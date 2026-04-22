@@ -1,0 +1,187 @@
+---
+title: Database
+description: "Spotify local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Spotify plugin syncs data locally. Use `corsair.spotify.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Albums
+
+Path: `spotify.db.albums.search`
+
+```ts
+const rows = await corsair.spotify.db.albums.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `album_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `total_tracks` | `number` | equals, gt, gte, lt, lte, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `release_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `release_date_precision` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Artists
+
+Path: `spotify.db.artists.search`
+
+```ts
+const rows = await corsair.spotify.db.artists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `popularity` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Playlist Items
+
+Path: `spotify.db.playlistItems.search`
+
+```ts
+const rows = await corsair.spotify.db.playlistItems.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `playlist_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `track_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `added_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_local` | `boolean` | equals |
+| `position` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Playlists
+
+Path: `spotify.db.playlists.search`
+
+```ts
+const rows = await corsair.spotify.db.playlists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `public` | `boolean` | equals |
+| `collaborative` | `boolean` | equals |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tracks
+
+Path: `spotify.db.tracks.search`
+
+```ts
+const rows = await corsair.spotify.db.tracks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration_ms` | `number` | equals, gt, gte, lt, lte, in |
+| `explicit` | `boolean` | equals |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_local` | `boolean` | equals |
+| `popularity` | `number` | equals, gt, gte, lt, lte, in |
+| `preview_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `track_number` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `spotify.db.users.search`
+
+```ts
+const rows = await corsair.spotify.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `display_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `product` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

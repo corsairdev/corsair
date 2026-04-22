@@ -1,0 +1,1608 @@
+---
+title: API
+description: "API reference for Discord: every `discord.api.*` operation with input and output types."
+---
+
+Every `discord.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Channels
+
+### list
+
+`channels.list`
+
+List channels in a guild
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.channels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guild_id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  type: number,
+  guild_id?: string,
+  name?: string | null,
+  topic?: string | null,
+  position?: number,
+  parent_id?: string | null,
+  last_message_id?: string | null,
+  owner_id?: string,
+  thread_metadata?: {
+    archived: boolean,
+    auto_archive_duration: number,
+    archive_timestamp: string,
+    locked: boolean,
+    invitable?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Guilds
+
+### get
+
+`guilds.get`
+
+Get info about a guild
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.guilds.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guild_id` | `string` | Yes | — |
+| `with_counts` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `icon` | `string` | No | — |
+| `splash` | `string` | No | — |
+| `owner_id` | `string` | Yes | — |
+| `afk_timeout` | `number` | Yes | — |
+| `verification_level` | `number` | Yes | — |
+| `default_message_notifications` | `number` | Yes | — |
+| `explicit_content_filter` | `number` | Yes | — |
+| `roles` | `object[]` | Yes | — |
+| `features` | `string[]` | Yes | — |
+| `mfa_level` | `number` | Yes | — |
+| `description` | `string` | No | — |
+| `premium_tier` | `number` | Yes | — |
+| `premium_subscription_count` | `number` | No | — |
+| `preferred_locale` | `string` | Yes | — |
+| `approximate_member_count` | `number` | No | — |
+| `approximate_presence_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  permissions: string,
+  position: number,
+  color: number,
+  hoist: boolean,
+  managed: boolean,
+  mentionable: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`guilds.list`
+
+List guilds the bot is a member of
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.guilds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `with_counts` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  icon?: string | null,
+  owner: boolean,
+  permissions: string,
+  features: string[],
+  approximate_member_count?: number,
+  approximate_presence_count?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Get info about a guild member
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guild_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `nick` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `roles` | `string[]` | Yes | — |
+| `joined_at` | `string` | Yes | — |
+| `premium_since` | `string` | No | — |
+| `deaf` | `boolean` | Yes | — |
+| `mute` | `boolean` | Yes | — |
+| `flags` | `number` | Yes | — |
+| `pending` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`members.list`
+
+List members of a guild
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guild_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  nick?: string | null,
+  avatar?: string | null,
+  roles: string[],
+  joined_at: string,
+  premium_since?: string | null,
+  deaf: boolean,
+  mute: boolean,
+  flags: number,
+  pending?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Permanently delete a message [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.discord.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### edit
+
+`messages.edit`
+
+Edit an existing message
+
+**Risk:** `write`
+
+```ts
+await corsair.discord.api.messages.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `embeds` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="embeds full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  url?: string,
+  color?: number,
+  fields?: {
+    name: string,
+    value: string,
+    inline?: boolean
+  }[],
+  footer?: {
+    text: string,
+    icon_url?: string
+  },
+  image?: {
+    url: string
+  },
+  thumbnail?: {
+    url: string
+  },
+  author?: {
+    name: string,
+    url?: string,
+    icon_url?: string
+  },
+  timestamp?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `content` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `edited_timestamp` | `string` | No | — |
+| `tts` | `boolean` | Yes | — |
+| `mention_everyone` | `boolean` | Yes | — |
+| `mentions` | `object[]` | Yes | — |
+| `mention_roles` | `string[]` | Yes | — |
+| `attachments` | `object[]` | Yes | — |
+| `embeds` | `object[]` | Yes | — |
+| `reactions` | `object[]` | No | — |
+| `pinned` | `boolean` | Yes | — |
+| `type` | `number` | Yes | — |
+| `flags` | `number` | No | — |
+| `message_reference` | `object` | No | — |
+| `thread` | `object` | No | — |
+| `nonce` | `string \| number` | No | — |
+| `referenced_message` | `lazy` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  id: string,
+  filename: string,
+  description?: string,
+  content_type?: string,
+  size: number,
+  url: string,
+  proxy_url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="embeds full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  url?: string,
+  color?: number,
+  fields?: {
+    name: string,
+    value: string,
+    inline?: boolean
+  }[],
+  footer?: {
+    text: string,
+    icon_url?: string
+  },
+  image?: {
+    url: string
+  },
+  thumbnail?: {
+    url: string
+  },
+  author?: {
+    name: string,
+    url?: string,
+    icon_url?: string
+  },
+  timestamp?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+  count: number,
+  me: boolean,
+  emoji: {
+    id?: string | null,
+    name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="message_reference full type">
+
+```ts
+{
+  message_id?: string,
+  channel_id?: string,
+  guild_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  type: number,
+  guild_id?: string,
+  name?: string | null,
+  topic?: string | null,
+  position?: number,
+  parent_id?: string | null,
+  last_message_id?: string | null,
+  owner_id?: string,
+  thread_metadata?: {
+    archived: boolean,
+    auto_archive_duration: number,
+    archive_timestamp: string,
+    locked: boolean,
+    invitable?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Get a specific message
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `content` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `edited_timestamp` | `string` | No | — |
+| `tts` | `boolean` | Yes | — |
+| `mention_everyone` | `boolean` | Yes | — |
+| `mentions` | `object[]` | Yes | — |
+| `mention_roles` | `string[]` | Yes | — |
+| `attachments` | `object[]` | Yes | — |
+| `embeds` | `object[]` | Yes | — |
+| `reactions` | `object[]` | No | — |
+| `pinned` | `boolean` | Yes | — |
+| `type` | `number` | Yes | — |
+| `flags` | `number` | No | — |
+| `message_reference` | `object` | No | — |
+| `thread` | `object` | No | — |
+| `nonce` | `string \| number` | No | — |
+| `referenced_message` | `lazy` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  id: string,
+  filename: string,
+  description?: string,
+  content_type?: string,
+  size: number,
+  url: string,
+  proxy_url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="embeds full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  url?: string,
+  color?: number,
+  fields?: {
+    name: string,
+    value: string,
+    inline?: boolean
+  }[],
+  footer?: {
+    text: string,
+    icon_url?: string
+  },
+  image?: {
+    url: string
+  },
+  thumbnail?: {
+    url: string
+  },
+  author?: {
+    name: string,
+    url?: string,
+    icon_url?: string
+  },
+  timestamp?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+  count: number,
+  me: boolean,
+  emoji: {
+    id?: string | null,
+    name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="message_reference full type">
+
+```ts
+{
+  message_id?: string,
+  channel_id?: string,
+  guild_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  type: number,
+  guild_id?: string,
+  name?: string | null,
+  topic?: string | null,
+  position?: number,
+  parent_id?: string | null,
+  last_message_id?: string | null,
+  owner_id?: string,
+  thread_metadata?: {
+    archived: boolean,
+    auto_archive_duration: number,
+    archive_timestamp: string,
+    locked: boolean,
+    invitable?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List recent messages in a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `around` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  channel_id: string,
+  author: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  content: string,
+  timestamp: string,
+  edited_timestamp?: string | null,
+  tts: boolean,
+  mention_everyone: boolean,
+  mentions: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  }[],
+  mention_roles: string[],
+  attachments: {
+    id: string,
+    filename: string,
+    description?: string,
+    content_type?: string,
+    size: number,
+    url: string,
+    proxy_url: string,
+    height?: number | null,
+    width?: number | null
+  }[],
+  embeds: {
+    title?: string,
+    description?: string,
+    url?: string,
+    color?: number,
+    fields?: {
+      name: string,
+      value: string,
+      inline?: boolean
+    }[],
+    footer?: {
+      text: string,
+      icon_url?: string
+    },
+    image?: {
+      url: string
+    },
+    thumbnail?: {
+      url: string
+    },
+    author?: {
+      name: string,
+      url?: string,
+      icon_url?: string
+    },
+    timestamp?: string
+  }[],
+  reactions?: {
+    count: number,
+    me: boolean,
+    emoji: {
+      id?: string | null,
+      name: string
+    }
+  }[],
+  pinned: boolean,
+  type: number,
+  flags?: number,
+  message_reference?: {
+    message_id?: string,
+    channel_id?: string,
+    guild_id?: string
+  },
+  thread?: {
+    id: string,
+    type: number,
+    guild_id?: string,
+    name?: string | null,
+    topic?: string | null,
+    position?: number,
+    parent_id?: string | null,
+    last_message_id?: string | null,
+    owner_id?: string,
+    thread_metadata?: {
+      archived: boolean,
+      auto_archive_duration: number,
+      archive_timestamp: string,
+      locked: boolean,
+      invitable?: boolean
+    }
+  },
+  nonce?: string | number,
+  referenced_message: lazy
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reply
+
+`messages.reply`
+
+Reply to a message in a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.discord.api.messages.reply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `embeds` | `object[]` | No | — |
+| `fail_if_not_exists` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="embeds full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  url?: string,
+  color?: number,
+  fields?: {
+    name: string,
+    value: string,
+    inline?: boolean
+  }[],
+  footer?: {
+    text: string,
+    icon_url?: string
+  },
+  image?: {
+    url: string
+  },
+  thumbnail?: {
+    url: string
+  },
+  author?: {
+    name: string,
+    url?: string,
+    icon_url?: string
+  },
+  timestamp?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `content` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `edited_timestamp` | `string` | No | — |
+| `tts` | `boolean` | Yes | — |
+| `mention_everyone` | `boolean` | Yes | — |
+| `mentions` | `object[]` | Yes | — |
+| `mention_roles` | `string[]` | Yes | — |
+| `attachments` | `object[]` | Yes | — |
+| `embeds` | `object[]` | Yes | — |
+| `reactions` | `object[]` | No | — |
+| `pinned` | `boolean` | Yes | — |
+| `type` | `number` | Yes | — |
+| `flags` | `number` | No | — |
+| `message_reference` | `object` | No | — |
+| `thread` | `object` | No | — |
+| `nonce` | `string \| number` | No | — |
+| `referenced_message` | `lazy` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  id: string,
+  filename: string,
+  description?: string,
+  content_type?: string,
+  size: number,
+  url: string,
+  proxy_url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="embeds full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  url?: string,
+  color?: number,
+  fields?: {
+    name: string,
+    value: string,
+    inline?: boolean
+  }[],
+  footer?: {
+    text: string,
+    icon_url?: string
+  },
+  image?: {
+    url: string
+  },
+  thumbnail?: {
+    url: string
+  },
+  author?: {
+    name: string,
+    url?: string,
+    icon_url?: string
+  },
+  timestamp?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+  count: number,
+  me: boolean,
+  emoji: {
+    id?: string | null,
+    name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="message_reference full type">
+
+```ts
+{
+  message_id?: string,
+  channel_id?: string,
+  guild_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  type: number,
+  guild_id?: string,
+  name?: string | null,
+  topic?: string | null,
+  position?: number,
+  parent_id?: string | null,
+  last_message_id?: string | null,
+  owner_id?: string,
+  thread_metadata?: {
+    archived: boolean,
+    auto_archive_duration: number,
+    archive_timestamp: string,
+    locked: boolean,
+    invitable?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.discord.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `embeds` | `object[]` | No | — |
+| `tts` | `boolean` | No | — |
+| `nonce` | `string \| number` | No | — |
+
+<AccordionGroup>
+<Accordion title="embeds full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  url?: string,
+  color?: number,
+  fields?: {
+    name: string,
+    value: string,
+    inline?: boolean
+  }[],
+  footer?: {
+    text: string,
+    icon_url?: string
+  },
+  image?: {
+    url: string
+  },
+  thumbnail?: {
+    url: string
+  },
+  author?: {
+    name: string,
+    url?: string,
+    icon_url?: string
+  },
+  timestamp?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `channel_id` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `content` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `edited_timestamp` | `string` | No | — |
+| `tts` | `boolean` | Yes | — |
+| `mention_everyone` | `boolean` | Yes | — |
+| `mentions` | `object[]` | Yes | — |
+| `mention_roles` | `string[]` | Yes | — |
+| `attachments` | `object[]` | Yes | — |
+| `embeds` | `object[]` | Yes | — |
+| `reactions` | `object[]` | No | — |
+| `pinned` | `boolean` | Yes | — |
+| `type` | `number` | Yes | — |
+| `flags` | `number` | No | — |
+| `message_reference` | `object` | No | — |
+| `thread` | `object` | No | — |
+| `nonce` | `string \| number` | No | — |
+| `referenced_message` | `lazy` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  id: string,
+  filename: string,
+  description?: string,
+  content_type?: string,
+  size: number,
+  url: string,
+  proxy_url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="embeds full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  url?: string,
+  color?: number,
+  fields?: {
+    name: string,
+    value: string,
+    inline?: boolean
+  }[],
+  footer?: {
+    text: string,
+    icon_url?: string
+  },
+  image?: {
+    url: string
+  },
+  thumbnail?: {
+    url: string
+  },
+  author?: {
+    name: string,
+    url?: string,
+    icon_url?: string
+  },
+  timestamp?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+  count: number,
+  me: boolean,
+  emoji: {
+    id?: string | null,
+    name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="message_reference full type">
+
+```ts
+{
+  message_id?: string,
+  channel_id?: string,
+  guild_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  type: number,
+  guild_id?: string,
+  name?: string | null,
+  topic?: string | null,
+  position?: number,
+  parent_id?: string | null,
+  last_message_id?: string | null,
+  owner_id?: string,
+  thread_metadata?: {
+    archived: boolean,
+    auto_archive_duration: number,
+    archive_timestamp: string,
+    locked: boolean,
+    invitable?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reactions
+
+### add
+
+`reactions.add`
+
+Add a reaction to a message
+
+**Risk:** `write`
+
+```ts
+await corsair.discord.api.reactions.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `emoji` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`reactions.list`
+
+List reactions on a message
+
+**Risk:** `read`
+
+```ts
+await corsair.discord.api.reactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `emoji` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`reactions.remove`
+
+Remove a reaction from a message
+
+**Risk:** `write`
+
+```ts
+await corsair.discord.api.reactions.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `emoji` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Threads
+
+### create
+
+`threads.create`
+
+Create a new thread in a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.discord.api.threads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `auto_archive_duration` | `60 \| 1440 \| 4320 \| 10080` | No | — |
+| `type` | `number` | No | — |
+| `invitable` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `number` | Yes | — |
+| `guild_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `position` | `number` | No | — |
+| `parent_id` | `string` | No | — |
+| `last_message_id` | `string` | No | — |
+| `owner_id` | `string` | No | — |
+| `thread_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="thread_metadata full type">
+
+```ts
+{
+  archived: boolean,
+  auto_archive_duration: number,
+  archive_timestamp: string,
+  locked: boolean,
+  invitable?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromMessage
+
+`threads.createFromMessage`
+
+Create a thread from an existing message
+
+**Risk:** `write`
+
+```ts
+await corsair.discord.api.threads.createFromMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `auto_archive_duration` | `60 \| 1440 \| 4320 \| 10080` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `number` | Yes | — |
+| `guild_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `position` | `number` | No | — |
+| `parent_id` | `string` | No | — |
+| `last_message_id` | `string` | No | — |
+| `owner_id` | `string` | No | — |
+| `thread_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="thread_metadata full type">
+
+```ts
+{
+  archived: boolean,
+  auto_archive_duration: number,
+  archive_timestamp: string,
+  locked: boolean,
+  invitable?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

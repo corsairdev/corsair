@@ -1,0 +1,2271 @@
+---
+title: API
+description: "API reference for Strava: every `strava.api.*` operation with input and output types."
+---
+
+Every `strava.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activities
+
+### create
+
+`activities.create`
+
+Create a manual activity
+
+**Risk:** `write`
+
+```ts
+await corsair.strava.api.activities.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `sport_type` | `string` | Yes | — |
+| `start_date_local` | `string` | Yes | — |
+| `elapsed_time` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `commute` | `number` | No | — |
+| `trainer` | `number` | No | — |
+| `distance` | `number` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `sport_type` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `start_date_local` | `string` | No | — |
+| `elapsed_time` | `number` | No | — |
+| `moving_time` | `number` | No | — |
+| `distance` | `number` | No | — |
+| `total_elevation_gain` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `description` | `string` | No | — |
+| `calories` | `number` | No | — |
+| `map` | `object` | No | — |
+| `athlete` | `object` | No | — |
+| `gear_id` | `string` | No | — |
+| `commute` | `boolean` | No | — |
+| `trainer` | `boolean` | No | — |
+| `manual` | `boolean` | No | — |
+| `private` | `boolean` | No | — |
+| `resource_state` | `number` | No | — |
+| `kudos_count` | `number` | No | — |
+| `comment_count` | `number` | No | — |
+| `athlete_count` | `number` | No | — |
+| `photo_count` | `number` | No | — |
+| `average_speed` | `number` | No | — |
+| `max_speed` | `number` | No | — |
+| `average_heartrate` | `number` | No | — |
+| `max_heartrate` | `number` | No | — |
+| `average_watts` | `number` | No | — |
+| `max_watts` | `number` | No | — |
+| `kilojoules` | `number` | No | — |
+| `device_watts` | `boolean` | No | — |
+| `has_heartrate` | `boolean` | No | — |
+| `elev_high` | `number` | No | — |
+| `elev_low` | `number` | No | — |
+| `pr_count` | `number` | No | — |
+| `suffer_score` | `number` | No | — |
+| `workout_type` | `number` | No | — |
+| `start_latlng` | `number[]` | No | — |
+| `end_latlng` | `number[]` | No | — |
+| `upload_id` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `has_kudoed` | `boolean` | No | — |
+| `average_cadence` | `number` | No | — |
+| `device_name` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="map full type">
+
+```ts
+{
+  id?: string,
+  polyline?: string | null,
+  summary_polyline?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="athlete full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`activities.get`
+
+Get details of an activity by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.activities.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `include_all_efforts` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `sport_type` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `start_date_local` | `string` | No | — |
+| `elapsed_time` | `number` | No | — |
+| `moving_time` | `number` | No | — |
+| `distance` | `number` | No | — |
+| `total_elevation_gain` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `description` | `string` | No | — |
+| `calories` | `number` | No | — |
+| `map` | `object` | No | — |
+| `athlete` | `object` | No | — |
+| `gear_id` | `string` | No | — |
+| `commute` | `boolean` | No | — |
+| `trainer` | `boolean` | No | — |
+| `manual` | `boolean` | No | — |
+| `private` | `boolean` | No | — |
+| `resource_state` | `number` | No | — |
+| `kudos_count` | `number` | No | — |
+| `comment_count` | `number` | No | — |
+| `athlete_count` | `number` | No | — |
+| `photo_count` | `number` | No | — |
+| `average_speed` | `number` | No | — |
+| `max_speed` | `number` | No | — |
+| `average_heartrate` | `number` | No | — |
+| `max_heartrate` | `number` | No | — |
+| `average_watts` | `number` | No | — |
+| `max_watts` | `number` | No | — |
+| `kilojoules` | `number` | No | — |
+| `device_watts` | `boolean` | No | — |
+| `has_heartrate` | `boolean` | No | — |
+| `elev_high` | `number` | No | — |
+| `elev_low` | `number` | No | — |
+| `pr_count` | `number` | No | — |
+| `suffer_score` | `number` | No | — |
+| `workout_type` | `number` | No | — |
+| `start_latlng` | `number[]` | No | — |
+| `end_latlng` | `number[]` | No | — |
+| `upload_id` | `number` | No | — |
+| `external_id` | `string` | No | — |
+| `has_kudoed` | `boolean` | No | — |
+| `average_cadence` | `number` | No | — |
+| `device_name` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="map full type">
+
+```ts
+{
+  id?: string,
+  polyline?: string | null,
+  summary_polyline?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="athlete full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStreams
+
+`activities.getStreams`
+
+Get stream data for an activity
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.activities.getStreams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `keys` | `time \| distance \| latlng \| altitude \| velocity_smooth \| heartrate \| cadence \| watts \| temp \| moving \| grade_smooth[]` | Yes | — |
+| `key_by_type` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time` | `object` | No | — |
+| `distance` | `object` | No | — |
+| `latlng` | `object` | No | — |
+| `altitude` | `object` | No | — |
+| `velocity_smooth` | `object` | No | — |
+| `heartrate` | `object` | No | — |
+| `cadence` | `object` | No | — |
+| `watts` | `object` | No | — |
+| `temp` | `object` | No | — |
+| `moving` | `object` | No | — |
+| `grade_smooth` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="time full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="distance full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="latlng full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="altitude full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="velocity_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="heartrate full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="cadence full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="watts full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="temp full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="moving full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="grade_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getZones
+
+`activities.getZones`
+
+Get heart rate and power zones for an activity
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.activities.getZones({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  type?: string,
+  score?: number,
+  distribution_buckets?: {
+    min?: number,
+    max?: number,
+    time?: number
+  }[],
+  resource_state?: number,
+  sensor_based?: boolean,
+  points?: number,
+  custom_zones?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`activities.list`
+
+List the authenticated athlete's activities
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.activities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `number` | No | — |
+| `after` | `number` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  sport_type?: string,
+  start_date?: string,
+  start_date_local?: string,
+  elapsed_time?: number,
+  moving_time?: number,
+  distance?: number,
+  total_elevation_gain?: number,
+  timezone?: string,
+  description?: string | null,
+  calories?: number,
+  map?: {
+    id?: string,
+    polyline?: string | null,
+    summary_polyline?: string | null
+  },
+  athlete?: {
+    id: number
+  },
+  gear_id?: string | null,
+  commute?: boolean,
+  trainer?: boolean,
+  manual?: boolean,
+  private?: boolean,
+  resource_state?: number,
+  kudos_count?: number,
+  comment_count?: number,
+  athlete_count?: number,
+  photo_count?: number,
+  average_speed?: number,
+  max_speed?: number,
+  average_heartrate?: number,
+  max_heartrate?: number,
+  average_watts?: number,
+  max_watts?: number,
+  kilojoules?: number,
+  device_watts?: boolean,
+  has_heartrate?: boolean,
+  elev_high?: number,
+  elev_low?: number,
+  pr_count?: number,
+  suffer_score?: number | null,
+  workout_type?: number | null,
+  start_latlng?: number[],
+  end_latlng?: number[],
+  upload_id?: number | null,
+  external_id?: string | null,
+  has_kudoed?: boolean,
+  average_cadence?: number,
+  device_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listComments
+
+`activities.listComments`
+
+List comments on an activity
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.activities.listComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number,
+  activity_id?: number,
+  text?: string,
+  athlete?: {
+    id: number,
+    username?: string | null,
+    firstname?: string,
+    lastname?: string,
+    city?: string | null,
+    state?: string | null,
+    country?: string | null,
+    sex?: string | null,
+    premium?: boolean,
+    summit?: boolean,
+    created_at?: string,
+    updated_at?: string,
+    follower_count?: number,
+    friend_count?: number,
+    measurement_preference?: string,
+    ftp?: number | null,
+    weight?: number | null,
+    profile?: string,
+    profile_medium?: string,
+    resource_state?: number,
+    bikes?: {
+      id: string,
+      primary?: boolean,
+      name?: string,
+      nickname?: string,
+      distance?: number,
+      converted_distance?: number,
+      resource_state?: number,
+      retired?: boolean
+    }[],
+    shoes?: {
+      id: string,
+      primary?: boolean,
+      name?: string,
+      nickname?: string,
+      distance?: number,
+      converted_distance?: number,
+      resource_state?: number,
+      retired?: boolean
+    }[]
+  },
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listKudoers
+
+`activities.listKudoers`
+
+List athletes who kudoed an activity
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.activities.listKudoers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number,
+  username?: string | null,
+  firstname?: string,
+  lastname?: string,
+  profile_medium?: string,
+  profile?: string,
+  resource_state?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listLaps
+
+`activities.listLaps`
+
+List laps of an activity
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.activities.listLaps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  activity?: {
+    id?: number
+  },
+  athlete?: {
+    id?: number
+  },
+  average_cadence?: number,
+  average_speed?: number,
+  average_heartrate?: number,
+  average_watts?: number,
+  device_watts?: boolean,
+  distance?: number,
+  elapsed_time?: number,
+  end_index?: number,
+  lap_index?: number,
+  max_speed?: number,
+  max_heartrate?: number,
+  moving_time?: number,
+  name?: string,
+  pace_zone?: number,
+  resource_state?: number,
+  split?: number,
+  start_date?: string,
+  start_date_local?: string,
+  start_index?: number,
+  total_elevation_gain?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Athletes
+
+### get
+
+`athletes.get`
+
+Get the authenticated athlete profile
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.athletes.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `username` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `sex` | `string` | No | — |
+| `premium` | `boolean` | No | — |
+| `summit` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `follower_count` | `number` | No | — |
+| `friend_count` | `number` | No | — |
+| `measurement_preference` | `string` | No | — |
+| `ftp` | `number` | No | — |
+| `weight` | `number` | No | — |
+| `profile` | `string` | No | — |
+| `profile_medium` | `string` | No | — |
+| `resource_state` | `number` | No | — |
+| `bikes` | `object[]` | No | — |
+| `shoes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bikes full type">
+
+```ts
+{
+  id: string,
+  primary?: boolean,
+  name?: string,
+  nickname?: string,
+  distance?: number,
+  converted_distance?: number,
+  resource_state?: number,
+  retired?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="shoes full type">
+
+```ts
+{
+  id: string,
+  primary?: boolean,
+  name?: string,
+  nickname?: string,
+  distance?: number,
+  converted_distance?: number,
+  resource_state?: number,
+  retired?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStats
+
+`athletes.getStats`
+
+Get an athlete's activity statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.athletes.getStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `biggest_ride_distance` | `number` | No | — |
+| `biggest_climb_elevation_gain` | `number` | No | — |
+| `recent_ride_totals` | `object` | No | — |
+| `recent_run_totals` | `object` | No | — |
+| `recent_swim_totals` | `object` | No | — |
+| `ytd_ride_totals` | `object` | No | — |
+| `ytd_run_totals` | `object` | No | — |
+| `ytd_swim_totals` | `object` | No | — |
+| `all_ride_totals` | `object` | No | — |
+| `all_run_totals` | `object` | No | — |
+| `all_swim_totals` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recent_ride_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="recent_run_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="recent_swim_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="ytd_ride_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="ytd_run_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="ytd_swim_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="all_ride_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="all_run_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="all_swim_totals full type">
+
+```ts
+{
+  count?: number,
+  distance?: number,
+  moving_time?: number,
+  elapsed_time?: number,
+  elevation_gain?: number,
+  achievement_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getZones
+
+`athletes.getZones`
+
+Get the authenticated athlete's heart rate and power zones
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.athletes.getZones({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `heart_rate` | `object` | No | — |
+| `power` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="heart_rate full type">
+
+```ts
+{
+  custom_zones?: boolean,
+  zones?: {
+    min?: number,
+    max?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="power full type">
+
+```ts
+{
+  zones?: {
+    min?: number,
+    max?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`athletes.update`
+
+Update the authenticated athlete's profile
+
+**Risk:** `write`
+
+```ts
+await corsair.strava.api.athletes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `weight` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `username` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `sex` | `string` | No | — |
+| `premium` | `boolean` | No | — |
+| `summit` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `follower_count` | `number` | No | — |
+| `friend_count` | `number` | No | — |
+| `measurement_preference` | `string` | No | — |
+| `ftp` | `number` | No | — |
+| `weight` | `number` | No | — |
+| `profile` | `string` | No | — |
+| `profile_medium` | `string` | No | — |
+| `resource_state` | `number` | No | — |
+| `bikes` | `object[]` | No | — |
+| `shoes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="bikes full type">
+
+```ts
+{
+  id: string,
+  primary?: boolean,
+  name?: string,
+  nickname?: string,
+  distance?: number,
+  converted_distance?: number,
+  resource_state?: number,
+  retired?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="shoes full type">
+
+```ts
+{
+  id: string,
+  primary?: boolean,
+  name?: string,
+  nickname?: string,
+  distance?: number,
+  converted_distance?: number,
+  resource_state?: number,
+  retired?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Clubs
+
+### get
+
+`clubs.get`
+
+Get details of a club by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.clubs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `profile` | `string` | No | — |
+| `profile_medium` | `string` | No | — |
+| `description` | `string` | No | — |
+| `club_type` | `string` | No | — |
+| `sport_type` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `member_count` | `number` | No | — |
+| `featured` | `boolean` | No | — |
+| `verified` | `boolean` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+## Gear
+
+### get
+
+`gear.get`
+
+Get details of a gear item by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.gear.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `primary` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `distance` | `number` | No | — |
+| `brand_name` | `string` | No | — |
+| `model_name` | `string` | No | — |
+| `frame_type` | `number` | No | — |
+| `description` | `string` | No | — |
+| `athlete_id` | `number` | No | — |
+| `resource_state` | `number` | No | — |
+| `retired` | `boolean` | No | — |
+| `converted_distance` | `number` | No | — |
+| `notification_distance` | `number` | No | — |
+
+
+
+---
+
+## Routes
+
+### exportGpx
+
+`routes.exportGpx`
+
+Export a route as GPX
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.routes.exportGpx({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### exportTcx
+
+`routes.exportTcx`
+
+Export a route as TCX
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.routes.exportTcx({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### get
+
+`routes.get`
+
+Get details of a route by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.routes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `athlete` | `object` | No | — |
+| `description` | `string` | No | — |
+| `distance` | `number` | No | — |
+| `elevation_gain` | `number` | No | — |
+| `map` | `object` | No | — |
+| `name` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `starred` | `boolean` | No | — |
+| `timestamp` | `number` | No | — |
+| `type` | `number` | No | — |
+| `sub_type` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `estimated_moving_time` | `number` | No | — |
+| `segments` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="athlete full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+
+<Accordion title="map full type">
+
+```ts
+{
+  id?: string,
+  polyline?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStreams
+
+`routes.getStreams`
+
+Get stream data for a route
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.routes.getStreams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time` | `object` | No | — |
+| `distance` | `object` | No | — |
+| `latlng` | `object` | No | — |
+| `altitude` | `object` | No | — |
+| `velocity_smooth` | `object` | No | — |
+| `heartrate` | `object` | No | — |
+| `cadence` | `object` | No | — |
+| `watts` | `object` | No | — |
+| `temp` | `object` | No | — |
+| `moving` | `object` | No | — |
+| `grade_smooth` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="time full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="distance full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="latlng full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="altitude full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="velocity_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="heartrate full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="cadence full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="watts full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="temp full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="moving full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="grade_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segment Efforts
+
+### get
+
+`segmentEfforts.get`
+
+Get details of a segment effort by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.segmentEfforts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `activity_id` | `number` | No | — |
+| `athlete_id` | `number` | No | — |
+| `segment` | `object` | No | — |
+| `name` | `string` | No | — |
+| `elapsed_time` | `number` | No | — |
+| `moving_time` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `start_date_local` | `string` | No | — |
+| `distance` | `number` | No | — |
+| `start_index` | `number` | No | — |
+| `end_index` | `number` | No | — |
+| `kom_rank` | `number` | No | — |
+| `pr_rank` | `number` | No | — |
+| `achievements` | `any[]` | No | — |
+| `device_watts` | `boolean` | No | — |
+| `average_watts` | `number` | No | — |
+| `average_heartrate` | `number` | No | — |
+| `max_heartrate` | `number` | No | — |
+| `average_cadence` | `number` | No | — |
+| `resource_state` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="segment full type">
+
+```ts
+{
+  id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStreams
+
+`segmentEfforts.getStreams`
+
+Get stream data for a segment effort
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.segmentEfforts.getStreams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `keys` | `time \| distance \| latlng \| altitude \| velocity_smooth \| heartrate \| cadence \| watts \| temp \| moving \| grade_smooth[]` | Yes | — |
+| `key_by_type` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time` | `object` | No | — |
+| `distance` | `object` | No | — |
+| `latlng` | `object` | No | — |
+| `altitude` | `object` | No | — |
+| `velocity_smooth` | `object` | No | — |
+| `heartrate` | `object` | No | — |
+| `cadence` | `object` | No | — |
+| `watts` | `object` | No | — |
+| `temp` | `object` | No | — |
+| `moving` | `object` | No | — |
+| `grade_smooth` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="time full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="distance full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="latlng full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="altitude full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="velocity_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="heartrate full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="cadence full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="watts full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="temp full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="moving full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="grade_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### explore
+
+`segments.explore`
+
+Find popular segments within a bounding box
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.segments.explore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bounds` | `string` | Yes | — |
+| `activity_type` | `running \| riding` | No | — |
+| `min_cat` | `number` | No | — |
+| `max_cat` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="segments full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  climb_category?: number,
+  climb_category_desc?: string,
+  avg_grade?: number,
+  start_latlng?: number[],
+  end_latlng?: number[],
+  elev_difference?: number,
+  distance?: number,
+  points?: string,
+  starred?: boolean,
+  resource_state?: number,
+  starred_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`segments.get`
+
+Get details of a segment by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.segments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `activity_type` | `string` | No | — |
+| `distance` | `number` | No | — |
+| `average_grade` | `number` | No | — |
+| `maximum_grade` | `number` | No | — |
+| `elevation_high` | `number` | No | — |
+| `elevation_low` | `number` | No | — |
+| `start_latlng` | `number[]` | No | — |
+| `end_latlng` | `number[]` | No | — |
+| `climb_category` | `number` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `starred` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `total_elevation_gain` | `number` | No | — |
+| `map` | `object` | No | — |
+| `effort_count` | `number` | No | — |
+| `athlete_count` | `number` | No | — |
+| `hazardous` | `boolean` | No | — |
+| `star_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="map full type">
+
+```ts
+{
+  id?: string,
+  polyline?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStreams
+
+`segments.getStreams`
+
+Get stream data for a segment
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.segments.getStreams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `keys` | `time \| distance \| latlng \| altitude \| velocity_smooth \| heartrate \| cadence \| watts \| temp \| moving \| grade_smooth[]` | Yes | — |
+| `key_by_type` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time` | `object` | No | — |
+| `distance` | `object` | No | — |
+| `latlng` | `object` | No | — |
+| `altitude` | `object` | No | — |
+| `velocity_smooth` | `object` | No | — |
+| `heartrate` | `object` | No | — |
+| `cadence` | `object` | No | — |
+| `watts` | `object` | No | — |
+| `temp` | `object` | No | — |
+| `moving` | `object` | No | — |
+| `grade_smooth` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="time full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="distance full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="latlng full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="altitude full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="velocity_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="heartrate full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="cadence full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="watts full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="temp full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="moving full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+
+<Accordion title="grade_smooth full type">
+
+```ts
+{
+  type?: string,
+  data?: any[],
+  series_type?: string,
+  original_size?: number,
+  resolution?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List the authenticated athlete's starred segments
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.segments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  activity_type?: string,
+  distance?: number,
+  average_grade?: number,
+  maximum_grade?: number,
+  elevation_high?: number,
+  elevation_low?: number,
+  start_latlng?: number[],
+  end_latlng?: number[],
+  climb_category?: number,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  private?: boolean,
+  starred?: boolean,
+  created_at?: string,
+  updated_at?: string,
+  total_elevation_gain?: number,
+  map?: {
+    id?: string,
+    polyline?: string | null
+  },
+  effort_count?: number,
+  athlete_count?: number,
+  hazardous?: boolean,
+  star_count?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### star
+
+`segments.star`
+
+Star or unstar a segment
+
+**Risk:** `write`
+
+```ts
+await corsair.strava.api.segments.star({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `starred` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `activity_type` | `string` | No | — |
+| `distance` | `number` | No | — |
+| `average_grade` | `number` | No | — |
+| `maximum_grade` | `number` | No | — |
+| `elevation_high` | `number` | No | — |
+| `elevation_low` | `number` | No | — |
+| `start_latlng` | `number[]` | No | — |
+| `end_latlng` | `number[]` | No | — |
+| `climb_category` | `number` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `starred` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `total_elevation_gain` | `number` | No | — |
+| `map` | `object` | No | — |
+| `effort_count` | `number` | No | — |
+| `athlete_count` | `number` | No | — |
+| `hazardous` | `boolean` | No | — |
+| `star_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="map full type">
+
+```ts
+{
+  id?: string,
+  polyline?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Uploads
+
+### create
+
+`uploads.create`
+
+Upload an activity file (FIT, TCX, GPX)
+
+**Risk:** `write`
+
+```ts
+await corsair.strava.api.uploads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `any` | Yes | — |
+| `data_type` | `fit \| fit.gz \| tcx \| tcx.gz \| gpx \| gpx.gz` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `trainer` | `string` | No | — |
+| `commute` | `string` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string` | No | — |
+| `error` | `string` | No | — |
+| `status` | `string` | No | — |
+| `activity_id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`uploads.get`
+
+Get the status of an upload by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.strava.api.uploads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `external_id` | `string` | No | — |
+| `error` | `string` | No | — |
+| `status` | `string` | No | — |
+| `activity_id` | `number` | No | — |
+
+
+
+---
+

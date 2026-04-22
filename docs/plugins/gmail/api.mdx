@@ -1,0 +1,1498 @@
+---
+title: API
+description: "API reference for Gmail: every `gmail.api.*` operation with input and output types."
+---
+
+Every `gmail.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Drafts
+
+### create
+
+`drafts.create`
+
+Create a new draft
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.drafts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `draft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="draft full type">
+
+```ts
+{
+  message?: {
+    raw?: string,
+    threadId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`drafts.delete`
+
+Delete a draft [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gmail.api.drafts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`drafts.get`
+
+Get a specific draft
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.drafts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `format` | `minimal \| full \| raw \| metadata` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`drafts.list`
+
+List drafts in the mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.drafts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drafts` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `resultSizeEstimate` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="drafts full type">
+
+```ts
+{
+  id?: string,
+  message?: {
+    id?: string,
+    threadId?: string,
+    labelIds?: string[],
+    snippet?: string,
+    historyId?: string,
+    internalDate?: string | number | date | null,
+    sizeEstimate?: number,
+    payload?: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: lazy
+    },
+    raw?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`drafts.send`
+
+Send a draft as an email
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.drafts.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  raw?: string,
+  threadId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `internalDate` | `string \| number \| date` | No | — |
+| `sizeEstimate` | `number` | No | — |
+| `payload` | `object` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  partId?: string,
+  mimeType?: string,
+  filename?: string,
+  headers?: {
+    name?: string,
+    value?: string
+  }[],
+  body?: {
+    attachmentId?: string,
+    size?: number,
+    data?: string
+  },
+  parts: lazy
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`drafts.update`
+
+Update an existing draft
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.drafts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `draft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="draft full type">
+
+```ts
+{
+  message?: {
+    raw?: string,
+    threadId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Labels
+
+### create
+
+`labels.create`
+
+Create a new label
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.labels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `label` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="label full type">
+
+```ts
+{
+  name?: string,
+  messageListVisibility?: show | hide,
+  labelListVisibility?: labelShow | labelShowIfUnread | labelHide,
+  color?: {
+    textColor?: string,
+    backgroundColor?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `messageListVisibility` | `show \| hide` | No | — |
+| `labelListVisibility` | `labelShow \| labelShowIfUnread \| labelHide` | No | — |
+| `type` | `system \| user` | No | — |
+| `messagesTotal` | `number` | No | — |
+| `messagesUnread` | `number` | No | — |
+| `threadsTotal` | `number` | No | — |
+| `threadsUnread` | `number` | No | — |
+| `color` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="color full type">
+
+```ts
+{
+  textColor?: string,
+  backgroundColor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a label [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gmail.api.labels.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`labels.get`
+
+Get a specific label
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.labels.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `messageListVisibility` | `show \| hide` | No | — |
+| `labelListVisibility` | `labelShow \| labelShowIfUnread \| labelHide` | No | — |
+| `type` | `system \| user` | No | — |
+| `messagesTotal` | `number` | No | — |
+| `messagesUnread` | `number` | No | — |
+| `threadsTotal` | `number` | No | — |
+| `threadsUnread` | `number` | No | — |
+| `color` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="color full type">
+
+```ts
+{
+  textColor?: string,
+  backgroundColor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`labels.list`
+
+List all labels in the mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.labels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  messageListVisibility?: show | hide,
+  labelListVisibility?: labelShow | labelShowIfUnread | labelHide,
+  type?: system | user,
+  messagesTotal?: number,
+  messagesUnread?: number,
+  threadsTotal?: number,
+  threadsUnread?: number,
+  color?: {
+    textColor?: string,
+    backgroundColor?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`labels.update`
+
+Update an existing label
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.labels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `label` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="label full type">
+
+```ts
+{
+  name?: string,
+  messageListVisibility?: show | hide,
+  labelListVisibility?: labelShow | labelShowIfUnread | labelHide,
+  color?: {
+    textColor?: string,
+    backgroundColor?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `messageListVisibility` | `show \| hide` | No | — |
+| `labelListVisibility` | `labelShow \| labelShowIfUnread \| labelHide` | No | — |
+| `type` | `system \| user` | No | — |
+| `messagesTotal` | `number` | No | — |
+| `messagesUnread` | `number` | No | — |
+| `threadsTotal` | `number` | No | — |
+| `threadsUnread` | `number` | No | — |
+| `color` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="color full type">
+
+```ts
+{
+  textColor?: string,
+  backgroundColor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### batchModify
+
+`messages.batchModify`
+
+Add or remove labels from multiple messages in bulk
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.messages.batchModify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `ids` | `string[]` | No | — |
+| `addLabelIds` | `string[]` | No | — |
+| `removeLabelIds` | `string[]` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### delete
+
+`messages.delete`
+
+Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmail.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`messages.get`
+
+Get a specific message
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `format` | `minimal \| full \| raw \| metadata` | No | — |
+| `metadataHeaders` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `internalDate` | `string \| number \| date` | No | — |
+| `sizeEstimate` | `number` | No | — |
+| `payload` | `object` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  partId?: string,
+  mimeType?: string,
+  filename?: string,
+  headers?: {
+    name?: string,
+    value?: string
+  }[],
+  body?: {
+    attachmentId?: string,
+    size?: number,
+    data?: string
+  },
+  parts: lazy
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages in a mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `q` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `includeSpamTrash` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `resultSizeEstimate` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### modify
+
+`messages.modify`
+
+Add or remove labels from a message
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.messages.modify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `addLabelIds` | `string[]` | No | — |
+| `removeLabelIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `internalDate` | `string \| number \| date` | No | — |
+| `sizeEstimate` | `number` | No | — |
+| `payload` | `object` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  partId?: string,
+  mimeType?: string,
+  filename?: string,
+  headers?: {
+    name?: string,
+    value?: string
+  }[],
+  body?: {
+    attachmentId?: string,
+    size?: number,
+    data?: string
+  },
+  parts: lazy
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send an email to one or more recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `raw` | `string` | Yes | — |
+| `threadId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `internalDate` | `string \| number \| date` | No | — |
+| `sizeEstimate` | `number` | No | — |
+| `payload` | `object` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  partId?: string,
+  mimeType?: string,
+  filename?: string,
+  headers?: {
+    name?: string,
+    value?: string
+  }[],
+  body?: {
+    attachmentId?: string,
+    size?: number,
+    data?: string
+  },
+  parts: lazy
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trash
+
+`messages.trash`
+
+Move a message to the trash
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.messages.trash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `internalDate` | `string \| number \| date` | No | — |
+| `sizeEstimate` | `number` | No | — |
+| `payload` | `object` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  partId?: string,
+  mimeType?: string,
+  filename?: string,
+  headers?: {
+    name?: string,
+    value?: string
+  }[],
+  body?: {
+    attachmentId?: string,
+    size?: number,
+    data?: string
+  },
+  parts: lazy
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### untrash
+
+`messages.untrash`
+
+Restore a message from the trash
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.messages.untrash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `internalDate` | `string \| number \| date` | No | — |
+| `sizeEstimate` | `number` | No | — |
+| `payload` | `object` | No | — |
+| `raw` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  partId?: string,
+  mimeType?: string,
+  filename?: string,
+  headers?: {
+    name?: string,
+    value?: string
+  }[],
+  body?: {
+    attachmentId?: string,
+    size?: number,
+    data?: string
+  },
+  parts: lazy
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Threads
+
+### delete
+
+`threads.delete`
+
+Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gmail.api.threads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`threads.get`
+
+Get a specific thread
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.threads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `format` | `minimal \| full \| metadata` | No | — |
+| `metadataHeaders` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`threads.list`
+
+List threads in the mailbox
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.threads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `q` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `includeSpamTrash` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threads` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `resultSizeEstimate` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="threads full type">
+
+```ts
+{
+  id?: string,
+  snippet?: string,
+  historyId?: string,
+  messages?: {
+    id?: string,
+    threadId?: string,
+    labelIds?: string[],
+    snippet?: string,
+    historyId?: string,
+    internalDate?: string | number | date | null,
+    sizeEstimate?: number,
+    payload?: {
+      partId?: string,
+      mimeType?: string,
+      filename?: string,
+      headers?: {
+        name?: string,
+        value?: string
+      }[],
+      body?: {
+        attachmentId?: string,
+        size?: number,
+        data?: string
+      },
+      parts: lazy
+    },
+    raw?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### modify
+
+`threads.modify`
+
+Add or remove labels from a thread
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.threads.modify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `addLabelIds` | `string[]` | No | — |
+| `removeLabelIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trash
+
+`threads.trash`
+
+Move a thread to the trash
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.threads.trash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### untrash
+
+`threads.untrash`
+
+Restore a thread from the trash
+
+**Risk:** `write`
+
+```ts
+await corsair.gmail.api.threads.untrash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `snippet` | `string` | No | — |
+| `historyId` | `string` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string,
+  threadId?: string,
+  labelIds?: string[],
+  snippet?: string,
+  historyId?: string,
+  internalDate?: string | number | date | null,
+  sizeEstimate?: number,
+  payload?: {
+    partId?: string,
+    mimeType?: string,
+    filename?: string,
+    headers?: {
+      name?: string,
+      value?: string
+    }[],
+    body?: {
+      attachmentId?: string,
+      size?: number,
+      data?: string
+    },
+    parts: lazy
+  },
+  raw?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

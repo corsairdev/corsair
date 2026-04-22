@@ -1,0 +1,764 @@
+---
+title: API
+description: "API reference for Pagerduty: every `pagerduty.api.*` operation with input and output types."
+---
+
+Every `pagerduty.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Incident Notes
+
+### create
+
+`incidentNotes.create`
+
+Add a note to an incident
+
+**Risk:** `write`
+
+```ts
+await corsair.pagerduty.api.incidentNotes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `note` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="note full type">
+
+```ts
+{
+  id: string,
+  content?: string,
+  created_at?: string,
+  user?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  channel?: {
+    type?: string,
+    name?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`incidentNotes.list`
+
+List notes for an incident
+
+**Risk:** `read`
+
+```ts
+await corsair.pagerduty.api.incidentNotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+  id: string,
+  content?: string,
+  created_at?: string,
+  user?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  channel?: {
+    type?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Incidents
+
+### create
+
+`incidents.create`
+
+Create a new incident
+
+**Risk:** `write`
+
+```ts
+await corsair.pagerduty.api.incidents.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `service` | `object` | Yes | — |
+| `urgency` | `high \| low` | No | — |
+| `body` | `object` | No | — |
+| `escalation_policy` | `object` | No | — |
+| `assignments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="service full type">
+
+```ts
+{
+  id: string,
+  type: service_reference
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  type: incident_body,
+  details: string
+}
+```
+</Accordion>
+
+<Accordion title="escalation_policy full type">
+
+```ts
+{
+  id: string,
+  type: escalation_policy_reference
+}
+```
+</Accordion>
+
+<Accordion title="assignments full type">
+
+```ts
+{
+  assignee: {
+    id: string,
+    type: user_reference
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="incident full type">
+
+```ts
+{
+  id: string,
+  incident_number?: number,
+  title?: string,
+  status?: triggered | acknowledged | resolved,
+  urgency?: high | low,
+  html_url?: string,
+  created_at?: string,
+  updated_at?: string,
+  resolved_at?: string | null,
+  service?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  escalation_policy?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  teams?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  assignments?: {
+    at: string,
+    assignee: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }
+  }[],
+  body?: {
+    type?: string,
+    details?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`incidents.get`
+
+Get a single incident by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pagerduty.api.incidents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="incident full type">
+
+```ts
+{
+  id: string,
+  incident_number?: number,
+  title?: string,
+  status?: triggered | acknowledged | resolved,
+  urgency?: high | low,
+  html_url?: string,
+  created_at?: string,
+  updated_at?: string,
+  resolved_at?: string | null,
+  service?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  escalation_policy?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  teams?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  assignments?: {
+    at: string,
+    assignee: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }
+  }[],
+  body?: {
+    type?: string,
+    details?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`incidents.list`
+
+List incidents with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.pagerduty.api.incidents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `statuses` | `triggered \| acknowledged \| resolved[]` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `urgencies` | `high \| low[]` | No | — |
+| `service_ids` | `string[]` | No | — |
+| `team_ids` | `string[]` | No | — |
+| `sort_by` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incidents` | `object[]` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `more` | `boolean` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="incidents full type">
+
+```ts
+{
+  id: string,
+  incident_number?: number,
+  title?: string,
+  status?: triggered | acknowledged | resolved,
+  urgency?: high | low,
+  html_url?: string,
+  created_at?: string,
+  updated_at?: string,
+  resolved_at?: string | null,
+  service?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  escalation_policy?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  teams?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  assignments?: {
+    at: string,
+    assignee: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }
+  }[],
+  body?: {
+    type?: string,
+    details?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`incidents.update`
+
+Update an incident (acknowledge, resolve, reassign)
+
+**Risk:** `write`
+
+```ts
+await corsair.pagerduty.api.incidents.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `acknowledged \| resolved` | No | — |
+| `urgency` | `high \| low` | No | — |
+| `title` | `string` | No | — |
+| `assignments` | `object[]` | No | — |
+| `escalation_policy` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignments full type">
+
+```ts
+{
+  assignee: {
+    id: string,
+    type: user_reference
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="escalation_policy full type">
+
+```ts
+{
+  id: string,
+  type: escalation_policy_reference
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="incident full type">
+
+```ts
+{
+  id: string,
+  incident_number?: number,
+  title?: string,
+  status?: triggered | acknowledged | resolved,
+  urgency?: high | low,
+  html_url?: string,
+  created_at?: string,
+  updated_at?: string,
+  resolved_at?: string | null,
+  service?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  escalation_policy?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  teams?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  assignments?: {
+    at: string,
+    assignee: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }
+  }[],
+  body?: {
+    type?: string,
+    details?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Log Entries
+
+### get
+
+`logEntries.get`
+
+Get a single log entry by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pagerduty.api.logEntries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `include` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `log_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="log_entry full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  summary?: string,
+  created_at?: string,
+  html_url?: string | null,
+  incident?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  service?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  teams?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  agent?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  channel?: {
+    type: string,
+    name?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`logEntries.list`
+
+List log entries
+
+**Risk:** `read`
+
+```ts
+await corsair.pagerduty.api.logEntries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `is_overview` | `boolean` | No | — |
+| `include` | `string[]` | No | — |
+| `team_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `log_entries` | `object[]` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `more` | `boolean` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="log_entries full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  summary?: string,
+  created_at?: string,
+  html_url?: string | null,
+  incident?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  service?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  teams?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  agent?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  channel?: {
+    type: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.pagerduty.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `include` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  email?: string,
+  role?: string,
+  description?: string | null,
+  time_zone?: string,
+  html_url?: string,
+  avatar_url?: string,
+  color?: string,
+  contact_methods?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  notification_rules?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[],
+  teams?: {
+    id: string,
+    type: string,
+    summary?: string,
+    html_url?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

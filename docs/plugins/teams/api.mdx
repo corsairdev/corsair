@@ -1,0 +1,1626 @@
+---
+title: API
+description: "API reference for Microsoft Teams: every `teams.api.*` operation with input and output types."
+---
+
+Every `teams.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Channels
+
+### create
+
+`channels.create`
+
+Create a new channel in a team
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.channels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `displayName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `membershipType` | `standard \| private \| shared` | No | — |
+| `isFavoriteByDefault` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `email` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `membershipType` | `string` | No | — |
+| `isFavoriteByDefault` | `boolean` | No | — |
+| `createdDateTime` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`channels.delete`
+
+Delete a channel [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teams.api.channels.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`channels.get`
+
+Get details of a specific channel
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.channels.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `email` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `membershipType` | `string` | No | — |
+| `isFavoriteByDefault` | `boolean` | No | — |
+| `createdDateTime` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`channels.list`
+
+List channels in a team
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.channels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  displayName?: string,
+  description?: string | null,
+  email?: string | null,
+  webUrl?: string | null,
+  membershipType?: string | null,
+  isFavoriteByDefault?: boolean | null,
+  createdDateTime?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`channels.update`
+
+Update a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.channels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `isFavoriteByDefault` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Chats
+
+### create
+
+`chats.create`
+
+Create a new chat
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.chats.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatType` | `oneOnOne \| group` | Yes | — |
+| `topic` | `string` | No | — |
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  userId: string,
+  roles?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `topic` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastUpdatedDateTime` | `string` | No | — |
+| `chatType` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`chats.get`
+
+Get details of a specific chat
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.chats.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `topic` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastUpdatedDateTime` | `string` | No | — |
+| `chatType` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`chats.list`
+
+List chats for the current user
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.chats.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `top` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  topic?: string | null,
+  createdDateTime?: string,
+  lastUpdatedDateTime?: string,
+  chatType?: string,
+  webUrl?: string,
+  tenantId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMessages
+
+`chats.listMessages`
+
+List messages in a chat
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.chats.listMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatId` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skipToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  replyToId?: string | null,
+  etag?: string,
+  messageType?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  deletedDateTime?: string | null,
+  subject?: string | null,
+  summary?: string | null,
+  chatId?: string | null,
+  importance?: string,
+  locale?: string,
+  webUrl?: string | null,
+  from?: {
+    application?: {
+    } | null,
+    device?: {
+    } | null,
+    user?: {
+      id?: string,
+      displayName?: string | null,
+      userIdentityType?: string
+    } | null
+  } | null,
+  body?: {
+    contentType?: text | html,
+    content?: string
+  },
+  channelIdentity?: {
+    teamId?: string,
+    channelId?: string
+  } | null,
+  attachments?: {
+  }[],
+  mentions?: {
+  }[],
+  reactions?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendMessage
+
+`chats.sendMessage`
+
+Send a message in a chat
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.chats.sendMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+| `importance` | `normal \| high \| urgent` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  content: string,
+  contentType?: text | html
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `replyToId` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `messageType` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `deletedDateTime` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `chatId` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `from` | `object` | No | — |
+| `body` | `object` | No | — |
+| `channelIdentity` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `mentions` | `object[]` | No | — |
+| `reactions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  application?: {
+  } | null,
+  device?: {
+  } | null,
+  user?: {
+    id?: string,
+    displayName?: string | null,
+    userIdentityType?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: text | html,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="channelIdentity full type">
+
+```ts
+{
+  teamId?: string,
+  channelId?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Members
+
+### add
+
+`members.add`
+
+Add a member to a team
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.members.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `roles` | `owner \| member[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `email` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `roles` | `string[]` | No | — |
+| `visibleHistoryStartDateTime` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`members.get`
+
+Get a specific team member
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `membershipId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `email` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `roles` | `string[]` | No | — |
+| `visibleHistoryStartDateTime` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+List members of a team
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  displayName?: string | null,
+  userId?: string | null,
+  email?: string | null,
+  tenantId?: string | null,
+  roles?: string[],
+  visibleHistoryStartDateTime?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`members.remove`
+
+Remove a member from a team [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teams.api.members.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `membershipId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Delete a channel message [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teams.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`messages.get`
+
+Get a specific channel message
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `replyToId` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `messageType` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `deletedDateTime` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `chatId` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `from` | `object` | No | — |
+| `body` | `object` | No | — |
+| `channelIdentity` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `mentions` | `object[]` | No | — |
+| `reactions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  application?: {
+  } | null,
+  device?: {
+  } | null,
+  user?: {
+    id?: string,
+    displayName?: string | null,
+    userIdentityType?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: text | html,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="channelIdentity full type">
+
+```ts
+{
+  teamId?: string,
+  channelId?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages in a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skipToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  replyToId?: string | null,
+  etag?: string,
+  messageType?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  deletedDateTime?: string | null,
+  subject?: string | null,
+  summary?: string | null,
+  chatId?: string | null,
+  importance?: string,
+  locale?: string,
+  webUrl?: string | null,
+  from?: {
+    application?: {
+    } | null,
+    device?: {
+    } | null,
+    user?: {
+      id?: string,
+      displayName?: string | null,
+      userIdentityType?: string
+    } | null
+  } | null,
+  body?: {
+    contentType?: text | html,
+    content?: string
+  },
+  channelIdentity?: {
+    teamId?: string,
+    channelId?: string
+  } | null,
+  attachments?: {
+  }[],
+  mentions?: {
+  }[],
+  reactions?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReplies
+
+`messages.listReplies`
+
+List replies to a channel message
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.messages.listReplies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+| `top` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  replyToId?: string | null,
+  etag?: string,
+  messageType?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  deletedDateTime?: string | null,
+  subject?: string | null,
+  summary?: string | null,
+  chatId?: string | null,
+  importance?: string,
+  locale?: string,
+  webUrl?: string | null,
+  from?: {
+    application?: {
+    } | null,
+    device?: {
+    } | null,
+    user?: {
+      id?: string,
+      displayName?: string | null,
+      userIdentityType?: string
+    } | null
+  } | null,
+  body?: {
+    contentType?: text | html,
+    content?: string
+  },
+  channelIdentity?: {
+    teamId?: string,
+    channelId?: string
+  } | null,
+  attachments?: {
+  }[],
+  mentions?: {
+  }[],
+  reactions?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reply
+
+`messages.reply`
+
+Reply to a message in a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.messages.reply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+| `importance` | `normal \| high \| urgent` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  content: string,
+  contentType?: text | html
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `replyToId` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `messageType` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `deletedDateTime` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `chatId` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `from` | `object` | No | — |
+| `body` | `object` | No | — |
+| `channelIdentity` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `mentions` | `object[]` | No | — |
+| `reactions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  application?: {
+  } | null,
+  device?: {
+  } | null,
+  user?: {
+    id?: string,
+    displayName?: string | null,
+    userIdentityType?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: text | html,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="channelIdentity full type">
+
+```ts
+{
+  teamId?: string,
+  channelId?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `channelId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+| `subject` | `string` | No | — |
+| `importance` | `normal \| high \| urgent` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  content: string,
+  contentType?: text | html
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `replyToId` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `messageType` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `deletedDateTime` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `chatId` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `from` | `object` | No | — |
+| `body` | `object` | No | — |
+| `channelIdentity` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `mentions` | `object[]` | No | — |
+| `reactions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  application?: {
+  } | null,
+  device?: {
+  } | null,
+  user?: {
+    id?: string,
+    displayName?: string | null,
+    userIdentityType?: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: text | html,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="channelIdentity full type">
+
+```ts
+{
+  teamId?: string,
+  channelId?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="mentions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="reactions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a new team
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| private` | No | — |
+| `memberSettings` | `object` | No | — |
+| `guestSettings` | `object` | No | — |
+| `messagingSettings` | `object` | No | — |
+| `funSettings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="memberSettings full type">
+
+```ts
+{
+  allowCreateUpdateChannels?: boolean,
+  allowDeleteChannels?: boolean,
+  allowAddRemoveApps?: boolean,
+  allowCreateUpdateRemoveTabs?: boolean,
+  allowCreateUpdateRemoveConnectors?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="guestSettings full type">
+
+```ts
+{
+  allowCreateUpdateChannels?: boolean,
+  allowDeleteChannels?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="messagingSettings full type">
+
+```ts
+{
+  allowUserEditMessages?: boolean,
+  allowUserDeleteMessages?: boolean,
+  allowOwnerDeleteMessages?: boolean,
+  allowTeamMentions?: boolean,
+  allowChannelMentions?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="funSettings full type">
+
+```ts
+{
+  allowGiphy?: boolean,
+  giphyContentRating?: string,
+  allowStickersAndMemes?: boolean,
+  allowCustomMemes?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Delete a team [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teams.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`teams.get`
+
+Get details of a specific team
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `classification` | `string` | No | — |
+| `specialization` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `isArchived` | `boolean` | No | — |
+| `memberSettings` | `object` | No | — |
+| `guestSettings` | `object` | No | — |
+| `messagingSettings` | `object` | No | — |
+| `funSettings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="memberSettings full type">
+
+```ts
+{
+  allowCreateUpdateChannels?: boolean,
+  allowDeleteChannels?: boolean,
+  allowAddRemoveApps?: boolean,
+  allowCreateUpdateRemoveTabs?: boolean,
+  allowCreateUpdateRemoveConnectors?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="guestSettings full type">
+
+```ts
+{
+  allowCreateUpdateChannels?: boolean,
+  allowDeleteChannels?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="messagingSettings full type">
+
+```ts
+{
+  allowUserEditMessages?: boolean,
+  allowUserDeleteMessages?: boolean,
+  allowOwnerDeleteMessages?: boolean,
+  allowTeamMentions?: boolean,
+  allowChannelMentions?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="funSettings full type">
+
+```ts
+{
+  allowGiphy?: boolean,
+  giphyContentRating?: string,
+  allowStickersAndMemes?: boolean,
+  allowCustomMemes?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams the current user is a member of
+
+**Risk:** `read`
+
+```ts
+await corsair.teams.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skipToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  displayName?: string,
+  description?: string | null,
+  internalId?: string | null,
+  classification?: string | null,
+  specialization?: string | null,
+  visibility?: string | null,
+  webUrl?: string | null,
+  isArchived?: boolean | null,
+  memberSettings?: {
+    allowCreateUpdateChannels?: boolean,
+    allowDeleteChannels?: boolean,
+    allowAddRemoveApps?: boolean,
+    allowCreateUpdateRemoveTabs?: boolean,
+    allowCreateUpdateRemoveConnectors?: boolean
+  } | null,
+  guestSettings?: {
+    allowCreateUpdateChannels?: boolean,
+    allowDeleteChannels?: boolean
+  } | null,
+  messagingSettings?: {
+    allowUserEditMessages?: boolean,
+    allowUserDeleteMessages?: boolean,
+    allowOwnerDeleteMessages?: boolean,
+    allowTeamMentions?: boolean,
+    allowChannelMentions?: boolean
+  } | null,
+  funSettings?: {
+    allowGiphy?: boolean,
+    giphyContentRating?: string,
+    allowStickersAndMemes?: boolean,
+    allowCustomMemes?: boolean
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update team settings
+
+**Risk:** `write`
+
+```ts
+await corsair.teams.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `memberSettings` | `object` | No | — |
+| `guestSettings` | `object` | No | — |
+| `messagingSettings` | `object` | No | — |
+| `funSettings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="memberSettings full type">
+
+```ts
+{
+  allowCreateUpdateChannels?: boolean,
+  allowDeleteChannels?: boolean,
+  allowAddRemoveApps?: boolean,
+  allowCreateUpdateRemoveTabs?: boolean,
+  allowCreateUpdateRemoveConnectors?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="guestSettings full type">
+
+```ts
+{
+  allowCreateUpdateChannels?: boolean,
+  allowDeleteChannels?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="messagingSettings full type">
+
+```ts
+{
+  allowUserEditMessages?: boolean,
+  allowUserDeleteMessages?: boolean,
+  allowOwnerDeleteMessages?: boolean,
+  allowTeamMentions?: boolean,
+  allowChannelMentions?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="funSettings full type">
+
+```ts
+{
+  allowGiphy?: boolean,
+  giphyContentRating?: string,
+  allowStickersAndMemes?: boolean,
+  allowCustomMemes?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+

@@ -1,0 +1,2085 @@
+---
+title: API
+description: "API reference for Hubspot: every `hubspot.api.*` operation with input and output types."
+---
+
+Every `hubspot.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### create
+
+`companies.create`
+
+Create a new company
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.companies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object` | No | — |
+| `associations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+  to: {
+    id: string
+  },
+  types: {
+    associationCategory: string,
+    associationTypeId: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companies.delete`
+
+Permanently delete a company [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hubspot.api.companies.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`companies.get`
+
+Get a specific company
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.companies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+| `idProperty` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`companies.getMany`
+
+Get multiple companies
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.companies.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentlyCreated
+
+`companies.getRecentlyCreated`
+
+List recently created companies
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.companies.getRecentlyCreated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `after` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentlyUpdated
+
+`companies.getRecentlyUpdated`
+
+List recently updated companies
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.companies.getRecentlyUpdated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `after` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchByDomain
+
+`companies.searchByDomain`
+
+Search companies by domain name
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.companies.searchByDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `properties` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companies.update`
+
+Update an existing company
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.companies.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contact Lists
+
+### addContact
+
+`contactLists.addContact`
+
+Add a contact to a static contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.contactLists.addContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `emails` | `string[]` | No | — |
+| `vids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updated` | `number[]` | No | — |
+| `discarded` | `number[]` | No | — |
+| `invalidVids` | `number[]` | No | — |
+| `invalidEmails` | `string[]` | No | — |
+
+
+
+---
+
+### removeContact
+
+`contactLists.removeContact`
+
+Remove a contact from a static contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.contactLists.removeContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `emails` | `string[]` | No | — |
+| `vids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updated` | `number[]` | No | — |
+| `discarded` | `number[]` | No | — |
+| `invalidVids` | `number[]` | No | — |
+| `invalidEmails` | `string[]` | No | — |
+
+
+
+---
+
+## Contacts
+
+### createOrUpdate
+
+`contacts.createOrUpdate`
+
+Create a new contact or update an existing one
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.contacts.createOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object` | No | — |
+| `associations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+  to: {
+    id: string
+  },
+  types: {
+    associationCategory: string,
+    associationTypeId: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Permanently delete a contact [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hubspot.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a specific contact
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+| `idProperty` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`contacts.getMany`
+
+Get multiple contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.contacts.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentlyCreated
+
+`contacts.getRecentlyCreated`
+
+List recently created contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.contacts.getRecentlyCreated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `after` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentlyUpdated
+
+`contacts.getRecentlyUpdated`
+
+List recently updated contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.contacts.getRecentlyUpdated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `after` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`contacts.search`
+
+Search contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.contacts.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `sorts` | `string[]` | No | — |
+| `properties` | `string[]` | No | — |
+| `filterGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filterGroups full type">
+
+```ts
+{
+  filters: {
+    operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN,
+    propertyName: string,
+    highValue?: string,
+    value?: string,
+    values?: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deals
+
+### create
+
+`deals.create`
+
+Create a new deal
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.deals.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object` | No | — |
+| `associations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+  to: {
+    id: string
+  },
+  types: {
+    associationCategory: string,
+    associationTypeId: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`deals.delete`
+
+Permanently delete a deal [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hubspot.api.deals.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`deals.get`
+
+Get a specific deal
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.deals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `string` | Yes | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+| `idProperty` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`deals.getMany`
+
+Get multiple deals
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.deals.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentlyCreated
+
+`deals.getRecentlyCreated`
+
+List recently created deals
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.deals.getRecentlyCreated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `after` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentlyUpdated
+
+`deals.getRecentlyUpdated`
+
+List recently updated deals
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.deals.getRecentlyUpdated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `after` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`deals.search`
+
+Search deals
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.deals.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `sorts` | `string[]` | No | — |
+| `properties` | `string[]` | No | — |
+| `filterGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filterGroups full type">
+
+```ts
+{
+  filters: {
+    operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN,
+    propertyName: string,
+    highValue?: string,
+    value?: string,
+    values?: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`deals.update`
+
+Update an existing deal
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.deals.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dealId` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Engagements
+
+### create
+
+`engagements.create`
+
+Create a new engagement
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.engagements.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engagement` | `object` | Yes | — |
+| `associations` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  active?: boolean,
+  type: string,
+  timestamp?: number
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+  contactIds?: number[],
+  companyIds?: number[],
+  dealIds?: number[],
+  ownerIds?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `engagement` | `object` | No | — |
+| `associations` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  id?: number,
+  portalId?: number,
+  active?: boolean,
+  createdAt?: number,
+  lastUpdated?: number,
+  createdBy?: number,
+  modifiedBy?: number,
+  ownerId?: number,
+  type?: string,
+  timestamp?: number
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`engagements.delete`
+
+Permanently delete an engagement [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hubspot.api.engagements.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engagementId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`engagements.get`
+
+Get a specific engagement
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.engagements.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engagementId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `engagement` | `object` | No | — |
+| `associations` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  id?: number,
+  portalId?: number,
+  active?: boolean,
+  createdAt?: number,
+  lastUpdated?: number,
+  createdBy?: number,
+  modifiedBy?: number,
+  ownerId?: number,
+  type?: string,
+  timestamp?: number
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`engagements.getMany`
+
+Get multiple engagements
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.engagements.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  engagement?: {
+    id?: number,
+    portalId?: number,
+    active?: boolean,
+    createdAt?: number,
+    lastUpdated?: number,
+    createdBy?: number,
+    modifiedBy?: number,
+    ownerId?: number,
+    type?: string,
+    timestamp?: number
+  },
+  associations?: {
+  },
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickets
+
+### create
+
+`tickets.create`
+
+Create a new support ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.tickets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object` | No | — |
+| `associations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+  to: {
+    id: string
+  },
+  types: {
+    associationCategory: string,
+    associationTypeId: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tickets.delete`
+
+Permanently delete a ticket [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hubspot.api.tickets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`tickets.get`
+
+Get a specific ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.tickets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+| `idProperty` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`tickets.getMany`
+
+Get multiple tickets
+
+**Risk:** `read`
+
+```ts
+await corsair.hubspot.api.tickets.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `properties` | `string[]` | No | — |
+| `propertiesWithHistory` | `string[]` | No | — |
+| `associations` | `string[]` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  properties?: {
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archived?: boolean,
+  associations?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tickets.update`
+
+Update an existing ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.tickets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticketId` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

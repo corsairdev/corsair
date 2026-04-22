@@ -1,0 +1,2958 @@
+---
+title: API
+description: "API reference for Calendly: every `calendly.api.*` operation with input and output types."
+---
+
+Every `calendly.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activity Log
+
+### list
+
+`activityLog.list`
+
+List activity log entries for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.activityLog.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | Yes | — |
+| `sort` | `string` | No | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `min_occurred_at` | `string` | No | — |
+| `max_occurred_at` | `string` | No | — |
+| `search_term` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri?: string,
+  action: string,
+  actor: {
+  },
+  details: {
+  },
+  organization: string,
+  occurred_at: string,
+  namespace?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOutgoingCommunications
+
+`activityLog.listOutgoingCommunications`
+
+List outgoing communications for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.activityLog.listOutgoingCommunications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri?: string,
+  channel?: string,
+  sent_at?: string,
+  status?: string,
+  to?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Event Types
+
+### create
+
+`eventTypes.create`
+
+Create a new event type
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.eventTypes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `host` | `string` | Yes | — |
+| `co_hosts` | `string[]` | No | — |
+| `duration` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `date_setting` | `object` | No | — |
+| `location_configurations` | `object[]` | No | — |
+| `description_plain` | `string` | No | — |
+| `color` | `string` | No | — |
+| `slug` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="date_setting full type">
+
+```ts
+{
+  type: string,
+  num_days?: number
+}
+```
+</Accordion>
+
+<Accordion title="location_configurations full type">
+
+```ts
+{
+  kind: string,
+  location?: string,
+  additional_info?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  active: boolean,
+  slug?: string,
+  scheduling_url: string,
+  duration: number,
+  duration_options?: number[] | null,
+  kind?: string,
+  pooling_type?: string | null,
+  type?: string,
+  color?: string,
+  created_at: string,
+  updated_at: string,
+  internal_note?: string | null,
+  description_plain?: string | null,
+  description_html?: string | null,
+  profile?: {
+    type: string,
+    name: string,
+    owner: string
+  },
+  secret?: boolean,
+  booking_method?: string,
+  custom_questions?: {
+    name: string,
+    type: string,
+    position: number,
+    enabled: boolean,
+    required: boolean,
+    answer_choices?: string[],
+    include_other?: boolean
+  }[],
+  deleted_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOneOff
+
+`eventTypes.createOneOff`
+
+Create a one-off event type
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.eventTypes.createOneOff({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `host` | `string` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `timezone` | `string` | Yes | — |
+| `date_setting` | `object` | Yes | — |
+| `location_configuration` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="date_setting full type">
+
+```ts
+{
+  type: string,
+  start_date?: string,
+  end_date?: string
+}
+```
+</Accordion>
+
+<Accordion title="location_configuration full type">
+
+```ts
+{
+  kind: string,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  scheduling_url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`eventTypes.get`
+
+Get an event type by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.eventTypes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  active: boolean,
+  slug?: string,
+  scheduling_url: string,
+  duration: number,
+  duration_options?: number[] | null,
+  kind?: string,
+  pooling_type?: string | null,
+  type?: string,
+  color?: string,
+  created_at: string,
+  updated_at: string,
+  internal_note?: string | null,
+  description_plain?: string | null,
+  description_html?: string | null,
+  profile?: {
+    type: string,
+    name: string,
+    owner: string
+  },
+  secret?: boolean,
+  booking_method?: string,
+  custom_questions?: {
+    name: string,
+    type: string,
+    position: number,
+    enabled: boolean,
+    required: boolean,
+    answer_choices?: string[],
+    include_other?: boolean
+  }[],
+  deleted_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`eventTypes.list`
+
+List all event types
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.eventTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  active: boolean,
+  slug?: string,
+  scheduling_url: string,
+  duration: number,
+  duration_options?: number[] | null,
+  kind?: string,
+  pooling_type?: string | null,
+  type?: string,
+  color?: string,
+  created_at: string,
+  updated_at: string,
+  internal_note?: string | null,
+  description_plain?: string | null,
+  description_html?: string | null,
+  profile?: {
+    type: string,
+    name: string,
+    owner: string
+  },
+  secret?: boolean,
+  booking_method?: string,
+  custom_questions?: {
+    name: string,
+    type: string,
+    position: number,
+    enabled: boolean,
+    required: boolean,
+    answer_choices?: string[],
+    include_other?: boolean
+  }[],
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAvailableTimes
+
+`eventTypes.listAvailableTimes`
+
+List available times for an event type
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.eventTypes.listAvailableTimes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+| `start_time` | `string` | Yes | — |
+| `end_time` | `string` | Yes | — |
+| `timezone` | `string` | No | — |
+| `diagnostics` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  status: string,
+  invitees_remaining: number,
+  start_time: string,
+  scheduling_url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listHosts
+
+`eventTypes.listHosts`
+
+List hosts for an event type
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.eventTypes.listHosts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  user?: string,
+  user_membership_uri?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`eventTypes.update`
+
+Update an event type
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.eventTypes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description_plain` | `string` | No | — |
+| `color` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `slug` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  active: boolean,
+  slug?: string,
+  scheduling_url: string,
+  duration: number,
+  duration_options?: number[] | null,
+  kind?: string,
+  pooling_type?: string | null,
+  type?: string,
+  color?: string,
+  created_at: string,
+  updated_at: string,
+  internal_note?: string | null,
+  description_plain?: string | null,
+  description_html?: string | null,
+  profile?: {
+    type: string,
+    name: string,
+    owner: string
+  },
+  secret?: boolean,
+  booking_method?: string,
+  custom_questions?: {
+    name: string,
+    type: string,
+    position: number,
+    enabled: boolean,
+    required: boolean,
+    answer_choices?: string[],
+    include_other?: boolean
+  }[],
+  deleted_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateAvailability
+
+`eventTypes.updateAvailability`
+
+Update availability for an event type
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.eventTypes.updateAvailability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+| `timezone` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  type: string,
+  wday?: string,
+  date?: string,
+  intervals: {
+    from: string,
+    to: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  user: string,
+  timezone: string,
+  rules?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### get
+
+`groups.get`
+
+Get a group by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.groups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  slug?: string,
+  organization: string,
+  user_count?: number,
+  scheduling_url?: string,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRelationship
+
+`groups.getRelationship`
+
+Get a group relationship by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.groups.getRelationship({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  type: string,
+  group: string,
+  user_or_event_type?: string,
+  managed_event_types?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  slug?: string,
+  organization: string,
+  user_count?: number,
+  scheduling_url?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRelationships
+
+`groups.listRelationships`
+
+List relationships for a group
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.groups.listRelationships({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  type: string,
+  group: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invitees
+
+### create
+
+`invitees.create`
+
+Create an invitee for a one-off event type
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.invitees.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type_uuid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `additional_guests` | `object[]` | No | — |
+| `questions_and_answers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="additional_guests full type">
+
+```ts
+{
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="questions_and_answers full type">
+
+```ts
+{
+  question: string,
+  answer: string,
+  position: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  email: string,
+  name: string,
+  status?: active | canceled,
+  questions_and_answers?: {
+    question: string,
+    answer: string,
+    position: number
+  }[],
+  timezone?: string,
+  event: string,
+  created_at: string,
+  updated_at: string,
+  tracking?: {
+    utm_campaign?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_content?: string | null,
+    utm_term?: string | null,
+    salesforce_uuid?: string | null
+  },
+  text_reminder_number?: string | null,
+  rescheduled?: boolean,
+  old_invitee?: string | null,
+  new_invitee?: string | null,
+  cancel_url?: string,
+  reschedule_url?: string,
+  routing_form_submission?: string | null,
+  payment?: {
+    external_id: string,
+    provider: string,
+    amount: number,
+    currency: string,
+    terms: string,
+    successful: boolean
+  } | null,
+  no_show?: {
+    uri: string
+  } | null,
+  scheduling_method?: string | null,
+  invitee_scheduled_by?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteData
+
+`invitees.deleteData`
+
+Delete all data for specified invitee emails [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.invitees.deleteData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteNoShow
+
+`invitees.deleteNoShow`
+
+Delete an invitee no-show record [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.invitees.deleteNoShow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`invitees.get`
+
+Get an event invitee by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.invitees.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_uuid` | `string` | Yes | — |
+| `invitee_uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  email: string,
+  name: string,
+  status?: active | canceled,
+  questions_and_answers?: {
+    question: string,
+    answer: string,
+    position: number
+  }[],
+  timezone?: string,
+  event: string,
+  created_at: string,
+  updated_at: string,
+  tracking?: {
+    utm_campaign?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_content?: string | null,
+    utm_term?: string | null,
+    salesforce_uuid?: string | null
+  },
+  text_reminder_number?: string | null,
+  rescheduled?: boolean,
+  old_invitee?: string | null,
+  new_invitee?: string | null,
+  cancel_url?: string,
+  reschedule_url?: string,
+  routing_form_submission?: string | null,
+  payment?: {
+    external_id: string,
+    provider: string,
+    amount: number,
+    currency: string,
+    terms: string,
+    successful: boolean
+  } | null,
+  no_show?: {
+    uri: string
+  } | null,
+  scheduling_method?: string | null,
+  invitee_scheduled_by?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNoShow
+
+`invitees.getNoShow`
+
+Get an invitee no-show record
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.invitees.getNoShow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  invitee: string,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invitees.list`
+
+List invitees for a scheduled event
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.invitees.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_uuid` | `string` | Yes | — |
+| `status` | `active \| canceled` | No | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  email: string,
+  name: string,
+  status?: active | canceled,
+  questions_and_answers?: {
+    question: string,
+    answer: string,
+    position: number
+  }[],
+  timezone?: string,
+  event: string,
+  created_at: string,
+  updated_at: string,
+  tracking?: {
+    utm_campaign?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_content?: string | null,
+    utm_term?: string | null,
+    salesforce_uuid?: string | null
+  },
+  text_reminder_number?: string | null,
+  rescheduled?: boolean,
+  old_invitee?: string | null,
+  new_invitee?: string | null,
+  cancel_url?: string,
+  reschedule_url?: string,
+  routing_form_submission?: string | null,
+  payment?: {
+    external_id: string,
+    provider: string,
+    amount: number,
+    currency: string,
+    terms: string,
+    successful: boolean
+  } | null,
+  no_show?: {
+    uri: string
+  } | null,
+  scheduling_method?: string | null,
+  invitee_scheduled_by?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markNoShow
+
+`invitees.markNoShow`
+
+Mark an invitee as a no-show
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.invitees.markNoShow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invitee` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  invitee: string,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### deleteMembership
+
+`organizations.deleteMembership`
+
+Delete an organization membership [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.organizations.deleteMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`organizations.get`
+
+Get an organization by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  stage?: string,
+  billing_email?: string,
+  plan?: string,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInvitation
+
+`organizations.getInvitation`
+
+Get an organization invitation
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.organizations.getInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_uuid` | `string` | Yes | — |
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  organization: string,
+  email: string,
+  status: string,
+  created_at: string,
+  updated_at: string,
+  last_sent_at?: string,
+  user?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMembership
+
+`organizations.getMembership`
+
+Get an organization membership
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.organizations.getMembership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  role: string,
+  user: {
+    uri: string,
+    name: string,
+    slug: string,
+    email: string,
+    scheduling_url: string,
+    timezone: string,
+    avatar_url?: string | null,
+    created_at: string,
+    updated_at: string,
+    current_organization?: string
+  },
+  organization: string,
+  updated_at: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`organizations.invite`
+
+Invite a user to an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.organizations.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_uuid` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  organization: string,
+  email: string,
+  status: string,
+  created_at: string,
+  updated_at: string,
+  last_sent_at?: string,
+  user?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInvitations
+
+`organizations.listInvitations`
+
+List organization invitations
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.organizations.listInvitations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_uuid` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `email` | `string` | No | — |
+| `status` | `string` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  organization: string,
+  email: string,
+  status: string,
+  created_at: string,
+  updated_at: string,
+  last_sent_at?: string,
+  user?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMemberships
+
+`organizations.listMemberships`
+
+List organization memberships
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.organizations.listMemberships({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | No | — |
+| `user` | `string` | No | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  role: string,
+  user: {
+    uri: string,
+    name: string,
+    slug: string,
+    email: string,
+    scheduling_url: string,
+    timezone: string,
+    avatar_url?: string | null,
+    created_at: string,
+    updated_at: string,
+    current_organization?: string
+  },
+  organization: string,
+  updated_at: string,
+  created_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeMember
+
+`organizations.removeMember`
+
+Remove a user from the organization [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.organizations.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### revokeInvitation
+
+`organizations.revokeInvitation`
+
+Revoke a user's organization invitation [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.organizations.revokeInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_uuid` | `string` | Yes | — |
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Routing Forms
+
+### get
+
+`routingForms.get`
+
+Get a routing form by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.routingForms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  organization: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSampleWebhookData
+
+`routingForms.getSampleWebhookData`
+
+Get sample webhook data for an event type
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.routingForms.getSampleWebhookData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | Yes | — |
+| `scope` | `string` | Yes | — |
+| `event` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubmission
+
+`routingForms.getSubmission`
+
+Get a routing form submission by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.routingForms.getSubmission({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  routing_form: string,
+  questions_and_answers?: {
+  }[],
+  tracking?: {
+  },
+  created_at?: string,
+  updated_at?: string,
+  result?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`routingForms.list`
+
+List routing forms in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.routingForms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  organization: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scheduled Events
+
+### cancel
+
+`scheduledEvents.cancel`
+
+Cancel a scheduled event [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.scheduledEvents.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `reason` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  canceled_by?: string,
+  canceler_type?: string,
+  reason?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteData
+
+`scheduledEvents.deleteData`
+
+Delete all scheduled event data in a time range [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.scheduledEvents.deleteData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `string` | Yes | — |
+| `end_time` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`scheduledEvents.get`
+
+Get a scheduled event by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.scheduledEvents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name?: string,
+  status?: active | canceled,
+  start_time: string,
+  end_time: string,
+  event_type: string,
+  location?: {
+    type: string,
+    location?: string,
+    join_url?: string,
+    status?: string,
+    additional_info?: string
+  },
+  invitees_counter?: {
+    total: number,
+    active: number,
+    limit: number
+  },
+  created_at?: string,
+  updated_at?: string,
+  event_memberships?: {
+    user: string,
+    user_email?: string,
+    user_name?: string
+  }[],
+  event_guests?: {
+    email: string,
+    created_at: string,
+    updated_at: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`scheduledEvents.list`
+
+List all scheduled events
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.scheduledEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `status` | `active \| canceled` | No | — |
+| `min_start_time` | `string` | No | — |
+| `max_start_time` | `string` | No | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `invitee_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  name?: string,
+  status?: active | canceled,
+  start_time: string,
+  end_time: string,
+  event_type: string,
+  location?: {
+    type: string,
+    location?: string,
+    join_url?: string,
+    status?: string,
+    additional_info?: string
+  },
+  invitees_counter?: {
+    total: number,
+    active: number,
+    limit: number
+  },
+  created_at?: string,
+  updated_at?: string,
+  event_memberships?: {
+    user: string,
+    user_email?: string,
+    user_name?: string
+  }[],
+  event_guests?: {
+    email: string,
+    created_at: string,
+    updated_at: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scheduling Links
+
+### create
+
+`schedulingLinks.create`
+
+Create a scheduling link
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.schedulingLinks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_event_count` | `number` | Yes | — |
+| `owner` | `string` | Yes | — |
+| `owner_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  booking_url: string,
+  owner: string,
+  owner_type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createShare
+
+`schedulingLinks.createShare`
+
+Create a share link for an event type
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.schedulingLinks.createShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  booking_url?: string,
+  created_at?: string,
+  last_booking_at?: string | null,
+  event_type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSingleUse
+
+`schedulingLinks.createSingleUse`
+
+Create a single-use scheduling link
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.schedulingLinks.createSingleUse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_event_count` | `number` | Yes | — |
+| `owner` | `string` | Yes | — |
+| `owner_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  booking_url: string,
+  owner: string,
+  owner_type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  slug: string,
+  email: string,
+  scheduling_url: string,
+  timezone: string,
+  avatar_url?: string | null,
+  created_at: string,
+  updated_at: string,
+  current_organization?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAvailabilitySchedule
+
+`users.getAvailabilitySchedule`
+
+Get a user availability schedule
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.users.getAvailabilitySchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  default?: boolean,
+  name: string,
+  user: string,
+  timezone: string,
+  rules?: {
+  }[],
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the currently authenticated user (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.users.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  slug: string,
+  email: string,
+  scheduling_url: string,
+  timezone: string,
+  avatar_url?: string | null,
+  created_at: string,
+  updated_at: string,
+  current_organization?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAvailabilitySchedules
+
+`users.listAvailabilitySchedules`
+
+List all availability schedules for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.users.listAvailabilitySchedules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  default?: boolean,
+  name: string,
+  user: string,
+  timezone: string,
+  rules?: {
+  }[],
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBusyTimes
+
+`users.listBusyTimes`
+
+List busy times for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.users.listBusyTimes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `start_time` | `string` | Yes | — |
+| `end_time` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  type: string,
+  start_time: string,
+  end_time: string,
+  buffered_start_time?: string,
+  buffered_end_time?: string,
+  event?: string | {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEventTypes
+
+`users.listEventTypes`
+
+List event types for a user (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.users.listEventTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `organization` | `string` | No | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  name: string,
+  active: boolean,
+  slug?: string,
+  scheduling_url: string,
+  duration: number,
+  duration_options?: number[] | null,
+  kind?: string,
+  pooling_type?: string | null,
+  type?: string,
+  color?: string,
+  created_at: string,
+  updated_at: string,
+  internal_note?: string | null,
+  description_plain?: string | null,
+  description_html?: string | null,
+  profile?: {
+    type: string,
+    name: string,
+    owner: string
+  },
+  secret?: boolean,
+  booking_method?: string,
+  custom_questions?: {
+    name: string,
+    type: string,
+    position: number,
+    enabled: boolean,
+    required: boolean,
+    answer_choices?: string[],
+    include_other?: boolean
+  }[],
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMeetingLocations
+
+`users.listMeetingLocations`
+
+List meeting locations for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.users.listMeetingLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  kind: string,
+  additional_info?: string,
+  location?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Subscriptions
+
+### create
+
+`webhookSubscriptions.create`
+
+Create a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.calendly.api.webhookSubscriptions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `events` | `string[]` | Yes | — |
+| `organization` | `string` | Yes | — |
+| `scope` | `string` | Yes | — |
+| `user` | `string` | No | — |
+| `signature_secret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  callback_url: string,
+  created_at: string,
+  updated_at: string,
+  retry_started_at?: string | null,
+  state: active | disabled,
+  events: string[],
+  scope: string,
+  organization: string,
+  user?: string | null,
+  creator: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhookSubscriptions.delete`
+
+Delete a webhook subscription [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.calendly.api.webhookSubscriptions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`webhookSubscriptions.get`
+
+Get a webhook subscription by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.webhookSubscriptions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource full type">
+
+```ts
+{
+  uri: string,
+  callback_url: string,
+  created_at: string,
+  updated_at: string,
+  retry_started_at?: string | null,
+  state: active | disabled,
+  events: string[],
+  scope: string,
+  organization: string,
+  user?: string | null,
+  creator: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhookSubscriptions.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.calendly.api.webhookSubscriptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `string` | Yes | — |
+| `scope` | `string` | Yes | — |
+| `user` | `string` | No | — |
+| `count` | `number` | No | — |
+| `page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  uri: string,
+  callback_url: string,
+  created_at: string,
+  updated_at: string,
+  retry_started_at?: string | null,
+  state: active | disabled,
+  events: string[],
+  scope: string,
+  organization: string,
+  user?: string | null,
+  creator: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count?: number,
+  next_page?: string | null,
+  previous_page?: string | null,
+  next_page_token?: string | null,
+  previous_page_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,108 @@
+---
+title: Webhooks
+description: "Gmail incoming webhooks: event paths, payloads, and response data."
+---
+
+The Gmail plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/gmail/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `messageChanged` (`messageChanged`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Message Changed
+
+### Message Changed
+
+`messageChanged`
+
+A Gmail message was received, deleted, or had its labels changed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | No | — |
+| `subscription` | `string` | No | — |
+| `event` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  data?: string,
+  attributes?: {
+  },
+  messageId?: string,
+  publishTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: messageReceived,
+  emailAddress: string,
+  historyId: string,
+  message: any
+} | {
+  type: messageDeleted,
+  emailAddress: string,
+  historyId: string,
+  message: any
+} | {
+  type: messageLabelChanged,
+  emailAddress: string,
+  historyId: string,
+  message: any,
+  labelsAdded?: string[],
+  labelsRemoved?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+gmail({
+    webhookHooks: {
+        messageChanged: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

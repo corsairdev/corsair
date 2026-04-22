@@ -1,0 +1,347 @@
+---
+title: API
+description: "API reference for Resend: every `resend.api.*` operation with input and output types."
+---
+
+Every `resend.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Domains
+
+### create
+
+`domains.create`
+
+Add a new sending domain
+
+**Risk:** `write`
+
+```ts
+await corsair.resend.api.domains.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `region` | `us-east-1 \| eu-west-1 \| sa-east-1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed` | Yes | — |
+| `created_at` | `date` | No | — |
+| `region` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`domains.delete`
+
+Remove a sending domain [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.resend.api.domains.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`domains.get`
+
+Get info about a sending domain
+
+**Risk:** `read`
+
+```ts
+await corsair.resend.api.domains.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed` | Yes | — |
+| `created_at` | `date` | No | — |
+| `region` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List all sending domains
+
+**Risk:** `read`
+
+```ts
+await corsair.resend.api.domains.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status: not_started | validation | scheduled | ready | error | verified | pending | failed,
+  created_at?: date | null,
+  region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`domains.verify`
+
+Trigger DNS verification for a domain
+
+**Risk:** `write`
+
+```ts
+await corsair.resend.api.domains.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending` | No | — |
+| `created_at` | `date` | No | — |
+| `region` | `string` | No | — |
+
+
+
+---
+
+## Emails
+
+### get
+
+`emails.get`
+
+Get info about a sent email
+
+**Risk:** `read`
+
+```ts
+await corsair.resend.api.emails.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string[]` | Yes | — |
+| `created_at` | `date` | No | — |
+| `subject` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`emails.list`
+
+List sent emails
+
+**Risk:** `read`
+
+```ts
+await corsair.resend.api.emails.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  from: string,
+  to: string[],
+  created_at?: date | null,
+  subject?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`emails.send`
+
+Send an email to one or more recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.resend.api.emails.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string \| string[]` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `cc` | `string \| string[]` | No | — |
+| `bcc` | `string \| string[]` | No | — |
+| `reply_to` | `string \| string[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `tags` | `object[]` | No | — |
+| `headers` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename: string,
+  content: string | any,
+  path?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+

@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "Strava plugin for Corsair"
+---
+
+Use **Strava** through Corsair: one client, typed API calls, optional local DB sync.
+
+**What you get:**
+
+- 27 typed API operations
+- 9 database entities synced for fast `.search()` / `.list()` queries
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/strava
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { strava } from '@corsair-dev/strava';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [strava()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { strava } from '@corsair-dev/strava';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [strava()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/strava/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=strava
+```
+
+Use the key names documented in [Get Credentials](/plugins/strava/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=strava --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="OAuth 2.0 (Default)">
+
+```ts corsair.ts
+strava()
+```
+
+Store credentials with `pnpm corsair setup --plugin=strava` (see [Get Credentials](/plugins/strava/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+
+## Query synced data
+
+Synced entities support `corsair.strava.db.<entity>.search()` and `.list()`. See [Database](/plugins/strava/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `activities.get`
+
+```ts
+await corsair.strava.api.activities.get({});
+```
+
+
+**Write-style (write):** `activities.create`
+
+```ts
+await corsair.strava.api.activities.create({});
+```
+
+
+See the full list on the [API](/plugins/strava/api) page. Use `pnpm corsair list --plugin=strava` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/strava/api) |
+| Database | [Database](/plugins/strava/database) |
+| Credentials | [Get credentials](/plugins/strava/get-credentials) |
+

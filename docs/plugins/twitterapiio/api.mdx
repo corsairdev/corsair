@@ -1,0 +1,2987 @@
+---
+title: API
+description: "API reference for TwitterAPI.io: every `twitterapiio.api.*` operation with input and output types."
+---
+
+Every `twitterapiio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api
+
+### webhooks.addRule
+
+`api.webhooks.addRule`
+
+Create a new tweet filter rule for the webhook stream (inactive by default — call updateRule to activate)
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.api.webhooks.addRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `string` | Yes | Custom label to identify this rule |
+| `value` | `string` | Yes | Filter expression (e.g. "from:elonmusk OR from:kaitoeasyapi"). Rules are inactive until updated with isActive: true. |
+| `intervalSeconds` | `number` | Yes | How often to check for new tweets matching this rule (seconds, 100–86400) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `msg` | `string` | No | — |
+
+
+
+---
+
+### webhooks.deleteRule
+
+`api.webhooks.deleteRule`
+
+Permanently delete a tweet filter rule
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.twitterapiio.api.api.webhooks.deleteRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ruleId` | `string` | Yes | ID of the rule to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `msg` | `string` | No | — |
+
+
+
+---
+
+### webhooks.getRules
+
+`api.webhooks.getRules`
+
+List all existing tweet filter rules
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.api.webhooks.getRules({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rules` | `object[]` | No | — |
+| `status` | `string` | No | — |
+| `msg` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  rule_id: string,
+  tag: string,
+  value: string,
+  interval_seconds: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webhooks.updateRule
+
+`api.webhooks.updateRule`
+
+Update a tweet filter rule, including activating or deactivating it
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.api.webhooks.updateRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ruleId` | `string` | Yes | ID of the rule to update |
+| `tag` | `string` | Yes | Custom label |
+| `value` | `string` | Yes | Filter expression |
+| `intervalSeconds` | `number` | Yes | Check interval in seconds (100–86400) |
+| `isActive` | `boolean` | Yes | true to activate the rule, false to deactivate |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rule_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `msg` | `string` | No | — |
+
+
+
+---
+
+## Communities
+
+### create
+
+`communities.create`
+
+Create a new Twitter community
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.communities.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`communities.delete`
+
+Delete a Twitter community
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.twitterapiio.api.communities.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `communityId` | `string` | Yes | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getById
+
+`communities.getById`
+
+Get community info by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.communities.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `communityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  memberCount?: number,
+  role?: string,
+  createdAt?: string,
+  isNsfw?: boolean,
+  adminResults?: any[],
+  moderatorResults?: any[],
+  rules?: any[],
+  primaryTopic?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMembers
+
+`communities.getMembers`
+
+Get members of a community
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.communities.getMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `communityId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `members` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getModerators
+
+`communities.getModerators`
+
+Get moderators of a community
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.communities.getModerators({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `communityId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `members` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTweets
+
+`communities.getTweets`
+
+Get tweets posted in a community
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.communities.getTweets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `communityId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### join
+
+`communities.join`
+
+Join a Twitter community
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.communities.join({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `communityId` | `string` | Yes | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### leave
+
+`communities.leave`
+
+Leave a Twitter community
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.communities.leave({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `communityId` | `string` | Yes | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### searchTweets
+
+`communities.searchTweets`
+
+Search tweets across all communities
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.communities.searchTweets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### getFollowers
+
+`lists.getFollowers`
+
+Get followers of a Twitter list
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.lists.getFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `users` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMembers
+
+`lists.getMembers`
+
+Get members of a Twitter list
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.lists.getMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `users` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTweets
+
+`lists.getTweets`
+
+Get tweets from a Twitter list timeline
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.lists.getTweets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Replies
+
+### get
+
+`replies.get`
+
+Get replies to a tweet, paginated by time range — stored independently in the replies table so engagement changes are tracked per reply
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.replies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `sinceTime` | `string` | No | — |
+| `untilTime` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string,
+  url?: string,
+  inReplyToUsername?: string | null,
+  isLimitedReply?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getV2
+
+`replies.getV2`
+
+Get replies to a tweet (v2) with sort order control (Relevance, Latest, Likes) — stored independently in the replies table so engagement changes are tracked per reply
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.replies.getV2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `queryType` | `Relevance \| Latest \| Likes` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string,
+  url?: string,
+  inReplyToUsername?: string | null,
+  isLimitedReply?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stream
+
+### addUser
+
+`stream.addUser`
+
+Add a Twitter user to the real-time tweet monitor stream
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.stream.addUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | Twitter/X handle to add to the real-time monitor stream |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| error` | No | — |
+| `msg` | `string` | No | — |
+
+
+
+---
+
+### listUsers
+
+`stream.listUsers`
+
+List all Twitter users currently in the monitor stream
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.stream.listUsers({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `string[]` | No | — |
+| `status` | `string` | No | — |
+| `msg` | `string` | No | — |
+
+
+
+---
+
+### removeUser
+
+`stream.removeUser`
+
+Remove a Twitter user from the real-time tweet monitor stream
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.stream.removeUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | Twitter/X handle to remove from the monitor stream |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success \| error` | No | — |
+| `msg` | `string` | No | — |
+
+
+
+---
+
+## Trends
+
+### get
+
+`trends.get`
+
+Get trending topics by location (woeid)
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.trends.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `woeid` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `trends` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="trends full type">
+
+```ts
+{
+  name: string,
+  tweetVolume?: number | null,
+  url?: string,
+  woeid?: number,
+  trendingAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tweets
+
+### advancedSearch
+
+`tweets.advancedSearch`
+
+Search tweets using structured operators (keywords, users, dates, engagement thresholds, media filters, etc.)
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.advancedSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `string[]` | No | — |
+| `exactPhrase` | `string` | No | — |
+| `anyOf` | `string[]` | No | — |
+| `excludeKeywords` | `string[]` | No | — |
+| `hashtags` | `string[]` | No | — |
+| `fromUsers` | `string[]` | No | — |
+| `toUsers` | `string[]` | No | — |
+| `mentioningUsers` | `string[]` | No | — |
+| `language` | `am \| ar \| bg \| bn \| bo \| ca \| cs \| cy \| da \| de \| dv \| el \| en \| es \| et \| eu \| fa \| fi \| fr \| ga \| gl \| gu \| he \| hi \| hr \| hy \| id \| is \| it \| ja \| ka \| km \| kn \| ko \| lo \| lt \| lv \| ml \| mr \| my \| ne \| nl \| no \| or \| pa \| pl \| ps \| pt \| ro \| ru \| si \| sk \| sl \| sq \| sr \| sv \| sw \| ta \| te \| th \| tl \| tr \| ug \| uk \| ur \| vi \| zh` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `sinceTime` | `number` | No | — |
+| `untilTime` | `number` | No | — |
+| `replies` | `only \| exclude` | No | — |
+| `retweets` | `only \| exclude` | No | — |
+| `onlyLinks` | `boolean` | No | — |
+| `onlyMedia` | `boolean` | No | — |
+| `onlyImages` | `boolean` | No | — |
+| `onlyVideos` | `boolean` | No | — |
+| `minReplies` | `number` | No | — |
+| `minLikes` | `number` | No | — |
+| `minRetweets` | `number` | No | — |
+| `queryType` | `Latest \| Top` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`tweets.create`
+
+Post a new tweet or reply
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.tweets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweet` | `string` | Yes | Tweet text content |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+| `replyToTweetId` | `string` | No | — |
+| `mediaIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tweets.delete`
+
+Delete a tweet
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.twitterapiio.api.tweets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getByIds
+
+`tweets.getByIds`
+
+Fetch tweets by their IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.getByIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetIds` | `string` | Yes | Comma-separated list of tweet IDs |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getQuotations
+
+`tweets.getQuotations`
+
+Get quote tweets for a tweet
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.getQuotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRetweeters
+
+`tweets.getRetweeters`
+
+Get users who retweeted a tweet
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.getRetweeters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `users` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getThreadContext
+
+`tweets.getThreadContext`
+
+Get the full thread context for a tweet
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.getThreadContext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserLastTweets
+
+`tweets.getUserLastTweets`
+
+Retrieve a user's most recent tweets by username
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.getUserLastTweets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserMentions
+
+`tweets.getUserMentions`
+
+Get tweets that mention a user
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.getUserMentions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserTimeline
+
+`tweets.getUserTimeline`
+
+Retrieve a user's tweet timeline by user ID
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.getUserTimeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### like
+
+`tweets.like`
+
+Like a tweet
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.tweets.like({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### retweet
+
+`tweets.retweet`
+
+Retweet a tweet
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.tweets.retweet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### search
+
+`tweets.search`
+
+Search tweets with a raw query string
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.tweets.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `queryType` | `Top \| Latest \| Photos \| Videos` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `tweets` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  author?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  createdAt?: string,
+  likeCount?: number,
+  retweetCount?: number,
+  replyCount?: number,
+  quoteCount?: number,
+  viewCount?: number | null,
+  bookmarkCount?: number,
+  lang?: string,
+  source?: string,
+  isRetweet?: boolean,
+  isQuote?: boolean,
+  isPinned?: boolean,
+  inReplyToStatusId?: string | null,
+  inReplyToUserId?: string | null,
+  quotedTweetId?: string | null,
+  media?: {
+    type?: string,
+    url?: string,
+    mediaUrlHttps?: string,
+    expandedUrl?: string,
+    width?: number,
+    height?: number,
+    altText?: string | null,
+    durationMs?: number | null
+  }[],
+  entities?: {
+    urls?: {
+      url?: string,
+      expandedUrl?: string,
+      displayUrl?: string
+    }[],
+    hashtags?: {
+      text?: string
+    }[],
+    userMentions?: {
+      id?: string,
+      name?: string,
+      screenName?: string
+    }[]
+  },
+  conversationId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlike
+
+`tweets.unlike`
+
+Remove a like from a tweet
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.tweets.unlike({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | Yes | — |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Users
+
+### batchGetByIds
+
+`users.batchGetByIds`
+
+Batch fetch user profiles by user IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.batchGetByIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userIds` | `string` | Yes | Comma-separated list of user IDs |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkFollowRelationship
+
+`users.checkFollowRelationship`
+
+Check if two users follow each other
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.checkFollowRelationship({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceUserName` | `string` | Yes | — |
+| `targetUserName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `isFollowing` | `boolean` | No | — |
+| `isFollowedBy` | `boolean` | No | — |
+
+
+
+---
+
+### follow
+
+`users.follow`
+
+Follow a user
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.users.follow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `followId` | `string` | Yes | User ID to follow |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getByUsername
+
+`users.getByUsername`
+
+Get user profile by username
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.getByUsername({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFollowers
+
+`users.getFollowers`
+
+Get a user's followers
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.getFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `users` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFollowings
+
+`users.getFollowings`
+
+Get users that a user is following
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.getFollowings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `users` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMe
+
+`users.getMe`
+
+Get the authenticated account info
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.getMe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVerifiedFollowers
+
+`users.getVerifiedFollowers`
+
+Get a user's verified (blue-check) followers
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.getVerifiedFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `users` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### login
+
+`users.login`
+
+Authenticate a Twitter account via credentials and obtain a login cookie for v2 endpoints
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.users.login({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | Twitter username |
+| `email` | `string` | Yes | Account email address |
+| `password` | `string` | Yes | Account password |
+| `totpSecret` | `string` | No | — |
+| `proxy` | `string` | Yes | High-quality residential proxy URL (e.g. http://user:pass@host:port) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `login_cookie` | `string` | No | — |
+| `status` | `string` | No | — |
+| `msg` | `string` | No | — |
+
+
+
+---
+
+### search
+
+`users.search`
+
+Search users by keyword
+
+**Risk:** `read`
+
+```ts
+await corsair.twitterapiio.api.users.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `users` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  userName: string,
+  name: string,
+  followerCount?: number,
+  followingCount?: number,
+  profilePicture?: string | null,
+  coverPicture?: string | null,
+  description?: string | null,
+  location?: string | null,
+  isBlueVerified?: boolean,
+  isGovernmentVerified?: boolean,
+  favouritesCount?: number,
+  statusesCount?: number,
+  mediaCount?: number,
+  createdAt?: string,
+  isProtected?: boolean,
+  isSuspended?: boolean,
+  isUnavailable?: boolean,
+  pinnedTweetIds?: string[],
+  website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unfollow
+
+`users.unfollow`
+
+Unfollow a user
+
+**Risk:** `write`
+
+```ts
+await corsair.twitterapiio.api.users.unfollow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `followId` | `string` | Yes | User ID to unfollow |
+| `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+

@@ -1,0 +1,2332 @@
+---
+title: API
+description: "API reference for Figma: every `figma.api.*` operation with input and output types."
+---
+
+Every `figma.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activity Logs
+
+### list
+
+`activityLogs.list`
+
+List Figma organization activity logs
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.activityLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_time` | `number` | No | — |
+| `end_time` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `events` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `activity_logs` | `any[]` | No | — |
+| `cursor` | `string` | No | — |
+| `next_page` | `boolean` | No | — |
+
+
+
+---
+
+## Comments
+
+### add
+
+`comments.add`
+
+Add a comment to a Figma file
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.comments.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `file_key` | `string` | Yes | — |
+| `comment_id` | `string` | No | — |
+| `client_meta` | `any` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `uuid` | `string` | No | — |
+| `message` | `string` | No | — |
+| `file_key` | `string` | No | — |
+| `order_id` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `reactions` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `client_meta` | `any` | No | — |
+| `resolved_at` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="reactions full type">
+
+```ts
+{
+  user?: {
+    id: string,
+    handle?: string,
+    img_url?: string
+  },
+  emoji?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  handle?: string,
+  img_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addReaction
+
+`comments.addReaction`
+
+Add a reaction to a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.comments.addReaction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+| `emoji` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+| `error` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment from a Figma file [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.figma.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+| `error` | `boolean` | No | — |
+
+
+
+---
+
+### deleteReaction
+
+`comments.deleteReaction`
+
+Delete a reaction from a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.comments.deleteReaction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+| `emoji` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+| `error` | `boolean` | No | — |
+
+
+
+---
+
+### getReactions
+
+`comments.getReactions`
+
+Get reactions on a comment
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.comments.getReactions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reactions` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="reactions full type">
+
+```ts
+{
+  user?: {
+    id: string,
+    handle?: string,
+    img_url?: string
+  },
+  emoji?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments on a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `as_md` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: string,
+  uuid?: string | null,
+  message?: string,
+  file_key?: string,
+  order_id?: string | null,
+  parent_id?: string | null,
+  reactions?: {
+    user?: {
+      id: string,
+      handle?: string,
+      img_url?: string
+    },
+    emoji?: string,
+    created_at?: string
+  }[],
+  created_at?: string,
+  client_meta?: any,
+  resolved_at?: string | null,
+  user?: {
+    id: string,
+    handle?: string,
+    img_url?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Components
+
+### get
+
+`components.get`
+
+Get a Figma component by key
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.components.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `status` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  component?: {
+    key: string,
+    file_key?: string,
+    node_id?: string,
+    thumbnail_url?: string,
+    name?: string,
+    description?: string,
+    created_at?: string,
+    updated_at?: string,
+    containing_frame?: {
+      name?: string,
+      node_id?: string
+    },
+    user?: {
+      id: string,
+      handle?: string,
+      img_url?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getComponentSet
+
+`components.getComponentSet`
+
+Get a Figma component set by key
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.components.getComponentSet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `status` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  component_set?: {
+    key: string,
+    name?: string,
+    description?: string,
+    thumbnail_url?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getComponentSetsForFile
+
+`components.getComponentSetsForFile`
+
+Get all component sets in a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.components.getComponentSetsForFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  component_sets?: {
+    key: string,
+    name?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getComponentSetsForTeam
+
+`components.getComponentSetsForTeam`
+
+Get all component sets for a Figma team
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.components.getComponentSetsForTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `page_size` | `number` | No | — |
+| `after` | `number` | No | — |
+| `before` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  component_sets?: {
+    key: string,
+    name?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForFile
+
+`components.getForFile`
+
+Get all components in a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.components.getForFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `status` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  components?: {
+    key: string,
+    file_key?: string,
+    node_id?: string,
+    thumbnail_url?: string,
+    name?: string,
+    description?: string,
+    created_at?: string,
+    updated_at?: string,
+    containing_frame?: {
+      name?: string,
+      node_id?: string
+    },
+    user?: {
+      id: string,
+      handle?: string,
+      img_url?: string
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForTeam
+
+`components.getForTeam`
+
+Get all components for a Figma team
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.components.getForTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `page_size` | `number` | No | — |
+| `after` | `number` | No | — |
+| `before` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  components?: {
+    key: string,
+    file_key?: string,
+    node_id?: string,
+    thumbnail_url?: string,
+    name?: string,
+    description?: string,
+    created_at?: string,
+    updated_at?: string,
+    containing_frame?: {
+      name?: string,
+      node_id?: string
+    },
+    user?: {
+      id: string,
+      handle?: string,
+      img_url?: string
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Design Tools
+
+### designTokensToTailwind
+
+`designTools.designTokensToTailwind`
+
+Convert Figma design tokens to a Tailwind CSS configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.designTools.designTokensToTailwind({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `object` | Yes | — |
+| `prefix` | `string` | No | — |
+| `config_format` | `string` | No | — |
+| `include_font_imports` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `config` | `string` | No | — |
+| `css` | `string` | No | — |
+
+
+
+---
+
+### discoverResources
+
+`designTools.discoverResources`
+
+Discover Figma files, projects, and teams
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.designTools.discoverResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `figma_url` | `string` | No | — |
+| `file_key` | `string` | No | — |
+| `team_id` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `max_depth` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `any[]` | No | — |
+| `projects` | `any[]` | No | — |
+| `teams` | `any[]` | No | — |
+
+
+
+---
+
+### downloadImages
+
+`designTools.downloadImages`
+
+Download rendered images for Figma nodes
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.designTools.downloadImages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `images` | `object[]` | Yes | — |
+| `scale` | `number` | No | — |
+| `svg_include_id` | `boolean` | No | — |
+| `svg_outline_text` | `boolean` | No | — |
+| `svg_simplify_stroke` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  node_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractDesignTokens
+
+`designTools.extractDesignTokens`
+
+Extract design tokens (variables and styles) from a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.designTools.extractDesignTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `include_variables` | `boolean` | No | — |
+| `include_local_styles` | `boolean` | No | — |
+| `extract_from_nodes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractPrototypeInteractions
+
+`designTools.extractPrototypeInteractions`
+
+Extract prototype interactions and flows from a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.designTools.extractPrototypeInteractions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `analyze_components` | `boolean` | No | — |
+| `include_animations` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interactions` | `any[]` | No | — |
+| `flows` | `any[]` | No | — |
+
+
+
+---
+
+## Dev Resources
+
+### create
+
+`devResources.create`
+
+Create dev resources on a Figma file
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.devResources.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dev_resources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dev_resources full type">
+
+```ts
+{
+  url: string,
+  name: string,
+  node_id: string,
+  file_key: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links_created` | `object[]` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="links_created full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  name: string,
+  node_id: string,
+  file_key: string
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  error: string,
+  node_id?: string,
+  file_key?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`devResources.delete`
+
+Delete a dev resource from a Figma file [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.figma.api.devResources.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `dev_resource_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`devResources.get`
+
+Get dev resources for a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.devResources.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `node_ids` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dev_resources` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dev_resources full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  name: string,
+  node_id: string,
+  file_key: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`devResources.update`
+
+Update dev resources on a Figma file
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.devResources.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dev_resources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dev_resources full type">
+
+```ts
+{
+  id: string,
+  url?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links_updated` | `object[]` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="links_updated full type">
+
+```ts
+{
+  id: string,
+  url?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  error: string,
+  dev_resource_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### getImageFills
+
+`files.getImageFills`
+
+Get image fills from a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.getImageFills({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `error` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  images?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJSON
+
+`files.getJSON`
+
+Get full Figma file JSON
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.getJSON({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `version` | `string` | No | — |
+| `ids` | `string` | No | — |
+| `depth` | `number` | No | — |
+| `geometry` | `string` | No | — |
+| `plugin_data` | `string` | No | — |
+| `branch_data` | `boolean` | No | — |
+| `simplify` | `boolean` | No | — |
+| `include_raw` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `role` | `string` | No | — |
+| `lastModified` | `string` | No | — |
+| `editorType` | `string` | No | — |
+| `thumbnailUrl` | `string` | No | — |
+| `version` | `string` | No | — |
+| `document` | `any` | No | — |
+| `components` | `object` | No | — |
+| `styles` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="styles full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMetadata
+
+`files.getMetadata`
+
+Get Figma file metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.getMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `role` | `string` | No | — |
+| `last_modified` | `string` | No | — |
+| `editorType` | `string` | No | — |
+| `thumbnail_url` | `string` | No | — |
+| `version` | `string` | No | — |
+
+
+
+---
+
+### getNodes
+
+`files.getNodes`
+
+Get specific nodes from a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.getNodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `ids` | `string` | Yes | — |
+| `version` | `string` | No | — |
+| `depth` | `number` | No | — |
+| `geometry` | `string` | No | — |
+| `plugin_data` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `nodes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProjectFiles
+
+`files.getProjectFiles`
+
+Get all files in a Figma project
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.getProjectFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_data` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  key: string,
+  name?: string,
+  thumbnail_url?: string | null,
+  last_modified?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStyles
+
+`files.getStyles`
+
+Get styles from a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.getStyles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  styles?: {
+    key: string,
+    file_key?: string,
+    node_id?: string,
+    style_type?: string,
+    name?: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVersions
+
+`files.getVersions`
+
+Get version history of a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.getVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `page_size` | `number` | No | — |
+| `before` | `number` | No | — |
+| `after` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `versions` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="versions full type">
+
+```ts
+{
+  id: string,
+  created_at?: string,
+  label?: string | null,
+  description?: string | null,
+  user?: {
+    id: string,
+    handle?: string,
+    img_url?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### renderImages
+
+`files.renderImages`
+
+Render Figma nodes as images
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.files.renderImages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `ids` | `string` | Yes | — |
+| `scale` | `number` | No | — |
+| `format` | `jpg \| png \| svg \| pdf` | No | — |
+| `version` | `string` | No | — |
+| `contents_only` | `boolean` | No | — |
+| `svg_include_id` | `boolean` | No | — |
+| `svg_outline_text` | `boolean` | No | — |
+| `svg_include_node_id` | `boolean` | No | — |
+| `svg_simplify_stroke` | `boolean` | No | — |
+| `use_absolute_bounds` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object` | No | — |
+| `err` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Library Analytics
+
+### componentActions
+
+`libraryAnalytics.componentActions`
+
+Get library component action analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.libraryAnalytics.componentActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `group_by` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `any[]` | No | — |
+| `cursor` | `string` | No | — |
+| `next_page` | `boolean` | No | — |
+
+
+
+---
+
+### componentUsages
+
+`libraryAnalytics.componentUsages`
+
+Get library component usage analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.libraryAnalytics.componentUsages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `group_by` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `any[]` | No | — |
+| `cursor` | `string` | No | — |
+| `next_page` | `boolean` | No | — |
+
+
+
+---
+
+### styleActions
+
+`libraryAnalytics.styleActions`
+
+Get library style action analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.libraryAnalytics.styleActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `group_by` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `any[]` | No | — |
+| `cursor` | `string` | No | — |
+| `next_page` | `boolean` | No | — |
+
+
+
+---
+
+### styleUsages
+
+`libraryAnalytics.styleUsages`
+
+Get library style usage analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.libraryAnalytics.styleUsages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `group_by` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `any[]` | No | — |
+| `cursor` | `string` | No | — |
+| `next_page` | `boolean` | No | — |
+
+
+
+---
+
+### variableActions
+
+`libraryAnalytics.variableActions`
+
+Get library variable action analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.libraryAnalytics.variableActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `group_by` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `any[]` | No | — |
+| `cursor` | `string` | No | — |
+| `next_page` | `boolean` | No | — |
+
+
+
+---
+
+### variableUsages
+
+`libraryAnalytics.variableUsages`
+
+Get library variable usage analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.libraryAnalytics.variableUsages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `group_by` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `any[]` | No | — |
+| `cursor` | `string` | No | — |
+| `next_page` | `boolean` | No | — |
+
+
+
+---
+
+## Payments
+
+### get
+
+`payments.get`
+
+Get payment information for a Figma plugin or widget
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.payments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `plugin_id` | `string` | No | — |
+| `widget_id` | `string` | No | — |
+| `community_file_id` | `string` | No | — |
+| `plugin_payment_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `status` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  payment_information?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### getTeamProjects
+
+`projects.getTeamProjects`
+
+Get all projects for a Figma team
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.projects.getTeamProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `projects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Styles
+
+### get
+
+`styles.get`
+
+Get a Figma style by key
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.styles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  style?: {
+    key: string,
+    file_key?: string,
+    node_id?: string,
+    style_type?: string,
+    name?: string,
+    description?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForTeam
+
+`styles.getForTeam`
+
+Get all styles for a Figma team
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.styles.getForTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | Yes | — |
+| `page_size` | `number` | No | — |
+| `after` | `number` | No | — |
+| `before` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  styles?: {
+    key: string,
+    name?: string,
+    style_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the currently authenticated Figma user
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.users.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | No | — |
+| `img_url` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+## Variables
+
+### createModifyDelete
+
+`variables.createModifyDelete`
+
+Create, modify, or delete variables in a Figma file
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.variables.createModifyDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+| `variables` | `any[]` | No | — |
+| `variableModes` | `any[]` | No | — |
+| `variableModeValues` | `any[]` | No | — |
+| `variableCollections` | `any[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `status` | `number` | No | — |
+| `error` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  tempIdToRealId?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLocal
+
+`variables.getLocal`
+
+Get local variables from a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.variables.getLocal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `status` | `number` | No | — |
+| `error` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  variables?: {
+  },
+  variableCollections?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPublished
+
+`variables.getPublished`
+
+Get published variables from a Figma file
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.variables.getPublished({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `status` | `number` | No | — |
+| `error` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  variables?: {
+  },
+  variableCollections?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a Figma webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `string` | Yes | — |
+| `endpoint` | `string` | Yes | — |
+| `passcode` | `string` | Yes | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `context` | `string` | No | — |
+| `context_id` | `string` | No | — |
+| `team_id` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `context` | `team \| project \| file` | No | — |
+| `team_id` | `string` | No | — |
+| `endpoint` | `string` | No | — |
+| `passcode` | `string` | No | — |
+| `client_id` | `string` | No | — |
+| `context_id` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a Figma webhook [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.figma.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `context` | `team \| project \| file` | No | — |
+| `team_id` | `string` | No | — |
+| `endpoint` | `string` | No | — |
+| `passcode` | `string` | No | — |
+| `client_id` | `string` | No | — |
+| `context_id` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a Figma webhook by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `context` | `team \| project \| file` | No | — |
+| `team_id` | `string` | No | — |
+| `endpoint` | `string` | No | — |
+| `passcode` | `string` | No | — |
+| `client_id` | `string` | No | — |
+| `context_id` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### getRequests
+
+`webhooks.getRequests`
+
+Get webhook request history
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.webhooks.getRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  id: string,
+  webhook_id: string,
+  status?: string,
+  created_at?: string,
+  error?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List Figma webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.figma.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `string` | No | — |
+| `context_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  status?: ACTIVE | PAUSED,
+  context?: team | project | file | null,
+  team_id?: string | null,
+  endpoint?: string,
+  passcode?: string,
+  client_id?: string | null,
+  context_id?: string | null,
+  event_type?: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a Figma webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.figma.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `event_type` | `string` | No | — |
+| `endpoint` | `string` | No | — |
+| `passcode` | `string` | No | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `context` | `team \| project \| file` | No | — |
+| `team_id` | `string` | No | — |
+| `endpoint` | `string` | No | — |
+| `passcode` | `string` | No | — |
+| `client_id` | `string` | No | — |
+| `context_id` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+

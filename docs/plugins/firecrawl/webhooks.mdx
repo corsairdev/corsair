@@ -1,0 +1,1157 @@
+---
+title: Webhooks
+description: "Firecrawl incoming webhooks: event paths, payloads, and response data."
+---
+
+The Firecrawl plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/firecrawl/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `agent`
+  - `action` (`agent.action`)
+  - `cancelled` (`agent.cancelled`)
+  - `completed` (`agent.completed`)
+  - `failed` (`agent.failed`)
+  - `started` (`agent.started`)
+- `batchScrape`
+  - `completed` (`batchScrape.completed`)
+  - `page` (`batchScrape.page`)
+  - `started` (`batchScrape.started`)
+- `crawl`
+  - `completed` (`crawl.completed`)
+  - `page` (`crawl.page`)
+  - `started` (`crawl.started`)
+- `extract`
+  - `completed` (`extract.completed`)
+  - `failed` (`extract.failed`)
+  - `started` (`extract.started`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Agent
+
+### Action
+
+`agent.action`
+
+The agent executed a tool action
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `agent.action` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  creditsUsed?: number,
+  action?: string,
+  input?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: agent.action,
+  id: string,
+  data: {
+    creditsUsed?: number,
+    action?: string,
+    input?: {
+    }
+  }[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        agent: {
+            action: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Cancelled
+
+`agent.cancelled`
+
+An agent job was cancelled
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `agent.cancelled` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  creditsUsed?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: agent.cancelled,
+  id: string,
+  data: {
+    creditsUsed?: number
+  }[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        agent: {
+            cancelled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Completed
+
+`agent.completed`
+
+An agent job completed successfully
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `agent.completed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  creditsUsed?: number,
+  data?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: agent.completed,
+  id: string,
+  data: {
+    creditsUsed?: number,
+    data?: {
+    }
+  }[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        agent: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`agent.failed`
+
+An agent job failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `agent.failed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  creditsUsed?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: agent.failed,
+  id: string,
+  data: {
+    creditsUsed?: number
+  }[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        agent: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Started
+
+`agent.started`
+
+An agent job started
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `agent.started` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `never[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: agent.started,
+  id: string,
+  data: never[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        agent: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Batch Scrape
+
+### Completed
+
+`batchScrape.completed`
+
+A batch scrape job completed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `batch_scrape.completed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `never[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: batch_scrape.completed,
+  id: string,
+  data: never[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        batchScrape: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Page
+
+`batchScrape.page`
+
+A URL was scraped in a batch job
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `batch_scrape.page` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  markdown?: string,
+  html?: string | null,
+  rawHtml?: string | null,
+  links?: string[],
+  screenshot?: string | null,
+  metadata?: {
+    title?: string | string[],
+    description?: string | string[],
+    language?: string | string[] | null,
+    keywords?: string | string[],
+    sourceURL?: string,
+    url?: string,
+    scrapeId?: string,
+    statusCode?: number,
+    contentType?: string,
+    error?: string | null,
+    ogLocaleAlternate?: string[],
+    concurrencyLimited?: boolean,
+    concurrencyQueueDurationMs?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: batch_scrape.page,
+  id: string,
+  data: {
+    markdown?: string,
+    html?: string | null,
+    rawHtml?: string | null,
+    links?: string[],
+    screenshot?: string | null,
+    metadata?: {
+      title?: string | string[],
+      description?: string | string[],
+      language?: string | string[] | null,
+      keywords?: string | string[],
+      sourceURL?: string,
+      url?: string,
+      scrapeId?: string,
+      statusCode?: number,
+      contentType?: string,
+      error?: string | null,
+      ogLocaleAlternate?: string[],
+      concurrencyLimited?: boolean,
+      concurrencyQueueDurationMs?: number
+    }
+  }[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        batchScrape: {
+            page: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Started
+
+`batchScrape.started`
+
+A batch scrape job started
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `batch_scrape.started` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `never[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: batch_scrape.started,
+  id: string,
+  data: never[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        batchScrape: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Crawl
+
+### Completed
+
+`crawl.completed`
+
+A crawl job finished
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `crawl.completed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `never[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: crawl.completed,
+  id: string,
+  data: never[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        crawl: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Page
+
+`crawl.page`
+
+A page was scraped during a crawl
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `crawl.page` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  markdown?: string,
+  html?: string | null,
+  rawHtml?: string | null,
+  links?: string[],
+  screenshot?: string | null,
+  metadata?: {
+    title?: string | string[],
+    description?: string | string[],
+    language?: string | string[] | null,
+    keywords?: string | string[],
+    sourceURL?: string,
+    url?: string,
+    scrapeId?: string,
+    statusCode?: number,
+    contentType?: string,
+    error?: string | null,
+    ogLocaleAlternate?: string[],
+    concurrencyLimited?: boolean,
+    concurrencyQueueDurationMs?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: crawl.page,
+  id: string,
+  data: {
+    markdown?: string,
+    html?: string | null,
+    rawHtml?: string | null,
+    links?: string[],
+    screenshot?: string | null,
+    metadata?: {
+      title?: string | string[],
+      description?: string | string[],
+      language?: string | string[] | null,
+      keywords?: string | string[],
+      sourceURL?: string,
+      url?: string,
+      scrapeId?: string,
+      statusCode?: number,
+      contentType?: string,
+      error?: string | null,
+      ogLocaleAlternate?: string[],
+      concurrencyLimited?: boolean,
+      concurrencyQueueDurationMs?: number
+    }
+  }[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        crawl: {
+            page: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Started
+
+`crawl.started`
+
+A crawl job started processing
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `crawl.started` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `never[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: crawl.started,
+  id: string,
+  data: never[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        crawl: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Extract
+
+### Completed
+
+`extract.completed`
+
+An extract job completed successfully
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `extract.completed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  data: {
+  },
+  extractId: string,
+  llmUsage?: number,
+  totalUrlsScraped?: number,
+  sources?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: extract.completed,
+  id: string,
+  data: {
+    success: boolean,
+    data: {
+    },
+    extractId: string,
+    llmUsage?: number,
+    totalUrlsScraped?: number,
+    sources?: {
+    }
+  }[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        extract: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`extract.failed`
+
+An extract job failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `extract.failed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `never[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: extract.failed,
+  id: string,
+  data: never[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        extract: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Started
+
+`extract.started`
+
+An extract job started
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `type` | `extract.started` | Yes | — |
+| `id` | `string` | Yes | — |
+| `data` | `never[]` | Yes | — |
+| `metadata` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean,
+  type: extract.started,
+  id: string,
+  data: never[],
+  metadata?: {
+  },
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+firecrawl({
+    webhookHooks: {
+        extract: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

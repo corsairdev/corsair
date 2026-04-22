@@ -1,0 +1,748 @@
+---
+title: Webhooks
+description: "Resend incoming webhooks: event paths, payloads, and response data."
+---
+
+The Resend plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/resend/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `domains`
+  - `created` (`domains.created`)
+  - `updated` (`domains.updated`)
+- `emails`
+  - `bounced` (`emails.bounced`)
+  - `clicked` (`emails.clicked`)
+  - `complained` (`emails.complained`)
+  - `delivered` (`emails.delivered`)
+  - `failed` (`emails.failed`)
+  - `opened` (`emails.opened`)
+  - `received` (`emails.received`)
+  - `sent` (`emails.sent`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Domains
+
+### Created
+
+`domains.created`
+
+A new sending domain was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `domain.created` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain_id: string,
+  name: string,
+  status: not_started | validation | scheduled | ready | error,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: domain.created,
+  created_at: string,
+  data: {
+    domain_id: string,
+    name: string,
+    status: not_started | validation | scheduled | ready | error,
+    created_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        domains: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`domains.updated`
+
+A sending domain was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `domain.updated` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain_id: string,
+  name: string,
+  status: not_started | validation | scheduled | ready | error,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: domain.updated,
+  created_at: string,
+  data: {
+    domain_id: string,
+    name: string,
+    status: not_started | validation | scheduled | ready | error,
+    created_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        domains: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Emails
+
+### Bounced
+
+`emails.bounced`
+
+An email bounced and was not delivered
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.bounced` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string,
+  bounce_type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.bounced,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string,
+    bounce_type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            bounced: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Clicked
+
+`emails.clicked`
+
+A recipient clicked a link in an email
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.clicked` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string,
+  link?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.clicked,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string,
+    link?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            clicked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Complained
+
+`emails.complained`
+
+A recipient marked an email as spam
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.complained` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.complained,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            complained: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delivered
+
+`emails.delivered`
+
+An email was delivered to the recipient
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.delivered` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.delivered,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            delivered: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`emails.failed`
+
+An email failed to send
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.failed` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string,
+  error?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.failed,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string,
+    error?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Opened
+
+`emails.opened`
+
+A recipient opened an email
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.opened` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.opened,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            opened: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Received
+
+`emails.received`
+
+An inbound email was received
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.received` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.received,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            received: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Sent
+
+`emails.sent`
+
+An email was accepted and sent
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `email.sent` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id: string,
+  from: string,
+  to: string[],
+  subject?: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: email.sent,
+  created_at: string,
+  data: {
+    email_id: string,
+    from: string,
+    to: string[],
+    subject?: string,
+    created_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            sent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

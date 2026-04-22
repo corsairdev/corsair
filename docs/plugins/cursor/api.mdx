@@ -1,0 +1,212 @@
+---
+title: API
+description: "API reference for Cursor: every `cursor.api.*` operation with input and output types."
+---
+
+Every `cursor.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getMe
+
+`account.getMe`
+
+Retrieve API key information including name, creation date, and owner email
+
+**Risk:** `read`
+
+```ts
+await corsair.cursor.api.account.getMe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiKeyName` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `userEmail` | `string` | No | — |
+
+
+
+---
+
+## Agents
+
+### getConversation
+
+`agents.getConversation`
+
+Retrieve the conversation history for a specific cloud agent
+
+**Risk:** `read`
+
+```ts
+await corsair.cursor.api.agents.getConversation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string,
+  text?: string,
+  type?: user_message | assistant_message
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`agents.list`
+
+Retrieve a paginated list of Cursor Cloud agents
+
+**Risk:** `read`
+
+```ts
+await corsair.cursor.api.agents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agents` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="agents full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  source?: {
+    ref?: string,
+    repository?: string
+  },
+  status?: RUNNING | FINISHED | ERROR | CREATING | EXPIRED,
+  target?: {
+    url?: string,
+    prUrl?: string,
+    branchName?: string,
+    autoCreatePr?: boolean,
+    skipReviewerRequest?: boolean,
+    openAsCursorGithubApp?: boolean
+  },
+  summary?: string,
+  createdAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+Retrieve the list of available AI models in Cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.cursor.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `string[]` | Yes | — |
+
+
+
+---
+
+## Repositories
+
+### list
+
+`repositories.list`
+
+List GitHub repositories accessible to the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.cursor.api.repositories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repositories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="repositories full type">
+
+```ts
+{
+  name?: string,
+  owner?: string,
+  repository?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

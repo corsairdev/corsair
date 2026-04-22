@@ -1,0 +1,146 @@
+---
+title: Database
+description: "Reddit local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Reddit plugin syncs data locally. Use `corsair.reddit.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Comments
+
+Path: `reddit.db.comments.search`
+
+```ts
+const rows = await corsair.reddit.db.comments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `score` | `number` | equals, gt, gte, lt, lte, in |
+| `depth` | `number` | equals, gt, gte, lt, lte, in |
+| `parent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `link_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_utc` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Posts
+
+Path: `reddit.db.posts.search`
+
+```ts
+const rows = await corsair.reddit.db.posts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `selftext` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `subreddit` | `string` | equals, contains, startsWith, endsWith, in |
+| `score` | `number` | equals, gt, gte, lt, lte, in |
+| `ups` | `number` | equals, gt, gte, lt, lte, in |
+| `downs` | `number` | equals, gt, gte, lt, lte, in |
+| `upvote_ratio` | `number` | equals, gt, gte, lt, lte, in |
+| `num_comments` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `permalink` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnail` | `string` | equals, contains, startsWith, endsWith, in |
+| `over_18` | `boolean` | equals |
+| `spoiler` | `boolean` | equals |
+| `stickied` | `boolean` | equals |
+| `created_utc` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Subreddits
+
+Path: `reddit.db.subreddits.search`
+
+```ts
+const rows = await corsair.reddit.db.subreddits.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `display_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `public_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscribers` | `number` | equals, gt, gte, lt, lte, in |
+| `active_user_count` | `number` | equals, gt, gte, lt, lte, in |
+| `over18` | `boolean` | equals |
+| `created_utc` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `reddit.db.users.search`
+
+```ts
+const rows = await corsair.reddit.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `link_karma` | `number` | equals, gt, gte, lt, lte, in |
+| `comment_karma` | `number` | equals, gt, gte, lt, lte, in |
+| `total_karma` | `number` | equals, gt, gte, lt, lte, in |
+| `is_suspended` | `boolean` | equals |
+| `created_utc` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

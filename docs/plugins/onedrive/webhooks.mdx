@@ -1,0 +1,150 @@
+---
+title: Webhooks
+description: "Onedrive incoming webhooks: event paths, payloads, and response data."
+---
+
+The Onedrive plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/onedrive/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `drive`
+  - `driveNotification` (`drive.driveNotification`)
+  - `validation` (`drive.validation`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Drive
+
+### Drive Notification
+
+`drive.driveNotification`
+
+Microsoft Graph drive change notification — item created, updated, or deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  subscriptionId: string,
+  changeType: string,
+  clientState?: string,
+  resource?: string,
+  resourceData?: {
+  },
+  tenantId?: string,
+  subscriptionExpirationDateTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscriptionId: string,
+  changeType: string,
+  clientState?: string,
+  resource?: string,
+  resourceData?: {
+  },
+  tenantId?: string,
+  subscriptionExpirationDateTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+onedrive({
+    webhookHooks: {
+        drive: {
+            driveNotification: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Validation
+
+`drive.validation`
+
+Microsoft Graph OneDrive webhook validation handshake
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `validationToken` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  validationToken: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+onedrive({
+    webhookHooks: {
+        drive: {
+            validation: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,523 @@
+---
+title: Webhooks
+description: "TwitterAPI.io incoming webhooks: event paths, payloads, and response data."
+---
+
+The TwitterAPI.io plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/twitterapiio/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `tweets`
+  - `created` (`tweets.created`)
+  - `filterMatch` (`tweets.filterMatch`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Tweets
+
+### Created
+
+`tweets.created`
+
+A monitored user posted a new tweet
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `tweet.created` | Yes | — |
+| `data` | `object` | Yes | — |
+| `timestamp` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tweet: {
+    id: string,
+    text: string,
+    author?: {
+      id: string,
+      userName: string,
+      name: string,
+      followerCount?: number,
+      followingCount?: number,
+      profilePicture?: string | null,
+      coverPicture?: string | null,
+      description?: string | null,
+      location?: string | null,
+      isBlueVerified?: boolean,
+      isGovernmentVerified?: boolean,
+      favouritesCount?: number,
+      statusesCount?: number,
+      mediaCount?: number,
+      createdAt?: string,
+      isProtected?: boolean,
+      isSuspended?: boolean,
+      isUnavailable?: boolean,
+      pinnedTweetIds?: string[],
+      website?: string | null
+    },
+    createdAt?: string,
+    likeCount?: number,
+    retweetCount?: number,
+    replyCount?: number,
+    quoteCount?: number,
+    viewCount?: number | null,
+    bookmarkCount?: number,
+    lang?: string,
+    source?: string,
+    isRetweet?: boolean,
+    isQuote?: boolean,
+    isPinned?: boolean,
+    inReplyToStatusId?: string | null,
+    inReplyToUserId?: string | null,
+    quotedTweetId?: string | null,
+    media?: {
+      type?: string,
+      url?: string,
+      mediaUrlHttps?: string,
+      expandedUrl?: string,
+      width?: number,
+      height?: number,
+      altText?: string | null,
+      durationMs?: number | null
+    }[],
+    entities?: {
+      urls?: {
+        url?: string,
+        expandedUrl?: string,
+        displayUrl?: string
+      }[],
+      hashtags?: {
+        text?: string
+      }[],
+      userMentions?: {
+        id?: string,
+        name?: string,
+        screenName?: string
+      }[]
+    },
+    conversationId?: string
+  },
+  user?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: tweet.created,
+  data: {
+    tweet: {
+      id: string,
+      text: string,
+      author?: {
+        id: string,
+        userName: string,
+        name: string,
+        followerCount?: number,
+        followingCount?: number,
+        profilePicture?: string | null,
+        coverPicture?: string | null,
+        description?: string | null,
+        location?: string | null,
+        isBlueVerified?: boolean,
+        isGovernmentVerified?: boolean,
+        favouritesCount?: number,
+        statusesCount?: number,
+        mediaCount?: number,
+        createdAt?: string,
+        isProtected?: boolean,
+        isSuspended?: boolean,
+        isUnavailable?: boolean,
+        pinnedTweetIds?: string[],
+        website?: string | null
+      },
+      createdAt?: string,
+      likeCount?: number,
+      retweetCount?: number,
+      replyCount?: number,
+      quoteCount?: number,
+      viewCount?: number | null,
+      bookmarkCount?: number,
+      lang?: string,
+      source?: string,
+      isRetweet?: boolean,
+      isQuote?: boolean,
+      isPinned?: boolean,
+      inReplyToStatusId?: string | null,
+      inReplyToUserId?: string | null,
+      quotedTweetId?: string | null,
+      media?: {
+        type?: string,
+        url?: string,
+        mediaUrlHttps?: string,
+        expandedUrl?: string,
+        width?: number,
+        height?: number,
+        altText?: string | null,
+        durationMs?: number | null
+      }[],
+      entities?: {
+        urls?: {
+          url?: string,
+          expandedUrl?: string,
+          displayUrl?: string
+        }[],
+        hashtags?: {
+          text?: string
+        }[],
+        userMentions?: {
+          id?: string,
+          name?: string,
+          screenName?: string
+        }[]
+      },
+      conversationId?: string
+    },
+    user?: {
+      id: string,
+      userName: string,
+      name: string,
+      followerCount?: number,
+      followingCount?: number,
+      profilePicture?: string | null,
+      coverPicture?: string | null,
+      description?: string | null,
+      location?: string | null,
+      isBlueVerified?: boolean,
+      isGovernmentVerified?: boolean,
+      favouritesCount?: number,
+      statusesCount?: number,
+      mediaCount?: number,
+      createdAt?: string,
+      isProtected?: boolean,
+      isSuspended?: boolean,
+      isUnavailable?: boolean,
+      pinnedTweetIds?: string[],
+      website?: string | null
+    }
+  },
+  timestamp?: string,
+  userId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+twitterapiio({
+    webhookHooks: {
+        tweets: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Filter Match
+
+`tweets.filterMatch`
+
+A tweet matched a configured filter rule
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `tweet.filter_match` | Yes | — |
+| `data` | `object` | Yes | — |
+| `timestamp` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tweet: {
+    id: string,
+    text: string,
+    author?: {
+      id: string,
+      userName: string,
+      name: string,
+      followerCount?: number,
+      followingCount?: number,
+      profilePicture?: string | null,
+      coverPicture?: string | null,
+      description?: string | null,
+      location?: string | null,
+      isBlueVerified?: boolean,
+      isGovernmentVerified?: boolean,
+      favouritesCount?: number,
+      statusesCount?: number,
+      mediaCount?: number,
+      createdAt?: string,
+      isProtected?: boolean,
+      isSuspended?: boolean,
+      isUnavailable?: boolean,
+      pinnedTweetIds?: string[],
+      website?: string | null
+    },
+    createdAt?: string,
+    likeCount?: number,
+    retweetCount?: number,
+    replyCount?: number,
+    quoteCount?: number,
+    viewCount?: number | null,
+    bookmarkCount?: number,
+    lang?: string,
+    source?: string,
+    isRetweet?: boolean,
+    isQuote?: boolean,
+    isPinned?: boolean,
+    inReplyToStatusId?: string | null,
+    inReplyToUserId?: string | null,
+    quotedTweetId?: string | null,
+    media?: {
+      type?: string,
+      url?: string,
+      mediaUrlHttps?: string,
+      expandedUrl?: string,
+      width?: number,
+      height?: number,
+      altText?: string | null,
+      durationMs?: number | null
+    }[],
+    entities?: {
+      urls?: {
+        url?: string,
+        expandedUrl?: string,
+        displayUrl?: string
+      }[],
+      hashtags?: {
+        text?: string
+      }[],
+      userMentions?: {
+        id?: string,
+        name?: string,
+        screenName?: string
+      }[]
+    },
+    conversationId?: string
+  },
+  user?: {
+    id: string,
+    userName: string,
+    name: string,
+    followerCount?: number,
+    followingCount?: number,
+    profilePicture?: string | null,
+    coverPicture?: string | null,
+    description?: string | null,
+    location?: string | null,
+    isBlueVerified?: boolean,
+    isGovernmentVerified?: boolean,
+    favouritesCount?: number,
+    statusesCount?: number,
+    mediaCount?: number,
+    createdAt?: string,
+    isProtected?: boolean,
+    isSuspended?: boolean,
+    isUnavailable?: boolean,
+    pinnedTweetIds?: string[],
+    website?: string | null
+  },
+  matchedRules?: {
+    id?: string,
+    tag?: string,
+    value?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: tweet.filter_match,
+  data: {
+    tweet: {
+      id: string,
+      text: string,
+      author?: {
+        id: string,
+        userName: string,
+        name: string,
+        followerCount?: number,
+        followingCount?: number,
+        profilePicture?: string | null,
+        coverPicture?: string | null,
+        description?: string | null,
+        location?: string | null,
+        isBlueVerified?: boolean,
+        isGovernmentVerified?: boolean,
+        favouritesCount?: number,
+        statusesCount?: number,
+        mediaCount?: number,
+        createdAt?: string,
+        isProtected?: boolean,
+        isSuspended?: boolean,
+        isUnavailable?: boolean,
+        pinnedTweetIds?: string[],
+        website?: string | null
+      },
+      createdAt?: string,
+      likeCount?: number,
+      retweetCount?: number,
+      replyCount?: number,
+      quoteCount?: number,
+      viewCount?: number | null,
+      bookmarkCount?: number,
+      lang?: string,
+      source?: string,
+      isRetweet?: boolean,
+      isQuote?: boolean,
+      isPinned?: boolean,
+      inReplyToStatusId?: string | null,
+      inReplyToUserId?: string | null,
+      quotedTweetId?: string | null,
+      media?: {
+        type?: string,
+        url?: string,
+        mediaUrlHttps?: string,
+        expandedUrl?: string,
+        width?: number,
+        height?: number,
+        altText?: string | null,
+        durationMs?: number | null
+      }[],
+      entities?: {
+        urls?: {
+          url?: string,
+          expandedUrl?: string,
+          displayUrl?: string
+        }[],
+        hashtags?: {
+          text?: string
+        }[],
+        userMentions?: {
+          id?: string,
+          name?: string,
+          screenName?: string
+        }[]
+      },
+      conversationId?: string
+    },
+    user?: {
+      id: string,
+      userName: string,
+      name: string,
+      followerCount?: number,
+      followingCount?: number,
+      profilePicture?: string | null,
+      coverPicture?: string | null,
+      description?: string | null,
+      location?: string | null,
+      isBlueVerified?: boolean,
+      isGovernmentVerified?: boolean,
+      favouritesCount?: number,
+      statusesCount?: number,
+      mediaCount?: number,
+      createdAt?: string,
+      isProtected?: boolean,
+      isSuspended?: boolean,
+      isUnavailable?: boolean,
+      pinnedTweetIds?: string[],
+      website?: string | null
+    },
+    matchedRules?: {
+      id?: string,
+      tag?: string,
+      value?: string
+    }[]
+  },
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+twitterapiio({
+    webhookHooks: {
+        tweets: {
+            filterMatch: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

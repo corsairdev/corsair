@@ -1,0 +1,258 @@
+---
+title: Database
+description: "Youtube local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Youtube plugin syncs data locally. Use `corsair.youtube.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Activities
+
+Path: `youtube.db.activities.search`
+
+```ts
+const rows = await corsair.youtube.db.activities.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Captions
+
+Path: `youtube.db.captions.search`
+
+```ts
+const rows = await corsair.youtube.db.captions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `videoId` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `isDraft` | `boolean` | equals |
+| `trackKind` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Channels
+
+Path: `youtube.db.channels.search`
+
+```ts
+const rows = await corsair.youtube.db.channels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `customUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscriberCount` | `string` | equals, contains, startsWith, endsWith, in |
+| `videoCount` | `string` | equals, contains, startsWith, endsWith, in |
+| `viewCount` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Comments
+
+Path: `youtube.db.comments.search`
+
+```ts
+const rows = await corsair.youtube.db.comments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `videoId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `textDisplay` | `string` | equals, contains, startsWith, endsWith, in |
+| `textOriginal` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorDisplayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorChannelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `likeCount` | `number` | equals, gt, gte, lt, lte, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Playlist Items
+
+Path: `youtube.db.playlistItems.search`
+
+```ts
+const rows = await corsair.youtube.db.playlistItems.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `playlistId` | `string` | equals, contains, startsWith, endsWith, in |
+| `videoId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `position` | `number` | equals, gt, gte, lt, lte, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `channelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Playlists
+
+Path: `youtube.db.playlists.search`
+
+```ts
+const rows = await corsair.youtube.db.playlists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `channelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `privacyStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `itemCount` | `number` | equals, gt, gte, lt, lte, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Subscriptions
+
+Path: `youtube.db.subscriptions.search`
+
+```ts
+const rows = await corsair.youtube.db.subscriptions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Videos
+
+Path: `youtube.db.videos.search`
+
+```ts
+const rows = await corsair.youtube.db.videos.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `channelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `privacyStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration` | `string` | equals, contains, startsWith, endsWith, in |
+| `viewCount` | `string` | equals, contains, startsWith, endsWith, in |
+| `likeCount` | `string` | equals, contains, startsWith, endsWith, in |
+| `commentCount` | `string` | equals, contains, startsWith, endsWith, in |
+| `categoryId` | `string` | equals, contains, startsWith, endsWith, in |
+| `defaultThumbnailUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

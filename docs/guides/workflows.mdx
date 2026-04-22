@@ -1,0 +1,246 @@
+---
+title: Workflows
+description: Chain webhook events into multi-step automations across any plugin.
+---
+
+Workflows are event-driven automations built on Corsair's webhook hooks. When something happens in one service, you trigger actions in another.
+
+**Pattern:** event fires → webhook hook runs → you call any plugin API.
+
+No separate workflow engine needed. It's just TypeScript.
+
+---
+
+## How it works
+
+Every webhook event in Corsair supports an `after` hook — a function that runs after the event is saved to your database. Inside it, you have full access to `corsair` and can call any plugin API.
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            after: async (ctx, result) => {
+                const pr = result?.data?.pull_request;
+
+                // Do anything here — call Slack, send email, create Linear issue
+                await corsair.slack.api.messages.post({
+                    channel: 'C_ENG_CHANNEL',
+                    text: `New PR: *${pr?.title}* by ${pr?.user?.login}\n${pr?.html_url}`,
+                });
+            },
+        },
+    },
+})
+```
+
+That's a workflow: GitHub PR opened → Slack message sent.
+
+---
+
+## Common patterns
+
+<Tabs>
+
+<Tab title="GitHub → Slack">
+
+**Notify Slack when a PR is merged:**
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestClosed: {
+            after: async (ctx, result) => {
+                const pr = result.data.pull_request;
+                if (!pr.merged) return; // closed without merging
+
+                await corsair.slack.api.messages.post({
+                    channel: 'C_RELEASES_CHANNEL',
+                    text: `✅ Merged: *${pr.title}*\n${pr.html_url}`,
+                });
+            },
+        },
+    },
+})
+```
+
+**Alert on new stars:**
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        starCreated: {
+            after: async (ctx, result) => {
+                const { sender, repository } = result.data;
+                await corsair.slack.api.messages.post({
+                    channel: 'C_GROWTH_CHANNEL',
+                    text: `⭐ ${sender.login} starred ${repository.full_name} — now at ${repository.stargazers_count} stars`,
+                });
+            },
+        },
+    },
+})
+```
+
+</Tab>
+
+<Tab title="Slack → GitHub">
+
+**Create a GitHub issue when someone posts in #bugs:**
+
+```ts corsair.ts
+slack({
+    webhookHooks: {
+        messages: {
+            message: {
+                after: async (ctx, result) => {
+                    // Only react to messages in the #bugs channel
+                    if (result.data.channel !== 'C_BUGS_CHANNEL') return;
+                    if (result.data.bot_id) return; // skip bots
+
+                    await corsair.github.api.issues.create({
+                        owner: 'your-org',
+                        repo: 'your-repo',
+                        title: `[Slack] ${result.data.text.slice(0, 80)}`,
+                        body: `Reported via Slack by <@${result.data.user}>:\n\n${result.data.text}`,
+                        labels: ['from-slack'],
+                    });
+                },
+            },
+        },
+    },
+})
+```
+
+</Tab>
+
+<Tab title="Multi-step">
+
+**PR merged → post Slack message → create Linear issue to track follow-up:**
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestClosed: {
+            after: async (ctx, result) => {
+                const pr = result.data.pull_request;
+                if (!pr.merged) return;
+
+                // Step 1: Notify Slack
+                await corsair.slack.api.messages.post({
+                    channel: 'C_ENG_CHANNEL',
+                    text: `✅ Merged: *${pr.title}*`,
+                });
+
+                // Step 2: Create a Linear issue for post-merge follow-up
+                await corsair.linear.api.issues.create({
+                    title: `Post-merge: ${pr.title}`,
+                    description: `Follow up after merging ${pr.html_url}`,
+                    teamId: process.env.LINEAR_TEAM_ID!,
+                    labelIds: [process.env.LINEAR_POST_MERGE_LABEL!],
+                });
+            },
+        },
+    },
+})
+```
+
+</Tab>
+
+</Tabs>
+
+---
+
+## Filter with `before` hooks
+
+Use `before` to reject events before they hit your database or `after` handler:
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            before: async (ctx, payload) => {
+                // Ignore draft PRs entirely
+                if (payload.pull_request.draft) {
+                    throw new Error('Skipping draft PR');
+                }
+                return { ctx, payload };
+            },
+            after: async (ctx, result) => {
+                // Only runs for non-draft PRs
+                await corsair.slack.api.messages.post({
+                    channel: 'C_ENG_CHANNEL',
+                    text: `PR ready for review: ${result.data.pull_request.title}`,
+                });
+            },
+        },
+    },
+})
+```
+
+Throwing in `before` stops processing entirely — the event isn't saved to your database.
+
+---
+
+## Background jobs
+
+For heavy processing (LLM calls, sending emails, generating reports), fire a background job instead of doing work inline:
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            after: async (ctx, result) => {
+                // Send to your job queue — don't block the webhook response
+                await inngest.send({
+                    name: 'github/pr-opened',
+                    data: {
+                        tenantId: ctx.tenantId,
+                        pr: result.data.pull_request,
+                    },
+                });
+            },
+        },
+    },
+})
+```
+
+```ts inngest/functions.ts
+export const reviewPR = inngest.createFunction(
+    { id: 'review-pr' },
+    { event: 'github/pr-opened' },
+    async ({ event }) => {
+        const { pr } = event.data;
+
+        // Now you can do slow work: call an LLM, send emails, etc.
+        const review = await generateCodeReview(pr);
+
+        await corsair.github.api.issues.createComment({
+            owner: pr.base.repo.owner.login,
+            repo: pr.base.repo.name,
+            issue_number: pr.number,
+            body: review,
+        });
+    }
+);
+```
+
+Webhook response stays fast. The work happens in the background.
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Webhooks Setup" href="/guides/webhooks">
+    Get ngrok running and register your first webhook endpoint.
+  </Card>
+  <Card title="GitHub Webhooks" href="/plugins/github/webhooks">
+    All available GitHub events you can react to.
+  </Card>
+  <Card title="Slack Webhooks" href="/plugins/slack/webhooks">
+    All available Slack events you can react to.
+  </Card>
+  <Card title="Hooks Reference" href="/concepts/hooks">
+    Full before/after hook API and all available options.
+  </Card>
+</CardGroup>

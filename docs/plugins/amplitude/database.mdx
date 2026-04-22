@@ -1,0 +1,124 @@
+---
+title: Database
+description: "Amplitude local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Amplitude plugin syncs data locally. Use `corsair.amplitude.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Cohorts
+
+Path: `amplitude.db.cohorts.search`
+
+```ts
+const rows = await corsair.amplitude.db.cohorts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `app_id` | `number` | equals, gt, gte, lt, lte, in |
+| `published` | `boolean` | equals |
+| `archived` | `boolean` | equals |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `last_computed` | `number` | equals, gt, gte, lt, lte, in |
+| `last_modified` | `number` | equals, gt, gte, lt, lte, in |
+| `is_predefined` | `boolean` | equals |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Events
+
+Path: `amplitude.db.events.search`
+
+```ts
+const rows = await corsair.amplitude.db.events.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `event_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `device_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `time` | `number` | equals, gt, gte, lt, lte, in |
+| `app_version` | `string` | equals, contains, startsWith, endsWith, in |
+| `platform` | `string` | equals, contains, startsWith, endsWith, in |
+| `os_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `os_version` | `string` | equals, contains, startsWith, endsWith, in |
+| `device_brand` | `string` | equals, contains, startsWith, endsWith, in |
+| `device_manufacturer` | `string` | equals, contains, startsWith, endsWith, in |
+| `device_model` | `string` | equals, contains, startsWith, endsWith, in |
+| `carrier` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `dma` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip` | `string` | equals, contains, startsWith, endsWith, in |
+| `insert_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `session_id` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `amplitude.db.users.search`
+
+```ts
+const rows = await corsair.amplitude.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `canonical_amplitude_id` | `number` | equals, gt, gte, lt, lte, in |
+| `last_seen` | `number` | equals, gt, gte, lt, lte, in |
+| `is_identified` | `boolean` | equals |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `platform` | `string` | equals, contains, startsWith, endsWith, in |
+| `os` | `string` | equals, contains, startsWith, endsWith, in |
+| `device` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

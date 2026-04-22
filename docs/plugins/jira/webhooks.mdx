@@ -1,0 +1,466 @@
+---
+title: Webhooks
+description: "Jira incoming webhooks: event paths, payloads, and response data."
+---
+
+The Jira plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/jira/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `issues`
+  - `newIssue` (`issues.newIssue`)
+  - `updatedIssue` (`issues.updatedIssue`)
+- `projects`
+  - `newProject` (`projects.newProject`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Issues
+
+### New Issue
+
+`issues.newIssue`
+
+Triggered when a new issue is created in Jira
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookEvent` | `jira:issue_created` | Yes | — |
+| `timestamp` | `number` | No | — |
+| `issue` | `object` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="issue full type">
+
+```ts
+{
+  id?: string,
+  key?: string,
+  self?: string,
+  fields?: {
+    summary?: string,
+    status?: {
+      id?: string,
+      name?: string,
+      statusCategory?: {
+        key?: string,
+        name?: string
+      }
+    },
+    assignee?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string
+    } | null,
+    reporter?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string
+    },
+    priority?: {
+      id?: string,
+      name?: string
+    } | null,
+    issuetype?: {
+      id?: string,
+      name?: string,
+      subtask?: boolean
+    },
+    project?: {
+      id?: string,
+      key?: string,
+      name?: string
+    },
+    labels?: string[],
+    created?: string,
+    updated?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookEvent: jira:issue_created,
+  timestamp?: number,
+  issue?: {
+    id?: string,
+    key?: string,
+    self?: string,
+    fields?: {
+      summary?: string,
+      status?: {
+        id?: string,
+        name?: string,
+        statusCategory?: {
+          key?: string,
+          name?: string
+        }
+      },
+      assignee?: {
+        accountId?: string,
+        displayName?: string,
+        emailAddress?: string
+      } | null,
+      reporter?: {
+        accountId?: string,
+        displayName?: string,
+        emailAddress?: string
+      },
+      priority?: {
+        id?: string,
+        name?: string
+      } | null,
+      issuetype?: {
+        id?: string,
+        name?: string,
+        subtask?: boolean
+      },
+      project?: {
+        id?: string,
+        key?: string,
+        name?: string
+      },
+      labels?: string[],
+      created?: string,
+      updated?: string
+    }
+  },
+  user?: {
+    accountId?: string,
+    displayName?: string,
+    emailAddress?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+jira({
+    webhookHooks: {
+        issues: {
+            newIssue: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated Issue
+
+`issues.updatedIssue`
+
+Triggered when an issue is updated in Jira
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookEvent` | `jira:issue_updated` | Yes | — |
+| `timestamp` | `number` | No | — |
+| `issue` | `object` | No | — |
+| `user` | `object` | No | — |
+| `changelog` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="issue full type">
+
+```ts
+{
+  id?: string,
+  key?: string,
+  self?: string,
+  fields?: {
+    summary?: string,
+    status?: {
+      id?: string,
+      name?: string,
+      statusCategory?: {
+        key?: string,
+        name?: string
+      }
+    },
+    assignee?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string
+    } | null,
+    reporter?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string
+    },
+    priority?: {
+      id?: string,
+      name?: string
+    } | null,
+    issuetype?: {
+      id?: string,
+      name?: string,
+      subtask?: boolean
+    },
+    project?: {
+      id?: string,
+      key?: string,
+      name?: string
+    },
+    labels?: string[],
+    updated?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string
+}
+```
+</Accordion>
+
+<Accordion title="changelog full type">
+
+```ts
+{
+  id?: string,
+  items?: {
+    field?: string,
+    fieldtype?: string,
+    from?: string | null,
+    fromString?: string | null,
+    to?: string | null,
+    toString?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookEvent: jira:issue_updated,
+  timestamp?: number,
+  issue?: {
+    id?: string,
+    key?: string,
+    self?: string,
+    fields?: {
+      summary?: string,
+      status?: {
+        id?: string,
+        name?: string,
+        statusCategory?: {
+          key?: string,
+          name?: string
+        }
+      },
+      assignee?: {
+        accountId?: string,
+        displayName?: string,
+        emailAddress?: string
+      } | null,
+      reporter?: {
+        accountId?: string,
+        displayName?: string,
+        emailAddress?: string
+      },
+      priority?: {
+        id?: string,
+        name?: string
+      } | null,
+      issuetype?: {
+        id?: string,
+        name?: string,
+        subtask?: boolean
+      },
+      project?: {
+        id?: string,
+        key?: string,
+        name?: string
+      },
+      labels?: string[],
+      updated?: string
+    }
+  },
+  user?: {
+    accountId?: string,
+    displayName?: string,
+    emailAddress?: string
+  },
+  changelog?: {
+    id?: string,
+    items?: {
+      field?: string,
+      fieldtype?: string,
+      from?: string | null,
+      fromString?: string | null,
+      to?: string | null,
+      toString?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+jira({
+    webhookHooks: {
+        issues: {
+            updatedIssue: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Projects
+
+### New Project
+
+`projects.newProject`
+
+Triggered when a new project is created in Jira
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookEvent` | `project_created` | Yes | — |
+| `timestamp` | `number` | No | — |
+| `project` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: string,
+  key?: string,
+  name?: string,
+  description?: string,
+  projectTypeKey?: string,
+  lead?: {
+    accountId?: string,
+    displayName?: string,
+    emailAddress?: string
+  },
+  self?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookEvent: project_created,
+  timestamp?: number,
+  project?: {
+    id?: string,
+    key?: string,
+    name?: string,
+    description?: string,
+    projectTypeKey?: string,
+    lead?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string
+    },
+    self?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+jira({
+    webhookHooks: {
+        projects: {
+            newProject: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,170 @@
+---
+title: Database
+description: "Telegram local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Telegram plugin syncs data locally. Use `corsair.telegram.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Chats
+
+Path: `telegram.db.chats.search`
+
+```ts
+const rows = await corsair.telegram.db.chats.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `chat_id` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_forum` | `boolean` | equals |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `invite_link` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Files
+
+Path: `telegram.db.files.search`
+
+```ts
+const rows = await corsair.telegram.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_unique_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_size` | `number` | equals, gt, gte, lt, lte, in |
+| `file_path` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `telegram.db.messages.search`
+
+```ts
+const rows = await corsair.telegram.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `message_id` | `number` | equals, gt, gte, lt, lte, in |
+| `chat_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `from_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorId` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `number` | equals, gt, gte, lt, lte, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `caption` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `edit_date` | `number` | equals, gt, gte, lt, lte, in |
+| `media_group_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `reply_to_message_id` | `number` | equals, gt, gte, lt, lte, in |
+| `forward_from_id` | `number` | equals, gt, gte, lt, lte, in |
+| `forward_from_chat_id` | `number` | equals, gt, gte, lt, lte, in |
+| `forward_from_message_id` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Polls
+
+Path: `telegram.db.polls.search`
+
+```ts
+const rows = await corsair.telegram.db.polls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `poll_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `question` | `string` | equals, contains, startsWith, endsWith, in |
+| `total_voter_count` | `number` | equals, gt, gte, lt, lte, in |
+| `is_closed` | `boolean` | equals |
+| `is_anonymous` | `boolean` | equals |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `allows_multiple_answers` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `telegram.db.users.search`
+
+```ts
+const rows = await corsair.telegram.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `number` | equals, gt, gte, lt, lte, in |
+| `is_bot` | `boolean` | equals |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `language_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_premium` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

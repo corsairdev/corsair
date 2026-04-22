@@ -1,0 +1,1425 @@
+---
+title: API
+description: "API reference for Sentry: every `sentry.api.*` operation with input and output types."
+---
+
+Every `sentry.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### get
+
+`events.get`
+
+Get an event by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventID` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `message` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `dateCreated` | `string` | No | — |
+| `dateReceived` | `string` | No | — |
+| `type` | `string` | No | — |
+| `groupID` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `context` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  key: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="context full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+List events for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  eventID: string,
+  title?: string | null,
+  message?: string | null,
+  platform?: string | null,
+  dateCreated?: string | null,
+  dateReceived?: string | null,
+  type?: string | null,
+  groupID?: string | null,
+  tags?: {
+    key: string,
+    value: string
+  }[] | null,
+  context?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Issues
+
+### delete
+
+`issues.delete`
+
+Permanently delete an issue [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.sentry.api.issues.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### get
+
+`issues.get`
+
+Get an issue by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.issues.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `shortId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `culprit` | `string` | No | — |
+| `permalink` | `string` | No | — |
+| `level` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `platform` | `string` | No | — |
+| `type` | `string` | No | — |
+| `count` | `string` | No | — |
+| `userCount` | `number` | No | — |
+| `firstSeen` | `string` | No | — |
+| `lastSeen` | `string` | No | — |
+| `isPublic` | `boolean` | No | — |
+| `isBookmarked` | `boolean` | No | — |
+| `hasSeen` | `boolean` | No | — |
+| `isSubscribed` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `project` | `object` | No | — |
+| `assignedTo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug: string
+}
+```
+</Accordion>
+
+<Accordion title="assignedTo full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`issues.list`
+
+List issues for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.issues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `query` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  shortId: string,
+  title: string,
+  culprit?: string | null,
+  permalink?: string | null,
+  level?: string | null,
+  status: string,
+  platform?: string | null,
+  type?: string | null,
+  count?: string | null,
+  userCount?: number | null,
+  firstSeen?: string | null,
+  lastSeen?: string | null,
+  isPublic?: boolean | null,
+  isBookmarked?: boolean | null,
+  hasSeen?: boolean | null,
+  isSubscribed?: boolean | null,
+  metadata?: {
+  } | null,
+  project?: {
+    id: string,
+    name: string,
+    slug: string
+  } | null,
+  assignedTo?: {
+    id: string,
+    name: string,
+    type: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`issues.update`
+
+Update an issue
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.issues.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `string` | Yes | — |
+| `status` | `resolved \| unresolved \| ignored` | No | — |
+| `assignedTo` | `string` | No | — |
+| `hasSeen` | `boolean` | No | — |
+| `isBookmarked` | `boolean` | No | — |
+| `isPublic` | `boolean` | No | — |
+| `isSubscribed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `shortId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `culprit` | `string` | No | — |
+| `permalink` | `string` | No | — |
+| `level` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `platform` | `string` | No | — |
+| `type` | `string` | No | — |
+| `count` | `string` | No | — |
+| `userCount` | `number` | No | — |
+| `firstSeen` | `string` | No | — |
+| `lastSeen` | `string` | No | — |
+| `isPublic` | `boolean` | No | — |
+| `isBookmarked` | `boolean` | No | — |
+| `hasSeen` | `boolean` | No | — |
+| `isSubscribed` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+| `project` | `object` | No | — |
+| `assignedTo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug: string
+}
+```
+</Accordion>
+
+<Accordion title="assignedTo full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### create
+
+`organizations.create`
+
+Create a new organization
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.organizations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `agreeTerms` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `dateCreated` | `string` | No | — |
+| `status` | `object` | No | — |
+| `isEarlyAdopter` | `boolean` | No | — |
+| `require2FA` | `boolean` | No | — |
+| `avatar` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  id: string,
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="avatar full type">
+
+```ts
+{
+  avatarType: string,
+  avatarUuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`organizations.get`
+
+Get an organization by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `dateCreated` | `string` | No | — |
+| `status` | `object` | No | — |
+| `isEarlyAdopter` | `boolean` | No | — |
+| `require2FA` | `boolean` | No | — |
+| `avatar` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  id: string,
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="avatar full type">
+
+```ts
+{
+  avatarType: string,
+  avatarUuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string,
+  dateCreated?: string | null,
+  status?: {
+    id: string,
+    name: string
+  } | null,
+  isEarlyAdopter?: boolean | null,
+  require2FA?: boolean | null,
+  avatar?: {
+    avatarType: string,
+    avatarUuid?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`organizations.update`
+
+Update an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.organizations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `dateCreated` | `string` | No | — |
+| `status` | `object` | No | — |
+| `isEarlyAdopter` | `boolean` | No | — |
+| `require2FA` | `boolean` | No | — |
+| `avatar` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  id: string,
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="avatar full type">
+
+```ts
+{
+  avatarType: string,
+  avatarUuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `platform` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `platform` | `string` | No | — |
+| `dateCreated` | `string` | No | — |
+| `isBookmarked` | `boolean` | No | — |
+| `isMember` | `boolean` | No | — |
+| `hasAccess` | `boolean` | No | — |
+| `organization` | `object` | No | — |
+| `team` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string,
+  dateCreated?: string | null,
+  status?: {
+    id: string,
+    name: string
+  } | null,
+  isEarlyAdopter?: boolean | null,
+  require2FA?: boolean | null,
+  avatar?: {
+    avatarType: string,
+    avatarUuid?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.sentry.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `platform` | `string` | No | — |
+| `dateCreated` | `string` | No | — |
+| `isBookmarked` | `boolean` | No | — |
+| `isMember` | `boolean` | No | — |
+| `hasAccess` | `boolean` | No | — |
+| `organization` | `object` | No | — |
+| `team` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string,
+  dateCreated?: string | null,
+  status?: {
+    id: string,
+    name: string
+  } | null,
+  isEarlyAdopter?: boolean | null,
+  require2FA?: boolean | null,
+  avatar?: {
+    avatarType: string,
+    avatarUuid?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string,
+  platform?: string | null,
+  dateCreated?: string | null,
+  isBookmarked?: boolean | null,
+  isMember?: boolean | null,
+  hasAccess?: boolean | null,
+  organization?: {
+    id: string,
+    slug: string,
+    name: string,
+    dateCreated?: string | null,
+    status?: {
+      id: string,
+      name: string
+    } | null,
+    isEarlyAdopter?: boolean | null,
+    require2FA?: boolean | null,
+    avatar?: {
+      avatarType: string,
+      avatarUuid?: string | null
+    } | null
+  } | null,
+  team?: {
+    id: string,
+    slug: string,
+    name: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `projectSlug` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `isBookmarked` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `platform` | `string` | No | — |
+| `dateCreated` | `string` | No | — |
+| `isBookmarked` | `boolean` | No | — |
+| `isMember` | `boolean` | No | — |
+| `hasAccess` | `boolean` | No | — |
+| `organization` | `object` | No | — |
+| `team` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string,
+  dateCreated?: string | null,
+  status?: {
+    id: string,
+    name: string
+  } | null,
+  isEarlyAdopter?: boolean | null,
+  require2FA?: boolean | null,
+  avatar?: {
+    avatarType: string,
+    avatarUuid?: string | null
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Releases
+
+### create
+
+`releases.create`
+
+Create a new release
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.releases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `ref` | `string` | No | — |
+| `url` | `string` | No | — |
+| `projects` | `string[]` | Yes | — |
+| `dateReleased` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `version` | `string` | Yes | — |
+| `shortVersion` | `string` | No | — |
+| `dateCreated` | `string` | No | — |
+| `dateReleased` | `string` | No | — |
+| `firstEvent` | `string` | No | — |
+| `lastEvent` | `string` | No | — |
+| `newGroups` | `number` | No | — |
+| `url` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `projects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  slug: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`releases.delete`
+
+Delete a release [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.sentry.api.releases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### get
+
+`releases.get`
+
+Get a release by version ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.releases.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `version` | `string` | Yes | — |
+| `shortVersion` | `string` | No | — |
+| `dateCreated` | `string` | No | — |
+| `dateReleased` | `string` | No | — |
+| `firstEvent` | `string` | No | — |
+| `lastEvent` | `string` | No | — |
+| `newGroups` | `number` | No | — |
+| `url` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `projects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  slug: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`releases.list`
+
+List releases for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.releases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `query` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  version: string,
+  shortVersion?: string | null,
+  dateCreated?: string | null,
+  dateReleased?: string | null,
+  firstEvent?: string | null,
+  lastEvent?: string | null,
+  newGroups?: number | null,
+  url?: string | null,
+  ref?: string | null,
+  projects?: {
+    id: number,
+    slug: string,
+    name: string
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`releases.update`
+
+Update a release
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.releases.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `ref` | `string` | No | — |
+| `url` | `string` | No | — |
+| `dateReleased` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `version` | `string` | Yes | — |
+| `shortVersion` | `string` | No | — |
+| `dateCreated` | `string` | No | — |
+| `dateReleased` | `string` | No | — |
+| `firstEvent` | `string` | No | — |
+| `lastEvent` | `string` | No | — |
+| `newGroups` | `number` | No | — |
+| `url` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `projects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  slug: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a new team
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `dateCreated` | `string` | No | — |
+| `isMember` | `boolean` | No | — |
+| `memberCount` | `number` | No | — |
+| `hasAccess` | `boolean` | No | — |
+| `isPending` | `boolean` | No | — |
+| `avatar` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="avatar full type">
+
+```ts
+{
+  avatarType: string,
+  avatarUuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Delete a team [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.sentry.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### get
+
+`teams.get`
+
+Get a team by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `dateCreated` | `string` | No | — |
+| `isMember` | `boolean` | No | — |
+| `memberCount` | `number` | No | — |
+| `hasAccess` | `boolean` | No | — |
+| `isPending` | `boolean` | No | — |
+| `avatar` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="avatar full type">
+
+```ts
+{
+  avatarType: string,
+  avatarUuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.sentry.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  name: string,
+  dateCreated?: string | null,
+  isMember?: boolean | null,
+  memberCount?: number | null,
+  hasAccess?: boolean | null,
+  isPending?: boolean | null,
+  avatar?: {
+    avatarType: string,
+    avatarUuid?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`teams.update`
+
+Update a team
+
+**Risk:** `write`
+
+```ts
+await corsair.sentry.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationSlug` | `string` | Yes | — |
+| `teamSlug` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `dateCreated` | `string` | No | — |
+| `isMember` | `boolean` | No | — |
+| `memberCount` | `number` | No | — |
+| `hasAccess` | `boolean` | No | — |
+| `isPending` | `boolean` | No | — |
+| `avatar` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="avatar full type">
+
+```ts
+{
+  avatarType: string,
+  avatarUuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

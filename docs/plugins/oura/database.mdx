@@ -1,0 +1,127 @@
+---
+title: Database
+description: "Oura local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Oura plugin syncs data locally. Use `corsair.oura.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Daily Activity
+
+Path: `oura.db.dailyActivity.search`
+
+```ts
+const rows = await corsair.oura.db.dailyActivity.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `day` | `string` | equals, contains, startsWith, endsWith, in |
+| `score` | `number` | equals, gt, gte, lt, lte, in |
+| `active_calories` | `number` | equals, gt, gte, lt, lte, in |
+| `steps` | `number` | equals, gt, gte, lt, lte, in |
+| `total_calories` | `number` | equals, gt, gte, lt, lte, in |
+| `high_activity_time` | `number` | equals, gt, gte, lt, lte, in |
+| `medium_activity_time` | `number` | equals, gt, gte, lt, lte, in |
+| `low_activity_time` | `number` | equals, gt, gte, lt, lte, in |
+| `sedentary_time` | `number` | equals, gt, gte, lt, lte, in |
+| `resting_time` | `number` | equals, gt, gte, lt, lte, in |
+| `timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Daily Readiness
+
+Path: `oura.db.dailyReadiness.search`
+
+```ts
+const rows = await corsair.oura.db.dailyReadiness.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `day` | `string` | equals, contains, startsWith, endsWith, in |
+| `score` | `number` | equals, gt, gte, lt, lte, in |
+| `temperature_deviation` | `number` | equals, gt, gte, lt, lte, in |
+| `temperature_trend_deviation` | `number` | equals, gt, gte, lt, lte, in |
+| `timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Daily Sleep
+
+Path: `oura.db.dailySleep.search`
+
+```ts
+const rows = await corsair.oura.db.dailySleep.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `day` | `string` | equals, contains, startsWith, endsWith, in |
+| `score` | `number` | equals, gt, gte, lt, lte, in |
+| `timestamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Personal Info
+
+Path: `oura.db.personalInfo.search`
+
+```ts
+const rows = await corsair.oura.db.personalInfo.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `age` | `number` | equals, gt, gte, lt, lte, in |
+| `weight` | `number` | equals, gt, gte, lt, lte, in |
+| `height` | `number` | equals, gt, gte, lt, lte, in |
+| `biological_sex` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

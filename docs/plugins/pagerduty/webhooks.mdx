@@ -1,0 +1,1309 @@
+---
+title: Webhooks
+description: "Pagerduty incoming webhooks: event paths, payloads, and response data."
+---
+
+The Pagerduty plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/pagerduty/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `incidents`
+  - `acknowledged` (`incidents.acknowledged`)
+  - `assigned` (`incidents.assigned`)
+  - `resolved` (`incidents.resolved`)
+  - `triggered` (`incidents.triggered`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Incidents
+
+### Acknowledged
+
+`incidents.acknowledged`
+
+An incident was acknowledged
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.triggered,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.acknowledged,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.resolved,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.assigned,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: string,
+  resource_type: string,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.acknowledged,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+pagerduty({
+    webhookHooks: {
+        incidents: {
+            acknowledged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Assigned
+
+`incidents.assigned`
+
+An incident was assigned to a user or escalation policy
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.triggered,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.acknowledged,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.resolved,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.assigned,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: string,
+  resource_type: string,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.assigned,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+pagerduty({
+    webhookHooks: {
+        incidents: {
+            assigned: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Resolved
+
+`incidents.resolved`
+
+An incident was resolved
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.triggered,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.acknowledged,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.resolved,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.assigned,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: string,
+  resource_type: string,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.resolved,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+pagerduty({
+    webhookHooks: {
+        incidents: {
+            resolved: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Triggered
+
+`incidents.triggered`
+
+An incident was triggered (created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.triggered,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.acknowledged,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.resolved,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: incident.assigned,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+} | {
+  id: string,
+  event_type: string,
+  resource_type: string,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  event_type: incident.triggered,
+  resource_type: incident,
+  occurred_at: string,
+  agent?: {
+    id?: string,
+    type?: string,
+    summary?: string,
+    html_url?: string | null
+  },
+  client?: {
+    name?: string
+  } | null,
+  data: {
+    id: string,
+    type: incident,
+    incident_number?: number,
+    title?: string,
+    status?: triggered | acknowledged | resolved,
+    urgency?: high | low,
+    html_url?: string,
+    created_at?: string,
+    updated_at?: string,
+    resolved_at?: string | null,
+    service?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    escalation_policy?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    },
+    teams?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[],
+    assignees?: {
+      id: string,
+      type: string,
+      summary?: string,
+      html_url?: string | null
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+pagerduty({
+    webhookHooks: {
+        incidents: {
+            triggered: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

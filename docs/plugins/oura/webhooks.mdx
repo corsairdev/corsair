@@ -1,0 +1,117 @@
+---
+title: Webhooks
+description: "Oura incoming webhooks: event paths, payloads, and response data."
+---
+
+The Oura plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/oura/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `summary`
+  - `dailyActivity` (`summary.dailyActivity`)
+  - `dailyReadiness` (`summary.dailyReadiness`)
+  - `dailySleep` (`summary.dailySleep`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Summary
+
+### Daily Activity
+
+`summary.dailyActivity`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+oura({
+    webhookHooks: {
+        summary: {
+            dailyActivity: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Daily Readiness
+
+`summary.dailyReadiness`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+oura({
+    webhookHooks: {
+        summary: {
+            dailyReadiness: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Daily Sleep
+
+`summary.dailySleep`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+oura({
+    webhookHooks: {
+        summary: {
+            dailySleep: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,2968 @@
+---
+title: API
+description: "API reference for Github: every `github.api.*` operation with input and output types."
+---
+
+Every `github.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### delete
+
+`comments.delete`
+
+Delete a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`comments.get`
+
+Get a specific comment
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.comments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `issueUrl` | `string` | No | — |
+| `body` | `string` | No | — |
+| `authorAssociation` | `string` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List all comments in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `sort` | `created \| updated` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `since` | `string` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  url?: string,
+  htmlUrl?: string,
+  issueUrl?: string,
+  body?: string,
+  authorAssociation?: string,
+  createdAt?: date | null,
+  updatedAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listForIssue
+
+`comments.listForIssue`
+
+List comments on a specific issue or pull request
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.comments.listForIssue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `issueNumber` | `number` | Yes | — |
+| `since` | `string` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  url?: string,
+  htmlUrl?: string,
+  issueUrl?: string,
+  body?: string,
+  authorAssociation?: string,
+  createdAt?: date | null,
+  updatedAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`comments.update`
+
+Update a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.comments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `commentId` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `issueUrl` | `string` | No | — |
+| `body` | `string` | No | — |
+| `authorAssociation` | `string` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+
+
+
+---
+
+## Discussions
+
+### get
+
+`discussions.get`
+
+Get a specific discussion
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.discussions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `discussionNumber` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `number` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `repositoryUrl` | `string` | No | — |
+| `state` | `string` | No | — |
+| `locked` | `boolean` | No | — |
+| `comments` | `number` | No | — |
+| `authorAssociation` | `string` | No | — |
+| `category` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `answerChosenAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  repositoryId?: number,
+  emoji?: string,
+  name: string,
+  description?: string,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  slug?: string,
+  isAnswerable?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`discussions.list`
+
+List discussions in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.discussions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  number: number,
+  title: string,
+  body?: string | null,
+  htmlUrl?: string,
+  repositoryUrl?: string,
+  state?: string,
+  locked?: boolean,
+  comments?: number,
+  authorAssociation?: string,
+  category?: {
+    id: number,
+    nodeId?: string,
+    repositoryId?: number,
+    emoji?: string,
+    name: string,
+    description?: string,
+    createdAt?: date | null,
+    updatedAt?: date | null,
+    slug?: string,
+    isAnswerable?: boolean
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  answerChosenAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Forks
+
+### list
+
+`forks.list`
+
+List forks of a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.forks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `sort` | `newest \| oldest \| stargazers \| watchers` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  name: string,
+  fullName?: string,
+  private?: boolean,
+  htmlUrl?: string,
+  description?: string | null,
+  fork?: boolean,
+  url?: string,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  pushedAt?: date | null,
+  defaultBranch?: string,
+  language?: string | null,
+  stargazersCount?: number,
+  watchersCount?: number,
+  forksCount?: number,
+  openIssuesCount?: number,
+  archived?: boolean,
+  disabled?: boolean,
+  owner?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Issues
+
+### create
+
+`issues.create`
+
+Create a new issue
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.issues.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `title` | `string \| number` | Yes | — |
+| `body` | `string` | No | — |
+| `assignee` | `string` | No | — |
+| `milestone` | `string \| number` | No | — |
+| `labels` | `object[]` | No | — |
+| `assignees` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+    id?: number,
+    name?: string,
+    description?: string | null,
+    color?: string | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `repositoryUrl` | `string` | No | — |
+| `labelsUrl` | `string` | No | — |
+| `commentsUrl` | `string` | No | — |
+| `eventsUrl` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `number` | `number` | Yes | — |
+| `state` | `string` | Yes | — |
+| `stateReason` | `completed \| reopened \| not_planned \| duplicate` | No | — |
+| `title` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `user` | `object` | No | — |
+| `labels` | `object[]` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `comments` | `number` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `closedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+    id?: number,
+    nodeId?: string,
+    url?: string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    default?: boolean
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createComment
+
+`issues.createComment`
+
+Post a comment on an issue
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.issues.createComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `issueNumber` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `body` | `string` | No | — |
+| `bodyText` | `string` | No | — |
+| `bodyHtml` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `user` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `issueUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`issues.get`
+
+Get a specific issue
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.issues.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `issueNumber` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `repositoryUrl` | `string` | No | — |
+| `labelsUrl` | `string` | No | — |
+| `commentsUrl` | `string` | No | — |
+| `eventsUrl` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `number` | `number` | Yes | — |
+| `state` | `string` | Yes | — |
+| `stateReason` | `completed \| reopened \| not_planned \| duplicate` | No | — |
+| `title` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `user` | `object` | No | — |
+| `labels` | `object[]` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `comments` | `number` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `closedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+    id?: number,
+    nodeId?: string,
+    url?: string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    default?: boolean
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`issues.list`
+
+List issues in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.issues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `milestone` | `string` | No | — |
+| `state` | `open \| closed \| all` | No | — |
+| `assignee` | `string` | No | — |
+| `creator` | `string` | No | — |
+| `mentioned` | `string` | No | — |
+| `labels` | `string` | No | — |
+| `sort` | `created \| updated \| comments` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `since` | `string` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  url?: string,
+  repositoryUrl?: string,
+  labelsUrl?: string,
+  commentsUrl?: string,
+  eventsUrl?: string,
+  htmlUrl?: string,
+  number: number,
+  state: string,
+  stateReason?: completed | reopened | not_planned | duplicate | null,
+  title: string,
+  body?: string | null,
+  user?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  } | null,
+  labels?: (
+    string | {
+      id?: number,
+      nodeId?: string,
+      url?: string,
+      name?: string,
+      description?: string | null,
+      color?: string | null,
+      default?: boolean
+    }
+  )[],
+  assignee?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  } | null,
+  assignees?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  }[] | null,
+  locked?: boolean,
+  comments?: number,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  closedAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`issues.update`
+
+Update an existing issue
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.issues.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `issueNumber` | `number` | Yes | — |
+| `title` | `string \| number` | No | — |
+| `body` | `string` | No | — |
+| `assignee` | `string` | No | — |
+| `state` | `open \| closed` | No | — |
+| `stateReason` | `completed \| not_planned \| duplicate \| reopened` | No | — |
+| `milestone` | `string \| number` | No | — |
+| `labels` | `object[]` | No | — |
+| `assignees` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+    id?: number,
+    name?: string,
+    description?: string | null,
+    color?: string | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `url` | `string` | No | — |
+| `repositoryUrl` | `string` | No | — |
+| `labelsUrl` | `string` | No | — |
+| `commentsUrl` | `string` | No | — |
+| `eventsUrl` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `number` | `number` | Yes | — |
+| `state` | `string` | Yes | — |
+| `stateReason` | `completed \| reopened \| not_planned \| duplicate` | No | — |
+| `title` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `user` | `object` | No | — |
+| `labels` | `object[]` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `comments` | `number` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `closedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+(
+  string | {
+    id?: number,
+    nodeId?: string,
+    url?: string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    default?: boolean
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pull Requests
+
+### createReview
+
+`pullRequests.createReview`
+
+Submit a pull request review
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.pullRequests.createReview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `pullNumber` | `number` | Yes | — |
+| `commitId` | `string` | No | — |
+| `body` | `string` | No | — |
+| `event` | `APPROVE \| REQUEST_CHANGES \| COMMENT` | No | — |
+| `comments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  path: string,
+  position?: number,
+  body: string,
+  line?: number,
+  side?: string,
+  startLine?: number,
+  startSide?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `user` | `object` | No | — |
+| `body` | `string` | No | — |
+| `state` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `pullRequestUrl` | `string` | No | — |
+| `submittedAt` | `date` | No | — |
+| `commitId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  login: string,
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`pullRequests.get`
+
+Get a specific pull request
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.pullRequests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `pullNumber` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `diffUrl` | `string` | No | — |
+| `patchUrl` | `string` | No | — |
+| `issueUrl` | `string` | No | — |
+| `number` | `number` | Yes | — |
+| `state` | `open \| closed` | Yes | — |
+| `locked` | `boolean` | No | — |
+| `title` | `string` | Yes | — |
+| `user` | `object` | No | — |
+| `body` | `string` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `closedAt` | `date` | No | — |
+| `mergedAt` | `date` | No | — |
+| `mergeCommitSha` | `string` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `labels` | `object[]` | No | — |
+| `milestone` | `object` | No | — |
+| `commitsUrl` | `string` | No | — |
+| `reviewCommentsUrl` | `string` | No | — |
+| `reviewCommentUrl` | `string` | No | — |
+| `commentsUrl` | `string` | No | — |
+| `statusesUrl` | `string` | No | — |
+| `head` | `object` | No | — |
+| `base` | `object` | No | — |
+| `authorAssociation` | `string` | No | — |
+| `draft` | `boolean` | No | — |
+| `merged` | `boolean` | No | — |
+| `mergeable` | `boolean` | No | — |
+| `comments` | `number` | No | — |
+| `reviewComments` | `number` | No | — |
+| `commits` | `number` | No | — |
+| `additions` | `number` | No | — |
+| `deletions` | `number` | No | — |
+| `changedFiles` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id?: number,
+  nodeId?: string,
+  url?: string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  default?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  url?: string,
+  htmlUrl?: string,
+  labelsUrl?: string,
+  id?: number,
+  nodeId?: string,
+  number?: number,
+  state?: open | closed,
+  title?: string,
+  description?: string | null,
+  creator?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  },
+  openIssues?: number,
+  closedIssues?: number,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  closedAt?: date | null,
+  dueOn?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="head full type">
+
+```ts
+{
+  label?: string,
+  ref?: string,
+  sha?: string,
+  user?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  },
+  repo?: {
+    id: number,
+    nodeId?: string,
+    name: string,
+    fullName?: string,
+    private?: boolean,
+    htmlUrl?: string,
+    description?: string | null,
+    fork?: boolean,
+    url?: string,
+    createdAt?: date | null,
+    updatedAt?: date | null,
+    pushedAt?: date | null,
+    defaultBranch?: string,
+    language?: string | null,
+    stargazersCount?: number,
+    watchersCount?: number,
+    forksCount?: number,
+    openIssuesCount?: number,
+    archived?: boolean,
+    disabled?: boolean,
+    owner?: {
+      name?: string | null,
+      email?: string | null,
+      login: string,
+      id: number,
+      nodeId?: string,
+      avatarUrl?: string,
+      gravatarId?: string | null,
+      url?: string,
+      htmlUrl?: string,
+      followersUrl?: string,
+      followingUrl?: string,
+      gistsUrl?: string,
+      starredUrl?: string,
+      subscriptionsUrl?: string,
+      organizationsUrl?: string,
+      reposUrl?: string,
+      eventsUrl?: string,
+      receivedEventsUrl?: string,
+      type?: string,
+      siteAdmin?: boolean,
+      starredAt?: date | null
+    }
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="base full type">
+
+```ts
+{
+  label?: string,
+  ref?: string,
+  sha?: string,
+  user?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  },
+  repo?: {
+    id: number,
+    nodeId?: string,
+    name: string,
+    fullName?: string,
+    private?: boolean,
+    htmlUrl?: string,
+    description?: string | null,
+    fork?: boolean,
+    url?: string,
+    createdAt?: date | null,
+    updatedAt?: date | null,
+    pushedAt?: date | null,
+    defaultBranch?: string,
+    language?: string | null,
+    stargazersCount?: number,
+    watchersCount?: number,
+    forksCount?: number,
+    openIssuesCount?: number,
+    archived?: boolean,
+    disabled?: boolean,
+    owner?: {
+      name?: string | null,
+      email?: string | null,
+      login: string,
+      id: number,
+      nodeId?: string,
+      avatarUrl?: string,
+      gravatarId?: string | null,
+      url?: string,
+      htmlUrl?: string,
+      followersUrl?: string,
+      followingUrl?: string,
+      gistsUrl?: string,
+      starredUrl?: string,
+      subscriptionsUrl?: string,
+      organizationsUrl?: string,
+      reposUrl?: string,
+      eventsUrl?: string,
+      receivedEventsUrl?: string,
+      type?: string,
+      siteAdmin?: boolean,
+      starredAt?: date | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pullRequests.list`
+
+List pull requests
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.pullRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `state` | `open \| closed \| all` | No | — |
+| `head` | `string` | No | — |
+| `base` | `string` | No | — |
+| `sort` | `created \| updated \| popularity \| long-running` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  url: string,
+  id: number,
+  nodeId?: string,
+  htmlUrl?: string,
+  diffUrl?: string,
+  patchUrl?: string,
+  issueUrl?: string,
+  number: number,
+  state: open | closed,
+  locked?: boolean,
+  title: string,
+  user?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  },
+  body?: string | null,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  closedAt?: date | null,
+  mergedAt?: date | null,
+  mergeCommitSha?: string | null,
+  assignee?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  } | null,
+  assignees?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  }[] | null,
+  labels?: {
+    id?: number,
+    nodeId?: string,
+    url?: string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    default?: boolean
+  }[],
+  milestone?: {
+    url?: string,
+    htmlUrl?: string,
+    labelsUrl?: string,
+    id?: number,
+    nodeId?: string,
+    number?: number,
+    state?: open | closed,
+    title?: string,
+    description?: string | null,
+    creator?: {
+      name?: string | null,
+      email?: string | null,
+      login: string,
+      id: number,
+      nodeId?: string,
+      avatarUrl?: string,
+      gravatarId?: string | null,
+      url?: string,
+      htmlUrl?: string,
+      followersUrl?: string,
+      followingUrl?: string,
+      gistsUrl?: string,
+      starredUrl?: string,
+      subscriptionsUrl?: string,
+      organizationsUrl?: string,
+      reposUrl?: string,
+      eventsUrl?: string,
+      receivedEventsUrl?: string,
+      type?: string,
+      siteAdmin?: boolean,
+      starredAt?: date | null
+    },
+    openIssues?: number,
+    closedIssues?: number,
+    createdAt?: date | null,
+    updatedAt?: date | null,
+    closedAt?: date | null,
+    dueOn?: date | null
+  } | null,
+  commitsUrl?: string,
+  reviewCommentsUrl?: string,
+  reviewCommentUrl?: string,
+  commentsUrl?: string,
+  statusesUrl?: string,
+  head?: {
+    label?: string,
+    ref?: string,
+    sha?: string,
+    user?: {
+      name?: string | null,
+      email?: string | null,
+      login: string,
+      id: number,
+      nodeId?: string,
+      avatarUrl?: string,
+      gravatarId?: string | null,
+      url?: string,
+      htmlUrl?: string,
+      followersUrl?: string,
+      followingUrl?: string,
+      gistsUrl?: string,
+      starredUrl?: string,
+      subscriptionsUrl?: string,
+      organizationsUrl?: string,
+      reposUrl?: string,
+      eventsUrl?: string,
+      receivedEventsUrl?: string,
+      type?: string,
+      siteAdmin?: boolean,
+      starredAt?: date | null
+    },
+    repo?: {
+      id: number,
+      nodeId?: string,
+      name: string,
+      fullName?: string,
+      private?: boolean,
+      htmlUrl?: string,
+      description?: string | null,
+      fork?: boolean,
+      url?: string,
+      createdAt?: date | null,
+      updatedAt?: date | null,
+      pushedAt?: date | null,
+      defaultBranch?: string,
+      language?: string | null,
+      stargazersCount?: number,
+      watchersCount?: number,
+      forksCount?: number,
+      openIssuesCount?: number,
+      archived?: boolean,
+      disabled?: boolean,
+      owner?: {
+        name?: string | null,
+        email?: string | null,
+        login: string,
+        id: number,
+        nodeId?: string,
+        avatarUrl?: string,
+        gravatarId?: string | null,
+        url?: string,
+        htmlUrl?: string,
+        followersUrl?: string,
+        followingUrl?: string,
+        gistsUrl?: string,
+        starredUrl?: string,
+        subscriptionsUrl?: string,
+        organizationsUrl?: string,
+        reposUrl?: string,
+        eventsUrl?: string,
+        receivedEventsUrl?: string,
+        type?: string,
+        siteAdmin?: boolean,
+        starredAt?: date | null
+      }
+    } | null
+  },
+  base?: {
+    label?: string,
+    ref?: string,
+    sha?: string,
+    user?: {
+      name?: string | null,
+      email?: string | null,
+      login: string,
+      id: number,
+      nodeId?: string,
+      avatarUrl?: string,
+      gravatarId?: string | null,
+      url?: string,
+      htmlUrl?: string,
+      followersUrl?: string,
+      followingUrl?: string,
+      gistsUrl?: string,
+      starredUrl?: string,
+      subscriptionsUrl?: string,
+      organizationsUrl?: string,
+      reposUrl?: string,
+      eventsUrl?: string,
+      receivedEventsUrl?: string,
+      type?: string,
+      siteAdmin?: boolean,
+      starredAt?: date | null
+    },
+    repo?: {
+      id: number,
+      nodeId?: string,
+      name: string,
+      fullName?: string,
+      private?: boolean,
+      htmlUrl?: string,
+      description?: string | null,
+      fork?: boolean,
+      url?: string,
+      createdAt?: date | null,
+      updatedAt?: date | null,
+      pushedAt?: date | null,
+      defaultBranch?: string,
+      language?: string | null,
+      stargazersCount?: number,
+      watchersCount?: number,
+      forksCount?: number,
+      openIssuesCount?: number,
+      archived?: boolean,
+      disabled?: boolean,
+      owner?: {
+        name?: string | null,
+        email?: string | null,
+        login: string,
+        id: number,
+        nodeId?: string,
+        avatarUrl?: string,
+        gravatarId?: string | null,
+        url?: string,
+        htmlUrl?: string,
+        followersUrl?: string,
+        followingUrl?: string,
+        gistsUrl?: string,
+        starredUrl?: string,
+        subscriptionsUrl?: string,
+        organizationsUrl?: string,
+        reposUrl?: string,
+        eventsUrl?: string,
+        receivedEventsUrl?: string,
+        type?: string,
+        siteAdmin?: boolean,
+        starredAt?: date | null
+      }
+    }
+  },
+  authorAssociation?: string,
+  draft?: boolean,
+  merged?: boolean,
+  mergeable?: boolean | null,
+  comments?: number,
+  reviewComments?: number,
+  commits?: number,
+  additions?: number,
+  deletions?: number,
+  changedFiles?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listReviews
+
+`pullRequests.listReviews`
+
+List reviews on a pull request
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.pullRequests.listReviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `pullNumber` | `number` | Yes | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  user?: {
+    login: string,
+    id: number
+  },
+  body?: string,
+  state?: string,
+  htmlUrl?: string,
+  pullRequestUrl?: string,
+  submittedAt?: date | null,
+  commitId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Releases
+
+### create
+
+`releases.create`
+
+Create a new release
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.releases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `tagName` | `string` | Yes | — |
+| `targetCommitish` | `string` | No | — |
+| `name` | `string` | No | — |
+| `body` | `string` | No | — |
+| `draft` | `boolean` | No | — |
+| `prerelease` | `boolean` | No | — |
+| `generateReleaseNotes` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `assetsUrl` | `string` | No | — |
+| `uploadUrl` | `string` | No | — |
+| `tarballUrl` | `string` | No | — |
+| `zipballUrl` | `string` | No | — |
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `tagName` | `string` | No | — |
+| `targetCommitish` | `string` | No | — |
+| `name` | `string` | No | — |
+| `body` | `string` | No | — |
+| `draft` | `boolean` | No | — |
+| `prerelease` | `boolean` | No | — |
+| `createdAt` | `date` | No | — |
+| `publishedAt` | `date` | No | — |
+| `author` | `object` | No | — |
+| `assets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  url: string,
+  browserDownloadUrl: string,
+  id: number,
+  nodeId: string,
+  name: string,
+  label?: string | null,
+  state: uploaded | open,
+  contentType: string,
+  size: number,
+  downloadCount: number,
+  createdAt?: date | null,
+  updatedAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`releases.get`
+
+Get a specific release
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.releases.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `releaseId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `assetsUrl` | `string` | No | — |
+| `uploadUrl` | `string` | No | — |
+| `tarballUrl` | `string` | No | — |
+| `zipballUrl` | `string` | No | — |
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `tagName` | `string` | No | — |
+| `targetCommitish` | `string` | No | — |
+| `name` | `string` | No | — |
+| `body` | `string` | No | — |
+| `draft` | `boolean` | No | — |
+| `prerelease` | `boolean` | No | — |
+| `createdAt` | `date` | No | — |
+| `publishedAt` | `date` | No | — |
+| `author` | `object` | No | — |
+| `assets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  url: string,
+  browserDownloadUrl: string,
+  id: number,
+  nodeId: string,
+  name: string,
+  label?: string | null,
+  state: uploaded | open,
+  contentType: string,
+  size: number,
+  downloadCount: number,
+  createdAt?: date | null,
+  updatedAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`releases.list`
+
+List releases in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.releases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  url?: string,
+  htmlUrl?: string,
+  assetsUrl?: string,
+  uploadUrl?: string,
+  tarballUrl?: string | null,
+  zipballUrl?: string | null,
+  id: number,
+  nodeId?: string,
+  tagName?: string,
+  targetCommitish?: string,
+  name?: string | null,
+  body?: string | null,
+  draft?: boolean,
+  prerelease?: boolean,
+  createdAt?: date | null,
+  publishedAt?: date | null,
+  author?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  },
+  assets?: {
+    url: string,
+    browserDownloadUrl: string,
+    id: number,
+    nodeId: string,
+    name: string,
+    label?: string | null,
+    state: uploaded | open,
+    contentType: string,
+    size: number,
+    downloadCount: number,
+    createdAt?: date | null,
+    updatedAt?: date | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`releases.update`
+
+Update an existing release
+
+**Risk:** `write`
+
+```ts
+await corsair.github.api.releases.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `releaseId` | `number` | Yes | — |
+| `tagName` | `string` | No | — |
+| `targetCommitish` | `string` | No | — |
+| `name` | `string` | No | — |
+| `body` | `string` | No | — |
+| `draft` | `boolean` | No | — |
+| `prerelease` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `assetsUrl` | `string` | No | — |
+| `uploadUrl` | `string` | No | — |
+| `tarballUrl` | `string` | No | — |
+| `zipballUrl` | `string` | No | — |
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `tagName` | `string` | No | — |
+| `targetCommitish` | `string` | No | — |
+| `name` | `string` | No | — |
+| `body` | `string` | No | — |
+| `draft` | `boolean` | No | — |
+| `prerelease` | `boolean` | No | — |
+| `createdAt` | `date` | No | — |
+| `publishedAt` | `date` | No | — |
+| `author` | `object` | No | — |
+| `assets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  url: string,
+  browserDownloadUrl: string,
+  id: number,
+  nodeId: string,
+  name: string,
+  label?: string | null,
+  state: uploaded | open,
+  contentType: string,
+  size: number,
+  downloadCount: number,
+  createdAt?: date | null,
+  updatedAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Repositories
+
+### get
+
+`repositories.get`
+
+Get a specific repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.repositories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `fullName` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+| `fork` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `pushedAt` | `date` | No | — |
+| `defaultBranch` | `string` | No | — |
+| `language` | `string` | No | — |
+| `stargazersCount` | `number` | No | — |
+| `watchersCount` | `number` | No | — |
+| `forksCount` | `number` | No | — |
+| `openIssuesCount` | `number` | No | — |
+| `archived` | `boolean` | No | — |
+| `disabled` | `boolean` | No | — |
+| `owner` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: date | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContent
+
+`repositories.getContent`
+
+Get file or directory content from a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.repositories.getContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `ref` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  type: file,
+  encoding?: string,
+  size?: number,
+  name: string,
+  path?: string,
+  content?: string,
+  sha: string,
+  url?: string,
+  gitUrl?: string | null,
+  htmlUrl?: string | null,
+  downloadUrl?: string | null
+} | {
+  type: dir,
+  name: string,
+  path?: string,
+  sha: string,
+  size?: number,
+  url?: string,
+  gitUrl?: string | null,
+  htmlUrl?: string | null,
+  downloadUrl?: string | null
+} | {
+  type: file | dir | submodule | symlink,
+  size?: number,
+  name: string,
+  path?: string,
+  sha: string,
+  url?: string,
+  gitUrl?: string | null,
+  htmlUrl?: string | null,
+  downloadUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`repositories.list`
+
+List repositories for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.repositories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | No | — |
+| `type` | `all \| owner \| public \| private \| member` | No | — |
+| `sort` | `created \| updated \| pushed \| full_name` | No | — |
+| `direction` | `asc \| desc` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  name: string,
+  fullName?: string,
+  private?: boolean,
+  htmlUrl?: string,
+  description?: string | null,
+  fork?: boolean,
+  url?: string,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  pushedAt?: date | null,
+  defaultBranch?: string,
+  language?: string | null,
+  stargazersCount?: number,
+  watchersCount?: number,
+  forksCount?: number,
+  openIssuesCount?: number,
+  archived?: boolean,
+  disabled?: boolean,
+  owner?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: date | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listBranches
+
+`repositories.listBranches`
+
+List branches in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.repositories.listBranches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `protected` | `boolean` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  commit: {
+    sha: string,
+    url: string
+  },
+  protected: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCommits
+
+`repositories.listCommits`
+
+List commits in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.repositories.listCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `sha` | `string` | No | — |
+| `path` | `string` | No | — |
+| `author` | `string` | No | — |
+| `committer` | `string` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  url?: string,
+  sha: string,
+  nodeId?: string,
+  htmlUrl?: string,
+  commentsUrl?: string,
+  commit: {
+    url?: string,
+    author?: {
+      name: string,
+      email: string,
+      date?: date | null
+    } | null,
+    committer?: {
+      name: string,
+      email: string,
+      date?: date | null
+    } | null,
+    message: string,
+    commentCount?: number,
+    tree?: {
+      sha: string,
+      url?: string
+    }
+  },
+  author?: {
+    login: string,
+    id: number
+  } | null,
+  committer?: {
+    login: string,
+    id: number
+  } | null,
+  parents?: {
+    sha: string,
+    url?: string,
+    htmlUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Workflows
+
+### get
+
+`workflows.get`
+
+Get a specific workflow
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.workflows.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `workflowId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `nodeId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `state` | `active \| deleted \| disabled_fork \| disabled_inactivity \| disabled_manually` | Yes | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `url` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `badgeUrl` | `string` | No | — |
+| `deletedAt` | `date` | No | — |
+
+
+
+---
+
+### list
+
+`workflows.list`
+
+List workflows in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.workflows.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCount` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `workflows` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="workflows full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  name: string,
+  path: string,
+  state: active | deleted | disabled_fork | disabled_inactivity | disabled_manually,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  url?: string,
+  htmlUrl?: string,
+  badgeUrl?: string,
+  deletedAt?: date | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRuns
+
+`workflows.listRuns`
+
+List workflow runs
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.workflows.listRuns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `actor` | `string` | No | — |
+| `branch` | `string` | No | — |
+| `event` | `string` | No | — |
+| `status` | `completed \| action_required \| cancelled \| failure \| neutral \| skipped \| stale \| success \| timed_out \| in_progress \| queued \| requested \| waiting \| pending` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+| `created` | `string` | No | — |
+| `excludePullRequests` | `boolean` | No | — |
+| `checkSuiteId` | `number` | No | — |
+| `headSha` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCount` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `workflowRuns` | `object[]` | No | — |
+| `workflow_runs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="workflowRuns full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  name?: string | null,
+  headBranch?: string | null,
+  headSha?: string,
+  path?: string,
+  runNumber?: number,
+  runAttempt?: number,
+  event?: string,
+  status?: string | null,
+  conclusion?: string | null,
+  workflowId?: number,
+  url?: string,
+  htmlUrl?: string,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  displayTitle?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="workflow_runs full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  name?: string | null,
+  headBranch?: string | null,
+  headSha?: string,
+  path?: string,
+  runNumber?: number,
+  runAttempt?: number,
+  event?: string,
+  status?: string | null,
+  conclusion?: string | null,
+  workflowId?: number,
+  url?: string,
+  htmlUrl?: string,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  displayTitle?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

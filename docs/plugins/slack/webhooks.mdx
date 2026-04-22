@@ -1,0 +1,2106 @@
+---
+title: Webhooks
+description: "Slack incoming webhooks: event paths, payloads, and response data."
+---
+
+The Slack plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/slack/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `challenge`
+  - `challenge` (`challenge.challenge`)
+- `channels`
+  - `created` (`channels.created`)
+- `files`
+  - `created` (`files.created`)
+  - `public` (`files.public`)
+  - `shared` (`files.shared`)
+- `messages`
+  - `message` (`messages.message`)
+- `reactions`
+  - `added` (`reactions.added`)
+- `users`
+  - `teamJoin` (`users.teamJoin`)
+  - `userChange` (`users.userChange`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Challenge
+
+### Challenge
+
+`challenge.challenge`
+
+Slack URL verification challenge — respond to confirm the webhook endpoint
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `url_verification` | Yes | — |
+| `challenge` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: url_verification,
+  challenge: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        challenge: {
+            challenge: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Channels
+
+### Created
+
+`channels.created`
+
+A new channel was created in the workspace
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: channel_created,
+  event_ts: string,
+  channel: {
+    id: string,
+    is_channel: boolean,
+    name: string,
+    name_normalized: string,
+    created: number,
+    creator: string,
+    is_shared: boolean,
+    is_org_shared: boolean,
+    context_team_id: string,
+    is_archived: boolean,
+    is_frozen: boolean,
+    is_general: boolean,
+    is_group: boolean,
+    is_private: boolean,
+    is_ext_shared: boolean,
+    is_im: boolean,
+    is_mpim: boolean,
+    is_pending_ext_shared: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: channel_created,
+  event_ts: string,
+  channel: {
+    id: string,
+    is_channel: boolean,
+    name: string,
+    name_normalized: string,
+    created: number,
+    creator: string,
+    is_shared: boolean,
+    is_org_shared: boolean,
+    context_team_id: string,
+    is_archived: boolean,
+    is_frozen: boolean,
+    is_general: boolean,
+    is_group: boolean,
+    is_private: boolean,
+    is_ext_shared: boolean,
+    is_im: boolean,
+    is_mpim: boolean,
+    is_pending_ext_shared: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        channels: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Files
+
+### Created
+
+`files.created`
+
+A file was uploaded or created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: file_created,
+  file_id: string,
+  user_id: string,
+  file: {
+    id: string
+  },
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: file_created,
+  file_id: string,
+  user_id: string,
+  file: {
+    id: string
+  },
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        files: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Public
+
+`files.public`
+
+A file was made publicly accessible
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: file_public,
+  file_id: string,
+  user_id: string,
+  file: {
+    id: string
+  },
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: file_public,
+  file_id: string,
+  user_id: string,
+  file: {
+    id: string
+  },
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        files: {
+            public: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Shared
+
+`files.shared`
+
+A file was shared into a channel
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: file_shared,
+  file_id: string,
+  user_id: string,
+  file: {
+    id: string
+  },
+  channel_id: string,
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: file_shared,
+  file_id: string,
+  user_id: string,
+  file: {
+    id: string
+  },
+  channel_id: string,
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        files: {
+            shared: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Messages
+
+### Message
+
+`messages.message`
+
+A message was posted or updated in a channel
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: message,
+  event_ts: string,
+  team?: string,
+  channel: string,
+  user: string,
+  bot_id?: string,
+  bot_profile?: {
+    id: string,
+    name: string,
+    app_id: string,
+    team_id: string,
+    icons: {
+    },
+    updated: number,
+    deleted: boolean
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  channel_type: channel | group | im | mpim | app_home,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  files?: {
+    id: string,
+    created: number,
+    name?: string | null,
+    title?: string | null,
+    mimetype: string,
+    filetype: string,
+    pretty_type: string,
+    user?: string,
+    editable: boolean,
+    size: number,
+    mode: hosted | external | snippet | post,
+    is_external: boolean,
+    external_type?: string | null,
+    is_public: boolean,
+    public_url_shared: boolean,
+    display_as_bot: boolean,
+    username?: string | null,
+    url_private?: string,
+    url_private_download?: string,
+    permalink: string,
+    permalink_public?: string,
+    channels?: string[] | null,
+    groups?: string[] | null,
+    users?: string[],
+    is_starred?: boolean,
+    num_stars?: number
+  }[],
+  edited?: {
+    user: string,
+    ts: string
+  },
+  client_msg_id?: string,
+  parent_user_id?: string,
+  is_starred?: boolean,
+  pinned_to?: string[],
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[],
+  assistant_thread?: {
+  }
+} | {
+  type: message,
+  subtype: bot_message,
+  event_ts: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  streaming_state?: in_progress | completed | errored,
+  ts: string,
+  text: string,
+  bot_id: string,
+  username?: string,
+  user?: string,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  edited?: {
+    user: string,
+    ts: string
+  },
+  thread_ts?: string
+} | {
+  type: message,
+  subtype: channel_archive,
+  team: string,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_join,
+  team: string,
+  user: string,
+  inviter: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_leave,
+  team: string,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_name,
+  team: string,
+  user: string,
+  name: string,
+  old_name: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_posting_permissions,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_purpose,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  purpose: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_topic,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  topic: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_unarchive,
+  team: string,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: ekm_access_denied,
+  event_ts: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  text: string,
+  user: UREVOKEDU
+} | {
+  type: message,
+  subtype: file_share,
+  text: string,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  files?: {
+    id: string,
+    created: number,
+    name?: string | null,
+    title?: string | null,
+    mimetype: string,
+    filetype: string,
+    pretty_type: string,
+    user?: string,
+    editable: boolean,
+    size: number,
+    mode: hosted | external | snippet | post,
+    is_external: boolean,
+    external_type?: string | null,
+    is_public: boolean,
+    public_url_shared: boolean,
+    display_as_bot: boolean,
+    username?: string | null,
+    url_private?: string,
+    url_private_download?: string,
+    permalink: string,
+    permalink_public?: string,
+    channels?: string[] | null,
+    groups?: string[] | null,
+    users?: string[],
+    is_starred?: boolean,
+    num_stars?: number
+  }[],
+  upload?: boolean,
+  display_as_bot?: boolean,
+  x_files?: string[],
+  user: string,
+  parent_user_id?: string,
+  ts: string,
+  thread_ts?: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  event_ts: string
+} | {
+  type: message,
+  subtype: me_message,
+  event_ts: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  user: string,
+  text: string,
+  ts: string
+} | {
+  type: message,
+  subtype: message_changed,
+  event_ts: string,
+  hidden: true,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  message: {
+    type: message,
+    subtype?: string,
+    user?: string,
+    bot_id?: string,
+    ts: string,
+    client_msg_id?: string,
+    text?: string,
+    team?: string,
+    source_team?: string,
+    user_team?: string,
+    edited?: {
+      user: string,
+      ts: string
+    },
+    blocks?: {
+      type: string,
+      block_id?: string
+    }[],
+    thread_ts?: string,
+    reply_count?: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    subscribed?: boolean,
+    is_locked?: boolean
+  },
+  previous_message: {
+    type: message,
+    subtype?: string,
+    user?: string,
+    bot_id?: string,
+    ts: string,
+    client_msg_id?: string,
+    text?: string,
+    team?: string,
+    source_team?: string,
+    user_team?: string,
+    edited?: {
+      user: string,
+      ts: string
+    },
+    blocks?: {
+      type: string,
+      block_id?: string
+    }[],
+    thread_ts?: string,
+    reply_count?: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    subscribed?: boolean,
+    is_locked?: boolean
+  }
+} | {
+  type: message,
+  subtype: message_deleted,
+  event_ts: string,
+  hidden: true,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  deleted_ts: string,
+  previous_message: lazy
+} | {
+  type: message,
+  subtype: message_replied,
+  event_ts: string,
+  hidden: true,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  message: lazy & {
+    thread_ts: string,
+    reply_count: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    replies: {
+      user: string,
+      ts: string
+    }[]
+  }
+} | {
+  type: message,
+  subtype: thread_broadcast,
+  event_ts: string,
+  text: string,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  user: string,
+  ts: string,
+  thread_ts?: string,
+  root: {
+    type: message,
+    event_ts: string,
+    channel: string,
+    ts: string,
+    channel_type: channel | group | im | mpim | app_home,
+    thread_ts: string,
+    reply_count: number,
+    reply_users_count: number,
+    latest_reply: string,
+    reply_users: string[],
+    user?: string,
+    text?: string,
+    bot_id?: string
+  },
+  client_msg_id: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: message,
+  event_ts: string,
+  team?: string,
+  channel: string,
+  user: string,
+  bot_id?: string,
+  bot_profile?: {
+    id: string,
+    name: string,
+    app_id: string,
+    team_id: string,
+    icons: {
+    },
+    updated: number,
+    deleted: boolean
+  },
+  text?: string,
+  ts: string,
+  thread_ts?: string,
+  channel_type: channel | group | im | mpim | app_home,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  files?: {
+    id: string,
+    created: number,
+    name?: string | null,
+    title?: string | null,
+    mimetype: string,
+    filetype: string,
+    pretty_type: string,
+    user?: string,
+    editable: boolean,
+    size: number,
+    mode: hosted | external | snippet | post,
+    is_external: boolean,
+    external_type?: string | null,
+    is_public: boolean,
+    public_url_shared: boolean,
+    display_as_bot: boolean,
+    username?: string | null,
+    url_private?: string,
+    url_private_download?: string,
+    permalink: string,
+    permalink_public?: string,
+    channels?: string[] | null,
+    groups?: string[] | null,
+    users?: string[],
+    is_starred?: boolean,
+    num_stars?: number
+  }[],
+  edited?: {
+    user: string,
+    ts: string
+  },
+  client_msg_id?: string,
+  parent_user_id?: string,
+  is_starred?: boolean,
+  pinned_to?: string[],
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[],
+  assistant_thread?: {
+  }
+} | {
+  type: message,
+  subtype: bot_message,
+  event_ts: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  streaming_state?: in_progress | completed | errored,
+  ts: string,
+  text: string,
+  bot_id: string,
+  username?: string,
+  user?: string,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  edited?: {
+    user: string,
+    ts: string
+  },
+  thread_ts?: string
+} | {
+  type: message,
+  subtype: channel_archive,
+  team: string,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_join,
+  team: string,
+  user: string,
+  inviter: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_leave,
+  team: string,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_name,
+  team: string,
+  user: string,
+  name: string,
+  old_name: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_posting_permissions,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_purpose,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  purpose: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_topic,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  topic: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: channel_unarchive,
+  team: string,
+  user: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  text: string,
+  ts: string,
+  event_ts: string
+} | {
+  type: message,
+  subtype: ekm_access_denied,
+  event_ts: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  text: string,
+  user: UREVOKEDU
+} | {
+  type: message,
+  subtype: file_share,
+  text: string,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  files?: {
+    id: string,
+    created: number,
+    name?: string | null,
+    title?: string | null,
+    mimetype: string,
+    filetype: string,
+    pretty_type: string,
+    user?: string,
+    editable: boolean,
+    size: number,
+    mode: hosted | external | snippet | post,
+    is_external: boolean,
+    external_type?: string | null,
+    is_public: boolean,
+    public_url_shared: boolean,
+    display_as_bot: boolean,
+    username?: string | null,
+    url_private?: string,
+    url_private_download?: string,
+    permalink: string,
+    permalink_public?: string,
+    channels?: string[] | null,
+    groups?: string[] | null,
+    users?: string[],
+    is_starred?: boolean,
+    num_stars?: number
+  }[],
+  upload?: boolean,
+  display_as_bot?: boolean,
+  x_files?: string[],
+  user: string,
+  parent_user_id?: string,
+  ts: string,
+  thread_ts?: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  event_ts: string
+} | {
+  type: message,
+  subtype: me_message,
+  event_ts: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  user: string,
+  text: string,
+  ts: string
+} | {
+  type: message,
+  subtype: message_changed,
+  event_ts: string,
+  hidden: true,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  message: {
+    type: message,
+    subtype?: string,
+    user?: string,
+    bot_id?: string,
+    ts: string,
+    client_msg_id?: string,
+    text?: string,
+    team?: string,
+    source_team?: string,
+    user_team?: string,
+    edited?: {
+      user: string,
+      ts: string
+    },
+    blocks?: {
+      type: string,
+      block_id?: string
+    }[],
+    thread_ts?: string,
+    reply_count?: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    subscribed?: boolean,
+    is_locked?: boolean
+  },
+  previous_message: {
+    type: message,
+    subtype?: string,
+    user?: string,
+    bot_id?: string,
+    ts: string,
+    client_msg_id?: string,
+    text?: string,
+    team?: string,
+    source_team?: string,
+    user_team?: string,
+    edited?: {
+      user: string,
+      ts: string
+    },
+    blocks?: {
+      type: string,
+      block_id?: string
+    }[],
+    thread_ts?: string,
+    reply_count?: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    subscribed?: boolean,
+    is_locked?: boolean
+  }
+} | {
+  type: message,
+  subtype: message_deleted,
+  event_ts: string,
+  hidden: true,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  deleted_ts: string,
+  previous_message: lazy
+} | {
+  type: message,
+  subtype: message_replied,
+  event_ts: string,
+  hidden: true,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home,
+  ts: string,
+  message: lazy & {
+    thread_ts: string,
+    reply_count: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    replies: {
+      user: string,
+      ts: string
+    }[]
+  }
+} | {
+  type: message,
+  subtype: thread_broadcast,
+  event_ts: string,
+  text: string,
+  attachments?: {
+    blocks?: (
+      {
+        type: section | divider | image | actions | context | input | file | header | video | rich_text,
+        block_id?: string
+      } | {
+        type: string,
+        block_id?: string
+      }
+    )[],
+    fallback?: string,
+    color?: string,
+    pretext?: string,
+    author_name?: string,
+    author_link?: string,
+    author_icon?: string,
+    title?: string,
+    title_link?: string,
+    text?: string,
+    fields?: {
+      title: string,
+      value: string,
+      short?: boolean
+    }[],
+    image_url?: string,
+    thumb_url?: string,
+    footer?: string,
+    footer_icon?: string,
+    ts?: string
+  }[],
+  blocks?: (
+    {
+      type: section | divider | image | actions | context | input | file | header | video | rich_text,
+      block_id?: string
+    } | {
+      type: string,
+      block_id?: string
+    }
+  )[],
+  user: string,
+  ts: string,
+  thread_ts?: string,
+  root: {
+    type: message,
+    event_ts: string,
+    channel: string,
+    ts: string,
+    channel_type: channel | group | im | mpim | app_home,
+    thread_ts: string,
+    reply_count: number,
+    reply_users_count: number,
+    latest_reply: string,
+    reply_users: string[],
+    user?: string,
+    text?: string,
+    bot_id?: string
+  },
+  client_msg_id: string,
+  channel: string,
+  channel_type: channel | group | im | mpim | app_home
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        messages: {
+            message: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Reactions
+
+### Added
+
+`reactions.added`
+
+A reaction emoji was added to a message
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: reaction_added,
+  user: string,
+  reaction: string,
+  item_user: string,
+  item: {
+    type: message,
+    channel: string,
+    ts: string
+  },
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: reaction_added,
+  user: string,
+  reaction: string,
+  item_user: string,
+  item: {
+    type: message,
+    channel: string,
+    ts: string
+  },
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        reactions: {
+            added: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Users
+
+### Team Join
+
+`users.teamJoin`
+
+A new user joined the workspace
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: team_join,
+  user: {
+    id: string,
+    team_id: string,
+    name: string,
+    deleted: boolean,
+    color: string,
+    real_name: string,
+    tz: string,
+    tz_label: string,
+    tz_offset: number,
+    profile: {
+      title: string,
+      phone: string,
+      skype: string,
+      real_name: string,
+      real_name_normalized: string,
+      display_name: string,
+      display_name_normalized: string,
+      status_text: string,
+      status_text_canonical: string,
+      status_emoji: string,
+      status_emoji_display_info: {
+        emoji_name?: string,
+        display_alias?: string,
+        display_url?: string
+      }[],
+      status_expiration: number,
+      avatar_hash: string,
+      huddle_state?: string,
+      huddle_state_expiration_ts?: number,
+      first_name: string,
+      last_name: string,
+      email?: string,
+      image_original?: string,
+      is_custom_image?: boolean,
+      image_24: string,
+      image_32: string,
+      image_48: string,
+      image_72: string,
+      image_192: string,
+      image_512: string,
+      image_1024?: string,
+      team: string,
+      fields: {
+      } | never[] | null
+    },
+    is_admin: boolean,
+    is_owner: boolean,
+    is_primary_owner: boolean,
+    is_restricted: boolean,
+    is_ultra_restricted: boolean,
+    is_bot: boolean,
+    is_stranger?: boolean,
+    updated: number,
+    is_email_confirmed: boolean,
+    is_app_user: boolean,
+    is_invited_user?: boolean,
+    has_2fa?: boolean,
+    locale: string,
+    presence?: string,
+    enterprise_user?: {
+      id: string,
+      enterprise_id: string,
+      enterprise_name: string,
+      is_admin: boolean,
+      is_owner: boolean,
+      teams: string[]
+    },
+    two_factor_type?: string,
+    has_files?: boolean,
+    is_workflow_bot?: boolean,
+    who_can_share_contact_card: string
+  },
+  cache_ts: number,
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: team_join,
+  user: {
+    id: string,
+    team_id: string,
+    name: string,
+    deleted: boolean,
+    color: string,
+    real_name: string,
+    tz: string,
+    tz_label: string,
+    tz_offset: number,
+    profile: {
+      title: string,
+      phone: string,
+      skype: string,
+      real_name: string,
+      real_name_normalized: string,
+      display_name: string,
+      display_name_normalized: string,
+      status_text: string,
+      status_text_canonical: string,
+      status_emoji: string,
+      status_emoji_display_info: {
+        emoji_name?: string,
+        display_alias?: string,
+        display_url?: string
+      }[],
+      status_expiration: number,
+      avatar_hash: string,
+      huddle_state?: string,
+      huddle_state_expiration_ts?: number,
+      first_name: string,
+      last_name: string,
+      email?: string,
+      image_original?: string,
+      is_custom_image?: boolean,
+      image_24: string,
+      image_32: string,
+      image_48: string,
+      image_72: string,
+      image_192: string,
+      image_512: string,
+      image_1024?: string,
+      team: string,
+      fields: {
+      } | never[] | null
+    },
+    is_admin: boolean,
+    is_owner: boolean,
+    is_primary_owner: boolean,
+    is_restricted: boolean,
+    is_ultra_restricted: boolean,
+    is_bot: boolean,
+    is_stranger?: boolean,
+    updated: number,
+    is_email_confirmed: boolean,
+    is_app_user: boolean,
+    is_invited_user?: boolean,
+    has_2fa?: boolean,
+    locale: string,
+    presence?: string,
+    enterprise_user?: {
+      id: string,
+      enterprise_id: string,
+      enterprise_name: string,
+      is_admin: boolean,
+      is_owner: boolean,
+      teams: string[]
+    },
+    two_factor_type?: string,
+    has_files?: boolean,
+    is_workflow_bot?: boolean,
+    who_can_share_contact_card: string
+  },
+  cache_ts: number,
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        users: {
+            teamJoin: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### User Change
+
+`users.userChange`
+
+A user's profile or account settings were updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `team_id` | `string` | Yes | — |
+| `api_app_id` | `string` | Yes | — |
+| `type` | `event_callback` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_time` | `number` | Yes | — |
+| `event_context` | `string` | No | — |
+| `authorizations` | `object[]` | No | — |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="authorizations full type">
+
+```ts
+{
+  enterprise_id?: string | null,
+  team_id: string,
+  user_id: string,
+  is_bot: boolean,
+  is_enterprise_install: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  type: user_change,
+  user: {
+    id: string,
+    team_id: string,
+    name: string,
+    deleted: boolean,
+    color: string,
+    real_name: string,
+    tz: string,
+    tz_label: string,
+    tz_offset: number,
+    profile: {
+      title: string,
+      phone: string,
+      skype: string,
+      real_name: string,
+      real_name_normalized: string,
+      display_name: string,
+      display_name_normalized: string,
+      status_text: string,
+      status_text_canonical: string,
+      status_emoji: string,
+      status_emoji_display_info: {
+        emoji_name?: string,
+        display_alias?: string,
+        display_url?: string
+      }[],
+      status_expiration: number,
+      avatar_hash: string,
+      huddle_state?: string,
+      huddle_state_expiration_ts?: number,
+      first_name: string,
+      last_name: string,
+      email?: string,
+      image_original?: string,
+      is_custom_image?: boolean,
+      image_24: string,
+      image_32: string,
+      image_48: string,
+      image_72: string,
+      image_192: string,
+      image_512: string,
+      image_1024?: string,
+      team: string,
+      fields: {
+      } | never[] | null
+    },
+    is_admin: boolean,
+    is_owner: boolean,
+    is_primary_owner: boolean,
+    is_restricted: boolean,
+    is_ultra_restricted: boolean,
+    is_bot: boolean,
+    is_stranger?: boolean,
+    updated: number,
+    is_email_confirmed: boolean,
+    is_app_user: boolean,
+    is_invited_user?: boolean,
+    has_2fa?: boolean,
+    locale: string,
+    presence?: string,
+    enterprise_user?: {
+      id: string,
+      enterprise_id: string,
+      enterprise_name: string,
+      is_admin: boolean,
+      is_owner: boolean,
+      teams: string[]
+    },
+    two_factor_type?: string,
+    has_files?: boolean,
+    is_workflow_bot?: boolean,
+    who_can_share_contact_card: string
+  },
+  cache_ts: number,
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: user_change,
+  user: {
+    id: string,
+    team_id: string,
+    name: string,
+    deleted: boolean,
+    color: string,
+    real_name: string,
+    tz: string,
+    tz_label: string,
+    tz_offset: number,
+    profile: {
+      title: string,
+      phone: string,
+      skype: string,
+      real_name: string,
+      real_name_normalized: string,
+      display_name: string,
+      display_name_normalized: string,
+      status_text: string,
+      status_text_canonical: string,
+      status_emoji: string,
+      status_emoji_display_info: {
+        emoji_name?: string,
+        display_alias?: string,
+        display_url?: string
+      }[],
+      status_expiration: number,
+      avatar_hash: string,
+      huddle_state?: string,
+      huddle_state_expiration_ts?: number,
+      first_name: string,
+      last_name: string,
+      email?: string,
+      image_original?: string,
+      is_custom_image?: boolean,
+      image_24: string,
+      image_32: string,
+      image_48: string,
+      image_72: string,
+      image_192: string,
+      image_512: string,
+      image_1024?: string,
+      team: string,
+      fields: {
+      } | never[] | null
+    },
+    is_admin: boolean,
+    is_owner: boolean,
+    is_primary_owner: boolean,
+    is_restricted: boolean,
+    is_ultra_restricted: boolean,
+    is_bot: boolean,
+    is_stranger?: boolean,
+    updated: number,
+    is_email_confirmed: boolean,
+    is_app_user: boolean,
+    is_invited_user?: boolean,
+    has_2fa?: boolean,
+    locale: string,
+    presence?: string,
+    enterprise_user?: {
+      id: string,
+      enterprise_id: string,
+      enterprise_name: string,
+      is_admin: boolean,
+      is_owner: boolean,
+      teams: string[]
+    },
+    two_factor_type?: string,
+    has_files?: boolean,
+    is_workflow_bot?: boolean,
+    who_can_share_contact_card: string
+  },
+  cache_ts: number,
+  event_ts: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+slack({
+    webhookHooks: {
+        users: {
+            userChange: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

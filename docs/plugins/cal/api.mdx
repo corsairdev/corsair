@@ -1,0 +1,633 @@
+---
+title: API
+description: "API reference for Cal.com: every `cal.api.*` operation with input and output types."
+---
+
+Every `cal.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bookings
+
+### cancel
+
+`bookings.cancel`
+
+Cancel a booking [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cal.api.bookings.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `cancellationReason` | `string` | No | — |
+| `allRemainingBookings` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status: string,
+  start?: string,
+  end?: string,
+  duration?: number,
+  eventTypeId?: number,
+  eventType?: {
+    id: number,
+    slug?: string
+  },
+  meetingUrl?: string | null,
+  location?: string | null,
+  absentHost?: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone: string,
+    language?: string,
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  guests?: string[],
+  metadata?: {
+  } | null,
+  bookingFieldsResponses?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### confirm
+
+`bookings.confirm`
+
+Confirm a pending booking
+
+**Risk:** `write`
+
+```ts
+await corsair.cal.api.bookings.confirm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status: string,
+  start?: string,
+  end?: string,
+  duration?: number,
+  eventTypeId?: number,
+  eventType?: {
+    id: number,
+    slug?: string
+  },
+  meetingUrl?: string | null,
+  location?: string | null,
+  absentHost?: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone: string,
+    language?: string,
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  guests?: string[],
+  metadata?: {
+  } | null,
+  bookingFieldsResponses?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`bookings.create`
+
+Create a new booking
+
+**Risk:** `write`
+
+```ts
+await corsair.cal.api.bookings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | — |
+| `eventTypeId` | `number` | Yes | — |
+| `attendee` | `object` | Yes | — |
+| `meetingUrl` | `string` | No | — |
+| `lengthInMinutes` | `number` | No | — |
+| `bookingFieldsResponses` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attendee full type">
+
+```ts
+{
+  name: string,
+  email: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="bookingFieldsResponses full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status: string,
+  start?: string,
+  end?: string,
+  duration?: number,
+  eventTypeId?: number,
+  eventType?: {
+    id: number,
+    slug?: string
+  },
+  meetingUrl?: string | null,
+  location?: string | null,
+  absentHost?: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone: string,
+    language?: string,
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  guests?: string[],
+  metadata?: {
+  } | null,
+  bookingFieldsResponses?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### decline
+
+`bookings.decline`
+
+Decline a pending booking
+
+**Risk:** `write`
+
+```ts
+await corsair.cal.api.bookings.decline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `reason` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status: string,
+  start?: string,
+  end?: string,
+  duration?: number,
+  eventTypeId?: number,
+  eventType?: {
+    id: number,
+    slug?: string
+  },
+  meetingUrl?: string | null,
+  location?: string | null,
+  absentHost?: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone: string,
+    language?: string,
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  guests?: string[],
+  metadata?: {
+  } | null,
+  bookingFieldsResponses?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`bookings.get`
+
+Get a booking by UID
+
+**Risk:** `read`
+
+```ts
+await corsair.cal.api.bookings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status: string,
+  start?: string,
+  end?: string,
+  duration?: number,
+  eventTypeId?: number,
+  eventType?: {
+    id: number,
+    slug?: string
+  },
+  meetingUrl?: string | null,
+  location?: string | null,
+  absentHost?: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone: string,
+    language?: string,
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  guests?: string[],
+  metadata?: {
+  } | null,
+  bookingFieldsResponses?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bookings.list`
+
+List all bookings
+
+**Risk:** `read`
+
+```ts
+await corsair.cal.api.bookings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `upcoming \| recurring \| past \| cancelled \| unconfirmed` | No | — |
+| `attendeeEmail` | `string` | No | — |
+| `attendeeName` | `string` | No | — |
+| `eventTypeIds` | `string` | No | — |
+| `eventTypeId` | `number` | No | — |
+| `teamsIds` | `string` | No | — |
+| `teamId` | `number` | No | — |
+| `afterStart` | `string` | No | — |
+| `beforeEnd` | `string` | No | — |
+| `sortStart` | `asc \| desc` | No | — |
+| `sortEnd` | `asc \| desc` | No | — |
+| `sortCreated` | `asc \| desc` | No | — |
+| `take` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status: string,
+  start?: string,
+  end?: string,
+  duration?: number,
+  eventTypeId?: number,
+  eventType?: {
+    id: number,
+    slug?: string
+  },
+  meetingUrl?: string | null,
+  location?: string | null,
+  absentHost?: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone: string,
+    language?: string,
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  guests?: string[],
+  metadata?: {
+  } | null,
+  bookingFieldsResponses?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reschedule
+
+`bookings.reschedule`
+
+Reschedule a booking to a new time
+
+**Risk:** `write`
+
+```ts
+await corsair.cal.api.bookings.reschedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `start` | `string` | Yes | — |
+| `rescheduledBy` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status: string,
+  start?: string,
+  end?: string,
+  duration?: number,
+  eventTypeId?: number,
+  eventType?: {
+    id: number,
+    slug?: string
+  },
+  meetingUrl?: string | null,
+  location?: string | null,
+  absentHost?: boolean,
+  createdAt?: string,
+  updatedAt?: string,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone: string,
+    language?: string,
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  guests?: string[],
+  metadata?: {
+  } | null,
+  bookingFieldsResponses?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,222 @@
+---
+title: Database
+description: "TwitterAPI.io local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The TwitterAPI.io plugin syncs data locally. Use `corsair.twitterapiio.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Communities
+
+Path: `twitterapiio.db.communities.search`
+
+```ts
+const rows = await corsair.twitterapiio.db.communities.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `memberCount` | `number` | equals, gt, gte, lt, lte, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `isNsfw` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Lists
+
+Path: `twitterapiio.db.lists.search`
+
+```ts
+const rows = await corsair.twitterapiio.db.lists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `memberCount` | `number` | equals, gt, gte, lt, lte, in |
+| `followerCount` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `isPrivate` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Replies
+
+Path: `twitterapiio.db.replies.search`
+
+```ts
+const rows = await corsair.twitterapiio.db.replies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `likeCount` | `number` | equals, gt, gte, lt, lte, in |
+| `retweetCount` | `number` | equals, gt, gte, lt, lte, in |
+| `replyCount` | `number` | equals, gt, gte, lt, lte, in |
+| `quoteCount` | `number` | equals, gt, gte, lt, lte, in |
+| `viewCount` | `number` | equals, gt, gte, lt, lte, in |
+| `bookmarkCount` | `number` | equals, gt, gte, lt, lte, in |
+| `lang` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `isRetweet` | `boolean` | equals |
+| `isQuote` | `boolean` | equals |
+| `isPinned` | `boolean` | equals |
+| `inReplyToStatusId` | `string` | equals, contains, startsWith, endsWith, in |
+| `inReplyToUserId` | `string` | equals, contains, startsWith, endsWith, in |
+| `quotedTweetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `conversationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `inReplyToUsername` | `string` | equals, contains, startsWith, endsWith, in |
+| `isLimitedReply` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Trends
+
+Path: `twitterapiio.db.trends.search`
+
+```ts
+const rows = await corsair.twitterapiio.db.trends.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `tweetVolume` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `woeid` | `number` | equals, gt, gte, lt, lte, in |
+| `trendingAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tweets
+
+Path: `twitterapiio.db.tweets.search`
+
+```ts
+const rows = await corsair.twitterapiio.db.tweets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `likeCount` | `number` | equals, gt, gte, lt, lte, in |
+| `retweetCount` | `number` | equals, gt, gte, lt, lte, in |
+| `replyCount` | `number` | equals, gt, gte, lt, lte, in |
+| `quoteCount` | `number` | equals, gt, gte, lt, lte, in |
+| `viewCount` | `number` | equals, gt, gte, lt, lte, in |
+| `bookmarkCount` | `number` | equals, gt, gte, lt, lte, in |
+| `lang` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `isRetweet` | `boolean` | equals |
+| `isQuote` | `boolean` | equals |
+| `isPinned` | `boolean` | equals |
+| `inReplyToStatusId` | `string` | equals, contains, startsWith, endsWith, in |
+| `inReplyToUserId` | `string` | equals, contains, startsWith, endsWith, in |
+| `quotedTweetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `conversationId` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `twitterapiio.db.users.search`
+
+```ts
+const rows = await corsair.twitterapiio.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `userName` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `followerCount` | `number` | equals, gt, gte, lt, lte, in |
+| `followingCount` | `number` | equals, gt, gte, lt, lte, in |
+| `profilePicture` | `string` | equals, contains, startsWith, endsWith, in |
+| `coverPicture` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `isBlueVerified` | `boolean` | equals |
+| `isGovernmentVerified` | `boolean` | equals |
+| `favouritesCount` | `number` | equals, gt, gte, lt, lte, in |
+| `statusesCount` | `number` | equals, gt, gte, lt, lte, in |
+| `mediaCount` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `isProtected` | `boolean` | equals |
+| `isSuspended` | `boolean` | equals |
+| `isUnavailable` | `boolean` | equals |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

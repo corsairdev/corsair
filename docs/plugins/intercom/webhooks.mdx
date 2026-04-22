@@ -1,0 +1,506 @@
+---
+title: Webhooks
+description: "Intercom incoming webhooks: event paths, payloads, and response data."
+---
+
+The Intercom plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/intercom/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `contacts`
+  - `created` (`contacts.created`)
+  - `deleted` (`contacts.deleted`)
+  - `tagCreated` (`contacts.tagCreated`)
+- `conversations`
+  - `assigned` (`conversations.assigned`)
+  - `closed` (`conversations.closed`)
+  - `created` (`conversations.created`)
+- `ping` (`ping`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Contacts
+
+### Created
+
+`contacts.created`
+
+A new contact was created in Intercom
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `app_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `first_sent_at` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  item: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  name?: string,
+  role?: string,
+  created_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+intercom({
+    webhookHooks: {
+        contacts: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`contacts.deleted`
+
+A contact was deleted from Intercom
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `app_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `first_sent_at` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  item: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+intercom({
+    webhookHooks: {
+        contacts: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Tag Created
+
+`contacts.tagCreated`
+
+A tag was added to a contact
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `app_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `first_sent_at` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  item: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  tag_id?: string,
+  contact_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+intercom({
+    webhookHooks: {
+        contacts: {
+            tagCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Conversations
+
+### Assigned
+
+`conversations.assigned`
+
+A conversation was assigned to an admin or team
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `app_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `first_sent_at` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  item: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  assignee?: {
+    type?: string,
+    id?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+intercom({
+    webhookHooks: {
+        conversations: {
+            assigned: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Closed
+
+`conversations.closed`
+
+A conversation was closed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `app_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `first_sent_at` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  item: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+intercom({
+    webhookHooks: {
+        conversations: {
+            closed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`conversations.created`
+
+A new conversation was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `app_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `first_sent_at` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  item: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  created_at?: number,
+  state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+intercom({
+    webhookHooks: {
+        conversations: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Ping
+
+### Ping
+
+`ping`
+
+Initial ping sent by Intercom when a webhook URL is first registered
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `app_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `first_sent_at` | `number` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  item: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: ping,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+intercom({
+    webhookHooks: {
+        ping: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

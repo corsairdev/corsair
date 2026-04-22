@@ -1,0 +1,525 @@
+---
+title: Webhooks
+description: "Razorpay incoming webhooks: event paths, payloads, and response data."
+---
+
+The Razorpay plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/razorpay/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `orders`
+  - `paid` (`orders.paid`)
+- `payments`
+  - `captured` (`payments.captured`)
+  - `failed` (`payments.failed`)
+- `refunds`
+  - `processed` (`refunds.processed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Orders
+
+### Paid
+
+`orders.paid`
+
+A Razorpay order was paid
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `event` | Yes | — |
+| `account_id` | `string` | Yes | — |
+| `event` | `order.paid` | Yes | — |
+| `contains` | `string[]` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  order: {
+    entity: {
+      id: string,
+      entity: order,
+      amount: number,
+      amount_paid?: number,
+      amount_due?: number,
+      currency: string,
+      receipt?: string | null,
+      offer_id?: string | null,
+      status: string,
+      attempts?: number,
+      notes?: {
+      } | any[],
+      created_at?: number
+    }
+  },
+  payment?: {
+    entity: {
+      id: string,
+      entity: payment,
+      amount: number,
+      currency: string,
+      status: string,
+      order_id?: string | null,
+      invoice_id?: string | null,
+      method?: string | null,
+      captured?: boolean,
+      description?: string | null,
+      email?: string | null,
+      contact?: string | null,
+      notes?: {
+      } | any[],
+      created_at?: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  entity: event,
+  account_id: string,
+  event: order.paid,
+  contains: string[],
+  created_at: number,
+  payload: {
+    order: {
+      entity: {
+        id: string,
+        entity: order,
+        amount: number,
+        amount_paid?: number,
+        amount_due?: number,
+        currency: string,
+        receipt?: string | null,
+        offer_id?: string | null,
+        status: string,
+        attempts?: number,
+        notes?: {
+        } | any[],
+        created_at?: number
+      }
+    },
+    payment?: {
+      entity: {
+        id: string,
+        entity: payment,
+        amount: number,
+        currency: string,
+        status: string,
+        order_id?: string | null,
+        invoice_id?: string | null,
+        method?: string | null,
+        captured?: boolean,
+        description?: string | null,
+        email?: string | null,
+        contact?: string | null,
+        notes?: {
+        } | any[],
+        created_at?: number
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+razorpay({
+    webhookHooks: {
+        orders: {
+            paid: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Payments
+
+### Captured
+
+`payments.captured`
+
+A Razorpay payment was captured
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `event` | Yes | — |
+| `account_id` | `string` | Yes | — |
+| `event` | `payment.captured` | Yes | — |
+| `contains` | `string[]` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  payment: {
+    entity: {
+      id: string,
+      entity: payment,
+      amount: number,
+      currency: string,
+      status: string,
+      order_id?: string | null,
+      invoice_id?: string | null,
+      method?: string | null,
+      captured?: boolean,
+      description?: string | null,
+      email?: string | null,
+      contact?: string | null,
+      notes?: {
+      } | any[],
+      created_at?: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  entity: event,
+  account_id: string,
+  event: payment.captured,
+  contains: string[],
+  created_at: number,
+  payload: {
+    payment: {
+      entity: {
+        id: string,
+        entity: payment,
+        amount: number,
+        currency: string,
+        status: string,
+        order_id?: string | null,
+        invoice_id?: string | null,
+        method?: string | null,
+        captured?: boolean,
+        description?: string | null,
+        email?: string | null,
+        contact?: string | null,
+        notes?: {
+        } | any[],
+        created_at?: number
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+razorpay({
+    webhookHooks: {
+        payments: {
+            captured: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`payments.failed`
+
+A Razorpay payment failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `event` | Yes | — |
+| `account_id` | `string` | Yes | — |
+| `event` | `payment.failed` | Yes | — |
+| `contains` | `string[]` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  payment: {
+    entity: {
+      id: string,
+      entity: payment,
+      amount: number,
+      currency: string,
+      status: string,
+      order_id?: string | null,
+      invoice_id?: string | null,
+      method?: string | null,
+      captured?: boolean,
+      description?: string | null,
+      email?: string | null,
+      contact?: string | null,
+      notes?: {
+      } | any[],
+      created_at?: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  entity: event,
+  account_id: string,
+  event: payment.failed,
+  contains: string[],
+  created_at: number,
+  payload: {
+    payment: {
+      entity: {
+        id: string,
+        entity: payment,
+        amount: number,
+        currency: string,
+        status: string,
+        order_id?: string | null,
+        invoice_id?: string | null,
+        method?: string | null,
+        captured?: boolean,
+        description?: string | null,
+        email?: string | null,
+        contact?: string | null,
+        notes?: {
+        } | any[],
+        created_at?: number
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+razorpay({
+    webhookHooks: {
+        payments: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Refunds
+
+### Processed
+
+`refunds.processed`
+
+A Razorpay refund was processed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `event` | Yes | — |
+| `account_id` | `string` | Yes | — |
+| `event` | `refund.processed` | Yes | — |
+| `contains` | `string[]` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  refund: {
+    entity: {
+      id: string,
+      entity: refund,
+      payment_id: string,
+      amount: number,
+      currency?: string | null,
+      notes?: {
+      } | any[],
+      receipt?: string | null,
+      speed_processed?: string | null,
+      speed_requested?: string | null,
+      status: string,
+      created_at?: number
+    }
+  },
+  payment?: {
+    entity: {
+      id: string,
+      entity: payment,
+      amount: number,
+      currency: string,
+      status: string,
+      order_id?: string | null,
+      invoice_id?: string | null,
+      method?: string | null,
+      captured?: boolean,
+      description?: string | null,
+      email?: string | null,
+      contact?: string | null,
+      notes?: {
+      } | any[],
+      created_at?: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  entity: event,
+  account_id: string,
+  event: refund.processed,
+  contains: string[],
+  created_at: number,
+  payload: {
+    refund: {
+      entity: {
+        id: string,
+        entity: refund,
+        payment_id: string,
+        amount: number,
+        currency?: string | null,
+        notes?: {
+        } | any[],
+        receipt?: string | null,
+        speed_processed?: string | null,
+        speed_requested?: string | null,
+        status: string,
+        created_at?: number
+      }
+    },
+    payment?: {
+      entity: {
+        id: string,
+        entity: payment,
+        amount: number,
+        currency: string,
+        status: string,
+        order_id?: string | null,
+        invoice_id?: string | null,
+        method?: string | null,
+        captured?: boolean,
+        description?: string | null,
+        email?: string | null,
+        contact?: string | null,
+        notes?: {
+        } | any[],
+        created_at?: number
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+razorpay({
+    webhookHooks: {
+        refunds: {
+            processed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,9 +1,7 @@
-import React from 'react';
-
 export const GenerateKEK = () => {
-  const [key, setKey] = React.useState('');
-  const [copiedCmd, setCopiedCmd] = React.useState(false);
-  const [copiedEnv, setCopiedEnv] = React.useState(false);
+  const [key, setKey] = useState('');
+  const [copiedCmd, setCopiedCmd] = useState(false);
+  const [copiedEnv, setCopiedEnv] = useState(false);
 
   const generate = () => {
     const bytes = new Uint8Array(32);
@@ -11,7 +9,7 @@ export const GenerateKEK = () => {
     setKey(btoa(String.fromCharCode(...bytes)));
   };
 
-  React.useEffect(() => { generate(); }, []);
+  useEffect(() => { generate(); }, []);
 
   const copy = (text, setter) => {
     navigator.clipboard.writeText(text);
