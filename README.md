@@ -56,7 +56,12 @@ The second one is a live webhook workflow. Corsair handles the event routing and
 
 ## Contributing
 
-If you want to contribute to Corsair, start with [`CONTRIBUTING.md`](./CONTRIBUTING.md). It covers local setup, branch and commit workflow, plugin expectations, testing in `demo/testing`, and guidance for designing new integrations.
+Corsair is open source, and contributions are welcome.
+
+You can help by:
+
+- [Contributing](./CONTRIBUTING.md)
+- [Suggesting features](https://github.com/corsairdev/corsair/issues)
 
 ## Beyond personal use
 
