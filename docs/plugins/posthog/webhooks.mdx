@@ -1,0 +1,150 @@
+---
+title: Webhooks
+description: "Posthog incoming webhooks: event paths, payloads, and response data."
+---
+
+The Posthog plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/posthog/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `events`
+  - `captured` (`events.captured`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Events
+
+### Captured
+
+`events.captured`
+
+A PostHog event was captured
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `distinct_id` | `string` | Yes | — |
+| `timestamp` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `properties` | `object` | No | — |
+| `person` | `object` | No | — |
+| `groups` | `object` | No | — |
+| `$set` | `object` | No | — |
+| `$set_once` | `object` | No | — |
+| `$unset` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  distinct_id: string,
+  properties?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="$set full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="$set_once full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  distinct_id: string,
+  timestamp?: string,
+  uuid?: string,
+  properties?: {
+  },
+  person?: {
+    distinct_id: string,
+    properties?: {
+    }
+  },
+  groups?: {
+  },
+  $set?: {
+  },
+  $set_once?: {
+  },
+  $unset?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+posthog({
+    webhookHooks: {
+        events: {
+            captured: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

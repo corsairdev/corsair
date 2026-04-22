@@ -24,58 +24,52 @@
           {
             "group": "Get Started",
             "pages": [
-              "content/getting-started/introduction",
-              "content/getting-started/quick-start",
-              "content/getting-started/installation"
+              "getting-started/introduction",
+              "getting-started/quick-start",
+              "getting-started/installation"
             ]
           },
           {
             "group": "MCP Adapters",
             "pages": [
-              "content/mcp-adapters/mcp-adapters",
-              "content/mcp-adapters/anthropic-sdk",
-              "content/mcp-adapters/claude-sdk",
-              "content/mcp-adapters/openai-agents",
-              "content/mcp-adapters/vercel-ai",
-              "content/mcp-adapters/mastra",
-              "content/mcp-adapters/openai"
+              "mcp-adapters/mcp-adapters",
+              "mcp-adapters/anthropic-sdk",
+              "mcp-adapters/claude-sdk",
+              "mcp-adapters/openai-agents",
+              "mcp-adapters/vercel-ai",
+              "mcp-adapters/mastra",
+              "mcp-adapters/openai"
             ]
           },
           {
             "group": "Coding Agents",
-            "pages": [
-              "content/mcp-adapters/claude-code",
-              "content/mcp-adapters/cursor"
-            ]
+            "pages": ["mcp-adapters/claude-code", "mcp-adapters/cursor"]
           },
           {
             "group": "Core Concepts",
             "pages": [
-              "content/concepts/integrations",
-              "content/concepts/auth",
-              "content/concepts/database",
-              "content/concepts/webhooks",
-              "content/concepts/hooks",
-              "content/concepts/multi-tenancy",
-              "content/concepts/api",
-              "content/concepts/error-handling",
-              "content/concepts/typescript"
+              "concepts/integrations",
+              "concepts/auth",
+              "concepts/database",
+              "concepts/webhooks",
+              "concepts/hooks",
+              "concepts/multi-tenancy",
+              "concepts/api",
+              "concepts/error-handling",
+              "concepts/typescript"
             ]
           },
           {
             "group": "Auth Types",
-            "pages": [
-              "content/concepts/api-key",
-              "content/concepts/oauth"
-            ]
+            "pages": ["concepts/api-key", "concepts/oauth"]
           },
           {
             "group": "Workflow Engines",
             "pages": [
-              "content/guides/inngest",
-              "content/guides/temporal",
-              "content/guides/trigger-dev",
-              "content/guides/hatchet"
+              "guides/inngest",
+              "guides/temporal",
+              "guides/trigger-dev",
+              "guides/hatchet"
             ]
           }
         ]
@@ -84,50 +78,523 @@
         "tab": "Plugins",
         "groups": [
           {
-            "group": "Build Your Own",
-            "pages": [
-              "content/guides/create-your-own-plugin",
-              "content/guides/plugin-credentials"
-            ]
+            "group": "Overview",
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
             "pages": [
-              "content/plugins/airtable/main",
-              "content/plugins/amplitude/main",
-              "content/plugins/asana/main",
-              "content/plugins/box/main",
-              "content/plugins/cal/main",
-              "content/plugins/calendly/main",
-              "content/plugins/discord/main",
-              "content/plugins/dropbox/main",
-              "content/plugins/exa/main",
-              "content/plugins/github/main",
-              "content/plugins/gmail/main",
-              "content/plugins/googlecalendar/main",
-              "content/plugins/googledrive/main",
-              "content/plugins/googlesheets/main",
-              "content/plugins/hackernews/main",
-              "content/plugins/hubspot/main",
-              "content/plugins/intercom/main",
-              "content/plugins/jira/main",
-              "content/plugins/linear/main",
-              "content/plugins/monday/main",
-              "content/plugins/notion/main",
-              "content/plugins/onedrive/main",
-              "content/plugins/outlook/main",
-              "content/plugins/pagerduty/main",
-              "content/plugins/posthog/main",
-              "content/plugins/resend/main",
-              "content/plugins/sentry/main",
-              "content/plugins/slack/main",
-              "content/plugins/stripe/main",
-              "content/plugins/tavily/main",
-              "content/plugins/telegram/main",
-              "content/plugins/todoist/main",
-              "content/plugins/trello/main",
-              "content/plugins/typeform/main",
-              "content/plugins/zoom/main"
+              {
+                "group": "Ahrefs",
+                "pages": [
+                  "plugins/ahrefs/overview",
+                  "plugins/ahrefs/get-credentials",
+                  "plugins/ahrefs/database"
+                ]
+              },
+              {
+                "group": "Airtable",
+                "pages": [
+                  "plugins/airtable/overview",
+                  "plugins/airtable/get-credentials",
+                  "plugins/airtable/api",
+                  "plugins/airtable/database",
+                  "plugins/airtable/webhooks"
+                ]
+              },
+              {
+                "group": "Amplitude",
+                "pages": [
+                  "plugins/amplitude/overview",
+                  "plugins/amplitude/get-credentials",
+                  "plugins/amplitude/api",
+                  "plugins/amplitude/database",
+                  "plugins/amplitude/webhooks"
+                ]
+              },
+              {
+                "group": "Asana",
+                "pages": [
+                  "plugins/asana/overview",
+                  "plugins/asana/get-credentials",
+                  "plugins/asana/api",
+                  "plugins/asana/database",
+                  "plugins/asana/webhooks"
+                ]
+              },
+              {
+                "group": "Box",
+                "pages": [
+                  "plugins/box/overview",
+                  "plugins/box/get-credentials",
+                  "plugins/box/api",
+                  "plugins/box/database",
+                  "plugins/box/webhooks"
+                ]
+              },
+              {
+                "group": "Cal.com",
+                "pages": [
+                  "plugins/cal/overview",
+                  "plugins/cal/get-credentials",
+                  "plugins/cal/api",
+                  "plugins/cal/database",
+                  "plugins/cal/webhooks"
+                ]
+              },
+              {
+                "group": "Calendly",
+                "pages": [
+                  "plugins/calendly/overview",
+                  "plugins/calendly/get-credentials",
+                  "plugins/calendly/api",
+                  "plugins/calendly/database",
+                  "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "Cursor",
+                "pages": [
+                  "plugins/cursor/overview",
+                  "plugins/cursor/get-credentials",
+                  "plugins/cursor/api",
+                  "plugins/cursor/database"
+                ]
+              },
+              {
+                "group": "Discord",
+                "pages": [
+                  "plugins/discord/overview",
+                  "plugins/discord/get-credentials",
+                  "plugins/discord/api",
+                  "plugins/discord/database",
+                  "plugins/discord/webhooks"
+                ]
+              },
+              {
+                "group": "Dodo Payments",
+                "pages": [
+                  "plugins/dodopayments/overview",
+                  "plugins/dodopayments/api",
+                  "plugins/dodopayments/database",
+                  "plugins/dodopayments/webhooks"
+                ]
+              },
+              {
+                "group": "Dropbox",
+                "pages": [
+                  "plugins/dropbox/overview",
+                  "plugins/dropbox/get-credentials",
+                  "plugins/dropbox/api",
+                  "plugins/dropbox/database",
+                  "plugins/dropbox/webhooks"
+                ]
+              },
+              {
+                "group": "Exa",
+                "pages": [
+                  "plugins/exa/overview",
+                  "plugins/exa/get-credentials",
+                  "plugins/exa/api",
+                  "plugins/exa/database",
+                  "plugins/exa/webhooks"
+                ]
+              },
+              {
+                "group": "Figma",
+                "pages": [
+                  "plugins/figma/overview",
+                  "plugins/figma/get-credentials",
+                  "plugins/figma/api",
+                  "plugins/figma/database",
+                  "plugins/figma/webhooks"
+                ]
+              },
+              {
+                "group": "Firecrawl",
+                "pages": [
+                  "plugins/firecrawl/overview",
+                  "plugins/firecrawl/api",
+                  "plugins/firecrawl/database",
+                  "plugins/firecrawl/webhooks"
+                ]
+              },
+              {
+                "group": "Fireflies",
+                "pages": [
+                  "plugins/fireflies/overview",
+                  "plugins/fireflies/get-credentials",
+                  "plugins/fireflies/api",
+                  "plugins/fireflies/database",
+                  "plugins/fireflies/webhooks"
+                ]
+              },
+              {
+                "group": "Github",
+                "pages": [
+                  "plugins/github/overview",
+                  "plugins/github/get-credentials",
+                  "plugins/github/api",
+                  "plugins/github/database",
+                  "plugins/github/webhooks"
+                ]
+              },
+              {
+                "group": "Gmail",
+                "pages": [
+                  "plugins/gmail/overview",
+                  "plugins/gmail/get-credentials",
+                  "plugins/gmail/api",
+                  "plugins/gmail/database",
+                  "plugins/gmail/webhooks"
+                ]
+              },
+              {
+                "group": "Google calendar",
+                "pages": [
+                  "plugins/googlecalendar/overview",
+                  "plugins/googlecalendar/get-credentials",
+                  "plugins/googlecalendar/api",
+                  "plugins/googlecalendar/database",
+                  "plugins/googlecalendar/webhooks"
+                ]
+              },
+              {
+                "group": "Google drive",
+                "pages": [
+                  "plugins/googledrive/overview",
+                  "plugins/googledrive/get-credentials",
+                  "plugins/googledrive/api",
+                  "plugins/googledrive/database",
+                  "plugins/googledrive/webhooks"
+                ]
+              },
+              {
+                "group": "Google sheets",
+                "pages": [
+                  "plugins/googlesheets/overview",
+                  "plugins/googlesheets/get-credentials",
+                  "plugins/googlesheets/api",
+                  "plugins/googlesheets/database",
+                  "plugins/googlesheets/webhooks"
+                ]
+              },
+              {
+                "group": "Grafana",
+                "pages": [
+                  "plugins/grafana/overview",
+                  "plugins/grafana/api",
+                  "plugins/grafana/database"
+                ]
+              },
+              {
+                "group": "Hacker news",
+                "pages": [
+                  "plugins/hackernews/overview",
+                  "plugins/hackernews/get-credentials",
+                  "plugins/hackernews/api",
+                  "plugins/hackernews/database"
+                ]
+              },
+              {
+                "group": "Hubspot",
+                "pages": [
+                  "plugins/hubspot/overview",
+                  "plugins/hubspot/get-credentials",
+                  "plugins/hubspot/api",
+                  "plugins/hubspot/database",
+                  "plugins/hubspot/webhooks"
+                ]
+              },
+              {
+                "group": "Intercom",
+                "pages": [
+                  "plugins/intercom/overview",
+                  "plugins/intercom/get-credentials",
+                  "plugins/intercom/api",
+                  "plugins/intercom/database",
+                  "plugins/intercom/webhooks"
+                ]
+              },
+              {
+                "group": "Jira",
+                "pages": [
+                  "plugins/jira/overview",
+                  "plugins/jira/get-credentials",
+                  "plugins/jira/api",
+                  "plugins/jira/database",
+                  "plugins/jira/webhooks"
+                ]
+              },
+              {
+                "group": "Linear",
+                "pages": [
+                  "plugins/linear/overview",
+                  "plugins/linear/get-credentials",
+                  "plugins/linear/api",
+                  "plugins/linear/database",
+                  "plugins/linear/webhooks"
+                ]
+              },
+              {
+                "group": "Microsoft Teams",
+                "pages": [
+                  "plugins/teams/overview",
+                  "plugins/teams/api",
+                  "plugins/teams/database",
+                  "plugins/teams/webhooks"
+                ]
+              },
+              {
+                "group": "Monday",
+                "pages": [
+                  "plugins/monday/overview",
+                  "plugins/monday/get-credentials",
+                  "plugins/monday/api",
+                  "plugins/monday/database",
+                  "plugins/monday/webhooks"
+                ]
+              },
+              {
+                "group": "Notion",
+                "pages": [
+                  "plugins/notion/overview",
+                  "plugins/notion/get-credentials",
+                  "plugins/notion/api",
+                  "plugins/notion/database",
+                  "plugins/notion/webhooks"
+                ]
+              },
+              {
+                "group": "Onedrive",
+                "pages": [
+                  "plugins/onedrive/overview",
+                  "plugins/onedrive/get-credentials",
+                  "plugins/onedrive/api",
+                  "plugins/onedrive/database",
+                  "plugins/onedrive/webhooks"
+                ]
+              },
+              {
+                "group": "Open Weather Map",
+                "pages": [
+                  "plugins/openweathermap/overview",
+                  "plugins/openweathermap/api",
+                  "plugins/openweathermap/database"
+                ]
+              },
+              {
+                "group": "Oura",
+                "pages": [
+                  "plugins/oura/overview",
+                  "plugins/oura/get-credentials",
+                  "plugins/oura/api",
+                  "plugins/oura/database",
+                  "plugins/oura/webhooks"
+                ]
+              },
+              {
+                "group": "Outlook",
+                "pages": [
+                  "plugins/outlook/overview",
+                  "plugins/outlook/get-credentials",
+                  "plugins/outlook/api",
+                  "plugins/outlook/database",
+                  "plugins/outlook/webhooks"
+                ]
+              },
+              {
+                "group": "Pagerduty",
+                "pages": [
+                  "plugins/pagerduty/overview",
+                  "plugins/pagerduty/get-credentials",
+                  "plugins/pagerduty/api",
+                  "plugins/pagerduty/database",
+                  "plugins/pagerduty/webhooks"
+                ]
+              },
+              {
+                "group": "Posthog",
+                "pages": [
+                  "plugins/posthog/overview",
+                  "plugins/posthog/get-credentials",
+                  "plugins/posthog/api",
+                  "plugins/posthog/database",
+                  "plugins/posthog/webhooks"
+                ]
+              },
+              {
+                "group": "Razorpay",
+                "pages": [
+                  "plugins/razorpay/overview",
+                  "plugins/razorpay/api",
+                  "plugins/razorpay/database",
+                  "plugins/razorpay/webhooks"
+                ]
+              },
+              {
+                "group": "Reddit",
+                "pages": [
+                  "plugins/reddit/overview",
+                  "plugins/reddit/get-credentials",
+                  "plugins/reddit/api",
+                  "plugins/reddit/database"
+                ]
+              },
+              {
+                "group": "Resend",
+                "pages": [
+                  "plugins/resend/overview",
+                  "plugins/resend/get-credentials",
+                  "plugins/resend/api",
+                  "plugins/resend/database",
+                  "plugins/resend/webhooks"
+                ]
+              },
+              {
+                "group": "Sentry",
+                "pages": [
+                  "plugins/sentry/overview",
+                  "plugins/sentry/get-credentials",
+                  "plugins/sentry/api",
+                  "plugins/sentry/database",
+                  "plugins/sentry/webhooks"
+                ]
+              },
+              {
+                "group": "Sharepoint",
+                "pages": [
+                  "plugins/sharepoint/overview",
+                  "plugins/sharepoint/api",
+                  "plugins/sharepoint/database",
+                  "plugins/sharepoint/webhooks"
+                ]
+              },
+              {
+                "group": "Slack",
+                "pages": [
+                  "plugins/slack/overview",
+                  "plugins/slack/get-credentials",
+                  "plugins/slack/api",
+                  "plugins/slack/database",
+                  "plugins/slack/webhooks"
+                ]
+              },
+              {
+                "group": "Spotify",
+                "pages": [
+                  "plugins/spotify/overview",
+                  "plugins/spotify/get-credentials",
+                  "plugins/spotify/api",
+                  "plugins/spotify/database"
+                ]
+              },
+              {
+                "group": "Strava",
+                "pages": [
+                  "plugins/strava/overview",
+                  "plugins/strava/get-credentials",
+                  "plugins/strava/api",
+                  "plugins/strava/database"
+                ]
+              },
+              {
+                "group": "Stripe",
+                "pages": [
+                  "plugins/stripe/overview",
+                  "plugins/stripe/get-credentials",
+                  "plugins/stripe/api",
+                  "plugins/stripe/database",
+                  "plugins/stripe/webhooks"
+                ]
+              },
+              {
+                "group": "Tavily",
+                "pages": [
+                  "plugins/tavily/overview",
+                  "plugins/tavily/get-credentials",
+                  "plugins/tavily/api",
+                  "plugins/tavily/database"
+                ]
+              },
+              {
+                "group": "Telegram",
+                "pages": [
+                  "plugins/telegram/overview",
+                  "plugins/telegram/get-credentials",
+                  "plugins/telegram/api",
+                  "plugins/telegram/database",
+                  "plugins/telegram/webhooks"
+                ]
+              },
+              {
+                "group": "Todoist",
+                "pages": [
+                  "plugins/todoist/overview",
+                  "plugins/todoist/get-credentials",
+                  "plugins/todoist/api",
+                  "plugins/todoist/database",
+                  "plugins/todoist/webhooks"
+                ]
+              },
+              {
+                "group": "Trello",
+                "pages": [
+                  "plugins/trello/overview",
+                  "plugins/trello/get-credentials",
+                  "plugins/trello/api",
+                  "plugins/trello/database",
+                  "plugins/trello/webhooks"
+                ]
+              },
+              {
+                "group": "Twitter",
+                "pages": [
+                  "plugins/twitter/overview",
+                  "plugins/twitter/get-credentials",
+                  "plugins/twitter/api",
+                  "plugins/twitter/database"
+                ]
+              },
+              {
+                "group": "TwitterAPI.io",
+                "pages": [
+                  "plugins/twitterapiio/overview",
+                  "plugins/twitterapiio/get-credentials",
+                  "plugins/twitterapiio/api",
+                  "plugins/twitterapiio/database",
+                  "plugins/twitterapiio/webhooks"
+                ]
+              },
+              {
+                "group": "Typeform",
+                "pages": [
+                  "plugins/typeform/overview",
+                  "plugins/typeform/get-credentials",
+                  "plugins/typeform/api",
+                  "plugins/typeform/database",
+                  "plugins/typeform/webhooks"
+                ]
+              },
+              {
+                "group": "Youtube",
+                "pages": [
+                  "plugins/youtube/overview",
+                  "plugins/youtube/get-credentials",
+                  "plugins/youtube/api",
+                  "plugins/youtube/database"
+                ]
+              },
+              {
+                "group": "Zoom",
+                "pages": [
+                  "plugins/zoom/overview",
+                  "plugins/zoom/get-credentials",
+                  "plugins/zoom/api",
+                  "plugins/zoom/database",
+                  "plugins/zoom/webhooks"
+                ]
+              }
             ]
           }
         ]
@@ -137,11 +604,7 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": [
-              "content/guides/webhooks",
-              "content/guides/workflows",
-              "content/guides/dashboard"
-            ]
+            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
           }
         ]
       }

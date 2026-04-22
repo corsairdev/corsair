@@ -1,0 +1,153 @@
+---
+title: Database
+description: "Google drive local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Google drive plugin syncs data locally. Use `corsair.googledrive.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Files
+
+Path: `googledrive.db.files.search`
+
+```ts
+const rows = await corsair.googledrive.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `mimeType` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `starred` | `boolean` | equals |
+| `trashed` | `boolean` | equals |
+| `explicitlyTrashed` | `boolean` | equals |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `webViewLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `webContentLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `iconLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `hasThumbnail` | `boolean` | equals |
+| `thumbnailLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnailVersion` | `string` | equals, contains, startsWith, endsWith, in |
+| `viewedByMe` | `boolean` | equals |
+| `viewedByMeTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedByMeTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedByMe` | `boolean` | equals |
+| `shared` | `boolean` | equals |
+| `ownedByMe` | `boolean` | equals |
+| `viewersCanCopyContent` | `boolean` | equals |
+| `copyRequiresWriterPermission` | `boolean` | equals |
+| `writersCanShare` | `boolean` | equals |
+| `hasAugmentedPermissions` | `boolean` | equals |
+| `folderColorRgb` | `string` | equals, contains, startsWith, endsWith, in |
+| `originalFilename` | `string` | equals, contains, startsWith, endsWith, in |
+| `fullFileExtension` | `string` | equals, contains, startsWith, endsWith, in |
+| `fileExtension` | `string` | equals, contains, startsWith, endsWith, in |
+| `md5Checksum` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `string` | equals, contains, startsWith, endsWith, in |
+| `quotaBytesUsed` | `string` | equals, contains, startsWith, endsWith, in |
+| `headRevisionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `isAppAuthorized` | `boolean` | equals |
+| `resourceKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha1Checksum` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha256Checksum` | `string` | equals, contains, startsWith, endsWith, in |
+| `filePath` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Folders
+
+Path: `googledrive.db.folders.search`
+
+```ts
+const rows = await corsair.googledrive.db.folders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `mimeType` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `starred` | `boolean` | equals |
+| `trashed` | `boolean` | equals |
+| `explicitlyTrashed` | `boolean` | equals |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `webViewLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `webContentLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `iconLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `hasThumbnail` | `boolean` | equals |
+| `thumbnailLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnailVersion` | `string` | equals, contains, startsWith, endsWith, in |
+| `viewedByMe` | `boolean` | equals |
+| `viewedByMeTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedByMeTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `modifiedByMe` | `boolean` | equals |
+| `shared` | `boolean` | equals |
+| `ownedByMe` | `boolean` | equals |
+| `viewersCanCopyContent` | `boolean` | equals |
+| `copyRequiresWriterPermission` | `boolean` | equals |
+| `writersCanShare` | `boolean` | equals |
+| `hasAugmentedPermissions` | `boolean` | equals |
+| `folderColorRgb` | `string` | equals, contains, startsWith, endsWith, in |
+| `filePath` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Shared Drives
+
+Path: `googledrive.db.sharedDrives.search`
+
+```ts
+const rows = await corsair.googledrive.db.sharedDrives.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `themeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `colorRgb` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `hidden` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

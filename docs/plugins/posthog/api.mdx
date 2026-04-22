@@ -1,0 +1,252 @@
+---
+title: API
+description: "API reference for Posthog: every `posthog.api.*` operation with input and output types."
+---
+
+Every `posthog.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### aliasCreate
+
+`events.aliasCreate`
+
+Create an alias linking two distinct user IDs
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.events.aliasCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | — |
+| `alias` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+number | string | {
+  status?: number | string,
+  message?: string
+} | any
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### eventCreate
+
+`events.eventCreate`
+
+Ingest an analytics event
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.events.eventCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | — |
+| `event` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `timestamp` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+number | string | {
+  status?: number | string,
+  message?: string
+} | any
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### identityCreate
+
+`events.identityCreate`
+
+Associate properties with a user identity
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.events.identityCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+number | string | {
+  status?: number | string,
+  message?: string
+} | any
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### trackPage
+
+`events.trackPage`
+
+Track a page view event
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.events.trackPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `timestamp` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+number | string | {
+  status?: number | string,
+  message?: string
+} | any
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### trackScreen
+
+`events.trackScreen`
+
+Track a screen view event
+
+**Risk:** `write`
+
+```ts
+await corsair.posthog.api.events.trackScreen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | — |
+| `screen_name` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `timestamp` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+number | string | {
+  status?: number | string,
+  message?: string
+} | any
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

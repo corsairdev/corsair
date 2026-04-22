@@ -1,0 +1,3023 @@
+---
+title: API
+description: "API reference for Outlook: every `outlook.api.*` operation with input and output types."
+---
+
+Every `outlook.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calendars
+
+### create
+
+`calendars.create`
+
+Create a new calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.calendars.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `color` | `string` | No | — |
+| `hexColor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `hexColor` | `string` | No | — |
+| `isDefaultCalendar` | `boolean` | No | — |
+| `canEdit` | `boolean` | No | — |
+| `canShare` | `boolean` | No | — |
+| `canViewPrivateItems` | `boolean` | No | — |
+| `isRemovable` | `boolean` | No | — |
+| `isTallyingResponses` | `boolean` | No | — |
+| `owner` | `object` | No | — |
+| `changeKey` | `string` | No | — |
+| `allowedOnlineMeetingProviders` | `string[]` | No | — |
+| `defaultOnlineMeetingProvider` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`calendars.delete`
+
+Delete a calendar [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.outlook.api.calendars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`calendars.get`
+
+Get a calendar by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.calendars.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `hexColor` | `string` | No | — |
+| `isDefaultCalendar` | `boolean` | No | — |
+| `canEdit` | `boolean` | No | — |
+| `canShare` | `boolean` | No | — |
+| `canViewPrivateItems` | `boolean` | No | — |
+| `isRemovable` | `boolean` | No | — |
+| `isTallyingResponses` | `boolean` | No | — |
+| `owner` | `object` | No | — |
+| `changeKey` | `string` | No | — |
+| `allowedOnlineMeetingProviders` | `string[]` | No | — |
+| `defaultOnlineMeetingProvider` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calendars.list`
+
+List all calendars
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.calendars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string[]` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `@odata.deltaLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  color?: string,
+  hexColor?: string,
+  isDefaultCalendar?: boolean,
+  canEdit?: boolean,
+  canShare?: boolean,
+  canViewPrivateItems?: boolean,
+  isRemovable?: boolean,
+  isTallyingResponses?: boolean,
+  owner?: {
+    name?: string,
+    address?: string
+  },
+  changeKey?: string,
+  allowedOnlineMeetingProviders?: string[],
+  defaultOnlineMeetingProvider?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new contact
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `givenName` | `string` | No | — |
+| `surname` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `mobilePhone` | `string` | No | — |
+| `homePhone` | `string` | No | — |
+| `businessPhones` | `string[]` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `department` | `string` | No | — |
+| `officeLocation` | `string` | No | — |
+| `birthday` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  address: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `givenName` | `string` | No | — |
+| `surname` | `string` | No | — |
+| `middleName` | `string` | No | — |
+| `nickName` | `string` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `mobilePhone` | `string` | No | — |
+| `homePhones` | `string[]` | No | — |
+| `businessPhones` | `string[]` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `department` | `string` | No | — |
+| `officeLocation` | `string` | No | — |
+| `birthday` | `string` | No | — |
+| `personalNotes` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.outlook.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `contact_folder_id` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string[]` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  givenName?: string,
+  surname?: string,
+  middleName?: string | null,
+  nickName?: string | null,
+  emailAddresses?: {
+    name?: string,
+    address?: string
+  }[],
+  mobilePhone?: string | null,
+  homePhones?: string[],
+  businessPhones?: string[],
+  jobTitle?: string | null,
+  companyName?: string | null,
+  department?: string | null,
+  officeLocation?: string | null,
+  birthday?: string | null,
+  personalNotes?: string,
+  parentFolderId?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  changeKey?: string,
+  categories?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `givenName` | `string` | No | — |
+| `surname` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `mobilePhone` | `string` | No | — |
+| `homePhones` | `string[]` | No | — |
+| `businessPhones` | `string[]` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `department` | `string` | No | — |
+| `officeLocation` | `string` | No | — |
+| `birthday` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  address: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `givenName` | `string` | No | — |
+| `surname` | `string` | No | — |
+| `middleName` | `string` | No | — |
+| `nickName` | `string` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `mobilePhone` | `string` | No | — |
+| `homePhones` | `string[]` | No | — |
+| `businessPhones` | `string[]` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `department` | `string` | No | — |
+| `officeLocation` | `string` | No | — |
+| `birthday` | `string` | No | — |
+| `personalNotes` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### cancel
+
+`events.cancel`
+
+Cancel a calendar event and notify attendees
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.events.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+| `calendar_id` | `string` | Yes | — |
+| `Comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `event_id` | `string` | No | — |
+| `calendar_id` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`events.create`
+
+Create a calendar event
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.events.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `start_datetime` | `string` | Yes | — |
+| `end_datetime` | `string` | Yes | — |
+| `time_zone` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `calendar_id` | `string` | No | — |
+| `body` | `string` | No | — |
+| `is_html` | `boolean` | No | — |
+| `location` | `string` | No | — |
+| `attendees_info` | `object[]` | No | — |
+| `is_online_meeting` | `boolean` | No | — |
+| `online_meeting_provider` | `string` | No | — |
+| `show_as` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `importance` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attendees_info full type">
+
+```ts
+{
+  email: string,
+  name?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `bodyPreview` | `string` | No | — |
+| `start` | `object` | No | — |
+| `end` | `object` | No | — |
+| `location` | `object` | No | — |
+| `locations` | `object[]` | No | — |
+| `attendees` | `object[]` | No | — |
+| `organizer` | `object` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `isOrganizer` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isOnlineMeeting` | `boolean` | No | — |
+| `isReminderOn` | `boolean` | No | — |
+| `showAs` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `sensitivity` | `string` | No | — |
+| `type` | `string` | No | — |
+| `iCalUId` | `string` | No | — |
+| `webLink` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `recurrence` | `object` | No | — |
+| `responseStatus` | `object` | No | — |
+| `responseRequested` | `boolean` | No | — |
+| `seriesMasterId` | `string` | No | — |
+| `transactionId` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `onlineMeeting` | `object` | No | — |
+| `onlineMeetingProvider` | `string` | No | — |
+| `onlineMeetingUrl` | `string` | No | — |
+| `reminderMinutesBeforeStart` | `number` | No | — |
+| `allowNewTimeProposals` | `boolean` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `hideAttendees` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: string,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  displayName?: string,
+  address?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  displayName?: string,
+  address?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  type?: string,
+  status?: {
+  },
+  emailAddress?: {
+    name?: string,
+    address?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="recurrence full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="responseStatus full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="onlineMeeting full type">
+
+```ts
+{
+  joinUrl?: string,
+  conferenceId?: string,
+  tollNumber?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### decline
+
+`events.decline`
+
+Decline a calendar event invitation
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.events.decline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `sendResponse` | `boolean` | No | — |
+| `proposedNewTime` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="proposedNewTime full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`events.delete`
+
+Delete a calendar event [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.outlook.api.events.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### findMeetingTimes
+
+`events.findMeetingTimes`
+
+Find available meeting times for attendees
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.events.findMeetingTimes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `attendees` | `object[]` | No | — |
+| `timeConstraint` | `object` | No | — |
+| `locationConstraint` | `object` | No | — |
+| `meetingDuration` | `string` | No | — |
+| `maxCandidates` | `number` | No | — |
+| `isOrganizerOptional` | `boolean` | No | — |
+| `returnSuggestionReasons` | `boolean` | No | — |
+| `minimumAttendeePercentage` | `number` | No | — |
+| `prefer_timezone` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attendees full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="timeConstraint full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="locationConstraint full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@odata.context` | `string` | No | — |
+| `meetingTimeSuggestions` | `object[]` | No | — |
+| `emptySuggestionsReason` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meetingTimeSuggestions full type">
+
+```ts
+{
+  confidence?: number,
+  organizerAvailability?: string,
+  suggestionReason?: string,
+  meetingTimeSlot?: {
+    start?: {
+      dateTime: string,
+      timeZone: string
+    },
+    end?: {
+      dateTime: string,
+      timeZone: string
+    }
+  },
+  attendeeAvailability?: {
+    attendee?: {
+      type?: string,
+      status?: {
+      },
+      emailAddress?: {
+        name?: string,
+        address?: string
+      }
+    },
+    availability?: string
+  }[],
+  locations?: {
+    displayName?: string,
+    address?: {
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`events.get`
+
+Get a calendar event by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `calendar_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `bodyPreview` | `string` | No | — |
+| `start` | `object` | No | — |
+| `end` | `object` | No | — |
+| `location` | `object` | No | — |
+| `locations` | `object[]` | No | — |
+| `attendees` | `object[]` | No | — |
+| `organizer` | `object` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `isOrganizer` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isOnlineMeeting` | `boolean` | No | — |
+| `isReminderOn` | `boolean` | No | — |
+| `showAs` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `sensitivity` | `string` | No | — |
+| `type` | `string` | No | — |
+| `iCalUId` | `string` | No | — |
+| `webLink` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `recurrence` | `object` | No | — |
+| `responseStatus` | `object` | No | — |
+| `responseRequested` | `boolean` | No | — |
+| `seriesMasterId` | `string` | No | — |
+| `transactionId` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `onlineMeeting` | `object` | No | — |
+| `onlineMeetingProvider` | `string` | No | — |
+| `onlineMeetingUrl` | `string` | No | — |
+| `reminderMinutesBeforeStart` | `number` | No | — |
+| `allowNewTimeProposals` | `boolean` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `hideAttendees` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: string,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  displayName?: string,
+  address?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  displayName?: string,
+  address?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  type?: string,
+  status?: {
+  },
+  emailAddress?: {
+    name?: string,
+    address?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="recurrence full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="responseStatus full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="onlineMeeting full type">
+
+```ts
+{
+  joinUrl?: string,
+  conferenceId?: string,
+  tollNumber?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSchedule
+
+`events.getSchedule`
+
+Get free/busy schedule for a calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.events.getSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendar_id` | `string` | Yes | — |
+| `schedules` | `string[]` | Yes | — |
+| `startTime` | `object` | Yes | — |
+| `endTime` | `object` | Yes | — |
+| `availabilityViewInterval` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="startTime full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="endTime full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.context` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+List calendar events
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `calendar_id` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string[]` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `expand_recurring_events` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  subject?: string,
+  body?: {
+    contentType?: string,
+    content?: string
+  },
+  bodyPreview?: string,
+  start?: {
+    dateTime: string,
+    timeZone: string
+  },
+  end?: {
+    dateTime: string,
+    timeZone: string
+  },
+  location?: {
+    displayName?: string,
+    address?: {
+    }
+  },
+  locations?: {
+    displayName?: string,
+    address?: {
+    }
+  }[],
+  attendees?: {
+    type?: string,
+    status?: {
+    },
+    emailAddress?: {
+      name?: string,
+      address?: string
+    }
+  }[],
+  organizer?: {
+    name?: string,
+    address?: string
+  },
+  isAllDay?: boolean,
+  isCancelled?: boolean,
+  isOrganizer?: boolean,
+  isDraft?: boolean,
+  isOnlineMeeting?: boolean,
+  isReminderOn?: boolean,
+  showAs?: string,
+  importance?: string,
+  sensitivity?: string,
+  type?: string,
+  iCalUId?: string,
+  webLink?: string,
+  changeKey?: string,
+  categories?: string[],
+  recurrence?: {
+  } | null,
+  responseStatus?: {
+  },
+  responseRequested?: boolean,
+  seriesMasterId?: string | null,
+  transactionId?: string | null,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  onlineMeeting?: {
+    joinUrl?: string,
+    conferenceId?: string,
+    tollNumber?: string
+  } | null,
+  onlineMeetingProvider?: string,
+  onlineMeetingUrl?: string | null,
+  reminderMinutesBeforeStart?: number,
+  allowNewTimeProposals?: boolean,
+  hasAttachments?: boolean,
+  hideAttendees?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`events.update`
+
+Update a calendar event
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.events.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `start_datetime` | `string` | No | — |
+| `end_datetime` | `string` | No | — |
+| `time_zone` | `string` | No | — |
+| `location` | `string` | No | — |
+| `attendees` | `object[]` | No | — |
+| `show_as` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `bodyPreview` | `string` | No | — |
+| `start` | `object` | No | — |
+| `end` | `object` | No | — |
+| `location` | `object` | No | — |
+| `locations` | `object[]` | No | — |
+| `attendees` | `object[]` | No | — |
+| `organizer` | `object` | No | — |
+| `isAllDay` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `isOrganizer` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isOnlineMeeting` | `boolean` | No | — |
+| `isReminderOn` | `boolean` | No | — |
+| `showAs` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `sensitivity` | `string` | No | — |
+| `type` | `string` | No | — |
+| `iCalUId` | `string` | No | — |
+| `webLink` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `recurrence` | `object` | No | — |
+| `responseStatus` | `object` | No | — |
+| `responseRequested` | `boolean` | No | — |
+| `seriesMasterId` | `string` | No | — |
+| `transactionId` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `onlineMeeting` | `object` | No | — |
+| `onlineMeetingProvider` | `string` | No | — |
+| `onlineMeetingUrl` | `string` | No | — |
+| `reminderMinutesBeforeStart` | `number` | No | — |
+| `allowNewTimeProposals` | `boolean` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `hideAttendees` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: string,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  dateTime: string,
+  timeZone: string
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  displayName?: string,
+  address?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  displayName?: string,
+  address?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  type?: string,
+  status?: {
+  },
+  emailAddress?: {
+    name?: string,
+    address?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="recurrence full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="responseStatus full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="onlineMeeting full type">
+
+```ts
+{
+  joinUrl?: string,
+  conferenceId?: string,
+  tollNumber?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a new mail folder
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayName` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `isHidden` | `boolean` | No | — |
+| `return_existing_if_exists` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `totalItemCount` | `number` | No | — |
+| `unreadItemCount` | `number` | No | — |
+| `childFolderCount` | `number` | No | — |
+| `isHidden` | `boolean` | No | — |
+| `sizeInBytes` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a mail folder [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.outlook.api.folders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`folders.get`
+
+Get a mail folder by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mail_folder_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `totalItemCount` | `number` | No | — |
+| `unreadItemCount` | `number` | No | — |
+| `childFolderCount` | `number` | No | — |
+| `isHidden` | `boolean` | No | — |
+| `sizeInBytes` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List mail folders
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `count` | `boolean` | No | — |
+| `include_hidden_folders` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  parentFolderId?: string,
+  totalItemCount?: number,
+  unreadItemCount?: number,
+  childFolderCount?: number,
+  isHidden?: boolean,
+  sizeInBytes?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Rename a mail folder
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.folders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mail_folder_id` | `string` | Yes | — |
+| `displayName` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `totalItemCount` | `number` | No | — |
+| `unreadItemCount` | `number` | No | — |
+| `childFolderCount` | `number` | No | — |
+| `isHidden` | `boolean` | No | — |
+| `sizeInBytes` | `number` | No | — |
+
+
+
+---
+
+## Messages
+
+### addAttachment
+
+`messages.addAttachment`
+
+Add an attachment to a message
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.addAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `odata_type` | `string` | No | — |
+| `contentBytes` | `string` | No | — |
+| `contentType` | `string` | No | — |
+| `contentId` | `string` | No | — |
+| `contentLocation` | `string` | No | — |
+| `isInline` | `boolean` | No | — |
+| `item` | `object` | No | — |
+| `attachment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attachment full type">
+
+```ts
+{
+  name: string,
+  mimetype: string,
+  s3key: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `contentType` | `string` | No | — |
+| `size` | `number` | No | — |
+| `isInline` | `boolean` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `@odata.type` | `string` | No | — |
+| `contentBytes` | `string` | No | — |
+| `contentId` | `string` | No | — |
+| `contentLocation` | `string` | No | — |
+
+
+
+---
+
+### batchMove
+
+`messages.batchMove`
+
+Batch move up to 20 messages to a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.batchMove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_ids` | `string[]` | Yes | — |
+| `destination_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_requested` | `number` | Yes | — |
+| `total_succeeded` | `number` | Yes | — |
+| `total_failed` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  original_message_id: string,
+  moved_message_id?: string,
+  success: boolean,
+  status?: number,
+  error_message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchUpdate
+
+`messages.batchUpdate`
+
+Batch update up to 20 messages
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.batchUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updates` | `object[]` | Yes | — |
+| `user_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  message_id: string,
+  patch: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_requested` | `number` | Yes | — |
+| `total_succeeded` | `number` | Yes | — |
+| `total_failed` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  message_id: string,
+  success: boolean,
+  status?: number,
+  error_message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createDraft
+
+`messages.createDraft`
+
+Create an email draft
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.createDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `is_html` | `boolean` | No | — |
+| `to_recipients` | `string[]` | No | — |
+| `cc_recipients` | `string[]` | No | — |
+| `bcc_recipients` | `string[]` | No | — |
+| `attachment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `bodyPreview` | `string` | No | — |
+| `from` | `object` | No | — |
+| `sender` | `object` | No | — |
+| `toRecipients` | `object[]` | No | — |
+| `ccRecipients` | `object[]` | No | — |
+| `bccRecipients` | `object[]` | No | — |
+| `replyTo` | `object[]` | No | — |
+| `isRead` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `importance` | `string` | No | — |
+| `conversationId` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `sentDateTime` | `string` | No | — |
+| `receivedDateTime` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webLink` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `flag` | `object` | No | — |
+| `internetMessageId` | `string` | No | — |
+| `conversationIndex` | `string` | No | — |
+| `inferenceClassification` | `string` | No | — |
+| `isReadReceiptRequested` | `boolean` | No | — |
+| `isDeliveryReceiptRequested` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: string,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="toRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="ccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="flag full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`messages.delete`
+
+Delete an email message [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.outlook.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### forward
+
+`messages.forward`
+
+Forward an email message
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.forward({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `to_recipients` | `string[]` | Yes | — |
+| `comment` | `string` | No | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Get an email message by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `select` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `bodyPreview` | `string` | No | — |
+| `from` | `object` | No | — |
+| `sender` | `object` | No | — |
+| `toRecipients` | `object[]` | No | — |
+| `ccRecipients` | `object[]` | No | — |
+| `bccRecipients` | `object[]` | No | — |
+| `replyTo` | `object[]` | No | — |
+| `isRead` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `importance` | `string` | No | — |
+| `conversationId` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `sentDateTime` | `string` | No | — |
+| `receivedDateTime` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webLink` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `flag` | `object` | No | — |
+| `internetMessageId` | `string` | No | — |
+| `conversationIndex` | `string` | No | — |
+| `inferenceClassification` | `string` | No | — |
+| `isReadReceiptRequested` | `boolean` | No | — |
+| `isDeliveryReceiptRequested` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: string,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="toRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="ccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="flag full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List email messages in a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `folder` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string[]` | No | — |
+| `is_read` | `boolean` | No | — |
+| `subject` | `string` | No | — |
+| `subject_contains` | `string` | No | — |
+| `subject_startswith` | `string` | No | — |
+| `subject_endswith` | `string` | No | — |
+| `from_address` | `string` | No | — |
+| `has_attachments` | `boolean` | No | — |
+| `importance` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `conversationId` | `string` | No | — |
+| `sent_date_time_gt` | `string` | No | — |
+| `sent_date_time_lt` | `string` | No | — |
+| `received_date_time_ge` | `string` | No | — |
+| `received_date_time_gt` | `string` | No | — |
+| `received_date_time_le` | `string` | No | — |
+| `received_date_time_lt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  subject?: string,
+  body?: {
+    contentType?: string,
+    content?: string
+  },
+  bodyPreview?: string,
+  from?: {
+    name?: string,
+    address?: string
+  },
+  sender?: {
+    name?: string,
+    address?: string
+  },
+  toRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  ccRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  bccRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  replyTo?: {
+    name?: string,
+    address?: string
+  }[],
+  isRead?: boolean,
+  isDraft?: boolean,
+  hasAttachments?: boolean,
+  importance?: string,
+  conversationId?: string,
+  parentFolderId?: string,
+  sentDateTime?: string,
+  receivedDateTime?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  webLink?: string,
+  changeKey?: string,
+  categories?: string[],
+  flag?: {
+  },
+  internetMessageId?: string,
+  conversationIndex?: string,
+  inferenceClassification?: string,
+  isReadReceiptRequested?: boolean | null,
+  isDeliveryReceiptRequested?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`messages.move`
+
+Move a message to a different folder
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `destination_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `bodyPreview` | `string` | No | — |
+| `from` | `object` | No | — |
+| `sender` | `object` | No | — |
+| `toRecipients` | `object[]` | No | — |
+| `ccRecipients` | `object[]` | No | — |
+| `bccRecipients` | `object[]` | No | — |
+| `replyTo` | `object[]` | No | — |
+| `isRead` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `importance` | `string` | No | — |
+| `conversationId` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `sentDateTime` | `string` | No | — |
+| `receivedDateTime` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webLink` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `flag` | `object` | No | — |
+| `internetMessageId` | `string` | No | — |
+| `conversationIndex` | `string` | No | — |
+| `inferenceClassification` | `string` | No | — |
+| `isReadReceiptRequested` | `boolean` | No | — |
+| `isDeliveryReceiptRequested` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: string,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="toRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="ccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="flag full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`messages.query`
+
+Query email messages with OData filters
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.messages.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `folder` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.context` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  subject?: string,
+  body?: {
+    contentType?: string,
+    content?: string
+  },
+  bodyPreview?: string,
+  from?: {
+    name?: string,
+    address?: string
+  },
+  sender?: {
+    name?: string,
+    address?: string
+  },
+  toRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  ccRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  bccRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  replyTo?: {
+    name?: string,
+    address?: string
+  }[],
+  isRead?: boolean,
+  isDraft?: boolean,
+  hasAttachments?: boolean,
+  importance?: string,
+  conversationId?: string,
+  parentFolderId?: string,
+  sentDateTime?: string,
+  receivedDateTime?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  webLink?: string,
+  changeKey?: string,
+  categories?: string[],
+  flag?: {
+  },
+  internetMessageId?: string,
+  conversationIndex?: string,
+  inferenceClassification?: string,
+  isReadReceiptRequested?: boolean | null,
+  isDeliveryReceiptRequested?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reply
+
+`messages.reply`
+
+Reply to an email message
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.reply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `cc_emails` | `string[]` | No | — |
+| `bcc_emails` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | No | — |
+| `response_body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`messages.search`
+
+Search email messages
+
+**Risk:** `read`
+
+```ts
+await corsair.outlook.api.messages.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `fromEmail` | `string` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `size` | `number` | No | — |
+| `from_index` | `number` | No | — |
+| `enable_top_results` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.context` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  subject?: string,
+  body?: {
+    contentType?: string,
+    content?: string
+  },
+  bodyPreview?: string,
+  from?: {
+    name?: string,
+    address?: string
+  },
+  sender?: {
+    name?: string,
+    address?: string
+  },
+  toRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  ccRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  bccRecipients?: {
+    name?: string,
+    address?: string
+  }[],
+  replyTo?: {
+    name?: string,
+    address?: string
+  }[],
+  isRead?: boolean,
+  isDraft?: boolean,
+  hasAttachments?: boolean,
+  importance?: string,
+  conversationId?: string,
+  parentFolderId?: string,
+  sentDateTime?: string,
+  receivedDateTime?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  webLink?: string,
+  changeKey?: string,
+  categories?: string[],
+  flag?: {
+  },
+  internetMessageId?: string,
+  conversationIndex?: string,
+  inferenceClassification?: string,
+  isReadReceiptRequested?: boolean | null,
+  isDeliveryReceiptRequested?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send an email message
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `to_name` | `string` | No | — |
+| `is_html` | `boolean` | No | — |
+| `cc_emails` | `string[]` | No | — |
+| `bcc_emails` | `string[]` | No | — |
+| `from_address` | `string` | No | — |
+| `save_to_sent_items` | `boolean` | No | — |
+| `attachment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendDraft
+
+`messages.sendDraft`
+
+Send a saved draft message
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.sendDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Update an email message (e.g. mark as read)
+
+**Risk:** `write`
+
+```ts
+await corsair.outlook.api.messages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `is_read` | `boolean` | No | — |
+| `subject` | `string` | No | — |
+| `importance` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `to_recipients` | `object[]` | No | — |
+| `cc_recipients` | `object[]` | No | — |
+| `bcc_recipients` | `object[]` | No | — |
+| `reply_to` | `object[]` | No | — |
+| `flag` | `object` | No | — |
+| `inference_classification` | `string` | No | — |
+| `is_read_receipt_requested` | `boolean` | No | — |
+| `is_delivery_receipt_requested` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="to_recipients full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="cc_recipients full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc_recipients full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="flag full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `object` | No | — |
+| `bodyPreview` | `string` | No | — |
+| `from` | `object` | No | — |
+| `sender` | `object` | No | — |
+| `toRecipients` | `object[]` | No | — |
+| `ccRecipients` | `object[]` | No | — |
+| `bccRecipients` | `object[]` | No | — |
+| `replyTo` | `object[]` | No | — |
+| `isRead` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `hasAttachments` | `boolean` | No | — |
+| `importance` | `string` | No | — |
+| `conversationId` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `sentDateTime` | `string` | No | — |
+| `receivedDateTime` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webLink` | `string` | No | — |
+| `changeKey` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `flag` | `object` | No | — |
+| `internetMessageId` | `string` | No | — |
+| `conversationIndex` | `string` | No | — |
+| `inferenceClassification` | `string` | No | — |
+| `isReadReceiptRequested` | `boolean` | No | — |
+| `isDeliveryReceiptRequested` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  contentType?: string,
+  content?: string
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}
+```
+</Accordion>
+
+<Accordion title="toRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="ccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bccRecipients full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  name?: string,
+  address?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="flag full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

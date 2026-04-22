@@ -1,0 +1,1048 @@
+---
+title: API
+description: "API reference for Zoom: every `zoom.api.*` operation with input and output types."
+---
+
+Every `zoom.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Archive Files
+
+### list
+
+`archiveFiles.list`
+
+List all archived meeting or webinar files
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.archiveFiles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `type` | `number` | No | — |
+| `query_date_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_page_token` | `string` | No | — |
+| `page_size` | `number` | No | — |
+| `total_records` | `number` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `meetings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meetings full type">
+
+```ts
+{
+  id?: string,
+  meeting_id?: string,
+  topic?: string,
+  type?: number,
+  start_time?: string,
+  file_count?: number,
+  file_size?: number,
+  status?: string,
+  archive_files?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Devices
+
+### list
+
+`devices.list`
+
+List all Zoom devices
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.devices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `search_text` | `string` | No | — |
+| `platform_os` | `string` | No | — |
+| `device_vendor` | `string` | No | — |
+| `device_model` | `string` | No | — |
+| `device_status` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_page_token` | `string` | No | — |
+| `page_size` | `number` | No | — |
+| `total_records` | `number` | No | — |
+| `devices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="devices full type">
+
+```ts
+{
+  id?: string,
+  device_name?: string,
+  manufacturer?: string,
+  model?: string,
+  platform_os?: string,
+  device_status?: number,
+  mac_address?: string,
+  serial_number?: string,
+  last_online?: string,
+  tag?: string,
+  enrollment_token?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meetings
+
+### addRegistrant
+
+`meetings.addRegistrant`
+
+Add a registrant to a meeting
+
+**Risk:** `write`
+
+```ts
+await corsair.zoom.api.meetings.addRegistrant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | No | — |
+| `auto_approve` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registrant_id` | `string` | No | — |
+| `id` | `number` | No | — |
+| `topic` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `join_url` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`meetings.create`
+
+Create a new meeting for the authenticated user
+
+**Risk:** `write`
+
+```ts
+await corsair.zoom.api.meetings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | No | — |
+| `type` | `number` | No | — |
+| `start_time` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `agenda` | `string` | No | — |
+| `password` | `string` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  host_video?: boolean,
+  participant_video?: boolean,
+  cn_meeting?: boolean,
+  in_meeting?: boolean,
+  join_before_host?: boolean,
+  mute_upon_entry?: boolean,
+  watermark?: boolean,
+  use_pmi?: boolean,
+  approval_type?: number,
+  audio?: string,
+  auto_recording?: string,
+  waiting_room?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `uuid` | `string` | No | — |
+| `host_id` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `type` | `number` | No | — |
+| `status` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `agenda` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `join_url` | `string` | No | — |
+| `password` | `string` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  host_video?: boolean,
+  participant_video?: boolean,
+  cn_meeting?: boolean,
+  in_meeting?: boolean,
+  join_before_host?: boolean,
+  mute_upon_entry?: boolean,
+  watermark?: boolean,
+  use_pmi?: boolean,
+  approval_type?: number,
+  audio?: string,
+  auto_recording?: string,
+  waiting_room?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`meetings.get`
+
+Get details of a specific meeting
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.meetings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `uuid` | `string` | No | — |
+| `host_id` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `type` | `number` | No | — |
+| `status` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `agenda` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `join_url` | `string` | No | — |
+| `password` | `string` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  host_video?: boolean,
+  participant_video?: boolean,
+  cn_meeting?: boolean,
+  in_meeting?: boolean,
+  join_before_host?: boolean,
+  mute_upon_entry?: boolean,
+  watermark?: boolean,
+  use_pmi?: boolean,
+  approval_type?: number,
+  audio?: string,
+  auto_recording?: string,
+  waiting_room?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSummary
+
+`meetings.getSummary`
+
+Get the AI-generated summary of a meeting
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.meetings.getSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meeting_host_id` | `string` | No | — |
+| `meeting_host_email` | `string` | No | — |
+| `meeting_uuid` | `string` | No | — |
+| `meeting_id` | `number` | No | — |
+| `meeting_topic` | `string` | No | — |
+| `meeting_start_time` | `string` | No | — |
+| `meeting_end_time` | `string` | No | — |
+| `summary_start_time` | `string` | No | — |
+| `summary_end_time` | `string` | No | — |
+| `summary_created_time` | `string` | No | — |
+| `summary_last_modified_time` | `string` | No | — |
+| `summary_title` | `string` | No | — |
+| `summary_overview` | `string` | No | — |
+| `summary_details` | `object[]` | No | — |
+| `next_steps` | `string[]` | No | — |
+| `edited_summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="summary_details full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="edited_summary full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`meetings.list`
+
+List all meetings for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.meetings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `page_size` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `page_number` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | No | — |
+| `page_number` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `total_records` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `meetings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meetings full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  host_id?: string,
+  topic?: string,
+  type?: number,
+  status?: string,
+  start_time?: string,
+  duration?: number,
+  timezone?: string,
+  agenda?: string,
+  created_at?: string,
+  join_url?: string,
+  password?: string,
+  settings?: {
+    host_video?: boolean,
+    participant_video?: boolean,
+    cn_meeting?: boolean,
+    in_meeting?: boolean,
+    join_before_host?: boolean,
+    mute_upon_entry?: boolean,
+    watermark?: boolean,
+    use_pmi?: boolean,
+    approval_type?: number,
+    audio?: string,
+    auto_recording?: string,
+    waiting_room?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`meetings.update`
+
+Update a meeting
+
+**Risk:** `write`
+
+```ts
+await corsair.zoom.api.meetings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `topic` | `string` | No | — |
+| `type` | `number` | No | — |
+| `start_time` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `agenda` | `string` | No | — |
+| `password` | `string` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  host_video?: boolean,
+  participant_video?: boolean,
+  cn_meeting?: boolean,
+  in_meeting?: boolean,
+  join_before_host?: boolean,
+  mute_upon_entry?: boolean,
+  watermark?: boolean,
+  use_pmi?: boolean,
+  approval_type?: number,
+  audio?: string,
+  auto_recording?: string,
+  waiting_room?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Participants
+
+### getPastMeeting
+
+`participants.getPastMeeting`
+
+Get participants of a past meeting
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.participants.getPastMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `page_size` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_page_token` | `string` | No | — |
+| `page_count` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `total_records` | `number` | No | — |
+| `participants` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="participants full type">
+
+```ts
+{
+  id?: string,
+  user_id?: string,
+  user_name?: string,
+  device?: string,
+  ip_address?: string,
+  location?: string,
+  network_type?: string,
+  microphone?: string,
+  speaker?: string,
+  camera?: string,
+  data_center?: string,
+  connection_type?: string,
+  join_time?: string,
+  leave_time?: string,
+  share_application?: boolean,
+  share_desktop?: boolean,
+  share_whiteboard?: boolean,
+  recording?: boolean,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recordings
+
+### deleteMeeting
+
+`recordings.deleteMeeting`
+
+Delete cloud recordings for a meeting [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zoom.api.recordings.deleteMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `action` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getMeeting
+
+`recordings.getMeeting`
+
+Get cloud recordings for a specific meeting
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.recordings.getMeeting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | No | — |
+| `id` | `number` | No | — |
+| `account_id` | `string` | No | — |
+| `host_id` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `type` | `number` | No | — |
+| `start_time` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `total_size` | `number` | No | — |
+| `recording_count` | `number` | No | — |
+| `recording_files` | `object[]` | No | — |
+| `password` | `string` | No | — |
+| `share_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recording_files full type">
+
+```ts
+{
+  id?: string,
+  meeting_id?: string,
+  recording_type?: string,
+  file_type?: string,
+  file_size?: number,
+  play_url?: string,
+  download_url?: string,
+  status?: string,
+  recording_start?: string,
+  recording_end?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAll
+
+`recordings.listAll`
+
+List all cloud recordings for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.recordings.listAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page_size` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `mc` | `string` | No | — |
+| `trash` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page_count` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `total_records` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `meetings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meetings full type">
+
+```ts
+{
+  uuid?: string,
+  id?: number,
+  account_id?: string,
+  host_id?: string,
+  topic?: string,
+  type?: number,
+  start_time?: string,
+  timezone?: string,
+  duration?: number,
+  total_size?: number,
+  recording_count?: number,
+  recording_files?: {
+    id?: string,
+    meeting_id?: string,
+    recording_type?: string,
+    file_type?: string,
+    file_size?: number,
+    play_url?: string,
+    download_url?: string,
+    status?: string,
+    recording_start?: string,
+    recording_end?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### dailyUsage
+
+`reports.dailyUsage`
+
+Get the daily usage report for a given month
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.reports.dailyUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `month` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `number` | No | — |
+| `month` | `number` | No | — |
+| `dates` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dates full type">
+
+```ts
+{
+  date?: string,
+  new_user?: number,
+  meetings?: number,
+  participants?: number,
+  meeting_minutes?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webinars
+
+### addRegistrant
+
+`webinars.addRegistrant`
+
+Add a registrant to a webinar
+
+**Risk:** `write`
+
+```ts
+await corsair.zoom.api.webinars.addRegistrant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webinarId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | No | — |
+| `auto_approve` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `join_url` | `string` | No | — |
+| `registrant_id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`webinars.get`
+
+Get details of a specific webinar
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.webinars.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webinarId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `uuid` | `string` | No | — |
+| `host_id` | `string` | No | — |
+| `topic` | `string` | No | — |
+| `type` | `number` | No | — |
+| `status` | `string` | No | — |
+| `start_time` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `agenda` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `join_url` | `string` | No | — |
+| `password` | `string` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  host_video?: boolean,
+  panelists_video?: boolean,
+  practice_session?: boolean,
+  hd_video?: boolean,
+  approval_type?: number,
+  audio?: string,
+  auto_recording?: string,
+  enforce_login?: boolean,
+  registrants_restrict_number?: number,
+  meeting_authentication?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webinars.list`
+
+List all webinars for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.webinars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `page_number` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_count` | `number` | No | — |
+| `page_number` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `total_records` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+| `webinars` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="webinars full type">
+
+```ts
+{
+  id?: number,
+  uuid?: string,
+  host_id?: string,
+  topic?: string,
+  type?: number,
+  status?: string,
+  start_time?: string,
+  duration?: number,
+  timezone?: string,
+  agenda?: string,
+  created_at?: string,
+  join_url?: string,
+  password?: string,
+  settings?: {
+    host_video?: boolean,
+    panelists_video?: boolean,
+    practice_session?: boolean,
+    hd_video?: boolean,
+    approval_type?: number,
+    audio?: string,
+    auto_recording?: string,
+    enforce_login?: boolean,
+    registrants_restrict_number?: number,
+    meeting_authentication?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listParticipants
+
+`webinars.listParticipants`
+
+List participants of a past webinar
+
+**Risk:** `read`
+
+```ts
+await corsair.zoom.api.webinars.listParticipants({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webinarId` | `string` | Yes | — |
+| `page_size` | `number` | No | — |
+| `next_page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_page_token` | `string` | No | — |
+| `page_count` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `total_records` | `number` | No | — |
+| `participants` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="participants full type">
+
+```ts
+{
+  id?: string,
+  user_id?: string,
+  user_name?: string,
+  device?: string,
+  ip_address?: string,
+  location?: string,
+  network_type?: string,
+  microphone?: string,
+  speaker?: string,
+  camera?: string,
+  data_center?: string,
+  connection_type?: string,
+  join_time?: string,
+  leave_time?: string,
+  share_application?: boolean,
+  share_desktop?: boolean,
+  share_whiteboard?: boolean,
+  recording?: boolean,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

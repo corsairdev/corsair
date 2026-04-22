@@ -1,0 +1,149 @@
+---
+title: Overview
+description: "Typeform plugin for Corsair"
+---
+
+Use **Typeform** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+
+**What you get:**
+
+- 35 typed API operations
+- 6 database entities synced for fast `.search()` / `.list()` queries
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/typeform
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { typeform } from '@corsair-dev/typeform';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [typeform()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { typeform } from '@corsair-dev/typeform';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [typeform()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/typeform/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=typeform
+```
+
+Use the key names documented in [Get Credentials](/plugins/typeform/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=typeform --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="OAuth 2.0 (Default)">
+
+```ts corsair.ts
+typeform()
+```
+
+Store credentials with `pnpm corsair setup --plugin=typeform` (see [Get Credentials](/plugins/typeform/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+## Webhooks
+
+This plugin registers **1** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/typeform/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.typeform.db.<entity>.search()` and `.list()`. See [Database](/plugins/typeform/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `forms.get`
+
+```ts
+await corsair.typeform.api.forms.get({});
+```
+
+
+**Write-style (write):** `forms.create`
+
+```ts
+await corsair.typeform.api.forms.create({});
+```
+
+
+See the full list on the [API](/plugins/typeform/api) page. Use `pnpm corsair list --plugin=typeform` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/typeform/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/typeform/api) |
+| Database | [Database](/plugins/typeform/database) |
+| Webhooks | [Webhooks](/plugins/typeform/webhooks) |
+| Credentials | [Get credentials](/plugins/typeform/get-credentials) |
+

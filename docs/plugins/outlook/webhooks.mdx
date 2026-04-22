@@ -1,0 +1,490 @@
+---
+title: Webhooks
+description: "Outlook incoming webhooks: event paths, payloads, and response data."
+---
+
+The Outlook plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/outlook/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `contacts`
+  - `newContact` (`contacts.newContact`)
+- `events`
+  - `eventChange` (`events.eventChange`)
+  - `newEvent` (`events.newEvent`)
+- `messages`
+  - `newMessage` (`messages.newMessage`)
+  - `sentMessage` (`messages.sentMessage`)
+- `subscriptionValidation` (`subscriptionValidation`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Contacts
+
+### New Contact
+
+`contacts.newContact`
+
+Triggered when a new contact is added in Outlook contacts
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType?: created | updated | deleted,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType: created,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+outlook({
+    webhookHooks: {
+        contacts: {
+            newContact: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Events
+
+### Event Change
+
+`events.eventChange`
+
+Triggered when a calendar event is created, updated, or deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType?: created | updated | deleted,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType: created | updated | deleted,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+outlook({
+    webhookHooks: {
+        events: {
+            eventChange: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### New Event
+
+`events.newEvent`
+
+Triggered when a new calendar event is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType?: created | updated | deleted,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType: created,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+outlook({
+    webhookHooks: {
+        events: {
+            newEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Messages
+
+### New Message
+
+`messages.newMessage`
+
+Triggered when a new message is received in the Outlook mailbox
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType?: created | updated | deleted,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType: created,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+outlook({
+    webhookHooks: {
+        messages: {
+            newMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Sent Message
+
+`messages.sentMessage`
+
+Triggered when a message is sent from the Outlook mailbox
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType?: created | updated | deleted,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  subscriptionId?: string,
+  subscriptionExpirationDateTime?: string,
+  changeType: created,
+  resource?: string,
+  resourceData?: {
+    @odata.type?: string,
+    @odata.id?: string,
+    @odata.etag?: string,
+    id?: string
+  },
+  clientState?: string,
+  tenantId?: string,
+  eventType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+outlook({
+    webhookHooks: {
+        messages: {
+            sentMessage: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Subscription Validation
+
+### Subscription Validation
+
+`subscriptionValidation`
+
+Microsoft Graph subscription validation handshake
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `validationToken` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  validationToken: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+outlook({
+    webhookHooks: {
+        subscriptionValidation: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

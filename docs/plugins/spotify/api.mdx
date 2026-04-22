@@ -1,0 +1,2013 @@
+---
+title: API
+description: "API reference for Spotify: every `spotify.api.*` operation with input and output types."
+---
+
+Every `spotify.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Albums
+
+### get
+
+`albums.get`
+
+Get info about an album
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.albums.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `market` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `album_type` | `string` | Yes | — |
+| `total_tracks` | `number` | No | — |
+| `available_markets` | `string[]` | No | — |
+| `external_urls` | `object` | No | — |
+| `href` | `string` | No | — |
+| `images` | `object[]` | No | — |
+| `release_date` | `string` | No | — |
+| `release_date_precision` | `string` | No | — |
+| `artists` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="external_urls full type">
+
+```ts
+{
+  spotify?: string
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="artists full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  external_urls?: {
+    spotify?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNewReleases
+
+`albums.getNewReleases`
+
+Get new album releases
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.albums.getNewReleases({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albums` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="albums full type">
+
+```ts
+{
+  href?: string,
+  limit?: number,
+  next?: string | null,
+  offset?: number,
+  previous?: string | null,
+  total?: number,
+  items?: {
+    id: string,
+    name: string,
+    album_type: string,
+    total_tracks?: number,
+    available_markets?: string[],
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    release_date?: string,
+    release_date_precision?: string,
+    artists?: {
+      id: string,
+      name: string,
+      external_urls?: {
+        spotify?: string
+      }
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTracks
+
+`albums.getTracks`
+
+Get tracks from an album
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.albums.getTracks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `market` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `href` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `previous` | `string` | No | — |
+| `total` | `number` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  artists?: {
+    id: string,
+    name: string
+  }[],
+  album?: {
+    id: string,
+    name: string,
+    album_type: string,
+    total_tracks?: number,
+    available_markets?: string[],
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    release_date?: string,
+    release_date_precision?: string,
+    artists?: {
+      id: string,
+      name: string,
+      external_urls?: {
+        spotify?: string
+      }
+    }[]
+  },
+  duration_ms?: number,
+  explicit?: boolean,
+  external_urls?: {
+    spotify?: string
+  },
+  href?: string,
+  is_local?: boolean,
+  popularity?: number,
+  preview_url?: string | null,
+  track_number?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`albums.search`
+
+Search for albums
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.albums.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `type` | `album` | No | — |
+| `market` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `albums` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="albums full type">
+
+```ts
+{
+  href?: string,
+  limit?: number,
+  next?: string | null,
+  offset?: number,
+  previous?: string | null,
+  total?: number,
+  items?: {
+    id: string,
+    name: string,
+    album_type: string,
+    total_tracks?: number,
+    available_markets?: string[],
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    release_date?: string,
+    release_date_precision?: string,
+    artists?: {
+      id: string,
+      name: string,
+      external_urls?: {
+        spotify?: string
+      }
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Artists
+
+### get
+
+`artists.get`
+
+Get info about an artist
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.artists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `external_urls` | `object` | No | — |
+| `followers` | `object` | No | — |
+| `genres` | `string[]` | No | — |
+| `href` | `string` | No | — |
+| `images` | `object[]` | No | — |
+| `popularity` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="external_urls full type">
+
+```ts
+{
+  spotify?: string
+}
+```
+</Accordion>
+
+<Accordion title="followers full type">
+
+```ts
+{
+  total?: number
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAlbums
+
+`artists.getAlbums`
+
+Get albums by an artist
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.artists.getAlbums({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `include_groups` | `string` | No | — |
+| `market` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `href` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `previous` | `string` | No | — |
+| `total` | `number` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  album_type: string,
+  total_tracks?: number,
+  available_markets?: string[],
+  external_urls?: {
+    spotify?: string
+  },
+  href?: string,
+  images?: {
+    url: string,
+    height?: number | null,
+    width?: number | null
+  }[],
+  release_date?: string,
+  release_date_precision?: string,
+  artists?: {
+    id: string,
+    name: string,
+    external_urls?: {
+      spotify?: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRelatedArtists
+
+`artists.getRelatedArtists`
+
+Get artists related to an artist
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.artists.getRelatedArtists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `artists` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="artists full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  external_urls?: {
+    spotify?: string
+  },
+  followers?: {
+    total?: number
+  },
+  genres?: string[],
+  href?: string,
+  images?: {
+    url: string,
+    height?: number | null,
+    width?: number | null
+  }[],
+  popularity?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTopTracks
+
+`artists.getTopTracks`
+
+Get top tracks for an artist
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.artists.getTopTracks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `market` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tracks` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tracks full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  artists?: {
+    id: string,
+    name: string
+  }[],
+  album?: {
+    id: string,
+    name: string,
+    album_type: string,
+    total_tracks?: number,
+    available_markets?: string[],
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    release_date?: string,
+    release_date_precision?: string,
+    artists?: {
+      id: string,
+      name: string,
+      external_urls?: {
+        spotify?: string
+      }
+    }[]
+  },
+  duration_ms?: number,
+  explicit?: boolean,
+  external_urls?: {
+    spotify?: string
+  },
+  href?: string,
+  is_local?: boolean,
+  popularity?: number,
+  preview_url?: string | null,
+  track_number?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`artists.search`
+
+Search for artists
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.artists.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `type` | `artist` | No | — |
+| `market` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `artists` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="artists full type">
+
+```ts
+{
+  href?: string,
+  limit?: number,
+  next?: string | null,
+  offset?: number,
+  previous?: string | null,
+  total?: number,
+  items?: {
+    id: string,
+    name: string,
+    external_urls?: {
+      spotify?: string
+    },
+    followers?: {
+      total?: number
+    },
+    genres?: string[],
+    href?: string,
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    popularity?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Library
+
+### getLikedTracks
+
+`library.getLikedTracks`
+
+Get the current user's liked tracks
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.library.getLikedTracks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `market` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `href` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `previous` | `string` | No | — |
+| `total` | `number` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  added_at?: string,
+  track?: {
+    id: string,
+    name: string,
+    artists?: {
+      id: string,
+      name: string
+    }[],
+    album?: {
+      id: string,
+      name: string,
+      album_type: string,
+      total_tracks?: number,
+      available_markets?: string[],
+      external_urls?: {
+        spotify?: string
+      },
+      href?: string,
+      images?: {
+        url: string,
+        height?: number | null,
+        width?: number | null
+      }[],
+      release_date?: string,
+      release_date_precision?: string,
+      artists?: {
+        id: string,
+        name: string,
+        external_urls?: {
+          spotify?: string
+        }
+      }[]
+    },
+    duration_ms?: number,
+    explicit?: boolean,
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    is_local?: boolean,
+    popularity?: number,
+    preview_url?: string | null,
+    track_number?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## My Data
+
+### getFollowedArtists
+
+`myData.getFollowedArtists`
+
+Get artists followed by the current user
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.myData.getFollowedArtists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `artist` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `artists` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="artists full type">
+
+```ts
+{
+  href?: string,
+  limit?: number,
+  next?: string | null,
+  cursors?: {
+    after?: string | null
+  },
+  total?: number,
+  items?: {
+    id: string,
+    name: string,
+    external_urls?: {
+      spotify?: string
+    },
+    followers?: {
+      total?: number
+    },
+    genres?: string[],
+    href?: string,
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    popularity?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Player
+
+### addToQueue
+
+`player.addToQueue`
+
+Add a track to the playback queue
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.player.addToQueue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uri` | `string` | Yes | — |
+| `device_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCurrentlyPlaying
+
+`player.getCurrentlyPlaying`
+
+Get the currently playing track
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.player.getCurrentlyPlaying({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `market` | `string` | No | — |
+| `additional_types` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `number` | No | — |
+| `context` | `object` | No | — |
+| `progress_ms` | `number` | No | — |
+| `is_playing` | `boolean` | No | — |
+| `item` | `object` | No | — |
+| `currently_playing_type` | `string` | No | — |
+| `actions` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+  external_urls?: {
+    spotify?: string
+  },
+  href?: string,
+  type?: string,
+  uri?: string
+}
+```
+</Accordion>
+
+<Accordion title="item full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  artists?: {
+    id: string,
+    name: string
+  }[],
+  album?: {
+    id: string,
+    name: string,
+    album_type: string,
+    total_tracks?: number,
+    available_markets?: string[],
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    release_date?: string,
+    release_date_precision?: string,
+    artists?: {
+      id: string,
+      name: string,
+      external_urls?: {
+        spotify?: string
+      }
+    }[]
+  },
+  duration_ms?: number,
+  explicit?: boolean,
+  external_urls?: {
+    spotify?: string
+  },
+  href?: string,
+  is_local?: boolean,
+  popularity?: number,
+  preview_url?: string | null,
+  track_number?: number
+}
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+{
+  disallows?: {
+    resuming?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentlyPlayed
+
+`player.getRecentlyPlayed`
+
+Get recently played tracks
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.player.getRecentlyPlayed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `number` | No | — |
+| `before` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `next` | `string` | No | — |
+| `cursors` | `object` | No | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  track?: {
+    id: string,
+    name: string,
+    artists?: {
+      id: string,
+      name: string
+    }[],
+    album?: {
+      id: string,
+      name: string,
+      album_type: string,
+      total_tracks?: number,
+      available_markets?: string[],
+      external_urls?: {
+        spotify?: string
+      },
+      href?: string,
+      images?: {
+        url: string,
+        height?: number | null,
+        width?: number | null
+      }[],
+      release_date?: string,
+      release_date_precision?: string,
+      artists?: {
+        id: string,
+        name: string,
+        external_urls?: {
+          spotify?: string
+        }
+      }[]
+    },
+    duration_ms?: number,
+    explicit?: boolean,
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    is_local?: boolean,
+    popularity?: number,
+    preview_url?: string | null,
+    track_number?: number
+  },
+  played_at?: string,
+  context?: {
+    type?: string,
+    href?: string,
+    external_urls?: {
+      spotify?: string
+    },
+    uri?: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="cursors full type">
+
+```ts
+{
+  after?: string,
+  before?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`player.pause`
+
+Pause playback
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.player.pause({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### resume
+
+`player.resume`
+
+Resume playback
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.player.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### setVolume
+
+`player.setVolume`
+
+Set the playback volume
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.player.setVolume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volume_percent` | `number` | Yes | — |
+| `device_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### skipToNext
+
+`player.skipToNext`
+
+Skip to the next track
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.player.skipToNext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### skipToPrevious
+
+`player.skipToPrevious`
+
+Skip to the previous track
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.player.skipToPrevious({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### startPlayback
+
+`player.startPlayback`
+
+Start playback of specified content
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.player.startPlayback({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `string` | No | — |
+| `context_uri` | `string` | No | — |
+| `uris` | `string[]` | No | — |
+| `offset` | `object` | No | — |
+| `position_ms` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="offset full type">
+
+```ts
+{
+  position?: number,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Playlists
+
+### addItem
+
+`playlists.addItem`
+
+Add a track to a playlist
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.playlists.addItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playlist_id` | `string` | Yes | — |
+| `uris` | `string[]` | Yes | — |
+| `position` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshot_id` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`playlists.create`
+
+Create a new playlist
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.playlists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `public` | `boolean` | No | — |
+| `collaborative` | `boolean` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `public` | `boolean` | No | — |
+| `collaborative` | `boolean` | No | — |
+| `owner` | `object` | No | — |
+| `followers` | `object` | No | — |
+| `images` | `object[]` | No | — |
+| `tracks` | `object` | No | — |
+| `external_urls` | `object` | No | — |
+| `href` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id: string,
+  display_name?: string,
+  external_urls?: {
+    spotify?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="followers full type">
+
+```ts
+{
+  total?: number
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tracks full type">
+
+```ts
+{
+  href?: string,
+  total?: number
+}
+```
+</Accordion>
+
+<Accordion title="external_urls full type">
+
+```ts
+{
+  spotify?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`playlists.get`
+
+Get info about a playlist
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.playlists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playlist_id` | `string` | Yes | — |
+| `market` | `string` | No | — |
+| `fields` | `string` | No | — |
+| `additional_types` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `public` | `boolean` | No | — |
+| `collaborative` | `boolean` | No | — |
+| `owner` | `object` | No | — |
+| `followers` | `object` | No | — |
+| `images` | `object[]` | No | — |
+| `tracks` | `object` | No | — |
+| `external_urls` | `object` | No | — |
+| `href` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id: string,
+  display_name?: string,
+  external_urls?: {
+    spotify?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="followers full type">
+
+```ts
+{
+  total?: number
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  height?: number | null,
+  width?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tracks full type">
+
+```ts
+{
+  href?: string,
+  total?: number
+}
+```
+</Accordion>
+
+<Accordion title="external_urls full type">
+
+```ts
+{
+  spotify?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTracks
+
+`playlists.getTracks`
+
+Get tracks in a playlist
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.playlists.getTracks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playlist_id` | `string` | Yes | — |
+| `market` | `string` | No | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `additional_types` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `href` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `previous` | `string` | No | — |
+| `total` | `number` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  added_at?: string,
+  added_by?: {
+    id?: string
+  },
+  is_local?: boolean,
+  track?: {
+    id: string,
+    name: string,
+    artists?: {
+      id: string,
+      name: string
+    }[],
+    album?: {
+      id: string,
+      name: string,
+      album_type: string,
+      total_tracks?: number,
+      available_markets?: string[],
+      external_urls?: {
+        spotify?: string
+      },
+      href?: string,
+      images?: {
+        url: string,
+        height?: number | null,
+        width?: number | null
+      }[],
+      release_date?: string,
+      release_date_precision?: string,
+      artists?: {
+        id: string,
+        name: string,
+        external_urls?: {
+          spotify?: string
+        }
+      }[]
+    },
+    duration_ms?: number,
+    explicit?: boolean,
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    is_local?: boolean,
+    popularity?: number,
+    preview_url?: string | null,
+    track_number?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserPlaylists
+
+`playlists.getUserPlaylists`
+
+Get the current user's playlists
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.playlists.getUserPlaylists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `href` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `previous` | `string` | No | — |
+| `total` | `number` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  public?: boolean,
+  collaborative?: boolean,
+  owner?: {
+    id: string,
+    display_name?: string,
+    external_urls?: {
+      spotify?: string
+    }
+  },
+  followers?: {
+    total?: number
+  },
+  images?: {
+    url: string,
+    height?: number | null,
+    width?: number | null
+  }[],
+  tracks?: {
+    href?: string,
+    total?: number
+  },
+  external_urls?: {
+    spotify?: string
+  },
+  href?: string
+} | null[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeItem
+
+`playlists.removeItem`
+
+Remove a track from a playlist
+
+**Risk:** `write`
+
+```ts
+await corsair.spotify.api.playlists.removeItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playlist_id` | `string` | Yes | — |
+| `tracks` | `object[]` | Yes | — |
+| `snapshot_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tracks full type">
+
+```ts
+{
+  uri: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshot_id` | `string` | No | — |
+
+
+
+---
+
+### search
+
+`playlists.search`
+
+Search for playlists
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.playlists.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `type` | `playlist` | No | — |
+| `market` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playlists` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="playlists full type">
+
+```ts
+{
+  href?: string,
+  limit?: number,
+  next?: string | null,
+  offset?: number,
+  previous?: string | null,
+  total?: number,
+  items?: {
+    id: string,
+    name: string,
+    description?: string | null,
+    public?: boolean,
+    collaborative?: boolean,
+    owner?: {
+      id: string,
+      display_name?: string,
+      external_urls?: {
+        spotify?: string
+      }
+    },
+    followers?: {
+      total?: number
+    },
+    images?: {
+      url: string,
+      height?: number | null,
+      width?: number | null
+    }[],
+    tracks?: {
+      href?: string,
+      total?: number
+    },
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string
+  } | null[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tracks
+
+### get
+
+`tracks.get`
+
+Get info about a track
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.tracks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `market` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `artists` | `object[]` | No | — |
+| `album` | `object` | No | — |
+| `duration_ms` | `number` | No | — |
+| `explicit` | `boolean` | No | — |
+| `external_urls` | `object` | No | — |
+| `href` | `string` | No | — |
+| `is_local` | `boolean` | No | — |
+| `popularity` | `number` | No | — |
+| `preview_url` | `string` | No | — |
+| `track_number` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="artists full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="album full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  album_type: string,
+  total_tracks?: number,
+  available_markets?: string[],
+  external_urls?: {
+    spotify?: string
+  },
+  href?: string,
+  images?: {
+    url: string,
+    height?: number | null,
+    width?: number | null
+  }[],
+  release_date?: string,
+  release_date_precision?: string,
+  artists?: {
+    id: string,
+    name: string,
+    external_urls?: {
+      spotify?: string
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="external_urls full type">
+
+```ts
+{
+  spotify?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAudioFeatures
+
+`tracks.getAudioFeatures`
+
+Get audio features for a track
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.tracks.getAudioFeatures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `danceability` | `number` | No | — |
+| `energy` | `number` | No | — |
+| `key` | `number` | No | — |
+| `loudness` | `number` | No | — |
+| `mode` | `number` | No | — |
+| `speechiness` | `number` | No | — |
+| `acousticness` | `number` | No | — |
+| `instrumentalness` | `number` | No | — |
+| `liveness` | `number` | No | — |
+| `valence` | `number` | No | — |
+| `tempo` | `number` | No | — |
+| `duration_ms` | `number` | No | — |
+| `time_signature` | `number` | No | — |
+
+
+
+---
+
+### search
+
+`tracks.search`
+
+Search for tracks
+
+**Risk:** `read`
+
+```ts
+await corsair.spotify.api.tracks.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `type` | `track` | No | — |
+| `market` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tracks` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tracks full type">
+
+```ts
+{
+  href?: string,
+  limit?: number,
+  next?: string | null,
+  offset?: number,
+  previous?: string | null,
+  total?: number,
+  items?: {
+    id: string,
+    name: string,
+    artists?: {
+      id: string,
+      name: string
+    }[],
+    album?: {
+      id: string,
+      name: string,
+      album_type: string,
+      total_tracks?: number,
+      available_markets?: string[],
+      external_urls?: {
+        spotify?: string
+      },
+      href?: string,
+      images?: {
+        url: string,
+        height?: number | null,
+        width?: number | null
+      }[],
+      release_date?: string,
+      release_date_precision?: string,
+      artists?: {
+        id: string,
+        name: string,
+        external_urls?: {
+          spotify?: string
+        }
+      }[]
+    },
+    duration_ms?: number,
+    explicit?: boolean,
+    external_urls?: {
+      spotify?: string
+    },
+    href?: string,
+    is_local?: boolean,
+    popularity?: number,
+    preview_url?: string | null,
+    track_number?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,365 @@
+---
+title: Webhooks
+description: "Exa incoming webhooks: event paths, payloads, and response data."
+---
+
+The Exa plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/exa/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `content`
+  - `contentIndexed` (`content.contentIndexed`)
+- `search`
+  - `searchAlert` (`search.searchAlert`)
+- `webset`
+  - `websetItemsFound` (`webset.websetItemsFound`)
+  - `websetSearchCompleted` (`webset.websetSearchCompleted`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Content
+
+### Content Indexed
+
+`content.contentIndexed`
+
+A new web page has been indexed by Exa
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `content.indexed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url: string,
+  title?: string | null,
+  publishedDate?: string | null,
+  author?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  url: string,
+  title?: string | null,
+  publishedDate?: string | null,
+  author?: string | null,
+  indexedAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+exa({
+    webhookHooks: {
+        content: {
+            contentIndexed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Search
+
+### Search Alert
+
+`search.searchAlert`
+
+A monitored search query has new matching results
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `search.alert` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  query: string,
+  results: {
+    id: string,
+    url: string,
+    title?: string | null,
+    publishedDate?: string | null,
+    author?: string | null,
+    score?: number,
+    text?: string,
+    highlights?: string[],
+    summary?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  query: string,
+  results: {
+    id: string,
+    url: string,
+    title?: string | null,
+    publishedDate?: string | null,
+    author?: string | null,
+    score?: number,
+    text?: string,
+    highlights?: string[],
+    summary?: string
+  }[],
+  triggeredAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+exa({
+    webhookHooks: {
+        search: {
+            searchAlert: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Webset
+
+### Webset Items Found
+
+`webset.websetItemsFound`
+
+New items were found for a webset search
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webset.items_found` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  webset: {
+    id: string,
+    object: webset,
+    status: idle | running | paused | done,
+    externalId?: string,
+    createdAt: string,
+    updatedAt: string
+  },
+  items: {
+    id: string,
+    url: string,
+    title?: string | null,
+    publishedDate?: string | null,
+    author?: string | null,
+    score?: number,
+    text?: string,
+    highlights?: string[],
+    summary?: string
+  }[],
+  itemCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webset: {
+    id: string,
+    object: webset,
+    status: idle | running | paused | done,
+    externalId?: string,
+    createdAt: string,
+    updatedAt: string
+  },
+  items: {
+    id: string,
+    url: string,
+    title?: string | null,
+    publishedDate?: string | null,
+    author?: string | null,
+    score?: number,
+    text?: string,
+    highlights?: string[],
+    summary?: string
+  }[],
+  itemCount?: number,
+  triggeredAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+exa({
+    webhookHooks: {
+        webset: {
+            websetItemsFound: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Webset Search Completed
+
+`webset.websetSearchCompleted`
+
+A webset search has completed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `webset.search.completed` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  webset: {
+    id: string,
+    object: webset,
+    status: idle | running | paused | done,
+    externalId?: string,
+    createdAt: string,
+    updatedAt: string
+  },
+  totalItems?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webset: {
+    id: string,
+    object: webset,
+    status: idle | running | paused | done,
+    externalId?: string,
+    createdAt: string,
+    updatedAt: string
+  },
+  totalItems?: number,
+  completedAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+exa({
+    webhookHooks: {
+        webset: {
+            websetSearchCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

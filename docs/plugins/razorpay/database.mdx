@@ -1,0 +1,215 @@
+---
+title: Database
+description: "Razorpay local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Razorpay plugin syncs data locally. Use `corsair.razorpay.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Customers
+
+Path: `razorpay.db.customers.search`
+
+```ts
+const rows = await corsair.razorpay.db.customers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact` | `string` | equals, contains, startsWith, endsWith, in |
+| `gstin` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Orders
+
+Path: `razorpay.db.orders.search`
+
+```ts
+const rows = await corsair.razorpay.db.orders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `amount_paid` | `number` | equals, gt, gte, lt, lte, in |
+| `amount_due` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `receipt` | `string` | equals, contains, startsWith, endsWith, in |
+| `offer_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `attempts` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Payments
+
+Path: `razorpay.db.payments.search`
+
+```ts
+const rows = await corsair.razorpay.db.payments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `invoice_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `method` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured` | `boolean` | equals |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Refunds
+
+Path: `razorpay.db.refunds.search`
+
+```ts
+const rows = await corsair.razorpay.db.refunds.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `payment_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `receipt` | `string` | equals, contains, startsWith, endsWith, in |
+| `speed_processed` | `string` | equals, contains, startsWith, endsWith, in |
+| `speed_requested` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Settlements
+
+Path: `razorpay.db.settlements.search`
+
+```ts
+const rows = await corsair.razorpay.db.settlements.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `fees` | `number` | equals, gt, gte, lt, lte, in |
+| `tax` | `number` | equals, gt, gte, lt, lte, in |
+| `utr` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Subscriptions
+
+Path: `razorpay.db.subscriptions.search`
+
+```ts
+const rows = await corsair.razorpay.db.subscriptions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `plan_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `current_start` | `number` | equals, gt, gte, lt, lte, in |
+| `current_end` | `number` | equals, gt, gte, lt, lte, in |
+| `ended_at` | `number` | equals, gt, gte, lt, lte, in |
+| `charge_at` | `number` | equals, gt, gte, lt, lte, in |
+| `offer_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_at` | `number` | equals, gt, gte, lt, lte, in |
+| `end_at` | `number` | equals, gt, gte, lt, lte, in |
+| `auth_attempts` | `number` | equals, gt, gte, lt, lte, in |
+| `quantity` | `number` | equals, gt, gte, lt, lte, in |
+| `total_count` | `number` | equals, gt, gte, lt, lte, in |
+| `paid_count` | `number` | equals, gt, gte, lt, lte, in |
+| `remaining_count` | `number` | equals, gt, gte, lt, lte, in |
+| `customer_notify` | `boolean` | equals |
+| `expire_by` | `number` | equals, gt, gte, lt, lte, in |
+| `short_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_scheduled_changes` | `boolean` | equals |
+| `change_scheduled_at` | `number` | equals, gt, gte, lt, lte, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

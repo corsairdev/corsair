@@ -1,0 +1,1311 @@
+---
+title: Webhooks
+description: "Stripe incoming webhooks: event paths, payloads, and response data."
+---
+
+The Stripe plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/stripe/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `charge`
+  - `failed` (`charge.failed`)
+  - `refunded` (`charge.refunded`)
+  - `succeeded` (`charge.succeeded`)
+- `coupon`
+  - `created` (`coupon.created`)
+  - `deleted` (`coupon.deleted`)
+- `customer`
+  - `created` (`customer.created`)
+  - `deleted` (`customer.deleted`)
+  - `updated` (`customer.updated`)
+- `paymentIntent`
+  - `failed` (`paymentIntent.failed`)
+  - `succeeded` (`paymentIntent.succeeded`)
+- `ping`
+  - `ping` (`ping.ping`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Charge
+
+### Failed
+
+`charge.failed`
+
+A charge attempt failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `charge.failed` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: charge,
+    amount: number,
+    currency: string,
+    status: string,
+    customer?: string | null,
+    description?: string | null,
+    paid?: boolean,
+    refunded?: boolean,
+    created?: number,
+    payment_intent?: string | null,
+    failure_code?: string | null,
+    failure_message?: string | null,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: charge.failed,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: charge,
+      amount: number,
+      currency: string,
+      status: string,
+      customer?: string | null,
+      description?: string | null,
+      paid?: boolean,
+      refunded?: boolean,
+      created?: number,
+      payment_intent?: string | null,
+      failure_code?: string | null,
+      failure_message?: string | null,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        charge: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Refunded
+
+`charge.refunded`
+
+A charge was refunded
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `charge.refunded` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: charge,
+    amount: number,
+    currency: string,
+    status: string,
+    customer?: string | null,
+    description?: string | null,
+    paid?: boolean,
+    refunded?: boolean,
+    created?: number,
+    payment_intent?: string | null,
+    failure_code?: string | null,
+    failure_message?: string | null,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: charge.refunded,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: charge,
+      amount: number,
+      currency: string,
+      status: string,
+      customer?: string | null,
+      description?: string | null,
+      paid?: boolean,
+      refunded?: boolean,
+      created?: number,
+      payment_intent?: string | null,
+      failure_code?: string | null,
+      failure_message?: string | null,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        charge: {
+            refunded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Succeeded
+
+`charge.succeeded`
+
+A charge was successfully completed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `charge.succeeded` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: charge,
+    amount: number,
+    currency: string,
+    status: string,
+    customer?: string | null,
+    description?: string | null,
+    paid?: boolean,
+    refunded?: boolean,
+    created?: number,
+    payment_intent?: string | null,
+    failure_code?: string | null,
+    failure_message?: string | null,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: charge.succeeded,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: charge,
+      amount: number,
+      currency: string,
+      status: string,
+      customer?: string | null,
+      description?: string | null,
+      paid?: boolean,
+      refunded?: boolean,
+      created?: number,
+      payment_intent?: string | null,
+      failure_code?: string | null,
+      failure_message?: string | null,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        charge: {
+            succeeded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Coupon
+
+### Created
+
+`coupon.created`
+
+A coupon was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `coupon.created` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: coupon,
+    name?: string | null,
+    amount_off?: number | null,
+    percent_off?: number | null,
+    currency?: string | null,
+    duration?: string,
+    duration_in_months?: number | null,
+    max_redemptions?: number | null,
+    times_redeemed?: number,
+    valid?: boolean,
+    created?: number,
+    livemode?: boolean,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: coupon.created,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: coupon,
+      name?: string | null,
+      amount_off?: number | null,
+      percent_off?: number | null,
+      currency?: string | null,
+      duration?: string,
+      duration_in_months?: number | null,
+      max_redemptions?: number | null,
+      times_redeemed?: number,
+      valid?: boolean,
+      created?: number,
+      livemode?: boolean,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        coupon: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`coupon.deleted`
+
+A coupon was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `coupon.deleted` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: coupon,
+    name?: string | null,
+    amount_off?: number | null,
+    percent_off?: number | null,
+    currency?: string | null,
+    duration?: string,
+    duration_in_months?: number | null,
+    max_redemptions?: number | null,
+    times_redeemed?: number,
+    valid?: boolean,
+    created?: number,
+    livemode?: boolean,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: coupon.deleted,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: coupon,
+      name?: string | null,
+      amount_off?: number | null,
+      percent_off?: number | null,
+      currency?: string | null,
+      duration?: string,
+      duration_in_months?: number | null,
+      max_redemptions?: number | null,
+      times_redeemed?: number,
+      valid?: boolean,
+      created?: number,
+      livemode?: boolean,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        coupon: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Customer
+
+### Created
+
+`customer.created`
+
+A new customer was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `customer.created` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: customer,
+    email?: string | null,
+    name?: string | null,
+    phone?: string | null,
+    description?: string | null,
+    currency?: string | null,
+    balance?: number,
+    created?: number,
+    livemode?: boolean,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: customer.created,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: customer,
+      email?: string | null,
+      name?: string | null,
+      phone?: string | null,
+      description?: string | null,
+      currency?: string | null,
+      balance?: number,
+      created?: number,
+      livemode?: boolean,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        customer: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`customer.deleted`
+
+A customer was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `customer.deleted` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: customer,
+    email?: string | null,
+    name?: string | null,
+    phone?: string | null,
+    description?: string | null,
+    currency?: string | null,
+    balance?: number,
+    created?: number,
+    livemode?: boolean,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: customer.deleted,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: customer,
+      email?: string | null,
+      name?: string | null,
+      phone?: string | null,
+      description?: string | null,
+      currency?: string | null,
+      balance?: number,
+      created?: number,
+      livemode?: boolean,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        customer: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`customer.updated`
+
+A customer was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `customer.updated` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: customer,
+    email?: string | null,
+    name?: string | null,
+    phone?: string | null,
+    description?: string | null,
+    currency?: string | null,
+    balance?: number,
+    created?: number,
+    livemode?: boolean,
+    metadata?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: customer.updated,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: customer,
+      email?: string | null,
+      name?: string | null,
+      phone?: string | null,
+      description?: string | null,
+      currency?: string | null,
+      balance?: number,
+      created?: number,
+      livemode?: boolean,
+      metadata?: {
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        customer: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Payment Intent
+
+### Failed
+
+`paymentIntent.failed`
+
+A payment intent payment failed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `payment_intent.payment_failed` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: payment_intent,
+    amount: number,
+    currency: string,
+    status: string,
+    customer?: string | null,
+    description?: string | null,
+    created?: number,
+    payment_method?: string | null,
+    client_secret?: string | null,
+    canceled_at?: number | null,
+    cancellation_reason?: string | null,
+    metadata?: {
+    },
+    last_payment_error?: {
+      code?: string,
+      message?: string,
+      type?: string
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: payment_intent.payment_failed,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: payment_intent,
+      amount: number,
+      currency: string,
+      status: string,
+      customer?: string | null,
+      description?: string | null,
+      created?: number,
+      payment_method?: string | null,
+      client_secret?: string | null,
+      canceled_at?: number | null,
+      cancellation_reason?: string | null,
+      metadata?: {
+      },
+      last_payment_error?: {
+        code?: string,
+        message?: string,
+        type?: string
+      } | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        paymentIntent: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Succeeded
+
+`paymentIntent.succeeded`
+
+A payment intent succeeded
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `payment_intent.succeeded` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+    id: string,
+    object: payment_intent,
+    amount: number,
+    currency: string,
+    status: string,
+    customer?: string | null,
+    description?: string | null,
+    created?: number,
+    payment_method?: string | null,
+    client_secret?: string | null,
+    canceled_at?: number | null,
+    cancellation_reason?: string | null,
+    metadata?: {
+    },
+    last_payment_error?: {
+      code?: string,
+      message?: string,
+      type?: string
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: payment_intent.succeeded,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+      id: string,
+      object: payment_intent,
+      amount: number,
+      currency: string,
+      status: string,
+      customer?: string | null,
+      description?: string | null,
+      created?: number,
+      payment_method?: string | null,
+      client_secret?: string | null,
+      canceled_at?: number | null,
+      cancellation_reason?: string | null,
+      metadata?: {
+      },
+      last_payment_error?: {
+        code?: string,
+        message?: string,
+        type?: string
+      } | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        paymentIntent: {
+            succeeded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Ping
+
+### Ping
+
+`ping.ping`
+
+Stripe webhook endpoint connectivity test
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `api_version` | `string` | No | — |
+| `created` | `number` | Yes | — |
+| `livemode` | `boolean` | Yes | — |
+| `type` | `v2.core.event_destination.ping` | Yes | — |
+| `request` | `object` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  id?: string | null,
+  idempotency_key?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  api_version?: string | null,
+  created: number,
+  livemode: boolean,
+  type: v2.core.event_destination.ping,
+  request?: {
+    id?: string | null,
+    idempotency_key?: string | null
+  } | null,
+  data: {
+    object: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+stripe({
+    webhookHooks: {
+        ping: {
+            ping: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

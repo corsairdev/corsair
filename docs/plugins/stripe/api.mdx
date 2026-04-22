@@ -1,0 +1,1270 @@
+---
+title: API
+description: "API reference for Stripe: every `stripe.api.*` operation with input and output types."
+---
+
+Every `stripe.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Balance
+
+### get
+
+`balance.get`
+
+Retrieve the current account balance
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.balance.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `balance` | Yes | — |
+| `livemode` | `boolean` | No | — |
+| `available` | `object[]` | No | — |
+| `pending` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="available full type">
+
+```ts
+{
+  amount: number,
+  currency: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pending full type">
+
+```ts
+{
+  amount: number,
+  currency: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Charges
+
+### create
+
+`charges.create`
+
+Create a new Stripe charge
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.charges.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `source` | `string` | No | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `charge` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `paid` | `boolean` | No | — |
+| `refunded` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `payment_intent` | `string` | No | — |
+| `failure_code` | `string` | No | — |
+| `failure_message` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`charges.get`
+
+Retrieve a Stripe charge by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.charges.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `charge` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `paid` | `boolean` | No | — |
+| `refunded` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `payment_intent` | `string` | No | — |
+| `failure_code` | `string` | No | — |
+| `failure_message` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`charges.list`
+
+List Stripe charges with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.charges.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | No | — |
+| `payment_intent` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: charge,
+  amount: number,
+  currency: string,
+  status: string,
+  customer?: string | null,
+  description?: string | null,
+  paid?: boolean,
+  refunded?: boolean,
+  created?: number,
+  payment_intent?: string | null,
+  failure_code?: string | null,
+  failure_message?: string | null,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`charges.update`
+
+Update a Stripe charge
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.charges.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `receipt_email` | `string` | No | — |
+| `shipping` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `charge` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `paid` | `boolean` | No | — |
+| `refunded` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `payment_intent` | `string` | No | — |
+| `failure_code` | `string` | No | — |
+| `failure_message` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Coupons
+
+### create
+
+`coupons.create`
+
+Create a new Stripe coupon
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.coupons.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `amount_off` | `number` | No | — |
+| `percent_off` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `duration` | `forever \| once \| repeating` | No | — |
+| `duration_in_months` | `number` | No | — |
+| `max_redemptions` | `number` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `coupon` | Yes | — |
+| `name` | `string` | No | — |
+| `amount_off` | `number` | No | — |
+| `percent_off` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `duration_in_months` | `number` | No | — |
+| `max_redemptions` | `number` | No | — |
+| `times_redeemed` | `number` | No | — |
+| `valid` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `livemode` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`coupons.list`
+
+List Stripe coupons
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.coupons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: coupon,
+  name?: string | null,
+  amount_off?: number | null,
+  percent_off?: number | null,
+  currency?: string | null,
+  duration?: string,
+  duration_in_months?: number | null,
+  max_redemptions?: number | null,
+  times_redeemed?: number,
+  valid?: boolean,
+  created?: number,
+  livemode?: boolean,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a new Stripe customer
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.customers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `customer` | Yes | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `description` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `balance` | `number` | No | — |
+| `created` | `number` | No | — |
+| `livemode` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a Stripe customer [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stripe.api.customers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `customer` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Retrieve a Stripe customer by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `customer` | Yes | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `description` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `balance` | `number` | No | — |
+| `created` | `number` | No | — |
+| `livemode` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List Stripe customers with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: customer,
+  email?: string | null,
+  name?: string | null,
+  phone?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  balance?: number,
+  created?: number,
+  livemode?: boolean,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payment Intents
+
+### create
+
+`paymentIntents.create`
+
+Create a new Stripe payment intent
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.paymentIntents.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `payment_method` | `string` | No | — |
+| `confirm` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `payment_intent` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created` | `number` | No | — |
+| `payment_method` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `canceled_at` | `number` | No | — |
+| `cancellation_reason` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`paymentIntents.get`
+
+Retrieve a Stripe payment intent by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.paymentIntents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `payment_intent` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created` | `number` | No | — |
+| `payment_method` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `canceled_at` | `number` | No | — |
+| `cancellation_reason` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`paymentIntents.list`
+
+List Stripe payment intents with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.paymentIntents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: payment_intent,
+  amount: number,
+  currency: string,
+  status: string,
+  customer?: string | null,
+  description?: string | null,
+  created?: number,
+  payment_method?: string | null,
+  client_secret?: string | null,
+  canceled_at?: number | null,
+  cancellation_reason?: string | null,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`paymentIntents.update`
+
+Update a Stripe payment intent
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.paymentIntents.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `payment_method` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `payment_intent` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created` | `number` | No | — |
+| `payment_method` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `canceled_at` | `number` | No | — |
+| `cancellation_reason` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prices
+
+### create
+
+`prices.create`
+
+Create a new Stripe price
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.prices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency` | `string` | Yes | — |
+| `unit_amount` | `number` | No | — |
+| `product` | `string` | No | — |
+| `product_data` | `object` | No | — |
+| `nickname` | `string` | No | — |
+| `recurring` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="product_data full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="recurring full type">
+
+```ts
+{
+  interval: day | week | month | year,
+  interval_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `price` | Yes | — |
+| `active` | `boolean` | No | — |
+| `currency` | `string` | No | — |
+| `unit_amount` | `number` | No | — |
+| `nickname` | `string` | No | — |
+| `product` | `string` | No | — |
+| `type` | `string` | No | — |
+| `recurring` | `object` | No | — |
+| `created` | `number` | No | — |
+| `livemode` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recurring full type">
+
+```ts
+{
+  interval: string,
+  interval_count: number
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`prices.list`
+
+List Stripe prices
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.prices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `active` | `boolean` | No | — |
+| `currency` | `string` | No | — |
+| `product` | `string` | No | — |
+| `type` | `one_time \| recurring` | No | — |
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `url` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: price,
+  active?: boolean,
+  currency?: string,
+  unit_amount?: number | null,
+  nickname?: string | null,
+  product?: string,
+  type?: string,
+  recurring?: {
+    interval: string,
+    interval_count: number
+  } | null,
+  created?: number,
+  livemode?: boolean,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### create
+
+`sources.create`
+
+Create a new Stripe source
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.sources.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `flow` | `string` | No | — |
+| `owner` | `object` | No | — |
+| `redirect` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="redirect full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `source` | Yes | — |
+| `type` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `status` | `string` | No | — |
+| `created` | `number` | No | — |
+| `livemode` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sources.get`
+
+Retrieve a Stripe source by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.stripe.api.sources.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `source` | Yes | — |
+| `type` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `status` | `string` | No | — |
+| `created` | `number` | No | — |
+| `livemode` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tokens
+
+### create
+
+`tokens.create`
+
+Create a Stripe token
+
+**Risk:** `write`
+
+```ts
+await corsair.stripe.api.tokens.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `card` | `object` | No | — |
+| `bank_account` | `object` | No | — |
+| `pii` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="card full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="bank_account full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="pii full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `token` | Yes | — |
+| `type` | `string` | No | — |
+| `created` | `number` | No | — |
+| `livemode` | `boolean` | No | — |
+
+
+
+---
+

@@ -1,0 +1,1431 @@
+---
+title: API
+description: "API reference for Reddit: every `reddit.api.*` operation with input and output types."
+---
+
+Every `reddit.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Feeds
+
+### getAll
+
+`feeds.getAll`
+
+Get posts from /r/all feed
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.feeds.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPopular
+
+`feeds.getPopular`
+
+Get posts from /r/popular feed
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.feeds.getPopular({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Listings
+
+### subredditsNew
+
+`listings.subredditsNew`
+
+Get new subreddit listings
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.listings.subredditsNew({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddits` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subreddits full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  display_name: string,
+  display_name_prefixed: string,
+  title: string,
+  description: string | null,
+  description_html: string | null,
+  public_description: string | null,
+  subscribers: number,
+  active_user_count?: number | null,
+  accounts_active?: number | null,
+  over18: boolean,
+  quarantine: boolean,
+  restrict_posting?: boolean,
+  restrict_commenting?: boolean,
+  icon_img: string | null,
+  banner_img: string | null,
+  community_icon: string | null,
+  primary_color: string | null,
+  created_utc: number,
+  created: number,
+  lang: string,
+  allow_discovery?: boolean,
+  submit_text_label?: string | null,
+  wiki_enabled?: boolean,
+  subreddit_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subredditsPopular
+
+`listings.subredditsPopular`
+
+Get popular subreddit listings
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.listings.subredditsPopular({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddits` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subreddits full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  display_name: string,
+  display_name_prefixed: string,
+  title: string,
+  description: string | null,
+  description_html: string | null,
+  public_description: string | null,
+  subscribers: number,
+  active_user_count?: number | null,
+  accounts_active?: number | null,
+  over18: boolean,
+  quarantine: boolean,
+  restrict_posting?: boolean,
+  restrict_commenting?: boolean,
+  icon_img: string | null,
+  banner_img: string | null,
+  community_icon: string | null,
+  primary_color: string | null,
+  created_utc: number,
+  created: number,
+  lang: string,
+  allow_discovery?: boolean,
+  submit_text_label?: string | null,
+  wiki_enabled?: boolean,
+  subreddit_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### getById
+
+`posts.getById`
+
+Get posts by fullname IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.posts.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `names` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getComments
+
+`posts.getComments`
+
+Get a post and its comments
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.posts.getComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `depth` | `number` | No | — |
+| `context` | `number` | No | — |
+| `sort` | `confidence \| top \| new \| controversial \| old \| random \| qa` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | Yes | — |
+| `comments` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}
+```
+</Accordion>
+
+<Accordion title="comments full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  body: string,
+  body_html: string,
+  author: string | null,
+  author_fullname?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  depth?: number,
+  parent_id: string,
+  link_id: string,
+  created_utc: number,
+  controversiality: number,
+  gilded?: number,
+  edited: boolean | number,
+  score_hidden?: boolean,
+  collapsed?: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  stickied?: boolean,
+  permalink: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  over_18?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### global
+
+`search.global`
+
+Search all of Reddit
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.search.global({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `sort` | `relevance \| hot \| top \| new \| comments` | No | — |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+| `restrict_sr` | `boolean` | No | — |
+| `sr_name` | `string` | No | — |
+| `type` | `link \| sr \| user` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subreddit
+
+`search.subreddit`
+
+Search within a subreddit
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.search.subreddit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | — |
+| `q` | `string` | Yes | — |
+| `sort` | `relevance \| hot \| top \| new \| comments` | No | — |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subreddits
+
+`search.subreddits`
+
+Search for subreddits by name
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.search.subreddits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddits` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subreddits full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  display_name: string,
+  display_name_prefixed: string,
+  title: string,
+  description: string | null,
+  description_html: string | null,
+  public_description: string | null,
+  subscribers: number,
+  active_user_count?: number | null,
+  accounts_active?: number | null,
+  over18: boolean,
+  quarantine: boolean,
+  restrict_posting?: boolean,
+  restrict_commenting?: boolean,
+  icon_img: string | null,
+  banner_img: string | null,
+  community_icon: string | null,
+  primary_color: string | null,
+  created_utc: number,
+  created: number,
+  lang: string,
+  allow_discovery?: boolean,
+  submit_text_label?: string | null,
+  wiki_enabled?: boolean,
+  subreddit_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subreddits
+
+### getAbout
+
+`subreddits.getAbout`
+
+Get subreddit metadata and info
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.subreddits.getAbout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `display_name` | `string` | Yes | — |
+| `display_name_prefixed` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string \| null` | Yes | — |
+| `description_html` | `string \| null` | Yes | — |
+| `public_description` | `string \| null` | Yes | — |
+| `subscribers` | `number` | Yes | — |
+| `active_user_count` | `number` | No | — |
+| `accounts_active` | `number` | No | — |
+| `over18` | `boolean` | Yes | — |
+| `quarantine` | `boolean` | Yes | — |
+| `restrict_posting` | `boolean` | No | — |
+| `restrict_commenting` | `boolean` | No | — |
+| `icon_img` | `string \| null` | Yes | — |
+| `banner_img` | `string \| null` | Yes | — |
+| `community_icon` | `string \| null` | Yes | — |
+| `primary_color` | `string \| null` | Yes | — |
+| `created_utc` | `number` | Yes | — |
+| `created` | `number` | Yes | — |
+| `lang` | `string` | Yes | — |
+| `allow_discovery` | `boolean` | No | — |
+| `submit_text_label` | `string \| null` | No | — |
+| `wiki_enabled` | `boolean` | No | — |
+| `subreddit_type` | `string` | No | — |
+
+
+
+---
+
+### getControversial
+
+`subreddits.getControversial`
+
+Get controversial posts from a subreddit
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.subreddits.getControversial({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHot
+
+`subreddits.getHot`
+
+Get hot posts from a subreddit
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.subreddits.getHot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNew
+
+`subreddits.getNew`
+
+Get new posts from a subreddit
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.subreddits.getNew({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRising
+
+`subreddits.getRising`
+
+Get rising posts from a subreddit
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.subreddits.getRising({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTop
+
+`subreddits.getTop`
+
+Get top posts from a subreddit with time filter
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.subreddits.getTop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subreddit` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getAbout
+
+`users.getAbout`
+
+Get user profile information
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.users.getAbout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `link_karma` | `number` | Yes | — |
+| `comment_karma` | `number` | Yes | — |
+| `total_karma` | `number` | Yes | — |
+| `is_employee` | `boolean` | No | — |
+| `is_mod` | `boolean` | No | — |
+| `is_gold` | `boolean` | No | — |
+| `created_utc` | `number` | Yes | — |
+| `has_verified_email` | `boolean` | Yes | — |
+| `verified` | `boolean` | No | — |
+| `icon_img` | `string \| null` | Yes | — |
+| `is_suspended` | `boolean` | No | — |
+| `pref_show_snoovatar` | `boolean` | No | — |
+| `accept_followers` | `boolean` | No | — |
+
+
+
+---
+
+### getComments
+
+`users.getComments`
+
+Get a user's comments
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.users.getComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `sort` | `new \| hot \| top` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  body: string,
+  body_html: string,
+  author: string | null,
+  author_fullname?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  depth?: number,
+  parent_id: string,
+  link_id: string,
+  created_utc: number,
+  controversiality: number,
+  gilded?: number,
+  edited: boolean | number,
+  score_hidden?: boolean,
+  collapsed?: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  stickied?: boolean,
+  permalink: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  over_18?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOverview
+
+`users.getOverview`
+
+Get a user's mixed posts and comments
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.users.getOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `sort` | `new \| hot \| top` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+(
+  {
+    id: string,
+    name: string,
+    title: string,
+    selftext: string | null,
+    selftext_html: string | null,
+    url: string,
+    author: string | null,
+    author_fullname?: string,
+    subreddit: string,
+    subreddit_name_prefixed: string,
+    subreddit_id?: string,
+    score: number,
+    ups: number,
+    downs: number,
+    upvote_ratio: number,
+    num_comments: number,
+    over_18: boolean,
+    spoiler: boolean,
+    stickied: boolean,
+    archived?: boolean,
+    locked?: boolean,
+    hide_score?: boolean,
+    created_utc: number,
+    permalink: string,
+    thumbnail: string,
+    total_awards_received?: number
+  } | {
+    id: string,
+    name: string,
+    body: string,
+    body_html: string,
+    author: string | null,
+    author_fullname?: string,
+    score: number,
+    ups: number,
+    downs: number,
+    depth?: number,
+    parent_id: string,
+    link_id: string,
+    created_utc: number,
+    controversiality: number,
+    gilded?: number,
+    edited: boolean | number,
+    score_hidden?: boolean,
+    collapsed?: boolean,
+    archived?: boolean,
+    locked?: boolean,
+    stickied?: boolean,
+    permalink: string,
+    subreddit: string,
+    subreddit_name_prefixed: string,
+    over_18?: boolean
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubmitted
+
+`users.getSubmitted`
+
+Get a user's submitted posts
+
+**Risk:** `read`
+
+```ts
+await corsair.reddit.api.users.getSubmitted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `sort` | `new \| hot \| top` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `count` | `number` | No | — |
+| `t` | `hour \| day \| week \| month \| year \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `dist` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  title: string,
+  selftext: string | null,
+  selftext_html: string | null,
+  url: string,
+  author: string | null,
+  author_fullname?: string,
+  subreddit: string,
+  subreddit_name_prefixed: string,
+  subreddit_id?: string,
+  score: number,
+  ups: number,
+  downs: number,
+  upvote_ratio: number,
+  num_comments: number,
+  over_18: boolean,
+  spoiler: boolean,
+  stickied: boolean,
+  archived?: boolean,
+  locked?: boolean,
+  hide_score?: boolean,
+  created_utc: number,
+  permalink: string,
+  thumbnail: string,
+  total_awards_received?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,584 @@
+---
+title: API
+description: "API reference for Google sheets: every `googlesheets.api.*` operation with input and output types."
+---
+
+Every `googlesheets.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Sheets
+
+### appendOrUpdateRow
+
+`sheets.appendOrUpdateRow`
+
+Append a new row or update an existing one
+
+**Risk:** `write`
+
+```ts
+await corsair.googlesheets.api.sheets.appendOrUpdateRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetName` | `string` | No | — |
+| `keyColumn` | `string` | No | Column letter (e.g. "A"), not a header name (e.g. "Company Name") |
+| `keyValue` | `string \| number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[]` | No | — |
+| `valueInputOption` | `RAW \| USER_ENTERED` | No | — |
+| `insertDataOption` | `OVERWRITE \| INSERT_ROWS` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `totalUpdatedRows` | `number` | No | — |
+| `totalUpdatedColumns` | `number` | No | — |
+| `totalUpdatedCells` | `number` | No | — |
+| `totalUpdatedSheets` | `number` | No | — |
+| `responses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  range?: string,
+  majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED,
+  values?: (
+    string | number | boolean | null
+  )[][]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### appendRow
+
+`sheets.appendRow`
+
+Append a new row to a sheet
+
+**Risk:** `write`
+
+```ts
+await corsair.googlesheets.api.sheets.appendRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetName` | `string` | No | — |
+| `range` | `string` | No | — |
+| `values` | `(string \| number \| boolean \| null)[]` | No | — |
+| `valueInputOption` | `RAW \| USER_ENTERED` | No | — |
+| `insertDataOption` | `OVERWRITE \| INSERT_ROWS` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `totalUpdatedRows` | `number` | No | — |
+| `totalUpdatedColumns` | `number` | No | — |
+| `totalUpdatedCells` | `number` | No | — |
+| `totalUpdatedSheets` | `number` | No | — |
+| `responses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  range?: string,
+  majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED,
+  values?: (
+    string | number | boolean | null
+  )[][]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### clearSheet
+
+`sheets.clearSheet`
+
+Clear all data from a sheet [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlesheets.api.sheets.clearSheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetName` | `string` | No | — |
+| `range` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `clearedRange` | `string` | No | — |
+
+
+
+---
+
+### createSheet
+
+`sheets.createSheet`
+
+Add a new sheet tab to a spreadsheet
+
+**Risk:** `write`
+
+```ts
+await corsair.googlesheets.api.sheets.createSheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `replies` | `any[]` | No | — |
+| `updatedSpreadsheet` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="updatedSpreadsheet full type">
+
+```ts
+{
+  spreadsheetId?: string,
+  properties?: {
+    title?: string,
+    locale?: string,
+    autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE,
+    timeZone?: string
+  },
+  spreadsheetUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteRowsOrColumns
+
+`sheets.deleteRowsOrColumns`
+
+Delete rows or columns from a sheet [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlesheets.api.sheets.deleteRowsOrColumns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetId` | `number` | Yes | — |
+| `dimension` | `ROWS \| COLUMNS` | No | — |
+| `startIndex` | `number` | No | — |
+| `endIndex` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `replies` | `any[]` | No | — |
+| `updatedSpreadsheet` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="updatedSpreadsheet full type">
+
+```ts
+{
+  spreadsheetId?: string,
+  properties?: {
+    title?: string,
+    locale?: string,
+    autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE,
+    timeZone?: string
+  },
+  spreadsheetUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteSheet
+
+`sheets.deleteSheet`
+
+Delete a sheet tab and all its data [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlesheets.api.sheets.deleteSheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `replies` | `any[]` | No | — |
+| `updatedSpreadsheet` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="updatedSpreadsheet full type">
+
+```ts
+{
+  spreadsheetId?: string,
+  properties?: {
+    title?: string,
+    locale?: string,
+    autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE,
+    timeZone?: string
+  },
+  spreadsheetUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRows
+
+`sheets.getRows`
+
+Read rows from a sheet
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesheets.api.sheets.getRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetName` | `string` | No | — |
+| `range` | `string` | No | — |
+| `valueRenderOption` | `FORMATTED_VALUE \| UNFORMATTED_VALUE \| FORMULA` | No | — |
+| `dateTimeRenderOption` | `SERIAL_NUMBER \| FORMATTED_STRING` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `range` | `string` | No | — |
+| `majorDimension` | `ROWS \| COLUMNS \| DIMENSION_UNSPECIFIED` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | No | — |
+
+
+
+---
+
+### listSheetsInSpreadsheet
+
+`sheets.listSheetsInSpreadsheet`
+
+List all sheet tabs in a spreadsheet
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesheets.api.sheets.listSheetsInSpreadsheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `sheets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sheets full type">
+
+```ts
+{
+  sheetId?: number,
+  title?: string,
+  index?: number,
+  sheetType?: GRID | OBJECT | DATA_SOURCE,
+  hidden?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRow
+
+`sheets.updateRow`
+
+Update an existing row in a sheet
+
+**Risk:** `write`
+
+```ts
+await corsair.googlesheets.api.sheets.updateRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+| `sheetName` | `string` | No | — |
+| `range` | `string` | No | — |
+| `rowIndex` | `number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[]` | No | — |
+| `valueInputOption` | `RAW \| USER_ENTERED` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `totalUpdatedRows` | `number` | No | — |
+| `totalUpdatedColumns` | `number` | No | — |
+| `totalUpdatedCells` | `number` | No | — |
+| `totalUpdatedSheets` | `number` | No | — |
+| `responses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  range?: string,
+  majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED,
+  values?: (
+    string | number | boolean | null
+  )[][]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spreadsheets
+
+### create
+
+`spreadsheets.create`
+
+Create a new spreadsheet
+
+**Risk:** `write`
+
+```ts
+await corsair.googlesheets.api.spreadsheets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  title?: string,
+  locale?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `properties` | `object` | No | — |
+| `spreadsheetUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  title?: string,
+  locale?: string,
+  autoRecalc?: ON_CHANGE | ON_UPDATE | HOUR | MINUTE,
+  timeZone?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`spreadsheets.delete`
+
+Permanently delete a spreadsheet [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlesheets.api.spreadsheets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`spreadsheets.list`
+
+List all spreadsheets in Google Drive
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesheets.api.spreadsheets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  createdTime?: string,
+  modifiedTime?: string,
+  webViewLink?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,1572 @@
+---
+title: API
+description: "API reference for Jira: every `jira.api.*` operation with input and output types."
+---
+
+Every `jira.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### add
+
+`comments.add`
+
+Add a comment to a Jira issue
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.comments.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+| `visibility_type` | `string` | No | — |
+| `visibility_value` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `self` | `string` | No | — |
+| `author` | `object` | No | — |
+| `created` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string,
+  active?: boolean,
+  avatarUrls?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment from a Jira issue [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jira.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`comments.get`
+
+Get a specific comment on a Jira issue
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.comments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `self` | `string` | No | — |
+| `author` | `object` | No | — |
+| `body` | `any` | No | — |
+| `renderedBody` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string,
+  active?: boolean,
+  avatarUrls?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List all comments on a Jira issue
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+| `order_by` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `startAt` | `number` | No | — |
+| `maxResults` | `number` | No | — |
+| `comments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id?: string,
+  self?: string,
+  author?: {
+    accountId?: string,
+    displayName?: string,
+    emailAddress?: string,
+    active?: boolean,
+    avatarUrls?: {
+    }
+  },
+  body?: any,
+  renderedBody?: string,
+  created?: string,
+  updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Update a comment on a Jira issue
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.comments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `comment_id` | `string` | Yes | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `self` | `string` | No | — |
+| `author` | `object` | No | — |
+| `body` | `any` | No | — |
+| `renderedBody` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string,
+  active?: boolean,
+  avatarUrls?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a new Jira group
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### getAll
+
+`groups.getAll`
+
+Get all Jira groups
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.groups.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `header` | `string` | No | — |
+| `groups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  groupId?: string,
+  name?: string,
+  html?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Issues
+
+### addAttachment
+
+`issues.addAttachment`
+
+Add an attachment to a Jira issue
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.addAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `file_content` | `string` | No | — |
+| `file_url` | `string` | No | — |
+| `mime_type` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  self?: string,
+  filename?: string,
+  mimeType?: string,
+  size?: number,
+  content?: string,
+  created?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### addWatcher
+
+`issues.addWatcher`
+
+Add a watcher to a Jira issue
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.addWatcher({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `account_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### assign
+
+`issues.assign`
+
+Assign a Jira issue to a user
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.assign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### bulkCreate
+
+`issues.bulkCreate`
+
+Bulk create multiple Jira issues
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.bulkCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  project_key: string,
+  summary: string,
+  issue_type?: string,
+  description?: string,
+  assignee?: string,
+  priority?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | No | — |
+| `errors` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  id?: string,
+  key?: string,
+  self?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkFetch
+
+`issues.bulkFetch`
+
+Bulk fetch multiple Jira issues by ID or key
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.issues.bulkFetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_ids_or_keys` | `string[]` | Yes | — |
+| `fields` | `string[]` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | No | — |
+| `issueErrors` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  id: string,
+  key?: string,
+  self?: string,
+  fields?: {
+    summary?: string,
+    description?: any,
+    status?: {
+      id?: string,
+      name?: string,
+      statusCategory?: {
+        id?: number,
+        key?: string,
+        name?: string
+      }
+    },
+    assignee?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string,
+      active?: boolean,
+      avatarUrls?: {
+      }
+    } | null,
+    reporter?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string,
+      active?: boolean,
+      avatarUrls?: {
+      }
+    },
+    priority?: {
+      id?: string,
+      name?: string,
+      iconUrl?: string
+    } | null,
+    issuetype?: {
+      id?: string,
+      name?: string,
+      description?: string,
+      subtask?: boolean
+    },
+    project?: {
+      id?: string,
+      key?: string,
+      name?: string
+    },
+    labels?: string[],
+    created?: string,
+    updated?: string,
+    comment?: {
+      total?: number,
+      comments?: any[]
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`issues.create`
+
+Create a new Jira issue
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_key` | `string` | Yes | — |
+| `summary` | `string` | Yes | — |
+| `issue_type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `assignee` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `due_date` | `string` | No | — |
+| `parent` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `key` | `string` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`issues.delete`
+
+Delete a Jira issue [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.jira.api.issues.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `delete_subtasks` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### edit
+
+`issues.edit`
+
+Edit an existing Jira issue
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `assignee` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `labels` | `string[]` | No | — |
+| `due_date` | `string` | No | — |
+| `notify_users` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `issue_key` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`issues.get`
+
+Get a Jira issue by ID or key
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.issues.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `key` | `string` | No | — |
+| `self` | `string` | No | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  summary?: string,
+  description?: any,
+  status?: {
+    id?: string,
+    name?: string,
+    statusCategory?: {
+      id?: number,
+      key?: string,
+      name?: string
+    }
+  },
+  assignee?: {
+    accountId?: string,
+    displayName?: string,
+    emailAddress?: string,
+    active?: boolean,
+    avatarUrls?: {
+    }
+  } | null,
+  reporter?: {
+    accountId?: string,
+    displayName?: string,
+    emailAddress?: string,
+    active?: boolean,
+    avatarUrls?: {
+    }
+  },
+  priority?: {
+    id?: string,
+    name?: string,
+    iconUrl?: string
+  } | null,
+  issuetype?: {
+    id?: string,
+    name?: string,
+    description?: string,
+    subtask?: boolean
+  },
+  project?: {
+    id?: string,
+    key?: string,
+    name?: string
+  },
+  labels?: string[],
+  created?: string,
+  updated?: string,
+  comment?: {
+    total?: number,
+    comments?: any[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTransitions
+
+`issues.getTransitions`
+
+Get available transitions for a Jira issue
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.issues.getTransitions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transitions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="transitions full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  to?: {
+    id?: string,
+    name?: string,
+    statusCategory?: {
+      id?: number,
+      key?: string,
+      name?: string
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### linkIssues
+
+`issues.linkIssues`
+
+Link two Jira issues together
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.linkIssues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_type` | `string` | Yes | — |
+| `inward_issue_key` | `string` | Yes | — |
+| `outward_issue_key` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### removeWatcher
+
+`issues.removeWatcher`
+
+Remove a watcher from a Jira issue
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.removeWatcher({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `account_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### search
+
+`issues.search`
+
+Search issues using JQL
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.issues.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jql` | `string` | Yes | — |
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+| `fields` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `startAt` | `number` | No | — |
+| `maxResults` | `number` | No | — |
+| `issues` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  id: string,
+  key?: string,
+  self?: string,
+  fields?: {
+    summary?: string,
+    description?: any,
+    status?: {
+      id?: string,
+      name?: string,
+      statusCategory?: {
+        id?: number,
+        key?: string,
+        name?: string
+      }
+    },
+    assignee?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string,
+      active?: boolean,
+      avatarUrls?: {
+      }
+    } | null,
+    reporter?: {
+      accountId?: string,
+      displayName?: string,
+      emailAddress?: string,
+      active?: boolean,
+      avatarUrls?: {
+      }
+    },
+    priority?: {
+      id?: string,
+      name?: string,
+      iconUrl?: string
+    } | null,
+    issuetype?: {
+      id?: string,
+      name?: string,
+      description?: string,
+      subtask?: boolean
+    },
+    project?: {
+      id?: string,
+      key?: string,
+      name?: string
+    },
+    labels?: string[],
+    created?: string,
+    updated?: string,
+    comment?: {
+      total?: number,
+      comments?: any[]
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transition
+
+`issues.transition`
+
+Transition a Jira issue to a new status
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.issues.transition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id_or_key` | `string` | Yes | — |
+| `transition_id` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new Jira project
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `project_type_key` | `string` | No | — |
+| `description` | `string` | No | — |
+| `lead_account_id` | `string` | No | — |
+| `assignee_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `key` | `string` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a Jira project by ID or key
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id_or_key` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `key` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `projectTypeKey` | `string` | No | — |
+| `lead` | `object` | No | — |
+| `self` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string,
+  active?: boolean,
+  avatarUrls?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoles
+
+`projects.getRoles`
+
+Get project roles for a Jira project
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.projects.getRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id_or_key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`projects.list`
+
+List Jira projects
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `startAt` | `number` | No | — |
+| `maxResults` | `number` | No | — |
+| `isLast` | `boolean` | No | — |
+| `values` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  id?: string,
+  key?: string,
+  name?: string,
+  description?: string,
+  projectTypeKey?: string,
+  lead?: {
+    accountId?: string,
+    displayName?: string,
+    emailAddress?: string,
+    active?: boolean,
+    avatarUrls?: {
+    }
+  },
+  self?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sprints
+
+### create
+
+`sprints.create`
+
+Create a new sprint on a Jira board
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.sprints.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin_board_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `goal` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `state` | `string` | No | — |
+| `goal` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `completeDate` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `originBoardId` | `number` | No | — |
+| `self` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`sprints.list`
+
+List sprints for a Jira board
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.sprints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `number` | Yes | — |
+| `state` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `startAt` | `number` | No | — |
+| `isLast` | `boolean` | No | — |
+| `values` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  state?: string,
+  goal?: string,
+  startDate?: string,
+  endDate?: string,
+  completeDate?: string,
+  createdDate?: string,
+  originBoardId?: number,
+  self?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBoards
+
+`sprints.listBoards`
+
+List Jira boards
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.sprints.listBoards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_key_or_id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `name` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `startAt` | `number` | No | — |
+| `isLast` | `boolean` | No | — |
+| `total` | `number` | No | — |
+| `values` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  type?: string,
+  self?: string,
+  location?: {
+    projectId?: number,
+    projectKey?: string,
+    projectName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moveIssues
+
+`sprints.moveIssues`
+
+Move issues to a sprint
+
+**Risk:** `write`
+
+```ts
+await corsair.jira.api.sprints.moveIssues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sprint_id` | `number` | Yes | — |
+| `issue_keys` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Users
+
+### find
+
+`users.find`
+
+Search for Jira users
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.users.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `account_id` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string,
+  active?: boolean,
+  avatarUrls?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAll
+
+`users.getAll`
+
+Get all Jira users
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.users.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_at` | `number` | No | — |
+| `max_results` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  accountId?: string,
+  displayName?: string,
+  emailAddress?: string,
+  active?: boolean,
+  avatarUrls?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the currently authenticated Jira user
+
+**Risk:** `read`
+
+```ts
+await corsair.jira.api.users.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `emailAddress` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `avatarUrls` | `object` | No | — |
+| `timeZone` | `string` | No | — |
+| `locale` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="avatarUrls full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

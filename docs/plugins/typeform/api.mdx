@@ -1,0 +1,2782 @@
+---
+title: API
+description: "API reference for Typeform: every `typeform.api.*` operation with input and output types."
+---
+
+Every `typeform.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Forms
+
+### create
+
+`forms.create`
+
+Create a new form
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.forms.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `logic` | `object[]` | No | — |
+| `theme` | `object` | No | — |
+| `settings` | `object` | No | — |
+| `workspace` | `object` | No | — |
+| `welcome_screens` | `object[]` | No | — |
+| `thankyou_screens` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  ref?: string,
+  type?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    fields?: any[],
+    choices?: any[],
+    randomize?: boolean,
+    hide_marks?: boolean,
+    button_text?: string,
+    description?: string,
+    allow_other_choice?: boolean,
+    alphabetical_order?: boolean,
+    vertical_alignment?: boolean,
+    allow_multiple_selection?: boolean
+  },
+  validations?: {
+    required?: boolean,
+    max_value?: number,
+    min_value?: number,
+    max_length?: number,
+    min_length?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="logic full type">
+
+```ts
+{
+  ref?: string,
+  type?: string,
+  actions?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="theme full type">
+
+```ts
+{
+  href: string
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  is_trial?: boolean,
+  language?: string,
+  is_public?: boolean,
+  progress_bar?: string,
+  facebook_pixel?: string,
+  hide_navigation?: boolean,
+  google_analytics?: string,
+  autosave_progress?: boolean,
+  show_progress_bar?: boolean,
+  are_uploads_public?: boolean,
+  google_tag_manager?: string,
+  show_cookie_consent?: boolean,
+  free_form_navigation?: boolean,
+  show_question_number?: boolean,
+  pro_subdomain_enabled?: boolean,
+  show_time_to_complete?: boolean,
+  show_typeform_branding?: boolean,
+  show_key_hint_on_choices?: boolean,
+  redirect_after_submit_url?: string,
+  show_number_of_submissions?: boolean,
+  capabilities?: {
+  },
+  notifications?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  href: string
+}
+```
+</Accordion>
+
+<Accordion title="welcome_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    show_button?: boolean,
+    description?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="thankyou_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    button_mode?: string,
+    redirect_url?: string,
+    show_button?: boolean,
+    description?: string,
+    share_icons?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `last_updated_at` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `logic` | `object[]` | No | — |
+| `theme` | `object` | No | — |
+| `hidden` | `string[]` | No | — |
+| `settings` | `object` | No | — |
+| `variables` | `object` | No | — |
+| `workspace` | `object` | No | — |
+| `welcome_screens` | `object[]` | No | — |
+| `thankyou_screens` | `object[]` | No | — |
+| `_links` | `object` | No | — |
+| `cui_settings` | `object` | No | — |
+| `captcha` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `links` | `object` | No | — |
+| `language` | `string` | No | — |
+| `duplicate_prevention` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  ref?: string,
+  type?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    fields?: any[],
+    choices?: any[],
+    randomize?: boolean,
+    hide_marks?: boolean,
+    button_text?: string,
+    description?: string,
+    allow_other_choice?: boolean,
+    alphabetical_order?: boolean,
+    vertical_alignment?: boolean,
+    allow_multiple_selection?: boolean
+  },
+  validations?: {
+    required?: boolean,
+    max_value?: number,
+    min_value?: number,
+    max_length?: number,
+    min_length?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="logic full type">
+
+```ts
+{
+  ref?: string,
+  type?: string,
+  actions?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="theme full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  is_trial?: boolean,
+  language?: string,
+  is_public?: boolean,
+  progress_bar?: string,
+  facebook_pixel?: string,
+  hide_navigation?: boolean,
+  google_analytics?: string,
+  autosave_progress?: boolean,
+  show_progress_bar?: boolean,
+  are_uploads_public?: boolean,
+  google_tag_manager?: string,
+  show_cookie_consent?: boolean,
+  free_form_navigation?: boolean,
+  show_question_number?: boolean,
+  pro_subdomain_enabled?: boolean,
+  show_time_to_complete?: boolean,
+  show_typeform_branding?: boolean,
+  show_key_hint_on_choices?: boolean,
+  redirect_after_submit_url?: string,
+  show_number_of_submissions?: boolean,
+  capabilities?: {
+  },
+  notifications?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="welcome_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    show_button?: boolean,
+    description?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="thankyou_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    button_mode?: string,
+    redirect_url?: string,
+    show_button?: boolean,
+    description?: string,
+    share_icons?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cui_settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="captcha full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`forms.delete`
+
+Permanently delete a form [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.typeform.api.forms.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`forms.get`
+
+Get a form by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.forms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `last_updated_at` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `logic` | `object[]` | No | — |
+| `theme` | `object` | No | — |
+| `hidden` | `string[]` | No | — |
+| `settings` | `object` | No | — |
+| `variables` | `object` | No | — |
+| `workspace` | `object` | No | — |
+| `welcome_screens` | `object[]` | No | — |
+| `thankyou_screens` | `object[]` | No | — |
+| `_links` | `object` | No | — |
+| `cui_settings` | `object` | No | — |
+| `captcha` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `links` | `object` | No | — |
+| `language` | `string` | No | — |
+| `duplicate_prevention` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  ref?: string,
+  type?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    fields?: any[],
+    choices?: any[],
+    randomize?: boolean,
+    hide_marks?: boolean,
+    button_text?: string,
+    description?: string,
+    allow_other_choice?: boolean,
+    alphabetical_order?: boolean,
+    vertical_alignment?: boolean,
+    allow_multiple_selection?: boolean
+  },
+  validations?: {
+    required?: boolean,
+    max_value?: number,
+    min_value?: number,
+    max_length?: number,
+    min_length?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="logic full type">
+
+```ts
+{
+  ref?: string,
+  type?: string,
+  actions?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="theme full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  is_trial?: boolean,
+  language?: string,
+  is_public?: boolean,
+  progress_bar?: string,
+  facebook_pixel?: string,
+  hide_navigation?: boolean,
+  google_analytics?: string,
+  autosave_progress?: boolean,
+  show_progress_bar?: boolean,
+  are_uploads_public?: boolean,
+  google_tag_manager?: string,
+  show_cookie_consent?: boolean,
+  free_form_navigation?: boolean,
+  show_question_number?: boolean,
+  pro_subdomain_enabled?: boolean,
+  show_time_to_complete?: boolean,
+  show_typeform_branding?: boolean,
+  show_key_hint_on_choices?: boolean,
+  redirect_after_submit_url?: string,
+  show_number_of_submissions?: boolean,
+  capabilities?: {
+  },
+  notifications?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="welcome_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    show_button?: boolean,
+    description?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="thankyou_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    button_mode?: string,
+    redirect_url?: string,
+    show_button?: boolean,
+    description?: string,
+    share_icons?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cui_settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="captcha full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMessages
+
+`forms.getMessages`
+
+Get custom messages for a form
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.forms.getMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `block` | `string` | No | — |
+| `label` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`forms.list`
+
+List all forms in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.forms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `search` | `string` | No | — |
+| `sort_by` | `created_at \| last_updated_at` | No | — |
+| `order_by` | `asc \| desc` | No | — |
+| `page_size` | `number` | No | — |
+| `workspace_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `page_count` | `number` | No | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title?: string,
+  created_at?: string,
+  last_updated_at?: string,
+  settings?: {
+    is_public?: boolean
+  },
+  theme?: {
+    href?: string
+  },
+  _links?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`forms.patch`
+
+Partially update a form using JSON Patch operations
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.forms.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`forms.update`
+
+Replace a form with a new version (PUT)
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.forms.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `logic` | `object[]` | No | — |
+| `theme` | `object` | No | — |
+| `hidden` | `string[]` | No | — |
+| `settings` | `object` | No | — |
+| `variables` | `object` | No | — |
+| `workspace` | `object` | No | — |
+| `welcome_screens` | `object[]` | No | — |
+| `thankyou_screens` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  ref?: string,
+  type?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    fields?: any[],
+    choices?: any[],
+    randomize?: boolean,
+    hide_marks?: boolean,
+    button_text?: string,
+    description?: string,
+    allow_other_choice?: boolean,
+    alphabetical_order?: boolean,
+    vertical_alignment?: boolean,
+    allow_multiple_selection?: boolean
+  },
+  validations?: {
+    required?: boolean,
+    max_value?: number,
+    min_value?: number,
+    max_length?: number,
+    min_length?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="logic full type">
+
+```ts
+{
+  ref?: string,
+  type?: string,
+  actions?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="theme full type">
+
+```ts
+{
+  href: string
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  is_trial?: boolean,
+  language?: string,
+  is_public?: boolean,
+  progress_bar?: string,
+  facebook_pixel?: string,
+  hide_navigation?: boolean,
+  google_analytics?: string,
+  autosave_progress?: boolean,
+  show_progress_bar?: boolean,
+  are_uploads_public?: boolean,
+  google_tag_manager?: string,
+  show_cookie_consent?: boolean,
+  free_form_navigation?: boolean,
+  show_question_number?: boolean,
+  pro_subdomain_enabled?: boolean,
+  show_time_to_complete?: boolean,
+  show_typeform_branding?: boolean,
+  show_key_hint_on_choices?: boolean,
+  redirect_after_submit_url?: string,
+  show_number_of_submissions?: boolean,
+  capabilities?: {
+  },
+  notifications?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  href: string
+}
+```
+</Accordion>
+
+<Accordion title="welcome_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    show_button?: boolean,
+    description?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="thankyou_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    button_mode?: string,
+    redirect_url?: string,
+    show_button?: boolean,
+    description?: string,
+    share_icons?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `last_updated_at` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `logic` | `object[]` | No | — |
+| `theme` | `object` | No | — |
+| `hidden` | `string[]` | No | — |
+| `settings` | `object` | No | — |
+| `variables` | `object` | No | — |
+| `workspace` | `object` | No | — |
+| `welcome_screens` | `object[]` | No | — |
+| `thankyou_screens` | `object[]` | No | — |
+| `_links` | `object` | No | — |
+| `cui_settings` | `object` | No | — |
+| `captcha` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `links` | `object` | No | — |
+| `language` | `string` | No | — |
+| `duplicate_prevention` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  ref?: string,
+  type?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    fields?: any[],
+    choices?: any[],
+    randomize?: boolean,
+    hide_marks?: boolean,
+    button_text?: string,
+    description?: string,
+    allow_other_choice?: boolean,
+    alphabetical_order?: boolean,
+    vertical_alignment?: boolean,
+    allow_multiple_selection?: boolean
+  },
+  validations?: {
+    required?: boolean,
+    max_value?: number,
+    min_value?: number,
+    max_length?: number,
+    min_length?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="logic full type">
+
+```ts
+{
+  ref?: string,
+  type?: string,
+  actions?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="theme full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  is_trial?: boolean,
+  language?: string,
+  is_public?: boolean,
+  progress_bar?: string,
+  facebook_pixel?: string,
+  hide_navigation?: boolean,
+  google_analytics?: string,
+  autosave_progress?: boolean,
+  show_progress_bar?: boolean,
+  are_uploads_public?: boolean,
+  google_tag_manager?: string,
+  show_cookie_consent?: boolean,
+  free_form_navigation?: boolean,
+  show_question_number?: boolean,
+  pro_subdomain_enabled?: boolean,
+  show_time_to_complete?: boolean,
+  show_typeform_branding?: boolean,
+  show_key_hint_on_choices?: boolean,
+  redirect_after_submit_url?: string,
+  show_number_of_submissions?: boolean,
+  capabilities?: {
+  },
+  notifications?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="welcome_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    show_button?: boolean,
+    description?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="thankyou_screens full type">
+
+```ts
+{
+  ref?: string,
+  title?: string,
+  attachment?: {
+    href?: string,
+    type?: string,
+    scale?: number,
+    properties?: {
+    }
+  },
+  properties?: {
+    button_text?: string,
+    button_mode?: string,
+    redirect_url?: string,
+    show_button?: boolean,
+    description?: string,
+    share_icons?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cui_settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="captcha full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateMessages
+
+`forms.updateMessages`
+
+Update custom messages for a form
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.forms.updateMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `label_button_submit` | `string` | No | — |
+| `label_error_required` | `string` | No | — |
+| `label_buttonHint_default` | `string` | No | — |
+| `block_shortText_placeholder` | `string` | No | — |
+| `label_buttonNoAnswer_default` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Images
+
+### create
+
+`images.create`
+
+Upload a new image
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.images.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_name` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `image` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `src` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `avg_color` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `has_alpha` | `boolean` | No | — |
+| `media_type` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`images.delete`
+
+Permanently delete an image [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.typeform.api.images.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getBackgroundBySize
+
+`images.getBackgroundBySize`
+
+Get a background image at a specific size
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.images.getBackgroundBySize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_id` | `string` | Yes | — |
+| `size` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `src` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `avg_color` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `has_alpha` | `boolean` | No | — |
+| `media_type` | `string` | No | — |
+
+
+
+---
+
+### getBySize
+
+`images.getBySize`
+
+Get an image at a specific size
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.images.getBySize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_id` | `string` | Yes | — |
+| `size` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `src` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `avg_color` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `has_alpha` | `boolean` | No | — |
+| `media_type` | `string` | No | — |
+
+
+
+---
+
+### getChoiceImageBySize
+
+`images.getChoiceImageBySize`
+
+Get a choice image at a specific size
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.images.getChoiceImageBySize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_id` | `string` | Yes | — |
+| `size` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `src` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `avg_color` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `has_alpha` | `boolean` | No | — |
+| `media_type` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`images.list`
+
+List all images in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.images.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  src?: string,
+  width?: number,
+  height?: number,
+  avg_color?: string,
+  file_name?: string,
+  has_alpha?: boolean,
+  media_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Me
+
+### get
+
+`me.get`
+
+Get information about the authenticated Typeform account
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.me.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner_info full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Responses
+
+### delete
+
+`responses.delete`
+
+Delete specific responses from a form [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.typeform.api.responses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `included_response_ids` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### getAllFiles
+
+`responses.getAllFiles`
+
+Get a ZIP archive of all files uploaded in responses
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.responses.getAllFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`responses.list`
+
+List responses submitted to a form
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.responses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `sort` | `string` | No | — |
+| `after` | `string` | No | — |
+| `query` | `string` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `before` | `string` | No | — |
+| `fields` | `string[]` | No | — |
+| `page_size` | `number` | No | — |
+| `response_type` | `string[]` | No | — |
+| `answered_fields` | `string[]` | No | — |
+| `excluded_response_ids` | `string` | No | — |
+| `included_response_ids` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `page_count` | `number` | No | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  token?: string,
+  response_id?: string,
+  submitted_at?: string,
+  landed_at?: string,
+  answers?: {
+    type?: string,
+    text?: string,
+    email?: string,
+    url?: string,
+    date?: string,
+    number?: number,
+    boolean?: boolean,
+    phone_number?: string,
+    file_url?: string,
+    choice?: {
+      id?: string,
+      ref?: string,
+      label?: string,
+      other?: string
+    },
+    choices?: {
+      ids?: string[],
+      refs?: string[],
+      labels?: string[],
+      other?: string
+    },
+    field?: {
+      id?: string,
+      ref?: string,
+      type?: string
+    },
+    payment?: {
+    },
+    multi_format?: {
+    }
+  }[],
+  calculated?: {
+    score?: number
+  },
+  metadata?: {
+    browser?: string,
+    referer?: string,
+    platform?: string,
+    network_id?: string,
+    user_agent?: string
+  },
+  hidden?: {
+  },
+  variables?: {
+    key?: string,
+    type?: string,
+    text?: string,
+    number?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Themes
+
+### create
+
+`themes.create`
+
+Create a new theme
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.themes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `font` | `string` | Yes | — |
+| `colors` | `object` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `name` | `string` | No | — |
+| `background` | `object` | No | — |
+| `rounded_corners` | `string` | No | — |
+| `has_transparent_button` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="colors full type">
+
+```ts
+{
+  answer?: string,
+  button?: string,
+  question?: string,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  alignment?: left | center,
+  font_size?: small | medium | large
+}
+```
+</Accordion>
+
+<Accordion title="background full type">
+
+```ts
+{
+  href?: string,
+  layout?: fullscreen | repeat | no-repeat,
+  brightness?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `font` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `rounded_corners` | `string` | No | — |
+| `has_transparent_button` | `boolean` | No | — |
+| `colors` | `object` | No | — |
+| `background` | `object` | No | — |
+| `fields` | `object` | No | — |
+| `screens` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="colors full type">
+
+```ts
+{
+  answer?: string,
+  button?: string,
+  question?: string,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="background full type">
+
+```ts
+{
+  href?: string,
+  layout?: fullscreen | repeat | no-repeat,
+  brightness?: number
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  alignment?: left | center,
+  font_size?: small | medium | large
+}
+```
+</Accordion>
+
+<Accordion title="screens full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`themes.delete`
+
+Permanently delete a theme [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.typeform.api.themes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `theme_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`themes.get`
+
+Get a theme by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.themes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `theme_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `font` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `rounded_corners` | `string` | No | — |
+| `has_transparent_button` | `boolean` | No | — |
+| `colors` | `object` | No | — |
+| `background` | `object` | No | — |
+| `fields` | `object` | No | — |
+| `screens` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="colors full type">
+
+```ts
+{
+  answer?: string,
+  button?: string,
+  question?: string,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="background full type">
+
+```ts
+{
+  href?: string,
+  layout?: fullscreen | repeat | no-repeat,
+  brightness?: number
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  alignment?: left | center,
+  font_size?: small | medium | large
+}
+```
+</Accordion>
+
+<Accordion title="screens full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`themes.list`
+
+List all themes
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.themes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `page_count` | `number` | No | — |
+| `total_items` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  font?: string,
+  visibility?: string,
+  rounded_corners?: string,
+  has_transparent_button?: boolean,
+  colors?: {
+    answer?: string,
+    button?: string,
+    question?: string,
+    background?: string
+  },
+  background?: {
+    href?: string,
+    layout?: fullscreen | repeat | no-repeat,
+    brightness?: number
+  },
+  fields?: {
+    alignment?: left | center,
+    font_size?: small | medium | large
+  },
+  screens?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`themes.patch`
+
+Partially update a theme
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.themes.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `theme_id` | `string` | Yes | — |
+| `font` | `string` | No | — |
+| `name` | `string` | No | — |
+| `colors` | `object` | No | — |
+| `fields` | `object` | No | — |
+| `screens` | `object` | No | — |
+| `background` | `object` | No | — |
+| `rounded_corners` | `string` | No | — |
+| `has_transparent_button` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="colors full type">
+
+```ts
+{
+  answer?: string,
+  button?: string,
+  question?: string,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  alignment?: left | center,
+  font_size?: small | medium | large
+}
+```
+</Accordion>
+
+<Accordion title="screens full type">
+
+```ts
+{
+  font_size?: string,
+  alignment?: string
+}
+```
+</Accordion>
+
+<Accordion title="background full type">
+
+```ts
+{
+  href?: string,
+  layout?: fullscreen | repeat | no-repeat,
+  brightness?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `font` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `rounded_corners` | `string` | No | — |
+| `has_transparent_button` | `boolean` | No | — |
+| `colors` | `object` | No | — |
+| `background` | `object` | No | — |
+| `fields` | `object` | No | — |
+| `screens` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="colors full type">
+
+```ts
+{
+  answer?: string,
+  button?: string,
+  question?: string,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="background full type">
+
+```ts
+{
+  href?: string,
+  layout?: fullscreen | repeat | no-repeat,
+  brightness?: number
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  alignment?: left | center,
+  font_size?: small | medium | large
+}
+```
+</Accordion>
+
+<Accordion title="screens full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`themes.update`
+
+Replace a theme with a new version (PUT)
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.themes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `theme_id` | `string` | Yes | — |
+| `font` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `colors` | `object` | Yes | — |
+| `fields` | `object` | No | — |
+| `screens` | `object` | No | — |
+| `background` | `object` | No | — |
+| `rounded_corners` | `string` | No | — |
+| `has_transparent_button` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="colors full type">
+
+```ts
+{
+  answer?: string,
+  button?: string,
+  question?: string,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  alignment?: left | center,
+  font_size?: small | medium | large
+}
+```
+</Accordion>
+
+<Accordion title="screens full type">
+
+```ts
+{
+  font_size?: string,
+  alignment?: string
+}
+```
+</Accordion>
+
+<Accordion title="background full type">
+
+```ts
+{
+  href?: string,
+  layout?: fullscreen | repeat | no-repeat,
+  brightness?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `font` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `rounded_corners` | `string` | No | — |
+| `has_transparent_button` | `boolean` | No | — |
+| `colors` | `object` | No | — |
+| `background` | `object` | No | — |
+| `fields` | `object` | No | — |
+| `screens` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="colors full type">
+
+```ts
+{
+  answer?: string,
+  button?: string,
+  question?: string,
+  background?: string
+}
+```
+</Accordion>
+
+<Accordion title="background full type">
+
+```ts
+{
+  href?: string,
+  layout?: fullscreen | repeat | no-repeat,
+  brightness?: number
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  alignment?: left | center,
+  font_size?: small | medium | large
+}
+```
+</Accordion>
+
+<Accordion title="screens full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### upload
+
+`videos.upload`
+
+Get a signed URL to upload a video for a form field
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.videos.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+| `language` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `upload_url` | `string` | No | — |
+| `transcode_status` | `string` | No | — |
+
+
+
+---
+
+## Webhooks Config
+
+### createOrUpdate
+
+`webhooksConfig.createOrUpdate`
+
+Create or update a webhook configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.webhooksConfig.createOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `secret` | `string` | No | — |
+| `verify_ssl` | `boolean` | No | — |
+| `event_types` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `url` | `string` | No | — |
+| `secret` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `form_id` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `verify_ssl` | `boolean` | No | — |
+| `event_types` | `string[]` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooksConfig.delete`
+
+Delete a webhook configuration [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.typeform.api.webhooksConfig.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`webhooksConfig.get`
+
+Get a webhook configuration by tag
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.webhooksConfig.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `url` | `string` | No | — |
+| `secret` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `form_id` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `verify_ssl` | `boolean` | No | — |
+| `event_types` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`webhooksConfig.list`
+
+List all webhook configurations for a form
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.webhooksConfig.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id?: string,
+  tag?: string,
+  url?: string,
+  secret?: string,
+  enabled?: boolean,
+  form_id?: string,
+  created_at?: string,
+  updated_at?: string,
+  verify_ssl?: boolean,
+  event_types?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspaces
+
+### create
+
+`workspaces.create`
+
+Create a new workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.workspaces.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `self` | `object` | No | — |
+| `forms` | `object` | No | — |
+| `shared` | `boolean` | No | — |
+| `default` | `boolean` | No | — |
+| `members` | `object[]` | No | — |
+| `account_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="self full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="forms full type">
+
+```ts
+{
+  href?: string,
+  count?: number
+}
+```
+</Accordion>
+
+<Accordion title="members full type">
+
+```ts
+{
+  name?: string,
+  role?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createForAccount
+
+`workspaces.createForAccount`
+
+Create a new workspace within a specific account
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.workspaces.createForAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `account_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `self` | `object` | No | — |
+| `forms` | `object` | No | — |
+| `shared` | `boolean` | No | — |
+| `default` | `boolean` | No | — |
+| `members` | `object[]` | No | — |
+| `account_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="self full type">
+
+```ts
+{
+  href?: string
+}
+```
+</Accordion>
+
+<Accordion title="forms full type">
+
+```ts
+{
+  href?: string,
+  count?: number
+}
+```
+</Accordion>
+
+<Accordion title="members full type">
+
+```ts
+{
+  name?: string,
+  role?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`workspaces.delete`
+
+Permanently delete a workspace [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.typeform.api.workspaces.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`workspaces.get`
+
+Get a workspace by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.workspaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `href` | `string` | No | — |
+| `name` | `string` | No | — |
+| `forms` | `object` | No | — |
+| `members` | `object[]` | No | — |
+| `shared` | `boolean` | No | — |
+| `default` | `boolean` | No | — |
+| `account_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  href?: string,
+  count?: number
+}
+```
+</Accordion>
+
+<Accordion title="members full type">
+
+```ts
+{
+  name?: string,
+  role?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workspaces.list`
+
+List all workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.typeform.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `search` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaces` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspaces full type">
+
+```ts
+{
+  id?: string,
+  href?: string,
+  name?: string,
+  forms?: {
+    href?: string,
+    count?: number
+  },
+  members?: {
+    name?: string,
+    role?: string,
+    email?: string
+  }[],
+  shared?: boolean,
+  default?: boolean,
+  account_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`workspaces.update`
+
+Update a workspace using JSON Patch operations
+
+**Risk:** `write`
+
+```ts
+await corsair.typeform.api.workspaces.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `string` | Yes | — |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  op: add | remove | replace | move | copy | test,
+  path: string,
+  value?: any,
+  from?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+

@@ -1,0 +1,1419 @@
+---
+title: API
+description: "API reference for Monday: every `monday.api.*` operation with input and output types."
+---
+
+Every `monday.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Boards
+
+### archive
+
+`boards.archive`
+
+Archive a board
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.boards.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archive_board` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="archive_board full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`boards.create`
+
+Create a new board
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.boards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_name` | `string` | Yes | — |
+| `board_kind` | `public \| private \| share` | No | — |
+| `workspace_id` | `number` | No | — |
+| `template_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create_board` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="create_board full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`boards.delete`
+
+Permanently delete a board
+
+**Risk:** `destructive`
+
+```ts
+await corsair.monday.api.boards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_board` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="delete_board full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duplicate
+
+`boards.duplicate`
+
+Duplicate a board
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.boards.duplicate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `duplicate_type` | `duplicate_board_with_structure \| duplicate_board_with_pulses \| duplicate_board_with_pulses_and_updates` | No | — |
+| `board_name` | `string` | No | — |
+| `workspace_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `duplicate_board` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="duplicate_board full type">
+
+```ts
+{
+  board: {
+    id: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`boards.get`
+
+Get a board by ID with groups and columns
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.boards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  board_kind?: string,
+  state?: string,
+  workspace_id?: string | number | null,
+  groups?: {
+    id: string,
+    title: string,
+    color?: string,
+    position?: string,
+    archived?: boolean
+  }[],
+  columns?: {
+    id: string,
+    title: string,
+    type?: string,
+    settings_str?: string,
+    description?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`boards.list`
+
+List all boards
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.boards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `workspace_ids` | `number[]` | No | — |
+| `board_kind` | `public \| private \| share` | No | — |
+| `state` | `active \| archived \| deleted \| all` | No | — |
+| `order_by` | `created_at \| used_at` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  board_kind?: string,
+  state?: string,
+  workspace_id?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`boards.update`
+
+Update a board attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.boards.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `board_attribute` | `name \| description \| communication` | Yes | — |
+| `new_value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `update_board` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="update_board full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Columns
+
+### changeValue
+
+`columns.changeValue`
+
+Change a column value on an item
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.columns.changeValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+| `column_id` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `change_column_value` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="change_column_value full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`columns.create`
+
+Create a new column in a board
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.columns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `column_type` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create_column` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="create_column full type">
+
+```ts
+{
+  id: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`columns.list`
+
+List all columns in a board
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.columns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+  columns: {
+    id: string,
+    title: string,
+    type?: string,
+    settings_str?: string,
+    description?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a new group in a board
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `group_name` | `string` | Yes | — |
+| `position` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create_group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="create_group full type">
+
+```ts
+{
+  id: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group from a board
+
+**Risk:** `destructive`
+
+```ts
+await corsair.monday.api.groups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="delete_group full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List all groups in a board
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+  groups: {
+    id: string,
+    title: string,
+    color?: string,
+    position?: string,
+    archived?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a group attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.groups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+| `group_attribute` | `title \| color \| position \| relative_position_before \| relative_position_after` | Yes | — |
+| `new_value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `update_group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="update_group full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### archive
+
+`items.archive`
+
+Archive an item
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.items.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archive_item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="archive_item full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`items.create`
+
+Create a new item in a board
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.items.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `item_name` | `string` | Yes | — |
+| `group_id` | `string` | No | — |
+| `column_values` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create_item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="create_item full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`items.delete`
+
+Permanently delete an item
+
+**Risk:** `destructive`
+
+```ts
+await corsair.monday.api.items.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="delete_item full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`items.get`
+
+Get an item by ID with column values
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  state?: string,
+  created_at?: string | null,
+  creator_id?: string | null,
+  board?: {
+    id: string
+  },
+  group?: {
+    id: string,
+    title?: string
+  },
+  column_values?: {
+    id: string,
+    title?: string,
+    text?: string | null,
+    value?: string | null,
+    type?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+List items in a board
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+  items_page: {
+    cursor?: string | null,
+    items: {
+      id: string,
+      name: string,
+      state?: string,
+      created_at?: string | null,
+      creator_id?: string | null,
+      board?: {
+        id: string
+      },
+      group?: {
+        id: string,
+        title?: string
+      },
+      column_values?: {
+        id: string,
+        title?: string,
+        text?: string | null,
+        value?: string | null,
+        type?: string
+      }[]
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`items.move`
+
+Move an item to a different group
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.items.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `group_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `move_item_to_group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="move_item_to_group full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`items.update`
+
+Update a column value on an item
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.items.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+| `column_id` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `change_column_value` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="change_column_value full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Updates
+
+### create
+
+`updates.create`
+
+Create an update (comment) on an item
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.updates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create_update` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="create_update full type">
+
+```ts
+{
+  id: string,
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`updates.delete`
+
+Delete an update (comment)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.monday.api.updates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `update_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_update` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="delete_update full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`updates.list`
+
+List updates (comments) on an item
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.updates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  updates: {
+    id: string,
+    body?: string,
+    text_body?: string | null,
+    created_at?: string | null,
+    creator?: {
+      id: string,
+      name?: string
+    },
+    replies?: {
+      id: string,
+      body?: string
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  email?: string,
+  photo_thumb?: string | null,
+  title?: string | null,
+  is_admin?: boolean,
+  is_guest?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List all users in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `kind` | `all \| non_guests \| guests \| non_pending` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  email?: string,
+  photo_thumb?: string | null,
+  title?: string | null,
+  is_admin?: boolean,
+  is_guest?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe to a board event via webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.monday.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `event` | `change_column_value \| change_specific_column_value \| change_status_column_value \| create_item \| create_update \| delete_update \| item_archived \| item_deleted \| item_moved_to_board \| item_restored \| when_date_arrived` | Yes | — |
+| `config` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create_webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="create_webhook full type">
+
+```ts
+{
+  id: string,
+  board_id?: string,
+  event?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Unsubscribe a webhook by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.monday.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delete_webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="delete_webhook full type">
+
+```ts
+{
+  id: string,
+  board_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List all webhooks for a board
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `board_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  board_id?: string,
+  event?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspaces
+
+### list
+
+`workspaces.list`
+
+List all workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.monday.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `kind` | `open \| closed` | No | — |
+| `state` | `active \| deleted \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="workspaces full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  kind?: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

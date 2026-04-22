@@ -1,0 +1,1424 @@
+---
+title: API
+description: "API reference for Box: every `box.api.*` operation with input and output types."
+---
+
+Every `box.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Files
+
+### copy
+
+`files.copy`
+
+Copy a Box file to a destination folder
+
+**Risk:** `write`
+
+```ts
+await corsair.box.api.files.copy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `parent` | `object` | Yes | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="parent full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `file` | No | — |
+| `id` | `string` | Yes | — |
+| `sequence_id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `sha1` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `size` | `number` | No | — |
+| `path_collection` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `trashed_at` | `string` | No | — |
+| `purged_at` | `string` | No | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `created_by` | `object` | No | — |
+| `modified_by` | `object` | No | — |
+| `owned_by` | `object` | No | — |
+| `shared_link` | `object` | No | — |
+| `parent` | `object` | No | — |
+| `item_status` | `string` | No | — |
+| `extension` | `string` | No | — |
+| `is_package` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="path_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="owned_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="shared_link full type">
+
+```ts
+{
+  url?: string,
+  download_url?: string | null,
+  vanity_url?: string | null,
+  access?: string,
+  effective_access?: string,
+  effective_permission?: string,
+  unshared_at?: string | null,
+  is_password_enabled?: boolean,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  },
+  download_count?: number,
+  preview_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  sequence_id?: string | null,
+  etag?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`files.delete`
+
+Delete a Box file [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.box.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `if_match` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### download
+
+`files.download`
+
+Download the content of a Box file
+
+**Risk:** `read`
+
+```ts
+await corsair.box.api.files.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### get
+
+`files.get`
+
+Get metadata for a Box file by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.box.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `file` | No | — |
+| `id` | `string` | Yes | — |
+| `sequence_id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `sha1` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `size` | `number` | No | — |
+| `path_collection` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `trashed_at` | `string` | No | — |
+| `purged_at` | `string` | No | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `created_by` | `object` | No | — |
+| `modified_by` | `object` | No | — |
+| `owned_by` | `object` | No | — |
+| `shared_link` | `object` | No | — |
+| `parent` | `object` | No | — |
+| `item_status` | `string` | No | — |
+| `extension` | `string` | No | — |
+| `is_package` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="path_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="owned_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="shared_link full type">
+
+```ts
+{
+  url?: string,
+  download_url?: string | null,
+  vanity_url?: string | null,
+  access?: string,
+  effective_access?: string,
+  effective_permission?: string,
+  unshared_at?: string | null,
+  is_password_enabled?: boolean,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  },
+  download_count?: number,
+  preview_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  sequence_id?: string | null,
+  etag?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`files.search`
+
+Search for files in Box
+
+**Risk:** `read`
+
+```ts
+await corsair.box.api.files.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `ancestor_folder_ids` | `string` | No | — |
+| `content_types` | `string` | No | — |
+| `created_at_range` | `string` | No | — |
+| `file_extensions` | `string` | No | — |
+| `owner_user_ids` | `string` | No | — |
+| `size_range` | `string` | No | — |
+| `sort` | `modified_at \| name` | No | — |
+| `direction` | `ASC \| DESC` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `entries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### share
+
+`files.share`
+
+Create or update a shared link for a Box file
+
+**Risk:** `write`
+
+```ts
+await corsair.box.api.files.share({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `shared_link` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shared_link full type">
+
+```ts
+{
+  access?: open | company | collaborators,
+  password?: string,
+  unshared_at?: string,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `file` | No | — |
+| `id` | `string` | Yes | — |
+| `sequence_id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `sha1` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `size` | `number` | No | — |
+| `path_collection` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `trashed_at` | `string` | No | — |
+| `purged_at` | `string` | No | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `created_by` | `object` | No | — |
+| `modified_by` | `object` | No | — |
+| `owned_by` | `object` | No | — |
+| `shared_link` | `object` | No | — |
+| `parent` | `object` | No | — |
+| `item_status` | `string` | No | — |
+| `extension` | `string` | No | — |
+| `is_package` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="path_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="owned_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="shared_link full type">
+
+```ts
+{
+  url?: string,
+  download_url?: string | null,
+  vanity_url?: string | null,
+  access?: string,
+  effective_access?: string,
+  effective_permission?: string,
+  unshared_at?: string | null,
+  is_password_enabled?: boolean,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  },
+  download_count?: number,
+  preview_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  sequence_id?: string | null,
+  etag?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a new file to Box
+
+**Risk:** `write`
+
+```ts
+await corsair.box.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `parent_id` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | No | — |
+| `entries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  type?: file,
+  id: string,
+  sequence_id?: string,
+  etag?: string,
+  sha1?: string,
+  name?: string,
+  description?: string,
+  size?: number,
+  path_collection?: {
+    total_count?: number,
+    entries?: {
+      type?: string,
+      id?: string,
+      sequence_id?: string | null,
+      etag?: string | null,
+      name?: string | null
+    }[]
+  },
+  created_at?: string,
+  modified_at?: string,
+  trashed_at?: string | null,
+  purged_at?: string | null,
+  content_created_at?: string,
+  content_modified_at?: string,
+  created_by?: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  modified_by?: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  owned_by?: {
+    type?: string,
+    id?: string,
+    name?: string,
+    login?: string
+  },
+  shared_link?: {
+    url?: string,
+    download_url?: string | null,
+    vanity_url?: string | null,
+    access?: string,
+    effective_access?: string,
+    effective_permission?: string,
+    unshared_at?: string | null,
+    is_password_enabled?: boolean,
+    permissions?: {
+      can_download?: boolean,
+      can_preview?: boolean,
+      can_edit?: boolean
+    },
+    download_count?: number,
+    preview_count?: number
+  } | null,
+  parent?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  } | null,
+  item_status?: string,
+  extension?: string,
+  is_package?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a new folder in Box
+
+**Risk:** `write`
+
+```ts
+await corsair.box.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `parent_id` | `string` | Yes | — |
+| `folder_upload_email_access` | `string` | No | — |
+| `sync_state` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `folder` | No | — |
+| `id` | `string` | Yes | — |
+| `sequence_id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `path_collection` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `trashed_at` | `string` | No | — |
+| `purged_at` | `string` | No | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `created_by` | `object` | No | — |
+| `modified_by` | `object` | No | — |
+| `owned_by` | `object` | No | — |
+| `shared_link` | `object` | No | — |
+| `parent` | `object` | No | — |
+| `item_status` | `string` | No | — |
+| `is_externally_owned` | `boolean` | No | — |
+| `has_collaborations` | `boolean` | No | — |
+| `item_collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="owned_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="shared_link full type">
+
+```ts
+{
+  url?: string,
+  download_url?: string | null,
+  vanity_url?: string | null,
+  access?: string,
+  effective_access?: string,
+  effective_permission?: string,
+  unshared_at?: string | null,
+  is_password_enabled?: boolean,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  },
+  download_count?: number,
+  preview_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  sequence_id?: string | null,
+  etag?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="item_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a Box folder [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.box.api.folders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`folders.get`
+
+Get metadata for a Box folder by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.box.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `folder` | No | — |
+| `id` | `string` | Yes | — |
+| `sequence_id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `path_collection` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `trashed_at` | `string` | No | — |
+| `purged_at` | `string` | No | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `created_by` | `object` | No | — |
+| `modified_by` | `object` | No | — |
+| `owned_by` | `object` | No | — |
+| `shared_link` | `object` | No | — |
+| `parent` | `object` | No | — |
+| `item_status` | `string` | No | — |
+| `is_externally_owned` | `boolean` | No | — |
+| `has_collaborations` | `boolean` | No | — |
+| `item_collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="owned_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="shared_link full type">
+
+```ts
+{
+  url?: string,
+  download_url?: string | null,
+  vanity_url?: string | null,
+  access?: string,
+  effective_access?: string,
+  effective_permission?: string,
+  unshared_at?: string | null,
+  is_password_enabled?: boolean,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  },
+  download_count?: number,
+  preview_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  sequence_id?: string | null,
+  etag?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="item_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`folders.search`
+
+Search for folders in Box
+
+**Risk:** `read`
+
+```ts
+await corsair.box.api.folders.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `ancestor_folder_ids` | `string` | No | — |
+| `owner_user_ids` | `string` | No | — |
+| `sort` | `modified_at \| name` | No | — |
+| `direction` | `ASC \| DESC` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `entries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### share
+
+`folders.share`
+
+Create or update a shared link for a Box folder
+
+**Risk:** `write`
+
+```ts
+await corsair.box.api.folders.share({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `shared_link` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shared_link full type">
+
+```ts
+{
+  access?: open | company | collaborators,
+  password?: string,
+  unshared_at?: string,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `folder` | No | — |
+| `id` | `string` | Yes | — |
+| `sequence_id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `path_collection` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `trashed_at` | `string` | No | — |
+| `purged_at` | `string` | No | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `created_by` | `object` | No | — |
+| `modified_by` | `object` | No | — |
+| `owned_by` | `object` | No | — |
+| `shared_link` | `object` | No | — |
+| `parent` | `object` | No | — |
+| `item_status` | `string` | No | — |
+| `is_externally_owned` | `boolean` | No | — |
+| `has_collaborations` | `boolean` | No | — |
+| `item_collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="owned_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="shared_link full type">
+
+```ts
+{
+  url?: string,
+  download_url?: string | null,
+  vanity_url?: string | null,
+  access?: string,
+  effective_access?: string,
+  effective_permission?: string,
+  unshared_at?: string | null,
+  is_password_enabled?: boolean,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  },
+  download_count?: number,
+  preview_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  sequence_id?: string | null,
+  etag?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="item_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Update properties of a Box folder
+
+**Risk:** `write`
+
+```ts
+await corsair.box.api.folders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `is_collaboration_restricted_to_enterprise` | `boolean` | No | — |
+| `can_non_owners_invite` | `boolean` | No | — |
+| `can_non_owners_view_collaborators` | `boolean` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `folder` | No | — |
+| `id` | `string` | Yes | — |
+| `sequence_id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `path_collection` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `trashed_at` | `string` | No | — |
+| `purged_at` | `string` | No | — |
+| `content_created_at` | `string` | No | — |
+| `content_modified_at` | `string` | No | — |
+| `created_by` | `object` | No | — |
+| `modified_by` | `object` | No | — |
+| `owned_by` | `object` | No | — |
+| `shared_link` | `object` | No | — |
+| `parent` | `object` | No | — |
+| `item_status` | `string` | No | — |
+| `is_externally_owned` | `boolean` | No | — |
+| `has_collaborations` | `boolean` | No | — |
+| `item_collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+    type?: string,
+    id?: string,
+    sequence_id?: string | null,
+    etag?: string | null,
+    name?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="modified_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="owned_by full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string,
+  login?: string
+}
+```
+</Accordion>
+
+<Accordion title="shared_link full type">
+
+```ts
+{
+  url?: string,
+  download_url?: string | null,
+  vanity_url?: string | null,
+  access?: string,
+  effective_access?: string,
+  effective_permission?: string,
+  unshared_at?: string | null,
+  is_password_enabled?: boolean,
+  permissions?: {
+    can_download?: boolean,
+    can_preview?: boolean,
+    can_edit?: boolean
+  },
+  download_count?: number,
+  preview_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  sequence_id?: string | null,
+  etag?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="item_collection full type">
+
+```ts
+{
+  total_count?: number,
+  entries?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

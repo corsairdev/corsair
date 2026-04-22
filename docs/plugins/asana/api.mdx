@@ -1,0 +1,5885 @@
+---
+title: API
+description: "API reference for Asana: every `asana.api.*` operation with input and output types."
+---
+
+Every `asana.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Projects
+
+### addFollowers
+
+`projects.addFollowers`
+
+Add followers to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.addFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `followers` | `string[]` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addMembers
+
+`projects.addMembers`
+
+Add members to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.addMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `members` | `string[]` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  team?: string,
+  workspace?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string,
+  due_on?: string,
+  start_on?: string,
+  archived?: boolean,
+  followers?: string[],
+  owner?: string,
+  public?: boolean,
+  default_view?: string,
+  privacy_setting?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string | null,
+  archived?: boolean,
+  completed?: boolean,
+  due_on?: string | null,
+  start_on?: string | null,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  public?: boolean,
+  resource_type?: string,
+  created_at?: string,
+  modified_at?: string,
+  permalink_url?: string,
+  default_view?: string,
+  privacy_setting?: string,
+  icon?: string | null,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createForTeam
+
+`projects.createForTeam`
+
+Create a project for a team
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.createForTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  notes?: string,
+  color?: string,
+  due_on?: string,
+  start_on?: string,
+  archived?: boolean,
+  followers?: string[],
+  owner?: string,
+  public?: boolean,
+  default_view?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string | null,
+  archived?: boolean,
+  completed?: boolean,
+  due_on?: string | null,
+  start_on?: string | null,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  public?: boolean,
+  resource_type?: string,
+  created_at?: string,
+  modified_at?: string,
+  permalink_url?: string,
+  default_view?: string,
+  privacy_setting?: string,
+  icon?: string | null,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createForWorkspace
+
+`projects.createForWorkspace`
+
+Create a project for a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.createForWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  team?: string,
+  notes?: string,
+  color?: string,
+  due_on?: string,
+  start_on?: string,
+  archived?: boolean,
+  followers?: string[],
+  owner?: string,
+  public?: boolean,
+  default_view?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string | null,
+  archived?: boolean,
+  completed?: boolean,
+  due_on?: string | null,
+  start_on?: string | null,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  public?: boolean,
+  resource_type?: string,
+  created_at?: string,
+  modified_at?: string,
+  permalink_url?: string,
+  default_view?: string,
+  privacy_setting?: string,
+  icon?: string | null,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asana.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duplicate
+
+`projects.duplicate`
+
+Duplicate a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.duplicate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  team?: string,
+  include?: string,
+  schedule_dates?: {
+    should_skip_weekends: boolean,
+    due_on?: string,
+    start_on?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  status?: string,
+  new_project?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  new_task?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string | null,
+  archived?: boolean,
+  completed?: boolean,
+  due_on?: string | null,
+  start_on?: string | null,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  public?: boolean,
+  resource_type?: string,
+  created_at?: string,
+  modified_at?: string,
+  permalink_url?: string,
+  default_view?: string,
+  privacy_setting?: string,
+  icon?: string | null,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTaskCounts
+
+`projects.getTaskCounts`
+
+Get task counts for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.projects.getTaskCounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  num_tasks?: number,
+  num_completed_tasks?: number,
+  num_incomplete_tasks?: number,
+  num_milestones?: number,
+  num_completed_milestones?: number,
+  num_incomplete_milestones?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTasks
+
+`projects.getTasks`
+
+Get tasks in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.projects.getTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `completed_since` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | No | — |
+| `team` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string | null,
+  archived?: boolean,
+  completed?: boolean,
+  due_on?: string | null,
+  start_on?: string | null,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  public?: boolean,
+  resource_type?: string,
+  created_at?: string,
+  modified_at?: string,
+  permalink_url?: string,
+  default_view?: string,
+  privacy_setting?: string,
+  icon?: string | null,
+  custom_fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForWorkspace
+
+`projects.listForWorkspace`
+
+List projects in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.projects.listForWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `archived` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string | null,
+  archived?: boolean,
+  completed?: boolean,
+  due_on?: string | null,
+  start_on?: string | null,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  public?: boolean,
+  resource_type?: string,
+  created_at?: string,
+  modified_at?: string,
+  permalink_url?: string,
+  default_view?: string,
+  privacy_setting?: string,
+  icon?: string | null,
+  custom_fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFollowers
+
+`projects.removeFollowers`
+
+Remove followers from a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.removeFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `followers` | `string[]` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeMembers
+
+`projects.removeMembers`
+
+Remove members from a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.removeMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `members` | `string[]` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string,
+  due_on?: string,
+  start_on?: string,
+  archived?: boolean,
+  owner?: string,
+  public?: boolean,
+  default_view?: string,
+  privacy_setting?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  color?: string | null,
+  archived?: boolean,
+  completed?: boolean,
+  due_on?: string | null,
+  start_on?: string | null,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  members?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  public?: boolean,
+  resource_type?: string,
+  created_at?: string,
+  modified_at?: string,
+  permalink_url?: string,
+  default_view?: string,
+  privacy_setting?: string,
+  icon?: string | null,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sections
+
+### create
+
+`sections.create`
+
+Create a section in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.sections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  insert_before?: string,
+  insert_after?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  created_at?: string,
+  project?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sections.delete`
+
+Delete a section [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asana.api.sections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section_gid` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sections.get`
+
+Get a section by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.sections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  created_at?: string,
+  project?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`sections.insert`
+
+Insert a section at a specific position
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.sections.insert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  section: string,
+  before_section?: string,
+  after_section?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sections.list`
+
+List sections in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.sections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  created_at?: string,
+  project?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sections.update`
+
+Update a section
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.sections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  created_at?: string,
+  project?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stories
+
+### createComment
+
+`stories.createComment`
+
+Create a comment on a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.stories.createComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  text?: string,
+  html_text?: string,
+  is_pinned?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  text?: string,
+  html_text?: string,
+  type?: string,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  created_by?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  liked?: boolean,
+  num_likes?: number,
+  is_edited?: boolean,
+  is_pinned?: boolean,
+  target?: {
+    gid: string,
+    name?: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`stories.delete`
+
+Delete a story [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asana.api.stories.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_gid` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`stories.get`
+
+Get a story by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.stories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  text?: string,
+  html_text?: string,
+  type?: string,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  created_by?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  liked?: boolean,
+  num_likes?: number,
+  is_edited?: boolean,
+  is_pinned?: boolean,
+  target?: {
+    gid: string,
+    name?: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForTask
+
+`stories.listForTask`
+
+List stories for a task
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.stories.listForTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  text?: string,
+  html_text?: string,
+  type?: string,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  created_by?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  liked?: boolean,
+  num_likes?: number,
+  is_edited?: boolean,
+  is_pinned?: boolean,
+  target?: {
+    gid: string,
+    name?: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`stories.update`
+
+Update a story
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.stories.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  text?: string,
+  html_text?: string,
+  is_pinned?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  text?: string,
+  html_text?: string,
+  type?: string,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  created_by?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  liked?: boolean,
+  num_likes?: number,
+  is_edited?: boolean,
+  is_pinned?: boolean,
+  target?: {
+    gid: string,
+    name?: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  color?: string,
+  notes?: string,
+  workspace?: string,
+  followers?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createInWorkspace
+
+`tags.createInWorkspace`
+
+Create a tag in a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tags.createInWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  color?: string,
+  notes?: string,
+  followers?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asana.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_gid` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Get a tag by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTasks
+
+`tags.getTasks`
+
+Get tasks with a specific tag
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tags.getTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForTask
+
+`tags.listForTask`
+
+List tags on a task
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tags.listForTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForWorkspace
+
+`tags.listForWorkspace`
+
+List tags in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tags.listForWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Update a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  color?: string,
+  notes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### addDependencies
+
+`tasks.addDependencies`
+
+Add task dependencies
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.addDependencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `dependencies` | `string[]` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addFollowers
+
+`tasks.addFollowers`
+
+Add followers to a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.addFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `followers` | `string[]` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addProject
+
+`tasks.addProject`
+
+Add a task to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.addProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `section` | `string` | No | — |
+| `insert_after` | `string` | No | — |
+| `insert_before` | `string` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addTag
+
+`tasks.addTag`
+
+Add a tag to a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.addTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addToSection
+
+`tasks.addToSection`
+
+Add a task to a section
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.addToSection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section_gid` | `string` | Yes | — |
+| `task` | `string` | Yes | — |
+| `insert_before` | `string` | No | — |
+| `insert_after` | `string` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`tasks.create`
+
+Create a new task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  due_on?: string,
+  due_at?: string,
+  start_on?: string,
+  start_at?: string,
+  assignee?: string,
+  projects?: string[],
+  tags?: string[],
+  followers?: string[],
+  workspace?: string,
+  parent?: string,
+  completed?: boolean,
+  liked?: boolean,
+  resource_subtype?: string,
+  custom_fields?: {
+  },
+  assignee_section?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSubtask
+
+`tasks.createSubtask`
+
+Create a subtask
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.createSubtask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  notes?: string,
+  assignee?: string,
+  due_on?: string,
+  due_at?: string,
+  completed?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asana.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duplicate
+
+`tasks.duplicate`
+
+Duplicate a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.duplicate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `data` | `object` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  include?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  status?: string,
+  new_project?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  new_task?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAttachments
+
+`tasks.getAttachments`
+
+Get attachments for a task
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tasks.getAttachments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStories
+
+`tasks.getStories`
+
+Get stories (activity) for a task
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tasks.getStories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  text?: string,
+  html_text?: string,
+  type?: string,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  created_by?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  liked?: boolean,
+  num_likes?: number,
+  is_edited?: boolean,
+  is_pinned?: boolean,
+  target?: {
+    gid: string,
+    name?: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubtasks
+
+`tasks.getSubtasks`
+
+Get subtasks of a task
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tasks.getSubtasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTags
+
+`tasks.getTags`
+
+Get tags on a task
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tasks.getTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  color?: string | null,
+  notes?: string,
+  resource_type?: string,
+  created_at?: string,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  permalink_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assignee` | `string` | No | — |
+| `project` | `string` | No | — |
+| `section` | `string` | No | — |
+| `workspace` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `user_task_list` | `string` | No | — |
+| `completed_since` | `string` | No | — |
+| `modified_since` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFollower
+
+`tasks.removeFollower`
+
+Remove a follower from a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.removeFollower({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `followers` | `string[]` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeProject
+
+`tasks.removeProject`
+
+Remove a task from a project
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.removeProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTag
+
+`tasks.removeTag`
+
+Remove a tag from a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.removeTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`tasks.search`
+
+Search tasks in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.tasks.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `resource_subtype` | `string` | No | — |
+| `assignee` | `string` | No | — |
+| `project` | `string` | No | — |
+| `section` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `team` | `string` | No | — |
+| `completed` | `boolean` | No | — |
+| `is_subtask` | `boolean` | No | — |
+| `has_attachment` | `boolean` | No | — |
+| `is_blocked` | `boolean` | No | — |
+| `is_blocking` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setParent
+
+`tasks.setParent`
+
+Set the parent of a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.setParent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `parent` | `string` | No | — |
+| `insert_after` | `string` | No | — |
+| `insert_before` | `string` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  due_on?: string,
+  due_at?: string,
+  start_on?: string,
+  start_at?: string,
+  assignee?: string,
+  completed?: boolean,
+  liked?: boolean,
+  resource_subtype?: string,
+  approval_status?: string,
+  assignee_status?: string,
+  assignee_section?: string,
+  workspace?: string,
+  custom_fields?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  notes?: string,
+  html_notes?: string,
+  completed?: boolean,
+  due_on?: string | null,
+  due_at?: string | null,
+  start_on?: string | null,
+  start_at?: string | null,
+  assignee?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  assignee_status?: string,
+  assignee_section?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  projects?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  tags?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  followers?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[],
+  parent?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null,
+  resource_type?: string,
+  resource_subtype?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  liked?: boolean,
+  num_likes?: number,
+  permalink_url?: string,
+  num_subtasks?: number,
+  approval_status?: string,
+  custom_fields?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### addUser
+
+`teams.addUser`
+
+Add a user to a team
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.teams.addUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_gid` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  is_limited_access?: boolean,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`teams.create`
+
+Create a team
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  html_description?: string,
+  visibility?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  description?: string,
+  html_description?: string,
+  visibility?: string,
+  permalink_url?: string,
+  resource_type?: string,
+  organization?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`teams.get`
+
+Get a team by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  description?: string,
+  html_description?: string,
+  visibility?: string,
+  permalink_url?: string,
+  resource_type?: string,
+  organization?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForUser
+
+`teams.listForUser`
+
+List teams for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.teams.listForUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_gid` | `string` | Yes | — |
+| `organization` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  description?: string,
+  html_description?: string,
+  visibility?: string,
+  permalink_url?: string,
+  resource_type?: string,
+  organization?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForWorkspace
+
+`teams.listForWorkspace`
+
+List teams in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.teams.listForWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  description?: string,
+  html_description?: string,
+  visibility?: string,
+  permalink_url?: string,
+  resource_type?: string,
+  organization?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membershipsGet
+
+`teams.membershipsGet`
+
+Get a team membership
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.teams.membershipsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_membership_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  is_limited_access?: boolean,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membershipsList
+
+`teams.membershipsList`
+
+List team memberships
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.teams.membershipsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `string` | No | — |
+| `user` | `string` | No | — |
+| `workspace` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  is_limited_access?: boolean,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membershipsListForTeam
+
+`teams.membershipsListForTeam`
+
+List memberships for a team
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.teams.membershipsListForTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  is_limited_access?: boolean,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membershipsListForUser
+
+`teams.membershipsListForUser`
+
+List team memberships for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.teams.membershipsListForUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_gid` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  is_limited_access?: boolean,
+  team?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUser
+
+`teams.removeUser`
+
+Remove a user from a team
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.teams.removeUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_gid` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update a team
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  description?: string,
+  html_description?: string,
+  visibility?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  description?: string,
+  html_description?: string,
+  visibility?: string,
+  permalink_url?: string,
+  resource_type?: string,
+  organization?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  email?: string,
+  resource_type?: string,
+  photo?: {
+  } | null,
+  workspaces?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the currently authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.getCurrent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  email?: string,
+  resource_type?: string,
+  photo?: {
+  } | null,
+  workspaces?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFavorites
+
+`users.getFavorites`
+
+Get a user's favorites
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.getFavorites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_gid` | `string` | Yes | — |
+| `resource_type` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTaskList
+
+`users.getTaskList`
+
+Get a user's task list
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.getTaskList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_gid` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserTaskList
+
+`users.getUserTaskList`
+
+Get a user task list by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.getUserTaskList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_task_list_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  owner?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | No | — |
+| `team` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  email?: string,
+  resource_type?: string,
+  photo?: {
+  } | null,
+  workspaces?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForTeam
+
+`users.listForTeam`
+
+List users in a team
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.listForTeam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_gid` | `string` | Yes | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  email?: string,
+  resource_type?: string,
+  photo?: {
+  } | null,
+  workspaces?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForWorkspace
+
+`users.listForWorkspace`
+
+List users in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.users.listForWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  email?: string,
+  resource_type?: string,
+  photo?: {
+  } | null,
+  workspaces?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Management
+
+### create
+
+`webhookManagement.create`
+
+Register a new webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.webhookManagement.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  resource: string,
+  target: string,
+  filters?: {
+    resource_type?: string,
+    resource_subtype?: string,
+    action?: string,
+    fields?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  active?: boolean,
+  created_at?: string,
+  target?: string,
+  resource?: {
+    gid: string,
+    name?: string
+  },
+  filters?: {
+    resource_type?: string,
+    resource_subtype?: string,
+    action?: string,
+    fields?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhookManagement.delete`
+
+Delete a webhook [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asana.api.webhookManagement.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_gid` | `string` | Yes | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getList
+
+`webhookManagement.getList`
+
+List webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.webhookManagement.getList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `resource` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  active?: boolean,
+  created_at?: string,
+  target?: string,
+  resource?: {
+    gid: string,
+    name?: string
+  },
+  filters?: {
+    resource_type?: string,
+    resource_subtype?: string,
+    action?: string,
+    fields?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhookManagement.update`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.asana.api.webhookManagement.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_gid` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  filters?: {
+    resource_type?: string,
+    resource_subtype?: string,
+    action?: string,
+    fields?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  active?: boolean,
+  created_at?: string,
+  target?: string,
+  resource?: {
+    gid: string,
+    name?: string
+  },
+  filters?: {
+    resource_type?: string,
+    resource_subtype?: string,
+    action?: string,
+    fields?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspaces
+
+### get
+
+`workspaces.get`
+
+Get a workspace by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.workspaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  is_organization?: boolean,
+  email_domains?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workspaces.list`
+
+List workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  name?: string,
+  resource_type?: string,
+  is_organization?: boolean,
+  email_domains?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membershipsGet
+
+`workspaces.membershipsGet`
+
+Get a workspace membership
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.workspaces.membershipsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_membership_gid` | `string` | Yes | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_active?: boolean,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user_task_list?: {
+    gid: string,
+    name?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membershipsList
+
+`workspaces.membershipsList`
+
+List workspace memberships
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.workspaces.membershipsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_gid` | `string` | Yes | — |
+| `user` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_active?: boolean,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user_task_list?: {
+    gid: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membershipsListForUser
+
+`workspaces.membershipsListForUser`
+
+List workspace memberships for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.asana.api.workspaces.membershipsListForUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_gid` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | — |
+| `opt_fields` | `string[]` | No | — |
+| `opt_pretty` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `next_page` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  gid: string,
+  resource_type?: string,
+  is_active?: boolean,
+  is_admin?: boolean,
+  is_guest?: boolean,
+  workspace?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user?: {
+    gid: string,
+    name?: string,
+    resource_type?: string
+  },
+  user_task_list?: {
+    gid: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="next_page full type">
+
+```ts
+{
+  offset?: string,
+  path?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

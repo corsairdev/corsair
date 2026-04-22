@@ -1,0 +1,80 @@
+---
+title: Database
+description: "Open Weather Map local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Open Weather Map plugin syncs data locally. Use `corsair.openweathermap.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Day Summaries
+
+Path: `openweathermap.db.daySummaries.search`
+
+```ts
+const rows = await corsair.openweathermap.db.daySummaries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `lat` | `number` | equals, gt, gte, lt, lte, in |
+| `lon` | `number` | equals, gt, gte, lt, lte, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `tz` | `string` | equals, contains, startsWith, endsWith, in |
+| `units` | `string` | equals, contains, startsWith, endsWith, in |
+| `temperatureMin` | `number` | equals, gt, gte, lt, lte, in |
+| `temperatureMax` | `number` | equals, gt, gte, lt, lte, in |
+| `temperatureAfternoon` | `number` | equals, gt, gte, lt, lte, in |
+| `temperatureMorning` | `number` | equals, gt, gte, lt, lte, in |
+| `temperatureEvening` | `number` | equals, gt, gte, lt, lte, in |
+| `temperatureNight` | `number` | equals, gt, gte, lt, lte, in |
+| `precipitationTotal` | `number` | equals, gt, gte, lt, lte, in |
+| `windMaxSpeed` | `number` | equals, gt, gte, lt, lte, in |
+| `windMaxDirection` | `number` | equals, gt, gte, lt, lte, in |
+| `cloudCoverAfternoon` | `number` | equals, gt, gte, lt, lte, in |
+| `humidityAfternoon` | `number` | equals, gt, gte, lt, lte, in |
+| `pressureAfternoon` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Overviews
+
+Path: `openweathermap.db.overviews.search`
+
+```ts
+const rows = await corsair.openweathermap.db.overviews.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `lat` | `number` | equals, gt, gte, lt, lte, in |
+| `lon` | `number` | equals, gt, gte, lt, lte, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `tz` | `string` | equals, contains, startsWith, endsWith, in |
+| `units` | `string` | equals, contains, startsWith, endsWith, in |
+| `weatherOverview` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

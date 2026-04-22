@@ -1,0 +1,3648 @@
+---
+title: API
+description: "API reference for Sharepoint: every `sharepoint.api.*` operation with input and output types."
+---
+
+Every `sharepoint.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Content Types
+
+### addFieldLink
+
+`contentTypes.addFieldLink`
+
+Add a field link to a list content type
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.contentTypes.addFieldLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listid` | `string` | Yes | — |
+| `contenttypeid` | `string` | Yes | — |
+| `field_internal_name` | `string` | Yes | — |
+| `hidden` | `boolean` | No | — |
+| `required` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_link` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_link full type">
+
+```ts
+{
+  Id?: string,
+  Name?: string,
+  Hidden?: boolean,
+  Required?: boolean,
+  FieldInternalName?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`contentTypes.create`
+
+Create a new SharePoint content type
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.contentTypes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `group` | `string` | No | — |
+| `id` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="id full type">
+
+```ts
+{
+  StringValue: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `group` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+
+
+
+---
+
+### createListField
+
+`contentTypes.createListField`
+
+Create a new field (column) on a SharePoint list
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.contentTypes.createListField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `field_type` | `string` | Yes | — |
+| `internal_name` | `string` | Yes | — |
+| `display_name` | `string` | Yes | — |
+| `required` | `boolean` | No | — |
+| `choices` | `string[]` | No | — |
+| `default_value` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `required` | `boolean` | No | — |
+| `hidden` | `boolean` | No | — |
+| `readOnly` | `boolean` | No | — |
+| `defaultValue` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`contentTypes.get`
+
+Get a SharePoint content type by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.contentTypes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_type_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `group` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+
+
+
+---
+
+### getAll
+
+`contentTypes.getAll`
+
+Get all content types defined on the site
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.contentTypes.getAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  group?: string,
+  hidden?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getById
+
+`contentTypes.getById`
+
+Get a content type from a list by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.contentTypes.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `content_type_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `group` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+
+
+
+---
+
+### getForList
+
+`contentTypes.getForList`
+
+Get content types available for a specific list
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.contentTypes.getForList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  group?: string,
+  hidden?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contentTypes.update`
+
+Update an existing SharePoint content type
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.contentTypes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_type_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `group` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Drive
+
+### createSharingLink
+
+`drive.createSharingLink`
+
+Create a sharing link for a drive item via Graph API
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.drive.createSharingLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+| `type` | `view \| edit \| embed` | Yes | — |
+| `scope` | `anonymous \| organization \| users` | No | — |
+| `expiration_date_time` | `string` | No | — |
+| `password` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `type` | `string` | No | — |
+| `link` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  type?: string,
+  webUrl?: string,
+  scope?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteVersion
+
+`drive.deleteVersion`
+
+Delete a specific version of a drive item [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sharepoint.api.drive.deleteVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+| `version_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getAnalytics
+
+`drive.getAnalytics`
+
+Get analytics for a SharePoint drive item via Graph API
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.drive.getAnalytics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allTime` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="allTime full type">
+
+```ts
+{
+  access?: {
+    actionCount?: number,
+    actorCount?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRecentItems
+
+`drive.listRecentItems`
+
+List recently accessed drive items via Graph API
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.drive.listRecentItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  file?: {
+  },
+  folder?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restoreVersion
+
+`drive.restoreVersion`
+
+Restore a previous version of a drive item via Graph API
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.drive.restoreVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+| `version_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateItem
+
+`drive.updateItem`
+
+Update a drive item (rename, move) via Graph API
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.drive.updateItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `parent_reference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="parent_reference full type">
+
+```ts
+{
+  driveId?: string,
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### checkIn
+
+`files.checkIn`
+
+Check in a SharePoint file to publish changes
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.files.checkIn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_path` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `checkintype` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+| `message` | `string` | No | — |
+| `server_relative_path` | `string` | No | — |
+
+
+
+---
+
+### checkOut
+
+`files.checkOut`
+
+Check out a SharePoint file for exclusive editing
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.files.checkOut({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `server_relative_path` | `string` | No | — |
+
+
+
+---
+
+### download
+
+`files.download`
+
+Download a file by its server-relative URL
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.files.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+| `mimeType` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Get metadata of a SharePoint file by server-relative URL
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `size` | `number` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `parentReference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInFolder
+
+`files.listInFolder`
+
+List all files in a SharePoint folder
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.files.listInFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_server_relative_url` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  webUrl?: string,
+  size?: number,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  file?: {
+  },
+  folder?: {
+  },
+  parentReference?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recycle
+
+`files.recycle`
+
+Move a SharePoint file to the recycle bin
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.files.recycle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | No | — |
+
+
+
+---
+
+### undoCheckout
+
+`files.undoCheckout`
+
+Undo a checked-out SharePoint file
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.files.undoCheckout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `server_relative_path` | `string` | No | — |
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file to a SharePoint document library folder
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder_server_relative_url` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `content_text` | `string` | No | — |
+| `content_base64` | `string` | No | — |
+| `overwrite` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `size` | `number` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `parentReference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a new SharePoint folder
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `size` | `number` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `parentReference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a SharePoint folder and all its contents [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sharepoint.api.folders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`folders.get`
+
+Get a SharePoint folder by server-relative URL
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `size` | `number` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `parentReference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAll
+
+`folders.getAll`
+
+Get all SharePoint folders in a list or location
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.folders.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | No | — |
+| `server_relative_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  webUrl?: string,
+  size?: number,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  file?: {
+  },
+  folder?: {
+  },
+  parentReference?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubfolders
+
+`folders.listSubfolders`
+
+List subfolders inside a SharePoint folder
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.folders.listSubfolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  webUrl?: string,
+  size?: number,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  file?: {
+  },
+  folder?: {
+  },
+  parentReference?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`folders.rename`
+
+Rename a SharePoint folder
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.folders.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_relative_url` | `string` | Yes | — |
+| `new_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `new_server_relative_url` | `string` | No | — |
+
+
+
+---
+
+## Items
+
+### addAttachment
+
+`items.addAttachment`
+
+Add a file attachment to a SharePoint list item
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.items.addAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+| `list_title` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `content_text` | `string` | No | — |
+| `content_base64` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileName` | `string` | No | — |
+| `ServerRelativeUrl` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`items.create`
+
+Create a new SharePoint list item
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.items.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `fields` | `object` | No | — |
+| `@odata.etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createByGuid
+
+`items.createByGuid`
+
+Create a new item in a SharePoint list by GUID
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.items.createByGuid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_guid` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `fields` | `object` | No | — |
+| `@odata.etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createInFolder
+
+`items.createInFolder`
+
+Create a new list item inside a specific folder
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.items.createInFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `folder_path` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `fields` | `object` | No | — |
+| `@odata.etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`items.delete`
+
+Permanently delete a SharePoint list item [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sharepoint.api.items.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`items.get`
+
+Get a SharePoint list item by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `fields` | `object` | No | — |
+| `@odata.etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAttachmentContent
+
+`items.getAttachmentContent`
+
+Download the content of a list item attachment
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.items.getAttachmentContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+| `file_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | — |
+| `fileName` | `string` | No | — |
+
+
+
+---
+
+### getEtag
+
+`items.getEtag`
+
+Get the ETag for a SharePoint list item
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.items.getEtag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | Yes | — |
+
+
+
+---
+
+### getVersion
+
+`items.getVersion`
+
+Get a specific version of a SharePoint list item
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.items.getVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+| `version_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+List items in a SharePoint list
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  webUrl?: string,
+  fields?: {
+  },
+  @odata.etag?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttachments
+
+`items.listAttachments`
+
+List all attachments for a SharePoint list item
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.items.listAttachments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  FileName?: string,
+  ServerRelativeUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByGuid
+
+`items.listByGuid`
+
+List items in a SharePoint list by GUID
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.items.listByGuid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_guid` | `string` | Yes | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  webUrl?: string,
+  fields?: {
+  },
+  @odata.etag?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recycle
+
+`items.recycle`
+
+Move a SharePoint list item to the recycle bin
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.items.recycle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`items.update`
+
+Update an existing SharePoint list item
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.items.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a new SharePoint list
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `template` | `number` | No | — |
+| `enable_versioning` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `list` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  hidden?: boolean,
+  template?: string,
+  contentTypesEnabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a SharePoint list by GUID [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sharepoint.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_guid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteByTitle
+
+`lists.deleteByTitle`
+
+Delete a SharePoint list by title [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sharepoint.api.lists.deleteByTitle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getByGuid
+
+`lists.getByGuid`
+
+Get a SharePoint list by GUID
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.lists.getByGuid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_guid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `list` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  hidden?: boolean,
+  template?: string,
+  contentTypesEnabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByTitle
+
+`lists.getByTitle`
+
+Get a SharePoint list by title
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.lists.getByTitle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `list` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  hidden?: boolean,
+  template?: string,
+  contentTypesEnabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getChanges
+
+`lists.getChanges`
+
+Get change log entries for a SharePoint list
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.lists.getChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `change_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+| `@odata.deltaLink` | `string` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  webUrl?: string,
+  fields?: {
+  },
+  @odata.etag?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAll
+
+`lists.listAll`
+
+List all SharePoint lists in the site
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.lists.listAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  description?: string,
+  webUrl?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  list?: {
+    hidden?: boolean,
+    template?: string,
+    contentTypesEnabled?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listColumns
+
+`lists.listColumns`
+
+List all columns (fields) in a SharePoint list
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.lists.listColumns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  displayName?: string,
+  required?: boolean,
+  hidden?: boolean,
+  readOnly?: boolean,
+  defaultValue?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### renderDataAsStream
+
+`lists.renderDataAsStream`
+
+Render list data as a pageable stream
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.lists.renderDataAsStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `view_xml` | `string` | No | — |
+| `row_limit` | `number` | No | — |
+| `paging_info` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Row` | `object[]` | No | — |
+| `NextHref` | `string` | No | — |
+| `PrevHref` | `string` | No | — |
+| `FirstRow` | `number` | No | — |
+| `LastRow` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="Row full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Update an existing SharePoint list
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `enable_versioning` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Permissions
+
+### addRoleToItem
+
+`permissions.addRoleToItem`
+
+Grant a role assignment to a user on a list item
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.permissions.addRoleToItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+| `principal_id` | `number` | Yes | — |
+| `role_definition_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `list_title` | `string` | No | — |
+| `item_id` | `number` | No | — |
+| `principal_id` | `number` | No | — |
+| `role_definition_id` | `number` | No | — |
+
+
+
+---
+
+### addRoleToList
+
+`permissions.addRoleToList`
+
+Grant a role assignment to a user on a SharePoint list
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.permissions.addRoleToList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `principal_id` | `number` | Yes | — |
+| `role_definition_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `status_code` | `number` | No | — |
+
+
+
+---
+
+### breakInheritanceOnItem
+
+`permissions.breakInheritanceOnItem`
+
+Break permission inheritance on a list item
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.permissions.breakInheritanceOnItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `item_id` | `number` | Yes | — |
+| `copy_role_assignments` | `boolean` | No | — |
+| `clear_subscopes` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+
+
+
+---
+
+### breakInheritanceOnList
+
+`permissions.breakInheritanceOnList`
+
+Break permission inheritance on a SharePoint list
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.permissions.breakInheritanceOnList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_title` | `string` | Yes | — |
+| `copy_role_assignments` | `boolean` | Yes | — |
+| `clear_subscopes` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getRoleDefinitions
+
+`permissions.getRoleDefinitions`
+
+Get all role definitions (permission levels) in the site
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.permissions.getRoleDefinitions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: number | string,
+  Name?: string,
+  Description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recycle Bin
+
+### deletePermanent
+
+`recycleBin.deletePermanent`
+
+Permanently delete an item from the recycle bin [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sharepoint.api.recycleBin.deletePermanent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`recycleBin.list`
+
+List items in the SharePoint recycle bin
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.recycleBin.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `row_limit` | `number` | No | — |
+| `is_ascending` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  Id?: string,
+  Title?: string,
+  DirName?: string,
+  LeafName?: string,
+  DeletedDate?: string,
+  DeletedByName?: string,
+  Size?: string,
+  ItemType?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restore
+
+`recycleBin.restore`
+
+Restore an item from the SharePoint recycle bin
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.recycleBin.restore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Search
+
+### query
+
+`search.query`
+
+Execute a full-text search query against SharePoint
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.search.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query_text` | `string` | Yes | — |
+| `row_limit` | `number` | No | — |
+| `start_row` | `number` | No | — |
+| `select_properties` | `string[]` | No | — |
+| `refiners` | `string` | No | — |
+| `refinement_filters` | `string` | No | — |
+| `sort_list` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort_list full type">
+
+```ts
+{
+  Property: string,
+  Direction: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  searchTerms?: string[],
+  hitsContainers?: {
+    hits?: {
+      hitId?: string,
+      rank?: number,
+      summary?: string,
+      resource?: {
+      }
+    }[],
+    total?: number,
+    moreResultsAvailable?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suggest
+
+`search.suggest`
+
+Get query suggestions from SharePoint search
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.search.suggest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query_text` | `string` | Yes | — |
+| `show_people_name_suggestions` | `boolean` | No | — |
+| `max_suggestion_results` | `number` | No | — |
+| `is_prefix_match` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Social
+
+### follow
+
+`social.follow`
+
+Follow a SharePoint actor (person, document, site, tag)
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.social.follow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actor_type` | `number` | Yes | — |
+| `content_uri` | `string` | No | — |
+| `id` | `string` | No | — |
+| `tag_guid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `number` | No | — |
+
+
+
+---
+
+### getFollowed
+
+`social.getFollowed`
+
+Get entities followed by the current user
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.social.getFollowed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `types` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  AccountName?: string,
+  ActorType?: number,
+  ContentUri?: string,
+  Id?: string,
+  ImageUri?: string | null,
+  Name?: string,
+  StatusText?: string,
+  Uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFollowers
+
+`social.getFollowers`
+
+Get followers of the current user
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.social.getFollowers({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  AccountName?: string,
+  ActorType?: number,
+  ContentUri?: string,
+  Id?: string,
+  ImageUri?: string | null,
+  Name?: string,
+  StatusText?: string,
+  Uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### isFollowed
+
+`social.isFollowed`
+
+Check if the current user is following an actor
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.social.isFollowed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actor_type` | `number` | Yes | — |
+| `content_uri` | `string` | No | — |
+| `id` | `string` | No | — |
+| `tag_guid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `boolean` | No | — |
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Add an Azure AD user to the SharePoint site
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `login_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `mail` | `string` | No | — |
+| `userPrincipalName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+
+
+
+---
+
+### ensure
+
+`users.ensure`
+
+Ensure a user exists in SharePoint (create if not present)
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.users.ensure({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `login_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `mail` | `string` | No | — |
+| `userPrincipalName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+
+
+
+---
+
+### find
+
+`users.find`
+
+Find SharePoint users by name or email
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.users.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  mail?: string,
+  userPrincipalName?: string,
+  jobTitle?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the currently authenticated SharePoint user
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.users.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `mail` | `string` | No | — |
+| `userPrincipalName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+
+
+
+---
+
+### getEffectivePermissions
+
+`users.getEffectivePermissions`
+
+Get the effective permissions of a user on the web
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.users.getEffectivePermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_login_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `mail` | `string` | No | — |
+| `userPrincipalName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+
+
+
+---
+
+### getGroupUsers
+
+`users.getGroupUsers`
+
+Get users belonging to a SharePoint site group by name
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.users.getGroupUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  mail?: string,
+  userPrincipalName?: string,
+  jobTitle?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGroupUsersById
+
+`users.getGroupUsersById`
+
+Get users belonging to a SharePoint site group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.users.getGroupUsersById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  mail?: string,
+  userPrincipalName?: string,
+  jobTitle?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroups
+
+`users.listGroups`
+
+List all site groups
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.users.listGroups({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  description?: string,
+  mail?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSite
+
+`users.listSite`
+
+List all users in the SharePoint site
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.users.listSite({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  displayName?: string,
+  mail?: string,
+  userPrincipalName?: string,
+  jobTitle?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`users.remove`
+
+Remove a user from the SharePoint site [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sharepoint.api.users.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `login_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Web
+
+### createSubsite
+
+`web.createSubsite`
+
+Create a new SharePoint subsite
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.web.createSubsite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `web_template` | `string` | No | — |
+| `language` | `number` | No | — |
+| `use_unique_permissions` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `siteCollection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="siteCollection full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContextInfo
+
+`web.getContextInfo`
+
+Get SharePoint context info including form digest token
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.web.getContextInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FormDigestValue` | `string` | No | — |
+| `FormDigestTimeoutSeconds` | `number` | No | — |
+| `LibraryVersion` | `string` | No | — |
+| `SiteFullUrl` | `string` | No | — |
+| `WebFullUrl` | `string` | No | — |
+
+
+
+---
+
+### getDriveItemByPath
+
+`web.getDriveItemByPath`
+
+Get a drive item by its path using Microsoft Graph
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.web.getDriveItemByPath({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInfo
+
+`web.getInfo`
+
+Get information about the current SharePoint web/site
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.web.getInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `siteCollection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="siteCollection full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSiteCollectionInfo
+
+`web.getSiteCollectionInfo`
+
+Get information about the SharePoint site collection
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.web.getSiteCollectionInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `siteCollection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="siteCollection full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSitePage
+
+`web.getSitePage`
+
+Get the content of a SharePoint modern site page
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.web.getSitePage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_server_relative_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+
+
+
+---
+
+### logEvent
+
+`web.logEvent`
+
+Log a custom event to the SharePoint ULS log
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.web.logEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entry_type` | `number` | Yes | — |
+| `event_code` | `number` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateSite
+
+`web.updateSite`
+
+Update SharePoint site title or description
+
+**Risk:** `write`
+
+```ts
+await corsair.sharepoint.api.web.updateSite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Webhook Subscriptions
+
+### get
+
+`webhookSubscriptions.get`
+
+Get a specific SharePoint webhook subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.webhookSubscriptions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `subscription_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `clientState` | `string` | No | — |
+| `expirationDateTime` | `string` | No | — |
+| `notificationUrl` | `string` | No | — |
+| `resource` | `string` | No | — |
+
+
+
+---
+
+### getAll
+
+`webhookSubscriptions.getAll`
+
+Get all webhook subscriptions for a SharePoint list
+
+**Risk:** `read`
+
+```ts
+await corsair.sharepoint.api.webhookSubscriptions.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  clientState?: string | null,
+  expirationDateTime?: string,
+  notificationUrl?: string,
+  resource?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

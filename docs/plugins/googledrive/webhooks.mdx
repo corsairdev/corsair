@@ -1,0 +1,114 @@
+---
+title: Webhooks
+description: "Google drive incoming webhooks: event paths, payloads, and response data."
+---
+
+The Google drive plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/googledrive/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `driveChanged` (`driveChanged`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Drive Changed
+
+### Drive Changed
+
+`driveChanged`
+
+A file or folder in Google Drive was created, updated, or deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | No | — |
+| `subscription` | `string` | No | — |
+| `event` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  data?: string,
+  attributes?: {
+  },
+  messageId?: string,
+  publishTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: fileChanged | folderChanged,
+  fileId?: string,
+  folderId?: string,
+  changeType: created | updated | deleted | trashed | untrashed,
+  file?: any,
+  folder?: any,
+  filePath?: string,
+  change?: any,
+  binaryData?: string | null,
+  allFiles: {
+    file: any,
+    filePath: string,
+    change: any,
+    changeType: created | updated | deleted | trashed | untrashed,
+    binaryData?: string | null
+  }[],
+  allFolders: {
+    folder: any,
+    filePath: string,
+    change: any,
+    changeType: created | updated | deleted | trashed | untrashed
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+googledrive({
+    webhookHooks: {
+        driveChanged: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

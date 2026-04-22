@@ -1,0 +1,1530 @@
+---
+title: API
+description: "API reference for Linear: every `linear.api.*` operation with input and output types."
+---
+
+Every `linear.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### create
+
+`comments.create`
+
+Post a comment on an issue
+
+**Risk:** `write`
+
+```ts
+await corsair.linear.api.comments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `parentId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `issue` | `object` | Yes | — |
+| `user` | `object` | Yes | — |
+| `parent` | `object` | No | — |
+| `editedAt` | `date` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archivedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="issue full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.linear.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments on an issue
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `string` | Yes | — |
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+  id: string,
+  body: string,
+  issue: {
+    id: string,
+    title: string,
+    description?: string | null,
+    priority: 0 | 1 | 2 | 3 | 4,
+    estimate?: number | null,
+    sortOrder: number,
+    number: number,
+    identifier: string,
+    url: string,
+    state: {
+      id: string,
+      name: string,
+      type: backlog | unstarted | started | completed | canceled,
+      color: string,
+      position: number,
+      description?: string | null,
+      team: {
+        id: string,
+        name: string,
+        key: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        private: boolean,
+        createdAt?: date | null,
+        updatedAt?: date | null,
+        archivedAt?: date | null
+      },
+      createdAt?: date | null,
+      updatedAt?: date | null
+    },
+    team: {
+      id: string,
+      name: string,
+      key: string,
+      description?: string | null,
+      icon?: string | null,
+      color?: string | null,
+      private: boolean,
+      createdAt?: date | null,
+      updatedAt?: date | null,
+      archivedAt?: date | null
+    },
+    assignee?: {
+      id: string,
+      name: string,
+      email?: string | null,
+      displayName: string,
+      avatarUrl?: string | null,
+      active: boolean,
+      admin: boolean,
+      createdAt?: date | null,
+      updatedAt?: date | null
+    } | null,
+    creator: {
+      id: string,
+      name: string,
+      email?: string | null,
+      displayName: string,
+      avatarUrl?: string | null,
+      active: boolean,
+      admin: boolean,
+      createdAt?: date | null,
+      updatedAt?: date | null
+    },
+    project?: {
+      id: string,
+      name: string,
+      description?: string | null,
+      icon?: string | null,
+      color?: string | null,
+      state: backlog | planned | started | paused | completed | canceled,
+      priority: number,
+      sortOrder: number,
+      startDate?: date | null,
+      targetDate?: date | null,
+      completedAt?: date | null,
+      canceledAt?: date | null,
+      lead?: {
+        id: string,
+        name: string,
+        email?: string | null,
+        displayName: string,
+        avatarUrl?: string | null,
+        active: boolean,
+        admin: boolean,
+        createdAt?: date | null,
+        updatedAt?: date | null
+      } | null,
+      teams: {
+        id: string,
+        name: string,
+        key: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        private: boolean,
+        createdAt?: date | null,
+        updatedAt?: date | null,
+        archivedAt?: date | null
+      }[],
+      createdAt?: date | null,
+      updatedAt?: date | null,
+      archivedAt?: date | null
+    } | null,
+    cycle?: {
+      id: string,
+      number: number,
+      name?: string | null,
+      description?: string | null,
+      startsAt?: date | null,
+      endsAt?: date | null,
+      completedAt?: date | null,
+      team: {
+        id: string,
+        name: string,
+        key: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        private: boolean,
+        createdAt?: date | null,
+        updatedAt?: date | null,
+        archivedAt?: date | null
+      },
+      createdAt?: date | null,
+      updatedAt?: date | null,
+      archivedAt?: date | null
+    } | null,
+    labels: {
+      id: string,
+      name: string,
+      description?: string | null,
+      color: string,
+      team?: {
+        id: string,
+        name: string,
+        key: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        private: boolean,
+        createdAt?: date | null,
+        updatedAt?: date | null,
+        archivedAt?: date | null
+      } | null,
+      createdAt?: date | null,
+      updatedAt?: date | null,
+      parent: lazy
+    }[],
+    subscribers: {
+      id: string,
+      name: string,
+      email?: string | null,
+      displayName: string,
+      avatarUrl?: string | null,
+      active: boolean,
+      admin: boolean,
+      createdAt?: date | null,
+      updatedAt?: date | null
+    }[],
+    dueDate?: date | null,
+    startedAt?: date | null,
+    completedAt?: date | null,
+    canceledAt?: date | null,
+    triagedAt?: date | null,
+    snoozedUntilAt?: date | null,
+    createdAt?: date | null,
+    updatedAt?: date | null,
+    archivedAt?: date | null,
+    parent: lazy
+  },
+  user: {
+    id: string,
+    name: string,
+    email?: string | null,
+    displayName: string,
+    avatarUrl?: string | null,
+    active: boolean,
+    admin: boolean,
+    createdAt?: date | null,
+    updatedAt?: date | null
+  },
+  editedAt?: date | null,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archivedAt?: date | null,
+  parent: lazy
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Update a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.linear.api.comments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  body?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `issue` | `object` | Yes | — |
+| `user` | `object` | Yes | — |
+| `parent` | `object` | No | — |
+| `editedAt` | `date` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archivedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="issue full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Issues
+
+### create
+
+`issues.create`
+
+Create a new issue
+
+**Risk:** `write`
+
+```ts
+await corsair.linear.api.issues.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `teamId` | `string` | Yes | — |
+| `assigneeId` | `string` | No | — |
+| `priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | — |
+| `estimate` | `number` | No | — |
+| `stateId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `cycleId` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `labelIds` | `string[]` | No | — |
+| `subscriberIds` | `string[]` | No | — |
+| `dueDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | — |
+| `estimate` | `number` | No | — |
+| `sortOrder` | `number` | No | — |
+| `number` | `number` | No | — |
+| `identifier` | `string` | No | — |
+| `url` | `string` | No | — |
+| `state` | `object` | No | — |
+| `team` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `creator` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: backlog | unstarted | started | completed | canceled,
+  color?: string,
+  position?: number
+}
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  key: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`issues.delete`
+
+Permanently delete an issue [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.linear.api.issues.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### get
+
+`issues.get`
+
+Get a specific issue
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.issues.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `priority` | `0 \| 1 \| 2 \| 3 \| 4` | Yes | — |
+| `estimate` | `number` | No | — |
+| `sortOrder` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `identifier` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `state` | `object` | Yes | — |
+| `team` | `object` | Yes | — |
+| `assignee` | `object` | No | — |
+| `creator` | `object` | Yes | — |
+| `project` | `object` | No | — |
+| `cycle` | `object` | No | — |
+| `labels` | `object` | No | — |
+| `subscribers` | `object` | No | — |
+| `dueDate` | `date` | No | — |
+| `startedAt` | `date` | No | — |
+| `completedAt` | `date` | No | — |
+| `canceledAt` | `date` | No | — |
+| `triagedAt` | `date` | No | — |
+| `snoozedUntilAt` | `date` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archivedAt` | `date` | No | — |
+| `parent` | `lazy` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: backlog | unstarted | started | completed | canceled,
+  color?: string,
+  position?: number
+}
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  key: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  state: backlog | planned | started | paused | completed | canceled
+}
+```
+</Accordion>
+
+<Accordion title="cycle full type">
+
+```ts
+{
+  id: string,
+  number: number,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  nodes: {
+    id: string,
+    name: string,
+    color: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="subscribers full type">
+
+```ts
+{
+  nodes: {
+    id: string,
+    name: string,
+    displayName: string,
+    email?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`issues.list`
+
+List issues in a team
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.issues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | — |
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string | null,
+  priority: 0 | 1 | 2 | 3 | 4,
+  estimate?: number | null,
+  sortOrder: number,
+  number: number,
+  identifier: string,
+  url: string,
+  state: {
+    id: string,
+    name: string,
+    type: backlog | unstarted | started | completed | canceled,
+    color?: string,
+    position?: number
+  },
+  team: {
+    id: string,
+    name: string,
+    key: string
+  },
+  assignee?: {
+    id: string,
+    name: string,
+    displayName: string,
+    email?: string | null
+  } | null,
+  creator: {
+    id: string,
+    name: string,
+    displayName: string,
+    email?: string | null
+  },
+  project?: {
+    id: string,
+    name: string,
+    state: backlog | planned | started | paused | completed | canceled
+  } | null,
+  cycle?: {
+    id: string,
+    number: number,
+    name?: string | null
+  } | null,
+  labels?: {
+    nodes: {
+      id: string,
+      name: string,
+      color: string
+    }[]
+  } | null,
+  subscribers?: {
+    nodes: {
+      id: string,
+      name: string,
+      displayName: string,
+      email?: string | null
+    }[]
+  } | null,
+  dueDate?: date | null,
+  startedAt?: date | null,
+  completedAt?: date | null,
+  canceledAt?: date | null,
+  triagedAt?: date | null,
+  snoozedUntilAt?: date | null,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archivedAt?: date | null,
+  parent: lazy
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`issues.update`
+
+Update an existing issue
+
+**Risk:** `write`
+
+```ts
+await corsair.linear.api.issues.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  assigneeId?: string,
+  priority?: 0 | 1 | 2 | 3 | 4,
+  estimate?: number,
+  stateId?: string,
+  projectId?: string,
+  cycleId?: string,
+  parentId?: string,
+  labelIds?: string[],
+  subscriberIds?: string[],
+  dueDate?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | — |
+| `estimate` | `number` | No | — |
+| `sortOrder` | `number` | No | — |
+| `number` | `number` | No | — |
+| `identifier` | `string` | No | — |
+| `url` | `string` | No | — |
+| `state` | `object` | No | — |
+| `team` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `creator` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="state full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: backlog | unstarted | started | completed | canceled,
+  color?: string,
+  position?: number
+}
+```
+</Accordion>
+
+<Accordion title="team full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  key: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.linear.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `color` | `string` | No | — |
+| `teamIds` | `string[]` | Yes | — |
+| `leadId` | `string` | No | — |
+| `state` | `planned \| started \| paused \| completed \| canceled` | No | — |
+| `priority` | `number` | No | — |
+| `startDate` | `string` | No | — |
+| `targetDate` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `color` | `string` | No | — |
+| `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
+| `priority` | `number` | Yes | — |
+| `sortOrder` | `number` | No | — |
+| `startDate` | `date` | No | — |
+| `targetDate` | `date` | No | — |
+| `completedAt` | `date` | No | — |
+| `canceledAt` | `date` | No | — |
+| `lead` | `object` | No | — |
+| `teams` | `object` | Yes | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archivedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="teams full type">
+
+```ts
+{
+  nodes: {
+    id: string,
+    name: string,
+    key: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.linear.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a specific project
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `color` | `string` | No | — |
+| `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
+| `priority` | `number` | Yes | — |
+| `sortOrder` | `number` | Yes | — |
+| `startDate` | `date` | No | — |
+| `targetDate` | `date` | No | — |
+| `completedAt` | `date` | No | — |
+| `canceledAt` | `date` | No | — |
+| `lead` | `object` | No | — |
+| `teams` | `object` | Yes | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="teams full type">
+
+```ts
+{
+  nodes: {
+    id: string,
+    name: string,
+    key: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects in a team
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  icon?: string | null,
+  color?: string | null,
+  state: backlog | planned | started | paused | completed | canceled,
+  priority: number,
+  sortOrder: number,
+  startDate?: date | null,
+  targetDate?: date | null,
+  completedAt?: date | null,
+  canceledAt?: date | null,
+  lead?: {
+    id: string,
+    name: string,
+    displayName: string,
+    email?: string | null
+  } | null,
+  teams: {
+    nodes: {
+      id: string,
+      name: string,
+      key: string
+    }[]
+  },
+  createdAt?: date | null,
+  updatedAt?: date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update an existing project
+
+**Risk:** `write`
+
+```ts
+await corsair.linear.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `input` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  name?: string,
+  description?: string,
+  icon?: string,
+  color?: string,
+  teamIds?: string[],
+  leadId?: string,
+  state?: planned | started | paused | completed | canceled,
+  priority?: number,
+  startDate?: string,
+  targetDate?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `color` | `string` | No | — |
+| `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
+| `priority` | `number` | Yes | — |
+| `sortOrder` | `number` | No | — |
+| `startDate` | `date` | No | — |
+| `targetDate` | `date` | No | — |
+| `completedAt` | `date` | No | — |
+| `canceledAt` | `date` | No | — |
+| `lead` | `object` | No | — |
+| `teams` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archivedAt` | `date` | No | — |
+
+<AccordionGroup>
+<Accordion title="lead full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  displayName: string,
+  email?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="teams full type">
+
+```ts
+{
+  nodes: {
+    id: string,
+    name: string,
+    key: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### get
+
+`teams.get`
+
+Get a specific team
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `color` | `string` | No | — |
+| `private` | `boolean` | Yes | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archivedAt` | `date` | No | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  key: string,
+  description?: string | null,
+  icon?: string | null,
+  color?: string | null,
+  private: boolean,
+  createdAt?: date | null,
+  updatedAt?: date | null,
+  archivedAt?: date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a specific user
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `displayName` | `string` | Yes | — |
+| `avatarUrl` | `string` | No | — |
+| `active` | `boolean` | Yes | — |
+| `admin` | `boolean` | Yes | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.linear.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string | null,
+  displayName: string,
+  avatarUrl?: string | null,
+  active: boolean,
+  admin: boolean,
+  createdAt?: date | null,
+  updatedAt?: date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  hasPreviousPage: boolean,
+  startCursor?: string | null,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
