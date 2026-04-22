@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import {
-	FirecrawlScrapeMetadata,
+	FirecrawlCrawlPageDocument,
+	FirecrawlMapLink,
 	FirecrawlScrapeActionResults,
 	FirecrawlScrapeChangeTracking,
-	FirecrawlMapLink,
-	FirecrawlSearchWebItem,
+	FirecrawlScrapeMetadata,
 	FirecrawlSearchImageItem,
 	FirecrawlSearchNewsItem,
-	FirecrawlCrawlPageDocument,
+	FirecrawlSearchWebItem,
 } from '../schema/database';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -16,7 +16,10 @@ import {
 
 const LocationSchema = z
 	.object({
-		country: z.string().regex(/^[A-Z]{2}$/).optional(),
+		country: z
+			.string()
+			.regex(/^[A-Z]{2}$/)
+			.optional(),
 		languages: z.array(z.string()).optional(),
 	})
 	.passthrough();
@@ -256,7 +259,9 @@ const WebhookSchema = z
 		url: z.string(),
 		headers: z.record(z.string()).optional(),
 		metadata: z.record(z.unknown()).optional(),
-		events: z.array(z.enum(['completed', 'page', 'failed', 'started'])).optional(),
+		events: z
+			.array(z.enum(['completed', 'page', 'failed', 'started']))
+			.optional(),
 	})
 	.passthrough();
 

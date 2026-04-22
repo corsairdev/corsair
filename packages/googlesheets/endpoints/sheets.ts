@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleSheetsEndpoints } from '..';
 import { makeAuthenticatedSheetsRequest } from '../client';
+import type { GoogleSheetsEndpoints } from '../index';
 import type {
 	AppendValuesResponse,
 	SheetProperties,

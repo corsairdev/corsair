@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { PagerdutyEndpoints } from '..';
 import { makePagerdutyRequest } from '../client';
+import type { PagerdutyEndpoints } from '../index';
 import type { PagerdutyEndpointOutputs } from './types';
 
 export const get: PagerdutyEndpoints['logEntriesGet'] = async (ctx, input) => {

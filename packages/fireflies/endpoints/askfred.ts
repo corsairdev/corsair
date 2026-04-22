@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FirefliesEndpoints } from '..';
 import { makeFirefliesRequest } from '../client';
+import type { FirefliesEndpoints } from '../index';
 import type { FirefliesEndpointOutputs } from './types';
 
 // askfred_threads returns AskFredThreadSummary (no messages field)

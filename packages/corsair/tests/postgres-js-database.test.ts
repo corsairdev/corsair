@@ -1,13 +1,13 @@
 import 'dotenv/config';
+import { slack } from '@corsair-dev/slack';
 import { Kysely, sql } from 'kysely';
 import postgres from 'postgres';
-import { slack } from '@corsair-dev/slack';
 import { createCorsair } from '../core';
-import { createCorsairDatabase } from '../db/kysely/database';
 import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
+import { createCorsairDatabase } from '../db/kysely/database';
 import { createCorsairOrm } from '../db/orm';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 
@@ -290,39 +290,45 @@ describe('postgres-js database integration', () => {
 	});
 
 	describe('corsair_accounts field types', () => {
-		gated()('stores tenant/integration references and jsonb config', async () => {
-			await createIntegrationAndAccount(kdb, 'slack', 'tenant-alpha');
+		gated()(
+			'stores tenant/integration references and jsonb config',
+			async () => {
+				await createIntegrationAndAccount(kdb, 'slack', 'tenant-alpha');
 
-			const account = await kdb
-				.selectFrom('corsair_accounts')
-				.selectAll()
-				.where('tenant_id', '=', 'tenant-alpha')
-				.executeTakeFirstOrThrow();
+				const account = await kdb
+					.selectFrom('corsair_accounts')
+					.selectAll()
+					.where('tenant_id', '=', 'tenant-alpha')
+					.executeTakeFirstOrThrow();
 
-			expect(account.integration_id).toBe('slack-integration');
-			expect(account.config).toEqual({});
-			expect(account.created_at).toBeInstanceOf(Date);
+				expect(account.integration_id).toBe('slack-integration');
+				expect(account.config).toEqual({});
+				expect(account.created_at).toBeInstanceOf(Date);
 
-			await kdb
-				.updateTable('corsair_accounts')
-				.set({
-					config: { scopes: ['chat:write', 'channels:read'], per_tenant: true },
-					dek: 'enc-dek',
-				} as never)
-				.where('id', '=', account.id)
-				.execute();
+				await kdb
+					.updateTable('corsair_accounts')
+					.set({
+						config: {
+							scopes: ['chat:write', 'channels:read'],
+							per_tenant: true,
+						},
+						dek: 'enc-dek',
+					} as never)
+					.where('id', '=', account.id)
+					.execute();
 
-			const updated = await kdb
-				.selectFrom('corsair_accounts')
-				.selectAll()
-				.where('id', '=', account.id)
-				.executeTakeFirstOrThrow();
-			expect(updated.config).toEqual({
-				scopes: ['chat:write', 'channels:read'],
-				per_tenant: true,
-			});
-			expect(updated.dek).toBe('enc-dek');
-		});
+				const updated = await kdb
+					.selectFrom('corsair_accounts')
+					.selectAll()
+					.where('id', '=', account.id)
+					.executeTakeFirstOrThrow();
+				expect(updated.config).toEqual({
+					scopes: ['chat:write', 'channels:read'],
+					per_tenant: true,
+				});
+				expect(updated.dek).toBe('enc-dek');
+			},
+		);
 	});
 
 	describe('corsair_entities field types', () => {
@@ -696,9 +702,9 @@ describe('postgres-js database integration', () => {
 					data: { id: 'C999', name: 'general-renamed', is_private: false },
 				});
 				expect(sameEntity.id).toBe(entity.id);
-				expect(
-					(sameEntity.data as { name?: string }).name,
-				).toBe('general-renamed');
+				expect((sameEntity.data as { name?: string }).name).toBe(
+					'general-renamed',
+				);
 
 				const countBefore = await orm.entities.count();
 				expect(countBefore).toBeGreaterThanOrEqual(1);
@@ -755,8 +761,7 @@ describe('postgres-js database integration', () => {
 		// `connectable` is set in beforeAll which runs after describe/it
 		// registration. Decide solely on env var presence here; the beforeAll
 		// probe will fail loudly if Postgres isn't reachable.
-		const slackEnabled =
-			!liveDisabled && Boolean(botToken && channel && kek);
+		const slackEnabled = !liveDisabled && Boolean(botToken && channel && kek);
 		const runIf = slackEnabled ? it : it.skip;
 
 		runIf(

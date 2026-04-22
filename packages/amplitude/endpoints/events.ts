@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AmplitudeEndpoints } from '..';
 import { AMPLITUDE_HTTP_API_BASE, makeAmplitudeRequest } from '../client';
+import type { AmplitudeEndpoints } from '../index';
 import type { AmplitudeEndpointOutputs } from './types';
 
 export const upload: AmplitudeEndpoints['eventsUpload'] = async (

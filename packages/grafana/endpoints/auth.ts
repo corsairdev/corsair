@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GrafanaEndpoints } from '..';
 import { makeGrafanaRawRequest } from '../client';
+import type { GrafanaEndpoints } from '../index';
 import type { GrafanaEndpointOutputs } from './types';
 
 export const postAcs: GrafanaEndpoints['samlPostAcs'] = async (ctx, input) => {

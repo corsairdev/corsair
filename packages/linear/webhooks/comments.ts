@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { LinearWebhooks } from '..';
+import type { LinearWebhooks } from '../index';
 import { createLinearMatch, verifyLinearWebhookSignature } from './types';
 
 export const commentCreate: LinearWebhooks['commentCreate'] = {

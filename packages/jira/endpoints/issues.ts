@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { JiraEndpoints } from '..';
 import { makeJiraRequest, uploadJiraAttachment } from '../client';
+import type { JiraEndpoints } from '../index';
 import type { JiraEndpointOutputs } from './types';
 import { makeAdf } from './types';
 

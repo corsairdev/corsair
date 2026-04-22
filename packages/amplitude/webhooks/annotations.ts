@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AmplitudeWebhooks } from '..';
+import type { AmplitudeWebhooks } from '../index';
 import { createAmplitudeMatch, verifyAmplitudeWebhookSignature } from './types';
 
 export const created: AmplitudeWebhooks['annotationsCreated'] = {

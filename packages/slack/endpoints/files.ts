@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SlackBoundEndpoints, SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
+import type { SlackBoundEndpoints, SlackEndpoints } from '../index';
 import type { SlackEndpointOutputs } from './types';
 
 export const get: SlackEndpoints['filesGet'] = async (ctx, input) => {

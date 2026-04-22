@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TeamsEndpoints } from '..';
 import { makeTeamsRequest } from '../client';
+import type { TeamsEndpoints } from '../index';
 import type { TeamsEndpointOutputs } from './types';
 
 export const list: TeamsEndpoints['membersList'] = async (ctx, input) => {

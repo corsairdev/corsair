@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TodoistEndpoints } from '..';
 import { makeTodoistRequest } from '../client';
+import type { TodoistEndpoints } from '../index';
 import type { TodoistEndpointOutputs } from './types';
 
 export const create: TodoistEndpoints['remindersCreate'] = async (

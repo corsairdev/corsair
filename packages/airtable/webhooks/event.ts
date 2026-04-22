@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AirtableBoundEndpoints, AirtableWebhooks } from '..';
+import type { AirtableBoundEndpoints, AirtableWebhooks } from '../index';
 import { createAirtableMatch, verifyAirtableWebhookSignature } from './types';
 
 export const event: AirtableWebhooks['event'] = {

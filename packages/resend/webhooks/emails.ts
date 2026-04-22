@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ResendWebhooks } from '..';
+import type { ResendWebhooks } from '../index';
 import { createResendMatch, verifyResendWebhookSignature } from './types';
 
 export const emailSent: ResendWebhooks['emailSent'] = {

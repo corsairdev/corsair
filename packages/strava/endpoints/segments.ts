@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { StravaEndpoints } from '..';
 import { makeStravaRequest } from '../client';
+import type { StravaEndpoints } from '../index';
 import type { StravaEndpointOutputs } from './types';
 
 export const explore: StravaEndpoints['segmentsExplore'] = async (

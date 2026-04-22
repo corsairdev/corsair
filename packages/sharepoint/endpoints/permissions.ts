@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SharepointEndpoints } from '..';
 import { makeGraphRequest } from '../client';
+import type { SharepointEndpoints } from '../index';
 
 export const addRoleToItem: SharepointEndpoints['permissionsAddRoleToItem'] =
 	async (ctx, input) => {

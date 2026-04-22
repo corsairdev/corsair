@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
+import type { SlackEndpoints } from '../index';
 import type { SlackEndpointOutputs } from './types';
 
 export const add: SlackEndpoints['starsAdd'] = async (ctx, input) => {

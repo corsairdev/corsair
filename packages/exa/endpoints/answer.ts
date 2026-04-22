@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ExaEndpoints } from '..';
 import { makeExaRequest } from '../client';
+import type { ExaEndpoints } from '../index';
 import type { ExaEndpointOutputs } from './types';
 
 export const getAnswer: ExaEndpoints['answerGet'] = async (ctx, input) => {

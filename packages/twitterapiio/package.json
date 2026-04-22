@@ -1,7 +1,7 @@
 {
-  "name": "@corsair-dev/twitterappio",
+  "name": "@corsair-dev/twitterapiio",
   "version": "0.1.0",
-  "description": "Twitter appio plugin for Corsair",
+  "description": "TwitterAPI.io plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -32,7 +32,7 @@
   },
   "keywords": [
     "corsair",
-    "twitterappio",
+    "twitterapiio",
     "plugin"
   ],
   "author": "",

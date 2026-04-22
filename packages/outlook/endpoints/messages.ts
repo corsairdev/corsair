@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { OutlookEndpoints } from '..';
 import { makeOutlookRequest } from '../client';
+import type { OutlookEndpoints } from '../index';
 import type { OutlookEndpointOutputs } from './types';
 
 const userPath = (userId?: string) => (userId ? `/users/${userId}` : '/me');

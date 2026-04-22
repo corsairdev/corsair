@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
+import type { GithubEndpoints } from '../index';
 import type { ForksListResponse } from './types';
 
 export const list: GithubEndpoints['forksList'] = async (ctx, input) => {

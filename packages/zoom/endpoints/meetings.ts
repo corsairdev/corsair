@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ZoomEndpoints } from '..';
 import { makeZoomRequest } from '../client';
+import type { ZoomEndpoints } from '../index';
 import type { ZoomEndpointOutputs } from './types';
 
 export const create: ZoomEndpoints['meetingsCreate'] = async (ctx, input) => {

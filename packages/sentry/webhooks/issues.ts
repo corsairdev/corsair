@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SentryWebhooks } from '..';
+import type { SentryWebhooks } from '../index';
 import { createSentryMatch, verifySentryWebhookSignature } from './types';
 
 export const issueCreated: SentryWebhooks['issueCreated'] = {

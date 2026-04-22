@@ -34,9 +34,7 @@ export const errorHandlers = {
 			return errorMessage.includes('not found');
 		},
 		handler: async (error, context) => {
-			console.warn(
-				`[REDDIT:${context.operation}] Not found: ${error.message}`,
-			);
+			console.warn(`[REDDIT:${context.operation}] Not found: ${error.message}`);
 			return { maxRetries: 0 };
 		},
 	},

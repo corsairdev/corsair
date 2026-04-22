@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RazorpayEndpoints } from '..';
 import { makeRazorpayRequest } from '../client';
+import type { RazorpayEndpoints } from '../index';
 import type { RazorpayEndpointOutputs } from './types';
 
 export const get: RazorpayEndpoints['paymentsGet'] = async (ctx, input) => {

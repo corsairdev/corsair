@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { OnedriveEndpoints } from '..';
 import { makeOnedriveRequest } from '../client';
+import type { OnedriveEndpoints } from '../index';
 import type { ItemsSearchResponse, OnedriveEndpointOutputs } from './types';
 
 export const createFolder: OnedriveEndpoints['filesCreateFolder'] = async (

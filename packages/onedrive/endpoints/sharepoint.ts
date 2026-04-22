@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { OnedriveEndpoints } from '..';
 import { makeOnedriveRequest } from '../client';
+import type { OnedriveEndpoints } from '../index';
 import type { OnedriveEndpointOutputs } from './types';
 
 export const getSite: OnedriveEndpoints['sharepointGetSite'] = async (

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AsanaBoundEndpoints, AsanaWebhooks } from '..';
+import type { AsanaBoundEndpoints, AsanaWebhooks } from '../index';
 import { createAsanaEventMatch, verifyAsanaWebhookSignature } from './types';
 
 export const taskEvent: AsanaWebhooks['taskEvent'] = {

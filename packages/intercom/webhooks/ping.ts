@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { IntercomWebhooks } from '..';
+import type { IntercomWebhooks } from '../index';
 import { createIntercomMatch } from './types';
 
 // Handles the ping event Intercom sends when a webhook URL is first registered.

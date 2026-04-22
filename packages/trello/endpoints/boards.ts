@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TrelloEndpoints } from '..';
 import { makeTrelloRequest } from '../client';
+import type { TrelloEndpoints } from '../index';
 import type { TrelloEndpointOutputs } from './types';
 
 export const get: TrelloEndpoints['boardsGet'] = async (ctx, input) => {

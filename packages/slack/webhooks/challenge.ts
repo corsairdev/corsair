@@ -1,4 +1,4 @@
-import type { SlackWebhooks } from '..';
+import type { SlackWebhooks } from '../index';
 import { createSlackEventMatch, verifySlackWebhookSignature } from './types';
 
 export const challenge: SlackWebhooks['challenge'] = {

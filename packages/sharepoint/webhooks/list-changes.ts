@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SharepointWebhooks } from '..';
+import type { SharepointWebhooks } from '../index';
 import {
 	createSharepointMatch,
 	verifySharepointWebhookSignature,

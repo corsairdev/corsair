@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DodoPaymentsEndpoints } from '..';
 import { makeDodoPaymentsRequest } from '../client';
+import type { DodoPaymentsEndpoints } from '../index';
 import type { DodoPaymentsEndpointOutputs } from './types';
 
 export const create: DodoPaymentsEndpoints['paymentsCreate'] = async (
