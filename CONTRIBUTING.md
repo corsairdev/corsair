@@ -44,6 +44,44 @@ pnpm build
 
 If your change needs credentials or local environment setup, follow the package-specific docs or examples in the repo before running tests.
 
+## Branch Workflow
+
+Please do your work on a separate branch instead of committing directly to `main`.
+
+Using a dedicated branch per change makes review easier, keeps unrelated work isolated, and makes it much simpler to update or discard a change if the design shifts during discussion.
+
+As a general rule:
+
+- create a new branch for each issue or contribution
+- keep the branch focused on one change
+- avoid mixing docs, refactors, and new features unless they are tightly related
+
+Branch names do not need to be rigid, but they should be descriptive. Good examples include:
+
+```bash
+git checkout -b fix/slack-message-typing
+git checkout -b feat/hubspot-webhooks
+git checkout -b docs/contributing-guide
+```
+
+If your work starts from an issue, including the issue number in the branch name is also helpful.
+
+## Commit Format
+
+We recommend using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages.
+
+This keeps history easier to scan and makes it clearer whether a change is a fix, feature, docs update, refactor, or breaking change.
+
+Common examples:
+
+```bash
+fix(slack): handle missing channel id
+feat(hubspot): add webhook event mapping
+docs: expand contributing guide
+```
+
+Try to keep commit messages descriptive and scoped to the actual change. If a change is breaking, call that out clearly in the commit message and in the pull request.
+
 ## Package Structure
 
 Corsair is a monorepo, and contributions should take the package boundaries seriously.
