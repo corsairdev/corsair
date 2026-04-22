@@ -46,6 +46,10 @@
             "pages": ["mcp-adapters/claude-code", "mcp-adapters/cursor"]
           },
           {
+            "group": "Studio",
+            "pages": ["studio/overview"]
+          },
+          {
             "group": "Core Concepts",
             "pages": [
               "concepts/integrations",
