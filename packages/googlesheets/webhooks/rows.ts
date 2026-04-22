@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleSheetsWebhooks } from '..';
+import type { GoogleSheetsWebhooks } from '../index';
 import { createGoogleSheetsWebhookMatcher } from './types';
 
 export const rangeUpdated: GoogleSheetsWebhooks['rangeUpdated'] = {

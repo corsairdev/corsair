@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { IntercomWebhooks } from '..';
+import type { IntercomWebhooks } from '../index';
 import { createIntercomMatch, verifyIntercomWebhookSignature } from './types';
 import { toUnixTimestamp } from './utils';
 

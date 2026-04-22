@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { HubSpotEndpoints } from '..';
 import { makeHubSpotRequest } from '../client';
+import type { HubSpotEndpoints } from '../index';
 import type {
 	AddContactToListResponse,
 	RemoveContactFromListResponse,

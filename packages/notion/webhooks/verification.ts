@@ -1,4 +1,4 @@
-import type { NotionWebhooks } from '..';
+import type { NotionWebhooks } from '../index';
 import { createNotionMatch } from './types';
 
 export const verification: NotionWebhooks['verification'] = {

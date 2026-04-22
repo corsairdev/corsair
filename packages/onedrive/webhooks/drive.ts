@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { OnedriveBoundEndpoints, OnedriveWebhooks } from '..';
+import type { OnedriveBoundEndpoints, OnedriveWebhooks } from '../index';
 import { createOnedriveMatch, verifyOnedriveClientState } from './types';
 
 export const driveNotification: OnedriveWebhooks['driveNotification'] = {

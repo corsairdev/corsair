@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TrelloWebhooks } from '..';
+import type { TrelloWebhooks } from '../index';
 import { createTrelloActionMatch, verifyTrelloWebhookSignature } from './types';
 
 export const listUpdated: TrelloWebhooks['listUpdated'] = {

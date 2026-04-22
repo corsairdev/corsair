@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleCalendarEndpoints } from '..';
 import { makeAuthenticatedCalendarRequest } from '../client';
+import type { GoogleCalendarEndpoints } from '../index';
 import type { GoogleCalendarEndpointOutputs } from './types';
 
 export const getAvailability: GoogleCalendarEndpoints['calendarGetAvailability'] =

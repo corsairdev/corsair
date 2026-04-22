@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GmailBoundEndpoints, GmailEndpoints } from '..';
 import { makeAuthenticatedGmailRequest } from '../client';
+import type { GmailBoundEndpoints, GmailEndpoints } from '../index';
 import type { GmailEndpointOutputs } from './types';
 
 export const list: GmailEndpoints['labelsList'] = async (ctx, input) => {

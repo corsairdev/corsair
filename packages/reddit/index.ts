@@ -129,9 +129,7 @@ export type RedditEndpoints = {
 	>;
 };
 
-export type RedditBoundEndpoints = BindEndpoints<
-	typeof redditEndpointsNested
->;
+export type RedditBoundEndpoints = BindEndpoints<typeof redditEndpointsNested>;
 
 const redditEndpointsNested = {
 	subreddits: {
@@ -398,4 +396,3 @@ export type {
 	SubredditAboutData,
 	UserAboutData,
 } from './endpoints/types';
-

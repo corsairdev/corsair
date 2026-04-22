@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GithubBoundEndpoints, GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
+import type { GithubBoundEndpoints, GithubEndpoints } from '../index';
 import type {
 	CommentCreateResponse,
 	IssueCreateResponse,

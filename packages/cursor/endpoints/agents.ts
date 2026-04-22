@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CursorEndpoints } from '..';
 import { makeCursorRequest } from '../client';
+import type { CursorEndpoints } from '../index';
 import type { CursorEndpointOutputs } from './types';
 
 export const list: CursorEndpoints['agentsList'] = async (ctx, input) => {

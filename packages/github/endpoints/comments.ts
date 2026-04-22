@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GithubEndpoints } from '..';
 import { makeGithubRequest } from '../client';
+import type { GithubEndpoints } from '../index';
 import type {
 	CommentGetResponse,
 	CommentsListResponse,
@@ -25,10 +25,7 @@ async function upsertComment(
 	});
 }
 
-export const list: GithubEndpoints['commentsList'] = async (
-	ctx,
-	input,
-) => {
+export const list: GithubEndpoints['commentsList'] = async (ctx, input) => {
 	const { owner, repo, ...queryParams } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/comments`;
 	const result = await makeGithubRequest<CommentsListResponse>(
@@ -56,42 +53,41 @@ export const list: GithubEndpoints['commentsList'] = async (
 	return result;
 };
 
-export const listForIssue: GithubEndpoints['commentsListForIssue'] =
-	async (ctx, input) => {
-		const { owner, repo, issueNumber, ...queryParams } = input;
-		const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}/comments`;
-		const result = await makeGithubRequest<CommentsListResponse>(
-			endpoint,
-			ctx.key,
-			{ query: queryParams },
-		);
+export const listForIssue: GithubEndpoints['commentsListForIssue'] = async (
+	ctx,
+	input,
+) => {
+	const { owner, repo, issueNumber, ...queryParams } = input;
+	const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}/comments`;
+	const result = await makeGithubRequest<CommentsListResponse>(
+		endpoint,
+		ctx.key,
+		{ query: queryParams },
+	);
 
-		if (result) {
-			try {
-				for (const comment of result) {
-					await upsertComment(ctx.db, comment);
-				}
-			} catch (error) {
-				console.warn('Failed to save comments to database:', error);
+	if (result) {
+		try {
+			for (const comment of result) {
+				await upsertComment(ctx.db, comment);
 			}
+		} catch (error) {
+			console.warn('Failed to save comments to database:', error);
 		}
+	}
 
-		await logEventFromContext(
-			ctx,
-			'github.comments.listForIssue',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+	await logEventFromContext(
+		ctx,
+		'github.comments.listForIssue',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
 
 export const get: GithubEndpoints['commentsGet'] = async (ctx, input) => {
 	const { owner, repo, commentId } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/comments/${commentId}`;
-	const result = await makeGithubRequest<CommentGetResponse>(
-		endpoint,
-		ctx.key,
-	);
+	const result = await makeGithubRequest<CommentGetResponse>(endpoint, ctx.key);
 
 	if (result) {
 		try {
@@ -110,10 +106,7 @@ export const get: GithubEndpoints['commentsGet'] = async (ctx, input) => {
 	return result;
 };
 
-export const update: GithubEndpoints['commentsUpdate'] = async (
-	ctx,
-	input,
-) => {
+export const update: GithubEndpoints['commentsUpdate'] = async (ctx, input) => {
 	const { owner, repo, commentId, body } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/comments/${commentId}`;
 	const result = await makeGithubRequest<CommentUpdateResponse>(
@@ -149,7 +142,10 @@ export const deleteComment: GithubEndpoints['commentsDelete'] = async (
 	// Fetch before deleting so we can preserve all fields in the soft-delete upsert
 	let existing: CommentGetResponse | undefined;
 	try {
-		existing = await makeGithubRequest<CommentGetResponse>(commentEndpoint, ctx.key);
+		existing = await makeGithubRequest<CommentGetResponse>(
+			commentEndpoint,
+			ctx.key,
+		);
 	} catch {
 		// Comment may already be gone; proceed with deletion regardless
 	}

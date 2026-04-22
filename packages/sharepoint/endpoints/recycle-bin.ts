@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SharepointEndpoints } from '..';
+import type { SharepointEndpoints } from '../index';
 
 export const list: SharepointEndpoints['recycleBinList'] = async (
 	ctx,

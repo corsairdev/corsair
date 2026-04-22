@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SentryEndpoints } from '..';
 import { makeSentryRequest } from '../client';
+import type { SentryEndpoints } from '../index';
 import type { SentryEndpointOutputs } from './types';
 
 export const get: SentryEndpoints['teamsGet'] = async (ctx, input) => {

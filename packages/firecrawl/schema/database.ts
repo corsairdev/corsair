@@ -177,7 +177,6 @@ export const FirecrawlSearchRecord = z.object({
 	fetchedAt: z.coerce.date().nullable().optional(),
 });
 
-
 export const FirecrawlCrawlStartResponse = z
 	.object({
 		success: z.boolean().optional(),
@@ -264,7 +263,9 @@ export type FirecrawlSearchWebItem = z.infer<typeof FirecrawlSearchWebItem>;
 export type FirecrawlSearchImageItem = z.infer<typeof FirecrawlSearchImageItem>;
 export type FirecrawlSearchNewsItem = z.infer<typeof FirecrawlSearchNewsItem>;
 export type FirecrawlSearchData = z.infer<typeof FirecrawlSearchData>;
-export type FirecrawlSearchApiResponse = z.infer<typeof FirecrawlSearchApiResponse>;
+export type FirecrawlSearchApiResponse = z.infer<
+	typeof FirecrawlSearchApiResponse
+>;
 export type FirecrawlSearchRecord = z.infer<typeof FirecrawlSearchRecord>;
 export type FirecrawlCrawlStartResponse = z.infer<
 	typeof FirecrawlCrawlStartResponse

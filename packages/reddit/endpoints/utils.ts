@@ -1,4 +1,4 @@
-import type { RedditContext } from '..';
+import type { RedditContext } from '../index';
 import type {
 	CommentData,
 	PostData,
@@ -70,7 +70,10 @@ export async function savePostsToDb(ctx: RedditDbContext, posts: PostData[]) {
 	}
 }
 
-export async function saveCommentsToDb(ctx: RedditDbContext, comments: CommentData[]) {
+export async function saveCommentsToDb(
+	ctx: RedditDbContext,
+	comments: CommentData[],
+) {
 	if (!ctx.db?.comments) return;
 	for (const comment of comments) {
 		try {

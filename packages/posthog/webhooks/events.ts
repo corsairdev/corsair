@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { v7 } from 'uuid';
-import type { PostHogWebhooks } from '..';
+import type { PostHogWebhooks } from '../index';
 import { createPostHogMatch, verifyPostHogWebhookSignature } from './types';
 
 export const eventCaptured: PostHogWebhooks['eventCaptured'] = {

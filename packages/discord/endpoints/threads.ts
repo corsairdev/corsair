@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DiscordEndpoints } from '..';
 import { makeDiscordRequest } from '../client';
+import type { DiscordEndpoints } from '../index';
 import type { DiscordEndpointOutputs } from './types';
 
 export const create: DiscordEndpoints['threadsCreate'] = async (ctx, input) => {

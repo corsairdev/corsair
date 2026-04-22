@@ -6,14 +6,13 @@ import type {
 	PluginPermissionsConfig,
 } from 'corsair/core';
 import type { PluginEntityClients } from 'corsair/orm';
-
-import {
+import type { FirecrawlSchema } from './schema';
+import type {
 	FirecrawlJob,
 	FirecrawlScrape,
 	FirecrawlSearchRecord,
 	FirecrawlSiteMap,
 } from './schema/database';
-import { FirecrawlSchema } from './schema';
 
 /**
  * Options shape for `CorsairPluginContext` only. `hooks` / `webhookHooks` use `unknown` so this
@@ -38,6 +37,9 @@ type FirecrawlEntityDb = PluginEntityClients<{
 }>;
 
 export type FirecrawlContext = Omit<
-	CorsairPluginContext<typeof FirecrawlSchema, FirecrawlPluginOptionsForContext>,
+	CorsairPluginContext<
+		typeof FirecrawlSchema,
+		FirecrawlPluginOptionsForContext
+	>,
 	'db'
 > & { db: FirecrawlEntityDb };

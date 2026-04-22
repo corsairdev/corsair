@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleCalendarWebhooks } from '..';
 import { makeCalendarRequest } from '../client';
+import type { GoogleCalendarWebhooks } from '../index';
 import type { Event } from '../types';
 import type {
 	EventDeletedEvent,

@@ -1,4 +1,4 @@
-import type { AsanaWebhooks } from '..';
+import type { AsanaWebhooks } from '../index';
 
 // ── Asana Webhook Challenge ───────────────────────────────────────────────────
 // Asana sends a POST with X-Hook-Secret header and empty body {} when a webhook

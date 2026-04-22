@@ -1,7 +1,7 @@
 import { makeRedditRequest } from '../client';
+import type { RedditListingRaw } from '../endpoints/types';
 import { PostDataSchema, SubredditDataSchema } from '../endpoints/types';
 import { TEST_SUBREDDIT } from '../endpoints/utils';
-import type { RedditListingRaw } from '../endpoints/types';
 
 describe('Reddit JSON: /search.json', () => {
 	it('returns search results for a query', async () => {

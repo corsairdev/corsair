@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FirefliesEndpoints } from '..';
 import { makeFirefliesRequest } from '../client';
+import type { FirefliesEndpoints } from '../index';
 import type { FirefliesEndpointOutputs } from './types';
 
 // AudioUploadInput uses custom_language (not language)

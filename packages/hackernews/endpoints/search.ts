@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { HackerNewsEndpoints } from '..';
 import { makeHackerNewsAlgoliaRequest } from '../client';
+import type { HackerNewsEndpoints } from '../index';
 import type { HackerNewsEndpointOutputs } from './types';
 
 // Algolia search response envelope

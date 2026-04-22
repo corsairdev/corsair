@@ -1,6 +1,6 @@
 import { makeRedditRequest } from '../client';
-import { SubredditDataSchema } from '../endpoints/types';
 import type { RedditListingRaw } from '../endpoints/types';
+import { SubredditDataSchema } from '../endpoints/types';
 
 describe('Reddit JSON: /subreddits/new.json', () => {
 	it('returns a listing of t5 subreddits', async () => {

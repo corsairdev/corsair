@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { StripeWebhooks } from '..';
+import type { StripeWebhooks } from '../index';
 import { createStripeEventMatch, verifyStripeWebhookSignature } from './types';
 
 export const ping: StripeWebhooks['ping'] = {

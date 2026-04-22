@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { JiraEndpoints } from '..';
 import { makeJiraAgileRequest } from '../client';
+import type { JiraEndpoints } from '../index';
 import type { JiraEndpointOutputs } from './types';
 
 export const create: JiraEndpoints['sprintsCreate'] = async (ctx, input) => {

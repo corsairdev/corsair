@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CalendlyWebhooks } from '..';
+import type { CalendlyWebhooks } from '../index';
 import {
 	createCalendlyEventMatch,
 	verifyCalendlyWebhookSignature,

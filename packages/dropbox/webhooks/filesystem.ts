@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DropboxBoundEndpoints, DropboxWebhooks } from '..';
+import type { DropboxBoundEndpoints, DropboxWebhooks } from '../index';
 import {
 	createDropboxEventMatch,
 	verifyDropboxWebhookSignature,

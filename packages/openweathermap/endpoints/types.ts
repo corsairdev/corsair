@@ -50,9 +50,14 @@ export const OneCallInputSchema = z.object({
 	units: z
 		.enum(OPENWEATHERMAP_UNITS)
 		.optional()
-		.describe('Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)'),
+		.describe(
+			'Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)',
+		),
 	/** Language code for descriptions (e.g. "en", "fr", "de") */
-	lang: z.string().optional().describe('Language code for weather descriptions'),
+	lang: z
+		.string()
+		.optional()
+		.describe('Language code for weather descriptions'),
 });
 
 export type OneCallInput = z.infer<typeof OneCallInputSchema>;
@@ -223,14 +228,21 @@ export const TimeMachineInputSchema = z.object({
 	/** Longitude (-180 to 180) */
 	lon: z.number().min(-180).max(180).describe('Longitude of the location'),
 	/** Timestamp (Unix time, UTC) for the requested date. Data is available from 1979-01-01. */
-	dt: z.number().describe('Unix timestamp (UTC) for the requested historical date'),
+	dt: z
+		.number()
+		.describe('Unix timestamp (UTC) for the requested historical date'),
 	/** Units of measurement: standard, metric, or imperial */
 	units: z
 		.enum(OPENWEATHERMAP_UNITS)
 		.optional()
-		.describe('Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)'),
+		.describe(
+			'Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)',
+		),
 	/** Language code for descriptions */
-	lang: z.string().optional().describe('Language code for weather descriptions'),
+	lang: z
+		.string()
+		.optional()
+		.describe('Language code for weather descriptions'),
 });
 
 export type TimeMachineInput = z.infer<typeof TimeMachineInputSchema>;
@@ -285,9 +297,14 @@ export const DaySummaryInputSchema = z.object({
 	units: z
 		.enum(OPENWEATHERMAP_UNITS)
 		.optional()
-		.describe('Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)'),
+		.describe(
+			'Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)',
+		),
 	/** Language code for descriptions */
-	lang: z.string().optional().describe('Language code for weather descriptions'),
+	lang: z
+		.string()
+		.optional()
+		.describe('Language code for weather descriptions'),
 	/** Timezone in ±XX:XX format for date interpretation */
 	tz: z
 		.string()
@@ -352,7 +369,9 @@ export const OverviewInputSchema = z.object({
 	units: z
 		.enum(OPENWEATHERMAP_UNITS)
 		.optional()
-		.describe('Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)'),
+		.describe(
+			'Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit)',
+		),
 });
 
 export type OverviewInput = z.infer<typeof OverviewInputSchema>;

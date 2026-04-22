@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AmplitudeEndpoints } from '..';
 import { makeAmplitudeRequest } from '../client';
+import type { AmplitudeEndpoints } from '../index';
 import type { AmplitudeEndpointOutputs } from './types';
 
 export const get: AmplitudeEndpoints['chartsGet'] = async (ctx, input) => {

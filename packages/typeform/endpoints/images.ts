@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TypeformEndpoints } from '..';
 import { makeTypeformRequest } from '../client';
+import type { TypeformEndpoints } from '../index';
 import type { TypeformEndpointOutputs } from './types';
 
 export const list: TypeformEndpoints['imagesList'] = async (ctx, _input) => {

@@ -1,6 +1,6 @@
 import { makeRedditRequest } from '../client';
-import { PostDataSchema } from '../endpoints/types';
 import type { RedditListingRaw } from '../endpoints/types';
+import { PostDataSchema } from '../endpoints/types';
 
 describe('Reddit JSON: /r/all.json', () => {
 	it('returns a listing of t3 posts', async () => {

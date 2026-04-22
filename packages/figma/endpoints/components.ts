@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FigmaEndpoints } from '..';
 import { makeFigmaRequest } from '../client';
+import type { FigmaEndpoints } from '../index';
 import type { FigmaEndpointOutputs } from './types';
 
 export const get: FigmaEndpoints['componentsGet'] = async (ctx, input) => {

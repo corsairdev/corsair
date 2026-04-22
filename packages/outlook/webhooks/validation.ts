@@ -1,4 +1,4 @@
-import type { OutlookWebhooks } from '..';
+import type { OutlookWebhooks } from '../index';
 import type { SubscriptionValidationPayload } from './types';
 
 export const subscriptionValidation: OutlookWebhooks['subscriptionValidation'] =

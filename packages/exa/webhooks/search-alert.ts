@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ExaWebhooks } from '..';
+import type { ExaWebhooks } from '../index';
 import { createExaEventMatch, verifyExaWebhookSignature } from './types';
 
 export const searchAlert: ExaWebhooks['searchAlert'] = {

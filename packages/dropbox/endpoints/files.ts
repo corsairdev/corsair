@@ -1,17 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DropboxEndpoints } from '..';
-import { DROPBOX_CONTENT_BASE, makeDropboxRequest } from '../client';
+import {
+	DROPBOX_CONTENT_BASE,
+	makeAuthenticatedDropboxRequest,
+} from '../client';
+import type { DropboxEndpoints } from '../index';
 import type { DropboxEndpointOutputs } from './types';
 
 export const copy: DropboxEndpoints['filesCopy'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<DropboxEndpointOutputs['filesCopy']>(
-		'files/copy_v2',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const result = await makeAuthenticatedDropboxRequest<
+		DropboxEndpointOutputs['filesCopy']
+	>('files/copy_v2', ctx, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (result.metadata && ctx.db.files) {
 		try {
@@ -45,9 +46,9 @@ export const deleteFile: DropboxEndpoints['filesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['filesDelete']
-	>('files/delete_v2', ctx.key, {
+	>('files/delete_v2', ctx, {
 		method: 'POST',
 		body: { path: input.path },
 	});
@@ -78,9 +79,9 @@ export const download: DropboxEndpoints['filesDownload'] = async (
 ) => {
 	// Dropbox download uses content.dropboxapi.com with metadata in Dropbox-API-Arg header.
 	// The response body is the raw file content (text/binary), not JSON.
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['filesDownload']
-	>('files/download', ctx.key, {
+	>('files/download', ctx, {
 		method: 'POST',
 		baseUrl: DROPBOX_CONTENT_BASE,
 		extraHeaders: {
@@ -98,14 +99,12 @@ export const download: DropboxEndpoints['filesDownload'] = async (
 };
 
 export const move: DropboxEndpoints['filesMove'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<DropboxEndpointOutputs['filesMove']>(
-		'files/move_v2',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const result = await makeAuthenticatedDropboxRequest<
+		DropboxEndpointOutputs['filesMove']
+	>('files/move_v2', ctx, {
+		method: 'POST',
+		body: input,
+	});
 
 	if (result.metadata && ctx.db.files) {
 		try {
@@ -138,9 +137,9 @@ export const move: DropboxEndpoints['filesMove'] = async (ctx, input) => {
 export const upload: DropboxEndpoints['filesUpload'] = async (ctx, input) => {
 	// Dropbox upload uses content.dropboxapi.com. Metadata goes in Dropbox-API-Arg header;
 	// the request body is the raw file content (string/bytes), not JSON.
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['filesUpload']
-	>('files/upload', ctx.key, {
+	>('files/upload', ctx, {
 		method: 'POST',
 		baseUrl: DROPBOX_CONTENT_BASE,
 		extraHeaders: {

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { JiraWebhooks } from '..';
+import type { JiraWebhooks } from '../index';
 import { createJiraMatch, verifyJiraWebhookSignature } from './types';
 
 export const newProject: JiraWebhooks['newProject'] = {

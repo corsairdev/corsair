@@ -1,8 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TeamsWebhooks } from '..';
 import { makeTeamsRequest } from '../client';
 import { toChannelRecord } from '../endpoints/channels';
 import type { TeamsEndpointOutputs } from '../endpoints/types';
+import type { TeamsWebhooks } from '../index';
 import {
 	createTeamsNotificationMatch,
 	extractODataId,

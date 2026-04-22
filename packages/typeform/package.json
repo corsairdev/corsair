@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/typeform",
   "version": "0.1.0",
-  "description": "Typeform appio plugin for Corsair",
+  "description": "Typeform plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

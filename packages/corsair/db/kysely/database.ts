@@ -95,19 +95,31 @@ function withParamSerialization(sql: Sql): Sql {
 	return new Proxy(sql, {
 		get(target, prop, receiver) {
 			if (prop !== 'reserve') {
-				return bindIfFunction(Reflect.get(target, prop, receiver) as unknown, target);
+				return bindIfFunction(
+					Reflect.get(target, prop, receiver) as unknown,
+					target,
+				);
 			}
 			return async function () {
 				const reserved: ReservedSql = await target.reserve();
 				return new Proxy(reserved, {
 					get(resTarget, resProp, resReceiver) {
 						if (resProp !== 'unsafe') {
-							return bindIfFunction(Reflect.get(resTarget, resProp, resReceiver) as unknown, resTarget);
+							return bindIfFunction(
+								Reflect.get(resTarget, resProp, resReceiver) as unknown,
+								resTarget,
+							);
 						}
-						return function (queryStr: string, params?: unknown[], options?: UnsafeQueryOptions) {
+						return function (
+							queryStr: string,
+							params?: unknown[],
+							options?: UnsafeQueryOptions,
+						) {
 							return resTarget.unsafe(
 								queryStr,
-								params?.map(serializeParam) as Parameters<typeof resTarget.unsafe>[1],
+								params?.map(serializeParam) as Parameters<
+									typeof resTarget.unsafe
+								>[1],
 								options,
 							);
 						};
@@ -150,7 +162,9 @@ export function createCorsairDatabase(
 
 	if (isPostgresJs(input)) {
 		const db = new Kysely<CorsairKyselyDatabase>({
-			dialect: new PostgresJSDialect({ postgres: withParamSerialization(input) }),
+			dialect: new PostgresJSDialect({
+				postgres: withParamSerialization(input),
+			}),
 		});
 		return { db };
 	}

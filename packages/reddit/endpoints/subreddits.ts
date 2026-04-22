@@ -1,8 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { SubredditDataSchema } from './types';
+import type { RedditEndpoints } from '../index';
 import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
+import { SubredditDataSchema } from './types';
 import { extractPosts, savePostsToDb, saveSubredditsToDb } from './utils';
 
 export const getHot: RedditEndpoints['subredditsGetHot'] = async (
@@ -122,9 +122,9 @@ export const getControversial: RedditEndpoints['subredditsGetControversial'] =
 		const { subreddit, ...query } = input;
 		const raw = await makeRedditRequest<RedditListingRaw>(
 			`/r/${subreddit}/controversial.json`,
-		{
-			query,
-		},
+			{
+				query,
+			},
 		);
 
 		const posts = extractPosts(raw);

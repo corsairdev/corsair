@@ -1,8 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { extractPosts, extractSubreddits, savePostsToDb, saveSubredditsToDb } from './utils';
+import type { RedditEndpoints } from '../index';
 import type { RedditListingRaw } from './types';
+import {
+	extractPosts,
+	extractSubreddits,
+	savePostsToDb,
+	saveSubredditsToDb,
+} from './utils';
 
 export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
 	ctx,

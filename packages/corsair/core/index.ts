@@ -191,7 +191,19 @@ export type {
 	RetryStrategy,
 } from './errors';
 // Inspection types
-export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
+export type {
+	CorsairInspectMethods,
+	DocSchemaFieldRow,
+	DocSchemaShape,
+	DocsApiEndpoint,
+	DocsDbEntity,
+	DocsDbFilterField,
+	DocsWebhook,
+	EndpointSchemaResult,
+	IntrospectPluginForDocsResult,
+	PluginDocsIntrospection,
+} from './inspect';
+export { introspectPluginForDocs } from './inspect';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,

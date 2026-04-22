@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '..';
 import { makeAuthenticatedGoogleDriveRequest } from '../client';
+import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '../index';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ResendBoundEndpoints, ResendEndpoints } from '..';
 import { makeResendRequest } from '../client';
+import type { ResendBoundEndpoints, ResendEndpoints } from '../index';
 import type { ResendEndpointOutputs } from './types';
 
 export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {

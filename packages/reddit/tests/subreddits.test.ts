@@ -1,9 +1,15 @@
 import { makeRedditRequest } from '../client';
-import { SubredditDataSchema, PostDataSchema } from '../endpoints/types';
-import { TEST_SUBREDDIT, extractPosts } from '../endpoints/utils';
-import type { RedditEntityEnvelopeRaw, RedditListingRaw } from '../endpoints/types';
-import { RedditEndpointOutputSchemas } from '../endpoints/types';
-import type { GetHotPostsResponse } from '../endpoints/types';
+import type {
+	GetHotPostsResponse,
+	RedditEntityEnvelopeRaw,
+	RedditListingRaw,
+} from '../endpoints/types';
+import {
+	PostDataSchema,
+	RedditEndpointOutputSchemas,
+	SubredditDataSchema,
+} from '../endpoints/types';
+import { extractPosts, TEST_SUBREDDIT } from '../endpoints/utils';
 
 describe('Subreddit endpoints test suite', () => {
 	describe('Reddit JSON: /r/{subreddit}/about.json', () => {

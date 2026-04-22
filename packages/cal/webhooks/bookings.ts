@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CalWebhooks } from '..';
+import type { CalWebhooks } from '../index';
 import { createCalMatch, verifyCalWebhookSignature } from './types';
 
 export const bookingCreated: CalWebhooks['bookingCreated'] = {

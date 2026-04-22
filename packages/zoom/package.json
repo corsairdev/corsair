@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/zoom",
   "version": "0.1.0",
-  "description": "Zoom appio plugin for Corsair",
+  "description": "Zoom plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

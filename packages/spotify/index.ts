@@ -51,7 +51,7 @@ import { ExampleEventSchema } from './webhooks/types';
  * - webhookSecret: Optional webhook secret for signature verification
  */
 export type SpotifyPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'api_key'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalSpotifyPlugin['hooks'];
@@ -543,6 +543,14 @@ export function spotify<const T extends SpotifyPluginOptions>(
 
 			if (source === 'endpoint' && options.key) {
 				return options.key;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const res = await ctx.keys.get_api_key();
+				if (!res) {
+					return '';
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {

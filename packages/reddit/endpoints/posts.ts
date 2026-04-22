@@ -1,9 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { PostDataSchema } from './types';
-import { extractComments, extractPosts, saveCommentsToDb, savePostsToDb } from './utils';
+import type { RedditEndpoints } from '../index';
 import type { RedditListingRaw } from './types';
+import { PostDataSchema } from './types';
+import {
+	extractComments,
+	extractPosts,
+	saveCommentsToDb,
+	savePostsToDb,
+} from './utils';
 
 export const getComments: RedditEndpoints['postsGetComments'] = async (
 	ctx,

@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DropboxEndpoints } from '..';
-import { makeDropboxRequest } from '../client';
+import { makeAuthenticatedDropboxRequest } from '../client';
+import type { DropboxEndpoints } from '../index';
 import type { DropboxEndpointOutputs } from './types';
 
 export const copy: DropboxEndpoints['foldersCopy'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['foldersCopy']
-	>('files/copy_v2', ctx.key, {
+	>('files/copy_v2', ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -34,9 +34,9 @@ export const copy: DropboxEndpoints['foldersCopy'] = async (ctx, input) => {
 };
 
 export const create: DropboxEndpoints['foldersCreate'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['foldersCreate']
-	>('files/create_folder_v2', ctx.key, {
+	>('files/create_folder_v2', ctx, {
 		method: 'POST',
 		body: {
 			path: input.path,
@@ -70,9 +70,9 @@ export const deleteFolder: DropboxEndpoints['foldersDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['foldersDelete']
-	>('files/delete_v2', ctx.key, {
+	>('files/delete_v2', ctx, {
 		method: 'POST',
 		body: { path: input.path },
 	});
@@ -98,9 +98,9 @@ export const deleteFolder: DropboxEndpoints['foldersDelete'] = async (
 };
 
 export const list: DropboxEndpoints['foldersList'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['foldersList']
-	>('files/list_folder', ctx.key, {
+	>('files/list_folder', ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -172,9 +172,9 @@ export const listContinue: DropboxEndpoints['foldersListContinue'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['foldersListContinue']
-	>('files/list_folder/continue', ctx.key, {
+	>('files/list_folder/continue', ctx, {
 		method: 'POST',
 		body: { cursor: input.cursor },
 	});
@@ -246,9 +246,9 @@ export const listContinue: DropboxEndpoints['foldersListContinue'] = async (
 };
 
 export const move: DropboxEndpoints['foldersMove'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['foldersMove']
-	>('files/move_v2', ctx.key, {
+	>('files/move_v2', ctx, {
 		method: 'POST',
 		body: input,
 	});

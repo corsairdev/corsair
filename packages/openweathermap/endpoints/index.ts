@@ -1,6 +1,6 @@
-import { oneCall } from './weather';
 import { timeMachine } from './history';
 import { daySummary, overview } from './summary';
+import { oneCall } from './weather';
 
 export const Weather = {
 	oneCall,

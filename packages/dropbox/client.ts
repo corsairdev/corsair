@@ -17,6 +17,81 @@ export class DropboxAPIError extends Error {
 
 const DROPBOX_API_BASE = 'https://api.dropboxapi.com/2';
 export const DROPBOX_CONTENT_BASE = 'https://content.dropboxapi.com/2';
+// https://developers.dropbox.com/oauth-guide — "Using Refresh Tokens"
+const DROPBOX_TOKEN_URL = 'https://api.dropboxapi.com/oauth2/token';
+
+async function refreshAccessToken(
+	clientId: string,
+	clientSecret: string,
+	refreshToken: string,
+) {
+	const response = await fetch(DROPBOX_TOKEN_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			grant_type: 'refresh_token',
+			refresh_token: refreshToken,
+			client_id: clientId,
+			client_secret: clientSecret,
+		}),
+	});
+
+	if (!response.ok) {
+		const error = await response.text();
+		throw new DropboxAPIError(
+			`Failed to refresh access token: ${error}`,
+			String(response.status),
+		);
+	}
+
+	const json = (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+		token_type: string;
+	};
+	return json;
+}
+
+export async function getValidAccessToken({
+	accessToken,
+	expiresAt,
+	clientId,
+	clientSecret,
+	refreshToken,
+	forceRefresh = false,
+}: {
+	clientId: string;
+	clientSecret: string;
+	accessToken?: string | null;
+	expiresAt?: string | null;
+	refreshToken: string;
+	forceRefresh?: boolean;
+}): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
+	const now = Math.floor(Date.now() / 1000);
+	const bufferSeconds = 5 * 60;
+
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
+		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
+	}
+
+	const tokenData = await refreshAccessToken(
+		clientId,
+		clientSecret,
+		refreshToken,
+	);
+	return {
+		accessToken: tokenData.access_token,
+		expiresAt: now + tokenData.expires_in,
+		refreshed: true,
+	};
+}
 
 const DROPBOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -117,5 +192,37 @@ export async function makeDropboxRequest<T>(
 			throw new DropboxAPIError(error.message);
 		}
 		throw new DropboxAPIError('Unknown error');
+	}
+}
+
+function isUnauthorizedError(error: unknown): boolean {
+	if (error instanceof DropboxAPIError) {
+		return error.code === '401';
+	}
+	return (
+		error instanceof Error &&
+		'status' in error &&
+		(error as { status: number }).status === 401
+	);
+}
+
+/**
+ * Wrapper around makeDropboxRequest that retries once on 401 by force-refreshing
+ * the access token. Handles the case where a stored token is rejected by Dropbox
+ * (e.g. revoked, corrupted) even though `expires_at` hasn't passed yet.
+ */
+export async function makeAuthenticatedDropboxRequest<T>(
+	endpoint: string,
+	ctx: { key: string; _refreshAuth?: () => Promise<string> },
+	options: Parameters<typeof makeDropboxRequest>[2] = {},
+): Promise<T> {
+	try {
+		return await makeDropboxRequest<T>(endpoint, ctx.key, options);
+	} catch (error) {
+		if (isUnauthorizedError(error) && ctx._refreshAuth) {
+			const freshToken = await ctx._refreshAuth();
+			return await makeDropboxRequest<T>(endpoint, freshToken, options);
+		}
+		throw error;
 	}
 }

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FirefliesEndpoints } from '..';
 import { makeFirefliesRequest } from '../client';
+import type { FirefliesEndpoints } from '../index';
 import type { FirefliesEndpointOutputs } from './types';
 
 // apps(app_id, transcript_id, skip, limit) returns Apps { outputs: AppOutput[] }

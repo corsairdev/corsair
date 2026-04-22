@@ -11,6 +11,7 @@ import {
 	checkSuiteCompleted,
 	checkSuiteRequested,
 } from './checks';
+import { commentCreated, commentDeleted, commentEdited } from './comments';
 import { deploymentCreated, deploymentStatusCreated } from './deployments';
 import {
 	discussionAnswered,
@@ -24,11 +25,6 @@ import {
 	discussionReopened,
 } from './discussions';
 import { forked } from './fork';
-import {
-	commentCreated,
-	commentDeleted,
-	commentEdited,
-} from './comments';
 import {
 	issueAssigned,
 	issueClosed,

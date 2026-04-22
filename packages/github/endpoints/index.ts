@@ -1,6 +1,6 @@
+import * as Comments from './comments';
 import * as Discussions from './discussions';
 import * as Forks from './forks';
-import * as Comments from './comments';
 import * as Issues from './issues';
 import * as PullRequests from './pull-requests';
 import * as Releases from './releases';

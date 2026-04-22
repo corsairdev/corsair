@@ -1061,9 +1061,7 @@ export const CommentCreatedEventSchema = z.object({
 	installation: InstallationSchema.optional(),
 	organization: OrganizationSchema.optional(),
 });
-export type CommentCreatedEvent = z.infer<
-	typeof CommentCreatedEventSchema
->;
+export type CommentCreatedEvent = z.infer<typeof CommentCreatedEventSchema>;
 
 export const CommentEditedEventSchema = z.object({
 	action: z.literal('edited'),
@@ -1077,9 +1075,7 @@ export const CommentEditedEventSchema = z.object({
 	installation: InstallationSchema.optional(),
 	organization: OrganizationSchema.optional(),
 });
-export type CommentEditedEvent = z.infer<
-	typeof CommentEditedEventSchema
->;
+export type CommentEditedEvent = z.infer<typeof CommentEditedEventSchema>;
 
 export const CommentDeletedEventSchema = z.object({
 	action: z.literal('deleted'),
@@ -1090,9 +1086,7 @@ export const CommentDeletedEventSchema = z.object({
 	installation: InstallationSchema.optional(),
 	organization: OrganizationSchema.optional(),
 });
-export type CommentDeletedEvent = z.infer<
-	typeof CommentDeletedEventSchema
->;
+export type CommentDeletedEvent = z.infer<typeof CommentDeletedEventSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Release event schemas

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AsanaEndpoints } from '..';
 import { makeAsanaRequest } from '../client';
+import type { AsanaEndpoints } from '../index';
 import type { AsanaEndpointOutputs } from './types';
 
 export const get: AsanaEndpoints['tasksGet'] = async (ctx, input) => {

@@ -283,7 +283,9 @@ describe('Tavily API Type Tests', () => {
 				{
 					method: 'POST',
 					body: {
-						urls: ['https://en.wikipedia.org/wiki/Python_(programming_language)'],
+						urls: [
+							'https://en.wikipedia.org/wiki/Python_(programming_language)',
+						],
 						include_favicon: true,
 					},
 				},

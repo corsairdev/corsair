@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { IntercomEndpoints } from '..';
 import { makeIntercomRequest } from '../client';
+import type { IntercomEndpoints } from '../index';
 import type { IntercomEndpointOutputs } from './types';
 
 export const get: IntercomEndpoints['contactsGet'] = async (ctx, input) => {

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CalendlyEndpoints } from '..';
 import { makeCalendlyRequest } from '../client';
+import type { CalendlyEndpoints } from '../index';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['eventTypesGet'] = async (ctx, input) => {

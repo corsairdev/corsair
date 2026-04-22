@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { PagerdutyWebhooks } from '..';
+import type { PagerdutyWebhooks } from '../index';
 import { createPagerdutyMatch, verifyPagerdutyWebhookSignature } from './types';
 
 export const triggered: PagerdutyWebhooks['incidentTriggered'] = {

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DodoPaymentsWebhooks } from '..';
+import type { DodoPaymentsWebhooks } from '../index';
 import { createDodoMatch, verifyDodoWebhookSignature } from './types';
 
 export const succeeded: DodoPaymentsWebhooks['paymentSucceeded'] = {

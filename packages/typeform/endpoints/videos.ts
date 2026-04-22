@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TypeformEndpoints } from '..';
 import { makeTypeformRequest } from '../client';
+import type { TypeformEndpoints } from '../index';
 import type { TypeformEndpointOutputs } from './types';
 
 export const upload: TypeformEndpoints['videosUpload'] = async (ctx, input) => {

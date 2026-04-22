@@ -4,7 +4,7 @@ import type {
 	OutlookBoundEndpoints,
 	OutlookContext,
 	OutlookWebhooks,
-} from '..';
+} from '../index';
 import type { ContactCreatedEvent, OutlookWebhookPayload } from './types';
 import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 

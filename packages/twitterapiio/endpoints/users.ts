@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
+import type { TwitterApiIOEndpoints } from '../index';
 import type { TwitterApiIOEndpointOutputs } from './types';
 
 export const getByUsername: TwitterApiIOEndpoints['usersGetByUsername'] =

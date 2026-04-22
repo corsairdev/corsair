@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleDriveWebhooks } from '..';
 import { makeGoogleDriveRequest } from '../client';
+import type { GoogleDriveWebhooks } from '../index';
 import type { ChangeList, File } from '../types';
 import { createGoogleDriveWebhookMatcher, decodePubSubMessage } from './types';
 

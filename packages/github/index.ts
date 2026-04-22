@@ -66,6 +66,9 @@ import type {
 	CheckRunRerequestedEvent,
 	CheckSuiteCompletedEvent,
 	CheckSuiteRequestedEvent,
+	CommentCreatedEvent,
+	CommentDeletedEvent,
+	CommentEditedEvent,
 	DependabotAlertAutoDismissedEvent,
 	DependabotAlertAutoReopenedEvent,
 	DependabotAlertCreatedEvent,
@@ -89,9 +92,6 @@ import type {
 	GithubWebhookPayload,
 	IssueAssignedEvent,
 	IssueClosedEvent,
-	CommentCreatedEvent,
-	CommentDeletedEvent,
-	CommentEditedEvent,
 	IssueDeletedEvent,
 	IssueEditedEvent,
 	IssueLabeledEvent,
@@ -171,6 +171,9 @@ import {
 	CheckRunRerequestedEventSchema,
 	CheckSuiteCompletedEventSchema,
 	CheckSuiteRequestedEventSchema,
+	CommentCreatedEventSchema,
+	CommentDeletedEventSchema,
+	CommentEditedEventSchema,
 	DependabotAlertAutoDismissedEventSchema,
 	DependabotAlertAutoReopenedEventSchema,
 	DependabotAlertCreatedEventSchema,
@@ -191,9 +194,6 @@ import {
 	ForkEventSchema,
 	IssueAssignedEventSchema,
 	IssueClosedEventSchema,
-	CommentCreatedEventSchema,
-	CommentDeletedEventSchema,
-	CommentEditedEventSchema,
 	IssueDeletedEventSchema,
 	IssueEditedEventSchema,
 	IssueLabeledEventSchema,
@@ -422,18 +422,9 @@ export type GithubWebhooks = {
 	issuePinned: GithubWebhook<'issuePinned', IssuePinnedEvent>;
 	issueUnpinned: GithubWebhook<'issueUnpinned', IssueUnpinnedEvent>;
 	// Comments (issue & pull request)
-	commentCreated: GithubWebhook<
-		'commentCreated',
-		CommentCreatedEvent
-	>;
-	commentEdited: GithubWebhook<
-		'commentEdited',
-		CommentEditedEvent
-	>;
-	commentDeleted: GithubWebhook<
-		'commentDeleted',
-		CommentDeletedEvent
-	>;
+	commentCreated: GithubWebhook<'commentCreated', CommentCreatedEvent>;
+	commentEdited: GithubWebhook<'commentEdited', CommentEditedEvent>;
+	commentDeleted: GithubWebhook<'commentDeleted', CommentDeletedEvent>;
 	// Releases
 	releasePublished: GithubWebhook<'releasePublished', ReleasePublishedEvent>;
 	releaseCreated: GithubWebhook<'releaseCreated', ReleaseCreatedEvent>;

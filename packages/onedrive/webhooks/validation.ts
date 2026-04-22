@@ -1,4 +1,4 @@
-import type { OnedriveWebhooks } from '..';
+import type { OnedriveWebhooks } from '../index';
 import {
 	createOnedriveValidationMatch,
 	extractOnedriveValidationToken,

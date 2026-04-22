@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { MondayEndpoints } from '..';
 import { makeMondayRequest } from '../client';
+import type { MondayEndpoints } from '../index';
 import type { MondayEndpointOutputs } from './types';
 
 export const list: MondayEndpoints['boardsList'] = async (ctx, input) => {

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GrafanaEndpoints } from '..';
 import { makeGrafanaRequest } from '../client';
+import type { GrafanaEndpoints } from '../index';
 import type { GrafanaEndpointOutputs } from './types';
 
 export const get: GrafanaEndpoints['healthGet'] = async (ctx, _input) => {

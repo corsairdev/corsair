@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SharepointEndpoints } from '..';
 import { makeGraphRequest } from '../client';
+import type { SharepointEndpoints } from '../index';
 import type { SharepointEndpointOutputs } from './types';
 
 export const getInfo: SharepointEndpoints['webGetInfo'] = async (

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { NotionWebhooks } from '..';
+import type { NotionWebhooks } from '../index';
 import { createNotionMatch, verifyNotionWebhookSignature } from './types';
 
 export const pageCreated: NotionWebhooks['pageCreated'] = {

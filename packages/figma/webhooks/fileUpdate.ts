@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FigmaWebhooks } from '..';
+import type { FigmaWebhooks } from '../index';
 import { createFigmaEventMatch, verifyFigmaWebhookPasscode } from './types';
 
 export const fileUpdate: FigmaWebhooks['fileUpdate'] = {

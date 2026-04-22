@@ -1,9 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import type { HackerNewsEndpoints } from '..';
 import {
 	makeHackerNewsAlgoliaRequest,
 	makeHackerNewsFirebaseRequest,
 } from '../client';
+import type { HackerNewsEndpoints } from '../index';
 import type { HackerNewsEndpointOutputs } from './types';
 
 // Raw Algolia item shape returned by the /items/{id} endpoint

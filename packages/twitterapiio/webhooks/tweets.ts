@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TwitterApiIOWebhooks } from '..';
+import type { TwitterApiIOWebhooks } from '../index';
 import { persistTweetWithAuthor } from '../utils';
 import {
 	createTwitterApiIOMatch,
