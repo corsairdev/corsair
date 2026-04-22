@@ -16,7 +16,9 @@
     "bumpp": "bumpp",
     "typecheck": "tsc --build",
     "generate:plugin": "node --experimental-strip-types scripts/generate-plugin.ts",
-    "generate:plugin-from-json": "node --experimental-strip-types scripts/generate-plugin-from-json.ts"
+    "generate:plugin-from-json": "node --experimental-strip-types scripts/generate-plugin-from-json.ts",
+    "generate:docs": "tsx scripts/generate-plugin-docs.ts",
+    "generate:docs:all": "tsx scripts/generate-plugin-docs.ts --all"
   },
   "pnpm": {
     "overrides": {
@@ -31,7 +33,9 @@
     "@types/node": "^24.9.2",
     "bumpp": "^10.3.1",
     "tinyglobby": "^0.2.15",
+    "tsx": "^4.20.6",
     "turbo": "^2.6.1",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "yaml": "^2.8.1"
   }
 }
