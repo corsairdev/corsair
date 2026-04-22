@@ -2,8 +2,6 @@
 
 [Website](https://corsair.dev) · [Discord](https://discord.gg/DphupWS7) · [X](https://x.com/corsairdotdev) 
 
-
-
 Corsair gives you (or your agent) safe access to hundreds of integrations. It natively handles all integration plumbing. The only code you write is the code that's specific to your use case. Your data stays in your database, not a third-party service.
 
 # Why this exists
@@ -56,13 +54,9 @@ Once connected, your agent can reason across all your integrations at once. Some
 
 The second one is a live webhook workflow. Corsair handles the event routing and your agent handles the logic.
 
-## Compatibility
+## Contributing
 
-We're adding stuff every day. Request something if you don't see it here. We will build it for you.
-
-Integrations: Slack · Linear · HubSpot · Gmail · Google Calendar · GitHub · PostHog · Amplitude · Airtable · Google Drive · Spotify · Oura · and more
-
-Frameworks: Claude · OpenAI · Vercel AI SDK · Mastra · and more
+If you want to contribute to Corsair, start with [`CONTRIBUTING.md`](./CONTRIBUTING.md). It covers local setup, branch and commit workflow, plugin expectations, testing in `demo/testing`, and guidance for designing new integrations.
 
 ## Beyond personal use
 
