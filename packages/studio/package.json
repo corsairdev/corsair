@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/studio",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local dashboard for inspecting and configuring your Corsair instance",
   "type": "module",
   "exports": {
@@ -16,11 +16,13 @@
     "build:server": "tsup && tsc -p tsconfig.build.json",
     "dev:web": "vite",
     "dev:server": "tsx src/server/dev-entry.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:watch": "tsup --watch"
   },
   "dependencies": {
     "@corsair-dev/cli": "workspace:*",
-    "corsair": "workspace:*"
+    "corsair": "workspace:*",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
@@ -33,7 +35,6 @@
     "tailwindcss": "^4.0.0",
     "tsup": "^8.0.1",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3",
     "vite": "^6.0.0"
   },
   "files": [
