@@ -17,7 +17,8 @@ import type {
 import {
 	Customers,
 	Orders,
-	Payments,
+    Payments,
+    Payouts,
 	Refunds,
 	Settlements,
 	Subscriptions,
@@ -108,7 +109,7 @@ export type RazorpayEndpoints = {
 	paymentsCapture: RazorpayEndpoint<'paymentsCapture', PaymentsCaptureInput>;
 	payoutsGet: RazorpayEndpoint<'payoutsGet', PayoutsGetInput>;
 	payoutsList: RazorpayEndpoint<'payoutsList', PayoutsListInput>;
-	payoutsCapture: RazorpayEndpoint<'payoutsCreate', PayoutsCreateInput>;
+	payoutsCreate: RazorpayEndpoint<'payoutsCreate', PayoutsCreateInput>;
 	refundsCreate: RazorpayEndpoint<'refundsCreate', RefundsCreateInput>;
 	refundsGet: RazorpayEndpoint<'refundsGet', RefundsGetInput>;
 	refundsList: RazorpayEndpoint<'refundsList', RefundsListInput>;
@@ -175,7 +176,12 @@ const razorpayEndpointsNested = {
 		get: Payments.get,
 		list: Payments.list,
 		capture: Payments.capture,
-	},
+    },
+    payouts: {
+		get: Payments.get,
+		list: Payments.list,
+		create: Payments.capture,
+    },
 	refunds: {
 		create: Refunds.create,
 		get: Refunds.get,
@@ -239,6 +245,18 @@ export const razorpayEndpointSchemas = {
 	'payments.capture': {
 		input: RazorpayEndpointInputSchemas.paymentsCapture,
 		output: RazorpayEndpointOutputSchemas.paymentsCapture,
+    },
+    'payouts.get': {
+		input: RazorpayEndpointInputSchemas.payoutsGet,
+		output: RazorpayEndpointOutputSchemas.payoutsGet,
+	},
+	'payouts.list': {
+		input: RazorpayEndpointInputSchemas.payoutsList,
+		output: RazorpayEndpointOutputSchemas.payoutsList,
+	},
+	'payouts.create': {
+		input: RazorpayEndpointInputSchemas.payoutsCreate,
+		output: RazorpayEndpointOutputSchemas.payoutsCreate,
 	},
 	'refunds.create': {
 		input: RazorpayEndpointInputSchemas.refundsCreate,
@@ -359,6 +377,18 @@ const razorpayEndpointMeta = {
 	'payments.capture': {
 		riskLevel: 'write',
 		description: 'Capture an authorized Razorpay payment',
+	},
+	'payouts.get': {
+		riskLevel: 'read',
+		description: 'Fetch a Razorpay payout by ID',
+	},
+	'payouts.list': {
+		riskLevel: 'read',
+		description: 'List Razorpay payouts',
+	},
+	'payouts.create': {
+		riskLevel: 'write',
+		description: 'Create a Razorpay payout',
 	},
 	'refunds.create': {
 		riskLevel: 'write',
@@ -511,6 +541,12 @@ export type {
 	PaymentsGetResponse,
 	PaymentsListInput,
 	PaymentsListResponse,
+	PayoutsGetInput,
+	PayoutsGetResponse,
+	PayoutsListInput,
+	PayoutsListResponse,
+	PayoutsCreateInput,
+	PayoutsCreateResponse,
 	RazorpayEndpointInputs,
 	RazorpayEndpointOutputs,
 	RefundsCreateInput,

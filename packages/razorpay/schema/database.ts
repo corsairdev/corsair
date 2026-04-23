@@ -161,6 +161,10 @@ export const RazorpayPayment = RazorpayPaymentSchema.extend({
 	createdAt: z.coerce.date().nullable().optional(),
 });
 
+export const RazorpayPayout = RazorpayPayoutSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
 export const RazorpayRefund = RazorpayRefundSchema.extend({
 	createdAt: z.coerce.date().nullable().optional(),
 });
@@ -180,6 +184,7 @@ export const RazorpaySubscription = RazorpaySubscriptionSchema.extend({
 // Type exports
 export type RazorpayOrderData = z.infer<typeof RazorpayOrderSchema>;
 export type RazorpayPaymentData = z.infer<typeof RazorpayPaymentSchema>;
+export type RazorpayPayoutData = z.infer<typeof RazorpayPayoutSchema>;
 export type RazorpayRefundData = z.infer<typeof RazorpayRefundSchema>;
 export type RazorpayCustomerData = z.infer<typeof RazorpayCustomerSchema>;
 export type RazorpaySettlementData = z.infer<typeof RazorpaySettlementSchema>;
@@ -189,6 +194,7 @@ export type RazorpaySubscriptionData = z.infer<
 
 export type RazorpayOrder = z.infer<typeof RazorpayOrder>;
 export type RazorpayPayment = z.infer<typeof RazorpayPayment>;
+export type RazorpayPayout = z.infer<typeof RazorpayPayout>;
 export type RazorpayRefund = z.infer<typeof RazorpayRefund>;
 export type RazorpayCustomer = z.infer<typeof RazorpayCustomer>;
 export type RazorpaySettlement = z.infer<typeof RazorpaySettlement>;
