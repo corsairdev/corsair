@@ -18,7 +18,8 @@
     "generate:plugin": "node --experimental-strip-types scripts/generate-plugin.ts",
     "generate:plugin-from-json": "node --experimental-strip-types scripts/generate-plugin-from-json.ts",
     "generate:docs": "tsx scripts/generate-plugin-docs.ts",
-    "generate:docs:all": "tsx scripts/generate-plugin-docs.ts --all"
+    "generate:docs:all": "tsx scripts/generate-plugin-docs.ts --all",
+    "build:explorer-catalog": "tsx scripts/build-explorer-catalog.ts"
   },
   "pnpm": {
     "overrides": {
