@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import type { OperationResult } from '../api';
 import { api } from '../api';
 import {
@@ -20,12 +20,52 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 	const [result, setResult] = useState<OperationResult | null>(null);
 	const [running, setRunning] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [tenants, setTenants] = useState<string[]>([]);
+	const [scope, setScope] = useState<'main' | 'tenant'>('main');
+	const [activeTenant, setActiveTenant] = useState('');
+	const [multiTenancy, setMultiTenancy] = useState(false);
+
+	const refreshTenants = () => {
+		api
+			.listTenants()
+			.then((res) => setTenants(res.tenants))
+			.catch((e) => setError(e.message));
+	};
+
+	useEffect(() => {
+		const fetchStatus = async () => {
+			try {
+				const status = await api.status();
+				setMultiTenancy(status.multiTenancy);
+				if (status.multiTenancy) {
+					refreshTenants();
+				}
+			} catch (e) {
+				// Silently fail
+			}
+		};
+		fetchStatus();
+	}, []);
+
+	useEffect(() => {
+		if (tenants.length === 0) return;
+		if (activeTenant && !tenants.includes(activeTenant)) {
+			setActiveTenant('');
+		}
+	}, [tenants]);
 
 	const run = async () => {
+		if (scope === 'tenant' && !activeTenant) {
+			setError('Please select a tenant before running the script.');
+			return;
+		}
 		setError(null);
 		setRunning(true);
 		try {
-			const r = await api.runScript({ code, tenant });
+			const r = await api.runScript({
+				code,
+				tenant: scope === 'tenant' ? activeTenant : undefined
+			});
 			setResult(r);
 		} catch (e) {
 			setError((e as Error).message);
@@ -36,10 +76,45 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 
 	return (
 		<div className="flex flex-col gap-4">
+			{multiTenancy && (
+				<Section title="Tenant Scope">
+					<Card className="p-3 flex items-center gap-2">
+						<select
+							value={scope}
+							onChange={(e) =>
+								setScope(
+									e.target.value === 'main' ? 'main' : 'tenant'
+								)
+							}
+							className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
+						>
+							<option value="main">Main (integration keys)</option>
+							<option value="tenant">Tenant (account keys)</option>
+						</select>
+						{scope === 'tenant' ? (
+							<select
+								value={activeTenant}
+								onChange={(e) => setActiveTenant(e.target.value)}
+								className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
+							>
+								{tenants.map((tenantId) => (
+									<option key={tenantId} value={tenantId}>
+										{tenantId}
+									</option>
+								))}
+							</select>
+						) : null}
+					</Card>
+				</Section>
+			)}
 			<Section
 				title="Script"
 				action={
-					<Button variant="primary" onClick={run} disabled={running}>
+					<Button
+						variant="primary"
+						onClick={run}
+						disabled={running || (scope === 'tenant' && !activeTenant)}
+					>
 						{running ? 'Running…' : '▶ Run'}
 					</Button>
 				}
