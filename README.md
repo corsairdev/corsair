@@ -1,6 +1,6 @@
 # Corsair: The Integration Layer for AI Agents
 
-[Website](https://corsair.dev) · [Discord](https://discord.gg/DphupWS7) · [X](https://x.com/corsairdotdev) 
+[Website](https://corsair.dev) · [Discord](https://discord.gg/uNgCP3mSzU) · [X](https://x.com/corsairdotdev) 
 
 Corsair gives you (or your agent) safe access to hundreds of integrations. It natively handles all integration plumbing. The only code you write is the code that's specific to your use case. Your data stays in your database, not a third-party service.
 
