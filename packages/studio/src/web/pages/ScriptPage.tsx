@@ -41,7 +41,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 					refreshTenants();
 				}
 			} catch (e) {
-				// Silently fail
+				console.error(e)
 			}
 		};
 		fetchStatus();
@@ -97,6 +97,9 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 								onChange={(e) => setActiveTenant(e.target.value)}
 								className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 							>
+								<option value="">
+									Select tenant
+								</option>
 								{tenants.map((tenantId) => (
 									<option key={tenantId} value={tenantId}>
 										{tenantId}
