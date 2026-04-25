@@ -612,28 +612,6 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
 
-  packages/explorer:
-    dependencies:
-      express:
-        specifier: ^4.21.0
-        version: 4.22.1
-    devDependencies:
-      '@types/express':
-        specifier: ^4.17.21
-        version: 4.17.25
-      '@types/node':
-        specifier: ^24.10.1
-        version: 24.10.1
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
-      tsx:
-        specifier: ^4.20.6
-        version: 4.20.6
-      typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
-
   packages/figma:
     dependencies:
       jest:

@@ -7,14 +7,7 @@ export type PermissionAdapter = {
 };
 
 export type BaseMcpOptions = {
-	corsair: {
-		list_operations: (opts?: {
-			plugin?: string;
-			type?: 'api' | 'webhooks' | 'db';
-		}) => unknown;
-		get_schema: (path: string) => unknown;
-		[key: string]: unknown;
-	};
+	corsair: { [key: string]: unknown };
 	permissions?: PermissionAdapter;
 	basePermissionUrl?: string;
 };

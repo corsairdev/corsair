@@ -254,63 +254,6 @@ export type ListOperationsOptions = {
 	type?: 'api' | 'webhooks' | 'db';
 };
 
-export type CorsairInspectMethods = {
-	/**
-	 * Lists available operations (API endpoints, webhooks, or database entities) for the configured plugins.
-	 *
-	 * - No options → all API endpoint paths across every plugin, keyed by plugin ID
-	 * - `{ type: 'webhooks' }` → all webhook paths across every plugin, keyed by plugin ID
-	 * - `{ type: 'db' }` → all searchable DB entity paths across every plugin, keyed by plugin ID
-	 * - `{ plugin: 'slack' }` → Slack API endpoint paths as a flat array
-	 * - `{ plugin: 'slack', type: 'webhooks' }` → Slack webhook paths as a flat array
-	 * - `{ plugin: 'slack', type: 'db' }` → Slack DB entity search paths as a flat array
-	 * - If the plugin is known but not configured, returns a plain string message.
-	 * - If the plugin string is completely unrecognised, returns all API endpoints (same as no options).
-	 *
-	 * API paths use the format `plugin.api.group.method` (e.g. `slack.api.messages.post`).
-	 * Webhook paths use the format `plugin.webhooks.group.event` (e.g. `slack.webhooks.messages.message`).
-	 * DB paths use the format `plugin.db.entityType.search` (e.g. `slack.db.messages.search`).
-	 * All paths can be passed directly to `get_schema()`.
-	 *
-	 * @example
-	 * corsair.list_operations()
-	 * // { slack: ['slack.api.channels.list', 'slack.api.messages.post', ...], ... }
-	 *
-	 * corsair.list_operations({ plugin: 'slack' })
-	 * // ['slack.api.channels.list', 'slack.api.messages.post', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'slack', type: 'webhooks' })
-	 * // ['slack.webhooks.messages.message', 'slack.webhooks.channels.created', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'slack', type: 'db' })
-	 * // ['slack.db.messages.search', 'slack.db.channels.search', 'slack.db.users.search', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'unknown' })
-	 * // "unknown isn't configured in the Corsair instance."
-	 */
-	list_operations(
-		options?: ListOperationsOptions,
-	): Record<string, string[]> | string[] | string;
-	/**
-	 * Returns a plain-text TypeScript-style type declaration for a specific operation path.
-	 * The path format determines which kind of schema is returned:
-	 * - API path (`plugin.api.group.method`) → description, risk level, input/output types
-	 * - Webhook path (`plugin.webhooks.group.event`) → description, payload/response types, usage snippet
-	 * - DB path (`plugin.db.entityType.search`) → description, filterable fields with operators
-	 *
-	 * Casing is ignored — the path is lowercased before lookup.
-	 * If the path is not found, returns a list of available paths for self-correction.
-	 *
-	 * @example
-	 * corsair.get_schema('slack.api.messages.post')
-	 * // "Post a message to a channel  [write]\n\ninput {\n  channel: string\n  text?: string\n  ..."
-	 *
-	 * corsair.get_schema('slack.api.invalid')
-	 * // "Path not found. Available operations:\n  slack: slack.api.channels.list, ..."
-	 */
-	get_schema(path: string): string;
-};
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Tree Walker
 // ─────────────────────────────────────────────────────────────────────────────
@@ -465,7 +408,7 @@ const KNOWN_PLUGIN_IDS = new Set<string>(BaseProviders);
 // Core Functions
 // ─────────────────────────────────────────────────────────────────────────────
 
-function listOperations(
+export function listOperations(
 	plugins: readonly CorsairPlugin[],
 	options?: ListOperationsOptions,
 ): Record<string, string[]> | string[] | string {
@@ -590,7 +533,10 @@ function formatAvailablePaths(
 	);
 }
 
-function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
+export function getSchema(
+	plugins: readonly CorsairPlugin[],
+	path: string,
+): string {
 	// Normalise casing so the agent can call with any capitalisation
 	const normalised = path.toLowerCase();
 	const dotIndex = normalised.indexOf('.');
@@ -726,27 +672,6 @@ function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 		listOperations(plugins),
 		'Path not found. Available operations',
 	);
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Factory — binds inspect methods to a fixed plugin list
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Creates the list_operations / get_schema functions bound to a specific plugin list.
- * Used by both single-tenant and multi-tenant client builders.
- */
-export function buildInspectMethods(
-	plugins: readonly CorsairPlugin[],
-): CorsairInspectMethods {
-	return {
-		list_operations(options?: ListOperationsOptions) {
-			return listOperations(plugins, options);
-		},
-		get_schema(path: string): string {
-			return getSchema(plugins, path);
-		},
-	};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

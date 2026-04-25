@@ -19,8 +19,6 @@ import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
-import type { CorsairInspectMethods } from '../inspect';
-import { buildInspectMethods } from '../inspect';
 import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
@@ -189,15 +187,13 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
 
 /**
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
- * Also includes list_operations() and get_schema() for agent-facing endpoint discovery.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
-	InferPluginNamespaces<Plugins> & CorsairInspectMethods;
+	InferPluginNamespaces<Plugins>;
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
  * Also includes integration-level `keys` for managing shared secrets (OAuth2 client credentials, etc.)
- * Inspect methods (list_operations / get_schema) are available at the root — no need to call withTenant().
  */
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	withTenant: (tenantId: string) => CorsairClient<Plugins>;
@@ -211,7 +207,7 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	 * Available at the root regardless of multi-tenancy setting.
 	 */
 	permissions: CorsairPermissionsNamespace;
-} & CorsairInspectMethods;
+};
 
 /**
  * Single-tenant client that includes both plugin APIs and integration-level keys.
@@ -513,13 +509,7 @@ export function buildCorsairClient<
 		}
 	}
 
-	const api = apiUnsafe as InferPluginNamespaces<Plugins>;
-	const inspect = buildInspectMethods(plugins);
-
-	return {
-		...(api as unknown as Record<string, unknown>),
-		...inspect,
-	} as CorsairClient<Plugins>;
+	return apiUnsafe as CorsairClient<Plugins>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
