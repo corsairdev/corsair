@@ -6,6 +6,8 @@ import babelPresetReact from '@babel/preset-react';
 // @ts-expect-error
 import babelPresetTypeScript from '@babel/preset-typescript';
 import { loadConfig } from 'c12';
+import type { AnyCorsairInstance } from 'corsair';
+import { getSchema, listOperations } from 'corsair';
 import type { JitiOptions } from 'jiti';
 import { getTsconfigInfo } from './get-tsconfig-info';
 
@@ -504,26 +506,34 @@ function parseAuthArgs(args: string[]): {
 	code?: string;
 	credentials?: boolean;
 	webhook?: boolean;
-	agent?: boolean;
+	listen?: boolean;
+	collect?: boolean;
+	sessionId?: string;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
 	let webhook = false;
-	let agent = false;
+	let listen = false;
+	let collect = false;
+	let sessionId: string | undefined;
 
 	for (const arg of args) {
 		if (arg === '--credentials') {
 			credentials = true;
 			continue;
 		}
-		if (arg === '--agent') {
-			agent = true;
-			continue;
-		}
 		if (arg === '--webhook') {
 			webhook = true;
+			continue;
+		}
+		if (arg === '--listen') {
+			listen = true;
+			continue;
+		}
+		if (arg === '--collect') {
+			collect = true;
 			continue;
 		}
 
@@ -543,10 +553,23 @@ function parseAuthArgs(args: string[]): {
 				code = value;
 				continue;
 			}
+			if (key === 'session') {
+				sessionId = value;
+				continue;
+			}
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials, webhook, agent };
+	return {
+		pluginId,
+		tenantId,
+		code,
+		credentials,
+		webhook,
+		listen,
+		collect,
+		sessionId,
+	};
 }
 
 function parseSetupArgs(args: string[]): {
@@ -679,7 +702,6 @@ function printHelp() {
 		'pnpm corsair setup --plugin=<id> <field>=VALUE  Set plugin credentials',
 		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
-		'pnpm corsair auth --plugin=<id> --agent         Run this if you are an agent (specific instructions to handle pending process)',
 		'pnpm corsair auth --plugin=<id> --credentials   Show credential status',
 		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
@@ -803,29 +825,17 @@ async function main() {
 	if (command === 'list') {
 		const { plugin, type } = parseListArgs(args.slice(1));
 		const instance = await getCorsairInstance({ cwd });
-		const corsair = instance as Record<string, unknown>;
-		if (typeof corsair.list_operations !== 'function') {
-			console.error(
-				'[#corsair]: list_operations not available on this Corsair instance.',
-			);
-			process.exit(1);
-		}
-		const result = corsair.list_operations({ plugin, type }) as unknown;
+		const result = listOperations(instance as AnyCorsairInstance, {
+			plugin,
+			type,
+		});
 		if (type === 'db') {
 			console.log(
 				'[#corsair]: NOTE: Every DB query listed here has both .search() and .list() methods available.',
 			);
 			console.log('');
 		}
-		if (typeof result === 'string') {
-			console.log(result);
-		} else if (Array.isArray(result)) {
-			console.log(result.join('\n'));
-		} else if (result && typeof result === 'object') {
-			const grouped = result as Record<string, string[]>;
-			const all = Object.values(grouped).flat();
-			console.log(all.join('\n'));
-		}
+		console.log(result);
 		return;
 	}
 
@@ -966,14 +976,7 @@ async function main() {
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
-		const corsair = instance as Record<string, unknown>;
-		if (typeof corsair.get_schema !== 'function') {
-			console.error(
-				'[#corsair]: get_schema not available on this Corsair instance.',
-			);
-			process.exit(1);
-		}
-		const result = corsair.get_schema(schemaPath) as string;
+		const result = getSchema(instance as AnyCorsairInstance, schemaPath);
 		console.log(result);
 		return;
 	}
