@@ -9,9 +9,7 @@ import type {
 import { verifyHmacSignatureWithPrefix } from 'corsair/http';
 import { z } from 'zod';
 import type { FirecrawlSchema } from '../schema';
-import {
-	FirecrawlScrapeMetadata,
-} from '../schema/database';
+import { FirecrawlScrapeMetadata } from '../schema/database';
 
 type FirecrawlPluginOptionsShape = {
 	authType?: PickAuth<'api_key'>;

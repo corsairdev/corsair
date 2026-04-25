@@ -1,8 +1,6 @@
 # Corsair: The Integration Layer for AI Agents
 
-[Website](https://corsair.dev) · [Discord](https://discord.gg/DphupWS7) · [X](https://x.com/corsairdotdev) 
-
-
+[Website](https://corsair.dev) · [Discord](https://discord.gg/uNgCP3mSzU) · [X](https://x.com/corsairdotdev) 
 
 Corsair gives you (or your agent) safe access to hundreds of integrations. It natively handles all integration plumbing. The only code you write is the code that's specific to your use case. Your data stays in your database, not a third-party service.
 
@@ -56,13 +54,14 @@ Once connected, your agent can reason across all your integrations at once. Some
 
 The second one is a live webhook workflow. Corsair handles the event routing and your agent handles the logic.
 
-## Compatibility
+## Contributing
 
-We're adding stuff every day. Request something if you don't see it here. We will build it for you.
+Corsair is open source, and contributions are welcome.
 
-Integrations: Slack · Linear · HubSpot · Gmail · Google Calendar · GitHub · PostHog · Amplitude · Airtable · Google Drive · Spotify · Oura · and more
+You can help by:
 
-Frameworks: Claude · OpenAI · Vercel AI SDK · Mastra · and more
+- [Contributing](./CONTRIBUTING.md)
+- [Suggesting features](https://github.com/corsairdev/corsair/issues)
 
 ## Beyond personal use
 

@@ -1,4 +1,4 @@
-import type { MondayWebhooks } from '..';
+import type { MondayWebhooks } from '../index';
 import { createMondayChallengeMatch } from './types';
 
 export const challenge: MondayWebhooks['challenge'] = {

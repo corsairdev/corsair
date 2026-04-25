@@ -1,0 +1,5593 @@
+---
+title: API
+description: "API reference for Onedrive: every `onedrive.api.*` operation with input and output types."
+---
+
+Every `onedrive.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Drive
+
+### get
+
+`drive.get`
+
+Get a drive by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `select_fields` | `string[]` | No | — |
+| `expand_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `driveType` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `owner` | `object` | No | — |
+| `quota` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  deleted?: number,
+  remaining?: number,
+  total?: number,
+  used?: number,
+  state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGroup
+
+`drive.getGroup`
+
+Get a group's drive
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.getGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+| `select_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `driveType` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `owner` | `object` | No | — |
+| `quota` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  deleted?: number,
+  remaining?: number,
+  total?: number,
+  used?: number,
+  state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getQuota
+
+`drive.getQuota`
+
+Get the user's drive and quota information
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.getQuota({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `driveType` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `owner` | `object` | No | — |
+| `quota` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="quota full type">
+
+```ts
+{
+  deleted?: number,
+  remaining?: number,
+  total?: number,
+  used?: number,
+  state?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecentItems
+
+`drive.getRecentItems`
+
+Get recently accessed drive items
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.getRecentItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoot
+
+`drive.getRoot`
+
+Get the root folder of the user's drive
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.getRoot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select_fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `eTag` | `string` | No | — |
+| `cTag` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `createdBy` | `object` | No | — |
+| `lastModifiedBy` | `object` | No | — |
+| `parentReference` | `object` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `deleted` | `object` | No | — |
+| `@microsoft.graph.downloadUrl` | `string` | No | — |
+| `root` | `object` | No | — |
+| `description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="lastModifiedBy full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+  driveId?: string,
+  id?: string,
+  path?: string,
+  name?: string,
+  siteId?: string
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string,
+  hashes?: {
+    quickXorHash?: string,
+    sha1Hash?: string,
+    sha256Hash?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+  childCount?: number
+}
+```
+</Accordion>
+
+<Accordion title="deleted full type">
+
+```ts
+{
+  state?: string
+}
+```
+</Accordion>
+
+<Accordion title="root full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSharedItems
+
+`drive.getSharedItems`
+
+Get items shared with the user
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.getSharedItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allow_external` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSpecialFolder
+
+`drive.getSpecialFolder`
+
+Get a special folder (documents, photos, cameraroll)
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.getSpecialFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `special_folder_name` | `documents \| photos \| cameraroll` | Yes | — |
+| `select_fields` | `string[]` | No | — |
+| `expand_relations` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `eTag` | `string` | No | — |
+| `cTag` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `createdBy` | `object` | No | — |
+| `lastModifiedBy` | `object` | No | — |
+| `parentReference` | `object` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `deleted` | `object` | No | — |
+| `@microsoft.graph.downloadUrl` | `string` | No | — |
+| `children` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="lastModifiedBy full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+  driveId?: string,
+  id?: string,
+  path?: string,
+  name?: string,
+  siteId?: string
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string,
+  hashes?: {
+    quickXorHash?: string,
+    sha1Hash?: string,
+    sha256Hash?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+  childCount?: number
+}
+```
+</Accordion>
+
+<Accordion title="deleted full type">
+
+```ts
+{
+  state?: string
+}
+```
+</Accordion>
+
+<Accordion title="children full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`drive.list`
+
+List available drives
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `skip_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  driveType?: string,
+  webUrl?: string,
+  description?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  owner?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  quota?: {
+    deleted?: number,
+    remaining?: number,
+    total?: number,
+    used?: number,
+    state?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listActivities
+
+`drive.listActivities`
+
+List activities across the drive
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.listActivities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  action?: {
+    comment?: {
+    },
+    create?: {
+    },
+    delete?: {
+    },
+    edit?: {
+    },
+    mention?: {
+    },
+    move?: {
+    },
+    rename?: {
+    },
+    restore?: {
+    },
+    share?: {
+    },
+    version?: {
+    }
+  },
+  actor?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  times?: {
+    recordedTime?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBundles
+
+`drive.listBundles`
+
+List bundles in a drive
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.listBundles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `expand` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+| `skip_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listChanges
+
+`drive.listChanges`
+
+List changes to drive items using delta
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.drive.listChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `token` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+| `@odata.deltaLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### createFolder
+
+`files.createFolder`
+
+Create a new folder
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.files.createFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `parent_folder` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `webUrl` | `string` | No | — |
+
+
+
+---
+
+### createTextFile
+
+`files.createTextFile`
+
+Create a new text file with content
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.files.createTextFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `folder` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `conflict_behavior` | `fail \| replace \| rename` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file` | `object` | No | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findFile
+
+`files.findFile`
+
+Find a file by name
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.files.findFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `folder` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `include_metadata` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `odata_context` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findFolder
+
+`files.findFolder`
+
+Find a folder by name
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.files.findFolder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `top` | `number` | No | — |
+| `expand` | `string` | No | — |
+| `folder` | `string` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `skip_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List files in the root drive
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `select` | `string[]` | No | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file to OneDrive
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `object` | Yes | — |
+| `folder` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `defer_commit` | `boolean` | No | — |
+| `if_match_etag` | `string` | No | — |
+| `file_system_info` | `object` | No | — |
+| `conflict_behavior` | `rename \| fail \| replace` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  name: string,
+  s3key: string,
+  mimetype: string
+}
+```
+</Accordion>
+
+<Accordion title="file_system_info full type">
+
+```ts
+{
+  createdDateTime?: string,
+  lastAccessedDateTime?: string,
+  lastModifiedDateTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file` | `object` | No | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### checkin
+
+`items.checkin`
+
+Check in a checked-out drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.checkin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `driveItem_id` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `checkInAs` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### checkout
+
+`items.checkout`
+
+Check out a drive item for editing
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.checkout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `driveItem_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### copy
+
+`items.copy`
+
+Copy a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.copy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `children_only` | `boolean` | No | — |
+| `parent_reference` | `object` | No | — |
+| `conflict_behavior` | `fail \| replace \| rename` | No | — |
+| `include_all_version_history` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="parent_reference full type">
+
+```ts
+{
+  id?: string,
+  driveId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `message` | `string` | Yes | — |
+| `web_url` | `string` | No | — |
+| `monitor_url` | `string` | No | — |
+| `status_code` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`items.delete`
+
+Delete a drive item [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.onedrive.api.items.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `if_match` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### deletePermanently
+
+`items.deletePermanently`
+
+Permanently delete a drive item [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.onedrive.api.items.deletePermanently({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `drive_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### discardCheckout
+
+`items.discardCheckout`
+
+Discard the checkout of a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.discardCheckout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `driveItem_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### download
+
+`items.download`
+
+Download a file
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `format` | `pdf \| html` | No | — |
+| `if_none_match` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+### downloadAsFormat
+
+`items.downloadAsFormat`
+
+Download a file converted to a different format
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.downloadAsFormat({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path_and_filename` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `format` | `pdf \| html` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+### downloadByPath
+
+`items.downloadByPath`
+
+Download a file by path
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.downloadByPath({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_path` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+### downloadVersion
+
+`items.downloadVersion`
+
+Download a specific version of a file
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.downloadVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `version_id` | `string` | Yes | — |
+| `file_name` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+### follow
+
+`items.follow`
+
+Follow a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.follow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `driveItem_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`items.get`
+
+Get a drive item by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `select_fields` | `string[]` | No | — |
+| `expand_relations` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `eTag` | `string` | No | — |
+| `cTag` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `createdBy` | `object` | No | — |
+| `lastModifiedBy` | `object` | No | — |
+| `parentReference` | `object` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `deleted` | `object` | No | — |
+| `@microsoft.graph.downloadUrl` | `string` | No | — |
+| `children` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdBy full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="lastModifiedBy full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+  driveId?: string,
+  id?: string,
+  path?: string,
+  name?: string,
+  siteId?: string
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string,
+  hashes?: {
+    quickXorHash?: string,
+    sha1Hash?: string,
+    sha256Hash?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+  childCount?: number
+}
+```
+</Accordion>
+
+<Accordion title="deleted full type">
+
+```ts
+{
+  state?: string
+}
+```
+</Accordion>
+
+<Accordion title="children full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDriveItemBySharingUrl
+
+`items.getDriveItemBySharingUrl`
+
+Get a drive item by sharing URL
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.getDriveItemBySharingUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sharing_url` | `string` | No | — |
+| `prefer_redeem` | `redeemSharingLinkIfNecessary \| redeemSharingLink` | No | — |
+| `select_fields` | `string[]` | No | — |
+| `expand_children` | `boolean` | No | — |
+| `share_id_or_encoded_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `eTag` | `string` | No | — |
+| `cTag` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+| `file` | `object` | No | — |
+| `folder` | `object` | No | — |
+| `@microsoft.graph.downloadUrl` | `string` | No | — |
+| `parentReference` | `object` | No | — |
+| `item_id` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+  childCount?: number
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+  driveId?: string,
+  id?: string,
+  path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFollowed
+
+`items.getFollowed`
+
+Get a followed drive item
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.getFollowed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `driveItem_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file` | `object` | No | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `folder` | `object` | No | — |
+| `webUrl` | `string` | No | — |
+| `followed` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+  childCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getThumbnails
+
+`items.getThumbnails`
+
+Get thumbnails for a drive item
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.getThumbnails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `select` | `string` | No | — |
+| `original_orientation` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  large?: {
+    height?: number,
+    width?: number,
+    url?: string,
+    content?: string
+  },
+  medium?: {
+    height?: number,
+    width?: number,
+    url?: string,
+    content?: string
+  },
+  small?: {
+    height?: number,
+    width?: number,
+    url?: string,
+    content?: string
+  },
+  source?: {
+    height?: number,
+    width?: number,
+    url?: string,
+    content?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVersions
+
+`items.getVersions`
+
+Get versions of a drive item
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.getVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  lastModifiedDateTime?: string,
+  size?: number,
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  published?: {
+    level?: string,
+    versionId?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listActivities
+
+`items.listActivities`
+
+List activities on a drive item
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.listActivities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `drive_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skip` | `string` | No | — |
+| `expand` | `string[]` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  action?: {
+    comment?: {
+    },
+    create?: {
+    },
+    delete?: {
+    },
+    edit?: {
+    },
+    mention?: {
+    },
+    move?: {
+    },
+    rename?: {
+    },
+    restore?: {
+    },
+    share?: {
+    },
+    version?: {
+    }
+  },
+  actor?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  times?: {
+    recordedTime?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFolderChildren
+
+`items.listFolderChildren`
+
+List children of a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.listFolderChildren({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top` | `number` | No | — |
+| `expand` | `string[]` | No | — |
+| `select` | `string[]` | No | — |
+| `orderby` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+| `next_link` | `string` | No | — |
+| `skip_token` | `string` | No | — |
+| `folder_path` | `string` | No | — |
+| `use_me_drive` | `boolean` | No | — |
+| `folder_item_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`items.move`
+
+Move a drive item to a new location
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemId` | `string` | Yes | — |
+| `parentReference` | `object` | Yes | — |
+| `name` | `string` | No | — |
+| `siteId` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `driveId` | `string` | No | — |
+| `groupId` | `string` | No | — |
+| `description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="parentReference full type">
+
+```ts
+{
+  id: string,
+  driveId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+| `parentReference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="parentReference full type">
+
+```ts
+{
+  driveId?: string,
+  id?: string,
+  path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### preview
+
+`items.preview`
+
+Get a preview URL for a drive item
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.preview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `share_id` | `string` | No | — |
+| `page` | `string` | No | — |
+| `zoom` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `getUrl` | `string` | No | — |
+| `postUrl` | `string` | No | — |
+| `postParameters` | `string` | No | — |
+
+
+
+---
+
+### restore
+
+`items.restore`
+
+Restore a deleted drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.restore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `parent_reference_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file` | `object` | No | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `folder` | `object` | No | — |
+| `webUrl` | `string` | No | — |
+| `deleted` | `object` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `parentReference` | `object` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+  childCount?: number
+}
+```
+</Accordion>
+
+<Accordion title="deleted full type">
+
+```ts
+{
+  state?: string
+}
+```
+</Accordion>
+
+<Accordion title="parentReference full type">
+
+```ts
+{
+  driveId?: string,
+  id?: string,
+  path?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`items.search`
+
+Search for drive items
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.items.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+| `skip_token` | `string` | No | — |
+| `search_scope` | `drive \| root` | No | — |
+| `stripped_annotations` | `string[]` | No | — |
+| `transformed_path_query` | `string` | No | — |
+| `transformed_kql_operator` | `string` | No | — |
+| `transformed_parent_query` | `string` | No | — |
+| `transformed_wildcard_query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unfollow
+
+`items.unfollow`
+
+Unfollow a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.unfollow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### updateContent
+
+`items.updateContent`
+
+Update the content of a file
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.updateContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `file_size` | `number` | No | — |
+| `description` | `string` | No | — |
+| `defer_commit` | `boolean` | No | — |
+| `media_source` | `object` | No | — |
+| `if_match_etag` | `string` | No | — |
+| `file_system_info` | `object` | No | — |
+| `conflict_behavior` | `string` | No | — |
+| `drive_item_source` | `object` | No | — |
+| `if_none_match_etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="media_source full type">
+
+```ts
+{
+  contentCategory?: string
+}
+```
+</Accordion>
+
+<Accordion title="file_system_info full type">
+
+```ts
+{
+  createdDateTime?: string,
+  lastAccessedDateTime?: string,
+  lastModifiedDateTime?: string
+}
+```
+</Accordion>
+
+<Accordion title="drive_item_source full type">
+
+```ts
+{
+  externalId?: string,
+  application?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uploadUrl` | `string` | No | — |
+| `expirationDateTime` | `string` | No | — |
+| `nextExpectedRanges` | `string[]` | No | — |
+
+
+
+---
+
+### updateMetadata
+
+`items.updateMetadata`
+
+Update metadata for a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.items.updateMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `ifMatch` | `string` | No | — |
+| `fileSystemInfo` | `object` | No | — |
+| `parent_reference_id` | `string` | No | — |
+| `parent_reference_drive_id` | `string` | No | — |
+| `additional_properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fileSystemInfo full type">
+
+```ts
+{
+  createdDateTime?: string,
+  lastAccessedDateTime?: string,
+  lastModifiedDateTime?: string
+}
+```
+</Accordion>
+
+<Accordion title="additional_properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cTag` | `string` | No | — |
+| `eTag` | `string` | No | — |
+| `file` | `object` | No | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `folder` | `object` | No | — |
+| `webUrl` | `string` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  mimeType?: string
+}
+```
+</Accordion>
+
+<Accordion title="folder full type">
+
+```ts
+{
+  childCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Permissions
+
+### createForItem
+
+`permissions.createForItem`
+
+Create a permission for a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.permissions.createForItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `drive_id` | `string` | Yes | — |
+| `driveItem_id` | `string` | Yes | — |
+| `roles` | `string[]` | Yes | — |
+| `grantedToV2` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="grantedToV2 full type">
+
+```ts
+{
+  siteGroup?: {
+  },
+  application?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `link` | `object` | No | — |
+| `roles` | `string[]` | No | — |
+| `grantedTo` | `object` | No | — |
+| `grantedToV2` | `object` | No | — |
+| `hasPassword` | `boolean` | No | — |
+| `expirationDateTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  type?: string,
+  scope?: string,
+  webUrl?: string,
+  webHtml?: string,
+  preventsDownload?: boolean,
+  application?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="grantedTo full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  },
+  siteUser?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string,
+    email?: string
+  },
+  siteGroup?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string
+  },
+  group?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="grantedToV2 full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  },
+  siteUser?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string,
+    email?: string
+  },
+  siteGroup?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string
+  },
+  group?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createLink
+
+`permissions.createLink`
+
+Create a sharing link for a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.permissions.createLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `type` | `view \| edit \| embed` | Yes | — |
+| `scope` | `anonymous \| organization \| users` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `drive_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `password` | `string` | No | — |
+| `expiration_date_time` | `string` | No | — |
+| `retain_inherited_permissions` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `link` | `object` | No | — |
+| `roles` | `string[]` | No | — |
+| `shareId` | `string` | No | — |
+| `hasPassword` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  type?: string,
+  scope?: string,
+  webUrl?: string,
+  webHtml?: string,
+  preventsDownload?: boolean,
+  application?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteFromItem
+
+`permissions.deleteFromItem`
+
+Delete a permission from a drive item [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.onedrive.api.permissions.deleteFromItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `perm_id` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### deleteSharePermission
+
+`permissions.deleteSharePermission`
+
+Delete a share permission [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.onedrive.api.permissions.deleteSharePermission({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shared_drive_item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### getForItem
+
+`permissions.getForItem`
+
+Get permissions for a drive item
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.permissions.getForItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `item_path` | `string` | No | — |
+| `select` | `string` | No | — |
+| `if_none_match` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  link?: {
+    type?: string,
+    scope?: string,
+    webUrl?: string,
+    webHtml?: string,
+    preventsDownload?: boolean,
+    application?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  roles?: string[],
+  grantedTo?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    },
+    siteUser?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string,
+      email?: string
+    },
+    siteGroup?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string
+    },
+    group?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  grantedToV2?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    },
+    siteUser?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string,
+      email?: string
+    },
+    siteGroup?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string
+    },
+    group?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  hasPassword?: boolean,
+  expirationDateTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getShare
+
+`permissions.getShare`
+
+Get a shared item by share ID or encoded URL
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.permissions.getShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `share_id_or_encoded_sharing_url` | `string` | Yes | — |
+| `prefer_redeem` | `redeemSharingLinkIfNecessary \| redeemSharingLink` | No | — |
+| `expand_children` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `root` | `object` | No | — |
+| `items` | `object[]` | No | — |
+| `owner` | `object` | No | — |
+| `children` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="root full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="children full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### grantSharePermission
+
+`permissions.grantSharePermission`
+
+Grant a permission on a shared item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.permissions.grantSharePermission({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `encoded_sharing_url` | `string` | Yes | — |
+| `roles` | `string[]` | Yes | — |
+| `recipients` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  link?: {
+    type?: string,
+    scope?: string,
+    webUrl?: string,
+    webHtml?: string,
+    preventsDownload?: boolean,
+    application?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  roles?: string[],
+  grantedTo?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    },
+    siteUser?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string,
+      email?: string
+    },
+    siteGroup?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string
+    },
+    group?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  grantedToV2?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    },
+    siteUser?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string,
+      email?: string
+    },
+    siteGroup?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string
+    },
+    group?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  hasPassword?: boolean,
+  expirationDateTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### inviteUser
+
+`permissions.inviteUser`
+
+Invite a user to access a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.permissions.inviteUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `roles` | `string[]` | Yes | — |
+| `recipients` | `object[]` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+| `message` | `string` | No | — |
+| `password` | `string` | No | — |
+| `require_sign_in` | `boolean` | No | — |
+| `send_invitation` | `boolean` | No | — |
+| `expiration_date_time` | `string` | No | — |
+| `retain_inherited_permissions` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  link?: {
+    type?: string,
+    scope?: string,
+    webUrl?: string,
+    webHtml?: string,
+    preventsDownload?: boolean,
+    application?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  roles?: string[],
+  grantedTo?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    },
+    siteUser?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string,
+      email?: string
+    },
+    siteGroup?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string
+    },
+    group?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  grantedToV2?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    },
+    siteUser?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string,
+      email?: string
+    },
+    siteGroup?: {
+      id?: string,
+      displayName?: string,
+      loginName?: string
+    },
+    group?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  hasPassword?: boolean,
+  expirationDateTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSharePermissions
+
+`permissions.listSharePermissions`
+
+List permissions on a shared drive item
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.permissions.listSharePermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shared_drive_item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `link` | `object` | No | — |
+| `roles` | `string[]` | No | — |
+| `hasPassword` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  type?: string,
+  scope?: string,
+  webUrl?: string,
+  webHtml?: string,
+  preventsDownload?: boolean,
+  application?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateForItem
+
+`permissions.updateForItem`
+
+Update a permission on a drive item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedrive.api.permissions.updateForItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `permission_id` | `string` | Yes | — |
+| `roles` | `string[]` | Yes | — |
+| `drive_id` | `string` | No | — |
+| `site_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `group_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `link` | `object` | No | — |
+| `roles` | `string[]` | No | — |
+| `grantedTo` | `object` | No | — |
+| `grantedToV2` | `object` | No | — |
+| `hasPassword` | `boolean` | No | — |
+| `expirationDateTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  type?: string,
+  scope?: string,
+  webUrl?: string,
+  webHtml?: string,
+  preventsDownload?: boolean,
+  application?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="grantedTo full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  },
+  siteUser?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string,
+    email?: string
+  },
+  siteGroup?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string
+  },
+  group?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="grantedToV2 full type">
+
+```ts
+{
+  user?: {
+    id?: string,
+    displayName?: string
+  },
+  application?: {
+    id?: string,
+    displayName?: string
+  },
+  device?: {
+    id?: string,
+    displayName?: string
+  },
+  siteUser?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string,
+    email?: string
+  },
+  siteGroup?: {
+    id?: string,
+    displayName?: string,
+    loginName?: string
+  },
+  group?: {
+    id?: string,
+    displayName?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sharepoint
+
+### getListItems
+
+`sharepoint.getListItems`
+
+Get items from a SharePoint list
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.getListItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `list_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `count` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  eTag?: string,
+  webUrl?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  contentType?: {
+    id?: string,
+    name?: string
+  },
+  fields?: {
+  },
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSite
+
+`sharepoint.getSite`
+
+Get a SharePoint site by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.getSite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `eTag` | `string` | No | — |
+| `name` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `sharepointIds` | `object` | No | — |
+| `isPersonalSite` | `boolean` | No | — |
+| `siteCollection` | `object` | No | — |
+| `createdDateTime` | `string` | No | — |
+| `lastModifiedDateTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sharepointIds full type">
+
+```ts
+{
+  siteId?: string,
+  siteUrl?: string,
+  webId?: string,
+  webUrl?: string,
+  listId?: string,
+  tenantId?: string
+}
+```
+</Accordion>
+
+<Accordion title="siteCollection full type">
+
+```ts
+{
+  hostname?: string,
+  dataLocationCode?: string,
+  root?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSitePage
+
+`sharepoint.getSitePage`
+
+Get a page from a SharePoint site
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.getSitePage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `page_id` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `webUrl` | `string` | No | — |
+
+
+
+---
+
+### listListItemsDelta
+
+`sharepoint.listListItemsDelta`
+
+List changes to SharePoint list items using delta
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.listListItemsDelta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `list_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `token` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+| `@odata.deltaLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  eTag?: string,
+  webUrl?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  contentType?: {
+    id?: string,
+    name?: string
+  },
+  fields?: {
+  },
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSiteColumns
+
+`sharepoint.listSiteColumns`
+
+List site columns in a SharePoint site
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.listSiteColumns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `count` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  displayName?: string,
+  description?: string,
+  columnGroup?: string,
+  indexed?: boolean,
+  readOnly?: boolean,
+  required?: boolean,
+  hidden?: boolean,
+  enforceUniqueValues?: boolean,
+  boolean?: {
+  },
+  text?: {
+    allowMultipleLines?: boolean,
+    maxLength?: number,
+    textType?: string
+  },
+  number?: {
+    decimalPlaces?: string,
+    displayAs?: string,
+    maximum?: number,
+    minimum?: number
+  },
+  dateTime?: {
+    displayAs?: string,
+    format?: string
+  },
+  choice?: {
+    allowTextEntry?: boolean,
+    choices?: string[],
+    displayAs?: string
+  },
+  lookup?: {
+    allowMultipleValues?: boolean,
+    columnName?: string,
+    listId?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSiteItemsDelta
+
+`sharepoint.listSiteItemsDelta`
+
+List changes to all drive items in a site using delta
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.listSiteItemsDelta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `token` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+| `@odata.deltaLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  size?: number,
+  webUrl?: string,
+  eTag?: string,
+  cTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  parentReference?: {
+    driveId?: string,
+    id?: string,
+    path?: string,
+    name?: string,
+    siteId?: string
+  },
+  file?: {
+    mimeType?: string,
+    hashes?: {
+      quickXorHash?: string,
+      sha1Hash?: string,
+      sha256Hash?: string
+    }
+  },
+  folder?: {
+    childCount?: number
+  },
+  deleted?: {
+    state?: string
+  },
+  @microsoft.graph.downloadUrl?: string,
+  children?: {
+    id: string,
+    name?: string,
+    size?: number,
+    webUrl?: string,
+    eTag?: string,
+    cTag?: string,
+    createdDateTime?: string,
+    lastModifiedDateTime?: string,
+    createdBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    lastModifiedBy?: {
+      user?: {
+        id?: string,
+        displayName?: string
+      },
+      application?: {
+        id?: string,
+        displayName?: string
+      },
+      device?: {
+        id?: string,
+        displayName?: string
+      }
+    },
+    parentReference?: {
+      driveId?: string,
+      id?: string,
+      path?: string,
+      name?: string,
+      siteId?: string
+    },
+    file?: {
+      mimeType?: string,
+      hashes?: {
+        quickXorHash?: string,
+        sha1Hash?: string,
+        sha256Hash?: string
+      }
+    },
+    folder?: {
+      childCount?: number
+    },
+    deleted?: {
+      state?: string
+    },
+    @microsoft.graph.downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSiteLists
+
+`sharepoint.listSiteLists`
+
+List all lists in a SharePoint site
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.listSiteLists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `count` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  displayName?: string,
+  description?: string,
+  webUrl?: string,
+  eTag?: string,
+  createdDateTime?: string,
+  lastModifiedDateTime?: string,
+  createdBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  lastModifiedBy?: {
+    user?: {
+      id?: string,
+      displayName?: string
+    },
+    application?: {
+      id?: string,
+      displayName?: string
+    },
+    device?: {
+      id?: string,
+      displayName?: string
+    }
+  },
+  list?: {
+    hidden?: boolean,
+    template?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSiteSubsites
+
+`sharepoint.listSiteSubsites`
+
+List subsites of a SharePoint site
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.sharepoint.listSiteSubsites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_id` | `string` | Yes | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `count` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  eTag?: string,
+  name?: string,
+  webUrl?: string,
+  description?: string,
+  displayName?: string,
+  sharepointIds?: {
+    siteId?: string,
+    siteUrl?: string,
+    webId?: string,
+    webUrl?: string,
+    listId?: string,
+    tenantId?: string
+  },
+  isPersonalSite?: boolean,
+  siteCollection?: {
+    hostname?: string,
+    dataLocationCode?: string,
+    root?: {
+    }
+  },
+  createdDateTime?: string,
+  lastModifiedDateTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### list
+
+`subscriptions.list`
+
+List all active subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.onedrive.api.subscriptions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id?: string,
+  resource?: string | null,
+  changeType?: string | null,
+  clientState?: string | null,
+  notificationUrl?: string | null,
+  expirationDateTime?: string | null,
+  applicationId?: string | null,
+  creatorId?: string | null,
+  notificationQueryOptions?: string | null,
+  lifecycleNotificationUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

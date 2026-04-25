@@ -1,0 +1,180 @@
+---
+title: Database
+description: "Typeform local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Typeform plugin syncs data locally. Use `corsair.typeform.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Forms
+
+Path: `typeform.db.forms.search`
+
+```ts
+const rows = await corsair.typeform.db.forms.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Images
+
+Path: `typeform.db.images.search`
+
+```ts
+const rows = await corsair.typeform.db.images.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `src` | `string` | equals, contains, startsWith, endsWith, in |
+| `width` | `number` | equals, gt, gte, lt, lte, in |
+| `height` | `number` | equals, gt, gte, lt, lte, in |
+| `avg_color` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_alpha` | `boolean` | equals |
+| `media_type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Responses
+
+Path: `typeform.db.responses.search`
+
+```ts
+const rows = await corsair.typeform.db.responses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `response_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `form_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `submitted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `landed_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Themes
+
+Path: `typeform.db.themes.search`
+
+```ts
+const rows = await corsair.typeform.db.themes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `font` | `string` | equals, contains, startsWith, endsWith, in |
+| `visibility` | `string` | equals, contains, startsWith, endsWith, in |
+| `rounded_corners` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_transparent_button` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhook Configs
+
+Path: `typeform.db.webhookConfigs.search`
+
+```ts
+const rows = await corsair.typeform.db.webhookConfigs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `enabled` | `boolean` | equals |
+| `form_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `verify_ssl` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workspaces
+
+Path: `typeform.db.workspaces.search`
+
+```ts
+const rows = await corsair.typeform.db.workspaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `href` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `default` | `boolean` | equals |
+| `account_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

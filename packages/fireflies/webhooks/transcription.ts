@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FirefliesWebhooks } from '..';
+import type { FirefliesWebhooks } from '../index';
 import { createFirefliesMatch, verifyFirefliesWebhookSignature } from './types';
 
 export const transcriptionComplete: FirefliesWebhooks['transcriptionComplete'] =

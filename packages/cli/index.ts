@@ -1,10 +1,13 @@
-import fs, { existsSync } from 'node:fs';
+import fs, { existsSync, realpathSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 // @ts-expect-error
 import babelPresetReact from '@babel/preset-react';
 // @ts-expect-error
 import babelPresetTypeScript from '@babel/preset-typescript';
 import { loadConfig } from 'c12';
+import type { AnyCorsairInstance } from 'corsair';
+import { getSchema, listOperations } from 'corsair';
 import type { JitiOptions } from 'jiti';
 import { getTsconfigInfo } from './get-tsconfig-info';
 
@@ -503,26 +506,34 @@ function parseAuthArgs(args: string[]): {
 	code?: string;
 	credentials?: boolean;
 	webhook?: boolean;
-	agent?: boolean;
+	listen?: boolean;
+	collect?: boolean;
+	sessionId?: string;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
 	let webhook = false;
-	let agent = false;
+	let listen = false;
+	let collect = false;
+	let sessionId: string | undefined;
 
 	for (const arg of args) {
 		if (arg === '--credentials') {
 			credentials = true;
 			continue;
 		}
-		if (arg === '--agent') {
-			agent = true;
-			continue;
-		}
 		if (arg === '--webhook') {
 			webhook = true;
+			continue;
+		}
+		if (arg === '--listen') {
+			listen = true;
+			continue;
+		}
+		if (arg === '--collect') {
+			collect = true;
 			continue;
 		}
 
@@ -542,10 +553,23 @@ function parseAuthArgs(args: string[]): {
 				code = value;
 				continue;
 			}
+			if (key === 'session') {
+				sessionId = value;
+				continue;
+			}
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials, webhook, agent };
+	return {
+		pluginId,
+		tenantId,
+		code,
+		credentials,
+		webhook,
+		listen,
+		collect,
+		sessionId,
+	};
 }
 
 function parseSetupArgs(args: string[]): {
@@ -612,6 +636,37 @@ function parseRunArgs(args: string[]): {
 	return { path: endpointPath, input, tenant };
 }
 
+function parseUiArgs(args: string[]): { port?: number; open?: boolean } {
+	let port: number | undefined;
+	let open: boolean | undefined;
+
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i]!;
+		if (arg === '--no-open') {
+			open = false;
+			continue;
+		}
+		if (arg === '--open') {
+			open = true;
+			continue;
+		}
+		if (arg === '--port' && args[i + 1]) {
+			const next = args[++i];
+			if (next) {
+				const parsed = Number.parseInt(next, 10);
+				if (Number.isFinite(parsed)) port = parsed;
+			}
+			continue;
+		}
+		if (arg.startsWith('--port=')) {
+			const parsed = Number.parseInt(arg.slice('--port='.length), 10);
+			if (Number.isFinite(parsed)) port = parsed;
+		}
+	}
+
+	return { port, open };
+}
+
 function parseScriptArgs(args: string[]): {
 	code: string | undefined;
 	tenant: string | undefined;
@@ -647,12 +702,12 @@ function printHelp() {
 		'pnpm corsair setup --plugin=<id> <field>=VALUE  Set plugin credentials',
 		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
-		'pnpm corsair auth --plugin=<id> --agent         Run this if you are an agent (specific instructions to handle pending process)',
 		'pnpm corsair auth --plugin=<id> --credentials   Show credential status',
 		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
 		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
 		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
+		'pnpm corsair ui [--port=4317] [--no-open]       Open the Corsair Studio dashboard (requires @corsair-dev/studio)',
 		'pnpm corsair script --code "<js>" [--tenant=<id>]',
 		'  corsair is injected; use return to output a value.',
 		'  IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
@@ -770,29 +825,17 @@ async function main() {
 	if (command === 'list') {
 		const { plugin, type } = parseListArgs(args.slice(1));
 		const instance = await getCorsairInstance({ cwd });
-		const corsair = instance as Record<string, unknown>;
-		if (typeof corsair.list_operations !== 'function') {
-			console.error(
-				'[#corsair]: list_operations not available on this Corsair instance.',
-			);
-			process.exit(1);
-		}
-		const result = corsair.list_operations({ plugin, type }) as unknown;
+		const result = listOperations(instance as AnyCorsairInstance, {
+			plugin,
+			type,
+		});
 		if (type === 'db') {
 			console.log(
 				'[#corsair]: NOTE: Every DB query listed here has both .search() and .list() methods available.',
 			);
 			console.log('');
 		}
-		if (typeof result === 'string') {
-			console.log(result);
-		} else if (Array.isArray(result)) {
-			console.log(result.join('\n'));
-		} else if (result && typeof result === 'object') {
-			const grouped = result as Record<string, string[]>;
-			const all = Object.values(grouped).flat();
-			console.log(all.join('\n'));
-		}
+		console.log(result);
 		return;
 	}
 
@@ -868,6 +911,61 @@ async function main() {
 		return;
 	}
 
+	if (command === 'ui' || command === 'studio') {
+		const { port, open } = parseUiArgs(args.slice(1));
+		type StartStudio = (opts: {
+			cwd: string;
+			port?: number;
+			open?: boolean;
+		}) => Promise<unknown>;
+		// Resolve @corsair-dev/studio from the USER's project cwd, not the CLI's
+		// own location. In pnpm workspaces the CLI lives in an isolated
+		// node_modules/.pnpm store that can't see peer packages unless they're
+		// declared as deps of the CLI itself. Using createRequire(cwd) + import()
+		// of a file:// URL sidesteps that and matches where the user installed it.
+		let startStudio: StartStudio;
+		try {
+			const { createRequire } = await import('node:module');
+			const { pathToFileURL } = await import('node:url');
+			const req = createRequire(path.join(cwd, 'package.json'));
+			const resolvedPath = req.resolve('@corsair-dev/studio/server');
+			const mod = (await import(pathToFileURL(resolvedPath).href)) as {
+				start?: StartStudio;
+				startStudio?: StartStudio;
+			};
+			const candidate = mod.start ?? mod.startStudio;
+			if (!candidate) {
+				throw new Error('@corsair-dev/studio/server did not export `start`.');
+			}
+			startStudio = candidate;
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			if (
+				msg.includes('Cannot find package') ||
+				msg.includes('Cannot find module') ||
+				msg.includes('ERR_MODULE_NOT_FOUND') ||
+				msg.includes('MODULE_NOT_FOUND')
+			) {
+				console.error('[#corsair]: Corsair Studio is not installed.');
+				console.error('[#corsair]: Install it with:');
+				console.error('');
+				console.error('  pnpm add -D @corsair-dev/studio');
+				console.error('');
+				process.exit(1);
+			}
+			throw err;
+		}
+		await startStudio({ cwd, port, open });
+		// startStudio resolves once the server is listening; keep the process
+		// alive until the user stops it (Ctrl+C) so the HTTP server stays up.
+		await new Promise<void>((resolve) => {
+			const shutdown = () => resolve();
+			process.once('SIGINT', shutdown);
+			process.once('SIGTERM', shutdown);
+		});
+		return;
+	}
+
 	if (command === 'schema') {
 		const schemaPath = args[1];
 		if (!schemaPath) {
@@ -878,14 +976,7 @@ async function main() {
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
-		const corsair = instance as Record<string, unknown>;
-		if (typeof corsair.get_schema !== 'function') {
-			console.error(
-				'[#corsair]: get_schema not available on this Corsair instance.',
-			);
-			process.exit(1);
-		}
-		const result = corsair.get_schema(schemaPath) as string;
+		const result = getSchema(instance as AnyCorsairInstance, schemaPath);
 		console.log(result);
 		return;
 	}
@@ -893,16 +984,23 @@ async function main() {
 	printHelp();
 }
 
-// Run if this file is executed directly
-// Check if we're running as a script (not imported as a module)
-const isMainModule =
-	import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` ||
-	process.argv[1]?.includes('index.ts') ||
-	process.argv[1]?.includes('index.js') ||
-	import.meta.url.endsWith('/index.ts') ||
-	import.meta.url.endsWith('/index.js');
+// Run if this file is executed directly (not imported as a module).
+// We resolve symlinks on both sides because the CLI is typically invoked via
+// a `node_modules/.bin/corsair` symlink — argv[1] is the symlink, while
+// import.meta.url is the realpath'd target.
+function detectIsMainModule(): boolean {
+	const argv1 = process.argv[1];
+	if (!argv1) return false;
+	try {
+		const argvResolved = realpathSync(argv1);
+		const selfResolved = realpathSync(fileURLToPath(import.meta.url));
+		return argvResolved === selfResolved;
+	} catch {
+		return import.meta.url === `file://${argv1.replace(/\\/g, '/')}`;
+	}
+}
 
-if (isMainModule) {
+if (detectIsMainModule()) {
 	main()
 		.then(() => process.exit(0))
 		.catch((e) => {

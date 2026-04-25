@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RazorpayWebhooks } from '..';
+import type { RazorpayWebhooks } from '../index';
 import { createRazorpayMatch, verifyRazorpayWebhookSignature } from './types';
 
 export const captured: RazorpayWebhooks['paymentCaptured'] = {

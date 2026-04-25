@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TelegramEndpoints } from '..';
 import { makeTelegramRequest } from '../client';
+import type { TelegramEndpoints } from '../index';
 import type { TelegramEndpointOutputs } from './types';
 
 export const getChat: TelegramEndpoints['getChat'] = async (ctx, input) => {

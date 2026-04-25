@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { YoutubeEndpoints } from '..';
 import { makeYoutubeRequest } from '../client';
+import type { YoutubeEndpoints } from '../index';
 import type { YoutubeEndpointOutputs } from './types';
 
 export const getStatistics: YoutubeEndpoints['channelsGetStatistics'] = async (

@@ -1,7 +1,14 @@
 import { makeRedditRequest } from '../client';
-import { UserDataSchema, CommentDataSchema, PostDataSchema } from '../endpoints/types';
+import type {
+	RedditEntityEnvelopeRaw,
+	RedditListingRaw,
+} from '../endpoints/types';
+import {
+	CommentDataSchema,
+	PostDataSchema,
+	UserDataSchema,
+} from '../endpoints/types';
 import { TEST_USERNAME } from '../endpoints/utils';
-import type { RedditEntityEnvelopeRaw, RedditListingRaw } from '../endpoints/types';
 
 describe('User endpoints test suite', () => {
 	describe('Reddit JSON: /user/{username}/about.json', () => {

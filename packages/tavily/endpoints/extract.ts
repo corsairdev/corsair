@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TavilyEndpoints } from '..';
 import { makeTavilyRequest } from '../client';
+import type { TavilyEndpoints } from '../index';
 import type { TavilyExtractResponse } from './types';
 
 export const extract: TavilyEndpoints['extract'] = async (ctx, input) => {

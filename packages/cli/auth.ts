@@ -1,6 +1,12 @@
+import type { SpawnOptions } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import * as crypto from 'node:crypto';
+import * as fs from 'node:fs';
 import * as http from 'node:http';
 import * as https from 'node:https';
 import * as net from 'node:net';
+import * as os from 'node:os';
+import * as path from 'node:path';
 import * as querystring from 'node:querystring';
 import type {
 	AuthTypes,
@@ -88,6 +94,42 @@ function createGraphSubscription(
 
 function out(data: Record<string, unknown>): void {
 	console.log(JSON.stringify(data));
+}
+
+function authStateFile(sessionId: string): string {
+	return path.join(os.tmpdir(), `corsair-auth-${sessionId}.json`);
+}
+
+function writeAuthState(
+	sessionId: string,
+	state: Record<string, unknown>,
+): void {
+	fs.writeFileSync(authStateFile(sessionId), JSON.stringify(state));
+}
+
+function pollAuthState(
+	sessionId: string,
+	timeoutMs: number,
+): Promise<Record<string, unknown>> {
+	return new Promise((resolve, reject) => {
+		const file = authStateFile(sessionId);
+		const start = Date.now();
+		const interval = setInterval(() => {
+			try {
+				const state = JSON.parse(fs.readFileSync(file, 'utf8')) as Record<
+					string,
+					unknown
+				>;
+				clearInterval(interval);
+				resolve(state);
+			} catch {
+				if (Date.now() - start > timeoutMs) {
+					clearInterval(interval);
+					reject(new Error('Timed out waiting for OAuth server to start'));
+				}
+			}
+		}, 100);
+	});
 }
 
 function getOAuthConfigForPlugin(plugin: CorsairPlugin): OAuthConfig | null {
@@ -303,120 +345,6 @@ async function ensureAccount(
 // OAuth flow
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function oauthGetUrl(
-	database: CorsairDatabase,
-	plugin: CorsairPlugin,
-	kek: string,
-	tenantId: string,
-): Promise<void> {
-	const oauthCfg = getOAuthConfigForPlugin(plugin);
-	if (!oauthCfg) {
-		out({ error: `No oauthConfig defined on plugin '${plugin.id}'.` });
-		return;
-	}
-
-	const extraFields = getCustomIntegrationFields(plugin, 'oauth_2');
-	const integrationKm = createIntegrationKeyManager({
-		authType: 'oauth_2',
-		integrationName: plugin.id,
-		kek,
-		database,
-		extraIntegrationFields: extraFields,
-	});
-
-	const clientId = await integrationKm.get_client_id();
-	if (!clientId) {
-		out({
-			error: `client_id not set for '${plugin.id}'. Run: corsair setup --${plugin.id} client_id=YOUR_CLIENT_ID`,
-		});
-		return;
-	}
-
-	const clientSecret = await integrationKm.get_client_secret();
-	if (!clientSecret) {
-		out({
-			error: `client_secret not set for '${plugin.id}'. Run: corsair setup --${plugin.id} client_secret=YOUR_CLIENT_SECRET`,
-		});
-		return;
-	}
-
-	let redirectUri: string;
-	if (oauthCfg.requiresRegisteredRedirect) {
-		const stored = await integrationKm.get_redirect_url();
-		if (!stored) {
-			out({
-				error: `redirect_url required for '${plugin.id}'. Run: corsair setup --${plugin.id} redirect_url=YOUR_REDIRECT_URI`,
-			});
-			return;
-		}
-		redirectUri = stored;
-	} else {
-		const port = await findFreePort();
-		redirectUri = `http://localhost:${port}`;
-	}
-
-	const authParams: Record<string, string | null> = {
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: 'code',
-		scope: oauthCfg.scopes.join(' '),
-		...oauthCfg.authParams,
-	};
-
-	const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
-
-	// If the redirect is a localhost URL with a port, spin up a local server and wait for the code.
-	// This works whether the redirect is dynamic (requiresRegisteredRedirect: false) or a
-	// pre-registered localhost:PORT URL (requiresRegisteredRedirect: true, e.g. Notion).
-	const localhostPortMatch = redirectUri.match(
-		/^https?:\/\/(?:localhost|127\.0\.0\.1):(\d+)/,
-	);
-	const localhostPort = localhostPortMatch?.[1]
-		? parseInt(localhostPortMatch[1], 10)
-		: null;
-	if (localhostPort) {
-		out({
-			status: 'pending_oauth',
-			authUrl,
-			redirectUri,
-			plugin: plugin.id,
-			tenant: tenantId,
-			note: 'Open authUrl in a browser. Tokens will be saved automatically once authorized.',
-		});
-		let code: string;
-		try {
-			code = await waitForOAuthCode(localhostPort);
-		} catch (err) {
-			out({
-				error: `Authorization failed: ${err instanceof Error ? err.message : String(err)}`,
-			});
-			return;
-		}
-		await oauthExchangeCode(
-			database,
-			plugin,
-			kek,
-			tenantId,
-			code,
-			redirectUri,
-			clientId,
-			clientSecret,
-			oauthCfg,
-		);
-		return;
-	}
-
-	// Registered redirect is not a localhost:PORT URL — can't auto-capture, output the URL
-	out({
-		status: 'needs_code',
-		authUrl,
-		redirectUri,
-		plugin: plugin.id,
-		tenant: tenantId,
-		note: 'Open authUrl, complete auth, then run: corsair auth --plugin=<id> --code=CODE',
-	});
-}
-
 async function oauthExchangeCode(
 	database: CorsairDatabase,
 	plugin: CorsairPlugin,
@@ -427,7 +355,7 @@ async function oauthExchangeCode(
 	clientId: string,
 	clientSecret: string,
 	oauthCfg: OAuthConfig,
-): Promise<void> {
+): Promise<boolean> {
 	let tokens: {
 		access_token?: string;
 		refresh_token?: string;
@@ -445,14 +373,14 @@ async function oauthExchangeCode(
 		out({
 			error: `Token exchange failed: ${err instanceof Error ? err.message : String(err)}`,
 		});
-		return;
+		return false;
 	}
 
 	if (!tokens.access_token) {
 		out({
 			error: `No access_token in response from ${oauthCfg.providerName}.`,
 		});
-		return;
+		return false;
 	}
 
 	const extraAccountFields = getCustomAccountFields(plugin, 'oauth_2');
@@ -474,6 +402,7 @@ async function oauthExchangeCode(
 		);
 
 	out({ status: 'success', plugin: plugin.id, tenant: tenantId });
+	return true;
 }
 
 async function oauthWithCode(
@@ -520,6 +449,197 @@ async function oauthWithCode(
 		clientSecret,
 		oauthCfg,
 	);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Background listen mode (used by --agent via detached spawn)
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function oauthListen(
+	database: CorsairDatabase,
+	plugin: CorsairPlugin,
+	kek: string,
+	tenantId: string,
+	sessionId: string,
+): Promise<void> {
+	const oauthCfg = getOAuthConfigForPlugin(plugin);
+	if (!oauthCfg) {
+		writeAuthState(sessionId, {
+			status: 'error',
+			error: `No oauthConfig defined on plugin '${plugin.id}'.`,
+		});
+		return;
+	}
+
+	const extraFields = getCustomIntegrationFields(plugin, 'oauth_2');
+	const integrationKm = createIntegrationKeyManager({
+		authType: 'oauth_2',
+		integrationName: plugin.id,
+		kek,
+		database,
+		extraIntegrationFields: extraFields,
+	});
+
+	const clientId = await integrationKm.get_client_id();
+	if (!clientId) {
+		writeAuthState(sessionId, {
+			status: 'error',
+			error: `client_id not set for '${plugin.id}'.`,
+		});
+		return;
+	}
+
+	const clientSecret = await integrationKm.get_client_secret();
+	if (!clientSecret) {
+		writeAuthState(sessionId, {
+			status: 'error',
+			error: `client_secret not set for '${plugin.id}'.`,
+		});
+		return;
+	}
+
+	let redirectUri: string;
+	let localhostPort: number;
+
+	if (oauthCfg.requiresRegisteredRedirect) {
+		const stored = await integrationKm.get_redirect_url();
+		if (!stored) {
+			writeAuthState(sessionId, {
+				status: 'error',
+				error: `redirect_url required for '${plugin.id}'.`,
+			});
+			return;
+		}
+		const match = stored.match(/^https?:\/\/(?:localhost|127\.0\.0\.1):(\d+)/);
+		if (!match) {
+			// Non-localhost registered redirect — can't auto-capture; signal caller to use --code flow
+			const authParams: Record<string, string | null> = {
+				client_id: clientId,
+				redirect_uri: stored,
+				response_type: 'code',
+				scope: oauthCfg.scopes.join(' '),
+				...oauthCfg.authParams,
+			};
+			const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
+			writeAuthState(sessionId, {
+				status: 'needs_code',
+				url: authUrl,
+				redirectUri: stored,
+			});
+			return;
+		}
+		redirectUri = stored;
+		localhostPort = parseInt(match[1]!, 10);
+	} else {
+		localhostPort = await findFreePort();
+		redirectUri = `http://localhost:${localhostPort}`;
+	}
+
+	const authParams: Record<string, string | null> = {
+		client_id: clientId,
+		redirect_uri: redirectUri,
+		response_type: 'code',
+		scope: oauthCfg.scopes.join(' '),
+		...oauthCfg.authParams,
+	};
+	const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
+
+	// Write the URL immediately so the parent --agent process can read it and exit
+	writeAuthState(sessionId, { status: 'listening', url: authUrl });
+
+	// Auto-kill after 10 minutes if user never completes sign-in
+	const timeout = setTimeout(
+		() => {
+			writeAuthState(sessionId, {
+				status: 'error',
+				error: 'OAuth session timed out after 10 minutes.',
+			});
+			process.exit(0);
+		},
+		10 * 60 * 1000,
+	);
+	timeout.unref();
+
+	let code: string;
+	try {
+		code = await waitForOAuthCode(localhostPort);
+	} catch (err) {
+		writeAuthState(sessionId, {
+			status: 'error',
+			error: `Authorization failed: ${err instanceof Error ? err.message : String(err)}`,
+		});
+		return;
+	}
+
+	const success = await oauthExchangeCode(
+		database,
+		plugin,
+		kek,
+		tenantId,
+		code,
+		redirectUri,
+		clientId,
+		clientSecret,
+		oauthCfg,
+	);
+	writeAuthState(
+		sessionId,
+		success
+			? { status: 'complete' }
+			: { status: 'error', error: 'Token exchange failed.' },
+	);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Collect mode — check whether a background listen session completed
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function oauthCollect(
+	database: CorsairDatabase,
+	plugin: CorsairPlugin,
+	kek: string,
+	tenantId: string,
+	sessionId: string,
+): Promise<void> {
+	const extraAccountFields = getCustomAccountFields(plugin, 'oauth_2');
+	const accountKm = createAccountKeyManager({
+		authType: 'oauth_2',
+		integrationName: plugin.id,
+		tenantId,
+		kek,
+		database,
+		extraAccountFields,
+	});
+
+	const accessToken = await accountKm.get_access_token();
+	if (accessToken) {
+		try {
+			fs.unlinkSync(authStateFile(sessionId));
+		} catch {
+			/* already gone */
+		}
+		out({ status: 'success', plugin: plugin.id, tenant: tenantId });
+		return;
+	}
+
+	// Check state file for errors from the background process
+	try {
+		const state = JSON.parse(
+			fs.readFileSync(authStateFile(sessionId), 'utf8'),
+		) as Record<string, unknown>;
+		if (state.status === 'error') {
+			out({ status: 'error', error: state.error });
+			return;
+		}
+	} catch {
+		/* state file gone or unreadable */
+	}
+
+	out({
+		status: 'pending',
+		message:
+			'User has not completed sign-in yet. Try again after the user visits the auth URL.',
+	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -620,7 +740,9 @@ export async function runAuth({
 	tenantId: tenantIdArg,
 	code: codeArg,
 	credentials: showCredentials = false,
-	agent: agentMode = false,
+	listen: listenMode = false,
+	collect: collectMode = false,
+	sessionId,
 }: {
 	cwd: string;
 	pluginId?: string;
@@ -629,8 +751,12 @@ export async function runAuth({
 	code?: string;
 	/** Output current credential status instead of starting OAuth flow. */
 	credentials?: boolean;
-	/** When true, output instructions for an AI agent to guide the user through auth. */
-	agent?: boolean;
+	/** Internal: run as the background OAuth callback server for a given session. */
+	listen?: boolean;
+	/** Check whether the background OAuth session completed and tokens are stored. */
+	collect?: boolean;
+	/** Session ID tying --listen and --collect together. */
+	sessionId?: string;
 }): Promise<void> {
 	let internal: CorsairInternalConfig;
 	try {
@@ -685,27 +811,94 @@ export async function runAuth({
 		return;
 	}
 
-	if (agentMode) {
-		const baseCmd = `pnpm corsair auth --plugin=${plugin.id}`;
-		const needsQuoting = tenantIdArg && /[^a-zA-Z0-9_\-.]/.test(tenantIdArg);
-		const tenantFlag =
-			tenantIdArg && tenantIdArg !== 'default'
-				? ` --tenant=${needsQuoting ? `"${tenantIdArg}"` : tenantIdArg}`
-				: '';
-		const cmd = `${baseCmd}${tenantFlag}`;
-		out({
-			status: 'agent_instructions',
-			plugin: plugin.id,
-			tenant: tenantId,
-			command: cmd,
-			message: `To authenticate the '${plugin.id}' plugin, run the following command:\n\n  ${cmd}\n\nThis command opens a browser and waits for an OAuth callback — it is a long-running interactive task. Either ask the user to run it in a separate terminal, or run it as a background process. Do NOT run it inline in the current session.`,
-		});
+	if (listenMode) {
+		if (!sessionId) {
+			out({ error: '--listen requires --session=<id>.' });
+			process.exit(1);
+		}
+		await oauthListen(database, plugin, kek, tenantId, sessionId);
+		return;
+	}
+
+	if (collectMode) {
+		if (!sessionId) {
+			out({ error: '--collect requires --session=<id>.' });
+			process.exit(1);
+		}
+		await oauthCollect(database, plugin, kek, tenantId, sessionId);
 		return;
 	}
 
 	if (codeArg) {
 		await oauthWithCode(database, plugin, kek, tenantId, codeArg);
-	} else {
-		await oauthGetUrl(database, plugin, kek, tenantId);
+		return;
 	}
+
+	// Default: spawn a background OAuth server, return the URL and the collect command.
+	const session = crypto.randomUUID().slice(0, 8);
+	const needsQuoting = tenantIdArg && /[^a-zA-Z0-9_\-.]/.test(tenantIdArg);
+	const tenantFlag =
+		tenantIdArg && tenantIdArg !== 'default'
+			? `--tenant=${needsQuoting ? `"${tenantIdArg}"` : tenantIdArg}`
+			: '';
+
+	const spawnOpts: SpawnOptions = {
+		detached: true,
+		stdio: 'ignore',
+		cwd: process.cwd(),
+		env: process.env,
+	};
+	const child = spawn(
+		process.execPath,
+		[
+			...process.execArgv,
+			process.argv[1] ?? '',
+			'auth',
+			`--plugin=${plugin.id}`,
+			'--listen',
+			`--session=${session}`,
+			...(tenantFlag ? [tenantFlag] : []),
+		],
+		spawnOpts,
+	);
+	child.unref();
+
+	let state: Record<string, unknown>;
+	try {
+		state = await pollAuthState(session, 5000);
+	} catch (err) {
+		out({
+			error: `Failed to start OAuth server: ${err instanceof Error ? err.message : String(err)}`,
+		});
+		return;
+	}
+
+	if (state.status === 'needs_code') {
+		console.log(`\nAuthorize ${plugin.id}\n`);
+		console.log(`  Open this URL in your browser:\n`);
+		console.log(`    ${state.url as string}\n`);
+		console.log(
+			`  Once you've signed in, copy the code from the redirect URL and run:\n`,
+		);
+		console.log(`    pnpm corsair auth --plugin=${plugin.id} --code=CODE\n`);
+		return;
+	}
+
+	if (state.status === 'error') {
+		out({ error: state.error });
+		return;
+	}
+
+	const collectCmd = [
+		`pnpm corsair auth --plugin=${plugin.id}`,
+		'--collect',
+		`--session=${session}`,
+		...(tenantFlag ? [tenantFlag] : []),
+	].join(' ');
+
+	console.log(`\nAuthorize ${plugin.id}\n`);
+	console.log(`  Open this URL in your browser:\n`);
+	console.log(`    ${state.url as string}\n`);
+	console.log(`  Once you've signed in, run:\n`);
+	console.log(`    ${collectCmd}\n`);
 }

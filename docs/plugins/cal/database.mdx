@@ -1,0 +1,52 @@
+---
+title: Database
+description: "Cal.com local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Cal.com plugin syncs data locally. Use `corsair.cal.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Bookings
+
+Path: `cal.db.bookings.search`
+
+```ts
+const rows = await corsair.cal.db.bookings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `bookingId` | `number` | equals, gt, gte, lt, lte, in |
+| `uid` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `start` | `string` | equals, contains, startsWith, endsWith, in |
+| `startTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `end` | `string` | equals, contains, startsWith, endsWith, in |
+| `endTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `length` | `number` | equals, gt, gte, lt, lte, in |
+| `eventTypeId` | `number` | equals, gt, gte, lt, lte, in |
+| `meetingUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `cancellationReason` | `string` | equals, contains, startsWith, endsWith, in |
+| `reschedulingReason` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

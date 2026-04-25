@@ -1,0 +1,841 @@
+---
+title: API
+description: "API reference for Google calendar: every `googlecalendar.api.*` operation with input and output types."
+---
+
+Every `googlecalendar.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calendar
+
+### getAvailability
+
+`calendar.getAvailability`
+
+Get free/busy availability for a calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecalendar.api.calendar.getAvailability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeMin` | `string` | Yes | — |
+| `timeMax` | `string` | Yes | — |
+| `timeZone` | `string` | No | — |
+| `groupExpansionMax` | `number` | No | — |
+| `calendarExpansionMax` | `number` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `calendars` | `object` | No | — |
+| `groups` | `object` | No | — |
+| `timeMin` | `string` | No | — |
+| `timeMax` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="calendars full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Create a new calendar event
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecalendar.api.events.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | — |
+| `event` | `object` | Yes | Event body. Provide at minimum "summary", "start", and "end". |
+| `sendUpdates` | `all \| externalOnly \| none` | No | — |
+| `sendNotifications` | `boolean` | No | — |
+| `conferenceDataVersion` | `number` | No | — |
+| `maxAttendees` | `number` | No | — |
+| `supportsAttachments` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  summary?: string,
+  description?: string,
+  location?: string,
+  start?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  end?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  attendees?: {
+    id?: string,
+    email?: string,
+    displayName?: string,
+    organizer?: boolean,
+    self?: boolean,
+    resource?: boolean,
+    optional?: boolean,
+    responseStatus?: needsAction | declined | tentative | accepted,
+    comment?: string,
+    additionalGuests?: number
+  }[],
+  recurrence?: string[],
+  colorId?: string,
+  transparency?: opaque | transparent,
+  visibility?: default | public | private | confidential,
+  eventType?: default | outOfOffice | focusTime | workingLocation,
+  status?: confirmed | tentative | cancelled,
+  reminders?: {
+    useDefault?: boolean,
+    overrides?: {
+      method?: email | popup,
+      minutes?: number
+    }[]
+  },
+  guestsCanModify?: boolean,
+  guestsCanInviteOthers?: boolean,
+  guestsCanSeeOtherGuests?: boolean,
+  anyoneCanAddSelf?: boolean,
+  sequence?: number,
+  originalStartTime?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  recurringEventId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `confirmed \| tentative \| cancelled` | No | — |
+| `htmlLink` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `location` | `string` | No | — |
+| `colorId` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `organizer` | `object` | No | — |
+| `start` | `object` | No | — |
+| `end` | `object` | No | — |
+| `endTimeUnspecified` | `boolean` | No | — |
+| `recurrence` | `string[]` | No | — |
+| `recurringEventId` | `string` | No | — |
+| `originalStartTime` | `object` | No | — |
+| `transparency` | `opaque \| transparent` | No | — |
+| `visibility` | `default \| public \| private \| confidential` | No | — |
+| `iCalUID` | `string` | No | — |
+| `sequence` | `number` | No | — |
+| `attendees` | `object[]` | No | — |
+| `attendeesOmitted` | `boolean` | No | — |
+| `hangoutLink` | `string` | No | — |
+| `reminders` | `object` | No | — |
+| `anyoneCanAddSelf` | `boolean` | No | — |
+| `guestsCanInviteOthers` | `boolean` | No | — |
+| `guestsCanModify` | `boolean` | No | — |
+| `guestsCanSeeOtherGuests` | `boolean` | No | — |
+| `privateCopy` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  self?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  self?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="originalStartTime full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  organizer?: boolean,
+  self?: boolean,
+  resource?: boolean,
+  optional?: boolean,
+  responseStatus?: needsAction | declined | tentative | accepted,
+  comment?: string,
+  additionalGuests?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  useDefault?: boolean,
+  overrides?: {
+    method?: email | popup,
+    minutes?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`events.delete`
+
+Delete a calendar event [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlecalendar.api.events.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `sendUpdates` | `all \| externalOnly \| none` | No | — |
+| `sendNotifications` | `boolean` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`events.get`
+
+Get a specific calendar event
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecalendar.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `timeZone` | `string` | No | — |
+| `maxAttendees` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `confirmed \| tentative \| cancelled` | No | — |
+| `htmlLink` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `location` | `string` | No | — |
+| `colorId` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `organizer` | `object` | No | — |
+| `start` | `object` | No | — |
+| `end` | `object` | No | — |
+| `endTimeUnspecified` | `boolean` | No | — |
+| `recurrence` | `string[]` | No | — |
+| `recurringEventId` | `string` | No | — |
+| `originalStartTime` | `object` | No | — |
+| `transparency` | `opaque \| transparent` | No | — |
+| `visibility` | `default \| public \| private \| confidential` | No | — |
+| `iCalUID` | `string` | No | — |
+| `sequence` | `number` | No | — |
+| `attendees` | `object[]` | No | — |
+| `attendeesOmitted` | `boolean` | No | — |
+| `hangoutLink` | `string` | No | — |
+| `reminders` | `object` | No | — |
+| `anyoneCanAddSelf` | `boolean` | No | — |
+| `guestsCanInviteOthers` | `boolean` | No | — |
+| `guestsCanModify` | `boolean` | No | — |
+| `guestsCanSeeOtherGuests` | `boolean` | No | — |
+| `privateCopy` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  self?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  self?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="originalStartTime full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  organizer?: boolean,
+  self?: boolean,
+  resource?: boolean,
+  optional?: boolean,
+  responseStatus?: needsAction | declined | tentative | accepted,
+  comment?: string,
+  additionalGuests?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  useDefault?: boolean,
+  overrides?: {
+    method?: email | popup,
+    minutes?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`events.getMany`
+
+List calendar events
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecalendar.api.events.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | — |
+| `timeMin` | `string` | No | — |
+| `timeMax` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `updatedMin` | `string` | No | — |
+| `singleEvents` | `boolean` | No | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `q` | `string` | No | — |
+| `orderBy` | `startTime \| updated` | No | — |
+| `iCalUID` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `showHiddenInvitations` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `accessRole` | `string` | No | — |
+| `defaultReminders` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `nextSyncToken` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="defaultReminders full type">
+
+```ts
+{
+  method?: email | popup,
+  minutes?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  status?: confirmed | tentative | cancelled,
+  htmlLink?: string,
+  created?: string,
+  updated?: string,
+  summary?: string,
+  description?: string,
+  location?: string,
+  colorId?: string,
+  creator?: {
+    id?: string,
+    email?: string,
+    displayName?: string,
+    self?: boolean
+  },
+  organizer?: {
+    id?: string,
+    email?: string,
+    displayName?: string,
+    self?: boolean
+  },
+  start?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  end?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  endTimeUnspecified?: boolean,
+  recurrence?: string[],
+  recurringEventId?: string,
+  originalStartTime?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  transparency?: opaque | transparent,
+  visibility?: default | public | private | confidential,
+  iCalUID?: string,
+  sequence?: number,
+  attendees?: {
+    id?: string,
+    email?: string,
+    displayName?: string,
+    organizer?: boolean,
+    self?: boolean,
+    resource?: boolean,
+    optional?: boolean,
+    responseStatus?: needsAction | declined | tentative | accepted,
+    comment?: string,
+    additionalGuests?: number
+  }[],
+  attendeesOmitted?: boolean,
+  hangoutLink?: string,
+  reminders?: {
+    useDefault?: boolean,
+    overrides?: {
+      method?: email | popup,
+      minutes?: number
+    }[]
+  },
+  anyoneCanAddSelf?: boolean,
+  guestsCanInviteOthers?: boolean,
+  guestsCanModify?: boolean,
+  guestsCanSeeOtherGuests?: boolean,
+  privateCopy?: boolean,
+  locked?: boolean,
+  eventType?: default | outOfOffice | focusTime | workingLocation
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`events.update`
+
+Update an existing calendar event
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecalendar.api.events.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarId` | `string` | No | — |
+| `id` | `string` | Yes | Event ID to update |
+| `event` | `object` | Yes | Updated event fields |
+| `sendUpdates` | `all \| externalOnly \| none` | No | — |
+| `sendNotifications` | `boolean` | No | — |
+| `conferenceDataVersion` | `number` | No | — |
+| `maxAttendees` | `number` | No | — |
+| `supportsAttachments` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  summary?: string,
+  description?: string,
+  location?: string,
+  start?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  end?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  attendees?: {
+    id?: string,
+    email?: string,
+    displayName?: string,
+    organizer?: boolean,
+    self?: boolean,
+    resource?: boolean,
+    optional?: boolean,
+    responseStatus?: needsAction | declined | tentative | accepted,
+    comment?: string,
+    additionalGuests?: number
+  }[],
+  recurrence?: string[],
+  colorId?: string,
+  transparency?: opaque | transparent,
+  visibility?: default | public | private | confidential,
+  eventType?: default | outOfOffice | focusTime | workingLocation,
+  status?: confirmed | tentative | cancelled,
+  reminders?: {
+    useDefault?: boolean,
+    overrides?: {
+      method?: email | popup,
+      minutes?: number
+    }[]
+  },
+  guestsCanModify?: boolean,
+  guestsCanInviteOthers?: boolean,
+  guestsCanSeeOtherGuests?: boolean,
+  anyoneCanAddSelf?: boolean,
+  sequence?: number,
+  originalStartTime?: {
+    date?: string,
+    dateTime?: string,
+    timeZone?: string
+  },
+  recurringEventId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `status` | `confirmed \| tentative \| cancelled` | No | — |
+| `htmlLink` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `description` | `string` | No | — |
+| `location` | `string` | No | — |
+| `colorId` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `organizer` | `object` | No | — |
+| `start` | `object` | No | — |
+| `end` | `object` | No | — |
+| `endTimeUnspecified` | `boolean` | No | — |
+| `recurrence` | `string[]` | No | — |
+| `recurringEventId` | `string` | No | — |
+| `originalStartTime` | `object` | No | — |
+| `transparency` | `opaque \| transparent` | No | — |
+| `visibility` | `default \| public \| private \| confidential` | No | — |
+| `iCalUID` | `string` | No | — |
+| `sequence` | `number` | No | — |
+| `attendees` | `object[]` | No | — |
+| `attendeesOmitted` | `boolean` | No | — |
+| `hangoutLink` | `string` | No | — |
+| `reminders` | `object` | No | — |
+| `anyoneCanAddSelf` | `boolean` | No | — |
+| `guestsCanInviteOthers` | `boolean` | No | — |
+| `guestsCanModify` | `boolean` | No | — |
+| `guestsCanSeeOtherGuests` | `boolean` | No | — |
+| `privateCopy` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  self?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  self?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="originalStartTime full type">
+
+```ts
+{
+  date?: string,
+  dateTime?: string,
+  timeZone?: string
+}
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  displayName?: string,
+  organizer?: boolean,
+  self?: boolean,
+  resource?: boolean,
+  optional?: boolean,
+  responseStatus?: needsAction | declined | tentative | accepted,
+  comment?: string,
+  additionalGuests?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="reminders full type">
+
+```ts
+{
+  useDefault?: boolean,
+  overrides?: {
+    method?: email | popup,
+    minutes?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

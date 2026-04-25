@@ -1,5 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { setupCorsair } from 'corsair';
+import type { AnyCorsairInstance } from 'corsair';
+import { getSchema, listOperations, setupCorsair } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 
@@ -31,12 +32,12 @@ export function buildCorsairToolDefs(
 					.describe("Operation type: 'api' (default), 'webhooks', or 'db'"),
 			},
 			handler: async ({ plugin, type }) => {
-				const result = corsair.list_operations({
+				const result = listOperations(corsair as AnyCorsairInstance, {
 					plugin: plugin as string | undefined,
 					type: type as 'api' | 'webhooks' | 'db' | undefined,
 				});
 				return {
-					content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+					content: [{ type: 'text', text: result }],
 				};
 			},
 		},
@@ -52,7 +53,7 @@ export function buildCorsairToolDefs(
 					),
 			},
 			handler: async ({ path }) => {
-				const result = corsair.get_schema(path as string);
+				const result = getSchema(corsair as AnyCorsairInstance, path as string);
 				return {
 					content: [{ type: 'text', text: result as string }],
 				};

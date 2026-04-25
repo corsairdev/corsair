@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ResendBoundEndpoints, ResendEndpoints } from '..';
 import { makeResendRequest } from '../client';
+import type { ResendBoundEndpoints, ResendEndpoints } from '../index';
 import type { ResendEndpointOutputs } from './types';
 
 export const create: ResendEndpoints['domainsCreate'] = async (ctx, input) => {

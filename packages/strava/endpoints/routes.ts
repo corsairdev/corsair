@@ -1,5 +1,5 @@
-import type { StravaEndpoints } from '..';
 import { makeStravaRequest } from '../client';
+import type { StravaEndpoints } from '../index';
 import type { StravaEndpointOutputs } from './types';
 
 export const get: StravaEndpoints['routesGet'] = async (ctx, input) => {

@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/cli",
-  "version": "0.1.11",
+  "version": "0.1.13",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",

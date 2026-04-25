@@ -1,0 +1,663 @@
+---
+title: API
+description: "API reference for Hacker news: every `hackernews.api.*` operation with input and output types."
+---
+
+Every `hackernews.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Items
+
+### get
+
+`items.get`
+
+Get a HackerNews item by numeric ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `job \| story \| comment \| poll \| pollopt` | Yes | — |
+| `by` | `string` | No | — |
+| `title` | `string` | No | — |
+| `url` | `string` | No | — |
+| `text` | `string` | No | — |
+| `score` | `number` | No | — |
+| `time` | `number` | No | — |
+| `descendants` | `number` | No | — |
+| `parent` | `number` | No | — |
+| `poll` | `number` | No | — |
+| `kids` | `number[]` | No | — |
+| `parts` | `number[]` | No | — |
+| `dead` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### getMaxId
+
+`items.getMaxId`
+
+Get the current maximum item ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.items.getMaxId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `max_item_id` | `number` | Yes | — |
+
+
+
+---
+
+### getWithId
+
+`items.getWithId`
+
+Get a HackerNews item with nested comments
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.items.getWithId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `max_depth` | `number` | No | — |
+| `max_children` | `number` | No | — |
+| `truncate_text` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `boolean` | Yes | — |
+| `item` | `object` | No | — |
+| `error_message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: number,
+  type?: string,
+  author?: string,
+  title?: string | null,
+  url?: string | null,
+  text?: string | null,
+  points?: number | null,
+  parent_id?: number | null,
+  story_id?: number | null,
+  created_at?: string,
+  created_at_i?: number,
+  options?: number[],
+  children?: {
+  }[],
+  children_shown?: number,
+  max_depth_reached?: boolean,
+  children_truncated?: boolean,
+  total_children_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### getFrontpage
+
+`search.getFrontpage`
+
+Get current HackerNews frontpage posts
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.search.getFrontpage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `min_points` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+| `total_hits` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  objectID?: string,
+  title?: string,
+  url?: string | null,
+  author?: string,
+  points?: number | null,
+  story_id?: number | null,
+  created_at?: string,
+  num_comments?: number | null,
+  story_text?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLatest
+
+`search.getLatest`
+
+Get latest HackerNews posts
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.search.getLatest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hits` | `object[]` | Yes | — |
+| `nbHits` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `nbPages` | `number` | Yes | — |
+| `hitsPerPage` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hits full type">
+
+```ts
+{
+  objectID?: string,
+  title?: string,
+  url?: string | null,
+  author?: string,
+  points?: number | null,
+  story_id?: number | null,
+  story_url?: string | null,
+  story_title?: string | null,
+  comment_text?: string | null,
+  story_text?: string | null,
+  created_at?: string,
+  created_at_i?: number,
+  num_comments?: number | null,
+  _tags?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTodays
+
+`search.getTodays`
+
+Get today's HackerNews posts
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.search.getTodays({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `min_points` | `number` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hits` | `object[]` | Yes | — |
+| `nbHits` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `nbPages` | `number` | Yes | — |
+| `hitsPerPage` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hits full type">
+
+```ts
+{
+  objectID?: string,
+  title?: string,
+  url?: string | null,
+  author?: string,
+  points?: number | null,
+  story_id?: number | null,
+  created_at?: string,
+  num_comments?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts
+
+`search.posts`
+
+Full-text search HackerNews posts
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.search.posts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `tags` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hits` | `object[]` | Yes | — |
+| `nbHits` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `nbPages` | `number` | Yes | — |
+| `hitsPerPage` | `number` | Yes | — |
+| `query` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hits full type">
+
+```ts
+{
+  objectID?: string,
+  title?: string,
+  url?: string | null,
+  author?: string,
+  points?: number | null,
+  story_id?: number | null,
+  story_url?: string | null,
+  story_title?: string | null,
+  comment_text?: string | null,
+  story_text?: string | null,
+  created_at?: string,
+  created_at_i?: number,
+  num_comments?: number | null,
+  _tags?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stories
+
+### getAsk
+
+`stories.getAsk`
+
+Get Ask HN story IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.stories.getAsk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `pretty` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_ids` | `number[]` | Yes | — |
+
+
+
+---
+
+### getBest
+
+`stories.getBest`
+
+Get best HackerNews story IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.stories.getBest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `pretty` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_ids` | `number[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+### getJobs
+
+`stories.getJobs`
+
+Get HackerNews job story IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.stories.getJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `pretty` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_story_ids` | `number[]` | Yes | — |
+
+
+
+---
+
+### getNew
+
+`stories.getNew`
+
+Get newest HackerNews story IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.stories.getNew({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `pretty` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_ids` | `number[]` | Yes | — |
+
+
+
+---
+
+### getShow
+
+`stories.getShow`
+
+Get Show HN story IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.stories.getShow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `pretty` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_ids` | `number[]` | Yes | — |
+
+
+
+---
+
+### getTop
+
+`stories.getTop`
+
+Get top HackerNews story IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.stories.getTop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `pretty` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `story_ids` | `number[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+## Updates
+
+### get
+
+`updates.get`
+
+Get recently changed HackerNews items and profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.updates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `print` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `number[]` | Yes | — |
+| `profiles` | `string[]` | Yes | — |
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a HackerNews user profile via Algolia
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `karma` | `number` | Yes | — |
+| `about` | `string` | No | — |
+
+
+
+---
+
+### getByUsername
+
+`users.getByUsername`
+
+Get a HackerNews user profile via Firebase
+
+**Risk:** `read`
+
+```ts
+await corsair.hackernews.api.users.getByUsername({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `karma` | `number` | Yes | — |
+| `created` | `number` | Yes | — |
+| `about` | `string` | No | — |
+| `submitted` | `number[]` | No | — |
+
+
+
+---
+

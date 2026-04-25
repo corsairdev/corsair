@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SpotifyEndpoints } from '..';
 import { makeAuthenticatedSpotifyRequest } from '../client';
+import type { SpotifyEndpoints } from '../index';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const getLikedTracks: SpotifyEndpoints['libraryGetLikedTracks'] = async (

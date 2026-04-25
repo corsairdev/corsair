@@ -199,7 +199,9 @@ describe('OpenWeatherMap API Type Tests', () => {
 			);
 
 			OpenWeatherMapEndpointOutputSchemas.daySummary.parse(response);
-			expect(response.temperature.max).toBeGreaterThanOrEqual(response.temperature.min);
+			expect(response.temperature.max).toBeGreaterThanOrEqual(
+				response.temperature.min,
+			);
 		});
 	});
 

@@ -1,0 +1,204 @@
+---
+title: Database
+description: "Sharepoint local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Sharepoint plugin syncs data locally. Use `corsair.sharepoint.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Files
+
+Path: `sharepoint.db.files.search`
+
+```ts
+const rows = await corsair.sharepoint.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `serverRelativeUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeLastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `length` | `string` | equals, contains, startsWith, endsWith, in |
+| `majorVersion` | `number` | equals, gt, gte, lt, lte, in |
+| `minorVersion` | `number` | equals, gt, gte, lt, lte, in |
+| `checkOutType` | `number` | equals, gt, gte, lt, lte, in |
+| `eTag` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `modifiedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Folders
+
+Path: `sharepoint.db.folders.search`
+
+```ts
+const rows = await corsair.sharepoint.db.folders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `serverRelativeUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `itemCount` | `number` | equals, gt, gte, lt, lte, in |
+| `timeCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `timeLastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `modifiedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Items
+
+Path: `sharepoint.db.items.search`
+
+```ts
+const rows = await corsair.sharepoint.db.items.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `listId` | `string` | equals, contains, startsWith, endsWith, in |
+| `listTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorId` | `number` | equals, gt, gte, lt, lte, in |
+| `editorId` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `fileSystemObjectType` | `number` | equals, gt, gte, lt, lte, in |
+| `serverRedirectedEmbedUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `modifiedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Lists
+
+Path: `sharepoint.db.lists.search`
+
+```ts
+const rows = await corsair.sharepoint.db.lists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `itemCount` | `number` | equals, gt, gte, lt, lte, in |
+| `baseType` | `number` | equals, gt, gte, lt, lte, in |
+| `baseTemplate` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastItemModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastItemUserModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `hidden` | `boolean` | equals |
+| `serverRelativeUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `modifiedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sites
+
+Path: `sharepoint.db.sites.search`
+
+```ts
+const rows = await corsair.sharepoint.db.sites.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `serverRelativeUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastItemUserModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `webTemplate` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `sharepoint.db.users.search`
+
+```ts
+const rows = await corsair.sharepoint.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `loginName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `principalType` | `number` | equals, gt, gte, lt, lte, in |
+| `isSiteAdmin` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

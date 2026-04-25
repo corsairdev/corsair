@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "corsair": {
-      "command": "pnpm",
-      "args": ["tsx", "src/scripts/mcp-server.ts"],
-      "cwd": "/Users/devjain/Projects/corsair/main/corsair/demo/testing"
-    }
-  }
-}

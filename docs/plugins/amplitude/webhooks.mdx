@@ -1,0 +1,550 @@
+---
+title: Webhooks
+description: "Amplitude incoming webhooks: event paths, payloads, and response data."
+---
+
+The Amplitude plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/amplitude/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `annotations`
+  - `created` (`annotations.created`)
+  - `updated` (`annotations.updated`)
+- `cohorts`
+  - `computed` (`cohorts.computed`)
+- `events`
+  - `identify` (`events.identify`)
+  - `track` (`events.track`)
+- `experiments`
+  - `exposure` (`experiments.exposure`)
+- `monitors`
+  - `alert` (`monitors.alert`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Annotations
+
+### Created
+
+`annotations.created`
+
+A new chart annotation was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `annotation.created` | Yes | — |
+| `annotation_id` | `number` | Yes | — |
+| `date` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `details` | `string` | No | — |
+| `app_id` | `number` | No | — |
+| `source` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: annotation.created,
+  annotation_id: number,
+  date: string,
+  label: string,
+  details?: string,
+  app_id?: number,
+  source?: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+amplitude({
+    webhookHooks: {
+        annotations: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`annotations.updated`
+
+A chart annotation was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `annotation.updated` | Yes | — |
+| `annotation_id` | `number` | Yes | — |
+| `date` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `details` | `string` | No | — |
+| `app_id` | `number` | No | — |
+| `source` | `string` | No | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: annotation.updated,
+  annotation_id: number,
+  date: string,
+  label: string,
+  details?: string,
+  app_id?: number,
+  source?: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+amplitude({
+    webhookHooks: {
+        annotations: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Cohorts
+
+### Computed
+
+`cohorts.computed`
+
+A cohort finished computing
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `cohort.computed` | Yes | — |
+| `cohort_id` | `string` | Yes | — |
+| `cohort_name` | `string` | Yes | — |
+| `app_id` | `number` | No | — |
+| `size` | `number` | Yes | — |
+| `computed_at` | `string` | Yes | — |
+| `published` | `boolean` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: cohort.computed,
+  cohort_id: string,
+  cohort_name: string,
+  app_id?: number,
+  size: number,
+  computed_at: string,
+  published?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+amplitude({
+    webhookHooks: {
+        cohorts: {
+            computed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Events
+
+### Identify
+
+`events.identify`
+
+A user identify call was received by Amplitude
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `event.identify` | Yes | — |
+| `user_id` | `string` | No | — |
+| `device_id` | `string` | No | — |
+| `time` | `number` | Yes | — |
+| `user_properties` | `object` | No | — |
+| `app_version` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `insert_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user_properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: event.identify,
+  user_id?: string,
+  device_id?: string,
+  time: number,
+  user_properties?: {
+  },
+  app_version?: string,
+  platform?: string,
+  insert_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+amplitude({
+    webhookHooks: {
+        events: {
+            identify: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Track
+
+`events.track`
+
+An event was tracked by Amplitude
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `event.track` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `event_type` | `string` | Yes | — |
+| `user_id` | `string` | No | — |
+| `device_id` | `string` | No | — |
+| `time` | `number` | Yes | — |
+| `event_properties` | `object` | No | — |
+| `user_properties` | `object` | No | — |
+| `app_version` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `session_id` | `number` | No | — |
+| `insert_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="event_properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="user_properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: event.track,
+  event_id: string,
+  event_type: string,
+  user_id?: string,
+  device_id?: string,
+  time: number,
+  event_properties?: {
+  },
+  user_properties?: {
+  },
+  app_version?: string,
+  platform?: string,
+  session_id?: number,
+  insert_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+amplitude({
+    webhookHooks: {
+        events: {
+            track: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Experiments
+
+### Exposure
+
+`experiments.exposure`
+
+An experiment exposure was tracked for a user
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `experiment.exposure` | Yes | — |
+| `flag_key` | `string` | Yes | — |
+| `variant` | `string` | Yes | — |
+| `user` | `object` | Yes | — |
+| `time` | `number` | Yes | — |
+| `experiment_key` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  user_id?: string,
+  device_id?: string,
+  user_properties?: {
+  },
+  country?: string,
+  city?: string,
+  region?: string,
+  language?: string,
+  platform?: string,
+  os?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  deployment_name?: string,
+  flag_version?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: experiment.exposure,
+  flag_key: string,
+  variant: string,
+  user: {
+    user_id?: string,
+    device_id?: string,
+    user_properties?: {
+    },
+    country?: string,
+    city?: string,
+    region?: string,
+    language?: string,
+    platform?: string,
+    os?: string
+  },
+  time: number,
+  experiment_key?: string,
+  metadata?: {
+    deployment_name?: string,
+    flag_version?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+amplitude({
+    webhookHooks: {
+        experiments: {
+            exposure: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Monitors
+
+### Alert
+
+`monitors.alert`
+
+An alert monitor threshold was triggered
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `monitor.alert` | Yes | — |
+| `monitor_id` | `string` | Yes | — |
+| `monitor_name` | `string` | Yes | — |
+| `alert_type` | `string` | Yes | — |
+| `condition` | `string` | No | — |
+| `value` | `number` | No | — |
+| `threshold` | `number` | No | — |
+| `triggered_at` | `string` | Yes | — |
+| `chart_id` | `string` | No | — |
+| `dashboard_id` | `number` | No | — |
+| `recipients` | `string[]` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: monitor.alert,
+  monitor_id: string,
+  monitor_name: string,
+  alert_type: string,
+  condition?: string,
+  value?: number,
+  threshold?: number,
+  triggered_at: string,
+  chart_id?: string,
+  dashboard_id?: number,
+  recipients?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+amplitude({
+    webhookHooks: {
+        monitors: {
+            alert: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

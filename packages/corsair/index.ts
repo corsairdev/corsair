@@ -1,4 +1,10 @@
 export { createCorsair } from './core';
+export {
+	type AnyCorsairInstance,
+	getSchema,
+	type ListOperationsOptions,
+	listOperations,
+} from './inspect';
 export type { PermissionExecuteResult } from './permissions';
 export { executePermission } from './permissions';
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';

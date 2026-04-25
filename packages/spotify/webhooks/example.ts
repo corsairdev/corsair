@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SpotifyWebhooks } from '..';
+import type { SpotifyWebhooks } from '../index';
 import { createSpotifyMatch, verifySpotifyWebhookSignature } from './types';
 
 export const example: SpotifyWebhooks['example'] = {

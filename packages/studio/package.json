@@ -1,0 +1,46 @@
+{
+  "name": "@corsair-dev/studio",
+  "version": "0.1.1",
+  "description": "Local dashboard for inspecting and configuring your Corsair instance",
+  "type": "module",
+  "exports": {
+    "./server": {
+      "dev-source": "./src/server/index.ts",
+      "types": "./dist/src/server/index.d.ts",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "scripts": {
+    "build": "pnpm run build:web && pnpm run build:server",
+    "build:web": "vite build",
+    "build:server": "tsup && tsc -p tsconfig.build.json",
+    "dev:web": "vite",
+    "dev:server": "tsx src/server/dev-entry.ts",
+    "typecheck": "tsc --noEmit",
+    "build:watch": "tsup --watch"
+  },
+  "dependencies": {
+    "@corsair-dev/cli": "workspace:*",
+    "corsair": "workspace:*",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.0",
+    "tsup": "^8.0.1",
+    "tsx": "^4.20.6",
+    "vite": "^6.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

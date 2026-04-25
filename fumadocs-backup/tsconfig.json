@@ -14,6 +14,7 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
+      "@/content/*": ["../docs/*"],
       "@/*": ["./*"]
     },
     "incremental": true,

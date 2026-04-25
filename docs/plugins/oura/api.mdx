@@ -1,0 +1,235 @@
+---
+title: API
+description: "API reference for Oura: every `oura.api.*` operation with input and output types."
+---
+
+Every `oura.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Profile
+
+### get
+
+`profile.get`
+
+Get the authenticated user Oura profile and personal info
+
+**Risk:** `read`
+
+```ts
+await corsair.oura.api.profile.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `age` | `number` | No | — |
+| `weight` | `number` | No | — |
+| `height` | `number` | No | — |
+| `biological_sex` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+## Summary
+
+### getActivity
+
+`summary.getActivity`
+
+Get daily activity summary data for a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.oura.api.summary.getActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  class_5_min?: string | null,
+  score?: number | null,
+  active_calories?: number,
+  average_met_minutes?: number,
+  contributors?: {
+    meet_daily_targets?: number | null,
+    move_every_hour?: number | null,
+    recovery_time?: number | null,
+    stay_active?: number | null,
+    training_frequency?: number | null,
+    training_volume?: number | null
+  },
+  equivalent_walking_distance?: number,
+  high_activity_met_minutes?: number,
+  high_activity_time?: number,
+  inactivity_alerts?: number,
+  low_activity_met_minutes?: number,
+  low_activity_time?: number,
+  medium_activity_met_minutes?: number,
+  medium_activity_time?: number,
+  meters_to_target?: number,
+  non_wear_time?: number,
+  resting_time?: number,
+  sedentary_met_minutes?: number,
+  sedentary_time?: number,
+  steps?: number,
+  target_calories?: number,
+  target_meters?: number,
+  total_calories?: number,
+  day: string,
+  timestamp: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReadiness
+
+`summary.getReadiness`
+
+Get daily readiness summary data for a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.oura.api.summary.getReadiness({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  contributors?: {
+    activity_balance?: number | null,
+    body_temperature?: number | null,
+    hrv_balance?: number | null,
+    previous_day_activity?: number | null,
+    previous_night?: number | null,
+    recovery_index?: number | null,
+    resting_heart_rate?: number | null,
+    sleep_balance?: number | null
+  },
+  day: string,
+  score?: number | null,
+  temperature_deviation?: number | null,
+  temperature_trend_deviation?: number | null,
+  timestamp: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSleep
+
+`summary.getSleep`
+
+Get daily sleep summary data for a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.oura.api.summary.getSleep({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `next_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `next_token` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  contributors?: {
+    deep_sleep?: number | null,
+    efficiency?: number | null,
+    latency?: number | null,
+    rem_sleep?: number | null,
+    restfulness?: number | null,
+    timing?: number | null,
+    total_sleep?: number | null
+  },
+  day: string,
+  score?: number | null,
+  timestamp: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { PostHogEndpoints } from '..';
 import { makePostHogRequest } from '../client';
+import type { PostHogEndpoints } from '../index';
 import type { PostHogEndpointOutputs } from './types';
 
 export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (

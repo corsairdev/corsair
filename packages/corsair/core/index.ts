@@ -3,7 +3,6 @@ import { createCorsairDatabase } from '../db/kysely/database';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
-import { buildInspectMethods } from './inspect';
 import { buildPermissionsNamespace } from './permissions';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
 
@@ -93,17 +92,19 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
 						);
 					}
-					return buildCorsairClient(config.plugins, {
+					const client = buildCorsairClient(config.plugins, {
 						database: resolvedDatabase,
 						tenantId,
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
 						approvalConfig: config.approval,
 					});
+					return Object.assign(client as object, {
+						[CORSAIR_INTERNAL]: internalConfig,
+					}) as unknown as typeof client;
 				},
 				keys: integrationKeys,
 				permissions,
-				...buildInspectMethods(config.plugins),
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
 		);
@@ -191,7 +192,19 @@ export type {
 	RetryStrategy,
 } from './errors';
 // Inspection types
-export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
+export type {
+	DocSchemaFieldRow,
+	DocSchemaShape,
+	DocsApiEndpoint,
+	DocsDbEntity,
+	DocsDbFilterField,
+	DocsWebhook,
+	EndpointSchemaResult,
+	IntrospectPluginForDocsResult,
+	ListOperationsOptions,
+	PluginDocsIntrospection,
+} from './inspect';
+export { introspectPluginForDocs } from './inspect';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,

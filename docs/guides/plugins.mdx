@@ -1,0 +1,51 @@
+---
+title: Plugins
+description: Install an integration package, register it on your Corsair instance, and browse reference docs for each provider.
+---
+
+Corsair integrations ship as **npm packages** under `@corsair-dev/<plugin>`. Each plugin adds typed API calls, optional webhooks, and a local database layer for that provider.
+
+## Install the package
+
+Add the core SDK and the plugins you need alongside your other dependencies:
+
+```bash
+npm install corsair @corsair-dev/slack @corsair-dev/linear
+```
+
+Use the package name that matches the integration (for example `@corsair-dev/gmail`, `@corsair-dev/github`). Every published plugin follows the same `@corsair-dev/<name>` pattern.
+
+## Add plugins to your Corsair instance
+
+Import `createCorsair` from `corsair` and each plugin’s factory from its package. Pass the plugin functions into `plugins`:
+
+```ts
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+import { linear } from '@corsair-dev/linear';
+
+export const corsair = createCorsair({
+  plugins: [slack(), linear()],
+  database: db,
+  kek: process.env.CORSAIR_KEK!,
+  multiTenancy: false,
+});
+```
+
+Then configure credentials for each integration (CLI, env, or your app’s setup flow). For a full walkthrough—database migration, `CORSAIR_KEK`, and first run—see [Installation](/getting-started/installation).
+
+## Find a specific integration
+
+Use the sidebar under **Plugins** to open an integration’s docs: overview, credentials, API reference, webhooks, and database where applicable.
+
+## Need something that isn’t listed?
+
+If there is no package for the API you need, you can scaffold and ship your own plugin in the Corsair repo:
+
+<CardGroup cols={1}>
+  <Card title="Build a Plugin" href="/guides/create-your-own-plugin">
+    Use the generator, wire auth and endpoints, and publish alongside your app.
+  </Card>
+</CardGroup>
+
+For storing and rotating credentials across plugins, see [Plugin credentials](/guides/plugin-credentials).

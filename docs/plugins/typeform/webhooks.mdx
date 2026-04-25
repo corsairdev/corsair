@@ -1,0 +1,154 @@
+---
+title: Webhooks
+description: "Typeform incoming webhooks: event paths, payloads, and response data."
+---
+
+The Typeform plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/typeform/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `forms`
+  - `formResponse` (`forms.formResponse`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Forms
+
+### Form Response
+
+`forms.formResponse`
+
+A form was submitted — Typeform delivers the full response payload
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | — |
+| `event_type` | `string` | Yes | — |
+| `form_response` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="form_response full type">
+
+```ts
+{
+  form_id: string,
+  token: string,
+  submitted_at: string,
+  landed_at: string,
+  hidden?: {
+  },
+  calculated?: {
+    score?: number
+  },
+  definition?: {
+    id?: string,
+    title?: string,
+    fields?: {
+    }[]
+  },
+  answers?: {
+  }[],
+  variables?: {
+    key?: string,
+    type?: string,
+    text?: string,
+    number?: number
+  }[],
+  metadata?: {
+    browser?: string,
+    referer?: string,
+    platform?: string,
+    network_id?: string,
+    user_agent?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_id: string,
+  event_type: string,
+  form_response: {
+    form_id: string,
+    token: string,
+    submitted_at: string,
+    landed_at: string,
+    hidden?: {
+    },
+    calculated?: {
+      score?: number
+    },
+    definition?: {
+      id?: string,
+      title?: string,
+      fields?: {
+      }[]
+    },
+    answers?: {
+    }[],
+    variables?: {
+      key?: string,
+      type?: string,
+      text?: string,
+      number?: number
+    }[],
+    metadata?: {
+      browser?: string,
+      referer?: string,
+      platform?: string,
+      network_id?: string,
+      user_agent?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+typeform({
+    webhookHooks: {
+        forms: {
+            formResponse: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

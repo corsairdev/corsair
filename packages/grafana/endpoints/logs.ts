@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GrafanaContext, GrafanaEndpoints } from '..';
 import { makeGrafanaRawRequest } from '../client';
+import type { GrafanaContext, GrafanaEndpoints } from '../index';
 import type { GrafanaEndpointOutputs, LogsCreateOtlpInput } from './types';
 
 export const createOtlp: GrafanaEndpoints['logsCreateOtlp'] = async (

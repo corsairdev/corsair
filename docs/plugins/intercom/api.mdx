@@ -1,0 +1,2925 @@
+---
+title: API
+description: "API reference for Intercom: every `intercom.api.*` operation with input and output types."
+---
+
+Every `intercom.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Admins
+
+### get
+
+`admins.get`
+
+Retrieve a single admin
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.admins.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `away_mode_enabled` | `boolean` | No | — |
+| `away_mode_reassign` | `boolean` | No | — |
+| `has_inbox_seat` | `boolean` | No | — |
+| `team_ids` | `number[]` | No | — |
+| `avatar` | `string` | No | — |
+
+
+
+---
+
+### identify
+
+`admins.identify`
+
+Identify the currently authorised admin
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.admins.identify({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `away_mode_enabled` | `boolean` | No | — |
+| `away_mode_reassign` | `boolean` | No | — |
+| `has_inbox_seat` | `boolean` | No | — |
+| `team_ids` | `number[]` | No | — |
+| `avatar` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`admins.list`
+
+List all admins in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.admins.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `admins` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="admins full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  name?: string,
+  email?: string,
+  away_mode_enabled?: boolean,
+  away_mode_reassign?: boolean,
+  has_inbox_seat?: boolean,
+  team_ids?: number[],
+  avatar?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listActivityLogs
+
+`admins.listActivityLogs`
+
+List all admin activity logs
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.admins.listActivityLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_at_after` | `string` | Yes | — |
+| `created_at_before` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `pages` | `object` | No | — |
+| `activity_logs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="activity_logs full type">
+
+```ts
+{
+  id: string,
+  performed_by?: {
+    type?: string,
+    id?: string,
+    email?: string
+  },
+  metadata?: {
+  },
+  created_at?: number,
+  activity_type?: string,
+  activity_description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setAway
+
+`admins.setAway`
+
+Set an admin as away
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.admins.setAway({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `away_mode_enabled` | `boolean` | Yes | — |
+| `away_mode_reassign` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `away_mode_enabled` | `boolean` | No | — |
+| `away_mode_reassign` | `boolean` | No | — |
+| `has_inbox_seat` | `boolean` | No | — |
+| `team_ids` | `number[]` | No | — |
+| `avatar` | `string` | No | — |
+
+
+
+---
+
+## Articles
+
+### create
+
+`articles.create`
+
+Create a new article
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.articles.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `author_id` | `number` | Yes | — |
+| `body` | `string` | No | — |
+| `description` | `string` | No | — |
+| `state` | `draft \| published` | No | — |
+| `parent_id` | `number` | No | — |
+| `parent_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `body` | `string` | No | — |
+| `author_id` | `number` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`articles.delete`
+
+Delete an article [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.intercom.api.articles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`articles.get`
+
+Retrieve a single article
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.articles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `body` | `string` | No | — |
+| `author_id` | `number` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`articles.list`
+
+List all articles
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.articles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `state` | `draft \| published` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  title?: string,
+  description?: string | null,
+  body?: string | null,
+  author_id?: number,
+  state?: string,
+  created_at?: number,
+  updated_at?: number,
+  url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`articles.search`
+
+Search for articles
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.articles.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phrase` | `string` | Yes | — |
+| `help_center_id` | `number` | No | — |
+| `state` | `draft \| published` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  title?: string,
+  description?: string | null,
+  body?: string | null,
+  author_id?: number,
+  state?: string,
+  created_at?: number,
+  updated_at?: number,
+  url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`articles.update`
+
+Update an existing article
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.articles.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `author_id` | `number` | No | — |
+| `body` | `string` | No | — |
+| `description` | `string` | No | — |
+| `state` | `draft \| published` | No | — |
+| `parent_id` | `number` | No | — |
+| `parent_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `body` | `string` | No | — |
+| `author_id` | `number` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+## Collections
+
+### create
+
+`collections.create`
+
+Create a new collection
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.collections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `help_center_id` | `number` | No | — |
+| `parent_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `url` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `order` | `number` | No | — |
+| `help_center_id` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`collections.delete`
+
+Delete a collection [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.intercom.api.collections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`collections.get`
+
+Retrieve a single collection
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.collections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `url` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `order` | `number` | No | — |
+| `help_center_id` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List all collections
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.collections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `help_center_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  name?: string,
+  description?: string | null,
+  created_at?: number,
+  updated_at?: number,
+  url?: string | null,
+  icon?: string | null,
+  order?: number,
+  help_center_id?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`collections.update`
+
+Update a collection
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.collections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `url` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `order` | `number` | No | — |
+| `help_center_id` | `number` | No | — |
+
+
+
+---
+
+## Companies
+
+### createOrUpdate
+
+`companies.createOrUpdate`
+
+Create or update a company
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.companies.createOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `remote_created_at` | `number` | No | — |
+| `plan` | `string` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `monthly_spend` | `number` | No | — |
+| `custom_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `company_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `monthly_spend` | `number` | No | — |
+| `session_count` | `number` | No | — |
+| `user_count` | `number` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `industry` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`companies.delete`
+
+Delete a company [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.intercom.api.companies.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`companies.get`
+
+Retrieve a company by Intercom ID
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.companies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `company_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `monthly_spend` | `number` | No | — |
+| `session_count` | `number` | No | — |
+| `user_count` | `number` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `industry` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List all companies
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.companies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `order` | `string` | No | — |
+| `tag_id` | `string` | No | — |
+| `segment_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  company_id?: string,
+  name?: string,
+  created_at?: number,
+  updated_at?: number,
+  monthly_spend?: number,
+  session_count?: number,
+  user_count?: number,
+  size?: number | null,
+  website?: string | null,
+  industry?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttachedContacts
+
+`companies.listAttachedContacts`
+
+List contacts attached to a company
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.companies.listAttachedContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  external_id?: string | null,
+  user_id?: string | null,
+  email?: string,
+  name?: string | null,
+  phone?: string | null,
+  role?: string,
+  created_at?: number,
+  updated_at?: number,
+  last_seen_at?: number | null,
+  unsubscribed_from_emails?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttachedSegments
+
+`companies.listAttachedSegments`
+
+List segments attached to a company
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.companies.listAttachedSegments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  name?: string,
+  created_at?: number,
+  updated_at?: number,
+  person_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`companies.retrieve`
+
+Retrieve a company by company_id or name
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.companies.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `company_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `monthly_spend` | `number` | No | — |
+| `session_count` | `number` | No | — |
+| `user_count` | `number` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `industry` | `string` | No | — |
+
+
+
+---
+
+### scroll
+
+`companies.scroll`
+
+Scroll over all companies for large datasets
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.companies.scroll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scroll_param` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `scroll_param` | `string` | No | — |
+| `pages` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  company_id?: string,
+  name?: string,
+  created_at?: number,
+  updated_at?: number,
+  monthly_spend?: number,
+  session_count?: number,
+  user_count?: number,
+  size?: number | null,
+  website?: string | null,
+  industry?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### addSubscription
+
+`contacts.addSubscription`
+
+Add a subscription to a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.addSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `consent_type` | `opt_in \| opt_out` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `consent_type` | `string` | No | — |
+| `default_translation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="default_translation full type">
+
+```ts
+{
+  name?: string,
+  description?: string,
+  locale?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addTag
+
+`contacts.addTag`
+
+Add a tag to a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.addTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `tag_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### attachToCompany
+
+`contacts.attachToCompany`
+
+Attach a contact to a company
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.attachToCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `company_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `company_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `monthly_spend` | `number` | No | — |
+| `session_count` | `number` | No | — |
+| `user_count` | `number` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `industry` | `string` | No | — |
+
+
+
+---
+
+### createNote
+
+`contacts.createNote`
+
+Create a note for a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.createNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `admin_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `author` | `object` | No | — |
+| `contact` | `object` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="contact full type">
+
+```ts
+{
+  type?: string,
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.intercom.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### detachFromCompany
+
+`contacts.detachFromCompany`
+
+Detach a contact from a company
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.detachFromCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `company_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `company_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `monthly_spend` | `number` | No | — |
+| `session_count` | `number` | No | — |
+| `user_count` | `number` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `industry` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a single contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `external_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `role` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `last_seen_at` | `number` | No | — |
+| `unsubscribed_from_emails` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List all contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  external_id?: string | null,
+  user_id?: string | null,
+  email?: string,
+  name?: string | null,
+  phone?: string | null,
+  role?: string,
+  created_at?: number,
+  updated_at?: number,
+  last_seen_at?: number | null,
+  unsubscribed_from_emails?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttachedCompanies
+
+`contacts.listAttachedCompanies`
+
+List companies attached to a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.contacts.listAttachedCompanies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  company_id?: string,
+  name?: string,
+  created_at?: number,
+  updated_at?: number,
+  monthly_spend?: number,
+  session_count?: number,
+  user_count?: number,
+  size?: number | null,
+  website?: string | null,
+  industry?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAttachedSegments
+
+`contacts.listAttachedSegments`
+
+List segments attached to a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.contacts.listAttachedSegments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  name?: string,
+  created_at?: number,
+  updated_at?: number,
+  person_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listNotes
+
+`contacts.listNotes`
+
+List all notes for a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.contacts.listNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  body?: string,
+  author?: {
+    type?: string,
+    id?: string,
+    name?: string
+  },
+  contact?: {
+    type?: string,
+    id?: string
+  },
+  created_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubscriptions
+
+`contacts.listSubscriptions`
+
+List subscription types for a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.contacts.listSubscriptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  state?: string,
+  consent_type?: string,
+  default_translation?: {
+    name?: string,
+    description?: string,
+    locale?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTags
+
+`contacts.listTags`
+
+List all tags attached to a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.contacts.listTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`contacts.merge`
+
+Merge a lead into a user contact
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.merge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `external_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `role` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `last_seen_at` | `number` | No | — |
+| `unsubscribed_from_emails` | `boolean` | No | — |
+
+
+
+---
+
+### removeSubscription
+
+`contacts.removeSubscription`
+
+Remove a subscription from a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.removeSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `subscription_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `consent_type` | `string` | No | — |
+| `default_translation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="default_translation full type">
+
+```ts
+{
+  name?: string,
+  description?: string,
+  locale?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTag
+
+`contacts.removeTag`
+
+Remove a tag from a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.removeTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `tag_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `role` | `user \| lead` | No | — |
+| `external_id` | `string` | No | — |
+| `unsubscribed_from_emails` | `boolean` | No | — |
+| `custom_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `external_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `role` | `string` | No | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `last_seen_at` | `number` | No | — |
+| `unsubscribed_from_emails` | `boolean` | No | — |
+
+
+
+---
+
+## Conversations
+
+### assign
+
+`conversations.assign`
+
+Assign a conversation to an admin or team
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.conversations.assign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `admin_id` | `string` | Yes | — |
+| `assignee_id` | `string` | Yes | — |
+| `type` | `admin \| team` | No | — |
+| `message_type` | `assignment` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `waiting_since` | `number` | No | — |
+| `snoozed_until` | `number` | No | — |
+| `state` | `string` | No | — |
+| `read` | `boolean` | No | — |
+| `priority` | `string` | No | — |
+| `assignee` | `object` | No | — |
+| `source` | `object` | No | — |
+| `conversation_parts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  type?: string,
+  id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  subject?: string | null,
+  body?: string | null,
+  author?: {
+    type?: string,
+    id?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="conversation_parts full type">
+
+```ts
+{
+  type?: string,
+  conversation_parts?: {
+    type?: string,
+    id?: string,
+    part_type?: string,
+    body?: string | null,
+    created_at?: number,
+    updated_at?: number,
+    author?: {
+      type?: string,
+      id?: string,
+      name?: string | null
+    }
+  }[],
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### close
+
+`conversations.close`
+
+Close a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.conversations.close({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `admin_id` | `string` | Yes | — |
+| `message_type` | `close` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `waiting_since` | `number` | No | — |
+| `snoozed_until` | `number` | No | — |
+| `state` | `string` | No | — |
+| `read` | `boolean` | No | — |
+| `priority` | `string` | No | — |
+| `assignee` | `object` | No | — |
+| `source` | `object` | No | — |
+| `conversation_parts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  type?: string,
+  id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  subject?: string | null,
+  body?: string | null,
+  author?: {
+    type?: string,
+    id?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="conversation_parts full type">
+
+```ts
+{
+  type?: string,
+  conversation_parts?: {
+    type?: string,
+    id?: string,
+    part_type?: string,
+    body?: string | null,
+    created_at?: number,
+    updated_at?: number,
+    author?: {
+      type?: string,
+      id?: string,
+      name?: string | null
+    }
+  }[],
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`conversations.create`
+
+Create a new conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.conversations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `object` | Yes | — |
+| `body` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  type: user | lead | contact,
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `waiting_since` | `number` | No | — |
+| `snoozed_until` | `number` | No | — |
+| `state` | `string` | No | — |
+| `read` | `boolean` | No | — |
+| `priority` | `string` | No | — |
+| `assignee` | `object` | No | — |
+| `source` | `object` | No | — |
+| `conversation_parts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  type?: string,
+  id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  subject?: string | null,
+  body?: string | null,
+  author?: {
+    type?: string,
+    id?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="conversation_parts full type">
+
+```ts
+{
+  type?: string,
+  conversation_parts?: {
+    type?: string,
+    id?: string,
+    part_type?: string,
+    body?: string | null,
+    created_at?: number,
+    updated_at?: number,
+    author?: {
+      type?: string,
+      id?: string,
+      name?: string | null
+    }
+  }[],
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`conversations.get`
+
+Get a conversation by ID with all messages and details
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.conversations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `display_as` | `plaintext \| html` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `waiting_since` | `number` | No | — |
+| `snoozed_until` | `number` | No | — |
+| `state` | `string` | No | — |
+| `read` | `boolean` | No | — |
+| `priority` | `string` | No | — |
+| `assignee` | `object` | No | — |
+| `source` | `object` | No | — |
+| `conversation_parts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  type?: string,
+  id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  subject?: string | null,
+  body?: string | null,
+  author?: {
+    type?: string,
+    id?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="conversation_parts full type">
+
+```ts
+{
+  type?: string,
+  conversation_parts?: {
+    type?: string,
+    id?: string,
+    part_type?: string,
+    body?: string | null,
+    created_at?: number,
+    updated_at?: number,
+    author?: {
+      type?: string,
+      id?: string,
+      name?: string | null
+    }
+  }[],
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List conversations with filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `starting_after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+| `conversations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="conversations full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  created_at?: number,
+  updated_at?: number,
+  waiting_since?: number | null,
+  snoozed_until?: number | null,
+  state?: string,
+  read?: boolean,
+  priority?: string,
+  assignee?: {
+    type?: string,
+    id?: number | null
+  },
+  source?: {
+    type?: string,
+    id?: string,
+    subject?: string | null,
+    body?: string | null,
+    author?: {
+      type?: string,
+      id?: string
+    }
+  },
+  conversation_parts?: {
+    type?: string,
+    conversation_parts?: {
+      type?: string,
+      id?: string,
+      part_type?: string,
+      body?: string | null,
+      created_at?: number,
+      updated_at?: number,
+      author?: {
+        type?: string,
+        id?: string,
+        name?: string | null
+      }
+    }[],
+    total_count?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reopen
+
+`conversations.reopen`
+
+Reopen a closed conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.conversations.reopen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `admin_id` | `string` | Yes | — |
+| `message_type` | `open` | No | — |
+| `body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `waiting_since` | `number` | No | — |
+| `snoozed_until` | `number` | No | — |
+| `state` | `string` | No | — |
+| `read` | `boolean` | No | — |
+| `priority` | `string` | No | — |
+| `assignee` | `object` | No | — |
+| `source` | `object` | No | — |
+| `conversation_parts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  type?: string,
+  id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  subject?: string | null,
+  body?: string | null,
+  author?: {
+    type?: string,
+    id?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="conversation_parts full type">
+
+```ts
+{
+  type?: string,
+  conversation_parts?: {
+    type?: string,
+    id?: string,
+    part_type?: string,
+    body?: string | null,
+    created_at?: number,
+    updated_at?: number,
+    author?: {
+      type?: string,
+      id?: string,
+      name?: string | null
+    }
+  }[],
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reply
+
+`conversations.reply`
+
+Send a reply to a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.intercom.api.conversations.reply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `admin_id` | `string` | No | — |
+| `intercom_user_id` | `string` | No | — |
+| `message_type` | `comment \| note` | No | — |
+| `type` | `admin \| user` | Yes | — |
+| `body` | `string` | Yes | — |
+| `attachment_urls` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `waiting_since` | `number` | No | — |
+| `snoozed_until` | `number` | No | — |
+| `state` | `string` | No | — |
+| `read` | `boolean` | No | — |
+| `priority` | `string` | No | — |
+| `assignee` | `object` | No | — |
+| `source` | `object` | No | — |
+| `conversation_parts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  type?: string,
+  id?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  subject?: string | null,
+  body?: string | null,
+  author?: {
+    type?: string,
+    id?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="conversation_parts full type">
+
+```ts
+{
+  type?: string,
+  conversation_parts?: {
+    type?: string,
+    id?: string,
+    part_type?: string,
+    body?: string | null,
+    created_at?: number,
+    updated_at?: number,
+    author?: {
+      type?: string,
+      id?: string,
+      name?: string | null
+    }
+  }[],
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`conversations.search`
+
+Search conversations using query string
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.conversations.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `sort` | `object` | No | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  field?: string,
+  operator?: string,
+  value?: string
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  field?: string,
+  order?: ascending | descending
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  per_page?: number,
+  starting_after?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `pages` | `object` | No | — |
+| `total_count` | `number` | No | — |
+| `conversations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  type?: string,
+  page?: number,
+  per_page?: number,
+  total_pages?: number,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="conversations full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  created_at?: number,
+  updated_at?: number,
+  waiting_since?: number | null,
+  snoozed_until?: number | null,
+  state?: string,
+  read?: boolean,
+  priority?: string,
+  assignee?: {
+    type?: string,
+    id?: number | null
+  },
+  source?: {
+    type?: string,
+    id?: string,
+    subject?: string | null,
+    body?: string | null,
+    author?: {
+      type?: string,
+      id?: string
+    }
+  },
+  conversation_parts?: {
+    type?: string,
+    conversation_parts?: {
+      type?: string,
+      id?: string,
+      part_type?: string,
+      body?: string | null,
+      created_at?: number,
+      updated_at?: number,
+      author?: {
+        type?: string,
+        id?: string,
+        name?: string | null
+      }
+    }[],
+    total_count?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Help Centers
+
+### get
+
+`helpCenters.get`
+
+Retrieve a single help center
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.helpCenters.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `id` | `number` | Yes | — |
+| `workspace_id` | `string` | No | — |
+| `identifier` | `string` | No | — |
+| `website_turned_on` | `boolean` | No | — |
+| `display_name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`helpCenters.list`
+
+List all help centers
+
+**Risk:** `read`
+
+```ts
+await corsair.intercom.api.helpCenters.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: number,
+  workspace_id?: string,
+  identifier?: string,
+  website_turned_on?: boolean,
+  display_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

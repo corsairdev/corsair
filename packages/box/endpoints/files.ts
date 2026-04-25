@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { BoxBoundEndpoints, BoxEndpoints } from '..';
 import { makeBoxRequest, makeBoxUploadRequest } from '../client';
+import type { BoxBoundEndpoints, BoxEndpoints } from '../index';
 import type { BoxEndpointOutputs } from './types';
 
 export const get: BoxEndpoints['filesGet'] = async (ctx, input) => {

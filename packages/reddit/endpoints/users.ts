@@ -1,9 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
-import type { RedditEndpoints } from '..';
 import { makeRedditRequest } from '../client';
-import { CommentDataSchema, PostDataSchema, UserDataSchema } from './types';
-import { extractComments, extractPosts, saveCommentsToDb, savePostsToDb, saveUserToDb } from './utils';
+import type { RedditEndpoints } from '../index';
 import type { RedditEntityEnvelopeRaw, RedditListingRaw } from './types';
+import { CommentDataSchema, PostDataSchema, UserDataSchema } from './types';
+import {
+	extractComments,
+	extractPosts,
+	saveCommentsToDb,
+	savePostsToDb,
+	saveUserToDb,
+} from './utils';
 
 export const getAbout: RedditEndpoints['usersGetAbout'] = async (
 	ctx,

@@ -1,0 +1,184 @@
+---
+title: Database
+description: "Outlook local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Outlook plugin syncs data locally. Use `corsair.outlook.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Calendars
+
+Path: `outlook.db.calendars.search`
+
+```ts
+const rows = await corsair.outlook.db.calendars.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `hexColor` | `string` | equals, contains, startsWith, endsWith, in |
+| `isDefaultCalendar` | `boolean` | equals |
+| `canEdit` | `boolean` | equals |
+| `canShare` | `boolean` | equals |
+| `owner` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `outlook.db.contacts.search`
+
+```ts
+const rows = await corsair.outlook.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `givenName` | `string` | equals, contains, startsWith, endsWith, in |
+| `surname` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailAddresses` | `string` | equals, contains, startsWith, endsWith, in |
+| `mobilePhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `businessPhones` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `department` | `string` | equals, contains, startsWith, endsWith, in |
+| `officeLocation` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentFolderId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Events
+
+Path: `outlook.db.events.search`
+
+```ts
+const rows = await corsair.outlook.db.events.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `bodyPreview` | `string` | equals, contains, startsWith, endsWith, in |
+| `start` | `string` | equals, contains, startsWith, endsWith, in |
+| `end` | `string` | equals, contains, startsWith, endsWith, in |
+| `isAllDay` | `boolean` | equals |
+| `isCancelled` | `boolean` | equals |
+| `isOrganizer` | `boolean` | equals |
+| `isOnlineMeeting` | `boolean` | equals |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `calendarId` | `string` | equals, contains, startsWith, endsWith, in |
+| `organizer` | `string` | equals, contains, startsWith, endsWith, in |
+| `importance` | `string` | equals, contains, startsWith, endsWith, in |
+| `sensitivity` | `string` | equals, contains, startsWith, endsWith, in |
+| `showAs` | `string` | equals, contains, startsWith, endsWith, in |
+| `webLink` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Folders
+
+Path: `outlook.db.folders.search`
+
+```ts
+const rows = await corsair.outlook.db.folders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentFolderId` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalItemCount` | `number` | equals, gt, gte, lt, lte, in |
+| `unreadItemCount` | `number` | equals, gt, gte, lt, lte, in |
+| `childFolderCount` | `number` | equals, gt, gte, lt, lte, in |
+| `isHidden` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `outlook.db.messages.search`
+
+```ts
+const rows = await corsair.outlook.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `bodyPreview` | `string` | equals, contains, startsWith, endsWith, in |
+| `from` | `string` | equals, contains, startsWith, endsWith, in |
+| `toRecipients` | `string` | equals, contains, startsWith, endsWith, in |
+| `ccRecipients` | `string` | equals, contains, startsWith, endsWith, in |
+| `isRead` | `boolean` | equals |
+| `isDraft` | `boolean` | equals |
+| `hasAttachments` | `boolean` | equals |
+| `importance` | `string` | equals, contains, startsWith, endsWith, in |
+| `conversationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentFolderId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentDateTime` | `date` | equals, before, after, between |
+| `receivedDateTime` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `webLink` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

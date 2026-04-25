@@ -1,0 +1,917 @@
+---
+title: API
+description: "API reference for Exa: every `exa.api.*` operation with input and output types."
+---
+
+Every `exa.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Answer
+
+### get
+
+`answer.get`
+
+Generate a direct, citation-backed answer to a natural language question
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.answer.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `text` | `boolean` | No | — |
+| `stream` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `answer` | `string` | Yes | — |
+| `citations` | `object[]` | No | — |
+| `requestId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="citations full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  title?: string | null,
+  publishedDate?: string | null,
+  author?: string | null,
+  score?: number,
+  text?: string,
+  highlights?: string[],
+  highlightScores?: number[],
+  summary?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contents
+
+### get
+
+`contents.get`
+
+Retrieve full text, highlights, or summaries from URLs or document IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.contents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `text` | `object` | No | — |
+| `highlights` | `object` | No | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="text full type">
+
+```ts
+{
+  maxCharacters?: number,
+  includeHtmlTags?: boolean
+} | boolean
+```
+</Accordion>
+
+<Accordion title="highlights full type">
+
+```ts
+{
+  numSentences?: number,
+  highlightsPerUrl?: number,
+  query?: string
+} | boolean
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  query?: string
+} | boolean
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `requestId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  title?: string | null,
+  publishedDate?: string | null,
+  author?: string | null,
+  score?: number,
+  text?: string,
+  highlights?: string[],
+  highlightScores?: number[],
+  summary?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### get
+
+`events.get`
+
+Get details of a specific webset event by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `websetId` | `string` | Yes | — |
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `event` | Yes | — |
+| `type` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `data` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`events.list`
+
+List all events that have occurred for a webset
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `websetId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: event,
+  type: string,
+  createdAt: string,
+  data?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Imports
+
+### create
+
+`imports.create`
+
+Create a new import to upload data into a webset
+
+**Risk:** `write`
+
+```ts
+await corsair.exa.api.imports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `websetId` | `string` | Yes | — |
+| `urls` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `import` | Yes | — |
+| `websetId` | `string` | Yes | — |
+| `urls` | `string[]` | No | — |
+| `status` | `pending \| processing \| completed \| failed` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`imports.delete`
+
+Delete an existing import [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.exa.api.imports.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `websetId` | `string` | Yes | — |
+| `importId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`imports.list`
+
+List all imports for a webset
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.imports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `websetId` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: import,
+  websetId: string,
+  urls?: string[],
+  status?: pending | processing | completed | failed,
+  createdAt: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Monitors
+
+### create
+
+`monitors.create`
+
+Create a new monitor to watch a webset for changes
+
+**Risk:** `write`
+
+```ts
+await corsair.exa.api.monitors.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `websetId` | `string` | Yes | — |
+| `cadence` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cadence full type">
+
+```ts
+{
+  type: realtime | hourly | daily | weekly
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `monitor` | Yes | — |
+| `websetId` | `string` | Yes | — |
+| `cadence` | `object` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="cadence full type">
+
+```ts
+{
+  type: realtime | hourly | daily | weekly
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### findSimilar
+
+`search.findSimilar`
+
+Find web pages semantically similar to a given URL
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.search.findSimilar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `numResults` | `number` | No | — |
+| `includeDomains` | `string[]` | No | — |
+| `excludeDomains` | `string[]` | No | — |
+| `startCrawlDate` | `string` | No | — |
+| `endCrawlDate` | `string` | No | — |
+| `startPublishedDate` | `string` | No | — |
+| `endPublishedDate` | `string` | No | — |
+| `excludeSourceDomain` | `boolean` | No | — |
+| `category` | `string` | No | — |
+| `contents` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  text?: {
+    maxCharacters?: number,
+    includeHtmlTags?: boolean
+  } | boolean,
+  highlights?: {
+    numSentences?: number,
+    highlightsPerUrl?: number,
+    query?: string
+  } | boolean,
+  summary?: {
+    query?: string
+  } | boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `requestId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  title?: string | null,
+  publishedDate?: string | null,
+  author?: string | null,
+  score?: number,
+  text?: string,
+  highlights?: string[],
+  highlightScores?: number[],
+  summary?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`search.search`
+
+Search the web using neural or keyword search
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.search.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `numResults` | `number` | No | — |
+| `includeDomains` | `string[]` | No | — |
+| `excludeDomains` | `string[]` | No | — |
+| `startCrawlDate` | `string` | No | — |
+| `endCrawlDate` | `string` | No | — |
+| `startPublishedDate` | `string` | No | — |
+| `endPublishedDate` | `string` | No | — |
+| `useAutoprompt` | `boolean` | No | — |
+| `type` | `keyword \| neural \| auto` | No | — |
+| `category` | `string` | No | — |
+| `contents` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  text?: {
+    maxCharacters?: number,
+    includeHtmlTags?: boolean
+  } | boolean,
+  highlights?: {
+    numSentences?: number,
+    highlightsPerUrl?: number,
+    query?: string
+  } | boolean,
+  summary?: {
+    query?: string
+  } | boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `autopromptString` | `string` | No | — |
+| `requestId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  title?: string | null,
+  publishedDate?: string | null,
+  author?: string | null,
+  score?: number,
+  text?: string,
+  highlights?: string[],
+  highlightScores?: number[],
+  summary?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks Api
+
+### list
+
+`webhooksApi.list`
+
+List all webhooks configured for websets
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.webhooksApi.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: webhook,
+  url: string,
+  events?: string[],
+  status?: active | inactive,
+  createdAt: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Websets
+
+### create
+
+`websets.create`
+
+Create a new webset with search, import, and enrichment setup
+
+**Risk:** `write`
+
+```ts
+await corsair.exa.api.websets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searches` | `object[]` | No | — |
+| `enrichments` | `object[]` | No | — |
+| `externalId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="searches full type">
+
+```ts
+{
+  query: string,
+  count?: number,
+  entity?: {
+    type?: company | person | article | research paper | repository | event | product | video | job | podcast
+  },
+  criteria?: {
+    description: string,
+    successRate?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="enrichments full type">
+
+```ts
+{
+  description: string,
+  format?: text | date | number | options | boolean,
+  options?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `webset` | Yes | — |
+| `status` | `idle \| running \| paused \| done` | Yes | — |
+| `externalId` | `string` | No | — |
+| `searches` | `object[]` | No | — |
+| `enrichments` | `object[]` | No | — |
+| `imports` | `object[]` | No | — |
+| `monitors` | `object[]` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searches full type">
+
+```ts
+{
+  query: string,
+  count?: number,
+  entity?: {
+    type?: company | person | article | research paper | repository | event | product | video | job | podcast
+  },
+  criteria?: {
+    description: string,
+    successRate?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="enrichments full type">
+
+```ts
+{
+  id: string,
+  description: string,
+  format: text | date | number | options | boolean,
+  options?: string[],
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="imports full type">
+
+```ts
+{
+  id: string,
+  object: import,
+  websetId: string,
+  urls?: string[],
+  status?: pending | processing | completed | failed,
+  createdAt: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="monitors full type">
+
+```ts
+{
+  id: string,
+  object: monitor,
+  websetId: string,
+  cadence: {
+    type: realtime | hourly | daily | weekly
+  },
+  createdAt: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`websets.delete`
+
+Delete a webset [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.exa.api.websets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `webset` | Yes | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`websets.get`
+
+Get details of a specific webset by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.exa.api.websets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `webset` | Yes | — |
+| `status` | `idle \| running \| paused \| done` | Yes | — |
+| `externalId` | `string` | No | — |
+| `searches` | `object[]` | No | — |
+| `enrichments` | `object[]` | No | — |
+| `imports` | `object[]` | No | — |
+| `monitors` | `object[]` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searches full type">
+
+```ts
+{
+  query: string,
+  count?: number,
+  entity?: {
+    type?: company | person | article | research paper | repository | event | product | video | job | podcast
+  },
+  criteria?: {
+    description: string,
+    successRate?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="enrichments full type">
+
+```ts
+{
+  id: string,
+  description: string,
+  format: text | date | number | options | boolean,
+  options?: string[],
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="imports full type">
+
+```ts
+{
+  id: string,
+  object: import,
+  websetId: string,
+  urls?: string[],
+  status?: pending | processing | completed | failed,
+  createdAt: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="monitors full type">
+
+```ts
+{
+  id: string,
+  object: monitor,
+  websetId: string,
+  cadence: {
+    type: realtime | hourly | daily | weekly
+  },
+  createdAt: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

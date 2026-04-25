@@ -1,0 +1,154 @@
+---
+title: Webhooks
+description: "Monday incoming webhooks: event paths, payloads, and response data."
+---
+
+The Monday plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/monday/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `columns`
+  - `columnValueChanged` (`columns.columnValueChanged`)
+- `items`
+  - `itemCreated` (`items.itemCreated`)
+- `status`
+  - `statusChanged` (`status.statusChanged`)
+- `verification`
+  - `challenge` (`verification.challenge`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Columns
+
+### Column Value Changed
+
+`columns.columnValueChanged`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+monday({
+    webhookHooks: {
+        columns: {
+            columnValueChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Items
+
+### Item Created
+
+`items.itemCreated`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+monday({
+    webhookHooks: {
+        items: {
+            itemCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Status
+
+### Status Changed
+
+`status.statusChanged`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+monday({
+    webhookHooks: {
+        status: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Verification
+
+### Challenge
+
+`verification.challenge`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+monday({
+    webhookHooks: {
+        verification: {
+            challenge: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

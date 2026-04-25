@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DropboxEndpoints } from '..';
-import { makeDropboxRequest } from '../client';
+import { makeAuthenticatedDropboxRequest } from '../client';
+import type { DropboxEndpoints } from '../index';
 import type { DropboxEndpointOutputs } from './types';
 
 export const query: DropboxEndpoints['searchQuery'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['searchQuery']
-	>('files/search_v2', ctx.key, {
+	>('files/search_v2', ctx, {
 		method: 'POST',
 		body: {
 			query: input.query,

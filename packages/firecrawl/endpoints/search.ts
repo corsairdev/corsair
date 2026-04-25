@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FirecrawlEndpoints } from '..';
 import { makeFirecrawlRequest } from '../client';
+import type { FirecrawlEndpoints } from '../index';
 import type { SearchRunResponse } from './types';
 
 export const run: FirecrawlEndpoints['searchRun'] = async (ctx, input) => {

@@ -1,0 +1,1322 @@
+---
+title: API
+description: "API reference for Razorpay: every `razorpay.api.*` operation with input and output types."
+---
+
+Every `razorpay.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a Razorpay customer
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.customers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `gstin` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `fail_existing` | `0 \| 1` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `customer` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `gstin` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Fetch a Razorpay customer by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `customer` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `gstin` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List Razorpay customers
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `collection` | No | — |
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  entity: customer,
+  name?: string | null,
+  email?: string | null,
+  contact?: string | null,
+  gstin?: string | null,
+  notes?: {
+  } | any[],
+  created_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a Razorpay customer
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.customers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `gstin` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `customer` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `gstin` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### create
+
+`orders.create`
+
+Create a Razorpay order
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.orders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `receipt` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `order` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `amount_paid` | `number` | No | — |
+| `amount_due` | `number` | No | — |
+| `currency` | `string` | Yes | — |
+| `receipt` | `string` | No | — |
+| `offer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `attempts` | `number` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Fetch a Razorpay order by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.orders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `order` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `amount_paid` | `number` | No | — |
+| `amount_due` | `number` | No | — |
+| `currency` | `string` | Yes | — |
+| `receipt` | `string` | No | — |
+| `offer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `attempts` | `number` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+List Razorpay orders
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.orders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `count` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `authorized` | `0 \| 1` | No | — |
+| `receipt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `collection` | No | — |
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  entity: order,
+  amount: number,
+  amount_paid?: number,
+  amount_due?: number,
+  currency: string,
+  receipt?: string | null,
+  offer_id?: string | null,
+  status: string,
+  attempts?: number,
+  notes?: {
+  } | any[],
+  created_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payments
+
+### capture
+
+`payments.capture`
+
+Capture an authorized Razorpay payment
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.payments.capture({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `payment` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `order_id` | `string` | No | — |
+| `invoice_id` | `string` | No | — |
+| `method` | `string` | No | — |
+| `captured` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `email` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`payments.get`
+
+Fetch a Razorpay payment by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.payments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `payment` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `order_id` | `string` | No | — |
+| `invoice_id` | `string` | No | — |
+| `method` | `string` | No | — |
+| `captured` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `email` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payments.list`
+
+List Razorpay payments
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.payments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `count` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `collection` | No | — |
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  entity: payment,
+  amount: number,
+  currency: string,
+  status: string,
+  order_id?: string | null,
+  invoice_id?: string | null,
+  method?: string | null,
+  captured?: boolean,
+  description?: string | null,
+  email?: string | null,
+  contact?: string | null,
+  notes?: {
+  } | any[],
+  created_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Refunds
+
+### create
+
+`refunds.create`
+
+Create a refund for a Razorpay payment
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.refunds.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | — |
+| `amount` | `number` | No | — |
+| `speed` | `normal \| optimum` | No | — |
+| `receipt` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `refund` | Yes | — |
+| `payment_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `receipt` | `string` | No | — |
+| `speed_processed` | `string` | No | — |
+| `speed_requested` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`refunds.get`
+
+Fetch a specific refund for a Razorpay payment
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.refunds.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | — |
+| `refundId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `refund` | Yes | — |
+| `payment_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `receipt` | `string` | No | — |
+| `speed_processed` | `string` | No | — |
+| `speed_requested` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`refunds.list`
+
+List refunds for a Razorpay payment
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.refunds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paymentId` | `string` | Yes | — |
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `count` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `collection` | No | — |
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  entity: refund,
+  payment_id: string,
+  amount: number,
+  currency?: string | null,
+  notes?: {
+  } | any[],
+  receipt?: string | null,
+  speed_processed?: string | null,
+  speed_requested?: string | null,
+  status: string,
+  created_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Settlements
+
+### get
+
+`settlements.get`
+
+Fetch a Razorpay settlement by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.settlements.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `settlement` | Yes | — |
+| `amount` | `number` | No | — |
+| `status` | `created \| processed \| failed` | Yes | — |
+| `fees` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `utr` | `string` | No | — |
+| `created_at` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`settlements.list`
+
+List Razorpay settlements
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.settlements.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `count` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `settlement` | Yes | — |
+| `amount` | `number` | No | — |
+| `status` | `created \| processed \| failed` | Yes | — |
+| `fees` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `utr` | `string` | No | — |
+| `created_at` | `number` | No | — |
+
+
+
+---
+
+## Subscriptions
+
+### cancel
+
+`subscriptions.cancel`
+
+Cancel a Razorpay subscription [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.razorpay.api.subscriptions.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cancel_at_cycle_end` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `subscription` | Yes | — |
+| `plan_id` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `current_start` | `number` | No | — |
+| `current_end` | `number` | No | — |
+| `ended_at` | `number` | No | — |
+| `charge_at` | `number` | No | — |
+| `offer_id` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `end_at` | `number` | No | — |
+| `auth_attempts` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `paid_count` | `number` | No | — |
+| `remaining_count` | `number` | No | — |
+| `customer_notify` | `boolean` | No | — |
+| `expire_by` | `number` | No | — |
+| `short_url` | `string` | No | — |
+| `has_scheduled_changes` | `boolean` | No | — |
+| `change_scheduled_at` | `number` | No | — |
+| `source` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`subscriptions.create`
+
+Create a Razorpay subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.subscriptions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan_id` | `string` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `quantity` | `number` | No | — |
+| `start_at` | `number` | No | — |
+| `expire_by` | `number` | No | — |
+| `customer_notify` | `0 \| 1` | No | — |
+| `notes` | `object[]` | No | — |
+| `offer_id` | `string` | No | — |
+| `customer_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `subscription` | Yes | — |
+| `plan_id` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `current_start` | `number` | No | — |
+| `current_end` | `number` | No | — |
+| `ended_at` | `number` | No | — |
+| `charge_at` | `number` | No | — |
+| `offer_id` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `end_at` | `number` | No | — |
+| `auth_attempts` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `paid_count` | `number` | No | — |
+| `remaining_count` | `number` | No | — |
+| `customer_notify` | `boolean` | No | — |
+| `expire_by` | `number` | No | — |
+| `short_url` | `string` | No | — |
+| `has_scheduled_changes` | `boolean` | No | — |
+| `change_scheduled_at` | `number` | No | — |
+| `source` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscriptions.get`
+
+Fetch a Razorpay subscription by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.subscriptions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `subscription` | Yes | — |
+| `plan_id` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `current_start` | `number` | No | — |
+| `current_end` | `number` | No | — |
+| `ended_at` | `number` | No | — |
+| `charge_at` | `number` | No | — |
+| `offer_id` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `end_at` | `number` | No | — |
+| `auth_attempts` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `paid_count` | `number` | No | — |
+| `remaining_count` | `number` | No | — |
+| `customer_notify` | `boolean` | No | — |
+| `expire_by` | `number` | No | — |
+| `short_url` | `string` | No | — |
+| `has_scheduled_changes` | `boolean` | No | — |
+| `change_scheduled_at` | `number` | No | — |
+| `source` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscriptions.list`
+
+List Razorpay subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.subscriptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `count` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `plan_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `collection` | No | — |
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  entity: subscription,
+  plan_id: string,
+  customer_id?: string | null,
+  status: string,
+  current_start?: number | null,
+  current_end?: number | null,
+  ended_at?: number | null,
+  charge_at?: number | null,
+  offer_id?: string | null,
+  start_at?: number | null,
+  end_at?: number | null,
+  auth_attempts?: number,
+  quantity?: number,
+  total_count?: number,
+  paid_count?: number,
+  remaining_count?: number,
+  customer_notify?: boolean,
+  expire_by?: number | null,
+  short_url?: string | null,
+  has_scheduled_changes?: boolean,
+  change_scheduled_at?: number | null,
+  source?: string | null,
+  notes?: {
+  } | any[],
+  created_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`subscriptions.pause`
+
+Pause a Razorpay subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.subscriptions.pause({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `pause_initiated_by` | `customer \| bank` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `subscription` | Yes | — |
+| `plan_id` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `current_start` | `number` | No | — |
+| `current_end` | `number` | No | — |
+| `ended_at` | `number` | No | — |
+| `charge_at` | `number` | No | — |
+| `offer_id` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `end_at` | `number` | No | — |
+| `auth_attempts` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `paid_count` | `number` | No | — |
+| `remaining_count` | `number` | No | — |
+| `customer_notify` | `boolean` | No | — |
+| `expire_by` | `number` | No | — |
+| `short_url` | `string` | No | — |
+| `has_scheduled_changes` | `boolean` | No | — |
+| `change_scheduled_at` | `number` | No | — |
+| `source` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resume
+
+`subscriptions.resume`
+
+Resume a paused Razorpay subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.subscriptions.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resume_at` | `now` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `subscription` | Yes | — |
+| `plan_id` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `current_start` | `number` | No | — |
+| `current_end` | `number` | No | — |
+| `ended_at` | `number` | No | — |
+| `charge_at` | `number` | No | — |
+| `offer_id` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `end_at` | `number` | No | — |
+| `auth_attempts` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `paid_count` | `number` | No | — |
+| `remaining_count` | `number` | No | — |
+| `customer_notify` | `boolean` | No | — |
+| `expire_by` | `number` | No | — |
+| `short_url` | `string` | No | — |
+| `has_scheduled_changes` | `boolean` | No | — |
+| `change_scheduled_at` | `number` | No | — |
+| `source` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subscriptions.update`
+
+Update a Razorpay subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.subscriptions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `plan_id` | `string` | No | — |
+| `quantity` | `number` | No | — |
+| `remaining_count` | `number` | No | — |
+| `offer_id` | `string` | No | — |
+| `schedule_change_at` | `now \| cycle_end` | No | — |
+| `customer_notify` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `subscription` | Yes | — |
+| `plan_id` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `current_start` | `number` | No | — |
+| `current_end` | `number` | No | — |
+| `ended_at` | `number` | No | — |
+| `charge_at` | `number` | No | — |
+| `offer_id` | `string` | No | — |
+| `start_at` | `number` | No | — |
+| `end_at` | `number` | No | — |
+| `auth_attempts` | `number` | No | — |
+| `quantity` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `paid_count` | `number` | No | — |
+| `remaining_count` | `number` | No | — |
+| `customer_notify` | `boolean` | No | — |
+| `expire_by` | `number` | No | — |
+| `short_url` | `string` | No | — |
+| `has_scheduled_changes` | `boolean` | No | — |
+| `change_scheduled_at` | `number` | No | — |
+| `source` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+| `created_at` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

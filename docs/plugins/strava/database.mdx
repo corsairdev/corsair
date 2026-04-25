@@ -1,0 +1,377 @@
+---
+title: Database
+description: "Strava local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Strava plugin syncs data locally. Use `corsair.strava.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Activities
+
+Path: `strava.db.activities.search`
+
+```ts
+const rows = await corsair.strava.db.activities.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sport_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_date_local` | `string` | equals, contains, startsWith, endsWith, in |
+| `elapsed_time` | `number` | equals, gt, gte, lt, lte, in |
+| `moving_time` | `number` | equals, gt, gte, lt, lte, in |
+| `distance` | `number` | equals, gt, gte, lt, lte, in |
+| `total_elevation_gain` | `number` | equals, gt, gte, lt, lte, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `calories` | `number` | equals, gt, gte, lt, lte, in |
+| `gear_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `commute` | `boolean` | equals |
+| `trainer` | `boolean` | equals |
+| `manual` | `boolean` | equals |
+| `private` | `boolean` | equals |
+| `resource_state` | `number` | equals, gt, gte, lt, lte, in |
+| `kudos_count` | `number` | equals, gt, gte, lt, lte, in |
+| `comment_count` | `number` | equals, gt, gte, lt, lte, in |
+| `athlete_count` | `number` | equals, gt, gte, lt, lte, in |
+| `photo_count` | `number` | equals, gt, gte, lt, lte, in |
+| `average_speed` | `number` | equals, gt, gte, lt, lte, in |
+| `max_speed` | `number` | equals, gt, gte, lt, lte, in |
+| `average_heartrate` | `number` | equals, gt, gte, lt, lte, in |
+| `max_heartrate` | `number` | equals, gt, gte, lt, lte, in |
+| `average_watts` | `number` | equals, gt, gte, lt, lte, in |
+| `max_watts` | `number` | equals, gt, gte, lt, lte, in |
+| `kilojoules` | `number` | equals, gt, gte, lt, lte, in |
+| `device_watts` | `boolean` | equals |
+| `has_heartrate` | `boolean` | equals |
+| `elev_high` | `number` | equals, gt, gte, lt, lte, in |
+| `elev_low` | `number` | equals, gt, gte, lt, lte, in |
+| `pr_count` | `number` | equals, gt, gte, lt, lte, in |
+| `suffer_score` | `number` | equals, gt, gte, lt, lte, in |
+| `workout_type` | `number` | equals, gt, gte, lt, lte, in |
+| `upload_id` | `number` | equals, gt, gte, lt, lte, in |
+| `external_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_kudoed` | `boolean` | equals |
+| `average_cadence` | `number` | equals, gt, gte, lt, lte, in |
+| `device_name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Athletes
+
+Path: `strava.db.athletes.search`
+
+```ts
+const rows = await corsair.strava.db.athletes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstname` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastname` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `sex` | `string` | equals, contains, startsWith, endsWith, in |
+| `premium` | `boolean` | equals |
+| `summit` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `follower_count` | `number` | equals, gt, gte, lt, lte, in |
+| `friend_count` | `number` | equals, gt, gte, lt, lte, in |
+| `measurement_preference` | `string` | equals, contains, startsWith, endsWith, in |
+| `ftp` | `number` | equals, gt, gte, lt, lte, in |
+| `weight` | `number` | equals, gt, gte, lt, lte, in |
+| `profile` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_medium` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_state` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Clubs
+
+Path: `strava.db.clubs.search`
+
+```ts
+const rows = await corsair.strava.db.clubs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_medium` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `club_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `sport_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `member_count` | `number` | equals, gt, gte, lt, lte, in |
+| `featured` | `boolean` | equals |
+| `verified` | `boolean` | equals |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Gears
+
+Path: `strava.db.gears.search`
+
+```ts
+const rows = await corsair.strava.db.gears.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `primary` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `distance` | `number` | equals, gt, gte, lt, lte, in |
+| `brand_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `model_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `frame_type` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `athlete_id` | `number` | equals, gt, gte, lt, lte, in |
+| `resource_state` | `number` | equals, gt, gte, lt, lte, in |
+| `retired` | `boolean` | equals |
+| `converted_distance` | `number` | equals, gt, gte, lt, lte, in |
+| `notification_distance` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Laps
+
+Path: `strava.db.laps.search`
+
+```ts
+const rows = await corsair.strava.db.laps.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `average_cadence` | `number` | equals, gt, gte, lt, lte, in |
+| `average_speed` | `number` | equals, gt, gte, lt, lte, in |
+| `average_heartrate` | `number` | equals, gt, gte, lt, lte, in |
+| `average_watts` | `number` | equals, gt, gte, lt, lte, in |
+| `device_watts` | `boolean` | equals |
+| `distance` | `number` | equals, gt, gte, lt, lte, in |
+| `elapsed_time` | `number` | equals, gt, gte, lt, lte, in |
+| `end_index` | `number` | equals, gt, gte, lt, lte, in |
+| `lap_index` | `number` | equals, gt, gte, lt, lte, in |
+| `max_speed` | `number` | equals, gt, gte, lt, lte, in |
+| `max_heartrate` | `number` | equals, gt, gte, lt, lte, in |
+| `moving_time` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `pace_zone` | `number` | equals, gt, gte, lt, lte, in |
+| `resource_state` | `number` | equals, gt, gte, lt, lte, in |
+| `split` | `number` | equals, gt, gte, lt, lte, in |
+| `start_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_date_local` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_index` | `number` | equals, gt, gte, lt, lte, in |
+| `total_elevation_gain` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Routes
+
+Path: `strava.db.routes.search`
+
+```ts
+const rows = await corsair.strava.db.routes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `distance` | `number` | equals, gt, gte, lt, lte, in |
+| `elevation_gain` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `starred` | `boolean` | equals |
+| `timestamp` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+| `sub_type` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `estimated_moving_time` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Segment Efforts
+
+Path: `strava.db.segmentEfforts.search`
+
+```ts
+const rows = await corsair.strava.db.segmentEfforts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `activity_id` | `number` | equals, gt, gte, lt, lte, in |
+| `athlete_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `elapsed_time` | `number` | equals, gt, gte, lt, lte, in |
+| `moving_time` | `number` | equals, gt, gte, lt, lte, in |
+| `start_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_date_local` | `string` | equals, contains, startsWith, endsWith, in |
+| `distance` | `number` | equals, gt, gte, lt, lte, in |
+| `start_index` | `number` | equals, gt, gte, lt, lte, in |
+| `end_index` | `number` | equals, gt, gte, lt, lte, in |
+| `kom_rank` | `number` | equals, gt, gte, lt, lte, in |
+| `pr_rank` | `number` | equals, gt, gte, lt, lte, in |
+| `device_watts` | `boolean` | equals |
+| `average_watts` | `number` | equals, gt, gte, lt, lte, in |
+| `average_heartrate` | `number` | equals, gt, gte, lt, lte, in |
+| `max_heartrate` | `number` | equals, gt, gte, lt, lte, in |
+| `average_cadence` | `number` | equals, gt, gte, lt, lte, in |
+| `resource_state` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Segments
+
+Path: `strava.db.segments.search`
+
+```ts
+const rows = await corsair.strava.db.segments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `activity_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `distance` | `number` | equals, gt, gte, lt, lte, in |
+| `average_grade` | `number` | equals, gt, gte, lt, lte, in |
+| `maximum_grade` | `number` | equals, gt, gte, lt, lte, in |
+| `elevation_high` | `number` | equals, gt, gte, lt, lte, in |
+| `elevation_low` | `number` | equals, gt, gte, lt, lte, in |
+| `climb_category` | `number` | equals, gt, gte, lt, lte, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `starred` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `total_elevation_gain` | `number` | equals, gt, gte, lt, lte, in |
+| `effort_count` | `number` | equals, gt, gte, lt, lte, in |
+| `athlete_count` | `number` | equals, gt, gte, lt, lte, in |
+| `hazardous` | `boolean` | equals |
+| `star_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Uploads
+
+Path: `strava.db.uploads.search`
+
+```ts
+const rows = await corsair.strava.db.uploads.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `external_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `error` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `activity_id` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

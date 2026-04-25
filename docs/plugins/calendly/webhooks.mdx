@@ -1,0 +1,694 @@
+---
+title: Webhooks
+description: "Calendly incoming webhooks: event paths, payloads, and response data."
+---
+
+The Calendly plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/calendly/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `eventTypes`
+  - `updated` (`eventTypes.updated`)
+- `invitees`
+  - `canceled` (`invitees.canceled`)
+  - `created` (`invitees.created`)
+  - `noShow` (`invitees.noShow`)
+- `routingForms`
+  - `submission` (`routingForms.submission`)
+- `users`
+  - `updated` (`users.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Event Types
+
+### Updated
+
+`eventTypes.updated`
+
+An event type was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `event_type.updated` | Yes | — |
+| `time` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  uri: string,
+  name?: string,
+  active?: boolean,
+  slug?: string,
+  scheduling_url?: string,
+  duration?: number,
+  kind?: string,
+  color?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: event_type.updated,
+  time: string,
+  payload: {
+    uri: string,
+    name?: string,
+    active?: boolean,
+    slug?: string,
+    scheduling_url?: string,
+    duration?: number,
+    kind?: string,
+    color?: string,
+    updated_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+calendly({
+    webhookHooks: {
+        eventTypes: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Invitees
+
+### Canceled
+
+`invitees.canceled`
+
+An invitee canceled a meeting
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `invitee.canceled` | Yes | — |
+| `time` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  uri: string,
+  email: string,
+  name: string,
+  status?: active | canceled,
+  event: string,
+  timezone?: string,
+  created_at: string,
+  updated_at: string,
+  cancel_url?: string,
+  reschedule_url?: string,
+  tracking?: {
+  },
+  questions_and_answers?: {
+  }[],
+  payment?: {
+  } | null,
+  no_show?: {
+    uri: string
+  } | null,
+  rescheduled?: boolean,
+  old_invitee?: string | null,
+  new_invitee?: string | null,
+  routing_form_submission?: string | null,
+  scheduled_event?: {
+    uri: string,
+    name?: string,
+    status?: active | canceled,
+    start_time: string,
+    end_time: string,
+    event_type: string,
+    location?: {
+      type: string,
+      location?: string,
+      join_url?: string
+    },
+    invitees_counter?: {
+      total: number,
+      active: number,
+      limit: number
+    },
+    created_at?: string,
+    updated_at?: string,
+    event_memberships?: {
+    }[],
+    event_guests?: {
+    }[]
+  },
+  invitee_scheduled_by?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  reconfirmation?: {
+  } | null,
+  scheduling_method?: string | null,
+  text_reminder_number?: string | null,
+  cancellation?: {
+    canceled_by: string,
+    reason?: string,
+    canceler_type: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: invitee.canceled,
+  time: string,
+  payload: {
+    uri: string,
+    email: string,
+    name: string,
+    status?: active | canceled,
+    event: string,
+    timezone?: string,
+    created_at: string,
+    updated_at: string,
+    cancel_url?: string,
+    reschedule_url?: string,
+    tracking?: {
+    },
+    questions_and_answers?: {
+    }[],
+    payment?: {
+    } | null,
+    no_show?: {
+      uri: string
+    } | null,
+    rescheduled?: boolean,
+    old_invitee?: string | null,
+    new_invitee?: string | null,
+    routing_form_submission?: string | null,
+    scheduled_event?: {
+      uri: string,
+      name?: string,
+      status?: active | canceled,
+      start_time: string,
+      end_time: string,
+      event_type: string,
+      location?: {
+        type: string,
+        location?: string,
+        join_url?: string
+      },
+      invitees_counter?: {
+        total: number,
+        active: number,
+        limit: number
+      },
+      created_at?: string,
+      updated_at?: string,
+      event_memberships?: {
+      }[],
+      event_guests?: {
+      }[]
+    },
+    invitee_scheduled_by?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    reconfirmation?: {
+    } | null,
+    scheduling_method?: string | null,
+    text_reminder_number?: string | null,
+    cancellation?: {
+      canceled_by: string,
+      reason?: string,
+      canceler_type: string
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+calendly({
+    webhookHooks: {
+        invitees: {
+            canceled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`invitees.created`
+
+An invitee booked a meeting
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `invitee.created` | Yes | — |
+| `time` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  uri: string,
+  email: string,
+  name: string,
+  status?: active | canceled,
+  event: string,
+  timezone?: string,
+  created_at: string,
+  updated_at: string,
+  cancel_url?: string,
+  reschedule_url?: string,
+  tracking?: {
+  },
+  questions_and_answers?: {
+  }[],
+  payment?: {
+  } | null,
+  no_show?: {
+    uri: string
+  } | null,
+  rescheduled?: boolean,
+  old_invitee?: string | null,
+  new_invitee?: string | null,
+  routing_form_submission?: string | null,
+  scheduled_event?: {
+    uri: string,
+    name?: string,
+    status?: active | canceled,
+    start_time: string,
+    end_time: string,
+    event_type: string,
+    location?: {
+      type: string,
+      location?: string,
+      join_url?: string
+    },
+    invitees_counter?: {
+      total: number,
+      active: number,
+      limit: number
+    },
+    created_at?: string,
+    updated_at?: string,
+    event_memberships?: {
+    }[],
+    event_guests?: {
+    }[]
+  },
+  invitee_scheduled_by?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  reconfirmation?: {
+  } | null,
+  scheduling_method?: string | null,
+  text_reminder_number?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: invitee.created,
+  time: string,
+  payload: {
+    uri: string,
+    email: string,
+    name: string,
+    status?: active | canceled,
+    event: string,
+    timezone?: string,
+    created_at: string,
+    updated_at: string,
+    cancel_url?: string,
+    reschedule_url?: string,
+    tracking?: {
+    },
+    questions_and_answers?: {
+    }[],
+    payment?: {
+    } | null,
+    no_show?: {
+      uri: string
+    } | null,
+    rescheduled?: boolean,
+    old_invitee?: string | null,
+    new_invitee?: string | null,
+    routing_form_submission?: string | null,
+    scheduled_event?: {
+      uri: string,
+      name?: string,
+      status?: active | canceled,
+      start_time: string,
+      end_time: string,
+      event_type: string,
+      location?: {
+        type: string,
+        location?: string,
+        join_url?: string
+      },
+      invitees_counter?: {
+        total: number,
+        active: number,
+        limit: number
+      },
+      created_at?: string,
+      updated_at?: string,
+      event_memberships?: {
+      }[],
+      event_guests?: {
+      }[]
+    },
+    invitee_scheduled_by?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    reconfirmation?: {
+    } | null,
+    scheduling_method?: string | null,
+    text_reminder_number?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+calendly({
+    webhookHooks: {
+        invitees: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### No Show
+
+`invitees.noShow`
+
+An invitee was marked as a no-show
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `invitee_no_show.created` | Yes | — |
+| `time` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  uri: string,
+  invitee: string,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: invitee_no_show.created,
+  time: string,
+  payload: {
+    uri: string,
+    invitee: string,
+    created_at: string,
+    updated_at: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+calendly({
+    webhookHooks: {
+        invitees: {
+            noShow: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Routing Forms
+
+### Submission
+
+`routingForms.submission`
+
+A routing form submission was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `routing_form_submission.created` | Yes | — |
+| `time` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  uri: string,
+  routing_form: string,
+  questions_and_answers?: {
+  }[],
+  tracking?: {
+  },
+  result?: {
+  },
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: routing_form_submission.created,
+  time: string,
+  payload: {
+    uri: string,
+    routing_form: string,
+    questions_and_answers?: {
+    }[],
+    tracking?: {
+    },
+    result?: {
+    },
+    created_at?: string,
+    updated_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+calendly({
+    webhookHooks: {
+        routingForms: {
+            submission: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Users
+
+### Updated
+
+`users.updated`
+
+A user was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `user.updated` | Yes | — |
+| `time` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  uri: string,
+  name?: string,
+  email?: string,
+  slug?: string,
+  timezone?: string,
+  scheduling_url?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: user.updated,
+  time: string,
+  payload: {
+    uri: string,
+    name?: string,
+    email?: string,
+    slug?: string,
+    timezone?: string,
+    scheduling_url?: string,
+    updated_at?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+calendly({
+    webhookHooks: {
+        users: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

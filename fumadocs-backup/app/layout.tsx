@@ -243,7 +243,7 @@ const tree = {
 			children: [
 				{
 					type: 'page' as const,
-					name: 'Create Your Own Plugin',
+					name: 'Build a Plugin',
 					url: '/guides/create-your-own-plugin',
 					icon: <Plug className="size-4" />,
 				},

@@ -1,4 +1,4 @@
-import type { GithubWebhooks } from '..';
+import type { GithubWebhooks } from '../index';
 import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 
 async function upsertRepository(

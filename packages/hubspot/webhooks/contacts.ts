@@ -1,4 +1,4 @@
-import type { HubSpotWebhooks } from '..';
+import type { HubSpotWebhooks } from '../index';
 import {
 	createHubSpotEventMatch,
 	verifyHubSpotWebhookSignature,

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { NotionEndpoints } from '..';
 import { makeNotionRequest } from '../client';
+import type { NotionEndpoints } from '../index';
 import type { NotionEndpointOutputs } from './types';
 
 export const appendBlock: NotionEndpoints['blocksAppendBlock'] = async (

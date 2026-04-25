@@ -1,7 +1,11 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairPluginSchema } from '../../db/orm';
 import { BaseProviders } from '../constants';
-import type { CorsairPlugin, EndpointMetaEntry } from '../plugins';
+import type {
+	CorsairPlugin,
+	EndpointMetaEntry,
+	EndpointRiskLevel,
+} from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Zod → TypeScript-style type string converters
@@ -250,63 +254,6 @@ export type ListOperationsOptions = {
 	type?: 'api' | 'webhooks' | 'db';
 };
 
-export type CorsairInspectMethods = {
-	/**
-	 * Lists available operations (API endpoints, webhooks, or database entities) for the configured plugins.
-	 *
-	 * - No options → all API endpoint paths across every plugin, keyed by plugin ID
-	 * - `{ type: 'webhooks' }` → all webhook paths across every plugin, keyed by plugin ID
-	 * - `{ type: 'db' }` → all searchable DB entity paths across every plugin, keyed by plugin ID
-	 * - `{ plugin: 'slack' }` → Slack API endpoint paths as a flat array
-	 * - `{ plugin: 'slack', type: 'webhooks' }` → Slack webhook paths as a flat array
-	 * - `{ plugin: 'slack', type: 'db' }` → Slack DB entity search paths as a flat array
-	 * - If the plugin is known but not configured, returns a plain string message.
-	 * - If the plugin string is completely unrecognised, returns all API endpoints (same as no options).
-	 *
-	 * API paths use the format `plugin.api.group.method` (e.g. `slack.api.messages.post`).
-	 * Webhook paths use the format `plugin.webhooks.group.event` (e.g. `slack.webhooks.messages.message`).
-	 * DB paths use the format `plugin.db.entityType.search` (e.g. `slack.db.messages.search`).
-	 * All paths can be passed directly to `get_schema()`.
-	 *
-	 * @example
-	 * corsair.list_operations()
-	 * // { slack: ['slack.api.channels.list', 'slack.api.messages.post', ...], ... }
-	 *
-	 * corsair.list_operations({ plugin: 'slack' })
-	 * // ['slack.api.channels.list', 'slack.api.messages.post', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'slack', type: 'webhooks' })
-	 * // ['slack.webhooks.messages.message', 'slack.webhooks.channels.created', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'slack', type: 'db' })
-	 * // ['slack.db.messages.search', 'slack.db.channels.search', 'slack.db.users.search', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'unknown' })
-	 * // "unknown isn't configured in the Corsair instance."
-	 */
-	list_operations(
-		options?: ListOperationsOptions,
-	): Record<string, string[]> | string[] | string;
-	/**
-	 * Returns a plain-text TypeScript-style type declaration for a specific operation path.
-	 * The path format determines which kind of schema is returned:
-	 * - API path (`plugin.api.group.method`) → description, risk level, input/output types
-	 * - Webhook path (`plugin.webhooks.group.event`) → description, payload/response types, usage snippet
-	 * - DB path (`plugin.db.entityType.search`) → description, filterable fields with operators
-	 *
-	 * Casing is ignored — the path is lowercased before lookup.
-	 * If the path is not found, returns a list of available paths for self-correction.
-	 *
-	 * @example
-	 * corsair.get_schema('slack.api.messages.post')
-	 * // "Post a message to a channel  [write]\n\ninput {\n  channel: string\n  text?: string\n  ..."
-	 *
-	 * corsair.get_schema('slack.api.invalid')
-	 * // "Path not found. Available operations:\n  slack: slack.api.channels.list, ..."
-	 */
-	get_schema(path: string): string;
-};
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Tree Walker
 // ─────────────────────────────────────────────────────────────────────────────
@@ -403,16 +350,14 @@ function resolveWebhookPathOriginalCase(
 
 /**
  * Builds a ready-to-copy code snippet showing how to configure a specific webhook.
- * The response.data type (if available) is embedded as an inline comment inside the after hook.
+ * Response shape is documented separately (e.g. generated webhooks MDX); the after hook is left empty.
  *
- * @param pluginId         Plugin ID (e.g. 'slack')
- * @param pathParts        Original-cased path segments (e.g. ['messages', 'message'])
- * @param responseTypeStr  Inline type string for response.data, or null if no schema registered
+ * @param pluginId   Plugin ID (e.g. 'slack')
+ * @param pathParts  Original-cased path segments (e.g. ['messages', 'message'])
  */
 function buildWebhookUsageExample(
 	pluginId: string,
 	pathParts: string[],
-	responseTypeStr: string | null,
 ): string {
 	const lines: string[] = [];
 
@@ -434,11 +379,6 @@ function buildWebhookUsageExample(
 	lines.push(`${hookIndent}},`);
 
 	lines.push(`${hookIndent}after(ctx, response) {`);
-	lines.push(
-		responseTypeStr !== null
-			? `${bodyIndent}// response.data: ${responseTypeStr}`
-			: `${bodyIndent}// response.data: unknown (register webhookSchemas to see the type)`,
-	);
 	lines.push(`${hookIndent}},`);
 
 	// Close nested key blocks (innermost first)
@@ -468,7 +408,7 @@ const KNOWN_PLUGIN_IDS = new Set<string>(BaseProviders);
 // Core Functions
 // ─────────────────────────────────────────────────────────────────────────────
 
-function listOperations(
+export function listOperations(
 	plugins: readonly CorsairPlugin[],
 	options?: ListOperationsOptions,
 ): Record<string, string[]> | string[] | string {
@@ -553,6 +493,32 @@ function findEndpointCaseInsensitive<T>(
 	return undefined;
 }
 
+/**
+ * `list_operations` paths look like `spotify.api.player.addToQueue`. Strip the plugin id and
+ * optional `api.` prefix. Preserves camelCase on the remainder for docs (`player.addToQueue`).
+ * Lookup keys for `endpointMeta` / `endpointSchemas` remain case-insensitive.
+ */
+function apiEndpointShortPathAndLookupKey(
+	fullPath: string,
+	pluginId: string,
+): { shortPath: string; lookupKey: string } {
+	const lower = fullPath.toLowerCase();
+	const pid = pluginId.toLowerCase();
+	if (!lower.startsWith(`${pid}.`)) {
+		const remainder = lower.slice(pluginId.length + 1);
+		let ep = remainder.startsWith('.') ? remainder.slice(1) : remainder;
+		if (ep.startsWith('api.')) {
+			ep = ep.slice(4);
+		}
+		return { shortPath: ep, lookupKey: ep };
+	}
+	let rest = fullPath.slice(pluginId.length + 1);
+	if (rest.toLowerCase().startsWith('api.')) {
+		rest = rest.slice(4);
+	}
+	return { shortPath: rest, lookupKey: rest.toLowerCase() };
+}
+
 function formatAvailablePaths(
 	paths: Record<string, string[]> | string[] | string,
 	label: string,
@@ -567,7 +533,10 @@ function formatAvailablePaths(
 	);
 }
 
-function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
+export function getSchema(
+	plugins: readonly CorsairPlugin[],
+	path: string,
+): string {
 	// Normalise casing so the agent can call with any capitalisation
 	const normalised = path.toLowerCase();
 	const dotIndex = normalised.indexOf('.');
@@ -647,7 +616,7 @@ function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 							parts.push(`response: ${responseTypeStr}`);
 						}
 						parts.push(
-							`usage:\n${buildWebhookUsageExample(pluginId, originalPathParts, responseTypeStr)}`,
+							`usage:\n${buildWebhookUsageExample(pluginId, originalPathParts)}`,
 						);
 						return parts.join('\n\n');
 					}
@@ -706,22 +675,274 @@ function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Factory — binds inspect methods to a fixed plugin list
+// Docs-only introspection (structured I/O for documentation generators)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Creates the list_operations / get_schema functions bound to a specific plugin list.
- * Used by both single-tenant and multi-tenant client builders.
+ * One row in an input/output table — typically a top-level Zod object property.
+ * Nested shapes are collapsed into {@link DocSchemaFieldRow.type} via `zodToInlineType`
+ * so tables stay scannable.
  */
-export function buildInspectMethods(
+export type DocSchemaFieldRow = {
+	key: string;
+	optional: boolean;
+	/** TypeScript-like type string (nested objects stay on one line) */
+	type: string;
+	description?: string;
+};
+
+/**
+ * Either an object broken out as field rows, or a single inline type (arrays, unions, etc.).
+ */
+export type DocSchemaShape =
+	| { kind: 'object'; fields: DocSchemaFieldRow[] }
+	| { kind: 'inline'; type: string };
+
+export type DocsApiEndpoint = {
+	path: string;
+	/** Dot path after `plugin.api.` (e.g. `messages.post`) */
+	shortPath: string;
+	description?: string;
+	riskLevel?: EndpointRiskLevel;
+	irreversible?: boolean;
+	input: DocSchemaShape;
+	output: DocSchemaShape;
+};
+
+export type DocsWebhook = {
+	path: string;
+	description?: string;
+	payload: DocSchemaShape;
+	responseType?: string;
+	/** Ready-to-paste `webhookHooks` snippet (same idea as `get_schema` text output) */
+	usageExample: string;
+};
+
+export type DocsDbFilterField = {
+	field: string;
+	type: 'string' | 'number' | 'boolean' | 'date';
+	operators: readonly string[];
+};
+
+export type DocsDbEntity = {
+	path: string;
+	entityName: string;
+	/** Always includes the synthetic `entity_id` row first, then entity filter fields */
+	filters: DocsDbFilterField[];
+};
+
+export type PluginDocsIntrospection = {
+	pluginId: string;
+	api: DocsApiEndpoint[];
+	webhooks: DocsWebhook[];
+	db: DocsDbEntity[];
+};
+
+export type IntrospectPluginForDocsResult =
+	| { ok: true; data: PluginDocsIntrospection }
+	| { ok: false; error: string };
+
+function unwrapZodForDocs(schema: ZodTypeAny): ZodTypeAny {
+	let current = schema;
+	for (;;) {
+		const def = (current as { _def: Record<string, unknown> })._def;
+		const typeName = def.typeName as string | undefined;
+		if (
+			typeName === 'ZodOptional' ||
+			typeName === 'ZodNullable' ||
+			typeName === 'ZodDefault'
+		) {
+			current = def.innerType as ZodTypeAny;
+			continue;
+		}
+		if (typeName === 'ZodEffects') {
+			current = def.schema as ZodTypeAny;
+			continue;
+		}
+		return current;
+	}
+}
+
+function zodToDocSchemaShape(schema: ZodTypeAny | undefined): DocSchemaShape {
+	if (schema === undefined) {
+		return { kind: 'inline', type: 'unknown' };
+	}
+	const base = unwrapZodForDocs(schema);
+	const def = (base as { _def: Record<string, unknown> })._def;
+	const typeName = def.typeName as string | undefined;
+	if (typeName === 'ZodObject') {
+		const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+		const fields: DocSchemaFieldRow[] = [];
+		for (const [key, val] of Object.entries(shape)) {
+			const valDef = (val as { _def: Record<string, unknown> })._def;
+			const ft = valDef.typeName as string | undefined;
+			const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
+			const inner = unwrapZodForDocs(val);
+			const innerDef = (inner as { _def: Record<string, unknown> })._def;
+			const description = innerDef?.description as string | undefined;
+			fields.push({
+				key,
+				optional,
+				type: zodToInlineType(inner),
+				description,
+			});
+		}
+		return { kind: 'object', fields };
+	}
+	return { kind: 'inline', type: zodToInlineType(base) };
+}
+
+/**
+ * Returns structured API, webhook, and DB operation metadata for a single plugin.
+ * Intended for **documentation generators** inside the Corsair repo (or tooling that depends
+ * on `corsair` as a library). It does not shell out to the CLI and does not require a
+ * `corsair.ts` file — pass the same `plugins` array you pass to `createCorsair`.
+ *
+ * Input/output shapes favour **small tables**: top-level object keys become rows; nested
+ * objects are rendered as compact inline types so pages do not overwhelm readers.
+ */
+export function introspectPluginForDocs(
 	plugins: readonly CorsairPlugin[],
-): CorsairInspectMethods {
+	pluginId: string,
+): IntrospectPluginForDocsResult {
+	const apiListResult = listOperations(plugins, {
+		plugin: pluginId,
+		type: 'api',
+	});
+	if (typeof apiListResult === 'string') {
+		return { ok: false, error: apiListResult };
+	}
+	if (!Array.isArray(apiListResult)) {
+		return {
+			ok: false,
+			error:
+				'list_operations did not return a path array — pass a configured plugin id.',
+		};
+	}
+
+	const plugin = plugins.find((p) => p.id === pluginId);
+	if (!plugin) {
+		return {
+			ok: false,
+			error: `Plugin "${pluginId}" is not configured on this instance.`,
+		};
+	}
+
+	const api: DocsApiEndpoint[] = [];
+	for (const path of apiListResult) {
+		const { shortPath, lookupKey } = apiEndpointShortPathAndLookupKey(
+			path,
+			pluginId,
+		);
+
+		const meta = findEndpointCaseInsensitive(
+			plugin.endpointMeta as Record<string, EndpointMetaEntry> | undefined,
+			lookupKey,
+		);
+		const schemas = findEndpointCaseInsensitive(
+			plugin.endpointSchemas,
+			lookupKey,
+		);
+		if (!meta && !schemas) continue;
+
+		api.push({
+			path,
+			shortPath,
+			description: meta?.description,
+			riskLevel: meta?.riskLevel,
+			irreversible: meta?.irreversible,
+			input: zodToDocSchemaShape(schemas?.input),
+			output: zodToDocSchemaShape(schemas?.output),
+		});
+	}
+	api.sort((a, b) => a.path.localeCompare(b.path));
+
+	const webhooks: DocsWebhook[] = [];
+	const whListResult = listOperations(plugins, {
+		plugin: pluginId,
+		type: 'webhooks',
+	});
+	if (Array.isArray(whListResult) && plugin.webhooks) {
+		for (const path of whListResult) {
+			const normalised = path.toLowerCase();
+			const remainder = normalised.slice(pluginId.length + 1);
+			const rest = remainder.startsWith('.') ? remainder.slice(1) : remainder;
+			if (!rest.startsWith('webhooks.')) continue;
+			const webhookPathNormalised = rest.slice(9);
+			const originalPathParts = resolveWebhookPathOriginalCase(
+				plugin.webhooks as Record<string, unknown>,
+				webhookPathNormalised.split('.'),
+			);
+			if (originalPathParts === null) continue;
+			const originalPath = originalPathParts.join('.');
+			const ws = findEndpointCaseInsensitive(
+				plugin.webhookSchemas,
+				originalPath.toLowerCase(),
+			);
+			const responseTypeStr = ws?.response
+				? zodToInlineType(ws.response)
+				: undefined;
+			webhooks.push({
+				path,
+				description: ws?.description,
+				payload: zodToDocSchemaShape(ws?.payload),
+				responseType: responseTypeStr,
+				usageExample: buildWebhookUsageExample(pluginId, originalPathParts),
+			});
+		}
+	}
+	webhooks.sort((a, b) => a.path.localeCompare(b.path));
+
+	const db: DocsDbEntity[] = [];
+	const dbListResult = listOperations(plugins, {
+		plugin: pluginId,
+		type: 'db',
+	});
+	const entities = (
+		plugin.schema as CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined
+	)?.entities;
+
+	if (Array.isArray(dbListResult) && entities) {
+		for (const path of dbListResult) {
+			const normalised = path.toLowerCase();
+			const remainder = normalised.slice(pluginId.length + 1);
+			const rest = remainder.startsWith('.') ? remainder.slice(1) : remainder;
+			if (!rest.startsWith('db.')) continue;
+			const dbPath = rest.slice(3);
+			const lastDot = dbPath.lastIndexOf('.');
+			if (lastDot === -1) continue;
+			const entityNameLower = dbPath.slice(0, lastDot);
+			const method = dbPath.slice(lastDot + 1);
+			if (method !== 'search') continue;
+			const entry = findEntityCaseInsensitive(entities, entityNameLower);
+			if (!entry) continue;
+			const [entityName, entitySchema] = entry;
+			const ff = buildFilterableFields(entitySchema);
+			const entityFilters: DocsDbFilterField[] = Object.entries(ff).map(
+				([field, info]) => ({
+					field,
+					type: info.type,
+					operators: info.operators,
+				}),
+			);
+			db.push({
+				path,
+				entityName,
+				filters: [
+					{
+						field: 'entity_id',
+						type: 'string',
+						operators: STRING_OPERATORS,
+					},
+					...entityFilters,
+				],
+			});
+		}
+	}
+	db.sort((a, b) => a.path.localeCompare(b.path));
+
 	return {
-		list_operations(options?: ListOperationsOptions) {
-			return listOperations(plugins, options);
-		},
-		get_schema(path: string): string {
-			return getSchema(plugins, path);
-		},
+		ok: true,
+		data: { pluginId, api, webhooks, db },
 	};
 }

@@ -1,4 +1,4 @@
-import type { GithubWebhooks } from '..';
+import type { GithubWebhooks } from '../index';
 import type { Discussion } from './types';
 import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
+import type { TwitterApiIOEndpoints } from '../index';
 import { persistTweetWithAuthor } from '../utils';
 import type { TwitterApiIOEndpointOutputs } from './types';
 import { buildAdvancedSearchQuery } from './types';

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ZoomWebhooks } from '..';
+import type { ZoomWebhooks } from '../index';
 import { createZoomEventMatch, verifyZoomWebhookSignature } from './types';
 
 export const started: ZoomWebhooks['webinarStarted'] = {

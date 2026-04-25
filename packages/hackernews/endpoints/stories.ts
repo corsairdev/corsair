@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { HackerNewsEndpoints } from '..';
 import { makeHackerNewsFirebaseRequest } from '../client';
+import type { HackerNewsEndpoints } from '../index';
 
 export const getTop: HackerNewsEndpoints['storiesGetTop'] = async (
 	ctx,

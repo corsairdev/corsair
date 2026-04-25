@@ -1,7 +1,7 @@
 import { makeRedditRequest } from '../client';
-import { PostDataSchema, CommentDataSchema } from '../endpoints/types';
-import { TEST_SUBREDDIT } from '../endpoints/utils';
 import type { RedditListingRaw } from '../endpoints/types';
+import { CommentDataSchema, PostDataSchema } from '../endpoints/types';
+import { TEST_SUBREDDIT } from '../endpoints/utils';
 
 describe('Reddit JSON: /by_id/{names}.json', () => {
 	it('returns posts by fullname IDs', async () => {

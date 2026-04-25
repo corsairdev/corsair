@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { OpenWeatherMapEndpoints } from '..';
 import { makeOpenWeatherMapRequest } from '../client';
+import type { OpenWeatherMapEndpoints } from '../index';
 import type { OpenWeatherMapEndpointOutputs } from './types';
 
 /**

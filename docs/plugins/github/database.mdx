@@ -1,0 +1,382 @@
+---
+title: Database
+description: "Github local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Github plugin syncs data locally. Use `corsair.github.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Branches
+
+Path: `github.db.branches.search`
+
+```ts
+const rows = await corsair.github.db.branches.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `repositoryId` | `number` | equals, gt, gte, lt, lte, in |
+| `repositoryFullName` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha` | `string` | equals, contains, startsWith, endsWith, in |
+| `protected` | `boolean` | equals |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Comments
+
+Path: `github.db.comments.search`
+
+```ts
+const rows = await corsair.github.db.comments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `issueUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorAssociation` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Discussions
+
+Path: `github.db.discussions.search`
+
+```ts
+const rows = await corsair.github.db.discussions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `repositoryUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `number` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `locked` | `boolean` | equals |
+| `comments` | `number` | equals, gt, gte, lt, lte, in |
+| `authorAssociation` | `string` | equals, contains, startsWith, endsWith, in |
+| `categoryId` | `number` | equals, gt, gte, lt, lte, in |
+| `categoryName` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `answerChosenAt` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Forks
+
+Path: `github.db.forks.search`
+
+```ts
+const rows = await corsair.github.db.forks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `fullName` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `fork` | `boolean` | equals |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `sourceRepoId` | `number` | equals, gt, gte, lt, lte, in |
+| `sourceRepoFullName` | `string` | equals, contains, startsWith, endsWith, in |
+| `defaultBranch` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `pushedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Issues
+
+Path: `github.db.issues.search`
+
+```ts
+const rows = await corsair.github.db.issues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `repositoryUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `labelsUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `commentsUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `eventsUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `number` | `number` | equals, gt, gte, lt, lte, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `locked` | `boolean` | equals |
+| `comments` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `closedAt` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pull Requests
+
+Path: `github.db.pullRequests.search`
+
+```ts
+const rows = await corsair.github.db.pullRequests.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `patchUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `issueUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `number` | `number` | equals, gt, gte, lt, lte, in |
+| `locked` | `boolean` | equals |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `closedAt` | `date` | equals, before, after, between |
+| `mergedAt` | `date` | equals, before, after, between |
+| `mergeCommitSha` | `string` | equals, contains, startsWith, endsWith, in |
+| `draft` | `boolean` | equals |
+| `merged` | `boolean` | equals |
+| `mergeable` | `boolean` | equals |
+| `comments` | `number` | equals, gt, gte, lt, lte, in |
+| `reviewComments` | `number` | equals, gt, gte, lt, lte, in |
+| `commits` | `number` | equals, gt, gte, lt, lte, in |
+| `additions` | `number` | equals, gt, gte, lt, lte, in |
+| `deletions` | `number` | equals, gt, gte, lt, lte, in |
+| `changedFiles` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Releases
+
+Path: `github.db.releases.search`
+
+```ts
+const rows = await corsair.github.db.releases.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `assetsUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `uploadUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `tarballUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `zipballUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `tagName` | `string` | equals, contains, startsWith, endsWith, in |
+| `targetCommitish` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `draft` | `boolean` | equals |
+| `prerelease` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+| `publishedAt` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Repositories
+
+Path: `github.db.repositories.search`
+
+```ts
+const rows = await corsair.github.db.repositories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `fullName` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `fork` | `boolean` | equals |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `pushedAt` | `date` | equals, before, after, between |
+| `defaultBranch` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `stargazersCount` | `number` | equals, gt, gte, lt, lte, in |
+| `watchersCount` | `number` | equals, gt, gte, lt, lte, in |
+| `forksCount` | `number` | equals, gt, gte, lt, lte, in |
+| `openIssuesCount` | `number` | equals, gt, gte, lt, lte, in |
+| `archived` | `boolean` | equals |
+| `disabled` | `boolean` | equals |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `github.db.users.search`
+
+```ts
+const rows = await corsair.github.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `login` | `string` | equals, contains, startsWith, endsWith, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatarUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `gravatarId` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteAdmin` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Workflows
+
+Path: `github.db.workflows.search`
+
+```ts
+const rows = await corsair.github.db.workflows.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `path` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `badgeUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+| `deletedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
