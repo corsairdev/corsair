@@ -113,8 +113,8 @@ export async function getValidGitlabAccessToken({
 
 export type GitlabRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	body?: Record<string, unknown>;
-	query?: Record<string, string | number | boolean | undefined>;
+	body?: Record<string, any>;
+	query?: Record<string, any>;
 	/** Self-managed host (default https://gitlab.com) */
 	baseUrl?: string;
 };

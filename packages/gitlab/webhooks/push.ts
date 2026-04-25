@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { GitlabWebhooks } from '..';
 import { createGitlabMatch, verifyGitlabWebhookSignature } from './types';
 
-export const example: GitlabWebhooks['example'] = {
-	match: createGitlabMatch('example'),
+export const push: GitlabWebhooks['push'] = {
+	match: createGitlabMatch('push'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyGitlabWebhookSignature(request, ctx.key);
@@ -16,11 +16,11 @@ export const example: GitlabWebhooks['example'] = {
 		}
 
 		const event = request.payload;
-		if (event.object_kind !== 'example') {
+		if (event.object_kind !== 'push') {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'gitlab.webhook.example', { ...event }, 'completed');
+		await logEventFromContext(ctx, 'gitlab.webhook.push', { ...event }, 'completed');
 
 		return { success: true, data: event };
 	},

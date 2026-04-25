@@ -24,6 +24,25 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 403) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('forbidden') || msg.includes('permission_denied') || msg.includes('access_denied');
+		},
+		handler: async (error: Error) => {
+			console.warn(`[GITLAB] Permission denied: ${error.message}`);
+			return { maxRetries: 0 };
+		},
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 404) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('not found') || msg.includes('404');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
