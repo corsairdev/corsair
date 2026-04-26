@@ -87,7 +87,7 @@ export function bindEndpointsRecursively({
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				if (permissionsConfig) {
 					const meta = endpointMeta?.[operationPath];
-					const { result: permResult, onComplete } = await enforcePermission({
+					const { result: permResult, reason: permReason, onComplete } = await enforcePermission({
 						pluginId,
 						endpointPath: operationPath,
 						args,
@@ -103,7 +103,17 @@ export function bindEndpointsRecursively({
 						tenantId,
 						approvalMode: approvalConfig?.mode,
 					});
-					if (permResult === 'blocked') return null;
+					if (permResult === 'blocked') {
+						const msg =
+							permReason === 'denied'
+								? `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`
+								: permReason === 'policy'
+								? `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`
+								: permReason === 'timeout'
+								? `Action '${operationPath}' timed out waiting for approval.`
+								: `Action '${operationPath}' requires user approval before it can run.`;
+						throw new Error(msg);
+					}
 					onPermissionComplete = onComplete;
 				}
 

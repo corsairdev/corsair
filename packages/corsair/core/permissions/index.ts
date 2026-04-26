@@ -170,6 +170,8 @@ export type EnforcePermissionOptions = {
 
 export type EnforcePermissionResult = {
 	result: 'allow' | 'blocked';
+	/** Why the call was blocked. Only present when result === 'blocked'. */
+	reason?: 'denied' | 'policy' | 'timeout' | 'pending';
 	/**
 	 * Called by the endpoint binding layer after the endpoint executes successfully.
 	 * Marks the permission record as 'completed' (single-use approval consumed).
@@ -196,7 +198,7 @@ async function pollUntilResolved(
 			.where('id', '=', permissionId)
 			.executeTakeFirst();
 
-		if (!record) return { result: 'blocked' };
+		if (!record) return { result: 'blocked', reason: 'pending' };
 
 		if (record.status === 'approved') {
 			return {
@@ -211,17 +213,17 @@ async function pollUntilResolved(
 			};
 		}
 
-		if (
-			record.status === 'denied' ||
-			record.status === 'expired' ||
-			record.status === 'failed'
-		) {
-			return { result: 'blocked' };
+		if (record.status === 'denied') {
+			return { result: 'blocked', reason: 'denied' };
+		}
+
+		if (record.status === 'expired' || record.status === 'failed') {
+			return { result: 'blocked', reason: 'timeout' };
 		}
 
 		await new Promise<void>((resolve) => setTimeout(resolve, 500));
 	}
-	return { result: 'blocked' };
+	return { result: 'blocked', reason: 'timeout' };
 }
 
 /**
@@ -257,7 +259,7 @@ export async function enforcePermission(
 			`\n  Action: ${description}`,
 			`\n  To allow this, update the permission mode or add an override in your corsair config.`,
 		);
-		return { result: 'blocked' };
+		return { result: 'blocked', reason: 'policy' };
 	}
 
 	const argsJson = JSON.stringify(opts.args);
@@ -311,7 +313,7 @@ export async function enforcePermission(
 		if (opts.approvalMode === 'synchronous') {
 			return pollUntilResolved(opts.db, existing.id, opts.timeoutMs ?? 10 * 60 * 1_000);
 		}
-		return { result: 'blocked' };
+		return { result: 'blocked', reason: 'pending' };
 	}
 
 	// No existing actionable record — create a new pending approval request
