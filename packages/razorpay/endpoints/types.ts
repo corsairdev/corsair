@@ -58,12 +58,12 @@ const PayoutsListInputSchema = z.object({
     contact_id: z.string().optional(),
     fund_account_id: z.string().optional(),
     mode: z.string().optional(),
-    reference_id: z.string().optional(), // max 40 chars
+    reference_id: z.string().optional(),
     status: z.string().optional(),
-    from: z.number().optional(), // timestamp in unix
-    to: z.number().optional(), // timestamp in unix
-    count: z.number().optional(), //default is 10, max is 100
-    skip: z.number().optional(), //default is 0
+    from: z.number().optional(),
+    to: z.number().optional(),
+    count: z.number().optional(),
+    skip: z.number().optional(),
 })
 
 const PayoutsGetInputSchema = z.object({
