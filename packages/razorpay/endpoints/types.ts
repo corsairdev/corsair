@@ -73,7 +73,7 @@ const PayoutsGetInputSchema = z.object({
 const PayoutsCreateInputSchema = z.object({
     account_number: z.string(),
     fund_account_id: z.string(),
-    amount: z.number(),
+    amount: z.number().int().positive().min(100),
     currency: z.string(),
     mode: z.string(),
     purpose: z.string(),
