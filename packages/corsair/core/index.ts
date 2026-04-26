@@ -20,7 +20,9 @@ export type CorsairInternalConfig = {
 	approval?: {
 		timeout: string;
 		onTimeout: 'deny' | 'approve';
-		mode?: 'synchronous' | 'asynchronous';
+		mode?: 'synchronous' | 'asynchronous' | (() => 'synchronous' | 'asynchronous');
+		/** Called when a permission is blocked in async mode. Return the message surfaced to the LLM. */
+		formatAsyncMessage?: (opts: { token: string; id: string; plugin: string; endpoint: string; args: unknown }) => string;
 	};
 };
 

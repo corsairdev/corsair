@@ -667,8 +667,16 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 		 *                      On denial, the tool returns an error and the model stops.
 		 * - `'asynchronous'` → the tool call returns immediately with a blocked result.
 		 *                      The model must handle the denial and stop on its own.
+		 * - A no-arg function → called per-request, return value selects the mode dynamically.
+		 *                       Use this to switch modes based on runtime context (e.g. auth type).
 		 * Defaults to `'asynchronous'` if not specified.
 		 */
-		mode?: 'synchronous' | 'asynchronous';
+		mode?: 'synchronous' | 'asynchronous' | (() => 'synchronous' | 'asynchronous');
+		/**
+		 * Called when a permission is blocked in async mode. Return the string that the LLM receives
+		 * as the tool result — this is what gets surfaced to the user in the chat.
+		 * Receives the permission token, record ID, plugin name, endpoint path, and args.
+		 */
+		formatAsyncMessage?: (opts: { token: string; id: string; plugin: string; endpoint: string; args: unknown }) => string;
 	};
 };

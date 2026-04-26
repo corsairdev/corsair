@@ -162,16 +162,21 @@ export type EnforcePermissionOptions = {
 	/**
 	 * Controls whether the call blocks until the user approves or denies.
 	 * - `'synchronous'`  → polls the DB every 500 ms; returns 'allow' on approval, 'blocked' on denial/timeout.
-	 * - `'asynchronous'` → returns 'blocked' immediately after creating the pending record (legacy behaviour).
+	 * - `'asynchronous'` → returns 'blocked' immediately after creating the pending record.
+	 * - A no-arg function → called per-request, return value selects the mode dynamically.
 	 * Defaults to `'asynchronous'`.
 	 */
-	approvalMode?: 'synchronous' | 'asynchronous';
+	approvalMode?: 'synchronous' | 'asynchronous' | (() => 'synchronous' | 'asynchronous');
 };
 
 export type EnforcePermissionResult = {
 	result: 'allow' | 'blocked';
 	/** Why the call was blocked. Only present when result === 'blocked'. */
 	reason?: 'denied' | 'policy' | 'timeout' | 'pending';
+	/** Permission record ID. Present when a pending approval record exists. */
+	id?: string;
+	/** Permission token (the value embedded in review URLs). Present when a pending approval record exists. */
+	token?: string;
 	/**
 	 * Called by the endpoint binding layer after the endpoint executes successfully.
 	 * Marks the permission record as 'completed' (single-use approval consumed).
@@ -310,10 +315,11 @@ export async function enforcePermission(
 			`\n  Permission ID: ${existing.id}`,
 			`\n  Use the token to approve or deny this request.`,
 		);
-		if (opts.approvalMode === 'synchronous') {
+		const resolvedMode = typeof opts.approvalMode === 'function' ? opts.approvalMode() : opts.approvalMode;
+		if (resolvedMode === 'synchronous') {
 			return pollUntilResolved(opts.db, existing.id, opts.timeoutMs ?? 10 * 60 * 1_000);
 		}
-		return { result: 'blocked', reason: 'pending' };
+		return { result: 'blocked', reason: 'pending', id: existing.id, token: existing.token };
 	}
 
 	// No existing actionable record — create a new pending approval request
@@ -347,9 +353,10 @@ export async function enforcePermission(
 		`\n  Use the token to approve or deny this request.`,
 	);
 
-	if (opts.approvalMode === 'synchronous') {
+	const resolvedMode = typeof opts.approvalMode === 'function' ? opts.approvalMode() : opts.approvalMode;
+	if (resolvedMode === 'synchronous') {
 		return pollUntilResolved(opts.db, id, timeoutMs);
 	}
 
-	return { result: 'blocked' };
+	return { result: 'blocked', reason: 'pending', id, token };
 }
