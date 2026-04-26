@@ -9,5 +9,6 @@ export type PermissionAdapter = {
 export type BaseMcpOptions = {
 	corsair: { [key: string]: unknown };
 	permissions?: PermissionAdapter;
+	setup?: boolean;
 	basePermissionUrl?: string;
 };

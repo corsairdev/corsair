@@ -14,7 +14,7 @@ export type CorsairToolDef = {
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
-	const { corsair, permissions, basePermissionUrl } = options;
+	const { corsair, permissions, basePermissionUrl, setup } = options;
 
 	const defs: CorsairToolDef[] = [
 		{
@@ -101,7 +101,10 @@ export function buildCorsairToolDefs(
 				}
 			},
 		},
-		{
+	];
+
+	if (setup == null || setup === true) {
+		defs.push({
 			name: 'corsair_setup',
 			description:
 				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up.',
@@ -130,8 +133,8 @@ export function buildCorsairToolDefs(
 					};
 				}
 			},
-		},
-	];
+		});
+	}
 
 	if (permissions && basePermissionUrl) {
 		defs.push({
