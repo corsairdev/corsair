@@ -333,7 +333,7 @@ export type BuildCorsairClientOptions = {
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
 	/** Approval timeout from createCorsair({ approval: ... }). Forwarded to the permission guard. */
-	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve' };
+	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve'; mode?: 'synchronous' | 'asynchronous' };
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

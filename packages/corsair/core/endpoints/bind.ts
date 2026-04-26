@@ -68,7 +68,7 @@ export function bindEndpointsRecursively({
 	/** Required for 'require_approval' to persist the approval record to the DB. */
 	database?: CorsairDatabase;
 	/** Approval timeout config from createCorsair({ approval: ... }). */
-	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve' };
+	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve'; mode?: 'synchronous' | 'asynchronous' };
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
 }): void {
@@ -101,6 +101,7 @@ export function bindEndpointsRecursively({
 							? parseDurationMs(approvalConfig.timeout)
 							: undefined,
 						tenantId,
+						approvalMode: approvalConfig?.mode,
 					});
 					if (permResult === 'blocked') return null;
 					onPermissionComplete = onComplete;
