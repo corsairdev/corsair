@@ -660,5 +660,15 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 		 * - `'approve'` → the action is automatically approved (use only in low-risk setups)
 		 */
 		onTimeout: 'deny' | 'approve';
+		/**
+		 * How approval requests are handled when execution is blocked.
+		 * - `'synchronous'`  → the tool call blocks (polls the DB) until the user approves or denies.
+		 *                      The model is unaware anything happened — it just sees a slow tool call.
+		 *                      On denial, the tool returns an error and the model stops.
+		 * - `'asynchronous'` → the tool call returns immediately with a blocked result.
+		 *                      The model must handle the denial and stop on its own.
+		 * Defaults to `'asynchronous'` if not specified.
+		 */
+		mode?: 'synchronous' | 'asynchronous';
 	};
 };

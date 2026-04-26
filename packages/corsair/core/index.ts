@@ -20,6 +20,7 @@ export type CorsairInternalConfig = {
 	approval?: {
 		timeout: string;
 		onTimeout: 'deny' | 'approve';
+		mode?: 'synchronous' | 'asynchronous';
 	};
 };
 
