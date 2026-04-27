@@ -150,8 +150,11 @@ export type GenerateOAuthUrlResult = {
  * Builds an OAuth authorization URL for the given plugin and tenant.
  *
  * Embed the returned `url` in a button or link for the customer to click.
- * Persist `state` server-side (e.g. in a session cookie) so you can verify
- * it matches when processOAuthCallback is called.
+ * The returned `state` is HMAC-signed — pass it to processOAuthCallback as-is.
+ *
+ * Requires the plugin to have an oauthConfig (e.g. googlecalendar, gmail,
+ * notion, spotify). Plugins like slack and linear use API keys, not OAuth.
+ * The plugin's client_id and client_secret must be set via `corsair setup`.
  *
  * Works for both multi-tenant and single-tenant corsair instances.
  */
