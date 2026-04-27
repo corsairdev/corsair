@@ -84,8 +84,13 @@ function extractFromMultipart(body: string, boundary: string): string {
 			const partHeaders = part.slice(0, sep).toLowerCase();
 			if (!partHeaders.includes(preferred)) continue;
 			const partBody = part.slice(sep).replace(/^\r?\n\r?\n?/, '');
-			const encMatch = partHeaders.match(/content-transfer-encoding:\s*([^\r\n]+)/);
-			const text = decodeTransferEncoding(partBody, encMatch ? encMatch[1].trim() : '');
+			const encMatch = partHeaders.match(
+				/content-transfer-encoding:\s*([^\r\n]+)/,
+			);
+			const text = decodeTransferEncoding(
+				partBody,
+				encMatch ? (encMatch?.[1] || '').trim() : '',
+			);
 			return preferred === 'text/html' ? stripHtml(text) : text;
 		}
 	}
@@ -118,7 +123,7 @@ export function parseRawEmail(raw: string): ParsedEmail {
 
 		if (contentType.startsWith('multipart/')) {
 			const bm = contentType.match(/boundary="?([^";]+)"?/i);
-			if (bm) body = extractFromMultipart(bodyRaw, bm[1].trim());
+			if (bm) body = extractFromMultipart(bodyRaw, (bm?.[1] || '').trim());
 		} else {
 			const enc = headers['content-transfer-encoding'] || '';
 			const text = decodeTransferEncoding(bodyRaw, enc);
