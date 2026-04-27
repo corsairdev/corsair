@@ -3,6 +3,12 @@ import {
 	processOAuthCallback,
 } from 'corsair/oauth';
 import express from 'express';
+
+/**
+ * Import your own corsair instance here.
+ * The plugin you connect must have oauthConfig defined
+ * (e.g. googlecalendar, gmail, notion, spotify — NOT slack or linear).
+ */
 import { corsair } from './corsair';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -26,13 +32,17 @@ const app = express();
 
 const REDIRECT_URI = `${process.env.APP_URL ?? 'http://localhost:3000'}/api/auth`;
 
+// Pending OAuth states — prevents CSRF by ensuring the callback state
+// was issued by this server. Use Redis or sessions in production.
+const pendingStates = new Set<string>();
+
 /**
- * GET /connect/:plugin
+ * GET /connect/:plugin?tenantId=<id>
  *
- * Initiates OAuth for a tenant. In a real app, tenantId would come from
+ * Initiates OAuth for a tenant. In a real app, tenantId comes from
  * your session/auth middleware.
  *
- * Example: GET /connect/slack?tenantId=acme
+ * Example: GET /connect/googlecalendar?tenantId=acme
  */
 app.get('/connect/:plugin', async (req, res) => {
 	const pluginId = req.params.plugin;
@@ -44,9 +54,7 @@ app.get('/connect/:plugin', async (req, res) => {
 			redirectUri: REDIRECT_URI,
 		});
 
-		// In production: persist `state` in a session or signed cookie
-		// so you can verify it in the callback below.
-		// Here we pass it via the provider's redirect (it comes back as ?state=).
+		pendingStates.add(state);
 		res.redirect(url);
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
@@ -58,7 +66,7 @@ app.get('/connect/:plugin', async (req, res) => {
  * GET /api/auth
  *
  * OAuth callback — the provider redirects here with ?code= and ?state=.
- * Exchanges the code for tokens and stores them for the tenant.
+ * Verifies state, exchanges the code for tokens, stores them for the tenant.
  */
 app.get('/api/auth', async (req, res) => {
 	const code = req.query.code as string | undefined;
@@ -76,6 +84,12 @@ app.get('/api/auth', async (req, res) => {
 		res.status(400).send('<p>Missing code or state parameter.</p>');
 		return;
 	}
+
+	if (!pendingStates.has(state)) {
+		res.status(400).send('<p>Invalid state. Possible CSRF attempt.</p>');
+		return;
+	}
+	pendingStates.delete(state);
 
 	try {
 		const result = await processOAuthCallback(corsair, {
