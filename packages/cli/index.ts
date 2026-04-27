@@ -636,6 +636,43 @@ function parseRunArgs(args: string[]): {
 	return { path: endpointPath, input, tenant };
 }
 
+function parseExploreArgs(args: string[]): {
+	plugin?: string;
+	type?: 'api' | 'webhooks' | 'db';
+	json: boolean;
+}{
+	let plugin: string | undefined;
+	let type: 'api' | 'webhooks' | 'db' | undefined;
+	let json = false;
+
+	for (let i = 0; i < args.length; i++){
+		const arg = args[i]!;
+		if (arg === '--json') {
+			json = true;
+			continue;
+		}
+		if (arg === '--type' && args[i + 1]) {
+			const value = args[++i];
+			if (value === 'api' || value === 'webhooks' || value === 'db') {
+				type = value;
+			}
+			continue;
+		}
+		if (arg.startsWith('--type=')) {
+			const value = arg.slice('--type='.length);
+			if (value === 'api' || value === 'webhooks' || value === 'db') {
+				type = value;
+			}
+			continue;
+		}
+
+		if (!arg.startsWith('-') && !plugin) {
+			plugin = arg;
+		}
+	}
+	return { plugin, type, json };
+}
+
 function parseUiArgs(args: string[]): { port?: number; open?: boolean } {
 	let port: number | undefined;
 	let open: boolean | undefined;
@@ -706,6 +743,7 @@ function printHelp() {
 		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
 		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
+		'pnpm corsair explore [provider] [--type=api|webhooks|db]  Discover official providers before installing them',
 		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'pnpm corsair ui [--port=4317] [--no-open]       Open the Corsair Studio dashboard (requires @corsair-dev/studio)',
 		'pnpm corsair script --code "<js>" [--tenant=<id>]',
@@ -837,6 +875,48 @@ async function main() {
 		}
 		console.log(result);
 		return;
+	}
+
+	if (command === 'explore') {
+		const { plugin, type, json } = parseExploreArgs(args.slice(1));
+		const baseUrl = process.env.CORSAIR_EXPLORER_URL ?? 'http://localhost:4319';
+
+		const typePath = plugin && type ? `/${type}` : '';
+		const url = plugin 
+		? `${baseUrl}/v1/plugins/${encodeURIComponent(plugin)}${typePath}`
+			: `${baseUrl}/v1/plugins`;
+		
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				if (response.status === 404 && plugin) {
+					console.error(`[#corsair]: Unknown provider "${plugin}".`);
+					console.error('[#corsair]: Run `pnpm corsair explore` to see available providers.');
+					process.exit(1);
+				}
+
+				console.error(
+					`[#corsair]: Explore request failed with HTTP ${response.status}.`,
+				);
+				process.exit(1);
+			}
+			const data = await response.json();
+			console.log(JSON.stringify(data, null, 2));
+			return;
+		}
+		catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+
+			console.error('[#corsair]: Could not reach the Corsair explorer registry.');
+			console.error(`[#corsair]: Tried: ${url}`);
+			console.error(`[#corsair]: ${message}`);
+			console.error('');
+			console.error(
+				'[#corsair]: Start the explorer server locally or set CORSAIR_EXPLORER_URL.',
+			);
+
+			process.exit(1);
+		}
 	}
 
 	if (SHOW_RUN && command === 'run') {
