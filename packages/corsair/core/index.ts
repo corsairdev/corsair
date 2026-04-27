@@ -156,11 +156,13 @@ export {
 	encryptConfig,
 	encryptDEK,
 	encryptWithDEK,
+	exchangeCodeForTokens,
 	generateDEK,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 	reEncryptConfig,
 } from './auth';
+export type { TokenResponse } from './auth';
 // Core types
 export type {
 	CorsairClient,
