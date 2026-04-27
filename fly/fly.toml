@@ -1,0 +1,36 @@
+app = "corsair-claude"
+primary_region = "dfw"
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env] 
+  CONTROL_PORT = '8080'
+  NODE_ENV = 'production'
+  RUNTIME_PORT = '3000'
+  WORKSPACE_DEFAULTS_DIR = '/workspace-defaults'
+  WORKSPACE_DIR = '/workspace'
+
+[[mounts]]
+  source = 'corsair_workspace'
+  destination = '/workspace'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+
+  [[http_service.checks]]
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '15s'
+    method = 'GET'
+    path = '/health'
+
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 512
