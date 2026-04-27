@@ -1,16 +1,18 @@
-import type { PluginDef, PluginsConfig, PermissionMode } from "./codegen.js";
-import { renderArgsSnippet } from "@corsair-dev/ui";
+import { renderArgsSnippet } from '@corsair-dev/ui';
+import type { PluginDef, PluginsConfig } from './codegen.js';
 
 export function esc(s: unknown): string {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+	return String(s ?? '')
+		.replace(/&/g, '&amp;')
+		.replace(/"/g, '&quot;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;');
 }
 
 const NAV = [
-  { href: "/plugins",     label: "Plugins"     },
-  { href: "/connect",     label: "Connect"     },
-  { href: "/permissions", label: "Permissions" },
+	{ href: '/plugins', label: 'Plugins' },
+	{ href: '/connect', label: 'Connect' },
+	{ href: '/permissions', label: 'Permissions' },
 ];
 
 const CSS = `
@@ -83,13 +85,21 @@ const CSS = `
   .dot-red    { background: #ef4444; }
 `;
 
-export function layout(active: string, title: string, body: string, flash?: string): string {
-  const links = NAV.map(({ href, label }) =>
-    `<a href="${href}"${active === href ? ' class="active"' : ""}>${label}</a>`
-  ).join("\n    ");
-  const flashHtml = flash ? `<div class="alert alert-blue" style="margin-bottom:1.5rem">${esc(flash)}</div>` : "";
+export function layout(
+	active: string,
+	title: string,
+	body: string,
+	flash?: string,
+): string {
+	const links = NAV.map(
+		({ href, label }) =>
+			`<a href="${href}"${active === href ? ' class="active"' : ''}>${label}</a>`,
+	).join('\n    ');
+	const flashHtml = flash
+		? `<div class="alert alert-blue" style="margin-bottom:1.5rem">${esc(flash)}</div>`
+		: '';
 
-  return `<!DOCTYPE html>
+	return `<!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)} — Corsair</title>
 <style>${CSS}</style></head>
@@ -108,7 +118,7 @@ export function layout(active: string, title: string, body: string, flash?: stri
 }
 
 export function loginPage(error = false): string {
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+	return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
 <title>Login — Corsair</title>
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc}
@@ -120,7 +130,7 @@ button:hover{background:#0f172a}.err{color:#dc2626;font-size:.8125rem}</style></
 <body><div class="card">
 <h1>Corsair</h1>
 <p>Enter your password to access the dashboard.</p>
-${error ? '<p class="err">Incorrect password.</p>' : ""}
+${error ? '<p class="err">Incorrect password.</p>' : ''}
 <form method="POST" action="/login">
 <input type="password" name="password" placeholder="Password" autofocus>
 <br><br>
@@ -130,25 +140,28 @@ ${error ? '<p class="err">Incorrect password.</p>' : ""}
 
 // Plugins page
 export function pluginsPage(
-  installed: PluginsConfig,
-  catalog: PluginDef[],
-  runtimeStatus: string,
+	installed: PluginsConfig,
+	catalog: PluginDef[],
+	runtimeStatus: string,
 ): string {
-  const installedIds = new Set(Object.keys(installed));
+	const installedIds = new Set(Object.keys(installed));
 
-  const statusDot = runtimeStatus === "running"
-    ? `<span class="status-dot dot-green"></span>Runtime running`
-    : runtimeStatus === "restarting" || runtimeStatus === "starting"
-    ? `<span class="status-dot dot-yellow"></span>Runtime restarting…`
-    : `<span class="status-dot dot-red"></span>Runtime ${runtimeStatus}`;
+	const statusDot =
+		runtimeStatus === 'running'
+			? `<span class="status-dot dot-green"></span>Runtime running`
+			: runtimeStatus === 'restarting' || runtimeStatus === 'starting'
+				? `<span class="status-dot dot-yellow"></span>Runtime restarting…`
+				: `<span class="status-dot dot-red"></span>Runtime ${runtimeStatus}`;
 
-  const installedCards = installedIds.size === 0
-    ? `<p class="empty">No plugins installed yet. Add one from the catalog below.</p>`
-    : [...installedIds].map(id => {
-        const def = catalog.find(p => p.id === id);
-        if (!def) return "";
-        const mode = installed[id]!.mode;
-        return `<div class="card">
+	const installedCards =
+		installedIds.size === 0
+			? `<p class="empty">No plugins installed yet. Add one from the catalog below.</p>`
+			: [...installedIds]
+					.map((id) => {
+						const def = catalog.find((p) => p.id === id);
+						if (!def) return '';
+						const mode = installed[id]!.mode;
+						return `<div class="card">
 <div class="card-row">
   <div>
     <div class="card-title">${esc(def.label)}</div>
@@ -157,9 +170,12 @@ export function pluginsPage(
   <div style="display:flex;gap:.5rem;align-items:center;flex-shrink:0">
     <form method="POST" action="/api/plugins/${esc(id)}/mode" style="display:flex;gap:.5rem;align-items:center">
       <select name="mode" class="btn btn-sm btn-outline" onchange="this.form.submit()">
-        ${["open","cautious","strict","readonly"].map(m =>
-          `<option value="${m}"${m === mode ? " selected" : ""}>${m}</option>`
-        ).join("")}
+        ${['open', 'cautious', 'strict', 'readonly']
+					.map(
+						(m) =>
+							`<option value="${m}"${m === mode ? ' selected' : ''}>${m}</option>`,
+					)
+					.join('')}
       </select>
     </form>
     <a href="/credentials/${esc(id)}" class="btn btn-sm btn-outline">Credentials</a>
@@ -169,14 +185,25 @@ export function pluginsPage(
     </form>
   </div>
 </div></div>`;
-      }).join("\n");
+					})
+					.join('\n');
 
-  const availableCards = catalog
-    .filter(p => !installedIds.has(p.id))
-    .map(p => {
-      const authBadge = p.authType === "oauth" ? "OAuth" : p.authType === "api_key" ? "API Key" : "Bot Token";
-      const badgeClass = p.authType === "oauth" ? "badge-purple" : p.authType === "api_key" ? "badge-blue" : "badge-gray";
-      return `<div class="plugin-card">
+	const availableCards = catalog
+		.filter((p) => !installedIds.has(p.id))
+		.map((p) => {
+			const authBadge =
+				p.authType === 'oauth'
+					? 'OAuth'
+					: p.authType === 'api_key'
+						? 'API Key'
+						: 'Bot Token';
+			const badgeClass =
+				p.authType === 'oauth'
+					? 'badge-purple'
+					: p.authType === 'api_key'
+						? 'badge-blue'
+						: 'badge-gray';
+			return `<div class="plugin-card">
 <div style="display:flex;justify-content:space-between;align-items:flex-start">
   <div class="card-title">${esc(p.label)}</div>
   <span class="badge ${badgeClass}">${authBadge}</span>
@@ -186,9 +213,13 @@ export function pluginsPage(
   <input type="hidden" name="plugin" value="${esc(p.id)}">
   <button type="submit" class="btn btn-sm btn-outline btn-full">Add</button>
 </form></div>`;
-    }).join("\n");
+		})
+		.join('\n');
 
-  return layout("/plugins", "Plugins", `
+	return layout(
+		'/plugins',
+		'Plugins',
+		`
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
   <h2 style="margin:0">Installed</h2>
   <span style="font-size:.8125rem;color:#64748b">${statusDot}</span>
@@ -196,75 +227,96 @@ export function pluginsPage(
 ${installedCards}
 <hr class="sep">
 <h2>Available</h2>
-<div class="grid">${availableCards}</div>`);
+<div class="grid">${availableCards}</div>`,
+	);
 }
 
 // Credentials page for a single plugin
 export function credentialsPage(
-  pluginId: string,
-  label: string,
-  authType: string,
-  rootKeys: Record<string, string>,
-  accountKeys: Record<string, string>,
+	pluginId: string,
+	label: string,
+	authType: string,
+	rootKeys: Record<string, string>,
+	accountKeys: Record<string, string>,
 ): string {
-  const isOAuth = authType === "oauth";
-  const hasClientCreds = !!(rootKeys.client_id && rootKeys.client_secret);
-  const isConnected = isOAuth ? !!accountKeys.access_token : Object.values(accountKeys).some(Boolean);
+	const isOAuth = authType === 'oauth';
+	const hasClientCreds = !!(rootKeys.client_id && rootKeys.client_secret);
+	const isConnected = isOAuth
+		? !!accountKeys.access_token
+		: Object.values(accountKeys).some(Boolean);
 
-  let body = `<a href="/plugins" style="font-size:.875rem;color:#6366f1;text-decoration:none">← Back to Plugins</a>
+	let body = `<a href="/plugins" style="font-size:.875rem;color:#6366f1;text-decoration:none">← Back to Plugins</a>
 <div style="margin-top:1.25rem">`;
 
-  if (isOAuth) {
-    body += `<div class="card" style="margin-bottom:.75rem">
+	if (isOAuth) {
+		body += `<div class="card" style="margin-bottom:.75rem">
 <div class="card-title" style="margin-bottom:.75rem">OAuth App Credentials</div>
 <div class="card-sub" style="margin-bottom:1rem">Create an OAuth app in the provider's developer console and paste the credentials here.</div>
 <form method="POST" action="/api/credentials/${esc(pluginId)}/root">
 <div style="display:flex;flex-direction:column;gap:.5rem">
-  <input type="text" name="client_id"     class="full" placeholder="Client ID"     value="${esc(rootKeys.client_id ?? "")}">
-  <input type="text" name="client_secret" class="full" placeholder="Client Secret" value="${esc(rootKeys.client_secret ?? "")}">
+  <input type="text" name="client_id"     class="full" placeholder="Client ID"     value="${esc(rootKeys.client_id ?? '')}">
+  <input type="text" name="client_secret" class="full" placeholder="Client Secret" value="${esc(rootKeys.client_secret ?? '')}">
   <div><button type="submit" class="btn btn-primary btn-sm">Save</button></div>
 </div></form></div>
 
 <div class="card">
-<div class="card-row" style="margin-bottom:${isConnected ? "0" : ".75rem"}">
+<div class="card-row" style="margin-bottom:${isConnected ? '0' : '.75rem'}">
   <div>
     <div class="card-title">Account Connection</div>
     ${isConnected ? '<div class="card-sub" style="color:#16a34a">Connected</div>' : '<div class="card-sub">Not connected</div>'}
   </div>
-  ${isConnected ? '<span class="badge badge-green" style="background:#dcfce7;color:#166534">Active</span>' : ""}
+  ${isConnected ? '<span class="badge badge-green" style="background:#dcfce7;color:#166534">Active</span>' : ''}
 </div>
-${!isConnected ? `<form method="POST" action="/api/credentials/${esc(pluginId)}/oauth">
-<button type="submit" class="btn btn-primary btn-sm" ${hasClientCreds ? "" : 'disabled title="Save OAuth credentials first"'}>Connect with OAuth</button>
-</form>` : `<form method="POST" action="/api/credentials/${esc(pluginId)}/oauth" style="margin-top:.75rem">
+${
+	!isConnected
+		? `<form method="POST" action="/api/credentials/${esc(pluginId)}/oauth">
+<button type="submit" class="btn btn-primary btn-sm" ${hasClientCreds ? '' : 'disabled title="Save OAuth credentials first"'}>Connect with OAuth</button>
+</form>`
+		: `<form method="POST" action="/api/credentials/${esc(pluginId)}/oauth" style="margin-top:.75rem">
 <button type="submit" class="btn btn-outline btn-sm">Reconnect</button>
-</form>`}</div>`;
-  } else {
-    const fields = Object.keys(accountKeys).length ? Object.keys(accountKeys) : ["api_key"];
-    body += `<div class="card">
+</form>`
+}</div>`;
+	} else {
+		const fields = Object.keys(accountKeys).length
+			? Object.keys(accountKeys)
+			: ['api_key'];
+		body += `<div class="card">
 <div class="card-title" style="margin-bottom:.75rem">
-  ${authType === "bot_token" ? "Bot Token" : "API Key"}
+  ${authType === 'bot_token' ? 'Bot Token' : 'API Key'}
 </div>
-${fields.map(field => `
+${fields
+	.map(
+		(field) => `
 <form method="POST" action="/api/credentials/${esc(pluginId)}/key" style="margin-bottom:.5rem">
 <input type="hidden" name="key" value="${esc(field)}">
 <div class="row">
-  <input type="text" name="value" placeholder="${esc(field)}" value="${esc(accountKeys[field] ?? "")}" style="flex:1">
+  <input type="text" name="value" placeholder="${esc(field)}" value="${esc(accountKeys[field] ?? '')}" style="flex:1">
   <button type="submit" class="btn btn-primary btn-sm">Save</button>
-</div></form>`).join("")}
+</div></form>`,
+	)
+	.join('')}
 </div>`;
-  }
+	}
 
-  body += `</div>`;
-  return layout("/plugins", `${label} — Credentials`, body);
+	body += `</div>`;
+	return layout('/plugins', `${label} — Credentials`, body);
 }
 
 // Connect page (MCP keys)
 export function connectPage(
-  publicUrl: string,
-  keys: { id: string; name: string; clientId: string; keyPrefix: string; createdAt: Date; lastUsedAt: Date | null }[],
-  newKey?: { clientId: string; clientSecret: string },
+	publicUrl: string,
+	keys: {
+		id: string;
+		name: string;
+		clientId: string;
+		keyPrefix: string;
+		createdAt: Date;
+		lastUsedAt: Date | null;
+	}[],
+	newKey?: { clientId: string; clientSecret: string },
 ): string {
-  const newKeyHtml = newKey ? `
+	const newKeyHtml = newKey
+		? `
 <div class="alert alert-green" style="margin-bottom:1.25rem">
   <strong>Key created — save these now. The client secret is shown only once.</strong>
   <div style="margin-top:.75rem;display:flex;flex-direction:column;gap:.5rem">
@@ -272,12 +324,15 @@ export function connectPage(
     <div><div class="label">Client ID</div><div class="mono">${esc(newKey.clientId)}</div></div>
     <div><div class="label">Client Secret</div><div class="mono">${esc(newKey.clientSecret)}</div></div>
   </div>
-</div>` : "";
+</div>`
+		: '';
 
-  const keyRows = keys.length
-    ? keys.map(k => {
-        const fmt = (d: Date | null) => d ? new Date(d).toLocaleDateString() : "Never";
-        return `<div class="card">
+	const keyRows = keys.length
+		? keys
+				.map((k) => {
+					const fmt = (d: Date | null) =>
+						d ? new Date(d).toLocaleDateString() : 'Never';
+					return `<div class="card">
 <div class="card-row">
   <div>
     <div class="card-title">${esc(k.name)}</div>
@@ -287,10 +342,14 @@ export function connectPage(
     <button class="btn btn-sm btn-danger" onclick="return confirm('Revoke this key?')">Revoke</button>
   </form>
 </div></div>`;
-      }).join("\n")
-    : `<div class="empty">No keys yet. Create one below.</div>`;
+				})
+				.join('\n')
+		: `<div class="empty">No keys yet. Create one below.</div>`;
 
-  return layout("/connect", "Connect", `
+	return layout(
+		'/connect',
+		'Connect',
+		`
 ${newKeyHtml}
 <div class="card" style="margin-bottom:1.25rem">
   <div class="label">MCP URL</div>
@@ -306,16 +365,24 @@ ${keyRows}
       <button type="submit" class="btn btn-primary">Create key</button>
     </div>
   </form>
-</div>`);
+</div>`,
+	);
 }
 
 // Permissions page
 export function permissionsPage(
-  perms: { id: string; plugin: string; endpoint: string; args: unknown; expires_at: string }[],
+	perms: {
+		id: string;
+		plugin: string;
+		endpoint: string;
+		args: unknown;
+		expires_at: string;
+	}[],
 ): string {
-  const cards = perms.length
-    ? perms.map(p => {
-        return `<div class="card">
+	const cards = perms.length
+		? perms
+				.map((p) => {
+					return `<div class="card">
 <div class="card-row" style="margin-bottom:.75rem">
   <div>
     <div class="card-title">${esc(p.plugin)} · ${esc(p.endpoint)}</div>
@@ -332,10 +399,13 @@ export function permissionsPage(
     <button class="btn btn-danger btn-sm">Deny</button>
   </form>
 </div></div>`;
-      }).join("\n")
-    : `<div class="empty">No pending approvals.</div>`;
+				})
+				.join('\n')
+		: `<div class="empty">No pending approvals.</div>`;
 
-  return layout("/permissions", "Permissions",
-    cards + `<script>setTimeout(() => location.reload(), 10000)</script>`
-  );
+	return layout(
+		'/permissions',
+		'Permissions',
+		cards + `<script>setTimeout(() => location.reload(), 10000)</script>`,
+	);
 }
