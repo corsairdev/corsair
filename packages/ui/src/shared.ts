@@ -99,12 +99,18 @@ export function actionsHtml(
 <\/script>`;
 }
 
-export function statusBannerHtml(status: PermissionStatus): string {
+export function statusBannerHtml(status: PermissionStatus | 'expired' | 'failed'): string {
 	if (status === 'approved' || status === 'completed') {
 		return `<div style="padding:10px 14px;border-radius:6px;background:#14532d;color:#22c55e;font-size:13px;font-weight:600;margin-bottom:16px;text-align:center">This permission has been granted.</div>`;
 	}
 	if (status === 'denied') {
 		return `<div style="padding:10px 14px;border-radius:6px;background:#7f1d1d;color:#ef4444;font-size:13px;font-weight:600;margin-bottom:16px;text-align:center">This permission has been denied.</div>`;
+	}
+	if (status === 'expired') {
+		return `<div style="padding:10px 14px;border-radius:6px;background:#1c1917;color:#a8a29e;font-size:13px;font-weight:600;margin-bottom:16px;text-align:center">This request has expired.</div>`;
+	}
+	if (status === 'failed') {
+		return `<div style="padding:10px 14px;border-radius:6px;background:#7f1d1d;color:#fca5a5;font-size:13px;font-weight:600;margin-bottom:16px;text-align:center">This request failed.</div>`;
 	}
 	return '';
 }
