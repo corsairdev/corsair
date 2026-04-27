@@ -2,7 +2,7 @@ import type {
 	PermissionActionCallback,
 	PermissionLike,
 	PermissionStatus,
-} from './types';
+} from './types.js';
 
 export function escapeHtml(s: unknown): string {
 	return String(s ?? '')
