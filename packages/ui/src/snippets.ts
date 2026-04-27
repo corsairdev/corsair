@@ -1,5 +1,5 @@
-import { escapeHtml } from './shared';
-import { parseRawEmail } from './plugins/gmail/messages-send';
+import { escapeHtml } from './shared.js';
+import { parseRawEmail } from './plugins/gmail/messages-send.js';
 
 // Light-themed inline snippet for embedding in dashboards / permission lists.
 

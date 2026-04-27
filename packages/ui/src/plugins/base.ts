@@ -5,8 +5,8 @@ import {
 	formatTimestamp,
 	parseArgs,
 	statusBannerHtml,
-} from '../shared';
-import type { PermissionActionCallback, PermissionLike } from '../types';
+} from '../shared.js';
+import type { PermissionActionCallback, PermissionLike } from '../types.js';
 
 export function renderBase(
 	permission: PermissionLike,
