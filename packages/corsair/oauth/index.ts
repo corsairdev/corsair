@@ -1,3 +1,4 @@
+import * as crypto from 'node:crypto';
 import * as querystring from 'node:querystring';
 import {
 	CORSAIR_INTERNAL,
@@ -15,7 +16,7 @@ import type {
 import { createCorsairOrm } from '../db/orm';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// State encoding
+// State encoding — HMAC-signed to prevent forged callbacks
 // ─────────────────────────────────────────────────────────────────────────────
 
 type OAuthState = { plugin: string; tenantId: string };
@@ -26,8 +27,10 @@ export function encodeOAuthState(plugin: string, tenantId: string): string {
 
 export function decodeOAuthState(state: string): OAuthState | null {
 	try {
+		// Accepts both raw payload (for tests/utilities) and signed `payload.sig` format
+		const payload = state.includes('.') ? state.split('.')[0] : state;
 		const decoded = JSON.parse(
-			Buffer.from(state, 'base64url').toString('utf-8'),
+			Buffer.from(payload!, 'base64url').toString('utf-8'),
 		) as unknown;
 		if (
 			decoded !== null &&
@@ -43,6 +46,32 @@ export function decodeOAuthState(state: string): OAuthState | null {
 	} catch {
 		return null;
 	}
+}
+
+function signState(payload: string, kek: string): string {
+	const sig = crypto
+		.createHmac('sha256', kek)
+		.update(payload)
+		.digest('base64url');
+	return `${payload}.${sig}`;
+}
+
+function verifyAndDecodeState(
+	signed: string,
+	kek: string,
+): OAuthState | null {
+	const dotIdx = signed.lastIndexOf('.');
+	if (dotIdx === -1) return null;
+	const payload = signed.slice(0, dotIdx);
+	const sig = signed.slice(dotIdx + 1);
+	const expected = crypto
+		.createHmac('sha256', kek)
+		.update(payload)
+		.digest('base64url');
+	if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+		return null;
+	}
+	return decodeOAuthState(payload);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -153,7 +182,7 @@ export async function generateOAuthUrl(
 		throw new Error(`client_id not configured for '${pluginId}'`);
 	}
 
-	const state = encodeOAuthState(pluginId, tenantId);
+	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
 
 	const params: Record<string, string> = {
 		client_id: clientId,
@@ -197,11 +226,12 @@ export async function processOAuthCallback(
 ): Promise<ProcessOAuthCallbackResult> {
 	const { code, state, redirectUri } = options;
 
-	const decoded = decodeOAuthState(state);
-	if (!decoded) throw new Error('Invalid or malformed state parameter');
+	const internal = getInternal(corsair);
+
+	const decoded = verifyAndDecodeState(state, internal.kek);
+	if (!decoded) throw new Error('Invalid or tampered state parameter');
 
 	const { plugin: pluginId, tenantId } = decoded;
-	const internal = getInternal(corsair);
 
 	if (!internal.database) {
 		throw new Error('No database configured on corsair instance');

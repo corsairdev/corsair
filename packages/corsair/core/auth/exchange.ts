@@ -48,6 +48,7 @@ export function exchangeCodeForTokens(
 		const req = https.request(
 			{
 				hostname: tokenUrl.hostname,
+				...(tokenUrl.port ? { port: Number(tokenUrl.port) } : {}),
 				path: tokenUrl.pathname + tokenUrl.search,
 				method: 'POST',
 				headers,
@@ -62,7 +63,11 @@ export function exchangeCodeForTokens(
 						reject(new Error(`Token exchange failed (${res.statusCode}): ${data}`));
 						return;
 					}
-					resolve(JSON.parse(data) as TokenResponse);
+					try {
+						resolve(JSON.parse(data) as TokenResponse);
+					} catch {
+						reject(new Error(`Token endpoint returned non-JSON response: ${data}`));
+					}
 				});
 			},
 		);
