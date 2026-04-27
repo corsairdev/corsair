@@ -671,12 +671,21 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 		 *                       Use this to switch modes based on runtime context (e.g. auth type).
 		 * Defaults to `'asynchronous'` if not specified.
 		 */
-		mode?: 'synchronous' | 'asynchronous' | (() => 'synchronous' | 'asynchronous');
+		mode?:
+			| 'synchronous'
+			| 'asynchronous'
+			| (() => 'synchronous' | 'asynchronous');
 		/**
 		 * Called when a permission is blocked in async mode. Return the string that the LLM receives
 		 * as the tool result — this is what gets surfaced to the user in the chat.
 		 * Receives the permission token, record ID, plugin name, endpoint path, and args.
 		 */
-		formatAsyncMessage?: (opts: { token: string; id: string; plugin: string; endpoint: string; args: unknown }) => string;
+		formatAsyncMessage?: (opts: {
+			token: string;
+			id: string;
+			plugin: string;
+			endpoint: string;
+			args: unknown;
+		}) => string;
 	};
 };

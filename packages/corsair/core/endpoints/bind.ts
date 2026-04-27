@@ -71,9 +71,18 @@ export function bindEndpointsRecursively({
 	approvalConfig?: {
 		timeout: string;
 		onTimeout: 'deny' | 'approve';
-		mode?: 'synchronous' | 'asynchronous' | (() => 'synchronous' | 'asynchronous');
+		mode?:
+			| 'synchronous'
+			| 'asynchronous'
+			| (() => 'synchronous' | 'asynchronous');
 		/** Called when a permission is blocked in async mode. Return the message to throw to the LLM. */
-		formatAsyncMessage?: (opts: { token: string; id: string; plugin: string; endpoint: string; args: unknown }) => string;
+		formatAsyncMessage?: (opts: {
+			token: string;
+			id: string;
+			plugin: string;
+			endpoint: string;
+			args: unknown;
+		}) => string;
 	};
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
@@ -93,7 +102,13 @@ export function bindEndpointsRecursively({
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				if (permissionsConfig) {
 					const meta = endpointMeta?.[operationPath];
-					const { result: permResult, reason: permReason, onComplete, token: permToken, id: permId } = await enforcePermission({
+					const {
+						result: permResult,
+						reason: permReason,
+						onComplete,
+						token: permToken,
+						id: permId,
+					} = await enforcePermission({
 						pluginId,
 						endpointPath: operationPath,
 						args,
@@ -117,8 +132,18 @@ export function bindEndpointsRecursively({
 							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
-						} else if (approvalConfig?.formatAsyncMessage && permToken && permId) {
-							msg = approvalConfig.formatAsyncMessage({ token: permToken, id: permId, plugin: pluginId, endpoint: operationPath, args });
+						} else if (
+							approvalConfig?.formatAsyncMessage &&
+							permToken &&
+							permId
+						) {
+							msg = approvalConfig.formatAsyncMessage({
+								token: permToken,
+								id: permId,
+								plugin: pluginId,
+								endpoint: operationPath,
+								args,
+							});
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}

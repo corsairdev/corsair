@@ -166,7 +166,10 @@ export type EnforcePermissionOptions = {
 	 * - A no-arg function → called per-request, return value selects the mode dynamically.
 	 * Defaults to `'asynchronous'`.
 	 */
-	approvalMode?: 'synchronous' | 'asynchronous' | (() => 'synchronous' | 'asynchronous');
+	approvalMode?:
+		| 'synchronous'
+		| 'asynchronous'
+		| (() => 'synchronous' | 'asynchronous');
 };
 
 export type EnforcePermissionResult = {
@@ -315,11 +318,23 @@ export async function enforcePermission(
 			`\n  Permission ID: ${existing.id}`,
 			`\n  Use the token to approve or deny this request.`,
 		);
-		const resolvedMode = typeof opts.approvalMode === 'function' ? opts.approvalMode() : opts.approvalMode;
+		const resolvedMode =
+			typeof opts.approvalMode === 'function'
+				? opts.approvalMode()
+				: opts.approvalMode;
 		if (resolvedMode === 'synchronous') {
-			return pollUntilResolved(opts.db, existing.id, opts.timeoutMs ?? 10 * 60 * 1_000);
+			return pollUntilResolved(
+				opts.db,
+				existing.id,
+				opts.timeoutMs ?? 10 * 60 * 1_000,
+			);
 		}
-		return { result: 'blocked', reason: 'pending', id: existing.id, token: existing.token };
+		return {
+			result: 'blocked',
+			reason: 'pending',
+			id: existing.id,
+			token: existing.token,
+		};
 	}
 
 	// No existing actionable record — create a new pending approval request
@@ -353,7 +368,10 @@ export async function enforcePermission(
 		`\n  Use the token to approve or deny this request.`,
 	);
 
-	const resolvedMode = typeof opts.approvalMode === 'function' ? opts.approvalMode() : opts.approvalMode;
+	const resolvedMode =
+		typeof opts.approvalMode === 'function'
+			? opts.approvalMode()
+			: opts.approvalMode;
 	if (resolvedMode === 'synchronous') {
 		return pollUntilResolved(opts.db, id, timeoutMs);
 	}

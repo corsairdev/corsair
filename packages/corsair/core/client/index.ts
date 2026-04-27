@@ -336,8 +336,17 @@ export type BuildCorsairClientOptions = {
 	approvalConfig?: {
 		timeout: string;
 		onTimeout: 'deny' | 'approve';
-		mode?: 'synchronous' | 'asynchronous' | (() => 'synchronous' | 'asynchronous');
-		formatAsyncMessage?: (opts: { token: string; id: string; plugin: string; endpoint: string; args: unknown }) => string;
+		mode?:
+			| 'synchronous'
+			| 'asynchronous'
+			| (() => 'synchronous' | 'asynchronous');
+		formatAsyncMessage?: (opts: {
+			token: string;
+			id: string;
+			plugin: string;
+			endpoint: string;
+			args: unknown;
+		}) => string;
 	};
 };
 

@@ -1,5 +1,5 @@
-import { escapeHtml } from './shared.js';
 import { parseRawEmail } from './plugins/gmail/messages-send.js';
+import { escapeHtml } from './shared.js';
 
 // Light-themed inline snippet for embedding in dashboards / permission lists.
 
@@ -11,7 +11,9 @@ function gmailSendSnippet(rawArgs: unknown): string {
 	if (!email.to && !email.subject && !email.body) return baseSnippet(rawArgs);
 
 	const subjectLine = escapeHtml(email.subject ?? '(no subject)');
-	const toLine = email.to ? `<div style="font-size:.75rem;color:#64748b;margin-top:3px">To: ${escapeHtml(email.to)}</div>` : '';
+	const toLine = email.to
+		? `<div style="font-size:.75rem;color:#64748b;margin-top:3px">To: ${escapeHtml(email.to)}</div>`
+		: '';
 	const bodyPreview = email.body
 		? `<div style="padding:8px 12px;font-size:.8125rem;color:#64748b;white-space:pre-wrap;word-break:break-word;max-height:72px;overflow:hidden;line-height:1.5;border-top:1px solid #e2e8f0">${escapeHtml(email.body)}</div>`
 		: '';
@@ -47,7 +49,10 @@ export function renderArgsSnippet(
 	endpoint: string,
 	rawArgs: unknown,
 ): string {
-	if (plugin === 'gmail' && (endpoint === 'messages.send' || endpoint === 'drafts.send')) {
+	if (
+		plugin === 'gmail' &&
+		(endpoint === 'messages.send' || endpoint === 'drafts.send')
+	) {
 		return gmailSendSnippet(rawArgs);
 	}
 	return baseSnippet(rawArgs);

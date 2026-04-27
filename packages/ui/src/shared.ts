@@ -99,7 +99,9 @@ export function actionsHtml(
 <\/script>`;
 }
 
-export function statusBannerHtml(status: PermissionStatus | 'expired' | 'failed'): string {
+export function statusBannerHtml(
+	status: PermissionStatus | 'expired' | 'failed',
+): string {
 	if (status === 'approved' || status === 'completed') {
 		return `<div style="padding:10px 14px;border-radius:6px;background:#14532d;color:#22c55e;font-size:13px;font-weight:600;margin-bottom:16px;text-align:center">This permission has been granted.</div>`;
 	}
