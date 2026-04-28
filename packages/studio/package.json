@@ -27,12 +27,15 @@
     "@corsair-dev/cli": "workspace:*",
     "@corsair-dev/mcp": "workspace:*",
     "ai": "^4.0.0",
+    "better-sqlite3": "^12.0.0",
     "corsair": "workspace:*",
+    "kysely": "^0.28.9",
     "typescript": "^5.9.3",
     "zod": "^3.25.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "@types/better-sqlite3": "^7.6.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
