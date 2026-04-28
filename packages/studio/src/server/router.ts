@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { exchangeOAuth, startOAuth } from './handlers/auth';
+import { chatHandler } from './handlers/chat';
 import { getCredentials, setCredentials } from './handlers/credentials';
 import {
 	listDbRows,
@@ -51,6 +52,8 @@ const routes: Route[] = [
 	{ method: 'POST', path: '/api/db/rows', handler: listDbRows },
 	{ method: 'POST', path: '/api/db/entities/query', handler: queryEntityData },
 	{ method: 'GET', path: '/api/db/permissions', handler: listPermissions },
+
+	{ method: 'POST', path: '/api/chat', handler: chatHandler },
 ];
 
 export async function handleApi(

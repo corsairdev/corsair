@@ -13,4 +13,5 @@ export { createBaseMcpServer } from './core/base.js';
 export { createMcpRouter } from './core/http.js';
 export { BaseProvider } from './core/provider.js';
 export { runStdioMcpServer } from './core/stdio.js';
+export { buildCorsairToolDefs } from './core/tools.js';
 export type { CorsairToolDef } from './core/tools.js';
