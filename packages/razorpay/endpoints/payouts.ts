@@ -9,7 +9,7 @@ export const create: RazorpayEndpoints['payoutsCreate'] = async (
 ) => {
 	const result = await makeRazorpayRequest<
 		RazorpayEndpointOutputs['payoutsCreate']
-	>('payouts', ctx.key, { method: 'POST', body: input });
+	>('payouts', ctx.key, { method: 'POST', body: input }, true);
 
 	if (result.id && ctx.db.payouts) {
 		try {
