@@ -7,54 +7,122 @@ import type { StoredMessage, StoredMsgBlock } from '../chat-store.js';
 import { readJsonBody } from '../router.js';
 import type { HandlerFn } from '../types.js';
 
+type TextBlock = Extract<StoredMsgBlock, { type: 'text' }>;
+type ToolBlock = Extract<StoredMsgBlock, { type: 'tool' }>;
+type CompletedToolBlock = ToolBlock & { result: unknown };
+type AssistantContentPart =
+	| { type: 'text'; text: string }
+	| {
+			type: 'tool-call';
+			toolCallId: string;
+			toolName: string;
+			args: Record<string, unknown>;
+	  };
+type ToolContentPart = {
+	type: 'tool-result';
+	toolCallId: string;
+	toolName: string;
+	result: unknown;
+};
+
+function isTextBlock(block: StoredMsgBlock): block is TextBlock {
+	return block.type === 'text';
+}
+
+function isCompletedToolBlock(
+	block: StoredMsgBlock,
+): block is CompletedToolBlock {
+	return block.type === 'tool' && block.result !== undefined;
+}
+
+function isPendingToolBlock(block: StoredMsgBlock): block is ToolBlock {
+	return block.type === 'tool' && block.result === undefined;
+}
+
+function joinTextBlocks(blocks: TextBlock[]): string {
+	return blocks.map((block) => block.content).join('');
+}
+
+function toToolArgs(args: unknown): Record<string, unknown> {
+	if (args && typeof args === 'object') {
+		const toolArgs: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(args)) {
+			toolArgs[key] = value;
+		}
+		return toolArgs;
+	}
+	return {};
+}
+
+function makeTextPart(block: TextBlock): AssistantContentPart {
+	return { type: 'text', text: block.content };
+}
+
+function makeToolCallPart(
+	toolCallId: string,
+	block: CompletedToolBlock,
+): AssistantContentPart {
+	return {
+		type: 'tool-call',
+		toolCallId,
+		toolName: block.name,
+		args: toToolArgs(block.args),
+	};
+}
+
+function makeToolResultPart(
+	toolCallId: string,
+	block: CompletedToolBlock,
+): ToolContentPart {
+	return {
+		type: 'tool-result',
+		toolCallId,
+		toolName: block.name,
+		result: block.result,
+	};
+}
+
+function findPendingToolBlockIndex(
+	blocks: StoredMsgBlock[],
+	toolName: string | undefined,
+): number {
+	return blocks.findLastIndex(
+		(block) => isPendingToolBlock(block) && block.name === toolName,
+	);
+}
+
 function toAiMessages(stored: StoredMessage[]): CoreMessage[] {
 	const result: CoreMessage[] = [];
 	for (const msg of stored) {
-		if (msg.role === 'user') {
-			const text = msg.blocks
-				.filter((b): b is { type: 'text'; content: string } => b.type === 'text')
-				.map((b) => b.content)
-				.join('');
-			result.push({ role: 'user', content: text });
-		} else {
-			const textBlocks = msg.blocks.filter(
-				(b): b is { type: 'text'; content: string } => b.type === 'text',
-			);
-			const toolBlocks = msg.blocks.filter(
-				(b): b is { type: 'tool'; name: string; args: unknown; result: unknown } =>
-					b.type === 'tool' && (b as { result?: unknown }).result !== undefined,
-			);
+		const textBlocks = msg.blocks.filter(isTextBlock);
+		const text = joinTextBlocks(textBlocks);
 
-			if (toolBlocks.length === 0) {
-				result.push({
-					role: 'assistant',
-					content: textBlocks.map((b) => b.content).join(''),
-				});
-			} else {
-				const ids = toolBlocks.map(() => crypto.randomUUID());
-				result.push({
-					role: 'assistant',
-					content: [
-						...textBlocks.map((b) => ({ type: 'text' as const, text: b.content })),
-						...toolBlocks.map((b, i) => ({
-							type: 'tool-call' as const,
-							toolCallId: ids[i]!,
-							toolName: b.name,
-							args: b.args as Record<string, unknown>,
-						})),
-					],
-				});
-				result.push({
-					role: 'tool',
-					content: toolBlocks.map((b, i) => ({
-						type: 'tool-result' as const,
-						toolCallId: ids[i]!,
-						toolName: b.name,
-						result: b.result,
-					})),
-				});
-			}
+		if (msg.role === 'user') {
+			result.push({ role: 'user', content: text });
+			continue;
 		}
+
+		const toolBlocks = msg.blocks.filter(isCompletedToolBlock);
+		if (toolBlocks.length === 0) {
+			result.push({ role: 'assistant', content: text });
+			continue;
+		}
+
+		const toolCallIds = toolBlocks.map(() => crypto.randomUUID());
+		const assistantParts: AssistantContentPart[] = textBlocks.map(makeTextPart);
+		const toolParts: ToolContentPart[] = [];
+
+		for (const [index, block] of toolBlocks.entries()) {
+			const toolCallId = toolCallIds[index];
+			if (!toolCallId) {
+				continue;
+			}
+			assistantParts.push(makeToolCallPart(toolCallId, block));
+			toolParts.push(makeToolResultPart(toolCallId, block));
+		}
+
+		result.push({ role: 'assistant', content: assistantParts });
+		result.push({ role: 'tool', content: toolParts });
 	}
 	return result;
 }
@@ -67,12 +135,8 @@ function buildAiTools(corsairClient: Record<string, unknown>): ToolSet {
 			description: def.description,
 			parameters: z.object(def.shape),
 			execute: async (args) => {
-				const result = await def.handler(
-					args as unknown as Record<string, unknown>,
-				);
-				const texts = result.content.filter(
-					(c): c is { type: 'text'; text: string } => c.type === 'text',
-				);
+				const result = await def.handler(args);
+				const texts = result.content.filter((c) => c.type === 'text');
 				if (result.isError) {
 					throw new Error(texts.map((c) => c.text).join('\n'));
 				}
@@ -182,7 +246,9 @@ export const chatHandler: HandlerFn = async (ctx) => {
 	const userMsgId = crypto.randomUUID();
 	if (chatId && chatExists(chatId) && newUserText) {
 		try {
-			appendMessage(chatId, userMsgId, 'user', [{ type: 'text', content: newUserText }]);
+			appendMessage(chatId, userMsgId, 'user', [
+				{ type: 'text', content: newUserText },
+			]);
 		} catch (err) {
 			console.error('[corsair:chat] failed to save user message:', err);
 		}
@@ -230,18 +296,10 @@ export const chatHandler: HandlerFn = async (ctx) => {
 				});
 			} else if (part.type === 'tool-result') {
 				send({ type: 'tool-end', name: part.toolName, result: part.result });
-				const idx = assistantBlocks.findLastIndex(
-					(b): b is Extract<StoredMsgBlock, { type: 'tool' }> =>
-						b.type === 'tool' &&
-						(b as Extract<StoredMsgBlock, { type: 'tool' }>).name ===
-							part.toolName &&
-						(b as Extract<StoredMsgBlock, { type: 'tool' }>).result ===
-							undefined,
-				);
-				if (idx >= 0) {
-					(
-						assistantBlocks[idx] as Extract<StoredMsgBlock, { type: 'tool' }>
-					).result = part.result;
+				const idx = findPendingToolBlockIndex(assistantBlocks, part.toolName);
+				const block = idx >= 0 ? assistantBlocks[idx] : undefined;
+				if (block && isPendingToolBlock(block)) {
+					block.result = part.result;
 				}
 			} else if (part.type === 'finish') {
 				send({ type: 'done' });
