@@ -43,6 +43,7 @@ export default defineConfig({
 		'core.ts',
 		'db.ts',
 		'mcp.ts',
+		'oauth.ts',
 		'orm.ts',
 		'setup.ts',
 		'http.ts',

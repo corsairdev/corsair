@@ -155,6 +155,34 @@ export default function Home() {
 				)}
 			</div>
 
+			<div
+				style={{
+					marginTop: '2rem',
+					padding: '1.5rem',
+					border: '1px solid #e0e0e0',
+					borderRadius: '8px',
+				}}
+			>
+				<h2>Connect Integrations</h2>
+				<p style={{ color: '#666', marginBottom: '1rem' }}>
+					Authorize a plugin using OAuth
+				</p>
+				<a
+					href="/api/connect?plugin=googlecalendar&tenantId=demo-user"
+					style={{
+						display: 'inline-block',
+						padding: '0.75rem 1.5rem',
+						backgroundColor: '#4285F4',
+						color: 'white',
+						borderRadius: '4px',
+						textDecoration: 'none',
+						fontSize: '1rem',
+					}}
+				>
+					Connect Google Calendar
+				</a>
+			</div>
+
 			<div style={{ marginTop: '2rem' }}>
 				<h2>API Endpoints</h2>
 				<ul>
