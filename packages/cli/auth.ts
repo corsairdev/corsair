@@ -14,12 +14,14 @@ import type {
 	CorsairPlugin,
 	OAuthConfig,
 	PluginAuthConfig,
+	TokenResponse,
 } from 'corsair/core';
 import {
 	CORSAIR_INTERNAL,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 	encryptDEK,
+	exchangeCodeForTokens,
 	generateDEK,
 } from 'corsair/core';
 import type { CorsairDatabase } from 'corsair/db';
@@ -210,71 +212,6 @@ function waitForOAuthCode(port: number): Promise<string> {
 	});
 }
 
-function exchangeCodeForTokens(
-	code: string,
-	clientId: string,
-	clientSecret: string,
-	oauthConfig: OAuthConfig,
-	redirectUri: string | null,
-): Promise<{
-	access_token?: string;
-	refresh_token?: string;
-	expires_in?: number;
-	token_type?: string;
-}> {
-	const tokenUrl = new URL(oauthConfig.tokenUrl);
-	const useBasicAuth = oauthConfig.tokenAuthMethod === 'basic';
-
-	return new Promise((resolve, reject) => {
-		const postDataParams: Record<string, string | null> = {
-			code: code.trim(),
-			redirect_uri: redirectUri,
-			grant_type: 'authorization_code',
-		};
-
-		if (!useBasicAuth) {
-			postDataParams.client_id = clientId;
-			postDataParams.client_secret = clientSecret;
-		}
-
-		const postData = querystring.stringify(postDataParams);
-		const headers: Record<string, string> = {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			'Content-Length': Buffer.byteLength(postData).toString(),
-		};
-
-		if (useBasicAuth) {
-			headers.Authorization = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`;
-		}
-
-		const req = https.request(
-			{
-				hostname: tokenUrl.hostname,
-				path: tokenUrl.pathname,
-				method: 'POST',
-				headers,
-			},
-			(res) => {
-				let data = '';
-				res.on('data', (chunk) => {
-					data += chunk;
-				});
-				res.on('end', () => {
-					if (res.statusCode !== 200) {
-						reject(new Error(`Token exchange failed: ${data}`));
-						return;
-					}
-					resolve(JSON.parse(data));
-				});
-			},
-		);
-		req.on('error', (error) =>
-			reject(new Error(`Request failed: ${error.message}`)),
-		);
-		req.write(postData);
-		req.end();
-	});
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal config loader
@@ -356,11 +293,7 @@ async function oauthExchangeCode(
 	clientSecret: string,
 	oauthCfg: OAuthConfig,
 ): Promise<boolean> {
-	let tokens: {
-		access_token?: string;
-		refresh_token?: string;
-		expires_in?: number;
-	};
+	let tokens: TokenResponse;
 	try {
 		tokens = await exchangeCodeForTokens(
 			code,

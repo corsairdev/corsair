@@ -39,3 +39,7 @@ export type {
 } from './types';
 
 export { BASE_AUTH_FIELDS } from './types';
+
+// Token exchange utility
+export { exchangeCodeForTokens } from './exchange';
+export type { TokenResponse } from './exchange';
