@@ -704,6 +704,10 @@ export function gitlab<const T extends GitlabPluginOptions>(
 					);
 				}
 
+				// Use a mutable variable so _refreshAuth always uses the latest refresh token
+				// (GitLab/self-managed may rotate refresh_token on refresh).
+				let currentRefreshToken = refreshToken;
+
 				const tokenUrl = gitlabOAuthTokenUrl(ctx.options.baseUrl);
 
 				let result: Awaited<ReturnType<typeof getValidGitlabAccessToken>>;
@@ -712,7 +716,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 						tokenUrl,
 						accessToken,
 						expiresAt,
-						refreshToken,
+						refreshToken: currentRefreshToken,
 						clientId: res.client_id,
 						clientSecret: res.client_secret,
 						redirectUri: res.redirect_url,
@@ -727,6 +731,10 @@ export function gitlab<const T extends GitlabPluginOptions>(
 					try {
 						await ctx.keys.set_access_token(result.accessToken);
 						await ctx.keys.set_expires_at(String(result.expiresAt));
+						if (result.newRefreshToken) {
+							currentRefreshToken = result.newRefreshToken;
+							await ctx.keys.set_refresh_token(currentRefreshToken);
+						}
 					} catch (error) {
 						throw new Error(
 							`[corsair:gitlab] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
@@ -739,7 +747,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 						tokenUrl,
 						accessToken: null,
 						expiresAt: null,
-						refreshToken,
+						refreshToken: currentRefreshToken,
 						clientId: res.client_id!,
 						clientSecret: res.client_secret!,
 						redirectUri: res.redirect_url,
@@ -747,6 +755,10 @@ export function gitlab<const T extends GitlabPluginOptions>(
 					});
 					await ctx.keys.set_access_token(freshResult.accessToken);
 					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					if (freshResult.newRefreshToken) {
+						currentRefreshToken = freshResult.newRefreshToken;
+						await ctx.keys.set_refresh_token(currentRefreshToken);
+					}
 					return freshResult.accessToken;
 				};
 

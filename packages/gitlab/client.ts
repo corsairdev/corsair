@@ -61,6 +61,8 @@ async function refreshGitlabAccessToken(
 	const json = (await response.json()) as {
 		access_token: string;
 		expires_in: number;
+		/** GitLab may omit this or issue a new token when rotating refresh tokens. */
+		refresh_token?: string;
 	};
 
 	return json;
@@ -84,7 +86,13 @@ export async function getValidGitlabAccessToken({
 	expiresAt?: string | null;
 	redirectUri?: string | null;
 	forceRefresh?: boolean;
-}): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
+}): Promise<{
+	accessToken: string;
+	expiresAt: number;
+	refreshed: boolean;
+	/** Present when the IdP returned a new refresh_token (rotation). */
+	newRefreshToken?: string;
+}> {
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
@@ -108,6 +116,7 @@ export async function getValidGitlabAccessToken({
 		accessToken: tokenData.access_token,
 		expiresAt: now + tokenData.expires_in,
 		refreshed: true,
+		newRefreshToken: tokenData.refresh_token,
 	};
 }
 
