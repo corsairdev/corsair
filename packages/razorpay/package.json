@@ -25,6 +25,7 @@
     "devDependencies": {
         "@types/jest": "^29.5.14",
         "corsair": "workspace:*",
+        "jest": "^29.7.0",
         "ts-jest": "^29.4.6",
         "tsup": "^8.0.1",
         "typescript": "catalog:",
@@ -39,8 +40,5 @@
     "license": "Apache-2.0",
     "files": [
         "dist"
-    ],
-    "dependencies": {
-        "jest": "^29.7.0"
-    }
+    ]
 }

@@ -78,15 +78,39 @@ describe('Razorpay API Type Tests', () => {
 
         it('payoutsCreate returns correct type', async () => {
 
-            if (!TEST_PAYOUT_ACCOUNT_NUMBER) {
+            if (!CREATE_PAYOUT_ACCOUNT_NUMBER) {
                 throw new Error(
-                    'RAZORPAY_TEST_ACCOUNT_NUMBER is required to run Razorpay payout tests',
+                    'RAZORPAY_CREATE_PAYOUT_ACCOUNT_NUMBER is required to run Razorpay payoutsCreate test',
                 );
             }
 
-            if (!TEST_PAYOUT_ID) {
+            if (!CREATE_PAYOUT_FUND_ACCOUNT_ID) {
                 throw new Error(
-                    'TEST_PAYOUT_ID is required to run Razorpay payoutGet test',
+                    'RAZORPAY_CREATE_PAYOUT_FUND_ACCOUNT_ID is required to run Razorpay payoutsCreate test',
+                );
+            }
+
+            if (!CREATE_PAYOUT_AMOUNT) {
+                throw new Error(
+                    'RAZORPAY_CREATE_PAYOUT_AMOUNT is required to run Razorpay payoutsCreate test',
+                );
+            }
+
+            if (!CREATE_PAYOUT_CURRENCY) {
+                throw new Error(
+                    'RAZORPAY_CREATE_PAYOUT_CURRENCY is required to run Razorpay payoutsCreate test',
+                );
+            }
+
+            if (!CREATE_PAYOUT_MODE) {
+                throw new Error(
+                    'RAZORPAY_CREATE_PAYOUT_MODE is required to run Razorpay payoutsCreate test',
+                );
+            }
+
+            if (!CREATE_PAYOUT_PURPOSE) {
+                throw new Error(
+                    'RAZORPAY_CREATE_PAYOUT_PURPOSE is required to run Razorpay payoutsCreate test',
                 );
             }
 
