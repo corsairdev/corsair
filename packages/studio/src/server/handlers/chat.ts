@@ -201,6 +201,31 @@ type StreamPart = {
 	result?: unknown;
 };
 
+function errorMessage(err: unknown): string {
+	return err instanceof Error ? err.message : String(err);
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
+
+function parseStreamPart(raw: unknown): StreamPart | null {
+	if (!isObject(raw) || typeof raw.type !== 'string') {
+		return null;
+	}
+
+	const textDelta =
+		typeof raw.textDelta === 'string' ? raw.textDelta : undefined;
+	const toolName = typeof raw.toolName === 'string' ? raw.toolName : undefined;
+	return {
+		type: raw.type,
+		textDelta,
+		toolName,
+		args: raw.args,
+		result: raw.result,
+	};
+}
+
 export const chatHandler: HandlerFn = async (ctx) => {
 	console.log('[corsair:chat] request received');
 	const body = await readJsonBody(ctx.req);
@@ -209,7 +234,8 @@ export const chatHandler: HandlerFn = async (ctx) => {
 	const newUserText = body.message ? String(body.message) : undefined;
 
 	// Load history from the store — don't trust the client to serialize tool calls
-	const storedHistory = chatId && chatExists(chatId) ? getMessages(chatId) : [];
+	const storedHistory =
+		chatId && (await chatExists(chatId)) ? await getMessages(chatId) : [];
 	const messages: CoreMessage[] = toAiMessages(storedHistory);
 	if (newUserText) {
 		messages.push({ role: 'user', content: newUserText });
@@ -230,12 +256,10 @@ export const chatHandler: HandlerFn = async (ctx) => {
 	try {
 		model = await resolveModel();
 	} catch (err) {
-		console.error(
-			'[corsair:chat] model resolution failed:',
-			(err as Error).message,
-		);
+		const message = errorMessage(err);
+		console.error('[corsair:chat] model resolution failed:', message);
 		ctx.res.writeHead(400, { 'content-type': 'application/json' });
-		ctx.res.end(JSON.stringify({ error: (err as Error).message }));
+		ctx.res.end(JSON.stringify({ error: message }));
 		return;
 	}
 
@@ -244,9 +268,9 @@ export const chatHandler: HandlerFn = async (ctx) => {
 	const tools = buildAiTools(client);
 
 	const userMsgId = crypto.randomUUID();
-	if (chatId && chatExists(chatId) && newUserText) {
+	if (chatId && (await chatExists(chatId)) && newUserText) {
 		try {
-			appendMessage(chatId, userMsgId, 'user', [
+			await appendMessage(chatId, userMsgId, 'user', [
 				{ type: 'text', content: newUserText },
 			]);
 		} catch (err) {
@@ -278,7 +302,11 @@ export const chatHandler: HandlerFn = async (ctx) => {
 		});
 
 		for await (const raw of result.fullStream) {
-			const part = raw as StreamPart;
+			const part = parseStreamPart(raw);
+			if (!part) {
+				continue;
+			}
+
 			if (part.type === 'text-delta') {
 				send({ type: 'text', text: part.textDelta });
 				const last = assistantBlocks[assistantBlocks.length - 1];
@@ -306,13 +334,14 @@ export const chatHandler: HandlerFn = async (ctx) => {
 			}
 		}
 	} catch (err) {
-		console.error('[corsair:chat] stream error:', (err as Error).message);
-		send({ type: 'error', message: (err as Error).message });
+		const message = errorMessage(err);
+		console.error('[corsair:chat] stream error:', message);
+		send({ type: 'error', message });
 	} finally {
 		// Persist the assistant response
-		if (chatId && chatExists(chatId) && assistantBlocks.length > 0) {
+		if (chatId && (await chatExists(chatId)) && assistantBlocks.length > 0) {
 			try {
-				appendMessage(
+				await appendMessage(
 					chatId,
 					crypto.randomUUID(),
 					'assistant',
