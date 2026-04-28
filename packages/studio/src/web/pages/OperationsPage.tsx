@@ -31,13 +31,7 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 		setResult(null);
 		api
 			.listOperations({ type })
-			.then((data) => {
-				if (Array.isArray(data) || typeof data === 'string') {
-					setPaths({});
-				} else {
-					setPaths(data as Record<string, string[]>);
-				}
-			})
+			.then((data) => setPaths(toOperationMap(data)))
 			.catch((e) => setError(e.message));
 	}, [type]);
 
@@ -225,4 +219,40 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 			</div>
 		</div>
 	);
+}
+
+function toOperationMap(
+	operations: Record<string, string[]> | string[] | string,
+): Record<string, string[]> {
+	if (typeof operations === 'string') {
+		return groupByPlugin(
+			operations
+				.split('\n')
+				.map((value) => value.trim())
+				.filter(Boolean),
+		);
+	}
+	if (Array.isArray(operations)) {
+		return groupByPlugin(
+			operations
+				.filter((value): value is string => typeof value === 'string')
+				.map((value) => value.trim())
+				.filter(Boolean),
+		);
+	}
+	return operations ?? {};
+}
+
+function groupByPlugin(paths: string[]): Record<string, string[]> {
+	const grouped: Record<string, string[]> = {};
+	for (const path of paths) {
+		const plugin = path.split('.', 1)[0];
+		if (!plugin) continue;
+		if (!grouped[plugin]) grouped[plugin] = [];
+		grouped[plugin].push(path);
+	}
+	for (const plugin of Object.keys(grouped)) {
+		grouped[plugin].sort((a, b) => a.localeCompare(b));
+	}
+	return grouped;
 }

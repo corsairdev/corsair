@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/studio",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Local dashboard for inspecting and configuring your Corsair instance",
   "type": "module",
   "exports": {

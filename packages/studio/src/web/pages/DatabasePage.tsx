@@ -447,15 +447,12 @@ type EntityPaths = {
 function toDbTree(
 	operations: Record<string, string[]> | string[] | string,
 ): Record<string, EntityPaths[]> {
-	if (
-		!operations ||
-		typeof operations !== 'object' ||
-		Array.isArray(operations)
-	) {
+	const operationMap = toOperationMap(operations);
+	if (!Object.keys(operationMap).length) {
 		return {};
 	}
 	const out: Record<string, Record<string, EntityPaths>> = {};
-	for (const [plugin, paths] of Object.entries(operations)) {
+	for (const [plugin, paths] of Object.entries(operationMap)) {
 		if (!Array.isArray(paths)) continue;
 		for (const path of paths) {
 			const parts = path.split('.');
@@ -475,13 +472,51 @@ function toDbTree(
 			if (method === 'search') out[plugin][entity].searchPath = path;
 		}
 	}
-	const normalized: Record<string, EntityPaths[]> = {};
+	const tree: Record<string, EntityPaths[]> = {};
 	for (const [plugin, entities] of Object.entries(out)) {
-		normalized[plugin] = Object.values(entities)
+		tree[plugin] = Object.values(entities)
 			.filter((entity) => entity.listPath || entity.searchPath)
 			.sort((a, b) => a.entity.localeCompare(b.entity));
 	}
-	return normalized;
+	return tree;
+}
+
+function toOperationMap(
+	operations: Record<string, string[]> | string[] | string,
+): Record<string, string[]> {
+	if (typeof operations === 'string') {
+		return groupByPlugin(
+			operations
+				.split('\n')
+				.map((value) => value.trim())
+				.filter(Boolean),
+		);
+	}
+	if (Array.isArray(operations)) {
+		return groupByPlugin(
+			operations
+				.filter((value): value is string => typeof value === 'string')
+				.map((value) => value.trim())
+				.filter(Boolean),
+		);
+	}
+	return operations ?? {};
+}
+
+function groupByPlugin(paths: string[]): Record<string, string[]> {
+	const grouped: Record<string, string[]> = {};
+	for (const path of paths) {
+		const plugin = path.split('.', 1)[0];
+		if (!plugin) continue;
+		if (!grouped[plugin]) grouped[plugin] = [];
+		grouped[plugin].push(path);
+	}
+	for (const plugin of Object.keys(grouped)) {
+		const pluginPaths = grouped[plugin];
+		if (!pluginPaths) continue;
+		pluginPaths.sort((a, b) => a.localeCompare(b));
+	}
+	return grouped;
 }
 
 function toRows(result: unknown): Array<Record<string, unknown>> {

@@ -14,6 +14,11 @@ import {
 
 export type { ListOperationsOptions };
 
+// Deliberately shallow plugin shape for inspect helpers.
+type InspectCorsairPlugin = {
+	id: CorsairPlugin['id'];
+};
+
 /**
  * Any form of Corsair instance:
  * - single-tenant client (`createCorsair({ ... })`)
@@ -21,9 +26,9 @@ export type { ListOperationsOptions };
  * - tenant-scoped client (`corsair.withTenant("tenant-id")`)
  */
 export type AnyCorsairInstance =
-	| CorsairSingleTenantClient<readonly CorsairPlugin[]>
-	| CorsairTenantWrapper<readonly CorsairPlugin[]>
-	| CorsairClient<readonly CorsairPlugin[]>;
+	| CorsairSingleTenantClient<readonly InspectCorsairPlugin[]>
+	| CorsairTenantWrapper<readonly InspectCorsairPlugin[]>
+	| CorsairClient<readonly InspectCorsairPlugin[]>;
 
 function getPlugins(corsair: AnyCorsairInstance): readonly CorsairPlugin[] {
 	const internal = (corsair as unknown as Record<symbol, unknown>)[
