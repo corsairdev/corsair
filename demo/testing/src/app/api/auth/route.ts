@@ -61,9 +61,11 @@ export async function GET(request: NextRequest) {
 		return response;
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
-		return new NextResponse(
+		const response = new NextResponse(
 			`<html><body><h2>OAuth error</h2><p>${escapeHtml(message)}</p></body></html>`,
 			{ status: 500, headers: { 'Content-Type': 'text/html' } },
 		);
+		response.cookies.delete('oauth_state');
+		return response;
 	}
 }

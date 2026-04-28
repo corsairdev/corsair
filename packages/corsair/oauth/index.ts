@@ -68,7 +68,9 @@ function verifyAndDecodeState(
 		.createHmac('sha256', kek)
 		.update(payload)
 		.digest('base64url');
-	if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+	const sigBuf = Buffer.from(sig, 'base64url');
+	const expectedBuf = Buffer.from(expected, 'base64url');
+	if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
 		return null;
 	}
 	return decodeOAuthState(payload);
@@ -188,12 +190,12 @@ export async function generateOAuthUrl(
 	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
 
 	const params: Record<string, string> = {
+		...oauthCfg.authParams,
 		client_id: clientId,
 		redirect_uri: redirectUri,
 		response_type: 'code',
 		scope: oauthCfg.scopes.join(' '),
 		state,
-		...oauthCfg.authParams,
 	};
 
 	return {
