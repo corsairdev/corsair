@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { StatusResp } from './api';
 import { api } from './api';
 import { Sidebar } from './components/Sidebar';
+import { ChatPage } from './pages/ChatPage';
 import { DatabasePage } from './pages/DatabasePage';
 import { OperationsPage } from './pages/OperationsPage';
 import { PermissionsPage } from './pages/PermissionsPage';
@@ -13,7 +14,8 @@ export type Route =
 	| 'operations'
 	| 'database'
 	| 'permissions'
-	| 'script';
+	| 'script'
+	| 'chat';
 
 const TITLES: Record<Route, string> = {
 	plugins: 'Plugins',
@@ -21,6 +23,7 @@ const TITLES: Record<Route, string> = {
 	database: 'Data',
 	permissions: 'Permissions',
 	script: 'Script',
+	chat: 'Chat',
 };
 
 type AppLocation = {
@@ -34,6 +37,7 @@ const ROUTES = new Set<Route>([
 	'database',
 	'permissions',
 	'script',
+	'chat',
 ]);
 
 function parseLocation(pathname: string): AppLocation {
@@ -156,7 +160,9 @@ export function App() {
 					) : null}
 				</header>
 
-				<div className="flex-1 min-h-0 overflow-auto p-6">
+				<div
+					className={`flex-1 min-h-0 ${route === 'chat' ? 'overflow-hidden' : 'overflow-auto p-6'}`}
+				>
 					{route === 'plugins' ? (
 						<PluginsPage
 							tenant={tenant}
@@ -171,6 +177,7 @@ export function App() {
 					{route === 'database' ? <DatabasePage /> : null}
 					{route === 'permissions' ? <PermissionsPage /> : null}
 					{route === 'script' ? <ScriptPage tenant={tenant} /> : null}
+					{route === 'chat' ? <ChatPage tenant={tenant} /> : null}
 				</div>
 			</main>
 		</div>
