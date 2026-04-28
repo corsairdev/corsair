@@ -2,10 +2,7 @@ export const enc = (id: string | number) => encodeURIComponent(String(id));
 
 type PluginDb = Record<string, any>;
 
-export async function persistUser(
-	user: Record<string, any>,
-	db: PluginDb,
-) {
+export async function persistUser(user: Record<string, any>, db: PluginDb) {
 	if (db.users) {
 		return db.users.upsertByEntityId(String(user.id), user);
 	}
@@ -29,10 +26,7 @@ export async function persistProject(
 	}
 }
 
-export async function persistIssue(
-	issue: Record<string, any>,
-	db: PluginDb,
-) {
+export async function persistIssue(issue: Record<string, any>, db: PluginDb) {
 	const { author, assignee, ...issueData } = issue;
 
 	if (author?.id && db.users) {
@@ -82,10 +76,7 @@ export async function persistPipeline(
 	}
 }
 
-export async function persistGroup(
-	group: Record<string, any>,
-	db: PluginDb,
-) {
+export async function persistGroup(group: Record<string, any>, db: PluginDb) {
 	if (db.groups) {
 		return db.groups.upsertByEntityId(String(group.id), group);
 	}

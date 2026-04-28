@@ -1,0 +1,4149 @@
+---
+title: API
+description: "API reference for Gitlab: every `gitlab.api.*` operation with input and output types."
+---
+
+Every `gitlab.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Branches
+
+### create
+
+`branches.create`
+
+Create a new branch
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.branches.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `branch` | `string` | Yes | — |
+| `ref` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `merged` | `boolean` | No | — |
+| `protected` | `boolean` | No | — |
+| `default` | `boolean` | No | — |
+| `developers_can_push` | `boolean` | No | — |
+| `developers_can_merge` | `boolean` | No | — |
+| `can_push` | `boolean` | No | — |
+| `web_url` | `string` | No | — |
+| `commit` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="commit full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`branches.delete`
+
+Delete a branch [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gitlab.api.branches.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `branch` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`branches.get`
+
+Get a specific branch
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.branches.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `branch` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `merged` | `boolean` | No | — |
+| `protected` | `boolean` | No | — |
+| `default` | `boolean` | No | — |
+| `developers_can_push` | `boolean` | No | — |
+| `developers_can_merge` | `boolean` | No | — |
+| `can_push` | `boolean` | No | — |
+| `web_url` | `string` | No | — |
+| `commit` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="commit full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`branches.list`
+
+List branches in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.branches.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  merged?: boolean,
+  protected?: boolean,
+  default?: boolean,
+  developers_can_push?: boolean,
+  developers_can_merge?: boolean,
+  can_push?: boolean,
+  web_url?: string,
+  commit?: {
+    id: string,
+    short_id?: string,
+    title?: string,
+    message?: string,
+    author_name?: string,
+    author_email?: string,
+    authored_date?: string,
+    committed_date?: string,
+    committer_name?: string,
+    committer_email?: string,
+    parent_ids?: string[],
+    web_url?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Commits
+
+### get
+
+`commits.get`
+
+Get a specific commit
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.commits.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `sha` | `string` | Yes | — |
+| `stats` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `short_id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `message` | `string` | No | — |
+| `author_name` | `string` | No | — |
+| `author_email` | `string` | No | — |
+| `authored_date` | `string` | No | — |
+| `committed_date` | `string` | No | — |
+| `committer_name` | `string` | No | — |
+| `committer_email` | `string` | No | — |
+| `parent_ids` | `string[]` | No | — |
+| `web_url` | `string` | No | — |
+| `stats` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  additions?: number,
+  deletions?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDiff
+
+`commits.getDiff`
+
+Get the diff of a commit
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.commits.getDiff({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `sha` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  old_path: string,
+  new_path: string,
+  a_mode?: string,
+  b_mode?: string,
+  diff: string,
+  new_file?: boolean,
+  renamed_file?: boolean,
+  deleted_file?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`commits.list`
+
+List commits in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.commits.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `ref_name` | `string` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `path` | `string` | No | — |
+| `all` | `boolean` | No | — |
+| `with_stats` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a new group
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| internal \| private` | No | — |
+| `parent_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `full_path` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `parent_id` | `number` | No | — |
+| `web_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gitlab.api.groups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number \| string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`groups.get`
+
+Get a specific group
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.groups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number \| string` | Yes | — |
+| `with_projects` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `full_path` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `parent_id` | `number` | No | — |
+| `web_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search` | `string` | No | — |
+| `owned` | `boolean` | No | — |
+| `top_level_only` | `boolean` | No | — |
+| `statistics` | `boolean` | No | — |
+| `order_by` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  path?: string,
+  full_path?: string,
+  full_name?: string,
+  description?: string | null,
+  visibility?: string,
+  parent_id?: number | null,
+  web_url?: string,
+  created_at?: string,
+  avatar_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listProjects
+
+`groups.listProjects`
+
+List projects in a group
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.groups.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `group_id` | `number \| string` | Yes | — |
+| `search` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `visibility` | `public \| internal \| private` | No | — |
+| `order_by` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `simple` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  path?: string,
+  path_with_namespace?: string,
+  description?: string | null,
+  default_branch?: string | null,
+  visibility?: string,
+  ssh_url_to_repo?: string,
+  http_url_to_repo?: string,
+  web_url?: string,
+  archived?: boolean,
+  created_at?: string,
+  last_activity_at?: string,
+  creator_id?: number,
+  namespace?: {
+    id: number,
+    name?: string,
+    path?: string,
+    kind?: string,
+    full_path?: string,
+    web_url?: string
+  },
+  owner?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  },
+  star_count?: number,
+  forks_count?: number,
+  open_issues_count?: number,
+  topics?: string[],
+  empty_repo?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a group
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.groups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `path` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| internal \| private` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `full_path` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `parent_id` | `number` | No | — |
+| `web_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+
+
+
+---
+
+## Issues
+
+### create
+
+`issues.create`
+
+Create a new issue
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.issues.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `assignee_ids` | `number[]` | No | — |
+| `milestone_id` | `number` | No | — |
+| `labels` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `confidential` | `boolean` | No | — |
+| `weight` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `closed_by` | `object` | No | — |
+| `author` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `labels` | `string[]` | No | — |
+| `milestone` | `object` | No | — |
+| `web_url` | `string` | No | — |
+| `confidential` | `boolean` | No | — |
+| `due_date` | `string` | No | — |
+| `weight` | `number` | No | — |
+| `references` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="closed_by full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  short?: string,
+  relative?: string,
+  full?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createNote
+
+`issues.createNote`
+
+Add a comment to an issue
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.issues.createNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `issue_iid` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `author` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `system` | `boolean` | No | — |
+| `noteable_id` | `number` | No | — |
+| `noteable_type` | `string` | No | — |
+| `noteable_iid` | `number` | No | — |
+| `resolvable` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`issues.delete`
+
+Delete an issue [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gitlab.api.issues.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `issue_iid` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`issues.get`
+
+Get a specific issue
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.issues.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `issue_iid` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `closed_by` | `object` | No | — |
+| `author` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `labels` | `string[]` | No | — |
+| `milestone` | `object` | No | — |
+| `web_url` | `string` | No | — |
+| `confidential` | `boolean` | No | — |
+| `due_date` | `string` | No | — |
+| `weight` | `number` | No | — |
+| `references` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="closed_by full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  short?: string,
+  relative?: string,
+  full?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`issues.list`
+
+List issues in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.issues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `state` | `opened \| closed \| all` | No | — |
+| `labels` | `string` | No | — |
+| `milestone` | `string` | No | — |
+| `search` | `string` | No | — |
+| `assignee_id` | `number` | No | — |
+| `author_id` | `number` | No | — |
+| `order_by` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `confidential` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  iid: number,
+  project_id: number,
+  title: string,
+  description?: string | null,
+  state?: string,
+  created_at?: string,
+  updated_at?: string,
+  closed_at?: string | null,
+  closed_by?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  } | null,
+  author?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  },
+  assignee?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  } | null,
+  assignees?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  }[],
+  labels?: string[],
+  milestone?: {
+    id: number,
+    iid?: number,
+    title: string,
+    state?: string,
+    due_date?: string | null
+  } | null,
+  web_url?: string,
+  confidential?: boolean,
+  due_date?: string | null,
+  weight?: number | null,
+  references?: {
+    short?: string,
+    relative?: string,
+    full?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listNotes
+
+`issues.listNotes`
+
+List comments on an issue
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.issues.listNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `issue_iid` | `number` | Yes | — |
+| `order_by` | `created_at \| updated_at` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  body: string,
+  author?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  },
+  created_at?: string,
+  updated_at?: string,
+  system?: boolean,
+  noteable_id?: number,
+  noteable_type?: string,
+  noteable_iid?: number,
+  resolvable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`issues.update`
+
+Update an existing issue
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.issues.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `issue_iid` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `assignee_ids` | `number[]` | No | — |
+| `milestone_id` | `number` | No | — |
+| `labels` | `string` | No | — |
+| `state_event` | `close \| reopen` | No | — |
+| `due_date` | `string` | No | — |
+| `confidential` | `boolean` | No | — |
+| `weight` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `closed_by` | `object` | No | — |
+| `author` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `labels` | `string[]` | No | — |
+| `milestone` | `object` | No | — |
+| `web_url` | `string` | No | — |
+| `confidential` | `boolean` | No | — |
+| `due_date` | `string` | No | — |
+| `weight` | `number` | No | — |
+| `references` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="closed_by full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  short?: string,
+  relative?: string,
+  full?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Labels
+
+### create
+
+`labels.create`
+
+Create a new label
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.labels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `priority` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `text_color` | `string` | No | — |
+| `description` | `string` | No | — |
+| `open_issues_count` | `number` | No | — |
+| `closed_issues_count` | `number` | No | — |
+| `open_merge_requests_count` | `number` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `is_project_label` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a label [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gitlab.api.labels.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `label_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`labels.list`
+
+List labels in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.labels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  color?: string,
+  text_color?: string,
+  description?: string | null,
+  open_issues_count?: number,
+  closed_issues_count?: number,
+  open_merge_requests_count?: number,
+  subscribed?: boolean,
+  is_project_label?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`labels.update`
+
+Update a label
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.labels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `label_id` | `number` | Yes | — |
+| `new_name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `description` | `string` | No | — |
+| `priority` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `text_color` | `string` | No | — |
+| `description` | `string` | No | — |
+| `open_issues_count` | `number` | No | — |
+| `closed_issues_count` | `number` | No | — |
+| `open_merge_requests_count` | `number` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `is_project_label` | `boolean` | No | — |
+
+
+
+---
+
+## Merge Requests
+
+### approve
+
+`mergeRequests.approve`
+
+Approve a merge request
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.mergeRequests.approve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `merge_request_iid` | `number` | Yes | — |
+| `sha` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`mergeRequests.create`
+
+Create a new merge request
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.mergeRequests.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `source_branch` | `string` | Yes | — |
+| `target_branch` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `assignee_id` | `number` | No | — |
+| `assignee_ids` | `number[]` | No | — |
+| `reviewer_ids` | `number[]` | No | — |
+| `labels` | `string` | No | — |
+| `milestone_id` | `number` | No | — |
+| `remove_source_branch` | `boolean` | No | — |
+| `squash` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `source_branch` | `string` | No | — |
+| `target_branch` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `merged_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `merged_by` | `object` | No | — |
+| `author` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `reviewers` | `object[]` | No | — |
+| `labels` | `string[]` | No | — |
+| `milestone` | `object` | No | — |
+| `merge_commit_sha` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `detailed_merge_status` | `string` | No | — |
+| `has_conflicts` | `boolean` | No | — |
+| `draft` | `boolean` | No | — |
+| `changes_count` | `string` | No | — |
+| `references` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="merged_by full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reviewers full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  short?: string,
+  relative?: string,
+  full?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createNote
+
+`mergeRequests.createNote`
+
+Add a comment to a merge request
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.mergeRequests.createNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `merge_request_iid` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `author` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `system` | `boolean` | No | — |
+| `noteable_id` | `number` | No | — |
+| `noteable_type` | `string` | No | — |
+| `noteable_iid` | `number` | No | — |
+| `resolvable` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`mergeRequests.delete`
+
+Delete a merge request [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gitlab.api.mergeRequests.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `merge_request_iid` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`mergeRequests.get`
+
+Get a specific merge request
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.mergeRequests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `merge_request_iid` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `source_branch` | `string` | No | — |
+| `target_branch` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `merged_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `merged_by` | `object` | No | — |
+| `author` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `reviewers` | `object[]` | No | — |
+| `labels` | `string[]` | No | — |
+| `milestone` | `object` | No | — |
+| `merge_commit_sha` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `detailed_merge_status` | `string` | No | — |
+| `has_conflicts` | `boolean` | No | — |
+| `draft` | `boolean` | No | — |
+| `changes_count` | `string` | No | — |
+| `references` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="merged_by full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reviewers full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  short?: string,
+  relative?: string,
+  full?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`mergeRequests.list`
+
+List merge requests in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.mergeRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `state` | `opened \| closed \| merged \| all` | No | — |
+| `labels` | `string` | No | — |
+| `milestone` | `string` | No | — |
+| `search` | `string` | No | — |
+| `author_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `reviewer_id` | `number` | No | — |
+| `source_branch` | `string` | No | — |
+| `target_branch` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `scope` | `created_by_me \| assigned_to_me \| all` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  iid: number,
+  project_id: number,
+  title: string,
+  description?: string | null,
+  state?: string,
+  source_branch?: string,
+  target_branch?: string,
+  created_at?: string,
+  updated_at?: string,
+  merged_at?: string | null,
+  closed_at?: string | null,
+  merged_by?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  } | null,
+  author?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  },
+  assignee?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  } | null,
+  assignees?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  }[],
+  reviewers?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  }[],
+  labels?: string[],
+  milestone?: {
+    id: number,
+    iid?: number,
+    title: string,
+    state?: string,
+    due_date?: string | null
+  } | null,
+  merge_commit_sha?: string | null,
+  sha?: string,
+  web_url?: string,
+  detailed_merge_status?: string,
+  has_conflicts?: boolean,
+  draft?: boolean,
+  changes_count?: string | null,
+  references?: {
+    short?: string,
+    relative?: string,
+    full?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listNotes
+
+`mergeRequests.listNotes`
+
+List comments on a merge request
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.mergeRequests.listNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `merge_request_iid` | `number` | Yes | — |
+| `order_by` | `created_at \| updated_at` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  body: string,
+  author?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  },
+  created_at?: string,
+  updated_at?: string,
+  system?: boolean,
+  noteable_id?: number,
+  noteable_type?: string,
+  noteable_iid?: number,
+  resolvable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### merge
+
+`mergeRequests.merge`
+
+Merge a merge request
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.mergeRequests.merge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `merge_request_iid` | `number` | Yes | — |
+| `merge_commit_message` | `string` | No | — |
+| `squash_commit_message` | `string` | No | — |
+| `squash` | `boolean` | No | — |
+| `should_remove_source_branch` | `boolean` | No | — |
+| `merge_when_pipeline_succeeds` | `boolean` | No | — |
+| `sha` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `source_branch` | `string` | No | — |
+| `target_branch` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `merged_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `merged_by` | `object` | No | — |
+| `author` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `reviewers` | `object[]` | No | — |
+| `labels` | `string[]` | No | — |
+| `milestone` | `object` | No | — |
+| `merge_commit_sha` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `detailed_merge_status` | `string` | No | — |
+| `has_conflicts` | `boolean` | No | — |
+| `draft` | `boolean` | No | — |
+| `changes_count` | `string` | No | — |
+| `references` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="merged_by full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reviewers full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  short?: string,
+  relative?: string,
+  full?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`mergeRequests.update`
+
+Update a merge request
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.mergeRequests.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `merge_request_iid` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `assignee_id` | `number` | No | — |
+| `assignee_ids` | `number[]` | No | — |
+| `reviewer_ids` | `number[]` | No | — |
+| `labels` | `string` | No | — |
+| `milestone_id` | `number` | No | — |
+| `state_event` | `close \| reopen` | No | — |
+| `remove_source_branch` | `boolean` | No | — |
+| `squash` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `source_branch` | `string` | No | — |
+| `target_branch` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `merged_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `merged_by` | `object` | No | — |
+| `author` | `object` | No | — |
+| `assignee` | `object` | No | — |
+| `assignees` | `object[]` | No | — |
+| `reviewers` | `object[]` | No | — |
+| `labels` | `string[]` | No | — |
+| `milestone` | `object` | No | — |
+| `merge_commit_sha` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `detailed_merge_status` | `string` | No | — |
+| `has_conflicts` | `boolean` | No | — |
+| `draft` | `boolean` | No | — |
+| `changes_count` | `string` | No | — |
+| `references` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="merged_by full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="reviewers full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="references full type">
+
+```ts
+{
+  short?: string,
+  relative?: string,
+  full?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Milestones
+
+### create
+
+`milestones.create`
+
+Create a new milestone
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.milestones.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `web_url` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`milestones.delete`
+
+Delete a milestone [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gitlab.api.milestones.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `milestone_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`milestones.get`
+
+Get a specific milestone
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.milestones.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `milestone_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `web_url` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`milestones.list`
+
+List milestones in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.milestones.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `state` | `active \| closed` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  project_id?: number,
+  title: string,
+  description?: string | null,
+  state?: string,
+  due_date?: string | null,
+  start_date?: string | null,
+  created_at?: string,
+  updated_at?: string,
+  web_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`milestones.update`
+
+Update a milestone
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.milestones.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `milestone_id` | `number` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `state_event` | `close \| activate` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `state` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `web_url` | `string` | No | — |
+
+
+
+---
+
+## Pipelines
+
+### cancel
+
+`pipelines.cancel`
+
+Cancel a running pipeline
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.pipelines.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `pipeline_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `status` | `string` | No | — |
+| `source` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `started_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `name` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`pipelines.create`
+
+Create a new pipeline
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.pipelines.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `ref` | `string` | Yes | — |
+| `variables` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+{
+  key: string,
+  value: string,
+  variable_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `status` | `string` | No | — |
+| `source` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `started_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `name` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`pipelines.delete`
+
+Delete a pipeline [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gitlab.api.pipelines.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `pipeline_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`pipelines.get`
+
+Get a specific pipeline
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.pipelines.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `pipeline_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `status` | `string` | No | — |
+| `source` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `started_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `name` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pipelines.list`
+
+List pipelines for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.pipelines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `status` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `source` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  project_id?: number,
+  status?: string,
+  source?: string,
+  ref?: string,
+  sha?: string,
+  web_url?: string,
+  created_at?: string,
+  updated_at?: string,
+  started_at?: string | null,
+  finished_at?: string | null,
+  name?: string | null,
+  user?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listJobs
+
+`pipelines.listJobs`
+
+List jobs in a pipeline
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.pipelines.listJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `pipeline_id` | `number` | Yes | — |
+| `scope` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  status?: string,
+  stage?: string,
+  ref?: string,
+  created_at?: string,
+  started_at?: string | null,
+  finished_at?: string | null,
+  duration?: number | null,
+  web_url?: string,
+  pipeline?: {
+    id: number,
+    status?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retry
+
+`pipelines.retry`
+
+Retry a failed pipeline
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.pipelines.retry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `pipeline_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `iid` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `status` | `string` | No | — |
+| `source` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `sha` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `started_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `name` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `namespace_id` | `number` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| internal \| private` | No | — |
+| `initialize_with_readme` | `boolean` | No | — |
+| `default_branch` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `path_with_namespace` | `string` | No | — |
+| `description` | `string` | No | — |
+| `default_branch` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `ssh_url_to_repo` | `string` | No | — |
+| `http_url_to_repo` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `last_activity_at` | `string` | No | — |
+| `creator_id` | `number` | No | — |
+| `namespace` | `object` | No | — |
+| `owner` | `object` | No | — |
+| `star_count` | `number` | No | — |
+| `forks_count` | `number` | No | — |
+| `open_issues_count` | `number` | No | — |
+| `topics` | `string[]` | No | — |
+| `empty_repo` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="namespace full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  path?: string,
+  kind?: string,
+  full_path?: string,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gitlab.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### fork
+
+`projects.fork`
+
+Fork a project
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.projects.fork({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `namespace_id` | `number` | No | — |
+| `namespace_path` | `string` | No | — |
+| `name` | `string` | No | — |
+| `path` | `string` | No | — |
+| `visibility` | `public \| internal \| private` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `path_with_namespace` | `string` | No | — |
+| `description` | `string` | No | — |
+| `default_branch` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `ssh_url_to_repo` | `string` | No | — |
+| `http_url_to_repo` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `last_activity_at` | `string` | No | — |
+| `creator_id` | `number` | No | — |
+| `namespace` | `object` | No | — |
+| `owner` | `object` | No | — |
+| `star_count` | `number` | No | — |
+| `forks_count` | `number` | No | — |
+| `open_issues_count` | `number` | No | — |
+| `topics` | `string[]` | No | — |
+| `empty_repo` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="namespace full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  path?: string,
+  kind?: string,
+  full_path?: string,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a specific project
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `statistics` | `boolean` | No | — |
+| `license` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `path_with_namespace` | `string` | No | — |
+| `description` | `string` | No | — |
+| `default_branch` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `ssh_url_to_repo` | `string` | No | — |
+| `http_url_to_repo` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `last_activity_at` | `string` | No | — |
+| `creator_id` | `number` | No | — |
+| `namespace` | `object` | No | — |
+| `owner` | `object` | No | — |
+| `star_count` | `number` | No | — |
+| `forks_count` | `number` | No | — |
+| `open_issues_count` | `number` | No | — |
+| `topics` | `string[]` | No | — |
+| `empty_repo` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="namespace full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  path?: string,
+  kind?: string,
+  full_path?: string,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search` | `string` | No | — |
+| `owned` | `boolean` | No | — |
+| `membership` | `boolean` | No | — |
+| `starred` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `visibility` | `public \| internal \| private` | No | — |
+| `order_by` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `simple` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  path?: string,
+  path_with_namespace?: string,
+  description?: string | null,
+  default_branch?: string | null,
+  visibility?: string,
+  ssh_url_to_repo?: string,
+  http_url_to_repo?: string,
+  web_url?: string,
+  archived?: boolean,
+  created_at?: string,
+  last_activity_at?: string,
+  creator_id?: number,
+  namespace?: {
+    id: number,
+    name?: string,
+    path?: string,
+    kind?: string,
+    full_path?: string,
+    web_url?: string
+  },
+  owner?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  },
+  star_count?: number,
+  forks_count?: number,
+  open_issues_count?: number,
+  topics?: string[],
+  empty_repo?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Update an existing project
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| internal \| private` | No | — |
+| `default_branch` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `path_with_namespace` | `string` | No | — |
+| `description` | `string` | No | — |
+| `default_branch` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `ssh_url_to_repo` | `string` | No | — |
+| `http_url_to_repo` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `last_activity_at` | `string` | No | — |
+| `creator_id` | `number` | No | — |
+| `namespace` | `object` | No | — |
+| `owner` | `object` | No | — |
+| `star_count` | `number` | No | — |
+| `forks_count` | `number` | No | — |
+| `open_issues_count` | `number` | No | — |
+| `topics` | `string[]` | No | — |
+| `empty_repo` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="namespace full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  path?: string,
+  kind?: string,
+  full_path?: string,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Releases
+
+### create
+
+`releases.create`
+
+Create a new release
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.releases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `released_at` | `string` | No | — |
+| `milestones` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_name` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `released_at` | `string` | No | — |
+| `upcoming_release` | `boolean` | No | — |
+| `author` | `object` | No | — |
+| `commit` | `object` | No | — |
+| `milestones` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="commit full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="milestones full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`releases.delete`
+
+Delete a release [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gitlab.api.releases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`releases.get`
+
+Get a specific release
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.releases.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_name` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `released_at` | `string` | No | — |
+| `upcoming_release` | `boolean` | No | — |
+| `author` | `object` | No | — |
+| `commit` | `object` | No | — |
+| `milestones` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="commit full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="milestones full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`releases.list`
+
+List releases in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.releases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `order_by` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  tag_name: string,
+  name?: string | null,
+  description?: string | null,
+  created_at?: string,
+  released_at?: string,
+  upcoming_release?: boolean,
+  author?: {
+    id: number,
+    username: string,
+    name?: string | null,
+    state?: string,
+    avatar_url?: string | null,
+    web_url?: string
+  },
+  commit?: {
+    id: string,
+    short_id?: string,
+    title?: string,
+    message?: string,
+    author_name?: string,
+    author_email?: string,
+    authored_date?: string,
+    committed_date?: string,
+    committer_name?: string,
+    committer_email?: string,
+    parent_ids?: string[],
+    web_url?: string
+  },
+  milestones?: {
+    id: number,
+    iid?: number,
+    title: string,
+    state?: string,
+    due_date?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`releases.update`
+
+Update a release
+
+**Risk:** `write`
+
+```ts
+await corsair.gitlab.api.releases.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `tag_name` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `released_at` | `string` | No | — |
+| `milestones` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_name` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `released_at` | `string` | No | — |
+| `upcoming_release` | `boolean` | No | — |
+| `author` | `object` | No | — |
+| `commit` | `object` | No | — |
+| `milestones` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="commit full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="milestones full type">
+
+```ts
+{
+  id: number,
+  iid?: number,
+  title: string,
+  state?: string,
+  due_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Repository
+
+### compare
+
+`repository.compare`
+
+Compare branches, tags, or commits
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.repository.compare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `straight` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `object` | No | — |
+| `commits` | `object[]` | No | — |
+| `diffs` | `object[]` | No | — |
+| `compare_timeout` | `boolean` | No | — |
+| `compare_same_ref` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="commit full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="commits full type">
+
+```ts
+{
+  id: string,
+  short_id?: string,
+  title?: string,
+  message?: string,
+  author_name?: string,
+  author_email?: string,
+  authored_date?: string,
+  committed_date?: string,
+  committer_name?: string,
+  committer_email?: string,
+  parent_ids?: string[],
+  web_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="diffs full type">
+
+```ts
+{
+  old_path: string,
+  new_path: string,
+  a_mode?: string,
+  b_mode?: string,
+  diff: string,
+  new_file?: boolean,
+  renamed_file?: boolean,
+  deleted_file?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFile
+
+`repository.getFile`
+
+Get a file from the repository
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.repository.getFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number \| string` | Yes | — |
+| `file_path` | `string` | Yes | — |
+| `ref` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_name` | `string` | Yes | — |
+| `file_path` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `encoding` | `string` | No | — |
+| `content` | `string` | No | — |
+| `content_sha256` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `blob_id` | `string` | No | — |
+| `commit_id` | `string` | No | — |
+| `last_commit_id` | `string` | No | — |
+
+
+
+---
+
+### getTree
+
+`repository.getTree`
+
+List repository tree (files and directories)
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.repository.getTree({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `project_id` | `number \| string` | Yes | — |
+| `path` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  path: string,
+  mode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### getCurrentUser
+
+`users.getCurrentUser`
+
+Get the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.users.getCurrentUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `username` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `state` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `web_url` | `string` | No | — |
+| `email` | `string` | No | — |
+| `bio` | `string` | No | — |
+| `location` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `is_admin` | `boolean` | No | — |
+| `bot` | `boolean` | No | — |
+| `two_factor_enabled` | `boolean` | No | — |
+
+
+
+---
+
+### getUser
+
+`users.getUser`
+
+Get a specific user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.users.getUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `username` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `state` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `web_url` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users
+
+**Risk:** `read`
+
+```ts
+await corsair.gitlab.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `search` | `string` | No | — |
+| `username` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `blocked` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  name?: string | null,
+  state?: string,
+  avatar_url?: string | null,
+  web_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

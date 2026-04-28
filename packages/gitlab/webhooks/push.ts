@@ -20,7 +20,12 @@ export const push: GitlabWebhooks['push'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'gitlab.webhook.push', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'gitlab.webhook.push',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

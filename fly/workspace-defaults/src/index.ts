@@ -335,21 +335,17 @@ app.post('/oauth/token', (req, res) => {
 		return;
 	}
 	if (client_id && entry.clientId !== client_id) {
-		res
-			.status(400)
-			.json({
-				error: 'invalid_grant',
-				error_description: 'client_id mismatch',
-			});
+		res.status(400).json({
+			error: 'invalid_grant',
+			error_description: 'client_id mismatch',
+		});
 		return;
 	}
 	if (redirect_uri && entry.redirectUri !== redirect_uri) {
-		res
-			.status(400)
-			.json({
-				error: 'invalid_grant',
-				error_description: 'redirect_uri mismatch',
-			});
+		res.status(400).json({
+			error: 'invalid_grant',
+			error_description: 'redirect_uri mismatch',
+		});
 		return;
 	}
 

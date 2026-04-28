@@ -20,7 +20,12 @@ export const mergeRequest: GitlabWebhooks['mergeRequest'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'gitlab.webhook.mergeRequest', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'gitlab.webhook.mergeRequest',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},
