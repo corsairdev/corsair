@@ -1,5 +1,10 @@
 import { readJsonBody } from '../router';
 import type { HandlerFn } from '../types';
+import type { AnyCorsairInstance } from 'corsair';
+import {
+	getSchema as getCorsairSchema,
+	listOperations as listCorsairOperations,
+} from 'corsair';
 
 function navigateToEndpoint(
 	client: Record<string, unknown>,
@@ -22,14 +27,13 @@ export const listOperations: HandlerFn = async (ctx) => {
 	const type = body.type ? String(body.type) : undefined;
 
 	const { instance } = await ctx.getCorsair();
-	const corsair = instance as Record<string, unknown>;
-	if (typeof corsair.list_operations !== 'function') {
-		throw new Error('list_operations not available on this Corsair instance.');
-	}
-	const opts: Record<string, unknown> = {};
+	const opts: {
+		plugin?: string;
+		type?: 'api' | 'webhooks' | 'db';
+	} = {};
 	if (plugin) opts.plugin = plugin;
 	if (type === 'api' || type === 'webhooks' || type === 'db') opts.type = type;
-	return (corsair.list_operations as (o: unknown) => unknown)(opts);
+	return listCorsairOperations(instance as AnyCorsairInstance, opts);
 };
 
 export const schemaForOperation: HandlerFn = async (ctx) => {
@@ -38,11 +42,7 @@ export const schemaForOperation: HandlerFn = async (ctx) => {
 	if (!path) throw new Error('Missing path.');
 
 	const { instance } = await ctx.getCorsair();
-	const corsair = instance as Record<string, unknown>;
-	if (typeof corsair.get_schema !== 'function') {
-		throw new Error('get_schema not available on this Corsair instance.');
-	}
-	const schema = (corsair.get_schema as (p: string) => string)(path);
+	const schema = getCorsairSchema(instance as AnyCorsairInstance, path);
 	return { schema };
 };
 
