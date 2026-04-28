@@ -212,7 +212,7 @@ const telegramWebhooksNested = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType: AuthTypes = 'bot_token';
 
 export const telegramAuthConfig = {
 	bot_token: {
