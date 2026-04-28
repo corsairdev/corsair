@@ -61,7 +61,10 @@ async function refreshGitlabAccessToken(
 	const json = (await response.json()) as {
 		access_token: string;
 		expires_in: number;
-		/** GitLab may omit this or issue a new token when rotating refresh tokens. */
+		/**
+		 * GitLab documents that each refresh returns new access + refresh tokens (the prior pair is invalidated).
+		 * @see https://docs.gitlab.com/api/oauth2/ (authorization code / PKCE sections — example refresh response)
+		 */
 		refresh_token?: string;
 	};
 
@@ -166,7 +169,8 @@ export async function makeGitlabRequest<T>(
 	} catch (error) {
 		if (error instanceof Error) {
 			const status =
-				'status' in error && typeof (error as { status: unknown }).status === 'number'
+				'status' in error &&
+				typeof (error as { status: unknown }).status === 'number'
 					? (error as { status: number }).status
 					: undefined;
 			throw new GitlabAPIError(error.message, status);
