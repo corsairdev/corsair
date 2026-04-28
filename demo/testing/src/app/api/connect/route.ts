@@ -21,7 +21,12 @@ export async function GET(request: NextRequest) {
 		});
 		const response = NextResponse.redirect(url);
 		// Store state in httpOnly cookie for CSRF verification in /api/auth
-		response.cookies.set('oauth_state', state, { httpOnly: true, sameSite: 'lax' });
+		response.cookies.set('oauth_state', state, {
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 10, // 10 minutes
+		});
 		return response;
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
