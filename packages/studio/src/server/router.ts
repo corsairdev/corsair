@@ -1,6 +1,11 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { exchangeOAuth, startOAuth } from './handlers/auth';
 import { chatHandler } from './handlers/chat';
+import {
+	createChatHandler,
+	getChatMessagesHandler,
+	listChatsHandler,
+} from './handlers/chats';
 import { getCredentials, setCredentials } from './handlers/credentials';
 import {
 	listDbRows,
@@ -52,6 +57,10 @@ const routes: Route[] = [
 	{ method: 'POST', path: '/api/db/rows', handler: listDbRows },
 	{ method: 'POST', path: '/api/db/entities/query', handler: queryEntityData },
 	{ method: 'GET', path: '/api/db/permissions', handler: listPermissions },
+
+	{ method: 'GET', path: '/api/chats', handler: listChatsHandler },
+	{ method: 'POST', path: '/api/chats', handler: createChatHandler },
+	{ method: 'GET', path: '/api/chats/messages', handler: getChatMessagesHandler },
 
 	{ method: 'POST', path: '/api/chat', handler: chatHandler },
 ];

@@ -1450,6 +1450,9 @@ importers:
       ai:
         specifier: ^4.0.0
         version: 4.3.19(react@19.2.5)(zod@3.25.76)
+      better-sqlite3:
+        specifier: ^12.0.0
+        version: 12.5.0
       corsair:
         specifier: workspace:*
         version: link:../corsair
@@ -1463,6 +1466,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.0.0
         version: 4.2.4(vite@6.4.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.20.6)(yaml@2.8.1))
+      '@types/better-sqlite3':
+        specifier: ^7.6.0
+        version: 7.6.13
       '@types/node':
         specifier: ^24.10.1
         version: 24.10.1
