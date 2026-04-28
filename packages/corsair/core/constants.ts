@@ -29,6 +29,7 @@ export const BaseProviders = [
 	'firecrawl',
 	'fireflies',
 	'github',
+	'gitlab',
 	'gmail',
 	'googlecalendar',
 	'googledrive',
@@ -84,6 +85,7 @@ export type AllProviders =
 	| 'firecrawl'
 	| 'fireflies'
 	| 'github'
+	| 'gitlab'
 	| 'gmail'
 	| 'googlecalendar'
 	| 'googledrive'
