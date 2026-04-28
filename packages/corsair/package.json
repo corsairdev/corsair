@@ -37,6 +37,11 @@
       "types": "./dist/http.d.ts",
       "default": "./dist/http.js"
     },
+    "./oauth": {
+      "dev-source": "./oauth.ts",
+      "types": "./dist/oauth.d.ts",
+      "default": "./dist/oauth.js"
+    },
     "./tests": {
       "dev-source": "./tests.ts",
       "types": "./dist/tests.d.ts",

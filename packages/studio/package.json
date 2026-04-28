@@ -20,12 +20,22 @@
     "build:watch": "tsup --watch"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.0.0",
+    "@ai-sdk/google": "^1.0.0",
+    "@ai-sdk/groq": "^1.0.0",
+    "@ai-sdk/openai": "^1.0.0",
     "@corsair-dev/cli": "workspace:*",
+    "@corsair-dev/mcp": "workspace:*",
+    "ai": "^4.0.0",
+    "better-sqlite3": "^12.0.0",
     "corsair": "workspace:*",
-    "typescript": "^5.9.3"
+    "kysely": "^0.28.9",
+    "typescript": "^5.9.3",
+    "zod": "^3.25.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
+    "@types/better-sqlite3": "^7.6.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
