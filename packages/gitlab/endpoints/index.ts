@@ -1,81 +1,77 @@
-import { getCurrentUser, getUser, list as listUsers } from './users';
 import {
-	list as listProjects,
-	get as getProject,
-	create as createProject,
-	update as updateProject,
-	deleteProject,
-	fork,
-} from './projects';
-import {
-	list as listIssues,
-	get as getIssue,
-	create as createIssue,
-	update as updateIssue,
-	deleteIssue,
-	listNotes as listIssueNotes,
-	createNote as createIssueNote,
-} from './issues';
-import {
-	list as listMergeRequests,
-	get as getMergeRequest,
-	create as createMergeRequest,
-	update as updateMergeRequest,
-	deleteMr,
-	merge,
-	approve,
-	listNotes as listMrNotes,
-	createNote as createMrNote,
-} from './merge-requests';
-import {
-	list as listBranches,
-	get as getBranch,
 	create as createBranch,
 	deleteBranch,
+	get as getBranch,
+	list as listBranches,
 } from './branches';
+import { get as getCommit, getDiff, list as listCommits } from './commits';
 import {
-	list as listCommits,
-	get as getCommit,
-	getDiff,
-} from './commits';
-import {
-	list as listPipelines,
-	get as getPipeline,
-	create as createPipeline,
-	retry,
-	cancel,
-	deletePipeline,
-	listJobs,
-} from './pipelines';
-import {
-	list as listGroups,
-	get as getGroup,
 	create as createGroup,
-	update as updateGroup,
 	deleteGroup,
+	get as getGroup,
 	listProjects as listGroupProjects,
+	list as listGroups,
+	update as updateGroup,
 } from './groups';
 import {
-	list as listLabels,
+	create as createIssue,
+	createNote as createIssueNote,
+	deleteIssue,
+	get as getIssue,
+	listNotes as listIssueNotes,
+	list as listIssues,
+	update as updateIssue,
+} from './issues';
+import {
 	create as createLabel,
-	update as updateLabel,
 	deleteLabel,
+	list as listLabels,
+	update as updateLabel,
 } from './labels';
 import {
-	list as listMilestones,
-	get as getMilestone,
+	approve,
+	create as createMergeRequest,
+	createNote as createMrNote,
+	deleteMr,
+	get as getMergeRequest,
+	list as listMergeRequests,
+	listNotes as listMrNotes,
+	merge,
+	update as updateMergeRequest,
+} from './merge-requests';
+import {
 	create as createMilestone,
-	update as updateMilestone,
 	deleteMilestone,
+	get as getMilestone,
+	list as listMilestones,
+	update as updateMilestone,
 } from './milestones';
 import {
-	list as listReleases,
-	get as getRelease,
+	cancel,
+	create as createPipeline,
+	deletePipeline,
+	get as getPipeline,
+	listJobs,
+	list as listPipelines,
+	retry,
+} from './pipelines';
+import {
+	create as createProject,
+	deleteProject,
+	fork,
+	get as getProject,
+	list as listProjects,
+	update as updateProject,
+} from './projects';
+import {
 	create as createRelease,
-	update as updateRelease,
 	deleteRelease,
+	get as getRelease,
+	list as listReleases,
+	update as updateRelease,
 } from './releases';
-import { getTree, getFile, compare } from './repository';
+import { compare, getFile, getTree } from './repository';
+import { getCurrentUser, getUser, list as listUsers } from './users';
 
 export const Users = {
 	getCurrentUser,

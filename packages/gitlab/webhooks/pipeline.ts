@@ -20,7 +20,12 @@ export const pipeline: GitlabWebhooks['pipeline'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'gitlab.webhook.pipeline', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'gitlab.webhook.pipeline',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

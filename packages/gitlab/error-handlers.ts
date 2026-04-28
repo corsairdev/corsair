@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -28,7 +28,11 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 403) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('forbidden') || msg.includes('permission_denied') || msg.includes('access_denied');
+			return (
+				msg.includes('forbidden') ||
+				msg.includes('permission_denied') ||
+				msg.includes('access_denied')
+			);
 		},
 		handler: async (error: Error) => {
 			console.warn(`[GITLAB] Permission denied: ${error.message}`);

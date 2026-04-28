@@ -1,8 +1,8 @@
-import { push } from './push';
-import { mergeRequest } from './merge-request';
 import { issue } from './issues';
-import { pipeline } from './pipeline';
+import { mergeRequest } from './merge-request';
 import { note } from './note';
+import { pipeline } from './pipeline';
+import { push } from './push';
 
 export const GitlabWebhooks = {
 	push,

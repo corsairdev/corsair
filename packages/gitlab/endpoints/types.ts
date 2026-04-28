@@ -287,7 +287,13 @@ const IssueSchema = z
 		confidential: z.boolean().optional(),
 		due_date: z.string().nullable().optional(),
 		weight: z.number().nullable().optional(),
-		references: z.object({ short: z.string().optional(), relative: z.string().optional(), full: z.string().optional() }).optional(),
+		references: z
+			.object({
+				short: z.string().optional(),
+				relative: z.string().optional(),
+				full: z.string().optional(),
+			})
+			.optional(),
 	})
 	.passthrough();
 
@@ -392,7 +398,13 @@ const MergeRequestSchema = z
 		has_conflicts: z.boolean().optional(),
 		draft: z.boolean().optional(),
 		changes_count: z.string().nullable().optional(),
-		references: z.object({ short: z.string().optional(), relative: z.string().optional(), full: z.string().optional() }).optional(),
+		references: z
+			.object({
+				short: z.string().optional(),
+				relative: z.string().optional(),
+				full: z.string().optional(),
+			})
+			.optional(),
 	})
 	.passthrough();
 
@@ -613,7 +625,15 @@ const PipelinesGetResponseSchema = PipelineSchema;
 const PipelinesCreateInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	ref: z.string(),
-	variables: z.array(z.object({ key: z.string(), value: z.string(), variable_type: z.string().optional() })).optional(),
+	variables: z
+		.array(
+			z.object({
+				key: z.string(),
+				value: z.string(),
+				variable_type: z.string().optional(),
+			}),
+		)
+		.optional(),
 });
 const PipelinesCreateResponseSchema = PipelineSchema;
 
@@ -910,8 +930,12 @@ const RepositoryCompareResponseSchema = GitlabCompareSchema;
 // Type Exports
 // ============================================================================
 
-export type UsersGetCurrentUserInput = z.infer<typeof UsersGetCurrentUserInputSchema>;
-export type UsersGetCurrentUserResponse = z.infer<typeof UsersGetCurrentUserResponseSchema>;
+export type UsersGetCurrentUserInput = z.infer<
+	typeof UsersGetCurrentUserInputSchema
+>;
+export type UsersGetCurrentUserResponse = z.infer<
+	typeof UsersGetCurrentUserResponseSchema
+>;
 export type UsersGetUserInput = z.infer<typeof UsersGetUserInputSchema>;
 export type UsersGetUserResponse = z.infer<typeof UsersGetUserResponseSchema>;
 export type UsersListInput = z.infer<typeof UsersListInputSchema>;
@@ -922,11 +946,17 @@ export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 export type ProjectsGetInput = z.infer<typeof ProjectsGetInputSchema>;
 export type ProjectsGetResponse = z.infer<typeof ProjectsGetResponseSchema>;
 export type ProjectsCreateInput = z.infer<typeof ProjectsCreateInputSchema>;
-export type ProjectsCreateResponse = z.infer<typeof ProjectsCreateResponseSchema>;
+export type ProjectsCreateResponse = z.infer<
+	typeof ProjectsCreateResponseSchema
+>;
 export type ProjectsUpdateInput = z.infer<typeof ProjectsUpdateInputSchema>;
-export type ProjectsUpdateResponse = z.infer<typeof ProjectsUpdateResponseSchema>;
+export type ProjectsUpdateResponse = z.infer<
+	typeof ProjectsUpdateResponseSchema
+>;
 export type ProjectsDeleteInput = z.infer<typeof ProjectsDeleteInputSchema>;
-export type ProjectsDeleteResponse = z.infer<typeof ProjectsDeleteResponseSchema>;
+export type ProjectsDeleteResponse = z.infer<
+	typeof ProjectsDeleteResponseSchema
+>;
 export type ProjectsForkInput = z.infer<typeof ProjectsForkInputSchema>;
 export type ProjectsForkResponse = z.infer<typeof ProjectsForkResponseSchema>;
 
@@ -941,59 +971,115 @@ export type IssuesUpdateResponse = z.infer<typeof IssuesUpdateResponseSchema>;
 export type IssuesDeleteInput = z.infer<typeof IssuesDeleteInputSchema>;
 export type IssuesDeleteResponse = z.infer<typeof IssuesDeleteResponseSchema>;
 export type IssuesListNotesInput = z.infer<typeof IssuesListNotesInputSchema>;
-export type IssuesListNotesResponse = z.infer<typeof IssuesListNotesResponseSchema>;
+export type IssuesListNotesResponse = z.infer<
+	typeof IssuesListNotesResponseSchema
+>;
 export type IssuesCreateNoteInput = z.infer<typeof IssuesCreateNoteInputSchema>;
-export type IssuesCreateNoteResponse = z.infer<typeof IssuesCreateNoteResponseSchema>;
+export type IssuesCreateNoteResponse = z.infer<
+	typeof IssuesCreateNoteResponseSchema
+>;
 
-export type MergeRequestsListInput = z.infer<typeof MergeRequestsListInputSchema>;
-export type MergeRequestsListResponse = z.infer<typeof MergeRequestsListResponseSchema>;
+export type MergeRequestsListInput = z.infer<
+	typeof MergeRequestsListInputSchema
+>;
+export type MergeRequestsListResponse = z.infer<
+	typeof MergeRequestsListResponseSchema
+>;
 export type MergeRequestsGetInput = z.infer<typeof MergeRequestsGetInputSchema>;
-export type MergeRequestsGetResponse = z.infer<typeof MergeRequestsGetResponseSchema>;
-export type MergeRequestsCreateInput = z.infer<typeof MergeRequestsCreateInputSchema>;
-export type MergeRequestsCreateResponse = z.infer<typeof MergeRequestsCreateResponseSchema>;
-export type MergeRequestsUpdateInput = z.infer<typeof MergeRequestsUpdateInputSchema>;
-export type MergeRequestsUpdateResponse = z.infer<typeof MergeRequestsUpdateResponseSchema>;
-export type MergeRequestsDeleteInput = z.infer<typeof MergeRequestsDeleteInputSchema>;
-export type MergeRequestsDeleteResponse = z.infer<typeof MergeRequestsDeleteResponseSchema>;
-export type MergeRequestsMergeInput = z.infer<typeof MergeRequestsMergeInputSchema>;
-export type MergeRequestsMergeResponse = z.infer<typeof MergeRequestsMergeResponseSchema>;
-export type MergeRequestsApproveInput = z.infer<typeof MergeRequestsApproveInputSchema>;
-export type MergeRequestsApproveResponse = z.infer<typeof MergeRequestsApproveResponseSchema>;
-export type MergeRequestsListNotesInput = z.infer<typeof MergeRequestsListNotesInputSchema>;
-export type MergeRequestsListNotesResponse = z.infer<typeof MergeRequestsListNotesResponseSchema>;
-export type MergeRequestsCreateNoteInput = z.infer<typeof MergeRequestsCreateNoteInputSchema>;
-export type MergeRequestsCreateNoteResponse = z.infer<typeof MergeRequestsCreateNoteResponseSchema>;
+export type MergeRequestsGetResponse = z.infer<
+	typeof MergeRequestsGetResponseSchema
+>;
+export type MergeRequestsCreateInput = z.infer<
+	typeof MergeRequestsCreateInputSchema
+>;
+export type MergeRequestsCreateResponse = z.infer<
+	typeof MergeRequestsCreateResponseSchema
+>;
+export type MergeRequestsUpdateInput = z.infer<
+	typeof MergeRequestsUpdateInputSchema
+>;
+export type MergeRequestsUpdateResponse = z.infer<
+	typeof MergeRequestsUpdateResponseSchema
+>;
+export type MergeRequestsDeleteInput = z.infer<
+	typeof MergeRequestsDeleteInputSchema
+>;
+export type MergeRequestsDeleteResponse = z.infer<
+	typeof MergeRequestsDeleteResponseSchema
+>;
+export type MergeRequestsMergeInput = z.infer<
+	typeof MergeRequestsMergeInputSchema
+>;
+export type MergeRequestsMergeResponse = z.infer<
+	typeof MergeRequestsMergeResponseSchema
+>;
+export type MergeRequestsApproveInput = z.infer<
+	typeof MergeRequestsApproveInputSchema
+>;
+export type MergeRequestsApproveResponse = z.infer<
+	typeof MergeRequestsApproveResponseSchema
+>;
+export type MergeRequestsListNotesInput = z.infer<
+	typeof MergeRequestsListNotesInputSchema
+>;
+export type MergeRequestsListNotesResponse = z.infer<
+	typeof MergeRequestsListNotesResponseSchema
+>;
+export type MergeRequestsCreateNoteInput = z.infer<
+	typeof MergeRequestsCreateNoteInputSchema
+>;
+export type MergeRequestsCreateNoteResponse = z.infer<
+	typeof MergeRequestsCreateNoteResponseSchema
+>;
 
 export type BranchesListInput = z.infer<typeof BranchesListInputSchema>;
 export type BranchesListResponse = z.infer<typeof BranchesListResponseSchema>;
 export type BranchesGetInput = z.infer<typeof BranchesGetInputSchema>;
 export type BranchesGetResponse = z.infer<typeof BranchesGetResponseSchema>;
 export type BranchesCreateInput = z.infer<typeof BranchesCreateInputSchema>;
-export type BranchesCreateResponse = z.infer<typeof BranchesCreateResponseSchema>;
+export type BranchesCreateResponse = z.infer<
+	typeof BranchesCreateResponseSchema
+>;
 export type BranchesDeleteInput = z.infer<typeof BranchesDeleteInputSchema>;
-export type BranchesDeleteResponse = z.infer<typeof BranchesDeleteResponseSchema>;
+export type BranchesDeleteResponse = z.infer<
+	typeof BranchesDeleteResponseSchema
+>;
 
 export type CommitsListInput = z.infer<typeof CommitsListInputSchema>;
 export type CommitsListResponse = z.infer<typeof CommitsListResponseSchema>;
 export type CommitsGetInput = z.infer<typeof CommitsGetInputSchema>;
 export type CommitsGetResponse = z.infer<typeof CommitsGetResponseSchema>;
 export type CommitsGetDiffInput = z.infer<typeof CommitsGetDiffInputSchema>;
-export type CommitsGetDiffResponse = z.infer<typeof CommitsGetDiffResponseSchema>;
+export type CommitsGetDiffResponse = z.infer<
+	typeof CommitsGetDiffResponseSchema
+>;
 
 export type PipelinesListInput = z.infer<typeof PipelinesListInputSchema>;
 export type PipelinesListResponse = z.infer<typeof PipelinesListResponseSchema>;
 export type PipelinesGetInput = z.infer<typeof PipelinesGetInputSchema>;
 export type PipelinesGetResponse = z.infer<typeof PipelinesGetResponseSchema>;
 export type PipelinesCreateInput = z.infer<typeof PipelinesCreateInputSchema>;
-export type PipelinesCreateResponse = z.infer<typeof PipelinesCreateResponseSchema>;
+export type PipelinesCreateResponse = z.infer<
+	typeof PipelinesCreateResponseSchema
+>;
 export type PipelinesRetryInput = z.infer<typeof PipelinesRetryInputSchema>;
-export type PipelinesRetryResponse = z.infer<typeof PipelinesRetryResponseSchema>;
+export type PipelinesRetryResponse = z.infer<
+	typeof PipelinesRetryResponseSchema
+>;
 export type PipelinesCancelInput = z.infer<typeof PipelinesCancelInputSchema>;
-export type PipelinesCancelResponse = z.infer<typeof PipelinesCancelResponseSchema>;
+export type PipelinesCancelResponse = z.infer<
+	typeof PipelinesCancelResponseSchema
+>;
 export type PipelinesDeleteInput = z.infer<typeof PipelinesDeleteInputSchema>;
-export type PipelinesDeleteResponse = z.infer<typeof PipelinesDeleteResponseSchema>;
-export type PipelinesListJobsInput = z.infer<typeof PipelinesListJobsInputSchema>;
-export type PipelinesListJobsResponse = z.infer<typeof PipelinesListJobsResponseSchema>;
+export type PipelinesDeleteResponse = z.infer<
+	typeof PipelinesDeleteResponseSchema
+>;
+export type PipelinesListJobsInput = z.infer<
+	typeof PipelinesListJobsInputSchema
+>;
+export type PipelinesListJobsResponse = z.infer<
+	typeof PipelinesListJobsResponseSchema
+>;
 
 export type GroupsListInput = z.infer<typeof GroupsListInputSchema>;
 export type GroupsListResponse = z.infer<typeof GroupsListResponseSchema>;
@@ -1005,8 +1091,12 @@ export type GroupsUpdateInput = z.infer<typeof GroupsUpdateInputSchema>;
 export type GroupsUpdateResponse = z.infer<typeof GroupsUpdateResponseSchema>;
 export type GroupsDeleteInput = z.infer<typeof GroupsDeleteInputSchema>;
 export type GroupsDeleteResponse = z.infer<typeof GroupsDeleteResponseSchema>;
-export type GroupsListProjectsInput = z.infer<typeof GroupsListProjectsInputSchema>;
-export type GroupsListProjectsResponse = z.infer<typeof GroupsListProjectsResponseSchema>;
+export type GroupsListProjectsInput = z.infer<
+	typeof GroupsListProjectsInputSchema
+>;
+export type GroupsListProjectsResponse = z.infer<
+	typeof GroupsListProjectsResponseSchema
+>;
 
 export type LabelsListInput = z.infer<typeof LabelsListInputSchema>;
 export type LabelsListResponse = z.infer<typeof LabelsListResponseSchema>;
@@ -1018,33 +1108,59 @@ export type LabelsDeleteInput = z.infer<typeof LabelsDeleteInputSchema>;
 export type LabelsDeleteResponse = z.infer<typeof LabelsDeleteResponseSchema>;
 
 export type MilestonesListInput = z.infer<typeof MilestonesListInputSchema>;
-export type MilestonesListResponse = z.infer<typeof MilestonesListResponseSchema>;
+export type MilestonesListResponse = z.infer<
+	typeof MilestonesListResponseSchema
+>;
 export type MilestonesGetInput = z.infer<typeof MilestonesGetInputSchema>;
 export type MilestonesGetResponse = z.infer<typeof MilestonesGetResponseSchema>;
 export type MilestonesCreateInput = z.infer<typeof MilestonesCreateInputSchema>;
-export type MilestonesCreateResponse = z.infer<typeof MilestonesCreateResponseSchema>;
+export type MilestonesCreateResponse = z.infer<
+	typeof MilestonesCreateResponseSchema
+>;
 export type MilestonesUpdateInput = z.infer<typeof MilestonesUpdateInputSchema>;
-export type MilestonesUpdateResponse = z.infer<typeof MilestonesUpdateResponseSchema>;
+export type MilestonesUpdateResponse = z.infer<
+	typeof MilestonesUpdateResponseSchema
+>;
 export type MilestonesDeleteInput = z.infer<typeof MilestonesDeleteInputSchema>;
-export type MilestonesDeleteResponse = z.infer<typeof MilestonesDeleteResponseSchema>;
+export type MilestonesDeleteResponse = z.infer<
+	typeof MilestonesDeleteResponseSchema
+>;
 
 export type ReleasesListInput = z.infer<typeof ReleasesListInputSchema>;
 export type ReleasesListResponse = z.infer<typeof ReleasesListResponseSchema>;
 export type ReleasesGetInput = z.infer<typeof ReleasesGetInputSchema>;
 export type ReleasesGetResponse = z.infer<typeof ReleasesGetResponseSchema>;
 export type ReleasesCreateInput = z.infer<typeof ReleasesCreateInputSchema>;
-export type ReleasesCreateResponse = z.infer<typeof ReleasesCreateResponseSchema>;
+export type ReleasesCreateResponse = z.infer<
+	typeof ReleasesCreateResponseSchema
+>;
 export type ReleasesUpdateInput = z.infer<typeof ReleasesUpdateInputSchema>;
-export type ReleasesUpdateResponse = z.infer<typeof ReleasesUpdateResponseSchema>;
+export type ReleasesUpdateResponse = z.infer<
+	typeof ReleasesUpdateResponseSchema
+>;
 export type ReleasesDeleteInput = z.infer<typeof ReleasesDeleteInputSchema>;
-export type ReleasesDeleteResponse = z.infer<typeof ReleasesDeleteResponseSchema>;
+export type ReleasesDeleteResponse = z.infer<
+	typeof ReleasesDeleteResponseSchema
+>;
 
-export type RepositoryGetTreeInput = z.infer<typeof RepositoryGetTreeInputSchema>;
-export type RepositoryGetTreeResponse = z.infer<typeof RepositoryGetTreeResponseSchema>;
-export type RepositoryGetFileInput = z.infer<typeof RepositoryGetFileInputSchema>;
-export type RepositoryGetFileResponse = z.infer<typeof RepositoryGetFileResponseSchema>;
-export type RepositoryCompareInput = z.infer<typeof RepositoryCompareInputSchema>;
-export type RepositoryCompareResponse = z.infer<typeof RepositoryCompareResponseSchema>;
+export type RepositoryGetTreeInput = z.infer<
+	typeof RepositoryGetTreeInputSchema
+>;
+export type RepositoryGetTreeResponse = z.infer<
+	typeof RepositoryGetTreeResponseSchema
+>;
+export type RepositoryGetFileInput = z.infer<
+	typeof RepositoryGetFileInputSchema
+>;
+export type RepositoryGetFileResponse = z.infer<
+	typeof RepositoryGetFileResponseSchema
+>;
+export type RepositoryCompareInput = z.infer<
+	typeof RepositoryCompareInputSchema
+>;
+export type RepositoryCompareResponse = z.infer<
+	typeof RepositoryCompareResponseSchema
+>;
 
 // ============================================================================
 // Aggregated Input/Output Maps

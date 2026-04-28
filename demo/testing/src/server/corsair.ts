@@ -6,9 +6,9 @@ import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
+import { openweathermap } from '@corsair-dev/openweathermap';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
-import { openweathermap } from '@corsair-dev/openweathermap';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 

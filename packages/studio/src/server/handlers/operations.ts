@@ -1,10 +1,10 @@
-import { readJsonBody } from '../router';
-import type { HandlerFn } from '../types';
 import type { AnyCorsairInstance } from 'corsair';
 import {
 	getSchema as getCorsairSchema,
 	listOperations as listCorsairOperations,
 } from 'corsair';
+import { readJsonBody } from '../router';
+import type { HandlerFn } from '../types';
 
 function navigateToEndpoint(
 	client: Record<string, unknown>,

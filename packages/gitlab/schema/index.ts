@@ -1,15 +1,15 @@
 import {
-	GitlabUser,
-	GitlabProject,
-	GitlabIssue,
-	GitlabMergeRequest,
-	GitlabPipeline,
-	GitlabGroup,
 	GitlabBranch,
 	GitlabCommit,
+	GitlabGroup,
+	GitlabIssue,
 	GitlabLabel,
+	GitlabMergeRequest,
 	GitlabMilestone,
+	GitlabPipeline,
+	GitlabProject,
 	GitlabRelease,
+	GitlabUser,
 } from './database';
 
 export const GitlabSchema = {

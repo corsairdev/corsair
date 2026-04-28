@@ -20,7 +20,12 @@ export const note: GitlabWebhooks['note'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'gitlab.webhook.note', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'gitlab.webhook.note',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

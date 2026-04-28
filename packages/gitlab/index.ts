@@ -14,45 +14,51 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { GitlabEndpointInputs, GitlabEndpointOutputs } from './endpoints/types';
-import { GitlabEndpointInputSchemas, GitlabEndpointOutputSchemas } from './endpoints/types';
-import type {
-	GitlabWebhookOutputs,
-	PushEvent,
-	MergeRequestEvent,
-	IssueEvent,
-	PipelineEvent,
-	NoteEvent,
-} from './webhooks/types';
-import {
-	PushEventSchema,
-	MergeRequestEventSchema,
-	IssueEventSchema,
-	PipelineEventSchema,
-	NoteEventSchema,
-} from './webhooks/types';
-import {
-	Users,
-	Projects,
-	Issues,
-	MergeRequests,
-	Branches,
-	Commits,
-	Pipelines,
-	Groups,
-	Labels,
-	Milestones,
-	Releases,
-	Repository,
-} from './endpoints';
-import { GitlabSchema } from './schema';
-import { GitlabWebhooks as GitlabWebhookHandlers } from './webhooks';
-import { errorHandlers } from './error-handlers';
 import {
 	getValidGitlabAccessToken,
 	gitlabOAuthTokenUrl,
 	normalizeGitlabBaseUrl,
 } from './client';
+import {
+	Branches,
+	Commits,
+	Groups,
+	Issues,
+	Labels,
+	MergeRequests,
+	Milestones,
+	Pipelines,
+	Projects,
+	Releases,
+	Repository,
+	Users,
+} from './endpoints';
+import type {
+	GitlabEndpointInputs,
+	GitlabEndpointOutputs,
+} from './endpoints/types';
+import {
+	GitlabEndpointInputSchemas,
+	GitlabEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { GitlabSchema } from './schema';
+import { GitlabWebhooks as GitlabWebhookHandlers } from './webhooks';
+import type {
+	GitlabWebhookOutputs,
+	IssueEvent,
+	MergeRequestEvent,
+	NoteEvent,
+	PipelineEvent,
+	PushEvent,
+} from './webhooks/types';
+import {
+	IssueEventSchema,
+	MergeRequestEventSchema,
+	NoteEventSchema,
+	PipelineEventSchema,
+	PushEventSchema,
+} from './webhooks/types';
 
 export const gitlabAuthConfig = {} as const satisfies PluginAuthConfig;
 
@@ -522,7 +528,8 @@ const gitlabWebhookSchemas = {
 		response: PushEventSchema,
 	},
 	mergeRequest: {
-		description: 'A merge request event from GitLab (open, update, merge, close)',
+		description:
+			'A merge request event from GitLab (open, update, merge, close)',
 		payload: MergeRequestEventSchema,
 		response: MergeRequestEventSchema,
 	},
@@ -537,7 +544,8 @@ const gitlabWebhookSchemas = {
 		response: PipelineEventSchema,
 	},
 	note: {
-		description: 'A comment event from GitLab (new comments on issues, MRs, commits)',
+		description:
+			'A comment event from GitLab (new comments on issues, MRs, commits)',
 		payload: NoteEventSchema,
 		response: NoteEventSchema,
 	},
@@ -546,68 +554,201 @@ const gitlabWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const gitlabEndpointMeta = {
-	'users.getCurrentUser': { riskLevel: 'read', description: 'Get the authenticated user' },
-	'users.getUser': { riskLevel: 'read', description: 'Get a specific user by ID' },
+	'users.getCurrentUser': {
+		riskLevel: 'read',
+		description: 'Get the authenticated user',
+	},
+	'users.getUser': {
+		riskLevel: 'read',
+		description: 'Get a specific user by ID',
+	},
 	'users.list': { riskLevel: 'read', description: 'List users' },
 	'projects.list': { riskLevel: 'read', description: 'List projects' },
 	'projects.get': { riskLevel: 'read', description: 'Get a specific project' },
-	'projects.create': { riskLevel: 'write', description: 'Create a new project' },
-	'projects.update': { riskLevel: 'write', description: 'Update an existing project' },
-	'projects.delete': { riskLevel: 'destructive', irreversible: true, description: 'Delete a project [DESTRUCTIVE · IRREVERSIBLE]' },
+	'projects.create': {
+		riskLevel: 'write',
+		description: 'Create a new project',
+	},
+	'projects.update': {
+		riskLevel: 'write',
+		description: 'Update an existing project',
+	},
+	'projects.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a project [DESTRUCTIVE · IRREVERSIBLE]',
+	},
 	'projects.fork': { riskLevel: 'write', description: 'Fork a project' },
 	'issues.list': { riskLevel: 'read', description: 'List issues in a project' },
 	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
 	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
-	'issues.update': { riskLevel: 'write', description: 'Update an existing issue' },
-	'issues.delete': { riskLevel: 'destructive', irreversible: true, description: 'Delete an issue [DESTRUCTIVE · IRREVERSIBLE]' },
-	'issues.listNotes': { riskLevel: 'read', description: 'List comments on an issue' },
-	'issues.createNote': { riskLevel: 'write', description: 'Add a comment to an issue' },
-	'mergeRequests.list': { riskLevel: 'read', description: 'List merge requests in a project' },
-	'mergeRequests.get': { riskLevel: 'read', description: 'Get a specific merge request' },
-	'mergeRequests.create': { riskLevel: 'write', description: 'Create a new merge request' },
-	'mergeRequests.update': { riskLevel: 'write', description: 'Update a merge request' },
-	'mergeRequests.delete': { riskLevel: 'destructive', irreversible: true, description: 'Delete a merge request [DESTRUCTIVE · IRREVERSIBLE]' },
-	'mergeRequests.merge': { riskLevel: 'write', description: 'Merge a merge request' },
-	'mergeRequests.approve': { riskLevel: 'write', description: 'Approve a merge request' },
-	'mergeRequests.listNotes': { riskLevel: 'read', description: 'List comments on a merge request' },
-	'mergeRequests.createNote': { riskLevel: 'write', description: 'Add a comment to a merge request' },
-	'branches.list': { riskLevel: 'read', description: 'List branches in a repository' },
+	'issues.update': {
+		riskLevel: 'write',
+		description: 'Update an existing issue',
+	},
+	'issues.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete an issue [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'issues.listNotes': {
+		riskLevel: 'read',
+		description: 'List comments on an issue',
+	},
+	'issues.createNote': {
+		riskLevel: 'write',
+		description: 'Add a comment to an issue',
+	},
+	'mergeRequests.list': {
+		riskLevel: 'read',
+		description: 'List merge requests in a project',
+	},
+	'mergeRequests.get': {
+		riskLevel: 'read',
+		description: 'Get a specific merge request',
+	},
+	'mergeRequests.create': {
+		riskLevel: 'write',
+		description: 'Create a new merge request',
+	},
+	'mergeRequests.update': {
+		riskLevel: 'write',
+		description: 'Update a merge request',
+	},
+	'mergeRequests.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a merge request [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'mergeRequests.merge': {
+		riskLevel: 'write',
+		description: 'Merge a merge request',
+	},
+	'mergeRequests.approve': {
+		riskLevel: 'write',
+		description: 'Approve a merge request',
+	},
+	'mergeRequests.listNotes': {
+		riskLevel: 'read',
+		description: 'List comments on a merge request',
+	},
+	'mergeRequests.createNote': {
+		riskLevel: 'write',
+		description: 'Add a comment to a merge request',
+	},
+	'branches.list': {
+		riskLevel: 'read',
+		description: 'List branches in a repository',
+	},
 	'branches.get': { riskLevel: 'read', description: 'Get a specific branch' },
 	'branches.create': { riskLevel: 'write', description: 'Create a new branch' },
-	'branches.delete': { riskLevel: 'destructive', description: 'Delete a branch [DESTRUCTIVE]' },
-	'commits.list': { riskLevel: 'read', description: 'List commits in a repository' },
+	'branches.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a branch [DESTRUCTIVE]',
+	},
+	'commits.list': {
+		riskLevel: 'read',
+		description: 'List commits in a repository',
+	},
 	'commits.get': { riskLevel: 'read', description: 'Get a specific commit' },
-	'commits.getDiff': { riskLevel: 'read', description: 'Get the diff of a commit' },
-	'pipelines.list': { riskLevel: 'read', description: 'List pipelines for a project' },
-	'pipelines.get': { riskLevel: 'read', description: 'Get a specific pipeline' },
-	'pipelines.create': { riskLevel: 'write', description: 'Create a new pipeline' },
-	'pipelines.retry': { riskLevel: 'write', description: 'Retry a failed pipeline' },
-	'pipelines.cancel': { riskLevel: 'write', description: 'Cancel a running pipeline' },
-	'pipelines.delete': { riskLevel: 'destructive', description: 'Delete a pipeline [DESTRUCTIVE]' },
-	'pipelines.listJobs': { riskLevel: 'read', description: 'List jobs in a pipeline' },
+	'commits.getDiff': {
+		riskLevel: 'read',
+		description: 'Get the diff of a commit',
+	},
+	'pipelines.list': {
+		riskLevel: 'read',
+		description: 'List pipelines for a project',
+	},
+	'pipelines.get': {
+		riskLevel: 'read',
+		description: 'Get a specific pipeline',
+	},
+	'pipelines.create': {
+		riskLevel: 'write',
+		description: 'Create a new pipeline',
+	},
+	'pipelines.retry': {
+		riskLevel: 'write',
+		description: 'Retry a failed pipeline',
+	},
+	'pipelines.cancel': {
+		riskLevel: 'write',
+		description: 'Cancel a running pipeline',
+	},
+	'pipelines.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a pipeline [DESTRUCTIVE]',
+	},
+	'pipelines.listJobs': {
+		riskLevel: 'read',
+		description: 'List jobs in a pipeline',
+	},
 	'groups.list': { riskLevel: 'read', description: 'List groups' },
 	'groups.get': { riskLevel: 'read', description: 'Get a specific group' },
 	'groups.create': { riskLevel: 'write', description: 'Create a new group' },
 	'groups.update': { riskLevel: 'write', description: 'Update a group' },
-	'groups.delete': { riskLevel: 'destructive', irreversible: true, description: 'Delete a group [DESTRUCTIVE · IRREVERSIBLE]' },
-	'groups.listProjects': { riskLevel: 'read', description: 'List projects in a group' },
+	'groups.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a group [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'groups.listProjects': {
+		riskLevel: 'read',
+		description: 'List projects in a group',
+	},
 	'labels.list': { riskLevel: 'read', description: 'List labels in a project' },
 	'labels.create': { riskLevel: 'write', description: 'Create a new label' },
 	'labels.update': { riskLevel: 'write', description: 'Update a label' },
-	'labels.delete': { riskLevel: 'destructive', description: 'Delete a label [DESTRUCTIVE]' },
-	'milestones.list': { riskLevel: 'read', description: 'List milestones in a project' },
-	'milestones.get': { riskLevel: 'read', description: 'Get a specific milestone' },
-	'milestones.create': { riskLevel: 'write', description: 'Create a new milestone' },
-	'milestones.update': { riskLevel: 'write', description: 'Update a milestone' },
-	'milestones.delete': { riskLevel: 'destructive', description: 'Delete a milestone [DESTRUCTIVE]' },
-	'releases.list': { riskLevel: 'read', description: 'List releases in a project' },
+	'labels.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a label [DESTRUCTIVE]',
+	},
+	'milestones.list': {
+		riskLevel: 'read',
+		description: 'List milestones in a project',
+	},
+	'milestones.get': {
+		riskLevel: 'read',
+		description: 'Get a specific milestone',
+	},
+	'milestones.create': {
+		riskLevel: 'write',
+		description: 'Create a new milestone',
+	},
+	'milestones.update': {
+		riskLevel: 'write',
+		description: 'Update a milestone',
+	},
+	'milestones.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a milestone [DESTRUCTIVE]',
+	},
+	'releases.list': {
+		riskLevel: 'read',
+		description: 'List releases in a project',
+	},
 	'releases.get': { riskLevel: 'read', description: 'Get a specific release' },
-	'releases.create': { riskLevel: 'write', description: 'Create a new release' },
+	'releases.create': {
+		riskLevel: 'write',
+		description: 'Create a new release',
+	},
 	'releases.update': { riskLevel: 'write', description: 'Update a release' },
-	'releases.delete': { riskLevel: 'destructive', description: 'Delete a release [DESTRUCTIVE]' },
-	'repository.getTree': { riskLevel: 'read', description: 'List repository tree (files and directories)' },
-	'repository.getFile': { riskLevel: 'read', description: 'Get a file from the repository' },
-	'repository.compare': { riskLevel: 'read', description: 'Compare branches, tags, or commits' },
+	'releases.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a release [DESTRUCTIVE]',
+	},
+	'repository.getTree': {
+		riskLevel: 'read',
+		description: 'List repository tree (files and directories)',
+	},
+	'repository.getFile': {
+		riskLevel: 'read',
+		description: 'Get a file from the repository',
+	},
+	'repository.compare': {
+		riskLevel: 'read',
+		description: 'Compare branches, tags, or commits',
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof gitlabEndpointsNested>;
 
 export type BaseGitlabPlugin<T extends GitlabPluginOptions> = CorsairPlugin<
@@ -777,11 +918,11 @@ export function gitlab<const T extends GitlabPluginOptions>(
 export type {
 	GitlabWebhookOutputs,
 	GitlabWebhookPayload,
-	PushEvent,
-	MergeRequestEvent,
 	IssueEvent,
-	PipelineEvent,
+	MergeRequestEvent,
 	NoteEvent,
+	PipelineEvent,
+	PushEvent,
 } from './webhooks/types';
 export {
 	createGitlabMatch,
