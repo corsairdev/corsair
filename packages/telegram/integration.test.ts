@@ -15,7 +15,7 @@ async function createTelegramClient() {
 	await createIntegrationAndAccount(testDb.db, 'telegram', 'default');
 
 	const corsair = createCorsair({
-		plugins: [telegram({})],
+		plugins: [telegram({ authType: 'bot_token' })],
 		database: testDb.db,
 		kek: process.env.CORSAIR_KEK!,
 	});
