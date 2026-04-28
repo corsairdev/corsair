@@ -445,6 +445,162 @@ importers:
 
   packages/corsair:
     dependencies:
+      '@corsair-dev/airtable':
+        specifier: workspace:*
+        version: link:../airtable
+      '@corsair-dev/amplitude':
+        specifier: workspace:*
+        version: link:../amplitude
+      '@corsair-dev/asana':
+        specifier: workspace:*
+        version: link:../asana
+      '@corsair-dev/box':
+        specifier: workspace:*
+        version: link:../box
+      '@corsair-dev/cal':
+        specifier: workspace:*
+        version: link:../cal
+      '@corsair-dev/calendly':
+        specifier: workspace:*
+        version: link:../calendly
+      '@corsair-dev/cursor':
+        specifier: workspace:*
+        version: link:../cursor
+      '@corsair-dev/discord':
+        specifier: workspace:*
+        version: link:../discord
+      '@corsair-dev/dodopayments':
+        specifier: workspace:*
+        version: link:../dodopayments
+      '@corsair-dev/dropbox':
+        specifier: workspace:*
+        version: link:../dropbox
+      '@corsair-dev/exa':
+        specifier: workspace:*
+        version: link:../exa
+      '@corsair-dev/figma':
+        specifier: workspace:*
+        version: link:../figma
+      '@corsair-dev/firecrawl':
+        specifier: workspace:*
+        version: link:../firecrawl
+      '@corsair-dev/fireflies':
+        specifier: workspace:*
+        version: link:../fireflies
+      '@corsair-dev/github':
+        specifier: workspace:*
+        version: link:../github
+      '@corsair-dev/gmail':
+        specifier: workspace:*
+        version: link:../gmail
+      '@corsair-dev/googlecalendar':
+        specifier: workspace:*
+        version: link:../googlecalendar
+      '@corsair-dev/googledrive':
+        specifier: workspace:*
+        version: link:../googledrive
+      '@corsair-dev/googlesheets':
+        specifier: workspace:*
+        version: link:../googlesheets
+      '@corsair-dev/grafana':
+        specifier: workspace:*
+        version: link:../grafana
+      '@corsair-dev/hackernews':
+        specifier: workspace:*
+        version: link:../hackernews
+      '@corsair-dev/hubspot':
+        specifier: workspace:*
+        version: link:../hubspot
+      '@corsair-dev/intercom':
+        specifier: workspace:*
+        version: link:../intercom
+      '@corsair-dev/jira':
+        specifier: workspace:*
+        version: link:../jira
+      '@corsair-dev/linear':
+        specifier: workspace:*
+        version: link:../linear
+      '@corsair-dev/monday':
+        specifier: workspace:*
+        version: link:../monday
+      '@corsair-dev/notion':
+        specifier: workspace:*
+        version: link:../notion
+      '@corsair-dev/onedrive':
+        specifier: workspace:*
+        version: link:../onedrive
+      '@corsair-dev/openweathermap':
+        specifier: workspace:*
+        version: link:../openweathermap
+      '@corsair-dev/oura':
+        specifier: workspace:*
+        version: link:../oura
+      '@corsair-dev/outlook':
+        specifier: workspace:*
+        version: link:../outlook
+      '@corsair-dev/pagerduty':
+        specifier: workspace:*
+        version: link:../pagerduty
+      '@corsair-dev/posthog':
+        specifier: workspace:*
+        version: link:../posthog
+      '@corsair-dev/razorpay':
+        specifier: workspace:*
+        version: link:../razorpay
+      '@corsair-dev/reddit':
+        specifier: workspace:*
+        version: link:../reddit
+      '@corsair-dev/resend':
+        specifier: workspace:*
+        version: link:../resend
+      '@corsair-dev/sentry':
+        specifier: workspace:*
+        version: link:../sentry
+      '@corsair-dev/sharepoint':
+        specifier: workspace:*
+        version: link:../sharepoint
+      '@corsair-dev/slack':
+        specifier: workspace:*
+        version: link:../slack
+      '@corsair-dev/spotify':
+        specifier: workspace:*
+        version: link:../spotify
+      '@corsair-dev/strava':
+        specifier: workspace:*
+        version: link:../strava
+      '@corsair-dev/stripe':
+        specifier: workspace:*
+        version: link:../stripe
+      '@corsair-dev/tavily':
+        specifier: workspace:*
+        version: link:../tavily
+      '@corsair-dev/teams':
+        specifier: workspace:*
+        version: link:../teams
+      '@corsair-dev/telegram':
+        specifier: workspace:*
+        version: link:../telegram
+      '@corsair-dev/todoist':
+        specifier: workspace:*
+        version: link:../todoist
+      '@corsair-dev/trello':
+        specifier: workspace:*
+        version: link:../trello
+      '@corsair-dev/twitter':
+        specifier: workspace:*
+        version: link:../twitter
+      '@corsair-dev/twitterappio':
+        specifier: workspace:*
+        version: link:../twitterapiio
+      '@corsair-dev/typeform':
+        specifier: workspace:*
+        version: link:../typeform
+      '@corsair-dev/youtube':
+        specifier: workspace:*
+        version: link:../youtube
+      '@corsair-dev/zoom':
+        specifier: workspace:*
+        version: link:../zoom
       kysely:
         specifier: ^0.28.5
         version: 0.28.9
