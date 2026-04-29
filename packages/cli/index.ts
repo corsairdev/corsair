@@ -637,11 +637,11 @@ function parseRunArgs(args: string[]): {
 }
 
 function parseExploreArgs(args: string[]): {
-	plugin?: string;
+	target?: string;
 	type?: 'api' | 'webhooks' | 'db';
 	json: boolean;
 }{
-	let plugin: string | undefined;
+	let target: string | undefined;
 	let type: 'api' | 'webhooks' | 'db' | undefined;
 	let json = false;
 
@@ -666,11 +666,11 @@ function parseExploreArgs(args: string[]): {
 			continue;
 		}
 
-		if (!arg.startsWith('-') && !plugin) {
-			plugin = arg;
+		if (!arg.startsWith('-') && !target) {
+			target = arg;
 		}
 	}
-	return { plugin, type, json };
+	return { target, type, json };
 }
 
 function parseUiArgs(args: string[]): { port?: number; open?: boolean } {
@@ -743,7 +743,10 @@ function printHelp() {
 		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
 		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
-		'pnpm corsair explore [provider] [--type=api|webhooks|db]  Discover official providers before installing them',
+		'pnpm corsair explore                            List all available plugins',
+		'pnpm corsair explore <plugin>                   List API endpoints of a plugin (before installing)',
+		'pnpm corsair explore <plugin> --type=api|webhooks|db  Filter to specific endpoint types',
+		'pnpm corsair explore <plugin.endpoint>          Show schema for a specific endpoint',
 		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'pnpm corsair ui [--port=4317] [--no-open]       Open the Corsair Studio dashboard (requires @corsair-dev/studio)',
 		'pnpm corsair script --code "<js>" [--tenant=<id>]',
@@ -878,20 +881,39 @@ async function main() {
 	}
 
 	if (command === 'explore') {
-		const { plugin, type, json } = parseExploreArgs(args.slice(1));
+		const { target, type, json } = parseExploreArgs(args.slice(1));
 		const baseUrl = process.env.CORSAIR_EXPLORER_URL ?? 'http://localhost:4319';
 
-		const typePath = plugin && type ? `/${type}` : '';
-		const url = plugin 
-		? `${baseUrl}/v1/plugins/${encodeURIComponent(plugin)}${typePath}`
-			: `${baseUrl}/v1/plugins`;
-		
+		// Determine the target and build the URL based on the new flat route structure
+		let url: string;
+		if (!target) {
+			// No arguments: list all plugins
+			url = `${baseUrl}/`;
+		} else if (target.includes('.')) {
+			// Target contains dots: treat as endpoint path (e.g., slack.api.messages.post)
+			url = `${baseUrl}/schema/${encodeURIComponent(target)}`;
+		} else {
+			// Target is a plugin name: list its endpoints (optionally filtered by type)
+			if (type) {
+				// List specific endpoint type for a plugin
+				url = `${baseUrl}/${encodeURIComponent(target)}/${type}`;
+			} else {
+				// List all endpoints for a plugin (defaults to API)
+				url = `${baseUrl}/${encodeURIComponent(target)}`;
+			}
+		}
+
 		try {
 			const response = await fetch(url);
 			if (!response.ok) {
-				if (response.status === 404 && plugin) {
-					console.error(`[#corsair]: Unknown provider "${plugin}".`);
-					console.error('[#corsair]: Run `pnpm corsair explore` to see available providers.');
+				if (response.status === 404) {
+					if (target && target.includes('.')) {
+						console.error(`[#corsair]: Unknown endpoint "${target}".`);
+						console.error('[#corsair]: Run `pnpm corsair explore <plugin>` to see available endpoints.');
+					} else {
+						console.error(`[#corsair]: Unknown provider "${target}".`);
+						console.error('[#corsair]: Run `pnpm corsair explore` to see available providers.');
+					}
 					process.exit(1);
 				}
 
