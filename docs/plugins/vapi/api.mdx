@@ -1,0 +1,2267 @@
+---
+title: API
+description: "API reference for Vapi: every `vapi.api.*` operation with input and output types."
+---
+
+Every `vapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assistants
+
+### create
+
+`assistants.create`
+
+Create a new Vapi assistant
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.assistants.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `model` | `object` | No | — |
+| `voice` | `object` | No | — |
+| `transcriber` | `object` | No | — |
+| `firstMessage` | `string` | No | — |
+| `systemPrompt` | `string` | No | — |
+| `endCallMessage` | `string` | No | — |
+| `endCallPhrases` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `serverUrl` | `string` | No | — |
+| `serverUrlSecret` | `string` | No | — |
+| `analysisPlan` | `object` | No | — |
+| `artifactPlan` | `object` | No | — |
+| `messagePlan` | `object` | No | — |
+| `startSpeakingPlan` | `object` | No | — |
+| `stopSpeakingPlan` | `object` | No | — |
+| `hipaaEnabled` | `boolean` | No | — |
+| `clientMessages` | `string[]` | No | — |
+| `serverMessages` | `string[]` | No | — |
+| `silenceTimeoutSeconds` | `number` | No | — |
+| `maxDurationSeconds` | `number` | No | — |
+| `backgroundSound` | `string` | No | — |
+| `backchannelingEnabled` | `boolean` | No | — |
+| `backgroundDenoisingEnabled` | `boolean` | No | — |
+| `modelOutputInMessagesEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="voice full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="transcriber full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="analysisPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="artifactPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="messagePlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="startSpeakingPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stopSpeakingPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `model` | `object` | No | — |
+| `voice` | `object` | No | — |
+| `transcriber` | `object` | No | — |
+| `firstMessage` | `string` | No | — |
+| `systemPrompt` | `string` | No | — |
+| `endCallMessage` | `string` | No | — |
+| `endCallPhrases` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `serverUrl` | `string` | No | — |
+| `hipaaEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="voice full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="transcriber full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`assistants.delete`
+
+Delete a Vapi assistant [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vapi.api.assistants.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`assistants.get`
+
+Retrieve a Vapi assistant by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.assistants.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `model` | `object` | No | — |
+| `voice` | `object` | No | — |
+| `transcriber` | `object` | No | — |
+| `firstMessage` | `string` | No | — |
+| `systemPrompt` | `string` | No | — |
+| `endCallMessage` | `string` | No | — |
+| `endCallPhrases` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `serverUrl` | `string` | No | — |
+| `hipaaEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="voice full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="transcriber full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`assistants.list`
+
+List all Vapi assistants
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.assistants.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `createdAtGt` | `string` | No | — |
+| `createdAtLt` | `string` | No | — |
+| `createdAtGe` | `string` | No | — |
+| `createdAtLe` | `string` | No | — |
+| `updatedAtGt` | `string` | No | — |
+| `updatedAtLt` | `string` | No | — |
+| `updatedAtGe` | `string` | No | — |
+| `updatedAtLe` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  name?: string | null,
+  model?: {
+  },
+  voice?: {
+  },
+  transcriber?: {
+  },
+  firstMessage?: string | null,
+  systemPrompt?: string | null,
+  endCallMessage?: string | null,
+  endCallPhrases?: string[],
+  metadata?: {
+  },
+  serverUrl?: string | null,
+  hipaaEnabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`assistants.update`
+
+Update a Vapi assistant
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.assistants.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `model` | `object` | No | — |
+| `voice` | `object` | No | — |
+| `transcriber` | `object` | No | — |
+| `firstMessage` | `string` | No | — |
+| `systemPrompt` | `string` | No | — |
+| `endCallMessage` | `string` | No | — |
+| `endCallPhrases` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `serverUrl` | `string` | No | — |
+| `serverUrlSecret` | `string` | No | — |
+| `analysisPlan` | `object` | No | — |
+| `artifactPlan` | `object` | No | — |
+| `messagePlan` | `object` | No | — |
+| `startSpeakingPlan` | `object` | No | — |
+| `stopSpeakingPlan` | `object` | No | — |
+| `hipaaEnabled` | `boolean` | No | — |
+| `clientMessages` | `string[]` | No | — |
+| `serverMessages` | `string[]` | No | — |
+| `silenceTimeoutSeconds` | `number` | No | — |
+| `maxDurationSeconds` | `number` | No | — |
+| `backgroundSound` | `string` | No | — |
+| `backchannelingEnabled` | `boolean` | No | — |
+| `backgroundDenoisingEnabled` | `boolean` | No | — |
+| `modelOutputInMessagesEnabled` | `boolean` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="voice full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="transcriber full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="analysisPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="artifactPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="messagePlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="startSpeakingPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="stopSpeakingPlan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `model` | `object` | No | — |
+| `voice` | `object` | No | — |
+| `transcriber` | `object` | No | — |
+| `firstMessage` | `string` | No | — |
+| `systemPrompt` | `string` | No | — |
+| `endCallMessage` | `string` | No | — |
+| `endCallPhrases` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `serverUrl` | `string` | No | — |
+| `hipaaEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="model full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="voice full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="transcriber full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Calls
+
+### create
+
+`calls.create`
+
+Create (initiate) a new Vapi call
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.calls.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistantId` | `string` | No | — |
+| `assistant` | `object` | No | — |
+| `assistantOverrides` | `object` | No | — |
+| `squadId` | `string` | No | — |
+| `squad` | `object` | No | — |
+| `phoneNumberId` | `string` | No | — |
+| `phoneNumber` | `object` | No | — |
+| `customerId` | `string` | No | — |
+| `customer` | `object` | No | — |
+| `name` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `scheduledAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="assistant full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="assistantOverrides full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="squad full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="phoneNumber full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `endedReason` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `phoneNumberId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `startedAt` | `string` | No | — |
+| `endedAt` | `string` | No | — |
+| `cost` | `number` | No | — |
+| `messages` | `object[]` | No | — |
+| `artifact` | `object` | No | — |
+| `analysis` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="artifact full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="analysis full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`calls.delete`
+
+Delete a Vapi call [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vapi.api.calls.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`calls.get`
+
+Retrieve a Vapi call by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.calls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `endedReason` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `phoneNumberId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `startedAt` | `string` | No | — |
+| `endedAt` | `string` | No | — |
+| `cost` | `number` | No | — |
+| `messages` | `object[]` | No | — |
+| `artifact` | `object` | No | — |
+| `analysis` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="artifact full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="analysis full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List all Vapi calls with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.calls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `createdAtGt` | `string` | No | — |
+| `createdAtLt` | `string` | No | — |
+| `createdAtGe` | `string` | No | — |
+| `createdAtLe` | `string` | No | — |
+| `updatedAtGt` | `string` | No | — |
+| `updatedAtLt` | `string` | No | — |
+| `updatedAtGe` | `string` | No | — |
+| `updatedAtLe` | `string` | No | — |
+| `id` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `phoneNumberId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  type?: string,
+  status?: string,
+  endedReason?: string | null,
+  assistantId?: string | null,
+  phoneNumberId?: string | null,
+  squadId?: string | null,
+  startedAt?: string | null,
+  endedAt?: string | null,
+  cost?: number,
+  messages?: {
+  }[],
+  artifact?: {
+  },
+  analysis?: {
+  },
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`calls.update`
+
+Update a Vapi call
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.calls.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `assistantOverrides` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="assistantOverrides full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `endedReason` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `phoneNumberId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `startedAt` | `string` | No | — |
+| `endedAt` | `string` | No | — |
+| `cost` | `number` | No | — |
+| `messages` | `object[]` | No | — |
+| `artifact` | `object` | No | — |
+| `analysis` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="artifact full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="analysis full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### delete
+
+`files.delete`
+
+Delete a Vapi file [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vapi.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Retrieve a Vapi file by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `originalName` | `string` | No | — |
+| `mimeType` | `string` | No | — |
+| `size` | `number` | No | — |
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List all Vapi files
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `createdAtGt` | `string` | No | — |
+| `createdAtLt` | `string` | No | — |
+| `createdAtGe` | `string` | No | — |
+| `createdAtLe` | `string` | No | — |
+| `updatedAtGt` | `string` | No | — |
+| `updatedAtLt` | `string` | No | — |
+| `updatedAtGe` | `string` | No | — |
+| `updatedAtLe` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  name?: string,
+  originalName?: string,
+  mimeType?: string,
+  size?: number,
+  status?: string,
+  url?: string,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`files.update`
+
+Update a Vapi file
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.files.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `originalName` | `string` | No | — |
+| `mimeType` | `string` | No | — |
+| `size` | `number` | No | — |
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Knowledge Bases
+
+### create
+
+`knowledgeBases.create`
+
+Create a new Vapi knowledge base
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.knowledgeBases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `fileIds` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `fileIds` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`knowledgeBases.delete`
+
+Delete a Vapi knowledge base [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vapi.api.knowledgeBases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`knowledgeBases.get`
+
+Retrieve a Vapi knowledge base by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.knowledgeBases.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `fileIds` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`knowledgeBases.list`
+
+List all Vapi knowledge bases
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.knowledgeBases.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `createdAtGt` | `string` | No | — |
+| `createdAtLt` | `string` | No | — |
+| `createdAtGe` | `string` | No | — |
+| `createdAtLe` | `string` | No | — |
+| `updatedAtGt` | `string` | No | — |
+| `updatedAtLt` | `string` | No | — |
+| `updatedAtGe` | `string` | No | — |
+| `updatedAtLe` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  name?: string | null,
+  fileIds?: string[],
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`knowledgeBases.update`
+
+Update a Vapi knowledge base
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.knowledgeBases.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `fileIds` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `fileIds` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Phone Numbers
+
+### create
+
+`phoneNumbers.create`
+
+Create a new Vapi phone number
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.phoneNumbers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `twilio \| vonage \| vapi \| telnyx` | No | — |
+| `number` | `string` | No | — |
+| `twilioAccountSid` | `string` | No | — |
+| `twilioAuthToken` | `string` | No | — |
+| `vonageApiKey` | `string` | No | — |
+| `vonageApiSecret` | `string` | No | — |
+| `name` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `serverUrl` | `string` | No | — |
+| `serverUrlSecret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `number` | `string` | No | — |
+| `name` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `serverUrl` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`phoneNumbers.delete`
+
+Delete a Vapi phone number [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vapi.api.phoneNumbers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`phoneNumbers.get`
+
+Retrieve a Vapi phone number by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.phoneNumbers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `number` | `string` | No | — |
+| `name` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `serverUrl` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`phoneNumbers.list`
+
+List all Vapi phone numbers
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.phoneNumbers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `createdAtGt` | `string` | No | — |
+| `createdAtLt` | `string` | No | — |
+| `createdAtGe` | `string` | No | — |
+| `createdAtLe` | `string` | No | — |
+| `updatedAtGt` | `string` | No | — |
+| `updatedAtLt` | `string` | No | — |
+| `updatedAtGe` | `string` | No | — |
+| `updatedAtLe` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  provider?: string,
+  number?: string,
+  name?: string | null,
+  assistantId?: string | null,
+  squadId?: string | null,
+  serverUrl?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`phoneNumbers.update`
+
+Update a Vapi phone number
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.phoneNumbers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `serverUrl` | `string` | No | — |
+| `serverUrlSecret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `number` | `string` | No | — |
+| `name` | `string` | No | — |
+| `assistantId` | `string` | No | — |
+| `squadId` | `string` | No | — |
+| `serverUrl` | `string` | No | — |
+
+
+
+---
+
+## Squads
+
+### create
+
+`squads.create`
+
+Create a new Vapi squad
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.squads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `members` | `object[]` | No | — |
+| `membersOverrides` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="membersOverrides full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `members` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`squads.delete`
+
+Delete a Vapi squad [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vapi.api.squads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`squads.get`
+
+Retrieve a Vapi squad by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.squads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `members` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`squads.list`
+
+List all Vapi squads
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.squads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `createdAtGt` | `string` | No | — |
+| `createdAtLt` | `string` | No | — |
+| `createdAtGe` | `string` | No | — |
+| `createdAtLe` | `string` | No | — |
+| `updatedAtGt` | `string` | No | — |
+| `updatedAtLt` | `string` | No | — |
+| `updatedAtGe` | `string` | No | — |
+| `updatedAtLe` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  name?: string | null,
+  members?: {
+  }[],
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`squads.update`
+
+Update a Vapi squad
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.squads.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `members` | `object[]` | No | — |
+| `membersOverrides` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="membersOverrides full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `name` | `string` | No | — |
+| `members` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### create
+
+`tools.create`
+
+Create a new Vapi tool
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.tools.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `async` | `boolean` | No | — |
+| `messages` | `object[]` | No | — |
+| `function` | `object` | No | — |
+| `server` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="function full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="server full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `type` | `string` | No | — |
+| `function` | `object` | No | — |
+| `server` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="function full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="server full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tools.delete`
+
+Delete a Vapi tool [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.vapi.api.tools.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`tools.get`
+
+Retrieve a Vapi tool by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.tools.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `type` | `string` | No | — |
+| `function` | `object` | No | — |
+| `server` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="function full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="server full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tools.list`
+
+List all Vapi tools
+
+**Risk:** `read`
+
+```ts
+await corsair.vapi.api.tools.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `createdAtGt` | `string` | No | — |
+| `createdAtLt` | `string` | No | — |
+| `createdAtGe` | `string` | No | — |
+| `createdAtLe` | `string` | No | — |
+| `updatedAtGt` | `string` | No | — |
+| `updatedAtLt` | `string` | No | — |
+| `updatedAtGe` | `string` | No | — |
+| `updatedAtLe` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  orgId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  type?: string,
+  function?: {
+  },
+  server?: {
+  },
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tools.update`
+
+Update a Vapi tool
+
+**Risk:** `write`
+
+```ts
+await corsair.vapi.api.tools.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `async` | `boolean` | No | — |
+| `messages` | `object[]` | No | — |
+| `function` | `object` | No | — |
+| `server` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="function full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="server full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `type` | `string` | No | — |
+| `function` | `object` | No | — |
+| `server` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="function full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="server full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
