@@ -130,7 +130,9 @@ export async function GET(request: NextRequest) {
 
     const storedState = request.cookies.get("oauth_state")?.value;
     if (!storedState || storedState !== state) {
-        return new NextResponse("Invalid state.", { status: 400 });
+        const response = new NextResponse("Invalid state.", { status: 400 });
+        response.cookies.delete("oauth_state");
+        return response;
     }
 
     const result = await processOAuthCallback(corsair, { code, state, redirectUri: REDIRECT_URI });

@@ -109,7 +109,11 @@ export async function connectHandler(req: Request, res: Response) {
         return;
     }
 
-    const plugin = req.params.plugin;
+    const plugin = req.query.plugin as string | undefined;
+    if (!plugin) {
+        res.status(400).json({ error: 'Missing plugin param' });
+        return;
+    }
 
     const { url, state } = await generateOAuthUrl(corsair, plugin, {
         tenantId,
