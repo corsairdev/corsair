@@ -1,0 +1,220 @@
+---
+title: Database
+description: "Vapi local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Vapi plugin syncs data locally. Use `corsair.vapi.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Assistants
+
+Path: `vapi.db.assistants.search`
+
+```ts
+const rows = await corsair.vapi.db.assistants.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstMessage` | `string` | equals, contains, startsWith, endsWith, in |
+| `serverUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `hipaaEnabled` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Calls
+
+Path: `vapi.db.calls.search`
+
+```ts
+const rows = await corsair.vapi.db.calls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `endedReason` | `string` | equals, contains, startsWith, endsWith, in |
+| `assistantId` | `string` | equals, contains, startsWith, endsWith, in |
+| `phoneNumberId` | `string` | equals, contains, startsWith, endsWith, in |
+| `squadId` | `string` | equals, contains, startsWith, endsWith, in |
+| `cost` | `number` | equals, gt, gte, lt, lte, in |
+| `startedAt` | `date` | equals, before, after, between |
+| `endedAt` | `date` | equals, before, after, between |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Files
+
+Path: `vapi.db.files.search`
+
+```ts
+const rows = await corsair.vapi.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `originalName` | `string` | equals, contains, startsWith, endsWith, in |
+| `mimeType` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Knowledge Bases
+
+Path: `vapi.db.knowledgeBases.search`
+
+```ts
+const rows = await corsair.vapi.db.knowledgeBases.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Phone Numbers
+
+Path: `vapi.db.phoneNumbers.search`
+
+```ts
+const rows = await corsair.vapi.db.phoneNumbers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `provider` | `string` | equals, contains, startsWith, endsWith, in |
+| `number` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `assistantId` | `string` | equals, contains, startsWith, endsWith, in |
+| `squadId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Squads
+
+Path: `vapi.db.squads.search`
+
+```ts
+const rows = await corsair.vapi.db.squads.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tools
+
+Path: `vapi.db.tools.search`
+
+```ts
+const rows = await corsair.vapi.db.tools.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

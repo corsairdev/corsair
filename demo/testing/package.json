@@ -46,6 +46,7 @@
     "better-sqlite3": "^11.0.0",
     "corsair": "workspace:*",
     "@corsair-dev/firecrawl": "workspace:*",
+    "@corsair-dev/vapi": "workspace:*",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
     "inngest": "^3.31.0",
