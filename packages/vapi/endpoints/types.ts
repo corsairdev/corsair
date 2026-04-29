@@ -296,17 +296,22 @@ const FilesDeleteResponseSchema = z.object({ id: z.string() }).passthrough();
 
 const KnowledgeBasesListInputSchema = PaginationInputSchema;
 
+// Vapi knowledge bases use a provider discriminated union.
+// "custom-knowledge-base" requires a server.url; "trieve" has its own config.
 const KnowledgeBasesCreateInputSchema = z.object({
+	provider: z.string(),
+	server: z
+		.object({ url: z.string() })
+		.passthrough()
+		.optional(),
 	name: z.string().optional(),
-	fileIds: z.array(z.string()).optional(),
-	metadata: z.record(z.unknown()).optional(),
-});
+}).passthrough();
 
 const KnowledgeBasesGetInputSchema = z.object({ id: z.string() });
 
-const KnowledgeBasesUpdateInputSchema = KnowledgeBasesCreateInputSchema.extend({
-	id: z.string(),
-});
+const KnowledgeBasesUpdateInputSchema = z
+	.object({ id: z.string() })
+	.passthrough();
 
 const KnowledgeBasesDeleteInputSchema = z.object({ id: z.string() });
 
@@ -316,9 +321,9 @@ const KnowledgeBaseSchema = z
 		orgId: z.string().optional(),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
+		provider: z.string().optional(),
 		name: z.string().nullable().optional(),
-		fileIds: z.array(z.string()).optional(),
-		metadata: z.record(z.unknown()).optional(),
+		server: z.record(z.unknown()).optional(),
 	})
 	.passthrough();
 

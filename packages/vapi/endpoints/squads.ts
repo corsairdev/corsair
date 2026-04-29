@@ -36,10 +36,12 @@ export const get: VapiEndpoints['squadsGet'] = async (ctx, input) => {
 
 export const update: VapiEndpoints['squadsUpdate'] = async (ctx, input) => {
 	const { id, ...body } = input;
+	// Vapi requires members on every PATCH even when only updating other fields
+	const bodyWithMembers = { members: [], ...body };
 	const result = await makeVapiRequest<VapiEndpointOutputs['squadsUpdate']>(
 		`squad/${id}`,
 		ctx.key,
-		{ method: 'PATCH', body },
+		{ method: 'PATCH', body: bodyWithMembers },
 	);
 	await logEventFromContext(ctx, 'vapi.squads.update', { id }, 'completed');
 	return result;

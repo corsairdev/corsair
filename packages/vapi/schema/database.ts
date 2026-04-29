@@ -71,8 +71,9 @@ export const VapiFile = z.object({
 export const VapiKnowledgeBase = z.object({
 	id: z.string(),
 	orgId: z.string().optional(),
+	provider: z.string().optional(),
 	name: z.string().nullable().optional(),
-	fileIds: z.array(z.string()).optional(),
+	server: z.record(z.unknown()).optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 });
