@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 import { github } from '@corsair-dev/github';
+import { vapi } from '@corsair-dev/vapi';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -30,5 +31,6 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		openweathermap(),
+		vapi({ key: process.env.VAPI_API_KEY, webhookSecret: process.env.VAPI_WEBHOOK_SECRET }),
 	],
 });
