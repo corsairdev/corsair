@@ -5,16 +5,35 @@ description: A production-ready OAuth implementation with security best practice
 
 OAuth lets your users connect their own accounts to your app. Corsair handles state signing, token exchange, and encrypted storage — you just wire up two routes.
 
-**Three steps: configure → connect route → callback route.**
+```mermaid
+sequenceDiagram
+    actor User
+    participant App as Your App
+    participant Provider as OAuth Provider
+
+    User->>App: Click "Connect"
+    App->>User: Redirect to provider
+    User->>Provider: Approve access
+    Provider->>App: Redirect back with auth code
+    App->>Provider: Exchange code for tokens
+    Provider->>App: Access + refresh tokens
+    App->>User: Connected!
+```
+
+Corsair handles security details automatically — CSRF protection, HMAC state verification, and token encryption. Tokens are refreshed automatically before every API call.
 
 ---
 
-## Step 1 — Configure your app
+<Steps>
+
+<Step>
+
+## Configure your app
 
 Add an OAuth plugin to your corsair instance. Make sure `database` and `kek` are set — both are required for token storage.
 
 <Info>
-OAuth is supported by plugins like Gmail, Google Calendar, Notion, Spotify, Dropbox, and others. Plugins that use API keys (e.g. Slack, Linear) don't use this flow — check your plugin's docs.
+OAuth is supported by plugins like Gmail, Google Calendar, Notion, Spotify, Dropbox, and others.
 </Info>
 
 ```ts corsair.ts
@@ -22,7 +41,7 @@ import { createCorsair } from 'corsair';
 import { gmail } from '@corsair-dev/gmail';
 
 export const corsair = createCorsair({
-    plugins: [gmail({ authType: 'oauth_2' })],
+    plugins: [gmail()],
     kek: process.env.CORSAIR_KEK!,
     database: db,
 });
@@ -34,14 +53,18 @@ Then store your OAuth app credentials once:
 pnpm corsair setup --plugin=gmail client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET
 ```
 
----
+</Step>
 
-## Step 2 — The connect route
+<Step>
+
+## The connect route
 
 `/api/connect` generates the provider's authorization URL and stores the HMAC-signed state in a cookie. The user is then redirected to the provider to approve access.
 
 <Warning>
-**This route must be authenticated.** If left open, anyone can call `/api/connect?plugin=gmail&tenantId=victim-id` and bind *their* OAuth grant to your victim's account — silently overwriting that tenant's stored tokens. Always read `tenantId` from your own session, never from a query parameter.
+**This route must be authenticated.** 
+
+If left open, anyone can call `/api/connect?plugin=gmail&tenantId=victim-id` and bind *their* OAuth grant to your victim's account, silently overwriting that tenant's stored tokens. Always read `tenantId` from your own session, never from a query parameter.
 </Warning>
 
 <Tabs>
@@ -135,9 +158,11 @@ export async function connectHandler(req: Request, res: Response) {
 
 </Tabs>
 
----
+</Step>
 
-## Step 3 — The callback route
+<Step>
+
+## The callback route
 
 After the user approves, the provider redirects to `/api/auth` with `?code=` and `?state=`. This route verifies the state, exchanges the code for tokens, and stores them encrypted for the tenant.
 
@@ -303,22 +328,9 @@ export async function authCallbackHandler(req: Request, res: Response) {
 
 </Tabs>
 
----
+</Step>
 
-## How it works
-
-```
-User clicks "Connect"
-    → /api/connect reads tenantId from session, calls generateOAuthUrl()
-    → HMAC-signed state stored in httpOnly cookie, user sent to provider
-
-Provider redirects back to /api/auth?code=ABC&state=<signed>
-    → cookie state compared to query param (CSRF check)
-    → processOAuthCallback() re-verifies HMAC, exchanges code for tokens
-    → tokens stored encrypted per-tenant, cookie cleared
-```
-
-`processOAuthCallback` handles two layers of state verification: your cookie check prevents CSRF, and the internal HMAC check ensures the state wasn't forged. Token expiry is handled automatically — Corsair refreshes before every API call using the stored refresh token.
+</Steps>
 
 ---
 
