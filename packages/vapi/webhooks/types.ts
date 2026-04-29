@@ -128,17 +128,7 @@ function parseBody(body: unknown): Record<string, unknown> {
 	return (body ?? {}) as Record<string, unknown>;
 }
 
-export function createVapiServerMessageMatch(
-	messageType: string,
-): CorsairWebhookMatcher {
-	return (request: RawWebhookRequest) => {
-		const parsed = parseBody(request.body);
-		const message = parsed.message as Record<string, unknown> | undefined;
-		return typeof message?.type === 'string' && message.type === messageType;
-	};
-}
-
-export function createVapiClientMessageMatch(
+export function createVapiMessageMatch(
 	messageType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {

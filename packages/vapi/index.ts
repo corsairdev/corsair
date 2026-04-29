@@ -13,17 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { VapiEndpointInputs, VapiEndpointOutputs } from './endpoints/types';
-import { VapiEndpointInputSchemas, VapiEndpointOutputSchemas } from './endpoints/types';
-import type { VapiWebhookOutputs } from './webhooks/types';
-import {
-	VapiAssistantRequestEventSchema,
-	VapiToolCallsEventSchema,
-	VapiTransferDestinationRequestEventSchema,
-	VapiEndOfCallReportEventSchema,
-	VapiStatusUpdateEventSchema,
-	VapiWorkflowNodeStartedEventSchema,
-} from './webhooks/types';
+import type { VapiEndpointInputs, VapiEndpointOutputs } from './endpoints';
 import {
 	Assistants,
 	Calls,
@@ -33,9 +23,19 @@ import {
 	Files,
 	KnowledgeBases,
 } from './endpoints';
+import { VapiEndpointInputSchemas, VapiEndpointOutputSchemas } from './endpoints/types';
 import { VapiSchema } from './schema';
-import { ServerMessageWebhooks, ClientMessageWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
+import {
+	ServerMessageWebhooks,
+	ClientMessageWebhooks,
+	VapiAssistantRequestEventSchema,
+	VapiToolCallsEventSchema,
+	VapiTransferDestinationRequestEventSchema,
+	VapiEndOfCallReportEventSchema,
+	VapiStatusUpdateEventSchema,
+	VapiWorkflowNodeStartedEventSchema,
+} from './webhooks';
 import type {
 	VapiAssistantRequestEvent,
 	VapiToolCallsEvent,
@@ -43,7 +43,8 @@ import type {
 	VapiEndOfCallReportEvent,
 	VapiStatusUpdateEvent,
 	VapiWorkflowNodeStartedEvent,
-} from './webhooks/types';
+	VapiWebhookOutputs,
+} from './webhooks';
 
 export type VapiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -512,9 +513,7 @@ const vapiEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof vapiEndpointsNested>;
 
 export const vapiAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseVapiPlugin<T extends VapiPluginOptions> = CorsairPlugin<
@@ -594,7 +593,7 @@ export type {
 	VapiWebhookOutputs,
 } from './webhooks/types';
 
-export { createVapiServerMessageMatch, createVapiClientMessageMatch } from './webhooks/types';
+export { createVapiMessageMatch } from './webhooks/types';
 
 // ── Endpoint Type Exports ─────────────────────────────────────────────────────
 

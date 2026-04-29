@@ -32,7 +32,6 @@ export async function makeVapiRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			Authorization: `Bearer ${apiKey}`,
 			'Content-Type': 'application/json',

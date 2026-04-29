@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { VapiWebhooks } from '../index';
 import {
-	createVapiServerMessageMatch,
+	createVapiMessageMatch,
 	verifyVapiWebhookSecret,
 } from './types';
 
 export const assistantRequest: VapiWebhooks['assistantRequest'] = {
-	match: createVapiServerMessageMatch('assistant-request'),
+	match: createVapiMessageMatch('assistant-request'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
@@ -21,7 +21,7 @@ export const assistantRequest: VapiWebhooks['assistantRequest'] = {
 };
 
 export const toolCalls: VapiWebhooks['toolCalls'] = {
-	match: createVapiServerMessageMatch('tool-calls'),
+	match: createVapiMessageMatch('tool-calls'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
@@ -36,7 +36,7 @@ export const toolCalls: VapiWebhooks['toolCalls'] = {
 };
 
 export const transferDestinationRequest: VapiWebhooks['transferDestinationRequest'] = {
-	match: createVapiServerMessageMatch('transfer-destination-request'),
+	match: createVapiMessageMatch('transfer-destination-request'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
@@ -51,7 +51,7 @@ export const transferDestinationRequest: VapiWebhooks['transferDestinationReques
 };
 
 export const endOfCallReport: VapiWebhooks['endOfCallReport'] = {
-	match: createVapiServerMessageMatch('end-of-call-report'),
+	match: createVapiMessageMatch('end-of-call-report'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
@@ -66,7 +66,7 @@ export const endOfCallReport: VapiWebhooks['endOfCallReport'] = {
 };
 
 export const statusUpdate: VapiWebhooks['statusUpdate'] = {
-	match: createVapiServerMessageMatch('status-update'),
+	match: createVapiMessageMatch('status-update'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);

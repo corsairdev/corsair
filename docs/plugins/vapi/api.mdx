@@ -1161,15 +1161,16 @@ await corsair.vapi.api.knowledgeBases.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `provider` | `string` | Yes | Knowledge base provider (e.g. `custom-knowledge-base`, `trieve`) |
+| `server` | `object` | No | Server config; required when `provider` is `custom-knowledge-base` |
 | `name` | `string` | No | — |
-| `fileIds` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
+<Accordion title="server full type">
 
 ```ts
 {
+  url: string
 }
 ```
 </Accordion>
@@ -1185,12 +1186,12 @@ await corsair.vapi.api.knowledgeBases.create({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
+| `provider` | `string` | No | — |
 | `name` | `string` | No | — |
-| `fileIds` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `server` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
+<Accordion title="server full type">
 
 ```ts
 {
@@ -1261,12 +1262,12 @@ await corsair.vapi.api.knowledgeBases.get({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
+| `provider` | `string` | No | — |
 | `name` | `string` | No | — |
-| `fileIds` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `server` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
+<Accordion title="server full type">
 
 ```ts
 {
@@ -1318,9 +1319,9 @@ await corsair.vapi.api.knowledgeBases.list({});
   orgId?: string,
   createdAt?: string,
   updatedAt?: string,
+  provider?: string,
   name?: string | null,
-  fileIds?: string[],
-  metadata?: {
+  server?: {
   }
 }[]
 ```
@@ -1346,20 +1347,9 @@ await corsair.vapi.api.knowledgeBases.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `fileIds` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
 | `id` | `string` | Yes | — |
 
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+_Additional fields are passed through to the Vapi API._
 
 
 
@@ -1371,12 +1361,12 @@ await corsair.vapi.api.knowledgeBases.update({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
+| `provider` | `string` | No | — |
 | `name` | `string` | No | — |
-| `fileIds` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `server` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
+<Accordion title="server full type">
 
 ```ts
 {

@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { VapiWebhooks } from '../index';
 import {
-	createVapiClientMessageMatch,
+	createVapiMessageMatch,
 	verifyVapiWebhookSecret,
 } from './types';
 
 export const workflowNodeStarted: VapiWebhooks['workflowNodeStarted'] = {
-	match: createVapiClientMessageMatch('workflow.node.started'),
+	match: createVapiMessageMatch('workflow.node.started'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
