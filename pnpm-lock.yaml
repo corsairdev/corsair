@@ -170,6 +170,9 @@ importers:
       '@corsair-dev/teams':
         specifier: workspace:*
         version: link:../../packages/teams
+      '@corsair-dev/vapi':
+        specifier: workspace:*
+        version: link:../../packages/vapi
       '@tanstack/react-query':
         specifier: ^5.62.14
         version: 5.90.20(react@18.3.1)
