@@ -21,7 +21,6 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 	const [running, setRunning] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [tenants, setTenants] = useState<string[]>([]);
-	const [scope, setScope] = useState<'main' | 'tenant'>('main');
 	const [activeTenant, setActiveTenant] = useState('');
 	const [multiTenancy, setMultiTenancy] = useState(false);
 
@@ -55,7 +54,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 	}, [tenants]);
 
 	const run = async () => {
-		if (scope === 'tenant' && !activeTenant) {
+		if (multiTenancy && !activeTenant) {
 			setError('Please select a tenant before running the script.');
 			return;
 		}
@@ -64,7 +63,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 		try {
 			const r = await api.runScript({
 				code,
-				tenant: scope === 'tenant' ? activeTenant : undefined
+				tenant: multiTenancy ? activeTenant : undefined
 			});
 			setResult(r);
 		} catch (e) {
@@ -77,36 +76,20 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 	return (
 		<div className="flex flex-col gap-4">
 			{multiTenancy && (
-				<Section title="Tenant Scope">
+				<Section title="Tenant">
 					<Card className="p-3 flex items-center gap-2">
 						<select
-							value={scope}
-							onChange={(e) =>
-								setScope(
-									e.target.value === 'main' ? 'main' : 'tenant'
-								)
-							}
+							value={activeTenant}
+							onChange={(e) => setActiveTenant(e.target.value)}
 							className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 						>
-							<option value="main">Main (integration keys)</option>
-							<option value="tenant">Tenant (account keys)</option>
-						</select>
-						{scope === 'tenant' ? (
-							<select
-								value={activeTenant}
-								onChange={(e) => setActiveTenant(e.target.value)}
-								className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
-							>
-								<option value="">
-									Select tenant
+							<option value="">Select tenant</option>
+							{tenants.map((tenantId) => (
+								<option key={tenantId} value={tenantId}>
+									{tenantId}
 								</option>
-								{tenants.map((tenantId) => (
-									<option key={tenantId} value={tenantId}>
-										{tenantId}
-									</option>
-								))}
-							</select>
-						) : null}
+							))}
+						</select>
 					</Card>
 				</Section>
 			)}
@@ -116,7 +99,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 					<Button
 						variant="primary"
 						onClick={run}
-						disabled={running || (scope === 'tenant' && !activeTenant)}
+						disabled={running || (multiTenancy && !activeTenant)}
 					>
 						{running ? 'Running…' : '▶ Run'}
 					</Button>
