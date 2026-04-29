@@ -67,7 +67,7 @@ Follow [Get Credentials](/plugins/vapi/get-credentials) if you need help getting
 pnpm corsair setup --plugin=vapi
 ```
 
-Use the key names documented in [Get Credentials](/plugins/vapi/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+Use the key names documented in [Get Credentials](/plugins/vapi/get-credentials) (for example `api_key=` or `webhook_signature=`).
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
@@ -93,7 +93,7 @@ Each tab shows how to register the plugin for that authentication method. The de
 vapi()
 ```
 
-Store credentials with `pnpm corsair setup --plugin=vapi` (see [Get Credentials](/plugins/vapi/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+Store credentials with `pnpm corsair setup --plugin=vapi` (see [Get Credentials](/plugins/vapi/get-credentials) for field names).
 
 More: [API Key](/concepts/api-key)
 

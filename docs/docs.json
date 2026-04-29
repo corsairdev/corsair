@@ -604,6 +604,7 @@
                 "group": "Vapi",
                 "pages": [
                   "plugins/vapi/overview",
+                  "plugins/vapi/get-credentials",
                   "plugins/vapi/api",
                   "plugins/vapi/database",
                   "plugins/vapi/webhooks"
