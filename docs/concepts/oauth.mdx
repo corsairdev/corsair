@@ -79,16 +79,31 @@ pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-cl
 
 When a user wants to connect their account, redirect them to the authorization URL:
 
-```ts app/api/connect/gmail/route.ts
-import { getOAuthUrl } from "corsair";
+```ts app/api/connect/route.ts
+import { generateOAuthUrl } from "corsair/oauth";
 import { corsair } from "@/server/corsair";
-import { redirect } from "next/navigation";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
+
+export async function GET(request: NextRequest) {
     const tenantId = getUserIdFromSession(request); // your auth logic
+    const plugin = new URL(request.url).searchParams.get("plugin")!;
 
-    const url = await getOAuthUrl(corsair, "gmail", { tenantId });
-    return redirect(url);
+    const { url, state } = await generateOAuthUrl(corsair, plugin, {
+        tenantId,
+        redirectUri: REDIRECT_URI,
+    });
+
+    const response = NextResponse.redirect(url);
+    response.cookies.set("oauth_state", state, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 10,
+    });
+    return response;
 }
 ```
 
@@ -96,22 +111,41 @@ export async function GET(request: Request) {
 
 After the user approves, the service redirects to your callback URL. Process it with Corsair:
 
-```ts app/api/oauth/callback/route.ts
-import { handleOAuthCallback } from "corsair";
+```ts app/api/auth/route.ts
+import { processOAuthCallback } from "corsair/oauth";
 import { corsair } from "@/server/corsair";
-import { redirect } from "next/navigation";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
-    const url = new URL(request.url);
-    const code = url.searchParams.get("code");
-    const state = url.searchParams.get("state"); // contains tenantId
+const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
 
-    await handleOAuthCallback(corsair, "gmail", { code, state });
-    return redirect("/dashboard?connected=gmail");
+export async function GET(request: NextRequest) {
+    const { searchParams } = new URL(request.url);
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
+
+    if (!code || !state) {
+        return new NextResponse("Missing code or state.", { status: 400 });
+    }
+
+    const storedState = request.cookies.get("oauth_state")?.value;
+    if (!storedState || storedState !== state) {
+        return new NextResponse("Invalid state.", { status: 400 });
+    }
+
+    const result = await processOAuthCallback(corsair, { code, state, redirectUri: REDIRECT_URI });
+
+    const response = NextResponse.redirect("/dashboard?connected=" + result.plugin);
+    response.cookies.delete("oauth_state");
+    return response;
 }
 ```
 
-Corsair extracts the `tenantId` from the state parameter, exchanges the code for tokens, and stores them encrypted for that tenant.
+Corsair extracts the `tenantId` from the HMAC-signed state, exchanges the code for tokens, and stores them encrypted for that tenant.
+
+<Info>
+See [Production: OAuth Process](/production/oauth-process) for a full implementation with security best practices — authenticated routes, cookie hardening, CSRF protection, and HTML escaping.
+</Info>
 
 ### 4. Make API calls per tenant
 
