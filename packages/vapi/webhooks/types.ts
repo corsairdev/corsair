@@ -1,7 +1,12 @@
+import { timingSafeEqual } from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
 // ── Shared call sub-schema ────────────────────────────────────────────────────
+// Nested call fields (messages, artifact, analysis, phoneNumber, customer, node,
+// toolWithToolCallList) are opaque Vapi-defined objects whose exact shapes vary
+// by provider and call configuration; z.record(z.unknown()) avoids re-implementing
+// the full Vapi OpenAPI spec here.
 
 export const VapiCallSchema = z
 	.object({
@@ -123,7 +128,11 @@ export type VapiWebhookOutputs = {
 
 function parseBody(body: unknown): Record<string, unknown> {
 	if (typeof body === 'string') {
-		return JSON.parse(body) as Record<string, unknown>;
+		try {
+			return JSON.parse(body) as Record<string, unknown>;
+		} catch {
+			return {};
+		}
 	}
 	return (body ?? {}) as Record<string, unknown>;
 }
@@ -153,7 +162,9 @@ export function verifyVapiWebhookSecret(
 	if (!incomingSecret) {
 		return { valid: false, error: 'Missing x-vapi-secret header' };
 	}
-	if (incomingSecret !== secret) {
+	const a = Buffer.from(incomingSecret);
+	const b = Buffer.from(secret);
+	if (a.length !== b.length || !timingSafeEqual(a, b)) {
 		return { valid: false, error: 'Invalid webhook secret' };
 	}
 	return { valid: true };

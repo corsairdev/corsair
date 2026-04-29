@@ -20,6 +20,10 @@ const AssistantsListInputSchema = PaginationInputSchema;
 
 const AssistantsCreateInputSchema = z.object({
 	name: z.string().optional(),
+	// model, voice, transcriber, and similar nested fields are opaque
+	// provider-specific objects (e.g. OpenAI, ElevenLabs, Deepgram) whose
+	// shapes vary by provider selection and cannot be statically typed without
+	// re-implementing the full Vapi OpenAPI spec.
 	model: z.record(z.unknown()).optional(),
 	voice: z.record(z.unknown()).optional(),
 	transcriber: z.record(z.unknown()).optional(),
@@ -80,6 +84,9 @@ const AssistantsDeleteResponseSchema = z
 	.passthrough();
 
 // ── Call schemas ──────────────────────────────────────────────────────────────
+// Nested fields (assistant, squad, phoneNumber, customer, artifact, analysis,
+// messages, metadata) are opaque Vapi-defined objects that vary by provider
+// and call type; z.record(z.unknown()) avoids duplicating the full upstream spec.
 
 const CallsListInputSchema = PaginationInputSchema.extend({
 	id: z.string().optional(),
@@ -190,6 +197,8 @@ const PhoneNumbersDeleteResponseSchema = z
 	.passthrough();
 
 // ── Squad schemas ─────────────────────────────────────────────────────────────
+// members and membersOverrides are arrays/maps of assistant configurations with
+// provider-specific shapes; z.record(z.unknown()) avoids duplicating upstream types.
 
 const SquadsListInputSchema = PaginationInputSchema;
 
@@ -224,6 +233,8 @@ const SquadsListResponseSchema = z.array(SquadSchema);
 const SquadsDeleteResponseSchema = z.object({ id: z.string() }).passthrough();
 
 // ── Tool schemas ──────────────────────────────────────────────────────────────
+// messages, function, and server are opaque Vapi-defined objects that vary by
+// tool type and provider; z.record(z.unknown()) avoids duplicating upstream types.
 
 const ToolsListInputSchema = PaginationInputSchema;
 

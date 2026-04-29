@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { z } from 'zod';
 import type { VapiEndpointInputs, VapiEndpointOutputs } from './endpoints';
 import {
 	Assistants,
@@ -338,36 +339,59 @@ export const vapiEndpointSchemas = {
 	},
 } as const;
 
+// Response schemas for interactive server messages differ from their payload shapes.
+// Vapi docs: https://docs.vapi.ai/api-reference
+const VapiAssistantRequestResponseSchema = z.object({
+	assistant: z.record(z.unknown()).optional(),
+	assistantId: z.string().optional(),
+	error: z.string().optional(),
+}).passthrough();
+
+const VapiToolCallsResponseSchema = z.object({
+	results: z.array(z.object({
+		toolCallId: z.string(),
+		result: z.string(),
+	})),
+}).passthrough();
+
+const VapiTransferDestinationRequestResponseSchema = z.object({
+	destination: z.record(z.unknown()).optional(),
+	error: z.string().optional(),
+}).passthrough();
+
+// Notification-only events — Vapi does not use the response body.
+const VapiAckResponseSchema = z.object({}).passthrough();
+
 const vapiWebhookSchemas = {
 	'server.assistantRequest': {
 		description: 'Sent to fetch assistant configuration for an incoming call',
 		payload: VapiAssistantRequestEventSchema,
-		response: VapiAssistantRequestEventSchema,
+		response: VapiAssistantRequestResponseSchema,
 	},
 	'server.toolCalls': {
 		description: 'Triggered when the assistant makes tool calls during a call',
 		payload: VapiToolCallsEventSchema,
-		response: VapiToolCallsEventSchema,
+		response: VapiToolCallsResponseSchema,
 	},
 	'server.transferDestinationRequest': {
 		description: 'Triggered when processing a transfer destination request',
 		payload: VapiTransferDestinationRequestEventSchema,
-		response: VapiTransferDestinationRequestEventSchema,
+		response: VapiTransferDestinationRequestResponseSchema,
 	},
 	'server.endOfCallReport': {
 		description: 'Sent at the end of a call with transcript, summary, and analysis',
 		payload: VapiEndOfCallReportEventSchema,
-		response: VapiEndOfCallReportEventSchema,
+		response: VapiAckResponseSchema,
 	},
 	'server.statusUpdate': {
 		description: 'Sent when the call status changes',
 		payload: VapiStatusUpdateEventSchema,
-		response: VapiStatusUpdateEventSchema,
+		response: VapiAckResponseSchema,
 	},
 	'client.workflowNodeStarted': {
 		description: 'Sent when the active workflow node changes',
 		payload: VapiWorkflowNodeStartedEventSchema,
-		response: VapiWorkflowNodeStartedEventSchema,
+		response: VapiAckResponseSchema,
 	},
 } as const;
 

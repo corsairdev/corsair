@@ -50,6 +50,9 @@ export async function makeVapiRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof Error) {
+			// The openapi-typescript-fetch client wraps HTTP errors as Error subclasses
+			// with a `body` property; there is no exported type for this shape, so we
+			// cast to extract the Vapi error message fields rather than let them be lost.
 			const apiErr = error as {
 				body?: { message?: string; error?: string };
 			};
