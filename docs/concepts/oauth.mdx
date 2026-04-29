@@ -125,7 +125,9 @@ export async function GET(request: NextRequest) {
     const state = searchParams.get("state");
 
     if (!code || !state) {
-        return new NextResponse("Missing code or state.", { status: 400 });
+        const response = new NextResponse("Missing code or state.", { status: 400 });
+        response.cookies.delete("oauth_state");
+        return response;
     }
 
     const storedState = request.cookies.get("oauth_state")?.value;
@@ -135,11 +137,16 @@ export async function GET(request: NextRequest) {
         return response;
     }
 
-    const result = await processOAuthCallback(corsair, { code, state, redirectUri: REDIRECT_URI });
-
-    const response = NextResponse.redirect("/dashboard?connected=" + result.plugin);
-    response.cookies.delete("oauth_state");
-    return response;
+    try {
+        const result = await processOAuthCallback(corsair, { code, state, redirectUri: REDIRECT_URI });
+        const response = NextResponse.redirect("/dashboard?connected=" + result.plugin);
+        response.cookies.delete("oauth_state");
+        return response;
+    } catch {
+        const response = new NextResponse("OAuth failed.", { status: 500 });
+        response.cookies.delete("oauth_state");
+        return response;
+    }
 }
 ```
 
