@@ -172,27 +172,27 @@ export async function GET(request: NextRequest) {
     const state = searchParams.get('state');
     const error = searchParams.get('error');
 
+    // Always clear the cookie — every exit path below must do this
+    const clearCookie = {
+        'Set-Cookie': 'oauth_state=; HttpOnly; Path=/; Max-Age=0',
+        'Content-Type': 'text/html',
+    };
+
     if (error) {
         return new NextResponse(
             `<html><body><h2>Authorization failed</h2><p>${escapeHtml(error)}</p></body></html>`,
-            { status: 400, headers: { 'Content-Type': 'text/html' } },
+            { status: 400, headers: clearCookie },
         );
     }
 
     if (!code || !state) {
         return new NextResponse('<p>Missing code or state.</p>', {
             status: 400,
-            headers: { 'Content-Type': 'text/html' },
+            headers: clearCookie,
         });
     }
 
     const storedState = request.cookies.get('oauth_state')?.value;
-
-    // Build headers that clear the cookie — used on both success and failure
-    const clearCookie = {
-        'Set-Cookie': 'oauth_state=; HttpOnly; Path=/; Max-Age=0',
-        'Content-Type': 'text/html',
-    };
 
     if (!storedState || storedState !== state) {
         return new NextResponse('<p>Invalid state. Possible CSRF attempt.</p>', {
@@ -337,7 +337,7 @@ Provider redirects back to /api/auth?code=ABC&state=<signed>
 <Check>Both `/api/connect` and `/api/auth` are authenticated routes</Check>
 <Check>`tenantId` is read from your session — never from a query parameter</Check>
 <Check>`oauth_state` cookie uses `httpOnly`, `sameSite: 'lax'`, and `secure` in production</Check>
-<Check>`oauth_state` cookie is cleared on CSRF mismatch, not just on success</Check>
+<Check>`oauth_state` cookie is cleared on every exit path — success, failure, and CSRF mismatch</Check>
 <Check>All user-controlled values are HTML-escaped before rendering</Check>
 <Check>`APP_URL` points to your HTTPS domain in production</Check>
 <Check>State store is Redis or DB-backed for multi-instance deployments</Check>
