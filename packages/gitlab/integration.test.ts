@@ -262,8 +262,7 @@ describe('GitLab plugin integration', () => {
 			body: `Corsair test comment ${Date.now()}`,
 		};
 
-		const createdNote =
-			await corsair.gitlab.api.issues.createNote(noteInput);
+		const createdNote = await corsair.gitlab.api.issues.createNote(noteInput);
 
 		expect(createdNote).toBeDefined();
 
@@ -284,8 +283,7 @@ describe('GitLab plugin integration', () => {
 			issue_iid: createdIssue.iid,
 		};
 
-		const notesList =
-			await corsair.gitlab.api.issues.listNotes(notesListInput);
+		const notesList = await corsair.gitlab.api.issues.listNotes(notesListInput);
 
 		expect(notesList).toBeDefined();
 		expect(Array.isArray(notesList)).toBe(true);
@@ -407,8 +405,7 @@ describe('GitLab plugin integration', () => {
 			per_page: 10,
 		};
 
-		const branches =
-			await corsair.gitlab.api.branches.list(branchesListInput);
+		const branches = await corsair.gitlab.api.branches.list(branchesListInput);
 
 		expect(branches).toBeDefined();
 		expect(Array.isArray(branches)).toBe(true);
@@ -429,8 +426,7 @@ describe('GitLab plugin integration', () => {
 				branch: firstBranch.name,
 			};
 
-			const branch =
-				await corsair.gitlab.api.branches.get(branchGetInput);
+			const branch = await corsair.gitlab.api.branches.get(branchGetInput);
 
 			expect(branch).toBeDefined();
 			expect(branch.name).toBe(firstBranch.name);
@@ -447,8 +443,7 @@ describe('GitLab plugin integration', () => {
 			per_page: 10,
 		};
 
-		const commits =
-			await corsair.gitlab.api.commits.list(commitsListInput);
+		const commits = await corsair.gitlab.api.commits.list(commitsListInput);
 
 		expect(commits).toBeDefined();
 
@@ -467,8 +462,7 @@ describe('GitLab plugin integration', () => {
 				sha: firstCommit.id,
 			};
 
-			const commit =
-				await corsair.gitlab.api.commits.get(commitGetInput);
+			const commit = await corsair.gitlab.api.commits.get(commitGetInput);
 
 			expect(commit).toBeDefined();
 			expect(commit.id).toBe(firstCommit.id);
@@ -512,8 +506,7 @@ describe('GitLab plugin integration', () => {
 			per_page: 10,
 		};
 
-		const labelsList =
-			await corsair.gitlab.api.labels.list(labelsListInput);
+		const labelsList = await corsair.gitlab.api.labels.list(labelsListInput);
 
 		expect(labelsList).toBeDefined();
 
@@ -626,12 +619,9 @@ describe('GitLab plugin integration', () => {
 			per_page: 10,
 		};
 
-		const pipelinesList =
-			await corsair.gitlab.api.pipelines.list(listInput);
+		const pipelinesList = await corsair.gitlab.api.pipelines.list(listInput);
 
-		const pipelinesArray = Array.isArray(pipelinesList)
-			? pipelinesList
-			: [];
+		const pipelinesArray = Array.isArray(pipelinesList) ? pipelinesList : [];
 
 		const orm = createCorsairOrm(testDb.database);
 		const listEvents = await orm.events.findMany({
@@ -674,10 +664,9 @@ describe('GitLab plugin integration', () => {
 				: getEvent.payload;
 		expect(getEventPayload).toMatchObject(getInput);
 
-		const pipelineFromDb =
-			await corsair.gitlab.db.pipelines.findByEntityId(
-				String(firstPipeline.id),
-			);
+		const pipelineFromDb = await corsair.gitlab.db.pipelines.findByEntityId(
+			String(firstPipeline.id),
+		);
 		expect(pipelineFromDb).not.toBeNull();
 		expect(pipelineFromDb?.data.id).toBe(firstPipeline.id);
 
@@ -686,8 +675,7 @@ describe('GitLab plugin integration', () => {
 			pipeline_id: firstPipeline.id,
 		};
 
-		const jobs =
-			await corsair.gitlab.api.pipelines.listJobs(jobsInput);
+		const jobs = await corsair.gitlab.api.pipelines.listJobs(jobsInput);
 
 		expect(jobs).toBeDefined();
 
@@ -753,10 +741,7 @@ describe('GitLab plugin integration', () => {
 
 				expect(fileEvents.length).toBeGreaterThan(0);
 			} catch (error) {
-				if (
-					error instanceof GitlabAPIError &&
-					error.status === 404
-				) {
+				if (error instanceof GitlabAPIError && error.status === 404) {
 					// ref might not be 'main'
 				} else {
 					throw error;
@@ -840,10 +825,9 @@ describe('GitLab plugin integration', () => {
 
 			expect(getEvents.length).toBeGreaterThan(0);
 
-			const groupFromDb =
-				await corsair.gitlab.db.groups.findByEntityId(
-					String(firstGroup.id),
-				);
+			const groupFromDb = await corsair.gitlab.db.groups.findByEntityId(
+				String(firstGroup.id),
+			);
 			expect(groupFromDb).not.toBeNull();
 			expect(groupFromDb?.data.id).toBe(firstGroup.id);
 
@@ -880,8 +864,7 @@ describe('GitLab plugin integration', () => {
 			per_page: 10,
 		};
 
-		const releasesList =
-			await corsair.gitlab.api.releases.list(listInput);
+		const releasesList = await corsair.gitlab.api.releases.list(listInput);
 
 		expect(releasesList).toBeDefined();
 
@@ -898,9 +881,7 @@ describe('GitLab plugin integration', () => {
 				: listEvent.payload;
 		expect(listEventPayload).toMatchObject(listInput);
 
-		const releasesArray = Array.isArray(releasesList)
-			? releasesList
-			: [];
+		const releasesArray = Array.isArray(releasesList) ? releasesList : [];
 
 		if (releasesArray.length > 0) {
 			const firstRelease = releasesArray[0]!;
@@ -910,8 +891,7 @@ describe('GitLab plugin integration', () => {
 				tag_name: firstRelease.tag_name,
 			};
 
-			const release =
-				await corsair.gitlab.api.releases.get(getInput);
+			const release = await corsair.gitlab.api.releases.get(getInput);
 
 			expect(release).toBeDefined();
 			expect(release.tag_name).toBe(firstRelease.tag_name);

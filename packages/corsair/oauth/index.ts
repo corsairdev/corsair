@@ -1,5 +1,10 @@
 import * as crypto from 'node:crypto';
 import * as querystring from 'node:querystring';
+import type {
+	CorsairInternalConfig,
+	CorsairPlugin,
+	OAuthConfig,
+} from '../core';
 import {
 	CORSAIR_INTERNAL,
 	createAccountKeyManager,
@@ -7,11 +12,6 @@ import {
 	encryptDEK,
 	exchangeCodeForTokens,
 	generateDEK,
-} from '../core';
-import type {
-	CorsairInternalConfig,
-	CorsairPlugin,
-	OAuthConfig,
 } from '../core';
 import { createCorsairOrm } from '../db/orm';
 
@@ -22,7 +22,9 @@ import { createCorsairOrm } from '../db/orm';
 type OAuthState = { plugin: string; tenantId: string };
 
 export function encodeOAuthState(plugin: string, tenantId: string): string {
-	return Buffer.from(JSON.stringify({ plugin, tenantId })).toString('base64url');
+	return Buffer.from(JSON.stringify({ plugin, tenantId })).toString(
+		'base64url',
+	);
 }
 
 export function decodeOAuthState(state: string): OAuthState | null {
@@ -56,10 +58,7 @@ function signState(payload: string, kek: string): string {
 	return `${payload}.${sig}`;
 }
 
-function verifyAndDecodeState(
-	signed: string,
-	kek: string,
-): OAuthState | null {
+function verifyAndDecodeState(signed: string, kek: string): OAuthState | null {
 	const dotIdx = signed.lastIndexOf('.');
 	if (dotIdx === -1) return null;
 	const payload = signed.slice(0, dotIdx);
@@ -70,7 +69,10 @@ function verifyAndDecodeState(
 		.digest('base64url');
 	const sigBuf = Buffer.from(sig, 'base64url');
 	const expectedBuf = Buffer.from(expected, 'base64url');
-	if (sigBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(sigBuf, expectedBuf)) {
+	if (
+		sigBuf.length !== expectedBuf.length ||
+		!crypto.timingSafeEqual(sigBuf, expectedBuf)
+	) {
 		return null;
 	}
 	return decodeOAuthState(payload);
@@ -81,9 +83,9 @@ function verifyAndDecodeState(
 // ─────────────────────────────────────────────────────────────────────────────
 
 function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[
-		CORSAIR_INTERNAL
-	] as CorsairInternalConfig | undefined;
+	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
+		| CorsairInternalConfig
+		| undefined;
 	if (!internal) throw new Error('Invalid corsair instance');
 	return internal;
 }

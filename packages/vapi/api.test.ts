@@ -1,30 +1,29 @@
 import 'dotenv/config';
 import { makeVapiRequest } from './client';
 import type {
-	AssistantsListResponse,
 	AssistantsCreateResponse,
-	AssistantsGetResponse,
-	AssistantsUpdateResponse,
 	AssistantsDeleteResponse,
-	CallsListResponse,
+	AssistantsGetResponse,
+	AssistantsListResponse,
+	AssistantsUpdateResponse,
 	CallsGetResponse,
-	PhoneNumbersListResponse,
-	SquadsListResponse,
-	SquadsCreateResponse,
-	SquadsGetResponse,
-	SquadsUpdateResponse,
-	SquadsDeleteResponse,
-	ToolsListResponse,
-	ToolsCreateResponse,
-	ToolsGetResponse,
-	ToolsUpdateResponse,
-	ToolsDeleteResponse,
+	CallsListResponse,
 	FilesListResponse,
-	KnowledgeBasesListResponse,
 	KnowledgeBasesCreateResponse,
-	KnowledgeBasesGetResponse,
-	KnowledgeBasesUpdateResponse,
 	KnowledgeBasesDeleteResponse,
+	KnowledgeBasesGetResponse,
+	KnowledgeBasesListResponse,
+	PhoneNumbersListResponse,
+	SquadsCreateResponse,
+	SquadsDeleteResponse,
+	SquadsGetResponse,
+	SquadsListResponse,
+	SquadsUpdateResponse,
+	ToolsCreateResponse,
+	ToolsDeleteResponse,
+	ToolsGetResponse,
+	ToolsListResponse,
+	ToolsUpdateResponse,
 } from './endpoints/types';
 import { VapiEndpointOutputSchemas } from './endpoints/types';
 
@@ -76,7 +75,8 @@ describe('Vapi API Type Tests', () => {
 					{ method: 'GET', query: { limit: 1 } },
 				);
 				const firstId = list[0]?.id;
-				if (!firstId) throw new Error('No assistants found to test assistantsGet');
+				if (!firstId)
+					throw new Error('No assistants found to test assistantsGet');
 				testAssistantId = firstId;
 			}
 
@@ -97,7 +97,8 @@ describe('Vapi API Type Tests', () => {
 					{ method: 'GET', query: { limit: 1 } },
 				);
 				const firstId = list[0]?.id;
-				if (!firstId) throw new Error('No assistants found to test assistantsUpdate');
+				if (!firstId)
+					throw new Error('No assistants found to test assistantsUpdate');
 				testAssistantId = firstId;
 			}
 
@@ -455,7 +456,8 @@ describe('Vapi API Type Tests', () => {
 					{ method: 'GET', query: { limit: 1 } },
 				);
 				const firstId = list[0]?.id;
-				if (!firstId) throw new Error('No knowledge bases found to test knowledgeBasesGet');
+				if (!firstId)
+					throw new Error('No knowledge bases found to test knowledgeBasesGet');
 				testKbId = firstId;
 			}
 

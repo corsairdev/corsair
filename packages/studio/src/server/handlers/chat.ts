@@ -2,8 +2,8 @@ import { buildCorsairToolDefs } from '@corsair-dev/mcp';
 import type { CoreMessage, LanguageModel, ToolSet } from 'ai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
-import { appendMessage, chatExists, getMessages } from '../chat-store.js';
 import type { StoredMessage, StoredMsgBlock } from '../chat-store.js';
+import { appendMessage, chatExists, getMessages } from '../chat-store.js';
 import { readJsonBody } from '../router.js';
 import type { HandlerFn } from '../types.js';
 

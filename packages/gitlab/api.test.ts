@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { makeGitlabRequest } from './client';
-import { GitlabEndpointOutputSchemas } from './endpoints/types';
 import type {
 	BranchesGetResponse,
 	BranchesListResponse,
@@ -26,6 +25,7 @@ import type {
 	UsersGetCurrentUserResponse,
 	UsersListResponse,
 } from './endpoints/types';
+import { GitlabEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_TOKEN = process.env.GITLAB_TOKEN!;
 const TEST_PROJECT_ID = process.env.TEST_GITLAB_PROJECT_ID!;
@@ -129,8 +129,7 @@ describe('GitLab API Type Tests', () => {
 					method: 'POST',
 					body: {
 						title: `Test issue from API test ${Date.now()}`,
-						description:
-							'This is a test issue created by the API test suite',
+						description: 'This is a test issue created by the API test suite',
 					},
 					baseUrl: TEST_BASE_URL,
 				},

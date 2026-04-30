@@ -9,17 +9,28 @@ export const list: VapiEndpoints['phoneNumbersList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query: { ...input } },
 	);
-	await logEventFromContext(ctx, 'vapi.phone-numbers.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'vapi.phone-numbers.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const create: VapiEndpoints['phoneNumbersCreate'] = async (ctx, input) => {
-	const result = await makeVapiRequest<VapiEndpointOutputs['phoneNumbersCreate']>(
-		'phone-number',
-		ctx.key,
-		{ method: 'POST', body: { ...input } },
+export const create: VapiEndpoints['phoneNumbersCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeVapiRequest<
+		VapiEndpointOutputs['phoneNumbersCreate']
+	>('phone-number', ctx.key, { method: 'POST', body: { ...input } });
+	await logEventFromContext(
+		ctx,
+		'vapi.phone-numbers.create',
+		{ ...input },
+		'completed',
 	);
-	await logEventFromContext(ctx, 'vapi.phone-numbers.create', { ...input }, 'completed');
 	return result;
 };
 
@@ -34,24 +45,36 @@ export const get: VapiEndpoints['phoneNumbersGet'] = async (ctx, input) => {
 	return result;
 };
 
-export const update: VapiEndpoints['phoneNumbersUpdate'] = async (ctx, input) => {
+export const update: VapiEndpoints['phoneNumbersUpdate'] = async (
+	ctx,
+	input,
+) => {
 	const { id, ...body } = input;
-	const result = await makeVapiRequest<VapiEndpointOutputs['phoneNumbersUpdate']>(
-		`phone-number/${id}`,
-		ctx.key,
-		{ method: 'PATCH', body },
+	const result = await makeVapiRequest<
+		VapiEndpointOutputs['phoneNumbersUpdate']
+	>(`phone-number/${id}`, ctx.key, { method: 'PATCH', body });
+	await logEventFromContext(
+		ctx,
+		'vapi.phone-numbers.update',
+		{ id },
+		'completed',
 	);
-	await logEventFromContext(ctx, 'vapi.phone-numbers.update', { id }, 'completed');
 	return result;
 };
 
-export const deletePhoneNumber: VapiEndpoints['phoneNumbersDelete'] = async (ctx, input) => {
+export const deletePhoneNumber: VapiEndpoints['phoneNumbersDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { id } = input;
-	const result = await makeVapiRequest<VapiEndpointOutputs['phoneNumbersDelete']>(
-		`phone-number/${id}`,
-		ctx.key,
-		{ method: 'DELETE' },
+	const result = await makeVapiRequest<
+		VapiEndpointOutputs['phoneNumbersDelete']
+	>(`phone-number/${id}`, ctx.key, { method: 'DELETE' });
+	await logEventFromContext(
+		ctx,
+		'vapi.phone-numbers.delete',
+		{ id },
+		'completed',
 	);
-	await logEventFromContext(ctx, 'vapi.phone-numbers.delete', { id }, 'completed');
 	return result;
 };
