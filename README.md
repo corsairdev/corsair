@@ -1,8 +1,7 @@
-# Corsair: The Unified Integration Layer for Agents. 
+# Corsair: The Unified Integration Layer for Agents
 
-[Website](https://corsair.dev) · [Discord](https://discord.gg/uNgCP3mSzU) · [X](https://x.com/corsairdotdev) 
+⭐ the repo · [Website](https://corsair.dev) · [Discord](https://discord.gg/uNgCP3mSzU) · [X](https://x.com/corsairdotdev) 
 
-⭐ the repo
 
 Corsair is the unified integration layer for your agents. Connect your Corsair instance to your agent and immediately get access to every integration. Your agent never sees the credentials, and you control exactly what it can do.
 
