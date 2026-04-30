@@ -1,15 +1,15 @@
-import fs, { existsSync, realpathSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import fs, { existsSync, realpathSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 // @ts-expect-error
-import babelPresetReact from '@babel/preset-react';
+import babelPresetReact from '@babel/preset-react'
 // @ts-expect-error
-import babelPresetTypeScript from '@babel/preset-typescript';
-import { loadConfig } from 'c12';
-import type { AnyCorsairInstance } from 'corsair';
-import { getSchema, listOperations } from 'corsair';
-import type { JitiOptions } from 'jiti';
-import { getTsconfigInfo } from './get-tsconfig-info';
+import babelPresetTypeScript from '@babel/preset-typescript'
+import { loadConfig } from 'c12'
+import type { AnyCorsairInstance } from 'corsair'
+import { getSchema, listOperations } from 'corsair'
+import type { JitiOptions } from 'jiti'
+import { getTsconfigInfo } from './get-tsconfig-info'
 
 // Possible locations for corsair.ts
 const possiblePaths = [
@@ -731,7 +731,7 @@ async function main() {
 
 	if (command === 'setup') {
 		const { backfill, credentials } = parseSetupArgs(args.slice(1));
-		const { setupCorsair } = await import('corsair/setup');
+		const { setupCorsair } = await import('corsair');
 		const instance = await getCorsairInstance({ cwd });
 		await setupCorsair(instance as Parameters<typeof setupCorsair>[0], {
 			backfill,
@@ -751,25 +751,25 @@ async function main() {
 				process.exit(1);
 			}
 			if (pluginId === 'outlook') {
-				const { runOutlookSubscribe } = await import('./subscribe-microsoft');
+				const { runOutlookSubscribe } = await import('./microsoft/subscribe-microsoft');
 				await runOutlookSubscribe({ cwd });
 			} else if (pluginId === 'sharepoint') {
 				const { runSharepointSubscribe } = await import(
-					'./subscribe-microsoft'
+					'./microsoft/subscribe-microsoft'
 				);
 				await runSharepointSubscribe({ cwd });
 			} else if (pluginId === 'teams') {
-				const { runTeamsSubscribe } = await import('./subscribe-microsoft');
+				const { runTeamsSubscribe } = await import('./microsoft/subscribe-microsoft');
 				await runTeamsSubscribe({ cwd });
 			} else if (pluginId === 'onedrive') {
-				const { runOnedriveSubscribe } = await import('./subscribe-microsoft');
+				const { runOnedriveSubscribe } = await import('./microsoft/subscribe-microsoft');
 				await runOnedriveSubscribe({ cwd });
 			} else if (
 				['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(
 					pluginId,
 				)
 			) {
-				const { runGoogleSubscribe } = await import('./subscribe-google');
+				const { runGoogleSubscribe } = await import('./google/subscribe-google');
 				await runGoogleSubscribe({ cwd, pluginId });
 			} else {
 				console.error(
@@ -789,13 +789,13 @@ async function main() {
 	}
 
 	if (command === 'watch-renew') {
-		const { runGoogleSubscribe } = await import('./subscribe-google');
+		const { runGoogleSubscribe } = await import('./google/subscribe-google');
 		await runGoogleSubscribe({ cwd });
 		return;
 	}
 
 	if (command === 'sharepoint-subscribe') {
-		const { runSharepointSubscribe } = await import('./subscribe-microsoft');
+		const { runSharepointSubscribe } = await import('./microsoft/subscribe-microsoft');
 		await runSharepointSubscribe({ cwd });
 		return;
 	}
@@ -806,7 +806,7 @@ async function main() {
 			? pluginArg.slice('--plugin='.length)
 			: undefined;
 		if (pluginId === 'outlook') {
-			const { runOutlookSubscribe } = await import('./subscribe-microsoft');
+			const { runOutlookSubscribe } = await import('./microsoft/subscribe-microsoft');
 			await runOutlookSubscribe({ cwd });
 			return;
 		}
@@ -817,7 +817,7 @@ async function main() {
 	}
 
 	if (command === 'teams-subscribe') {
-		const { runTeamsSubscribe } = await import('./subscribe-microsoft');
+		const { runTeamsSubscribe } = await import('./microsoft/subscribe-microsoft');
 		await runTeamsSubscribe({ cwd });
 		return;
 	}

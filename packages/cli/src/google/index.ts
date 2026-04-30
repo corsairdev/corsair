@@ -1,17 +1,13 @@
-import * as p from '@clack/prompts';
-import type { CorsairInternalConfig } from 'corsair/core';
-import {
-	CORSAIR_INTERNAL,
-	createAccountKeyManager,
-	createIntegrationKeyManager,
-} from 'corsair/core';
-import { getCorsairInstance } from '../index';
-import { promptTenantId } from '../utils/prompts';
-import { setupCalendarWatch } from './calendar';
-import { setupDriveWatch } from './drive';
-import { setupGmailWatch } from './gmail';
-import { refreshGoogleAccessToken } from './shared';
-import { setupSheetsWatch } from './sheets';
+import * as p from '@clack/prompts'
+import type { CorsairInternalConfig } from 'corsair'
+import { CORSAIR_INTERNAL, createAccountKeyManager, createIntegrationKeyManager, } from 'corsair'
+import { getCorsairInstance } from '../index'
+import { promptTenantId } from '../utils/prompts'
+import { setupCalendarWatch } from './calendar'
+import { setupDriveWatch } from './drive'
+import { setupGmailWatch } from './gmail'
+import { refreshGoogleAccessToken } from './shared'
+import { setupSheetsWatch } from './sheets'
 
 const GOOGLE_PLUGINS = [
 	'gmail',

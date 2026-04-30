@@ -1,32 +1,32 @@
-import type { SpawnOptions } from 'node:child_process';
-import { spawn } from 'node:child_process';
-import * as crypto from 'node:crypto';
-import * as fs from 'node:fs';
-import * as http from 'node:http';
-import * as https from 'node:https';
-import * as net from 'node:net';
-import * as os from 'node:os';
-import * as path from 'node:path';
-import * as querystring from 'node:querystring';
+import type { SpawnOptions } from 'node:child_process'
+import { spawn } from 'node:child_process'
+import * as crypto from 'node:crypto'
+import * as fs from 'node:fs'
+import * as http from 'node:http'
+import * as https from 'node:https'
+import * as net from 'node:net'
+import * as os from 'node:os'
+import * as path from 'node:path'
+import * as querystring from 'node:querystring'
 import type {
 	AuthTypes,
+	CorsairDatabase,
 	CorsairInternalConfig,
 	CorsairPlugin,
 	OAuthConfig,
 	PluginAuthConfig,
 	TokenResponse,
-} from 'corsair/core';
+} from 'corsair'
 import {
 	CORSAIR_INTERNAL,
 	createAccountKeyManager,
+	createCorsairOrm,
 	createIntegrationKeyManager,
 	encryptDEK,
 	exchangeCodeForTokens,
 	generateDEK,
-} from 'corsair/core';
-import type { CorsairDatabase } from 'corsair/db';
-import { createCorsairOrm } from 'corsair/orm';
-import { getCorsairInstance } from './index';
+} from 'corsair'
+import { getCorsairInstance } from './index'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers

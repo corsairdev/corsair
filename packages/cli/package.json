@@ -23,7 +23,7 @@
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "ind": "tsx index.ts"
+    "ind": "tsx src/index.ts"
   },
   "dependencies": {
     "@babel/core": "^7.28.6",
@@ -31,6 +31,7 @@
     "@babel/preset-typescript": "^7.28.5",
     "@clack/prompts": "^1.0.0",
     "c12": "^3.3.3",
+    "commander": "^14.0.3",
     "corsair": "workspace:*",
     "zod": "^3.25.76"
   },
