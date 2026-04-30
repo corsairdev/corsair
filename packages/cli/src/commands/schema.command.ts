@@ -1,19 +1,22 @@
-import type { AnyCorsairInstance } from 'corsair';
-import { getSchema } from 'corsair';
-import BaseCommand from './base.command';
-import type { CommandActionData, CommandArgument } from '@/index.types';
-import { getCorsairInstance } from '../utils/corsair-instance';
+import type { AnyCorsairInstance } from 'corsair'
+import { getSchema } from 'corsair'
+import BaseCommand from './base.command'
+import type { CommandActionData, CommandArgument } from '@/index.types'
+import { getCorsairInstance } from '@/utils/corsair-instance'
 
 export default class SchemaCommand extends BaseCommand {
 	getName(): string {
 		return 'schema';
 	}
+
 	getDescription(): string {
 		return 'Show schema for a specific path';
 	}
+
 	getArguments(): CommandArgument[] {
 		return [{ name: '<path>', description: 'Endpoint/webhook/db path' }];
 	}
+	
 	async action({ args }: CommandActionData) {
 		const schemaPath = args[0];
 		if (!schemaPath) {

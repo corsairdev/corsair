@@ -1,6 +1,6 @@
-import path from 'node:path';
-import BaseCommand from './base.command';
-import type { CommandActionData, CommandOption } from '@/index.types';
+import path from 'node:path'
+import BaseCommand from './base.command'
+import type { CommandActionData, CommandOption } from '@/index.types'
 
 type StartStudio = (opts: {
 	cwd: string;
@@ -12,12 +12,15 @@ export default class StudioCommand extends BaseCommand {
 	getName(): string {
 		return 'ui';
 	}
+
 	getAliases(): string[] {
 		return ['studio'];
 	}
+
 	getDescription(): string {
 		return 'Start Corsair Studio';
 	}
+
 	getOptions(): CommandOption[] {
 		return [
 			{ short: '-p', long: '--port <number>', description: 'Port to start Studio on' },

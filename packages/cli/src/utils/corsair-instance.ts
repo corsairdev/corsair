@@ -1,12 +1,12 @@
-import fs, { existsSync } from 'node:fs';
-import path from 'node:path';
+import fs, { existsSync } from 'node:fs'
+import path from 'node:path'
 // @ts-expect-error
-import babelPresetReact from '@babel/preset-react';
+import babelPresetReact from '@babel/preset-react'
 // @ts-expect-error
-import babelPresetTypeScript from '@babel/preset-typescript';
-import { loadConfig } from 'c12';
-import type { JitiOptions } from 'jiti';
-import { getTsconfigInfo } from '../get-tsconfig-info';
+import babelPresetTypeScript from '@babel/preset-typescript'
+import { loadConfig } from 'c12'
+import type { JitiOptions } from 'jiti'
+import { getTsconfigInfo } from '@/get-tsconfig-info'
 
 const POSSIBLE_PATHS = [
 	'corsair.ts',

@@ -1,5 +1,5 @@
 import * as p from '@clack/prompts'
-import type { CorsairInternalConfig } from 'corsair'
+import type { CorsairInternalConfig } from 'corsair/core'
 import { extractInternalConfig } from './corsair'
 
 export async function loadInternalConfig(

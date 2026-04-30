@@ -1,14 +1,16 @@
-import BaseCommand from './base.command';
-import type { CommandActionData, CommandOption } from '@/index.types';
-import { runWebhookSubscription } from '../utils/subscription';
+import BaseCommand from './base.command'
+import type { CommandActionData, CommandOption } from '@/index.types'
+import { runWebhookSubscription } from '@/utils/subscription'
 
 export default class AuthCommand extends BaseCommand {
 	getName(): string {
 		return 'auth';
 	}
+
 	getDescription(): string {
 		return 'Run plugin auth flows';
 	}
+
 	getOptions(): CommandOption[] {
 		return [
 			{ short: '-p', long: '--plugin <id>', description: 'Plugin id' },
@@ -21,6 +23,7 @@ export default class AuthCommand extends BaseCommand {
 			{ short: '-x', long: '--collect', description: 'Collect auth response from listener' },
 		];
 	}
+
 	async action({ options }: CommandActionData) {
 		const cwd = process.cwd();
 		if (options.webhook) {

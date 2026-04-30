@@ -9,8 +9,6 @@ import SetupCommand from './commands/setup.command'
 import StudioCommand from './commands/studio.command'
 import SubscribeCommand from './commands/subscribe.command'
 import WatchRenewCommand from './commands/watch-renew.command'
-import SharepointSubscribeCommand from './commands/sharepoint-subscribe.command'
-import TeamsSubscribeCommand from './commands/teams-subscribe.command'
 import { getCorsairInstance } from './utils/corsair-instance'
 
 const program = new Command();
@@ -22,8 +20,6 @@ const COMMANDS: BaseCommand[] = [
 	new SetupCommand(),
 	new AuthCommand(),
 	new WatchRenewCommand(),
-	new SharepointSubscribeCommand(),
-	new TeamsSubscribeCommand(),
 	new SubscribeCommand(),
 	new ListCommand(),
 	new SchemaCommand(),

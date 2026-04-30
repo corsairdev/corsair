@@ -1,7 +1,6 @@
-import BaseCommand from './base.command';
-import type { CommandActionData, CommandOption } from '@/index.types';
-import { getCorsairInstance, resolveClient } from '../utils/corsair-instance';
-import { parseScriptOptions } from '../utils/arg-parsers';
+import BaseCommand from './base.command'
+import type { CommandActionData, CommandOption } from '@/index.types'
+import { getCorsairInstance, resolveClient } from '@/utils/corsair-instance'
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
 	...args: string[]
@@ -11,17 +10,20 @@ export default class ScriptCommand extends BaseCommand {
 	getName(): string {
 		return 'script';
 	}
+
 	getDescription(): string {
 		return 'Execute inline JavaScript with corsair injected';
 	}
+
 	getOptions(): CommandOption[] {
 		return [
 			{ short: '-c', long: '--code <js>', description: 'Async JavaScript body to execute' },
 			{ short: '-t', long: '--tenant <id>', description: 'Tenant id for multi-tenant instances' },
 		];
 	}
+
 	async action({ options }: CommandActionData) {
-		const { code, tenant } = parseScriptOptions(options);
+		const { code, tenant } = options
 		if (!code) {
 			console.error('[#corsair]: Usage: corsair script --code "<js>"');
 			process.exit(1);

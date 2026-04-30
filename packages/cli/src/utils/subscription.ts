@@ -7,7 +7,7 @@ export async function runWebhookSubscription(cwd: string, pluginId: string): Pro
 	};
 
 	if (pluginId in microsoftPluginRunner) {
-		const mod = await import('../microsoft/subscribe-microsoft');
+		const mod = await import('@/lib/microsoft/subscribe-microsoft');
 		const fn = mod[microsoftPluginRunner[pluginId] as keyof typeof mod];
 		if (typeof fn === 'function') {
 			await (fn as (args: { cwd: string }) => Promise<void>)({ cwd });
@@ -16,7 +16,7 @@ export async function runWebhookSubscription(cwd: string, pluginId: string): Pro
 	}
 
 	if (['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(pluginId)) {
-		const { runGoogleSubscribe } = await import('../google/subscribe-google');
+		const { runGoogleSubscribe } = await import('@/lib/google/subscribe-google');
 		await runGoogleSubscribe({ cwd, pluginId });
 		return;
 	}
