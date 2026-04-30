@@ -1,5 +1,6 @@
 import express, { type Request, type Response } from 'express';
 import type { Catalog } from './catalog';
+import type { DocsApiEndpoint, DocsDbEntity, DocsWebhook } from './types';
 
 export type CreateServerOptions = {
 	catalog: Catalog;
@@ -36,23 +37,15 @@ export function createServer(options: CreateServerOptions): express.Express {
 	});
 
 	app.get('/', (_req, res) => {
+		const plugins = catalog.listSummaries().map((p) => ({
+			name: p.id,
+			displayName: p.displayName,
+			npmPackageName: p.npmPackageName,
+			description: p.description,
+		}));
 		res.json({
-			name: 'corsair-explorer',
-			description:
-				'Browse every Corsair plugin and every api / webhook / db operation it exposes.',
-			endpoints: [
-				'GET /health',
-				'GET /v1/meta',
-				'GET /v1/plugins',
-				'GET /v1/plugins/:id',
-				'GET /v1/plugins/:id/api',
-				'GET /v1/plugins/:id/api/:shortPath',
-				'GET /v1/plugins/:id/webhooks',
-				'GET /v1/plugins/:id/webhooks/:shortPath',
-				'GET /v1/plugins/:id/db',
-				'GET /v1/plugins/:id/db/:entity',
-				'GET /v1/search?q=<query>',
-			],
+			plugins,
+			note: 'To install a plugin, run: pnpm install @corsair-dev/<plugin_name>',
 		});
 	});
 
@@ -60,122 +53,121 @@ export function createServer(options: CreateServerOptions): express.Express {
 		res.json({ ok: true });
 	});
 
-	app.get('/v1/meta', (_req, res) => {
-		res.json({
-			generatedAt: catalog.generatedAt,
-			corsairVersion: catalog.corsairVersion,
-			catalogVersion: catalog.catalogVersion,
-			pluginCount: catalog.listSummaries().length,
-		});
-	});
-
-	app.get('/v1/plugins', (_req, res) => {
-		res.json({ plugins: catalog.listSummaries() });
-	});
-
-	app.get('/v1/plugins/:id', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
+	// GET /<plugin> or GET /<plugin>/api - List API endpoints
+	app.get('/:plugin', (req, res) => {
+		const plugin = catalog.getPlugin(req.params.plugin);
 		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
+			sendPluginNotFound(res, req.params.plugin);
 			return;
 		}
-		res.json({ plugin });
+		const endpoints = plugin.api.map(toApiEndpointSummary);
+		res.json({ plugin: plugin.id, endpoints });
 	});
 
-	app.get('/v1/plugins/:id/api', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
+	app.get('/:plugin/api', (req, res) => {
+		const plugin = catalog.getPlugin(req.params.plugin);
 		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
+			sendPluginNotFound(res, req.params.plugin);
 			return;
 		}
-		res.json({ pluginId: plugin.id, api: plugin.api });
+		const endpoints = plugin.api.map(toApiEndpointSummary);
+		res.json({ plugin: plugin.id, endpoints });
 	});
 
-	// `shortPath` uses `*` so values like `messages.post` come through intact.
-	app.get('/v1/plugins/:id/api/*', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
+	// GET /<plugin>/db - List DB entities
+	app.get('/:plugin/db', (req, res) => {
+		const plugin = catalog.getPlugin(req.params.plugin);
 		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
+			sendPluginNotFound(res, req.params.plugin);
 			return;
 		}
-		const shortPath = getWildcardParam(req);
-		const endpoint = catalog.findApiEndpoint(plugin.id, shortPath);
-		if (!endpoint) {
-			res.status(404).json({
-				error: 'endpoint_not_found',
-				message: `No api endpoint "${shortPath}" on plugin "${plugin.id}".`,
-				available: plugin.api.map((e) => e.shortPath),
-			});
-			return;
-		}
-		res.json({ pluginId: plugin.id, endpoint });
+		const entities = plugin.db.map(toDbEntitySummary);
+		res.json({ plugin: plugin.id, entities });
 	});
 
-	app.get('/v1/plugins/:id/webhooks', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
+	// GET /<plugin>/webhooks - List webhooks
+	app.get('/:plugin/webhooks', (req, res) => {
+		const plugin = catalog.getPlugin(req.params.plugin);
 		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
+			sendPluginNotFound(res, req.params.plugin);
 			return;
 		}
-		res.json({ pluginId: plugin.id, webhooks: plugin.webhooks });
+		const webhooks = plugin.webhooks.map(toWebhookSummary);
+		res.json({ plugin: plugin.id, webhooks });
 	});
 
-	app.get('/v1/plugins/:id/webhooks/*', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
-		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
-			return;
-		}
-		const shortPath = getWildcardParam(req);
-		const webhook = catalog.findWebhook(plugin.id, shortPath);
-		if (!webhook) {
-			res.status(404).json({
-				error: 'webhook_not_found',
-				message: `No webhook "${shortPath}" on plugin "${plugin.id}".`,
-				available: plugin.webhooks.map((w) => w.shortPath),
-			});
-			return;
-		}
-		res.json({ pluginId: plugin.id, webhook });
-	});
-
-	app.get('/v1/plugins/:id/db', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
-		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
-			return;
-		}
-		res.json({ pluginId: plugin.id, db: plugin.db });
-	});
-
-	app.get('/v1/plugins/:id/db/:entity', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
-		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
-			return;
-		}
-		const entity = catalog.findDbEntity(plugin.id, req.params.entity);
-		if (!entity) {
-			res.status(404).json({
-				error: 'entity_not_found',
-				message: `No db entity "${req.params.entity}" on plugin "${plugin.id}".`,
-				available: plugin.db.map((d) => d.entityName),
-			});
-			return;
-		}
-		res.json({ pluginId: plugin.id, entity });
-	});
-
-	app.get('/v1/search', (req, res) => {
-		const q = typeof req.query.q === 'string' ? req.query.q : '';
-		if (q.trim().length === 0) {
+	// GET /schema/<endpoint> - Full schema for specific endpoint
+	// Format: plugin.type.shortPath (e.g., slack.api.messages.post)
+	app.get('/schema/*', (req, res) => {
+		const endpointPath = getWildcardParam(req);
+		const parts = endpointPath.split('.');
+		
+		if (parts.length < 2) {
 			res.status(400).json({
-				error: 'missing_query',
-				message: 'Pass ?q=<query> to search.',
+				error: 'invalid_path',
+				message: 'Schema path must be in format: plugin.type.shortPath (e.g., slack.api.messages.post)',
 			});
 			return;
 		}
-		res.json({ query: q, results: catalog.search(q) });
+
+		const [pluginId, type, ...shortPathParts] = parts;
+		const shortPath = shortPathParts.join('.');
+
+		if (!['api', 'webhooks', 'db'].includes(type!)) {
+			res.status(400).json({
+				error: 'invalid_type',
+				message: `Invalid endpoint type "${type}". Must be one of: api, webhooks, db`,
+			});
+			return;
+		}
+
+		const plugin = catalog.getPlugin(pluginId!);
+		if (!plugin) {
+			sendPluginNotFound(res, pluginId!);
+			return;
+		}
+
+		if (type === 'api') {
+			const endpoint = catalog.findApiEndpoint(pluginId!, shortPath);
+			if (!endpoint) {
+				res.status(404).json({
+					error: 'endpoint_not_found',
+					message: `No api endpoint "${shortPath}" on plugin "${pluginId}".`,
+					available: plugin.api.map((e) => e.shortPath),
+				});
+				return;
+			}
+			res.json({ plugin: pluginId, type: 'api', shortPath, endpoint });
+			return;
+		}
+
+		if (type === 'webhooks') {
+			const webhook = catalog.findWebhook(pluginId!, shortPath);
+			if (!webhook) {
+				res.status(404).json({
+					error: 'webhook_not_found',
+					message: `No webhook "${shortPath}" on plugin "${pluginId}".`,
+					available: plugin.webhooks.map((w) => w.shortPath),
+				});
+				return;
+			}
+			res.json({ plugin: pluginId, type: 'webhooks', shortPath, webhook });
+			return;
+		}
+
+		if (type === 'db') {
+			const entity = catalog.findDbEntity(pluginId!, shortPath);
+			if (!entity) {
+				res.status(404).json({
+					error: 'entity_not_found',
+					message: `No db entity "${shortPath}" on plugin "${pluginId}".`,
+					available: plugin.db.map((d) => d.entityName),
+				});
+				return;
+			}
+			res.json({ plugin: pluginId, type: 'db', shortPath, entity });
+			return;
+		}
 	});
 
 	app.use((_req, res) => {
@@ -199,4 +191,35 @@ function sendPluginNotFound(res: Response, id: string): void {
 function getWildcardParam(req: Request): string {
 	const params = req.params as Record<string, string>;
 	return params['0'] ?? '';
+}
+
+// ============================================================================
+// SUMMARY FUNCTIONS - Lightweight responses for agent progressive discovery
+// ============================================================================
+
+/**
+ * Summarize an API endpoint for list responses.
+ * Excludes input/output schemas to reduce token usage.
+ */
+function toApiEndpointSummary(endpoint: DocsApiEndpoint) {
+	const { path, shortPath, description, riskLevel, irreversible } = endpoint;
+	return { path, shortPath, description, riskLevel, irreversible };
+}
+
+/**
+ * Summarize a webhook for list responses.
+ * Excludes payload schema to reduce token usage.
+ */
+function toWebhookSummary(webhook: DocsWebhook) {
+	const { path, shortPath, description } = webhook;
+	return { path, shortPath, description };
+}
+
+/**
+ * Summarize a DB entity for list responses.
+ * Excludes filter details to reduce token usage.
+ */
+function toDbEntitySummary(entity: DocsDbEntity) {
+	const { path, entityName } = entity;
+	return { path, entityName };
 }

@@ -636,6 +636,43 @@ function parseRunArgs(args: string[]): {
 	return { path: endpointPath, input, tenant };
 }
 
+function parseExploreArgs(args: string[]): {
+	target?: string;
+	type?: 'api' | 'webhooks' | 'db';
+	json: boolean;
+}{
+	let target: string | undefined;
+	let type: 'api' | 'webhooks' | 'db' | undefined;
+	let json = false;
+
+	for (let i = 0; i < args.length; i++){
+		const arg = args[i]!;
+		if (arg === '--json') {
+			json = true;
+			continue;
+		}
+		if (arg === '--type' && args[i + 1]) {
+			const value = args[++i];
+			if (value === 'api' || value === 'webhooks' || value === 'db') {
+				type = value;
+			}
+			continue;
+		}
+		if (arg.startsWith('--type=')) {
+			const value = arg.slice('--type='.length);
+			if (value === 'api' || value === 'webhooks' || value === 'db') {
+				type = value;
+			}
+			continue;
+		}
+
+		if (!arg.startsWith('-') && !target) {
+			target = arg;
+		}
+	}
+	return { target, type, json };
+}
+
 function parseUiArgs(args: string[]): { port?: number; open?: boolean } {
 	let port: number | undefined;
 	let open: boolean | undefined;
@@ -706,6 +743,10 @@ function printHelp() {
 		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
 		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
+		'pnpm corsair explore                            List all available plugins',
+		'pnpm corsair explore <plugin>                   List API endpoints of a plugin (before installing)',
+		'pnpm corsair explore <plugin> --type=api|webhooks|db  Filter to specific endpoint types',
+		'pnpm corsair explore <plugin.endpoint>          Show schema for a specific endpoint',
 		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'pnpm corsair ui [--port=4317] [--no-open]       Open the Corsair Studio dashboard (requires @corsair-dev/studio)',
 		'pnpm corsair script --code "<js>" [--tenant=<id>]',
@@ -837,6 +878,67 @@ async function main() {
 		}
 		console.log(result);
 		return;
+	}
+
+	if (command === 'explore') {
+		const { target, type, json } = parseExploreArgs(args.slice(1));
+		const baseUrl = process.env.CORSAIR_EXPLORER_URL ?? 'http://localhost:4319';
+
+		// Determine the target and build the URL based on the new flat route structure
+		let url: string;
+		if (!target) {
+			// No arguments: list all plugins
+			url = `${baseUrl}/`;
+		} else if (target.includes('.')) {
+			// Target contains dots: treat as endpoint path (e.g., slack.api.messages.post)
+			url = `${baseUrl}/schema/${encodeURIComponent(target)}`;
+		} else {
+			// Target is a plugin name: list its endpoints (optionally filtered by type)
+			if (type) {
+				// List specific endpoint type for a plugin
+				url = `${baseUrl}/${encodeURIComponent(target)}/${type}`;
+			} else {
+				// List all endpoints for a plugin (defaults to API)
+				url = `${baseUrl}/${encodeURIComponent(target)}`;
+			}
+		}
+
+		try {
+			const response = await fetch(url);
+			if (!response.ok) {
+				if (response.status === 404) {
+					if (target && target.includes('.')) {
+						console.error(`[#corsair]: Unknown endpoint "${target}".`);
+						console.error('[#corsair]: Run `pnpm corsair explore <plugin>` to see available endpoints.');
+					} else {
+						console.error(`[#corsair]: Unknown provider "${target}".`);
+						console.error('[#corsair]: Run `pnpm corsair explore` to see available providers.');
+					}
+					process.exit(1);
+				}
+
+				console.error(
+					`[#corsair]: Explore request failed with HTTP ${response.status}.`,
+				);
+				process.exit(1);
+			}
+			const data = await response.json();
+			console.log(JSON.stringify(data, null, 2));
+			return;
+		}
+		catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+
+			console.error('[#corsair]: Could not reach the Corsair explorer registry.');
+			console.error(`[#corsair]: Tried: ${url}`);
+			console.error(`[#corsair]: ${message}`);
+			console.error('');
+			console.error(
+				'[#corsair]: Start the explorer server locally or set CORSAIR_EXPLORER_URL.',
+			);
+
+			process.exit(1);
+		}
 	}
 
 	if (SHOW_RUN && command === 'run') {
