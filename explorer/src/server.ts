@@ -170,41 +170,6 @@ export function createServer(options: CreateServerOptions): express.Express {
 		}
 	});
 
-	// ============================================================================
-	// LEGACY ROUTES (v1) - Kept for backward compatibility
-	// ============================================================================
-
-	app.get('/v1/meta', (_req, res) => {
-		res.json({
-			generatedAt: catalog.generatedAt,
-			corsairVersion: catalog.corsairVersion,
-			catalogVersion: catalog.catalogVersion,
-			pluginCount: catalog.listSummaries().length,
-		});
-	});
-
-	app.get('/v1/plugins', (_req, res) => {
-		res.json({ plugins: catalog.listSummaries() });
-	});
-
-	app.get('/v1/plugins/:id', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
-		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
-			return;
-		}
-		res.json({ plugin });
-	});
-
-	app.get('/v1/plugins/:id/api', (req, res) => {
-		const plugin = catalog.getPlugin(req.params.id);
-		if (!plugin) {
-			sendPluginNotFound(res, req.params.id);
-			return;
-		}
-		res.json({ pluginId: plugin.id, api: plugin.api });
-	});
-
 	app.use((_req, res) => {
 		res.status(404).json({ error: 'not_found' });
 	});
