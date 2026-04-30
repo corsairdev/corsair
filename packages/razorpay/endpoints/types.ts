@@ -7,6 +7,7 @@ import {
 	RazorpayRefundSchema,
 	RazorpaySettlementSchema,
 	RazorpaySubscriptionSchema,
+	RazorpayPayoutSchema,
 } from '../schema/database';
 
 // ── Orders ──────────────────────────────────────────────────────────────
@@ -49,6 +50,38 @@ const PaymentsCaptureInputSchema = z.object({
 	amount: z.number().int().positive(),
 	currency: z.string().min(1),
 });
+
+// ── Payouts ─────────────────────────────────────────────────────────────
+
+const PayoutsListInputSchema = z.object({
+    account_number: z.string(),
+    contact_id: z.string().optional(),
+    fund_account_id: z.string().optional(),
+    mode: z.string().optional(),
+    reference_id: z.string().optional(),
+    status: z.string().optional(),
+    from: z.number().optional(),
+    to: z.number().optional(),
+    count: z.number().optional(),
+    skip: z.number().optional(),
+})
+
+const PayoutsGetInputSchema = z.object({
+    id: z.string(),
+})
+
+const PayoutsCreateInputSchema = z.object({
+    account_number: z.string(),
+    fund_account_id: z.string(),
+    amount: z.number().int().positive().min(100),
+    currency: z.string(),
+    mode: z.string(),
+    purpose: z.string(),
+    queue_if_low_balance: z.boolean().optional(),
+    reference_id: z.string().optional(),
+    narration: z.string().optional(),
+	notes: RazorpayNotesSchema.optional(),
+})
 
 // ── Refunds ─────────────────────────────────────────────────────────────
 
@@ -188,6 +221,16 @@ const PaymentsListResponseSchema = z
 	.passthrough();
 const PaymentsCaptureResponseSchema = RazorpayPaymentSchema;
 
+const PayoutsGetResponseSchema = RazorpayPayoutSchema;
+const PayoutsListResponseSchema = z
+	.object({
+		entity: z.literal('collection').optional(),
+		count: z.number(),
+		items: z.array(RazorpayPayoutSchema),
+	})
+	.passthrough();
+const PayoutsCreateResponseSchema = RazorpayPayoutSchema;
+
 const RefundsCreateResponseSchema = RazorpayRefundSchema;
 const RefundsGetResponseSchema = RazorpayRefundSchema;
 const RefundsListResponseSchema = z
@@ -234,6 +277,9 @@ export type OrdersListInput = z.infer<typeof OrdersListInputSchema>;
 export type PaymentsGetInput = z.infer<typeof PaymentsGetInputSchema>;
 export type PaymentsListInput = z.infer<typeof PaymentsListInputSchema>;
 export type PaymentsCaptureInput = z.infer<typeof PaymentsCaptureInputSchema>;
+export type PayoutsGetInput = z.infer<typeof PayoutsGetInputSchema>;
+export type PayoutsListInput = z.infer<typeof PayoutsListInputSchema>;
+export type PayoutsCreateInput = z.infer<typeof PayoutsCreateInputSchema>;
 export type RefundsCreateInput = z.infer<typeof RefundsCreateInputSchema>;
 export type RefundsGetInput = z.infer<typeof RefundsGetInputSchema>;
 export type RefundsListInput = z.infer<typeof RefundsListInputSchema>;
@@ -272,6 +318,11 @@ export type PaymentsGetResponse = z.infer<typeof PaymentsGetResponseSchema>;
 export type PaymentsListResponse = z.infer<typeof PaymentsListResponseSchema>;
 export type PaymentsCaptureResponse = z.infer<
 	typeof PaymentsCaptureResponseSchema
+>;
+export type PayoutsGetResponse = z.infer<typeof PayoutsGetResponseSchema>;
+export type PayoutsListResponse = z.infer<typeof PayoutsListResponseSchema>;
+export type PayoutsCreateResponse = z.infer<
+	typeof PayoutsCreateResponseSchema
 >;
 export type RefundsCreateResponse = z.infer<typeof RefundsCreateResponseSchema>;
 export type RefundsGetResponse = z.infer<typeof RefundsGetResponseSchema>;
@@ -321,6 +372,9 @@ export type RazorpayEndpointInputs = {
 	paymentsGet: PaymentsGetInput;
 	paymentsList: PaymentsListInput;
 	paymentsCapture: PaymentsCaptureInput;
+	payoutsGet: PayoutsGetInput;
+	payoutsList: PayoutsListInput;
+	payoutsCreate: PayoutsCreateInput;
 	refundsCreate: RefundsCreateInput;
 	refundsGet: RefundsGetInput;
 	refundsList: RefundsListInput;
@@ -346,6 +400,9 @@ export type RazorpayEndpointOutputs = {
 	paymentsGet: PaymentsGetResponse;
 	paymentsList: PaymentsListResponse;
 	paymentsCapture: PaymentsCaptureResponse;
+	payoutsGet: PayoutsGetResponse;
+	payoutsList: PayoutsListResponse;
+	payoutsCreate: PayoutsCreateResponse;
 	refundsCreate: RefundsCreateResponse;
 	refundsGet: RefundsGetResponse;
 	refundsList: RefundsListResponse;
@@ -371,6 +428,9 @@ export const RazorpayEndpointInputSchemas = {
 	paymentsGet: PaymentsGetInputSchema,
 	paymentsList: PaymentsListInputSchema,
 	paymentsCapture: PaymentsCaptureInputSchema,
+	payoutsGet: PayoutsGetInputSchema,
+	payoutsList: PayoutsListInputSchema,
+	payoutsCreate: PayoutsCreateInputSchema,
 	refundsCreate: RefundsCreateInputSchema,
 	refundsGet: RefundsGetInputSchema,
 	refundsList: RefundsListInputSchema,
@@ -396,6 +456,9 @@ export const RazorpayEndpointOutputSchemas = {
 	paymentsGet: PaymentsGetResponseSchema,
 	paymentsList: PaymentsListResponseSchema,
 	paymentsCapture: PaymentsCaptureResponseSchema,
+	payoutsGet: PayoutsGetResponseSchema,
+	payoutsList: PayoutsListResponseSchema,
+	payoutsCreate: PayoutsCreateResponseSchema,
 	refundsCreate: RefundsCreateResponseSchema,
 	refundsGet: RefundsGetResponseSchema,
 	refundsList: RefundsListResponseSchema,

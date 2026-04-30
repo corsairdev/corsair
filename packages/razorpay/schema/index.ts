@@ -2,6 +2,7 @@ import {
 	RazorpayCustomer,
 	RazorpayOrder,
 	RazorpayPayment,
+	RazorpayPayout,
 	RazorpayRefund,
 	RazorpaySettlement,
 	RazorpaySubscription,
@@ -11,7 +12,8 @@ export const RazorpaySchema = {
 	version: '1.0.0',
 	entities: {
 		orders: RazorpayOrder,
-		payments: RazorpayPayment,
+        payments: RazorpayPayment,
+        payouts: RazorpayPayout,
 		refunds: RazorpayRefund,
 		customers: RazorpayCustomer,
 		settlements: RazorpaySettlement,
