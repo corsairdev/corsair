@@ -70,8 +70,9 @@ let _seq = 0;
 
 function getTextFromBlocks(blocks: StoredMsgBlock[]) {
 	return blocks
-		.filter((block): block is Extract<StoredMsgBlock, { type: 'text' }> =>
-			block.type === 'text',
+		.filter(
+			(block): block is Extract<StoredMsgBlock, { type: 'text' }> =>
+				block.type === 'text',
 		)
 		.map((block) => block.content)
 		.join('');

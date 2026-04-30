@@ -60,13 +60,17 @@ export function exchangeCodeForTokens(
 				});
 				res.on('end', () => {
 					if (res.statusCode !== 200) {
-						reject(new Error(`Token exchange failed (${res.statusCode}): ${data}`));
+						reject(
+							new Error(`Token exchange failed (${res.statusCode}): ${data}`),
+						);
 						return;
 					}
 					try {
 						resolve(JSON.parse(data) as TokenResponse);
 					} catch {
-						reject(new Error(`Token endpoint returned non-JSON response: ${data}`));
+						reject(
+							new Error(`Token endpoint returned non-JSON response: ${data}`),
+						);
 					}
 				});
 			},

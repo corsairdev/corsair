@@ -1,5 +1,9 @@
 import { timingSafeEqual } from 'node:crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
 
 // ── Shared call sub-schema ────────────────────────────────────────────────────

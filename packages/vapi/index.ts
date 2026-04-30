@@ -18,33 +18,36 @@ import type { VapiEndpointInputs, VapiEndpointOutputs } from './endpoints';
 import {
 	Assistants,
 	Calls,
+	Files,
+	KnowledgeBases,
 	PhoneNumbers,
 	Squads,
 	Tools,
-	Files,
-	KnowledgeBases,
 } from './endpoints';
-import { VapiEndpointInputSchemas, VapiEndpointOutputSchemas } from './endpoints/types';
-import { VapiSchema } from './schema';
-import { errorHandlers } from './error-handlers';
 import {
-	ServerMessageWebhooks,
-	ClientMessageWebhooks,
-	VapiAssistantRequestEventSchema,
-	VapiToolCallsEventSchema,
-	VapiTransferDestinationRequestEventSchema,
-	VapiEndOfCallReportEventSchema,
-	VapiStatusUpdateEventSchema,
-	VapiWorkflowNodeStartedEventSchema,
-} from './webhooks';
+	VapiEndpointInputSchemas,
+	VapiEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { VapiSchema } from './schema';
 import type {
 	VapiAssistantRequestEvent,
-	VapiToolCallsEvent,
-	VapiTransferDestinationRequestEvent,
 	VapiEndOfCallReportEvent,
 	VapiStatusUpdateEvent,
-	VapiWorkflowNodeStartedEvent,
+	VapiToolCallsEvent,
+	VapiTransferDestinationRequestEvent,
 	VapiWebhookOutputs,
+	VapiWorkflowNodeStartedEvent,
+} from './webhooks';
+import {
+	ClientMessageWebhooks,
+	ServerMessageWebhooks,
+	VapiAssistantRequestEventSchema,
+	VapiEndOfCallReportEventSchema,
+	VapiStatusUpdateEventSchema,
+	VapiToolCallsEventSchema,
+	VapiTransferDestinationRequestEventSchema,
+	VapiWorkflowNodeStartedEventSchema,
 } from './webhooks';
 
 export type VapiPluginOptions = {
@@ -114,10 +117,11 @@ export type VapiEndpoints = {
 	knowledgeBasesDelete: VapiEndpoint<'knowledgeBasesDelete'>;
 };
 
-type VapiWebhook<
-	K extends keyof VapiWebhookOutputs,
+type VapiWebhook<K extends keyof VapiWebhookOutputs, TEvent> = CorsairWebhook<
+	VapiContext,
 	TEvent,
-> = CorsairWebhook<VapiContext, TEvent, VapiWebhookOutputs[K]>;
+	VapiWebhookOutputs[K]
+>;
 
 export type VapiWebhooks = {
 	assistantRequest: VapiWebhook<'assistantRequest', VapiAssistantRequestEvent>;
@@ -191,7 +195,8 @@ const vapiWebhooksNested = {
 	server: {
 		assistantRequest: ServerMessageWebhooks.assistantRequest,
 		toolCalls: ServerMessageWebhooks.toolCalls,
-		transferDestinationRequest: ServerMessageWebhooks.transferDestinationRequest,
+		transferDestinationRequest:
+			ServerMessageWebhooks.transferDestinationRequest,
 		endOfCallReport: ServerMessageWebhooks.endOfCallReport,
 		statusUpdate: ServerMessageWebhooks.statusUpdate,
 	},
@@ -341,23 +346,31 @@ export const vapiEndpointSchemas = {
 
 // Response schemas for interactive server messages differ from their payload shapes.
 // Vapi docs: https://docs.vapi.ai/api-reference
-const VapiAssistantRequestResponseSchema = z.object({
-	assistant: z.record(z.unknown()).optional(),
-	assistantId: z.string().optional(),
-	error: z.string().optional(),
-}).passthrough();
+const VapiAssistantRequestResponseSchema = z
+	.object({
+		assistant: z.record(z.unknown()).optional(),
+		assistantId: z.string().optional(),
+		error: z.string().optional(),
+	})
+	.passthrough();
 
-const VapiToolCallsResponseSchema = z.object({
-	results: z.array(z.object({
-		toolCallId: z.string(),
-		result: z.string(),
-	})),
-}).passthrough();
+const VapiToolCallsResponseSchema = z
+	.object({
+		results: z.array(
+			z.object({
+				toolCallId: z.string(),
+				result: z.string(),
+			}),
+		),
+	})
+	.passthrough();
 
-const VapiTransferDestinationRequestResponseSchema = z.object({
-	destination: z.record(z.unknown()).optional(),
-	error: z.string().optional(),
-}).passthrough();
+const VapiTransferDestinationRequestResponseSchema = z
+	.object({
+		destination: z.record(z.unknown()).optional(),
+		error: z.string().optional(),
+	})
+	.passthrough();
 
 // Notification-only events — Vapi does not use the response body.
 const VapiAckResponseSchema = z.object({}).passthrough();
@@ -379,7 +392,8 @@ const vapiWebhookSchemas = {
 		response: VapiTransferDestinationRequestResponseSchema,
 	},
 	'server.endOfCallReport': {
-		description: 'Sent at the end of a call with transcript, summary, and analysis',
+		description:
+			'Sent at the end of a call with transcript, summary, and analysis',
 		payload: VapiEndOfCallReportEventSchema,
 		response: VapiAckResponseSchema,
 	},
@@ -551,8 +565,7 @@ export type BaseVapiPlugin<T extends VapiPluginOptions> = CorsairPlugin<
 
 export type InternalVapiPlugin = BaseVapiPlugin<VapiPluginOptions>;
 
-export type ExternalVapiPlugin<T extends VapiPluginOptions> =
-	BaseVapiPlugin<T>;
+export type ExternalVapiPlugin<T extends VapiPluginOptions> = BaseVapiPlugin<T>;
 
 export function vapi<const T extends VapiPluginOptions>(
 	incomingOptions: VapiPluginOptions & T = {} as VapiPluginOptions & T,
@@ -609,12 +622,12 @@ export function vapi<const T extends VapiPluginOptions>(
 
 export type {
 	VapiAssistantRequestEvent,
-	VapiToolCallsEvent,
-	VapiTransferDestinationRequestEvent,
 	VapiEndOfCallReportEvent,
 	VapiStatusUpdateEvent,
-	VapiWorkflowNodeStartedEvent,
+	VapiToolCallsEvent,
+	VapiTransferDestinationRequestEvent,
 	VapiWebhookOutputs,
+	VapiWorkflowNodeStartedEvent,
 } from './webhooks/types';
 
 export { createVapiMessageMatch } from './webhooks/types';
@@ -622,74 +635,74 @@ export { createVapiMessageMatch } from './webhooks/types';
 // ── Endpoint Type Exports ─────────────────────────────────────────────────────
 
 export type {
-	VapiEndpointInputs,
-	VapiEndpointOutputs,
-	AssistantsListInput,
-	AssistantsListResponse,
 	AssistantsCreateInput,
 	AssistantsCreateResponse,
-	AssistantsGetInput,
-	AssistantsGetResponse,
-	AssistantsUpdateInput,
-	AssistantsUpdateResponse,
 	AssistantsDeleteInput,
 	AssistantsDeleteResponse,
-	CallsListInput,
-	CallsListResponse,
+	AssistantsGetInput,
+	AssistantsGetResponse,
+	AssistantsListInput,
+	AssistantsListResponse,
+	AssistantsUpdateInput,
+	AssistantsUpdateResponse,
 	CallsCreateInput,
 	CallsCreateResponse,
-	CallsGetInput,
-	CallsGetResponse,
-	CallsUpdateInput,
-	CallsUpdateResponse,
 	CallsDeleteInput,
 	CallsDeleteResponse,
-	PhoneNumbersListInput,
-	PhoneNumbersListResponse,
-	PhoneNumbersCreateInput,
-	PhoneNumbersCreateResponse,
-	PhoneNumbersGetInput,
-	PhoneNumbersGetResponse,
-	PhoneNumbersUpdateInput,
-	PhoneNumbersUpdateResponse,
-	PhoneNumbersDeleteInput,
-	PhoneNumbersDeleteResponse,
-	SquadsListInput,
-	SquadsListResponse,
-	SquadsCreateInput,
-	SquadsCreateResponse,
-	SquadsGetInput,
-	SquadsGetResponse,
-	SquadsUpdateInput,
-	SquadsUpdateResponse,
-	SquadsDeleteInput,
-	SquadsDeleteResponse,
-	ToolsListInput,
-	ToolsListResponse,
-	ToolsCreateInput,
-	ToolsCreateResponse,
-	ToolsGetInput,
-	ToolsGetResponse,
-	ToolsUpdateInput,
-	ToolsUpdateResponse,
-	ToolsDeleteInput,
-	ToolsDeleteResponse,
-	FilesListInput,
-	FilesListResponse,
-	FilesGetInput,
-	FilesGetResponse,
-	FilesUpdateInput,
-	FilesUpdateResponse,
+	CallsGetInput,
+	CallsGetResponse,
+	CallsListInput,
+	CallsListResponse,
+	CallsUpdateInput,
+	CallsUpdateResponse,
 	FilesDeleteInput,
 	FilesDeleteResponse,
-	KnowledgeBasesListInput,
-	KnowledgeBasesListResponse,
+	FilesGetInput,
+	FilesGetResponse,
+	FilesListInput,
+	FilesListResponse,
+	FilesUpdateInput,
+	FilesUpdateResponse,
 	KnowledgeBasesCreateInput,
 	KnowledgeBasesCreateResponse,
-	KnowledgeBasesGetInput,
-	KnowledgeBasesGetResponse,
-	KnowledgeBasesUpdateInput,
-	KnowledgeBasesUpdateResponse,
 	KnowledgeBasesDeleteInput,
 	KnowledgeBasesDeleteResponse,
+	KnowledgeBasesGetInput,
+	KnowledgeBasesGetResponse,
+	KnowledgeBasesListInput,
+	KnowledgeBasesListResponse,
+	KnowledgeBasesUpdateInput,
+	KnowledgeBasesUpdateResponse,
+	PhoneNumbersCreateInput,
+	PhoneNumbersCreateResponse,
+	PhoneNumbersDeleteInput,
+	PhoneNumbersDeleteResponse,
+	PhoneNumbersGetInput,
+	PhoneNumbersGetResponse,
+	PhoneNumbersListInput,
+	PhoneNumbersListResponse,
+	PhoneNumbersUpdateInput,
+	PhoneNumbersUpdateResponse,
+	SquadsCreateInput,
+	SquadsCreateResponse,
+	SquadsDeleteInput,
+	SquadsDeleteResponse,
+	SquadsGetInput,
+	SquadsGetResponse,
+	SquadsListInput,
+	SquadsListResponse,
+	SquadsUpdateInput,
+	SquadsUpdateResponse,
+	ToolsCreateInput,
+	ToolsCreateResponse,
+	ToolsDeleteInput,
+	ToolsDeleteResponse,
+	ToolsGetInput,
+	ToolsGetResponse,
+	ToolsListInput,
+	ToolsListResponse,
+	ToolsUpdateInput,
+	ToolsUpdateResponse,
+	VapiEndpointInputs,
+	VapiEndpointOutputs,
 } from './endpoints/types';

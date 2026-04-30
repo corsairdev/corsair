@@ -1,8 +1,4 @@
-import {
-	createChat,
-	getMessages,
-	listChats,
-} from '../chat-store.js';
+import { createChat, getMessages, listChats } from '../chat-store.js';
 import type { HandlerFn } from '../types.js';
 
 export const listChatsHandler: HandlerFn = async () => {

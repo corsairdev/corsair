@@ -9,7 +9,12 @@ export const list: VapiEndpoints['assistantsList'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET', query: { ...input } },
 	);
-	await logEventFromContext(ctx, 'vapi.assistants.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'vapi.assistants.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -19,7 +24,12 @@ export const create: VapiEndpoints['assistantsCreate'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'POST', body: { ...input } },
 	);
-	await logEventFromContext(ctx, 'vapi.assistants.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'vapi.assistants.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -45,7 +55,10 @@ export const update: VapiEndpoints['assistantsUpdate'] = async (ctx, input) => {
 	return result;
 };
 
-export const deleteAssistant: VapiEndpoints['assistantsDelete'] = async (ctx, input) => {
+export const deleteAssistant: VapiEndpoints['assistantsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { id } = input;
 	const result = await makeVapiRequest<VapiEndpointOutputs['assistantsDelete']>(
 		`assistant/${id}`,

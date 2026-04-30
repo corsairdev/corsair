@@ -19,7 +19,12 @@ export const create: VapiEndpoints['toolsCreate'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'POST', body: { ...input } },
 	);
-	await logEventFromContext(ctx, 'vapi.tools.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'vapi.tools.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
