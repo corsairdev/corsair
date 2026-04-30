@@ -1,6 +1,7 @@
 import { processWebhook } from 'corsair';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { agent, ensureAgentStarted } from '@/server/agent';
 import { corsair } from '@/server/corsair';
 
 export async function POST(request: NextRequest) {
@@ -41,6 +42,36 @@ export async function POST(request: NextRequest) {
 	const result = await processWebhook(corsair, headers, body, { tenantId });
 
 	console.info('Plugin Processed:', result.plugin, result.action);
+
+	// Forward to agent for dynamic hook dispatch (jobs created via agent.chat).
+	if (result.plugin && result.action) {
+		const agentPath = `${result.plugin}.webhooks.${result.action}`;
+		console.info('[agent] dispatching webhook:', agentPath);
+		await ensureAgentStarted();
+		try {
+			await agent.handleWebhookEvent({
+				// processWebhook returns action relative to the webhooks subtree
+				// (e.g. 'pullRequest.opened'), but agent hooks are stored with the
+				// full path from list_operations (e.g. 'github.webhooks.pullRequest.opened').
+				path: agentPath,
+				// Prefer the enriched handler data (e.g. Google Calendar fetches the
+				// full event from the API and returns it as response.data). Fall back
+				// to result.body (processWebhook's normalized body — needed for plugins
+				// like Google Calendar that send data in headers, not body) and finally
+				// the raw request body.
+				event: (result.handlerData ??
+					result.body ??
+					(typeof body === 'object' ? body : {})) as Record<string, unknown>,
+			});
+			console.info('[agent] webhook dispatch complete:', agentPath);
+		} catch (err) {
+			console.error('[agent] webhook dispatch failed:', err);
+		}
+	} else {
+		console.info(
+			'[agent] skipping dispatch — processWebhook returned no plugin/action',
+		);
+	}
 
 	// Build response headers (e.g. Asana X-Hook-Secret handshake)
 	// any/unknown cast needed since responseHeaders is a newer field not yet in the installed type definitions
