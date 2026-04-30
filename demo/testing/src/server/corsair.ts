@@ -5,6 +5,7 @@ import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { slack } from '@corsair-dev/slack';
+import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
