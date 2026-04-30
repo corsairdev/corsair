@@ -1,6 +1,7 @@
 import type { AnyCorsairInstance } from 'corsair';
 import { listOperations } from 'corsair';
 import BaseCommand from './base.command';
+import type { CommandActionData, CommandOption } from '@/index.types';
 import { getCorsairInstance } from '../utils/corsair-instance';
 import { parseListArgs } from '../utils/arg-parsers';
 
@@ -11,13 +12,13 @@ export default class ListCommand extends BaseCommand {
 	getDescription(): string {
 		return 'List available operations';
 	}
-	getOptions(): Array<{ flags: string; description: string }> {
+	getOptions(): CommandOption[] {
 		return [
-			{ flags: '--plugin <id>', description: 'Filter by plugin id' },
-			{ flags: '--type <api|webhooks|db>', description: 'Filter by operation type' },
+			{ short: '-p', long: '--plugin <id>', description: 'Filter by plugin id' },
+			{ short: '-t', long: '--type <api|webhooks|db>', description: 'Filter by operation type' },
 		];
 	}
-	async action(options: { plugin?: string; type?: 'api' | 'webhooks' | 'db' }) {
+	async action({ options }: CommandActionData) {
 		const { plugin, type } = parseListArgs([
 			options.plugin ? `--plugin=${options.plugin}` : '',
 			options.type ? `--type=${options.type}` : '',

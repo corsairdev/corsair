@@ -1,6 +1,7 @@
 import type { AnyCorsairInstance } from 'corsair';
 import { getSchema } from 'corsair';
 import BaseCommand from './base.command';
+import type { CommandActionData, CommandArgument } from '@/index.types';
 import { getCorsairInstance } from '../utils/corsair-instance';
 
 export default class SchemaCommand extends BaseCommand {
@@ -10,10 +11,11 @@ export default class SchemaCommand extends BaseCommand {
 	getDescription(): string {
 		return 'Show schema for a specific path';
 	}
-	getArguments(): Array<{ name: string; description?: string }> {
+	getArguments(): CommandArgument[] {
 		return [{ name: '<path>', description: 'Endpoint/webhook/db path' }];
 	}
-	async action(schemaPath?: string) {
+	async action({ args }: CommandActionData) {
+		const schemaPath = args[0];
 		if (!schemaPath) {
 			console.error('[#corsair]: Usage: corsair schema <path>');
 			process.exit(1);

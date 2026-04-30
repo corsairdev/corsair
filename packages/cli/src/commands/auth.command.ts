@@ -1,4 +1,5 @@
 import BaseCommand from './base.command';
+import type { CommandActionData, CommandOption } from '@/index.types';
 import { runWebhookSubscription } from '../utils/subscription';
 
 export default class AuthCommand extends BaseCommand {
@@ -8,28 +9,19 @@ export default class AuthCommand extends BaseCommand {
 	getDescription(): string {
 		return 'Run plugin auth flows';
 	}
-	getOptions(): Array<{ flags: string; description: string }> {
+	getOptions(): CommandOption[] {
 		return [
-			{ flags: '--plugin <id>', description: 'Plugin id' },
-			{ flags: '--tenant <id>', description: 'Tenant id for auth' },
-			{ flags: '--code <code>', description: 'OAuth code to exchange' },
-			{ flags: '--session <id>', description: 'Session id for local auth state' },
-			{ flags: '--credentials', description: 'Show credential status' },
-			{ flags: '--webhook', description: 'Run webhook subscription setup' },
-			{ flags: '--listen', description: 'Listen for callback only' },
-			{ flags: '--collect', description: 'Collect auth response from listener' },
+			{ short: '-p', long: '--plugin <id>', description: 'Plugin id' },
+			{ short: '-t', long: '--tenant <id>', description: 'Tenant id for auth' },
+			{ short: '-c', long: '--code <code>', description: 'OAuth code to exchange' },
+			{ short: '-s', long: '--session <id>', description: 'Session id for local auth state' },
+			{ short: '-C', long: '--credentials', description: 'Show credential status' },
+			{ short: '-w', long: '--webhook', description: 'Run webhook subscription setup' },
+			{ short: '-l', long: '--listen', description: 'Listen for callback only' },
+			{ short: '-x', long: '--collect', description: 'Collect auth response from listener' },
 		];
 	}
-	async action(options: {
-		plugin?: string;
-		tenant?: string;
-		code?: string;
-		session?: string;
-		credentials?: boolean;
-		webhook?: boolean;
-		listen?: boolean;
-		collect?: boolean;
-	}) {
+	async action({ options }: CommandActionData) {
 		const cwd = process.cwd();
 		if (options.webhook) {
 			if (!options.plugin) {

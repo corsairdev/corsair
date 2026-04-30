@@ -1,5 +1,6 @@
 import path from 'node:path';
 import BaseCommand from './base.command';
+import type { CommandActionData, CommandOption } from '@/index.types';
 
 type StartStudio = (opts: {
 	cwd: string;
@@ -17,15 +18,15 @@ export default class StudioCommand extends BaseCommand {
 	getDescription(): string {
 		return 'Start Corsair Studio';
 	}
-	getOptions(): Array<{ flags: string; description: string }> {
+	getOptions(): CommandOption[] {
 		return [
-			{ flags: '--port <number>', description: 'Port to start Studio on' },
-			{ flags: '--open', description: 'Open browser on launch' },
-			{ flags: '--no-open', description: 'Do not open browser on launch' },
+			{ short: '-p', long: '--port <number>', description: 'Port to start Studio on' },
+			{ short: '-o', long: '--open', description: 'Open browser on launch' },
+			{ short: '-O', long: '--no-open', description: 'Do not open browser on launch' },
 		];
 	}
 
-	async action(options: { port?: string; open?: boolean }) {
+	async action({ options }: CommandActionData) {
 		const cwd = process.cwd();
 		const port = options.port ? Number.parseInt(options.port, 10) : undefined;
 

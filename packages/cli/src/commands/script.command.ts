@@ -1,4 +1,5 @@
 import BaseCommand from './base.command';
+import type { CommandActionData, CommandOption } from '@/index.types';
 import { getCorsairInstance, resolveClient } from '../utils/corsair-instance';
 import { parseScriptOptions } from '../utils/arg-parsers';
 
@@ -13,13 +14,13 @@ export default class ScriptCommand extends BaseCommand {
 	getDescription(): string {
 		return 'Execute inline JavaScript with corsair injected';
 	}
-	getOptions(): Array<{ flags: string; description: string }> {
+	getOptions(): CommandOption[] {
 		return [
-			{ flags: '--code <js>', description: 'Async JavaScript body to execute' },
-			{ flags: '--tenant <id>', description: 'Tenant id for multi-tenant instances' },
+			{ short: '-c', long: '--code <js>', description: 'Async JavaScript body to execute' },
+			{ short: '-t', long: '--tenant <id>', description: 'Tenant id for multi-tenant instances' },
 		];
 	}
-	async action(options: { code?: string; tenant?: string }) {
+	async action({ options }: CommandActionData) {
 		const { code, tenant } = parseScriptOptions(options);
 		if (!code) {
 			console.error('[#corsair]: Usage: corsair script --code "<js>"');

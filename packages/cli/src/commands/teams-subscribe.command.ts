@@ -1,4 +1,5 @@
 import BaseCommand from './base.command';
+import type { CommandActionData } from '@/index.types';
 
 export default class TeamsSubscribeCommand extends BaseCommand {
 	getName(): string {
@@ -7,7 +8,7 @@ export default class TeamsSubscribeCommand extends BaseCommand {
 	getDescription(): string {
 		return 'Subscribe Teams webhooks';
 	}
-	async action() {
+	async action({}: CommandActionData) {
 		const { runTeamsSubscribe } = await import('../microsoft/subscribe-microsoft');
 		await runTeamsSubscribe({ cwd: process.cwd() });
 	}
