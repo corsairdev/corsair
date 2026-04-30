@@ -581,6 +581,240 @@ await corsair.razorpay.api.payments.list({});
 
 ---
 
+## Payouts
+
+### create
+
+`payouts.create`
+
+Create a Razorpay payout
+
+**Risk:** `write`
+
+```ts
+await corsair.razorpay.api.payouts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_number` | `string` | Yes | — |
+| `fund_account_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `mode` | `string` | Yes | — |
+| `purpose` | `string` | Yes | — |
+| `queue_if_low_balance` | `boolean` | No | — |
+| `reference_id` | `string` | No | — |
+| `narration` | `string` | No | — |
+| `notes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `payout` | Yes | — |
+| `fund_account_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `notes` | `object[]` | No | — |
+| `fees` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `status` | `string` | Yes | — |
+| `utr` | `string` | No | — |
+| `mode` | `string` | No | — |
+| `purpose` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `debit_account_number` | `string` | No | — |
+| `narration` | `string` | No | — |
+| `batch_id` | `string` | No | — |
+| `status_details` | `object` | No | — |
+| `created_at` | `number` | No | — |
+| `fee_type` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="status_details full type">
+
+```ts
+{
+  description: string,
+  source: string,
+  reason: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`payouts.get`
+
+Fetch a Razorpay payout by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.payouts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entity` | `payout` | Yes | — |
+| `fund_account_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `notes` | `object[]` | No | — |
+| `fees` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `status` | `string` | Yes | — |
+| `utr` | `string` | No | — |
+| `mode` | `string` | No | — |
+| `purpose` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `debit_account_number` | `string` | No | — |
+| `narration` | `string` | No | — |
+| `batch_id` | `string` | No | — |
+| `status_details` | `object` | No | — |
+| `created_at` | `number` | No | — |
+| `fee_type` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="status_details full type">
+
+```ts
+{
+  description: string,
+  source: string,
+  reason: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payouts.list`
+
+List Razorpay payouts
+
+**Risk:** `read`
+
+```ts
+await corsair.razorpay.api.payouts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_number` | `string` | Yes | — |
+| `contact_id` | `string` | No | — |
+| `fund_account_id` | `string` | No | — |
+| `mode` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `count` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `collection` | No | — |
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  entity: payout,
+  fund_account_id: string,
+  amount: number,
+  currency: string,
+  notes?: {
+  } | any[],
+  fees?: number,
+  tax?: number,
+  status: string,
+  utr?: string | null,
+  mode?: string,
+  purpose?: string,
+  reference_id?: string | null,
+  debit_account_number?: string,
+  narration?: string | null,
+  batch_id?: string | null,
+  status_details?: {
+    description: string,
+    source: string,
+    reason: string
+  } | null,
+  created_at?: number,
+  fee_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Refunds
 
 ### create

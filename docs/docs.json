@@ -43,11 +43,16 @@
           },
           {
             "group": "Coding Agents",
-            "pages": ["mcp-adapters/claude-code", "mcp-adapters/cursor"]
+            "pages": [
+              "mcp-adapters/claude-code",
+              "mcp-adapters/cursor"
+            ]
           },
           {
             "group": "Studio",
-            "pages": ["studio/overview"]
+            "pages": [
+              "studio/overview"
+            ]
           },
           {
             "group": "Core Concepts",
@@ -65,7 +70,10 @@
           },
           {
             "group": "Auth Types",
-            "pages": ["concepts/api-key", "concepts/oauth"]
+            "pages": [
+              "concepts/api-key",
+              "concepts/oauth"
+            ]
           },
           {
             "group": "Production",
@@ -89,7 +97,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -633,7 +644,11 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
+            "pages": [
+              "guides/webhooks",
+              "guides/workflows",
+              "guides/dashboard"
+            ]
           }
         ]
       }
