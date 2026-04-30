@@ -2,7 +2,11 @@ export type ModelPrice = {
 	input: number;
 	output: number;
 };
-
+// Prices are in dollars per million tokens, and should be updated as new models are added and prices change. Sources include:
+// - OpenAI: https://openai.com/pricing
+// - Anthropic: https://www.anthropic.com/pricing
+// - Google Gemini: https://cloud.google.com/vertex-ai/pricing#generative_ai_models
+// - Groq: https://www.groq.com/pricing
 export const MODEL_PRICES: Record<string, ModelPrice> = {
 	'gpt-4o': { input: 2.5, output: 10 },
 	'gpt-4o-2024-11-20': { input: 2.5, output: 10 },
