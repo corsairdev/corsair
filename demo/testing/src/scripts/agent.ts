@@ -1,48 +1,61 @@
+/**
+ * Corsair Agent — CLI + MCP Server
+ *
+ * One-shot:   pnpm agent "create a job that posts GitHub PRs to Slack"
+ * MCP server: pnpm agent          (no args — expose via stdio for Claude Code / ChatGPT)
+ *
+ * Claude Code config (~/.claude.json):
+ *   "mcpServers": {
+ *     "corsair-agent": {
+ *       "type": "stdio",
+ *       "command": "pnpm",
+ *       "args": ["--filter", "@corsair/demo-plugins", "agent"],
+ *       "cwd": "<path-to-repo>"
+ *     }
+ *   }
+ */
+
 import 'dotenv/config';
-import { query } from '@anthropic-ai/claude-agent-sdk';
-import { fileURLToPath } from 'url';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { createCorsairAgent, runAgentStdioMcpServer } from '@corsair-dev/agent';
+import { corsair } from '@/server/corsair';
 
-const mcpServerPath = fileURLToPath(
-	new URL('./mcp-server.ts', import.meta.url),
-);
-
-const prompt = process.argv[2];
-if (!prompt) {
-	console.error('Usage: pnpm agent "<prompt>"');
+const apiKey = process.env.ANTHROPIC_API_KEY;
+if (!apiKey) {
+	process.stderr.write('Error: ANTHROPIC_API_KEY is required in .env\n');
 	process.exit(1);
 }
 
-async function main() {
-	for await (const event of query({
-		prompt: prompt as string,
-		options: {
-			model: 'claude-sonnet-4-6',
-			permissionMode: 'bypassPermissions',
-			mcpServers: {
-				corsair: {
-					type: 'stdio',
-					command: 'npx',
-					args: ['tsx', mcpServerPath],
-				},
-			},
-		},
-	})) {
-		if (event.type === 'assistant') {
-			for (const block of event.message.content) {
-				if (block.type === 'text' && block.text.trim()) {
-					console.log(`[assistant] ${block.text.trim()}`);
-				} else if (block.type === 'tool_use') {
-					console.log(`[tool] ${block.name}(${JSON.stringify(block.input)})`);
-				}
-			}
-		} else if (event.type === 'result') {
-			if (event.subtype === 'success') {
-				process.stdout.write(event.result + '\n');
-			} else {
-				console.error(`[error] ${event.subtype}`);
-			}
-		}
-	}
-}
+const anthropic = createAnthropic({ apiKey });
+const agentOptions = {
+	system1: anthropic('claude-haiku-4-5-20251001'),
+	system2: anthropic('claude-sonnet-4-6'),
+};
 
-main().catch(console.error);
+const prompt = process.argv[2];
+
+if (prompt) {
+	// One-shot: chat with the agent and print the result.
+	const agent = createCorsairAgent(corsair, agentOptions);
+	await agent.start();
+	const result = await agent.chat(prompt);
+	switch (result.type) {
+		case 'job_created':
+			console.log(`Created: ${result.message}`);
+			console.log(`  ID: ${result.job.id}`);
+			break;
+		case 'job_updated':
+			console.log(`Updated: ${result.message}`);
+			break;
+		case 'job_deleted':
+			console.log(`Deleted: ${result.message}`);
+			break;
+		case 'message':
+			console.log(result.text);
+			break;
+	}
+	agent.stop();
+} else {
+	// MCP server mode: expose agent_chat + corsair tools via stdio.
+	await runAgentStdioMcpServer(corsair, agentOptions);
+}

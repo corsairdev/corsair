@@ -1,11 +1,11 @@
+import { workflowNodeStarted } from './client-messages';
 import {
 	assistantRequest,
-	toolCalls,
-	transferDestinationRequest,
 	endOfCallReport,
 	statusUpdate,
+	toolCalls,
+	transferDestinationRequest,
 } from './server-messages';
-import { workflowNodeStarted } from './client-messages';
 
 export const ServerMessageWebhooks = {
 	assistantRequest,

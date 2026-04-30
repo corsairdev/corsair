@@ -153,6 +153,7 @@ export type {
 	IntegrationKeyManagerFor,
 	OAuth2IntegrationCredentials,
 	PluginAuthConfig,
+	TokenResponse,
 } from './auth';
 // Auth utilities and types
 export {
@@ -171,7 +172,6 @@ export {
 	initializeIntegrationDEK,
 	reEncryptConfig,
 } from './auth';
-export type { TokenResponse } from './auth';
 // Core types
 export type {
 	CorsairClient,

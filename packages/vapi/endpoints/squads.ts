@@ -19,7 +19,12 @@ export const create: VapiEndpoints['squadsCreate'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'POST', body: { ...input } },
 	);
-	await logEventFromContext(ctx, 'vapi.squads.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'vapi.squads.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -47,7 +52,10 @@ export const update: VapiEndpoints['squadsUpdate'] = async (ctx, input) => {
 	return result;
 };
 
-export const deleteSquad: VapiEndpoints['squadsDelete'] = async (ctx, input) => {
+export const deleteSquad: VapiEndpoints['squadsDelete'] = async (
+	ctx,
+	input,
+) => {
 	const { id } = input;
 	const result = await makeVapiRequest<VapiEndpointOutputs['squadsDelete']>(
 		`squad/${id}`,

@@ -1,9 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { VapiWebhooks } from '../index';
-import {
-	createVapiMessageMatch,
-	verifyVapiWebhookSecret,
-} from './types';
+import { createVapiMessageMatch, verifyVapiWebhookSecret } from './types';
 
 export const assistantRequest: VapiWebhooks['assistantRequest'] = {
 	match: createVapiMessageMatch('assistant-request'),
@@ -11,11 +8,20 @@ export const assistantRequest: VapiWebhooks['assistantRequest'] = {
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
 		if (!verification.valid) {
-			return { success: false, statusCode: 401, error: verification.error ?? 'Unauthorized' };
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error ?? 'Unauthorized',
+			};
 		}
 
 		const event = request.payload;
-		await logEventFromContext(ctx, 'vapi.webhook.assistant-request', {}, 'completed');
+		await logEventFromContext(
+			ctx,
+			'vapi.webhook.assistant-request',
+			{},
+			'completed',
+		);
 		return { success: true, data: event };
 	},
 };
@@ -26,7 +32,11 @@ export const toolCalls: VapiWebhooks['toolCalls'] = {
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
 		if (!verification.valid) {
-			return { success: false, statusCode: 401, error: verification.error ?? 'Unauthorized' };
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error ?? 'Unauthorized',
+			};
 		}
 
 		const event = request.payload;
@@ -35,20 +45,30 @@ export const toolCalls: VapiWebhooks['toolCalls'] = {
 	},
 };
 
-export const transferDestinationRequest: VapiWebhooks['transferDestinationRequest'] = {
-	match: createVapiMessageMatch('transfer-destination-request'),
+export const transferDestinationRequest: VapiWebhooks['transferDestinationRequest'] =
+	{
+		match: createVapiMessageMatch('transfer-destination-request'),
 
-	handler: async (ctx, request) => {
-		const verification = verifyVapiWebhookSecret(request, ctx.key);
-		if (!verification.valid) {
-			return { success: false, statusCode: 401, error: verification.error ?? 'Unauthorized' };
-		}
+		handler: async (ctx, request) => {
+			const verification = verifyVapiWebhookSecret(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: verification.error ?? 'Unauthorized',
+				};
+			}
 
-		const event = request.payload;
-		await logEventFromContext(ctx, 'vapi.webhook.transfer-destination-request', {}, 'completed');
-		return { success: true, data: event };
-	},
-};
+			const event = request.payload;
+			await logEventFromContext(
+				ctx,
+				'vapi.webhook.transfer-destination-request',
+				{},
+				'completed',
+			);
+			return { success: true, data: event };
+		},
+	};
 
 export const endOfCallReport: VapiWebhooks['endOfCallReport'] = {
 	match: createVapiMessageMatch('end-of-call-report'),
@@ -56,11 +76,20 @@ export const endOfCallReport: VapiWebhooks['endOfCallReport'] = {
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
 		if (!verification.valid) {
-			return { success: false, statusCode: 401, error: verification.error ?? 'Unauthorized' };
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error ?? 'Unauthorized',
+			};
 		}
 
 		const event = request.payload;
-		await logEventFromContext(ctx, 'vapi.webhook.end-of-call-report', {}, 'completed');
+		await logEventFromContext(
+			ctx,
+			'vapi.webhook.end-of-call-report',
+			{},
+			'completed',
+		);
 		return { success: true, data: event };
 	},
 };
@@ -71,11 +100,20 @@ export const statusUpdate: VapiWebhooks['statusUpdate'] = {
 	handler: async (ctx, request) => {
 		const verification = verifyVapiWebhookSecret(request, ctx.key);
 		if (!verification.valid) {
-			return { success: false, statusCode: 401, error: verification.error ?? 'Unauthorized' };
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error ?? 'Unauthorized',
+			};
 		}
 
 		const event = request.payload;
-		await logEventFromContext(ctx, 'vapi.webhook.status-update', {}, 'completed');
+		await logEventFromContext(
+			ctx,
+			'vapi.webhook.status-update',
+			{},
+			'completed',
+		);
 		return { success: true, data: event };
 	},
 };
