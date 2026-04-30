@@ -1,15 +1,36 @@
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
+import { computeCost } from './model-pricing.js';
 
 export type StoredChat = {
 	id: string;
 	title: string;
 	created_at: number;
+	usage_total: ChatUsageTotal;
 };
 
 export type StoredMsgBlock =
 	| { type: 'text'; content: string }
 	| { type: 'tool'; name: string; args: unknown; result?: unknown };
+
+export type RawMessageUsage = {
+	model: string;
+	inputTokens: number;
+	outputTokens: number;
+	totalTokens: number;
+};
+
+export type MessageUsage = RawMessageUsage & {
+	cost: number | null;
+};
+
+export type ChatUsageTotal = {
+	inputTokens: number;
+	outputTokens: number;
+	totalTokens: number;
+	cost: number;
+	hasUnknownCost: boolean;
+};
 
 export type StoredMessage = {
 	id: string;
@@ -17,6 +38,7 @@ export type StoredMessage = {
 	role: 'user' | 'assistant';
 	blocks: StoredMsgBlock[];
 	error: string | null;
+	usage: MessageUsage | null;
 };
 
 type ChatTable = {
@@ -32,6 +54,7 @@ type ChatMessageTable = {
 	blocks: string;
 	error: string | null;
 	seq: number;
+	usage: string | null;
 };
 
 type ChatStoreDb = {
@@ -63,6 +86,7 @@ async function initSchema() {
 		.addColumn('blocks', 'text', (col) => col.notNull())
 		.addColumn('error', 'text')
 		.addColumn('seq', 'integer', (col) => col.notNull())
+		.addColumn('usage', 'text')
 		.execute();
 }
 
@@ -78,27 +102,103 @@ function getTextFromBlocks(blocks: StoredMsgBlock[]) {
 		.join('');
 }
 
-export async function createChat() {
-	await schemaReady;
-
-	const chat: StoredChat = {
-		id: crypto.randomUUID(),
-		title: 'New chat',
-		created_at: Date.now(),
-	};
-
-	await db.insertInto('chats').values(chat).execute();
-	return chat;
+function parseRawUsage(raw: string | null): RawMessageUsage | null {
+	if (!raw) return null;
+	try {
+		const parsed = JSON.parse(raw) as Partial<RawMessageUsage>;
+		if (
+			typeof parsed.model !== 'string' ||
+			typeof parsed.inputTokens !== 'number' ||
+			typeof parsed.outputTokens !== 'number' ||
+			typeof parsed.totalTokens !== 'number'
+		) {
+			return null;
+		}
+		return {
+			model: parsed.model,
+			inputTokens: parsed.inputTokens,
+			outputTokens: parsed.outputTokens,
+			totalTokens: parsed.totalTokens,
+		};
+	} catch {
+		return null;
+	}
 }
 
-export async function listChats() {
+export function withCost(raw: RawMessageUsage): MessageUsage {
+	return {
+		...raw,
+		cost: computeCost(raw.model, raw),
+	};
+}
+
+export function aggregateUsage(rows: (MessageUsage | null)[]): ChatUsageTotal {
+	const total: ChatUsageTotal = {
+		inputTokens: 0,
+		outputTokens: 0,
+		totalTokens: 0,
+		cost: 0,
+		hasUnknownCost: false,
+	};
+	for (const u of rows) {
+		if (!u) continue;
+		total.inputTokens += u.inputTokens;
+		total.outputTokens += u.outputTokens;
+		total.totalTokens += u.totalTokens;
+		if (u.cost === null) {
+			total.hasUnknownCost = true;
+		} else {
+			total.cost += u.cost;
+		}
+	}
+	return total;
+}
+
+export async function createChat(): Promise<StoredChat> {
 	await schemaReady;
 
-	return db
+	const id = crypto.randomUUID();
+	const created_at = Date.now();
+	const title = 'New chat';
+
+	await db.insertInto('chats').values({ id, title, created_at }).execute();
+	return {
+		id,
+		title,
+		created_at,
+		usage_total: aggregateUsage([]),
+	};
+}
+
+export async function listChats(): Promise<StoredChat[]> {
+	await schemaReady;
+
+	const chats = await db
 		.selectFrom('chats')
 		.select(['id', 'title', 'created_at'])
 		.orderBy('created_at', 'desc')
 		.execute();
+
+	const messageRows = await db
+		.selectFrom('chat_messages')
+		.select(['chat_id', 'usage'])
+		.execute();
+
+	const usageByChat = new Map<string, MessageUsage[]>();
+	for (const row of messageRows) {
+		const raw = parseRawUsage(row.usage);
+		if (!raw) continue;
+		const list = usageByChat.get(row.chat_id) ?? [];
+		list.push(withCost(raw));
+		usageByChat.set(row.chat_id, list);
+	}
+
+	return chats.map((chat) => ({
+		id: chat.id,
+		title: chat.title,
+		created_at: chat.created_at,
+		usage_total: aggregateUsage(usageByChat.get(chat.id) ?? []),
+	}));
 }
 
 export async function chatExists(chatId: string) {
@@ -112,23 +212,27 @@ export async function chatExists(chatId: string) {
 	return !!row;
 }
 
-export async function getMessages(chatId: string) {
+export async function getMessages(chatId: string): Promise<StoredMessage[]> {
 	await schemaReady;
 
 	const rows = await db
 		.selectFrom('chat_messages')
-		.select(['id', 'chat_id', 'role', 'blocks', 'error'])
+		.select(['id', 'chat_id', 'role', 'blocks', 'error', 'usage'])
 		.where('chat_id', '=', chatId)
 		.orderBy('seq', 'asc')
 		.execute();
 
-	return rows.map((row) => ({
-		id: row.id,
-		chat_id: row.chat_id,
-		role: row.role,
-		blocks: JSON.parse(row.blocks) as StoredMsgBlock[],
-		error: row.error,
-	}));
+	return rows.map((row) => {
+		const raw = parseRawUsage(row.usage);
+		return {
+			id: row.id,
+			chat_id: row.chat_id,
+			role: row.role,
+			blocks: JSON.parse(row.blocks) as StoredMsgBlock[],
+			error: row.error,
+			usage: raw ? withCost(raw) : null,
+		};
+	});
 }
 
 export async function appendMessage(
@@ -136,7 +240,7 @@ export async function appendMessage(
 	id: string,
 	role: 'user' | 'assistant',
 	blocks: StoredMsgBlock[],
-	error?: string,
+	options: { error?: string; usage?: RawMessageUsage } = {},
 ) {
 	await schemaReady;
 
@@ -147,8 +251,9 @@ export async function appendMessage(
 			chat_id: chatId,
 			role,
 			blocks: JSON.stringify(blocks),
-			error: error ?? null,
+			error: options.error ?? null,
 			seq: ++_seq,
+			usage: options.usage ? JSON.stringify(options.usage) : null,
 		})
 		.execute();
 

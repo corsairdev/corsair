@@ -2,8 +2,17 @@ import { buildCorsairToolDefs } from '@corsair-dev/mcp';
 import type { CoreMessage, LanguageModel, ToolSet } from 'ai';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
-import type { StoredMessage, StoredMsgBlock } from '../chat-store.js';
-import { appendMessage, chatExists, getMessages } from '../chat-store.js';
+import type {
+	RawMessageUsage,
+	StoredMessage,
+	StoredMsgBlock,
+} from '../chat-store.js';
+import {
+	appendMessage,
+	chatExists,
+	getMessages,
+	withCost,
+} from '../chat-store.js';
 import { readJsonBody } from '../router.js';
 import type { HandlerFn } from '../types.js';
 
@@ -152,40 +161,43 @@ function buildAiTools(corsairClient: Record<string, unknown>): ToolSet {
 	return tools;
 }
 
-async function resolveModel(): Promise<LanguageModel> {
-	const model = process.env.CORSAIR_CHAT_MODEL;
+type ResolvedModel = { model: LanguageModel; modelId: string };
+
+async function resolveModel(): Promise<ResolvedModel> {
+	const override = process.env.CORSAIR_CHAT_MODEL;
 	console.log(
 		'[corsair:chat] resolving model — OPENAI_API_KEY:',
 		!!process.env.OPENAI_API_KEY,
 		'| ANTHROPIC_API_KEY:',
 		!!process.env.ANTHROPIC_API_KEY,
 		'| CORSAIR_CHAT_MODEL:',
-		model ?? '(default)',
+		override ?? '(default)',
 	);
 
 	if (process.env.OPENAI_API_KEY) {
 		const { openai } = await import('@ai-sdk/openai');
-		console.log('[corsair:chat] using openai:', model ?? 'gpt-4o-mini');
-		return openai(model ?? 'gpt-4o-mini');
+		const modelId = override ?? 'gpt-4o-mini';
+		console.log('[corsair:chat] using openai:', modelId);
+		return { model: openai(modelId), modelId };
 	}
 
 	if (process.env.ANTHROPIC_API_KEY) {
 		const { anthropic } = await import('@ai-sdk/anthropic');
-		console.log(
-			'[corsair:chat] using anthropic:',
-			model ?? 'claude-sonnet-4-6',
-		);
-		return anthropic(model ?? 'claude-sonnet-4-6');
+		const modelId = override ?? 'claude-sonnet-4-6';
+		console.log('[corsair:chat] using anthropic:', modelId);
+		return { model: anthropic(modelId), modelId };
 	}
 
 	if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
 		const { google } = await import('@ai-sdk/google');
-		return google(model ?? 'gemini-2.0-flash');
+		const modelId = override ?? 'gemini-2.0-flash';
+		return { model: google(modelId), modelId };
 	}
 
 	if (process.env.GROQ_API_KEY) {
 		const { createGroq } = await import('@ai-sdk/groq');
-		return createGroq()(model ?? 'llama-3.3-70b-versatile');
+		const modelId = override ?? 'llama-3.3-70b-versatile';
+		return { model: createGroq()(modelId), modelId };
 	}
 
 	throw new Error(
@@ -193,12 +205,20 @@ async function resolveModel(): Promise<LanguageModel> {
 	);
 }
 
+type RawUsage = {
+	promptTokens?: number;
+	completionTokens?: number;
+	totalTokens?: number;
+};
+
 type StreamPart = {
 	type: string;
 	textDelta?: string;
 	toolName?: string;
 	args?: unknown;
 	result?: unknown;
+	usage?: RawUsage;
+	responseModelId?: string;
 };
 
 function errorMessage(err: unknown): string {
@@ -209,6 +229,17 @@ function isObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
+function parseRawUsage(raw: unknown): RawUsage | undefined {
+	if (!isObject(raw)) return undefined;
+	const usage: RawUsage = {};
+	if (typeof raw.promptTokens === 'number')
+		usage.promptTokens = raw.promptTokens;
+	if (typeof raw.completionTokens === 'number')
+		usage.completionTokens = raw.completionTokens;
+	if (typeof raw.totalTokens === 'number') usage.totalTokens = raw.totalTokens;
+	return usage;
+}
+
 function parseStreamPart(raw: unknown): StreamPart | null {
 	if (!isObject(raw) || typeof raw.type !== 'string') {
 		return null;
@@ -217,13 +248,33 @@ function parseStreamPart(raw: unknown): StreamPart | null {
 	const textDelta =
 		typeof raw.textDelta === 'string' ? raw.textDelta : undefined;
 	const toolName = typeof raw.toolName === 'string' ? raw.toolName : undefined;
+
+	let responseModelId: string | undefined;
+	if (isObject(raw.response) && typeof raw.response.modelId === 'string') {
+		responseModelId = raw.response.modelId;
+	}
+
 	return {
 		type: raw.type,
 		textDelta,
 		toolName,
 		args: raw.args,
 		result: raw.result,
+		usage: parseRawUsage(raw.usage),
+		responseModelId,
 	};
+}
+
+function buildRawMessageUsage(
+	modelId: string,
+	raw: RawUsage | undefined,
+): RawMessageUsage | null {
+	if (!raw) return null;
+	const inputTokens = raw.promptTokens ?? 0;
+	const outputTokens = raw.completionTokens ?? 0;
+	const totalTokens = raw.totalTokens ?? inputTokens + outputTokens;
+	if (inputTokens === 0 && outputTokens === 0 && totalTokens === 0) return null;
+	return { model: modelId, inputTokens, outputTokens, totalTokens };
 }
 
 export const chatHandler: HandlerFn = async (ctx) => {
@@ -252,9 +303,9 @@ export const chatHandler: HandlerFn = async (ctx) => {
 		chatId ?? '(none)',
 	);
 
-	let model: LanguageModel;
+	let resolved: ResolvedModel;
 	try {
-		model = await resolveModel();
+		resolved = await resolveModel();
 	} catch (err) {
 		const message = errorMessage(err);
 		console.error('[corsair:chat] model resolution failed:', message);
@@ -289,11 +340,12 @@ export const chatHandler: HandlerFn = async (ctx) => {
 	};
 
 	const assistantBlocks: StoredMsgBlock[] = [];
+	let finalRawUsage: RawMessageUsage | null = null;
 
 	console.log('[corsair:chat] starting stream');
 	try {
 		const result = streamText({
-			model,
+			model: resolved.model,
 			system:
 				"You are a helpful assistant with access to Corsair tools. Use the tools to answer questions about the user's integrations and data. Use list_operations to get the exact endpoint names.",
 			messages,
@@ -330,6 +382,18 @@ export const chatHandler: HandlerFn = async (ctx) => {
 					block.result = part.result;
 				}
 			} else if (part.type === 'finish') {
+				const effectiveModelId = part.responseModelId ?? resolved.modelId;
+				const raw = buildRawMessageUsage(effectiveModelId, part.usage);
+				console.log(
+					'[corsair:chat] finish — model:',
+					effectiveModelId,
+					'| usage:',
+					part.usage,
+				);
+				if (raw) {
+					finalRawUsage = raw;
+					send({ type: 'usage', usage: withCost(raw) });
+				}
 				send({ type: 'done' });
 			}
 		}
@@ -338,7 +402,6 @@ export const chatHandler: HandlerFn = async (ctx) => {
 		console.error('[corsair:chat] stream error:', message);
 		send({ type: 'error', message });
 	} finally {
-		// Persist the assistant response
 		if (chatId && (await chatExists(chatId)) && assistantBlocks.length > 0) {
 			try {
 				await appendMessage(
@@ -346,6 +409,7 @@ export const chatHandler: HandlerFn = async (ctx) => {
 					crypto.randomUUID(),
 					'assistant',
 					assistantBlocks,
+					{ usage: finalRawUsage ?? undefined },
 				);
 			} catch (err) {
 				console.error('[corsair:chat] failed to save assistant message:', err);
