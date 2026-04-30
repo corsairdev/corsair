@@ -1,0 +1,149 @@
+---
+title: Overview
+description: "Vapi plugin for Corsair"
+---
+
+Use **Vapi** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+
+**What you get:**
+
+- 34 typed API operations
+- 7 database entities synced for fast `.search()` / `.list()` queries
+- 6 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/vapi
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { vapi } from '@corsair-dev/vapi';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [vapi()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { vapi } from '@corsair-dev/vapi';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [vapi()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/vapi/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=vapi
+```
+
+Use the key names documented in [Get Credentials](/plugins/vapi/get-credentials) (for example `api_key=` or `webhook_signature=`).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=vapi --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+vapi()
+```
+
+Store credentials with `pnpm corsair setup --plugin=vapi` (see [Get Credentials](/plugins/vapi/get-credentials) for field names).
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+## Webhooks
+
+This plugin registers **6** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/vapi/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.vapi.db.<entity>.search()` and `.list()`. See [Database](/plugins/vapi/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `assistants.get`
+
+```ts
+await corsair.vapi.api.assistants.get({});
+```
+
+
+**Write-style (write):** `assistants.create`
+
+```ts
+await corsair.vapi.api.assistants.create({});
+```
+
+
+See the full list on the [API](/plugins/vapi/api) page. Use `pnpm corsair list --plugin=vapi` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/vapi/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/vapi/api) |
+| Database | [Database](/plugins/vapi/database) |
+| Webhooks | [Webhooks](/plugins/vapi/webhooks) |
+| Credentials | [Get credentials](/plugins/vapi/get-credentials) |
+

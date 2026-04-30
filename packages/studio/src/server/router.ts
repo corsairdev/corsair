@@ -60,7 +60,11 @@ const routes: Route[] = [
 
 	{ method: 'GET', path: '/api/chats', handler: listChatsHandler },
 	{ method: 'POST', path: '/api/chats', handler: createChatHandler },
-	{ method: 'GET', path: '/api/chats/messages', handler: getChatMessagesHandler },
+	{
+		method: 'GET',
+		path: '/api/chats/messages',
+		handler: getChatMessagesHandler,
+	},
 
 	{ method: 'POST', path: '/api/chat', handler: chatHandler },
 ];
