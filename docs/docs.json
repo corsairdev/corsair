@@ -76,6 +76,12 @@
             ]
           },
           {
+            "group": "Production",
+            "pages": [
+              "production/oauth-process"
+            ]
+          },
+          {
             "group": "Workflow Engines",
             "pages": [
               "guides/inngest",
