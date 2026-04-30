@@ -1,4 +1,5 @@
-import type { Command } from 'commander'
+import { type Command, Option } from 'commander'
+import type { CommandActionData, CommandArgument, CommandOption } from '@/index.types'
 
 export default abstract class BaseCommand {
 
@@ -6,17 +7,17 @@ export default abstract class BaseCommand {
 
 	abstract getDescription(): string;
 
-	abstract action(...args: unknown[]): Promise<void> | void;
+	action({}: CommandActionData): Promise<void> | void {}
 
 	getAliases(): string[] {
 		return [];
 	}
 
-	getArguments(): Array<{ name: string; description?: string }> {
+	getArguments(): CommandArgument[] {
 		return [];
 	}
 
-	getOptions(): Array<{ flags: string; description: string }> {
+	getOptions(): CommandOption[] {
 		return [];
 	}
 
@@ -24,17 +25,50 @@ export default abstract class BaseCommand {
 		return '';
 	}
 
+	getSubCommands(): BaseCommand[] {
+		return []
+	}
+
 	readonly prepare = (program: Command): void => {
-		const command = program.command(this.getName()).description(this.getDescription());
+		const command = program
+			.command(this.getName())
+			.description(this.getDescription());
+
 		const usage = this.getUsage();
-		if (usage) command.usage(usage);
-		this.getAliases().forEach((alias) => command.alias(alias));
+		if (usage) {
+			command.usage(usage);
+		}
+
+		this
+			.getAliases()
+			.forEach((alias) => command.alias(alias));
+
+		this.getOptions().forEach((option) => {
+			const newOption: Option = new Option(
+				`${option.short}, ${option.long}`,
+				option.description
+			).default(option.defaultValue)
+
+			option.choices &&
+			option.choices.length > 0 &&
+			newOption.choices(option.choices)
+
+			command.addOption(newOption)
+		})
 		this.getArguments().forEach((argument) =>
-			command.argument(argument.name, argument.description),
-		);
-		this.getOptions().forEach((option) =>
-			command.option(option.flags, option.description),
-		);
-		command.action((...args) => this.action(...args));
+			command.argument(argument.name, argument.description)
+		)
+
+		command.action(async (...data) => {
+			const argsCount = this.getArguments().length
+
+			const commandOptions = data[argsCount]
+			const args: string[] = data.slice(0, argsCount)
+			await this.action({ args, options: commandOptions })
+		});
+
+		this.getSubCommands().forEach((subCommand) => {
+			subCommand.prepare(command)
+		})
 	};
 }

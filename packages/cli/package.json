@@ -23,7 +23,7 @@
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "ind": "tsx src/index.ts"
+    "dev": "tsx src/index.ts"
   },
   "dependencies": {
     "@babel/core": "^7.28.6",
