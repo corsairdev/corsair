@@ -163,7 +163,7 @@ describe('Razorpay API Type Tests', () => {
 	describe('customers', () => {
 		let createdCustomerId: string | undefined;
 
-		beforeAll(async () => {
+        it('customersCreate returns correct type', async () => {
 			const result = await makeRazorpayRequest<CustomersCreateResponse>(
 				'customers',
 				API_KEY,
