@@ -26,23 +26,29 @@ const CREATE_PAYOUT_PURPOSE = process.env.RAZORPAY_CREATE_PAYOUT_PURPOSE;
 
 describe('Razorpay API Type Tests', () => {
 
-    function generateAPIKey() {
-        if (!API_KEY_ID) {
-            throw new Error(
-                `Missing required env vars for payout tests: API_KEY_ID}`,
-            );
+    let API_KEY: string;
+
+    beforeAll(() => {
+        function generateAPIKey() {
+            if (!API_KEY_ID) {
+                throw new Error(
+                    `Missing required env vars for payout tests: API_KEY_ID`,
+                );
+            }
+
+            if (!API_SECRET_KEY) {
+                throw new Error(
+                    `Missing required env vars for payout tests: API_SECRET_KEY`,
+                );
+            }
+
+            return API_KEY_ID.concat(":").concat(API_SECRET_KEY);
         }
 
-        if (!API_SECRET_KEY) {
-            throw new Error(
-                `Missing required env vars for payout tests: API_SECRET_KEY}`,
-            );
-        }
+        API_KEY = generateAPIKey();
 
-        return API_KEY_ID.concat(":").concat(API_SECRET_KEY);
-    }
+    });
 
-    const API_KEY = generateAPIKey();
 
     describe('payouts', () => {
 		beforeAll(() => {
