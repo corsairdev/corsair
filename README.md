@@ -8,7 +8,9 @@ Corsair is the unified integration layer for your agents. Connect your Corsair i
 ---
 ## Why this exists
 
-Agents are now capable of just about anything. It feels silly to do a routine task yourself. But you do it anyways, because giving agents the keys to everything feels reckless. A single misunderstood instruction and they are sending an email on your behalf that you'd never send. So you end up doing the work yourself, because granting access feels too risky.
+Agents are now capable of anything. It feels silly to do a routine task manually. But you do it anyways, because giving agents the keys to all your apps feels reckless. One misunderstood instruction and they're sending an email you'd never send. 
+
+Corsair allows you to safely integrate with any app. Connect the Corsair MCP to any agent and have built-in tool calls, permissions, and scoped auth.
 
 ---
 ## Example: Sending an Email
