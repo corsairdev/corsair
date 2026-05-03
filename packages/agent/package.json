@@ -1,0 +1,55 @@
+{
+  "name": "@corsair-dev/agent",
+  "version": "0.1.0",
+  "description": "Persistent async workflow agent for Corsair — natural language job creation, dual LLM tiers, self-healing",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "dev-source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ai": "^4.0.0",
+    "corsair": "workspace:*",
+    "@corsair-dev/mcp": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "kysely": "^0.28.5",
+    "node-cron": "^3.0.3",
+    "zod": "^3.25.0",
+    "uuid": "^13.0.0"
+  },
+  "peerDependencies": {
+    "@ai-sdk/anthropic": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@ai-sdk/anthropic": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/node-cron": "^3.0.11",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.20.0"
+}

@@ -4,10 +4,6 @@ import { github } from '@corsair-dev/github';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
-import { linear } from '@corsair-dev/linear';
-import { onedrive } from '@corsair-dev/onedrive';
-import { openweathermap } from '@corsair-dev/openweathermap';
-import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
@@ -27,13 +23,9 @@ export const corsair = createCorsair({
 		googlesheets(),
 		googlecalendar(),
 		gmail(),
-		linear(),
-		sharepoint(),
-		onedrive(),
-		openweathermap(),
-		vapi({
-			key: process.env.VAPI_API_KEY,
-			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
-		}),
+		// linear(),
+		// sharepoint(),
+		// onedrive(),
+		// openweathermap(),
 	],
 });

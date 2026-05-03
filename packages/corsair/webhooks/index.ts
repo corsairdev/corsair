@@ -27,6 +27,8 @@ export type WebhookFilterResult = {
 	body: unknown;
 	/** The response from the webhook handler, if one was executed */
 	response?: WebhookResponse<unknown>;
+	/** The enriched event data returned by the webhook handler (response.data). Use this as the agent event payload rather than the raw body. */
+	handlerData?: unknown;
 	/** HTTP response headers to set on the outgoing HTTP response (e.g. for Asana X-Hook-Secret handshake) */
 	responseHeaders?: Record<string, string>;
 };
@@ -254,6 +256,7 @@ export async function processWebhook(
 				response: returnToSenderObjectExists
 					? { ...response?.returnToSender, success: true }
 					: { success: true },
+				...(response.data !== undefined && { handlerData: response.data }),
 				...(response.responseHeaders && {
 					responseHeaders: response.responseHeaders,
 				}),

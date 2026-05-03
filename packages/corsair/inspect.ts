@@ -1,10 +1,4 @@
-import type {
-	CorsairClient,
-	CorsairInternalConfig,
-	CorsairPlugin,
-	CorsairSingleTenantClient,
-	CorsairTenantWrapper,
-} from './core';
+import type { CorsairInternalConfig, CorsairPlugin } from './core';
 import { CORSAIR_INTERNAL } from './core';
 import type { ListOperationsOptions } from './core/inspect';
 import {
@@ -14,21 +8,18 @@ import {
 
 export type { ListOperationsOptions };
 
-// Deliberately shallow plugin shape for inspect helpers.
-type InspectCorsairPlugin = {
-	id: CorsairPlugin['id'];
-};
-
 /**
  * Any form of Corsair instance:
  * - single-tenant client (`createCorsair({ ... })`)
  * - multi-tenant wrapper (`createCorsair({ multiTenancy: true, ... })`)
  * - tenant-scoped client (`corsair.withTenant("tenant-id")`)
+ *
+ * Typed as a string-keyed structural type so concrete instances with specific
+ * plugin tuples are directly assignable without a cast. All access to the
+ * internal CORSAIR_INTERNAL symbol is done via explicit symbol cast inside
+ * the implementation.
  */
-export type AnyCorsairInstance =
-	| CorsairSingleTenantClient<readonly InspectCorsairPlugin[]>
-	| CorsairTenantWrapper<readonly InspectCorsairPlugin[]>
-	| CorsairClient<readonly InspectCorsairPlugin[]>;
+export type AnyCorsairInstance = { [key: string]: unknown };
 
 function getPlugins(corsair: AnyCorsairInstance): readonly CorsairPlugin[] {
 	const internal = (corsair as unknown as Record<symbol, unknown>)[
