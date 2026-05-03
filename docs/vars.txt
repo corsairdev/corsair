@@ -1,0 +1,127 @@
+# Template Variables
+# All {{PLACEHOLDERS}} required across getting-started.mdx, api-endpoints.mdx, webhooks.mdx, database.mdx
+
+## Plugin-level (shared across all 4 files)
+PLUGIN_DISPLAY_NAME            # e.g. "GitHub", "Slack", "Linear"
+PLUGIN_CLI_NAME                # e.g. "github", "slack", "linear" (used in corsair.github.api...)
+PLUGIN_PACKAGE_NAME            # e.g. "github", "slack" (npm package @corsair-dev/github)
+PLUGIN_IMPORT_NAME             # e.g. "github", "slack" (named import from package)
+PLUGIN_ONE_LINE_DESCRIPTION    # one sentence for the frontmatter description field
+
+## getting-started.mdx
+PLUGIN_WHAT_IT_DOES_SENTENCE   # e.g. "manage issues, pull requests, and repositories"
+
+# API Key auth
+PLUGIN_ENV_VAR_NAME            # e.g. "GITHUB_TOKEN", "LINEAR_API_KEY"
+PLUGIN_SETTINGS_URL            # URL to the plugin's API key settings page
+API_KEY_STEPS                  # numbered markdown steps to obtain the API key
+
+# OAuth auth
+PLUGIN_CLIENT_ID_VAR           # e.g. "SLACK_CLIENT_ID"
+PLUGIN_CLIENT_SECRET_VAR       # e.g. "SLACK_CLIENT_SECRET"
+PLUGIN_OAUTH_URL               # URL to the plugin's OAuth app creation page
+OAUTH_APP_STEPS                # numbered markdown steps to create an OAuth app
+
+# Usage examples on getting-started page
+PLUGIN_RESOURCE_GROUP          # e.g. "repositories", "issues" (first resource to demo)
+PLUGIN_RESOURCE_PLURAL         # e.g. "repos", "issues" (variable name in code examples)
+PLUGIN_FILTER_FIELD            # e.g. "openIssuesCount" (field to filter by in DB example)
+LIVE_API_EXAMPLE               # full code snippet for the Live API tab
+DB_QUERY_EXAMPLE               # full code snippet for the Cached DB tab
+
+# Plugin options
+PLUGIN_OPTIONS_EXAMPLE         # inline options object example (e.g. "webhookSecret: process.env.X")
+PLUGIN_OPTIONS_TABLE_ROWS      # markdown table rows for the options table
+
+## api-endpoints.mdx
+# Repeat RESOURCE_GROUP_N and PARAM_N blocks for each resource group / method
+
+RESOURCE_GROUP_1_NAME          # e.g. "Repositories" (H2 heading)
+RESOURCE_GROUP_1_KEY           # e.g. "repositories" (used in corsair.github.api.repositories)
+RESOURCE_GROUP_2_NAME          # e.g. "Issues"
+RESOURCE_GROUP_2_KEY           # e.g. "issues"
+
+LIST_PARAM_EXAMPLE             # param name shown in the list() code snippet
+GET_PARAM_EXAMPLE              # param name shown in the get() code snippet
+CREATE_PARAM_EXAMPLE           # param name shown in the create() code snippet
+UPDATE_PARAM_EXAMPLE           # param name shown in the update() code snippet
+DELETE_PARAM_EXAMPLE           # param name shown in the delete() code snippet
+
+# Per-parameter fields (repeat for each parameter in a method's table)
+PARAM_1_NAME                   # parameter name
+PARAM_1_TYPE                   # TypeScript type, e.g. "string", "number", "boolean"
+PARAM_1_REQUIRED               # "Yes" or "No"
+PARAM_1_DESCRIPTION            # one-line description
+PARAM_2_NAME
+PARAM_2_TYPE
+PARAM_2_REQUIRED
+PARAM_2_DESCRIPTION
+
+## webhooks.mdx
+PLUGIN_WEBHOOK_SECRET_VAR      # e.g. "SLACK_WEBHOOK_SECRET", "GITHUB_WEBHOOK_SECRET"
+PLUGIN_WEBHOOKS_URL            # URL to the plugin's webhook settings page
+PLUGIN_WEBHOOK_SUBSCRIPTION_STEPS  # markdown steps to register the endpoint in the plugin dashboard
+
+# Per-event fields (repeat EVENT_N block for each event)
+EVENT_1_NAME                   # human name, e.g. "Issue Created"
+EVENT_1_TYPE                   # event type string, e.g. "issues.opened"
+EVENT_1_TRIGGER_DESCRIPTION    # e.g. "a new issue is opened in the repository"
+
+EVENT_1_PAYLOAD_FIELD_1        # top-level field name
+EVENT_1_PAYLOAD_FIELD_1_DESCRIPTION
+EVENT_1_PAYLOAD_FIELD_2
+EVENT_1_PAYLOAD_FIELD_2_DESCRIPTION
+EVENT_1_PAYLOAD_FIELD_3        # name of a nested object field
+
+EVENT_1_NESTED_FIELD_1         # field inside the nested object
+EVENT_1_NESTED_FIELD_1_DESCRIPTION
+EVENT_1_NESTED_FIELD_2
+EVENT_1_NESTED_FIELD_2_DESCRIPTION
+EVENT_1_NESTED_FIELD_3
+EVENT_1_NESTED_FIELD_3_DESCRIPTION
+
+EVENT_2_NAME
+EVENT_2_TYPE
+EVENT_2_TRIGGER_DESCRIPTION
+EVENT_2_PAYLOAD_FIELD_1
+EVENT_2_PAYLOAD_FIELD_1_DESCRIPTION
+EVENT_2_PAYLOAD_FIELD_2        # nested object name for event 2
+EVENT_2_NESTED_FIELD_1
+EVENT_2_NESTED_FIELD_1_DESCRIPTION
+EVENT_2_NESTED_FIELD_2
+
+EVENT_HOOK_NAME                # event key used in webhookHooks config, e.g. "created", "updated"
+
+## database.mdx
+SYNCED_ENTITIES_TABLE_ROWS     # markdown table rows listing entity key + when it syncs
+
+# Per-entity fields (repeat ENTITY_N block for each synced entity)
+ENTITY_1_DISPLAY_NAME          # e.g. "Repositories" (H2 heading)
+ENTITY_1_DISPLAY_NAME_LOWER    # e.g. "repositories" (used in prose)
+ENTITY_1_KEY                   # e.g. "repositories" (used in corsair.github.db.repositories)
+ENTITY_1_SEARCH_FIELD          # primary field to demo in search examples
+ENTITY_1_SEARCH_FIELD_2        # secondary field to demo in second search example
+
+# Schema fields for entity 1 (add as many as needed)
+ENTITY_1_FIELD_1               # field name
+ENTITY_1_FIELD_1_TYPE          # TypeScript type
+ENTITY_1_FIELD_1_DESCRIPTION   # inline comment description
+ENTITY_1_FIELD_2
+ENTITY_1_FIELD_2_TYPE
+ENTITY_1_FIELD_2_DESCRIPTION
+ENTITY_1_FIELD_3
+ENTITY_1_FIELD_3_TYPE
+ENTITY_1_FIELD_3_DESCRIPTION
+ENTITY_1_FIELD_4               # optional field (has ? suffix)
+ENTITY_1_FIELD_4_TYPE
+ENTITY_1_FIELD_4_DESCRIPTION
+
+ENTITY_2_DISPLAY_NAME
+ENTITY_2_KEY
+ENTITY_2_SEARCH_FIELD
+ENTITY_2_FIELD_1
+ENTITY_2_FIELD_1_TYPE
+ENTITY_2_FIELD_2
+ENTITY_2_FIELD_2_TYPE
+ENTITY_2_FIELD_3               # optional
+ENTITY_2_FIELD_3_TYPE

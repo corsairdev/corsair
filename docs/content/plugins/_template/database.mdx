@@ -1,0 +1,143 @@
+---
+title: {{PLUGIN_DISPLAY_NAME}} Database
+description: Query cached {{PLUGIN_DISPLAY_NAME}} data without hitting the API.
+---
+
+The {{PLUGIN_DISPLAY_NAME}} plugin automatically syncs API responses and webhook payloads to your local database. Query them instantly — no network call, no rate limits.
+
+<Info>
+**New to Corsair?** See [Database concepts](/concepts/database) and [Data synchronization](/concepts/integrations) before diving in.
+</Info>
+
+## Synced entities
+
+| Entity | Synced when |
+|--------|-------------|
+{{SYNCED_ENTITIES_TABLE_ROWS}}
+<!-- Example rows:
+| `{{ENTITY_1_KEY}}` | You call `api.{{ENTITY_1_KEY}}.list()` or `api.{{ENTITY_1_KEY}}.get()` |
+| `{{ENTITY_2_KEY}}` | You call `api.{{ENTITY_2_KEY}}.list()` or receive a webhook |
+-->
+
+## Query API
+
+All entities share the same query shape:
+
+```ts
+// Return all matching records
+const results = await corsair.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_1_KEY}}.search({
+    data: { {{ENTITY_1_SEARCH_FIELD}}: 'value' },  // filter by any schema field
+    limit: 100,                                      // optional
+    offset: 0,                                       // optional, for pagination
+});
+
+// Return all records
+const all = await corsair.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_1_KEY}}.search({});
+```
+
+---
+
+## {{ENTITY_1_DISPLAY_NAME}}
+<!-- Repeat this H2 block for each synced entity -->
+
+### Schema
+
+```ts
+{
+    id: string;                         // Unique ID (always present)
+    {{ENTITY_1_FIELD_1}}: {{ENTITY_1_FIELD_1_TYPE}};   // {{ENTITY_1_FIELD_1_DESCRIPTION}}
+    {{ENTITY_1_FIELD_2}}: {{ENTITY_1_FIELD_2_TYPE}};   // {{ENTITY_1_FIELD_2_DESCRIPTION}}
+    {{ENTITY_1_FIELD_3}}: {{ENTITY_1_FIELD_3_TYPE}};   // {{ENTITY_1_FIELD_3_DESCRIPTION}}
+    {{ENTITY_1_FIELD_4}}?: {{ENTITY_1_FIELD_4_TYPE}};  // {{ENTITY_1_FIELD_4_DESCRIPTION}}
+    createdAt?: Date;                   // When the record was created
+    updatedAt?: Date;                   // When the record was last updated
+}
+```
+
+### Search examples
+
+**By {{ENTITY_1_SEARCH_FIELD}}:**
+
+```ts
+const results = await corsair.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_1_KEY}}.search({
+    data: { {{ENTITY_1_SEARCH_FIELD}}: 'value' }, // [!code highlight]
+});
+```
+
+**By {{ENTITY_1_SEARCH_FIELD_2}}:**
+
+```ts
+const results = await corsair.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_1_KEY}}.search({
+    data: { {{ENTITY_1_SEARCH_FIELD_2}}: true },
+});
+```
+
+**With pagination:**
+
+```ts
+const page1 = await corsair.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_1_KEY}}.search({
+    data: {},
+    limit: 50,
+    offset: 0,
+});
+```
+
+---
+
+## {{ENTITY_2_DISPLAY_NAME}}
+
+### Schema
+
+```ts
+{
+    id: string;
+    {{ENTITY_2_FIELD_1}}: {{ENTITY_2_FIELD_1_TYPE}};
+    {{ENTITY_2_FIELD_2}}: {{ENTITY_2_FIELD_2_TYPE}};
+    {{ENTITY_2_FIELD_3}}?: {{ENTITY_2_FIELD_3_TYPE}};
+    createdAt?: Date;
+}
+```
+
+### Search examples
+
+**By {{ENTITY_2_SEARCH_FIELD}}:**
+
+```ts
+const results = await corsair.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_2_KEY}}.search({
+    data: { {{ENTITY_2_SEARCH_FIELD}}: 'value' }, // [!code highlight]
+});
+```
+
+---
+
+## Multi-tenancy
+
+All queries are automatically scoped when you use `withTenant`:
+
+```ts
+const tenant = corsair.withTenant('user-123');
+
+const results = await tenant.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_1_KEY}}.search({
+    data: { {{ENTITY_1_SEARCH_FIELD}}: 'value' },
+});
+```
+
+Each tenant's data is fully isolated. See [Multi-Tenancy](/concepts/multi-tenancy).
+
+---
+
+## When data is synced
+
+1. **API calls** — every `api.*` call syncs its response automatically
+2. **Webhooks** — incoming webhook events update the relevant entity
+3. **Backfill** — running `corsair setup --backfill` does an initial sync of all entities
+
+To force a refresh, call the corresponding API endpoint:
+
+```ts
+// Re-sync {{ENTITY_1_DISPLAY_NAME_LOWER}}
+await corsair.{{PLUGIN_CLI_NAME}}.api.{{ENTITY_1_KEY}}.list({});
+
+// Then query the updated cache
+const fresh = await corsair.{{PLUGIN_CLI_NAME}}.db.{{ENTITY_1_KEY}}.search({});
+```
