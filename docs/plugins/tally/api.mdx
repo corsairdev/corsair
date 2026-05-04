@@ -1,0 +1,1175 @@
+---
+title: API
+description: "API reference for Tally: every `tally.api.*` operation with input and output types."
+---
+
+Every `tally.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Forms
+
+### create
+
+`forms.create`
+
+Create a new form
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.forms.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+| `templateId` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `blocks` | `object[]` | Yes | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`forms.delete`
+
+Delete a form [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tally.api.forms.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`forms.get`
+
+Retrieve a form by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.forms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`forms.list`
+
+List all forms with optional pagination and workspace filter
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.forms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `workspaceIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  status?: string,
+  workspaceId?: string | null,
+  createdAt?: string,
+  updatedAt?: string,
+  blocks?: {
+  }[],
+  settings?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`forms.update`
+
+Update an existing form
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.forms.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### cancelInvite
+
+`organizations.cancelInvite`
+
+Cancel a pending organization invite [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tally.api.organizations.cancelInvite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `inviteId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### createInvite
+
+`organizations.createInvite`
+
+Invite users to an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.organizations.createInvite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `workspaceIds` | `string[]` | Yes | — |
+| `emails` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### listInvites
+
+`organizations.listInvites`
+
+List pending invites for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.organizations.listInvites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  organizationId?: string,
+  email?: string,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUsers
+
+`organizations.listUsers`
+
+List all users in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.organizations.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  name?: string | null,
+  subscriptionPlan?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeUser
+
+`organizations.removeUser`
+
+Remove a user from an organization [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tally.api.organizations.removeUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Questions
+
+### list
+
+`questions.list`
+
+List all questions for a form
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.questions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `questions` | `object[]` | Yes | — |
+| `hasResponses` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  title?: string | null,
+  isTitleModifiedByUser?: boolean,
+  formId?: string,
+  isDeleted?: boolean,
+  numberOfResponses?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  fields?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Submissions
+
+### delete
+
+`submissions.delete`
+
+Delete a form submission [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tally.api.submissions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `submissionId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`submissions.get`
+
+Retrieve a specific form submission
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.submissions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `submissionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `questions` | `object[]` | No | — |
+| `submission` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  title?: string | null,
+  isTitleModifiedByUser?: boolean,
+  formId?: string,
+  isDeleted?: boolean,
+  numberOfResponses?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="submission full type">
+
+```ts
+{
+  id: string,
+  respondentId?: string | null,
+  formId?: string,
+  createdAt?: string,
+  isCompleted?: boolean,
+  responses?: {
+    id: string,
+    formId?: string,
+    questionId?: string,
+    respondentId?: string,
+    submissionId?: string | null,
+    sessionUuid?: string,
+    answer?: any,
+    formattedAnswer?: string,
+    createdAt?: string,
+    updatedAt?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`submissions.list`
+
+List form submissions with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.submissions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `filter` | `all \| completed \| partial` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `afterId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `totalNumberOfSubmissionsPerFilter` | `object` | No | — |
+| `questions` | `object[]` | No | — |
+| `submissions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="totalNumberOfSubmissionsPerFilter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="questions full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  title?: string | null,
+  isTitleModifiedByUser?: boolean,
+  formId?: string,
+  isDeleted?: boolean,
+  numberOfResponses?: number,
+  createdAt?: string,
+  updatedAt?: string,
+  fields?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="submissions full type">
+
+```ts
+{
+  id: string,
+  respondentId?: string | null,
+  formId?: string,
+  createdAt?: string,
+  isCompleted?: boolean,
+  responses?: {
+    id: string,
+    formId?: string,
+    questionId?: string,
+    respondentId?: string,
+    submissionId?: string | null,
+    sessionUuid?: string,
+    answer?: any,
+    formattedAnswer?: string,
+    createdAt?: string,
+    updatedAt?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getMe
+
+`users.getMe`
+
+Retrieve the current authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.users.getMe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `subscriptionPlan` | `string` | No | — |
+
+
+
+---
+
+## Webhook Management
+
+### create
+
+`webhookManagement.create`
+
+Create a new webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.webhookManagement.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `eventTypes` | `string[]` | Yes | — |
+| `signingSecret` | `string` | No | — |
+| `httpHeaders` | `object[]` | No | — |
+| `externalSubscriber` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="httpHeaders full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `eventTypes` | `string[]` | No | — |
+| `isEnabled` | `boolean` | No | — |
+| `signingSecret` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhookManagement.delete`
+
+Delete a webhook subscription [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tally.api.webhookManagement.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`webhookManagement.list`
+
+List all webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.webhookManagement.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `totalCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: string,
+  url?: string,
+  eventTypes?: string[],
+  isEnabled?: boolean,
+  signingSecret?: string | null,
+  createdAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEvents
+
+`webhookManagement.listEvents`
+
+List delivery events for a webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.webhookManagement.listEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `totalNumberOfEvents` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string,
+  eventType?: string,
+  deliveryStatus?: string,
+  statusCode?: number | null,
+  response?: string | null,
+  retry?: number,
+  payload?: {
+  },
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retryEvent
+
+`webhookManagement.retryEvent`
+
+Retry a failed webhook event delivery
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.webhookManagement.retryEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`webhookManagement.update`
+
+Update a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.webhookManagement.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `formId` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `eventTypes` | `string[]` | Yes | — |
+| `isEnabled` | `boolean` | Yes | — |
+| `signingSecret` | `string` | No | — |
+| `httpHeaders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="httpHeaders full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `void`
+
+
+---
+
+## Workspaces
+
+### create
+
+`workspaces.create`
+
+Create a new workspace (Pro subscription required)
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.workspaces.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `members` | `any[]` | No | — |
+| `invites` | `any[]` | No | — |
+
+
+
+---
+
+### delete
+
+`workspaces.delete`
+
+Delete a workspace [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.tally.api.workspaces.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`workspaces.get`
+
+Retrieve a workspace by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.workspaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `members` | `any[]` | No | — |
+| `invites` | `any[]` | No | — |
+
+
+
+---
+
+### list
+
+`workspaces.list`
+
+List all workspaces
+
+**Risk:** `read`
+
+```ts
+await corsair.tally.api.workspaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `total` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  members?: any[],
+  invites?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`workspaces.update`
+
+Update a workspace name
+
+**Risk:** `write`
+
+```ts
+await corsair.tally.api.workspaces.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
