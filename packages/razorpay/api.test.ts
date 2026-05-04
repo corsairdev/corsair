@@ -5,6 +5,9 @@ import type {
 	CustomersGetResponse,
 	CustomersListResponse,
 	CustomersUpdateResponse,
+	OrdersCreateResponse,
+	OrdersGetResponse,
+	OrdersListResponse,
 	PayoutsCreateResponse,
 	PayoutsGetResponse,
 	PayoutsListResponse,
@@ -231,6 +234,62 @@ describe('Razorpay API Type Tests', () => {
 			);
 
 			RazorpayEndpointOutputSchemas.customersUpdate.parse(result);
+		});
+	});
+
+	describe('orders', () => {
+		let createdOrderId: string | undefined;
+
+		it('ordersCreate returns correct type', async () => {
+			const result = await makeRazorpayRequest<OrdersCreateResponse>(
+				'orders',
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						amount: 100,
+						currency: 'INR',
+						receipt: `corsair-order-${Date.now()}`,
+						notes: {
+							order_source: 'corsair-test',
+						},
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.ordersCreate.parse(result);
+			createdOrderId = result.id;
+		});
+
+		it('ordersList returns correct type', async () => {
+			const result = await makeRazorpayRequest<OrdersListResponse>(
+				'orders',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.ordersList.parse(result);
+		});
+
+		it('ordersGet returns correct type', async () => {
+			if (!createdOrderId) {
+				throw new Error(
+					'Unable to run ordersGet test because no order ID was created',
+				);
+			}
+
+			const result = await makeRazorpayRequest<OrdersGetResponse>(
+				`orders/${createdOrderId}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.ordersGet.parse(result);
 		});
 	});
 });

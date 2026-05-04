@@ -12,15 +12,15 @@ export const RazorpayNotesSchema = z.union([
 // Base order schema for API responses
 export const RazorpayOrderSchema = z
 	.object({
-		id: z.string(),
-		entity: z.literal('order'),
-		amount: z.number(),
-		amount_paid: z.number().optional(),
+		id: z.string().optional(),
+		entity: z.literal('order').optional(),
+		amount: z.number().optional(),
+		amount_paid: z.number().optional().nullable(),
 		amount_due: z.number().optional(),
 		currency: z.string(),
 		receipt: z.string().nullable().optional(),
 		offer_id: z.string().nullable().optional(),
-		status: z.string(),
+		status: z.string().optional(),
 		attempts: z.number().optional(),
 		notes: RazorpayNotesSchema.optional(),
 		created_at: z.number().optional(),
