@@ -1,39 +1,39 @@
 import {
-	create as formsCreate,
-	deleteForm as formsDelete,
-	get as formsGet,
 	list as formsList,
+	create as formsCreate,
+	get as formsGet,
 	update as formsUpdate,
+	deleteForm as formsDelete,
 } from './forms';
-import {
-	cancelInvite as organizationsCancelInvite,
-	createInvite as organizationsCreateInvite,
-	listInvites as organizationsListInvites,
-	listUsers as organizationsListUsers,
-	removeUser as organizationsRemoveUser,
-} from './organizations';
 import { list as questionsList } from './questions';
 import {
-	deleteSubmission as submissionsDelete,
-	get as submissionsGet,
 	list as submissionsList,
+	get as submissionsGet,
+	deleteSubmission as submissionsDelete,
 } from './submissions';
 import { getMe as usersGetMe } from './users';
 import {
-	create as webhookManagementCreate,
-	deleteWebhook as webhookManagementDelete,
+	listUsers as organizationsListUsers,
+	removeUser as organizationsRemoveUser,
+	listInvites as organizationsListInvites,
+	createInvite as organizationsCreateInvite,
+	cancelInvite as organizationsCancelInvite,
+} from './organizations';
+import {
+	list as workspacesList,
+	create as workspacesCreate,
+	get as workspacesGet,
+	update as workspacesUpdate,
+	deleteWorkspace as workspacesDelete,
+} from './workspaces';
+import {
 	list as webhookManagementList,
+	create as webhookManagementCreate,
+	update as webhookManagementUpdate,
+	deleteWebhook as webhookManagementDelete,
 	listEvents as webhookManagementListEvents,
 	retryEvent as webhookManagementRetryEvent,
-	update as webhookManagementUpdate,
 } from './webhook-subscriptions';
-import {
-	create as workspacesCreate,
-	deleteWorkspace as workspacesDelete,
-	get as workspacesGet,
-	list as workspacesList,
-	update as workspacesUpdate,
-} from './workspaces';
 
 export const Forms = {
 	list: formsList,

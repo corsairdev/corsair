@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TallyWebhooks } from '..';
-import { safeDbUpsert, toSubmissionRecord } from '../utils';
 import { createTallyMatch, verifyTallyWebhookSignature } from './types';
+import { toSubmissionRecord, safeDbUpsert } from '../utils';
 
 export const formResponse: TallyWebhooks['formResponse'] = {
 	match: createTallyMatch('FORM_RESPONSE'),

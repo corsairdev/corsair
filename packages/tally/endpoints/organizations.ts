@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TallyEndpoints } from '..';
-import { makeTallyRequest } from '../client';
 import type { TallyEndpointOutputs } from './types';
+import { makeTallyRequest } from '../client';
 
 export const listUsers: TallyEndpoints['organizationsListUsers'] = async (
 	ctx,
@@ -60,44 +60,40 @@ export const listInvites: TallyEndpoints['organizationsListInvites'] = async (
 	return result;
 };
 
-export const createInvite: TallyEndpoints['organizationsCreateInvite'] = async (
-	ctx,
-	input,
-) => {
-	const { organizationId, ...body } = input;
-	const result = await makeTallyRequest<
-		TallyEndpointOutputs['organizationsCreateInvite']
-	>(`organizations/${organizationId}/invites`, ctx.key, {
-		method: 'POST',
-		body: { ...body },
-	});
+export const createInvite: TallyEndpoints['organizationsCreateInvite'] =
+	async (ctx, input) => {
+		const { organizationId, ...body } = input;
+		const result = await makeTallyRequest<
+			TallyEndpointOutputs['organizationsCreateInvite']
+		>(`organizations/${organizationId}/invites`, ctx.key, {
+			method: 'POST',
+			body: { ...body },
+		});
 
-	await logEventFromContext(
-		ctx,
-		'tally.organizations.createInvite',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'tally.organizations.createInvite',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
-export const cancelInvite: TallyEndpoints['organizationsCancelInvite'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeTallyRequest<
-		TallyEndpointOutputs['organizationsCancelInvite']
-	>(
-		`organizations/${input.organizationId}/invites/${input.inviteId}`,
-		ctx.key,
-		{ method: 'DELETE' },
-	);
+export const cancelInvite: TallyEndpoints['organizationsCancelInvite'] =
+	async (ctx, input) => {
+		const result = await makeTallyRequest<
+			TallyEndpointOutputs['organizationsCancelInvite']
+		>(
+			`organizations/${input.organizationId}/invites/${input.inviteId}`,
+			ctx.key,
+			{ method: 'DELETE' },
+		);
 
-	await logEventFromContext(
-		ctx,
-		'tally.organizations.cancelInvite',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'tally.organizations.cancelInvite',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

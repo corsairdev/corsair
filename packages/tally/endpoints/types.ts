@@ -21,19 +21,31 @@ const TallyFormSchema = z
 
 const TallyQuestionSchema = z
 	.object({
-		key: z.string(),
-		label: z.string().optional(),
+		id: z.string(),
 		type: z.string().optional(),
+		title: z.string().nullable().optional(),
+		isTitleModifiedByUser: z.boolean().optional(),
+		formId: z.string().optional(),
+		isDeleted: z.boolean().optional(),
+		numberOfResponses: z.number().optional(),
+		createdAt: z.string().optional(),
+		updatedAt: z.string().optional(),
+		fields: z.array(z.record(z.unknown())).optional(),
 	})
 	.passthrough();
 
 const TallyFieldResponseSchema = z
 	.object({
-		key: z.string(),
-		label: z.string().optional(),
-		type: z.string().optional(),
-		value: z.unknown().optional(),
-		options: z.array(z.unknown()).optional(),
+		id: z.string(),
+		formId: z.string().optional(),
+		questionId: z.string().optional(),
+		respondentId: z.string().optional(),
+		submissionId: z.string().nullable().optional(),
+		sessionUuid: z.string().optional(),
+		answer: z.unknown().optional(),
+		formattedAnswer: z.string().optional(),
+		createdAt: z.string().optional(),
+		updatedAt: z.string().optional(),
 	})
 	.passthrough();
 

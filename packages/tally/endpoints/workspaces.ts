@@ -1,18 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TallyEndpoints } from '..';
-import { makeTallyRequest } from '../client';
-import { safeDbDelete, safeDbUpsert, toWorkspaceRecord } from '../utils';
 import type { TallyEndpointOutputs } from './types';
+import { makeTallyRequest } from '../client';
+import { toWorkspaceRecord, safeDbUpsert, safeDbDelete } from '../utils';
 
 export const list: TallyEndpoints['workspacesList'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (input.page !== undefined) query.page = input.page;
 
-	const result = await makeTallyRequest<TallyEndpointOutputs['workspacesList']>(
-		'workspaces',
-		ctx.key,
-		{ method: 'GET', query },
-	);
+	const result = await makeTallyRequest<
+		TallyEndpointOutputs['workspacesList']
+	>('workspaces', ctx.key, { method: 'GET', query });
 
 	if (result.items) {
 		for (const workspace of result.items) {
@@ -64,11 +62,9 @@ export const create: TallyEndpoints['workspacesCreate'] = async (
 };
 
 export const get: TallyEndpoints['workspacesGet'] = async (ctx, input) => {
-	const result = await makeTallyRequest<TallyEndpointOutputs['workspacesGet']>(
-		`workspaces/${input.workspaceId}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const result = await makeTallyRequest<
+		TallyEndpointOutputs['workspacesGet']
+	>(`workspaces/${input.workspaceId}`, ctx.key, { method: 'GET' });
 
 	if (result.id) {
 		await safeDbUpsert(

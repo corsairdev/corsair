@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TallyEndpoints } from '..';
-import { makeTallyRequest } from '../client';
 import type { TallyEndpointOutputs } from './types';
+import { makeTallyRequest } from '../client';
 
 export const getMe: TallyEndpoints['usersGetMe'] = async (ctx, _input) => {
 	const result = await makeTallyRequest<TallyEndpointOutputs['usersGetMe']>(

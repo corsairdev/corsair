@@ -1,8 +1,16 @@
-import type {
-	TallyForm,
-	TallySubmission,
-	TallyWorkspace,
-} from './schema/database';
+import type { TallyForm, TallySubmission, TallyWorkspace } from './schema/database';
+
+/**
+ * Serializes workspace IDs for `GET /forms` query (OpenAPI `style: form`, `explode: true`).
+ * Example: `["a", "b c"]` → `workspaceIds=a&workspaceIds=b%20c`
+ */
+export function buildFormsListWorkspaceQuerySegment(
+	workspaceIds: string[],
+): string {
+	return workspaceIds
+		.map((id) => `workspaceIds=${encodeURIComponent(id)}`)
+		.join('&');
+}
 
 function toDate(value: string | undefined | null): Date | undefined {
 	return value ? new Date(value) : undefined;
@@ -59,9 +67,7 @@ export function toSubmissionRecord(submission: {
 }
 
 export async function safeDbUpsert<T>(
-	db:
-		| { upsertByEntityId: (id: string, data: T) => Promise<unknown> }
-		| undefined,
+	db: { upsertByEntityId: (id: string, data: T) => Promise<unknown> } | undefined,
 	entityId: string,
 	data: T,
 	label: string,

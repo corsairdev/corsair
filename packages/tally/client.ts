@@ -41,7 +41,8 @@ export async function makeTallyRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: isWriteMethod && body !== undefined ? body : undefined,
+		body:
+			isWriteMethod && body !== undefined ? body : undefined,
 		mediaType: isWriteMethod ? 'application/json; charset=utf-8' : undefined,
 		query: method === 'GET' ? query : undefined,
 	};
