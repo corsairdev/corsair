@@ -32,6 +32,7 @@ import {
 	StripeEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { getValidStripeAccessToken } from './client';
 import { StripeSchema } from './schema';
 import {
 	ChargeWebhooks,
@@ -69,7 +70,7 @@ import {
 } from './webhooks/types';
 
 export type StripePluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalStripePlugin['hooks'];
@@ -451,6 +452,14 @@ export function stripe<const T extends StripePluginOptions>(
 		id: 'stripe',
 		schema: StripeSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Stripe',
+			authUrl: 'https://marketplace.stripe.com/oauth/v2/authorize',
+			tokenUrl: 'https://api.stripe.com/v1/oauth/token',
+			scopes: ['stripe_apps'],
+			tokenAuthMethod: 'basic',
+			requiresRegisteredRedirect: true,
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: stripeEndpointsNested,
@@ -492,6 +501,73 @@ export function stripe<const T extends StripePluginOptions>(
 				}
 
 				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new Error(
+						'[corsair:stripe] No refresh token found. Run `corsair auth --plugin=stripe` to re-authenticate.',
+					);
+				}
+
+				const creds = await ctx.keys.get_integration_credentials();
+
+				if (!creds.client_secret) {
+					throw new Error(
+						'[corsair:stripe] Missing client_secret. Run `corsair setup --stripe` to configure credentials.',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidStripeAccessToken>>;
+				try {
+					result = await getValidStripeAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientSecret: creds.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:stripe] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						// Stripe reissues the refresh token on every exchange — persist both
+						await ctx.keys.set_access_token(result.accessToken);
+						await ctx.keys.set_refresh_token(result.refreshToken);
+						await ctx.keys.set_expires_at(String(result.expiresAt));
+					} catch (error) {
+						throw new Error(
+							`[corsair:stripe] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				// Expose force-refresh so endpoints can retry on 401 (e.g. revoked token)
+				// without waiting for the 1-hour expiry window to lapse.
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidStripeAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientSecret: creds.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_refresh_token(freshResult.refreshToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					return freshResult.accessToken;
+				};
+
+				return result.accessToken;
 			}
 
 			return '';
