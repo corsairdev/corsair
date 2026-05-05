@@ -14,7 +14,13 @@ export type CorsairToolDef = {
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
-	const { corsair, permissions, basePermissionUrl, setup } = options;
+	const {
+		corsair,
+		permissions,
+		basePermissionUrl,
+		setup,
+		tenantId: defaultTenantId,
+	} = options;
 
 	const defs: CorsairToolDef[] = [
 		{
@@ -107,18 +113,24 @@ export function buildCorsairToolDefs(
 		defs.push({
 			name: 'corsair_setup',
 			description:
-				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up.',
-			shape: {},
-			handler: async () => {
+				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up. For multi-tenant Corsair instances, pass tenantId to set up a specific tenant.',
+			shape: {
+				tenantId: z
+					.string()
+					.optional()
+					.describe(
+						"Tenant ID to configure for multi-tenant Corsair instances. Defaults to the server's configured tenantId, then 'default'.",
+					),
+			},
+			handler: async ({ tenantId }) => {
 				try {
-					if (Object.keys(corsair).includes('withTenant')) {
-						throw new Error(
-							'Cannot setup Corsair if it multiTenancy is enabled.',
-						);
-					}
-
+					const setupTenantId =
+						typeof tenantId === 'string' && tenantId.length > 0
+							? tenantId
+							: defaultTenantId;
 					const text = await setupCorsair(
 						corsair as Parameters<typeof setupCorsair>[0],
+						setupTenantId ? { tenantId: setupTenantId } : undefined,
 					);
 					return {
 						content: [

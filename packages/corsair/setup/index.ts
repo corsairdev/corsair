@@ -1,4 +1,4 @@
-import type { Kysely } from 'kysely';
+import { Kysely } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import {
 	ZodBoolean,
@@ -11,14 +11,27 @@ import {
 	ZodOptional,
 	ZodRecord,
 	ZodString,
+	ZodType,
 } from 'zod';
 import type {
+	AuthTypes,
+	BaseKeyManager,
 	CorsairInternalConfig,
 	CorsairPlugin,
 	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
 } from '../core';
-import { CORSAIR_INTERNAL, createCorsair } from '../core';
-import type { CorsairKyselyDatabase } from '../db/kysely/database';
+import {
+	BASE_AUTH_FIELDS,
+	CORSAIR_INTERNAL,
+	createAccountKeyManager,
+	createCorsair,
+	createIntegrationKeyManager,
+} from '../core';
+import type {
+	CorsairDatabase,
+	CorsairKyselyDatabase,
+} from '../db/kysely/database';
 import { TABLE_SCHEMAS } from '../db/orm';
 
 // Inlined at build time by the esbuild YAML plugin in tsup.config.ts.
@@ -35,9 +48,14 @@ type BackfillYaml = Record<
 	Record<string, Record<string, Record<string, unknown>>>
 >;
 
-type KeyManager = Record<string, unknown>;
-
 export interface SetupCorsairOptions {
+	/**
+	 * Tenant to configure. Defaults to "default" to preserve single-tenant setup
+	 * behavior, and is used to scope account rows, account credentials, auth
+	 * checks, and optional backfill.
+	 */
+	tenantId?: string;
+
 	/**
 	 * When true, calls list endpoints for every plugin defined in
 	 * setup/backfill.yaml to seed the local database with initial data.
@@ -69,27 +87,45 @@ export interface SetupCorsairOptions {
 
 type SetupLog = (msg: string) => void;
 type SetupWarn = (msg: string) => void;
+type SetupCorsairInstance<Plugins extends readonly CorsairPlugin[]> =
+	| CorsairSingleTenantClient<Plugins>
+	| CorsairTenantWrapper<Plugins>;
+type SetupInternalConfig = CorsairInternalConfig & {
+	database: CorsairDatabase;
+};
+
+type CallableProperty = (...args: readonly unknown[]) => unknown;
+
+type PluginSetupAuth = {
+	pluginId: string;
+	authType: AuthTypes;
+	integration: BaseKeyManager;
+	account: BaseKeyManager;
+	integrationFields: readonly string[];
+	accountFields: readonly string[];
+};
 
 /**
  * Initialises a corsair instance end-to-end:
  *
  * 1. Checks that all required corsair_* tables exist (warns if any are missing).
  * 2. Ensures every configured plugin has rows in `corsair_integrations` and
- *    `corsair_accounts` (tenant_id = 'default') and issues DEKs where needed.
+ *    `corsair_accounts` for the requested tenant and issues DEKs where needed.
  * 3. Applies any credentials passed via `options.credentials`.
  * 4. Checks auth status for each plugin and logs guidance for any missing credentials.
  *    When `caller` is 'cli', guidance is printed as CLI flags instead of JS calls.
  * 5. If `{ backfill: true }`, calls the list endpoints defined in
  *    `setup/backfill.yaml` for each plugin that has auth configured.
  *
- * Only single-tenant corsair instances are accepted.
+ * Multi-tenant corsair instances are accepted; pass `options.tenantId` to target
+ * a non-default tenant.
  *
  * Returns a newline-separated string of all setup output.
  */
 export async function setupCorsair<
 	const Plugins extends readonly CorsairPlugin[],
 >(
-	corsair: CorsairSingleTenantClient<Plugins>,
+	corsair: SetupCorsairInstance<Plugins>,
 	options?: SetupCorsairOptions,
 ): Promise<string> {
 	const messages: string[] = [];
@@ -103,19 +139,16 @@ export async function setupCorsair<
 	};
 
 	const caller = options?.caller ?? 'script';
+	const tenantIdWasProvided = options?.tenantId !== undefined;
+	const tenantId = options?.tenantId ?? 'default';
+	if (!tenantId) {
+		throw new Error('setupCorsair: tenantId must be a non-empty string');
+	}
 
-	const internal = (corsair as unknown as Record<symbol, unknown>)[
-		CORSAIR_INTERNAL
-	] as CorsairInternalConfig | undefined;
+	const internal = getCorsairInternal(corsair);
 
 	if (!internal) {
 		throw new Error('setupCorsair: invalid corsair instance');
-	}
-	if (internal.multiTenancy) {
-		throw new Error(
-			'setupCorsair: multi-tenancy instances are not supported. ' +
-				'Create your corsair instance without multiTenancy: true.',
-		);
 	}
 	if (!internal.database) {
 		throw new Error(
@@ -123,29 +156,38 @@ export async function setupCorsair<
 		);
 	}
 
-	const db = internal.database.db as Kysely<CorsairKyselyDatabase>;
-
-	const instance = createCorsair({
-		plugins: internal.plugins as unknown as Plugins,
-		database: internal.database.db,
-		kek: internal.kek,
-	}) as unknown as CorsairSingleTenantClient<readonly CorsairPlugin[]>;
+	const setupInternal: SetupInternalConfig = {
+		...internal,
+		database: internal.database,
+	};
+	const db = setupInternal.database.db;
 
 	// 1. Verify schema
 	await checkTables(db, warn);
 
 	// 2. Create integration + account rows and issue DEKs for every plugin.
-	await ensurePluginRowsAndDeks(db, instance, internal.plugins, log);
+	const pluginAuth = await ensurePluginRowsAndDeks(
+		db,
+		setupInternal,
+		tenantId,
+		log,
+	);
 
 	// 3. Apply any credentials provided by the caller (CLI flags or programmatic).
 	if (options?.credentials && Object.keys(options.credentials).length > 0) {
-		await applyCredentials(instance, options.credentials, log, warn);
+		await applyCredentials(
+			pluginAuth,
+			options.credentials,
+			{ tenantId, tenantIdWasProvided },
+			log,
+			warn,
+		);
 	}
 
 	// 4. Check auth status for each plugin and log guidance for missing credentials.
 	const authReadyPlugins = await checkAllPluginsAuthStatus(
-		instance,
-		internal.plugins,
+		pluginAuth,
+		tenantId,
 		log,
 		caller,
 	);
@@ -153,11 +195,71 @@ export async function setupCorsair<
 	// 5. Optional backfill — only for plugins with auth configured.
 	if (options?.backfill) {
 		log('[corsair:setup] Starting backfill...');
+		const instance = createCorsair({
+			plugins: internal.plugins,
+			database: db,
+			kek: internal.kek,
+			multiTenancy: true,
+		}).withTenant(tenantId);
 		await runBackfill(instance, internal.plugins, authReadyPlugins, log, warn);
 		log('[corsair:setup] Backfill complete.');
 	}
 
 	return messages.join('\n');
+}
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
+
+function isCorsairInternalConfig(
+	value: unknown,
+): value is CorsairInternalConfig {
+	if (!isObjectRecord(value)) return false;
+	if (!Array.isArray(value.plugins)) return false;
+	if (typeof value.kek !== 'string') return false;
+	if (typeof value.multiTenancy !== 'boolean') return false;
+	if (value.database === undefined) return true;
+	if (!isObjectRecord(value.database)) return false;
+	return value.database.db instanceof Kysely;
+}
+
+function getCorsairInternal(corsair: object): CorsairInternalConfig | undefined {
+	const descriptor = Object.getOwnPropertyDescriptor(corsair, CORSAIR_INTERNAL);
+	if (!descriptor) return undefined;
+	return isCorsairInternalConfig(descriptor.value)
+		? descriptor.value
+		: undefined;
+}
+
+function isAuthType(value: unknown): value is AuthTypes {
+	return value === 'oauth_2' || value === 'api_key' || value === 'bot_token';
+}
+
+function getPluginAuthType(plugin: CorsairPlugin): AuthTypes | undefined {
+	const authType = plugin.options?.authType;
+	return isAuthType(authType) ? authType : undefined;
+}
+
+function getCallableProperty(
+	value: unknown,
+	key: string,
+): CallableProperty | undefined {
+	if (!isObjectRecord(value)) return undefined;
+	const property = value[key];
+	return typeof property === 'function'
+		? (...args) => Reflect.apply(property, value, args)
+		: undefined;
+}
+
+function isNestedRecord(value: unknown, depth: number): boolean {
+	if (!isObjectRecord(value)) return false;
+	if (depth === 0) return true;
+	return Object.values(value).every((child) => isNestedRecord(child, depth - 1));
+}
+
+function isBackfillYaml(value: unknown): value is BackfillYaml {
+	return isNestedRecord(value, 4);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -166,15 +268,13 @@ export async function setupCorsair<
 
 const REQUIRED_TABLES = {
 	...TABLE_SCHEMAS,
-} as const;
+};
 
 function describeZodSchema(schema: ZodTypeAny): unknown {
 	if (schema instanceof ZodObject) {
 		const shape: Record<string, unknown> = {};
-		for (const [key, val] of Object.entries(
-			schema.shape as Record<string, ZodTypeAny>,
-		)) {
-			shape[key] = describeZodSchema(val);
+		for (const [key, val] of Object.entries(schema.shape)) {
+			shape[key] = val instanceof ZodType ? describeZodSchema(val) : 'unknown';
 		}
 		return shape;
 	}
@@ -185,7 +285,7 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 	if (schema instanceof ZodOptional)
 		return `${describeZodSchema(schema.unwrap())} | undefined`;
 	if (schema instanceof ZodEnum)
-		return (schema.options as string[]).join(' | ');
+		return schema.options.join(' | ');
 	if (schema instanceof ZodString) return 'string';
 	if (schema instanceof ZodNumber) return 'number';
 	if (schema instanceof ZodBoolean) return 'boolean';
@@ -216,27 +316,18 @@ async function checkTables(
 // Row + DEK provisioning (no auth check)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const TENANT_ID = 'default';
-
 async function ensurePluginRowsAndDeks(
 	db: Kysely<CorsairKyselyDatabase>,
-	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
-	plugins: readonly CorsairPlugin[],
+	internal: SetupInternalConfig,
+	tenantId: string,
 	log: SetupLog,
-): Promise<void> {
+): Promise<Map<string, PluginSetupAuth>> {
 	const now = new Date();
+	const pluginAuth = new Map<string, PluginSetupAuth>();
 
-	const integrationKeys = instance.keys as unknown as Record<
-		string,
-		KeyManager | undefined
-	>;
-	const pluginNamespaces = instance as unknown as Record<
-		string,
-		{ keys?: KeyManager } | undefined
-	>;
-
-	for (const plugin of plugins) {
+	for (const plugin of internal.plugins) {
 		const pluginId = plugin.id;
+		const authType = getPluginAuthType(plugin);
 
 		// ── Integration row ────────────────────────────────────────────────────
 		let integration = await db
@@ -266,11 +357,25 @@ async function ensurePluginRowsAndDeks(
 		}
 
 		// ── Integration-level DEK ──────────────────────────────────────────────
-		const integrationKeyMgr = integrationKeys[pluginId];
+		const extraIntegrationFields = authType
+			? (plugin.authConfig?.[authType]?.integration ?? [])
+			: [];
+		const extraAccountFields = authType
+			? (plugin.authConfig?.[authType]?.account ?? [])
+			: [];
+		const integrationKeyMgr =
+			authType && integration
+				? createIntegrationKeyManager({
+						authType,
+						integrationName: pluginId,
+						kek: internal.kek,
+						database: internal.database,
+						extraIntegrationFields,
+					})
+				: undefined;
+
 		if (integration && !integration.dek && integrationKeyMgr) {
-			await (
-				integrationKeyMgr as { issue_new_dek: () => Promise<void> }
-			).issue_new_dek();
+			await integrationKeyMgr.issue_new_dek();
 			log(`[corsair:setup] Issued integration DEK: ${pluginId}`);
 		}
 
@@ -280,7 +385,7 @@ async function ensurePluginRowsAndDeks(
 		let account = await db
 			.selectFrom('corsair_accounts')
 			.selectAll()
-			.where('tenant_id', '=', TENANT_ID)
+			.where('tenant_id', '=', tenantId)
 			.where('integration_id', '=', integration.id)
 			.executeTakeFirst();
 
@@ -290,7 +395,7 @@ async function ensurePluginRowsAndDeks(
 				.insertInto('corsair_accounts')
 				.values({
 					id,
-					tenant_id: TENANT_ID,
+					tenant_id: tenantId,
 					integration_id: integration.id,
 					config: {},
 					created_at: now,
@@ -306,14 +411,41 @@ async function ensurePluginRowsAndDeks(
 		}
 
 		// ── Account-level DEK ─────────────────────────────────────────────────
-		const accountKeyMgr = pluginNamespaces[pluginId]?.keys;
+		const accountKeyMgr =
+			authType && account
+				? createAccountKeyManager({
+						authType,
+						integrationName: pluginId,
+						tenantId,
+						kek: internal.kek,
+						database: internal.database,
+						extraAccountFields,
+					})
+				: undefined;
 		if (account && !account.dek && accountKeyMgr) {
-			await (
-				accountKeyMgr as { issue_new_dek: () => Promise<void> }
-			).issue_new_dek();
+			await accountKeyMgr.issue_new_dek();
 			log(`[corsair:setup] Issued account DEK: ${pluginId}`);
 		}
+
+		if (authType && integrationKeyMgr && accountKeyMgr) {
+			pluginAuth.set(pluginId, {
+				pluginId,
+				authType,
+				integration: integrationKeyMgr,
+				account: accountKeyMgr,
+				integrationFields: [
+					...BASE_AUTH_FIELDS[authType].integration,
+					...extraIntegrationFields,
+				],
+				accountFields: [
+					...BASE_AUTH_FIELDS[authType].account,
+					...extraAccountFields,
+				],
+			});
+		}
 	}
+
+	return pluginAuth;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -321,43 +453,36 @@ async function ensurePluginRowsAndDeks(
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function applyCredentials(
-	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
+	pluginAuth: Map<string, PluginSetupAuth>,
 	credentials: Record<string, Record<string, string>>,
+	tenantScope: { tenantId: string; tenantIdWasProvided: boolean },
 	log: SetupLog,
 	warn: SetupWarn,
 ): Promise<void> {
-	const integrationKeys = instance.keys as unknown as Record<
-		string,
-		KeyManager | undefined
-	>;
-	const pluginNamespaces = instance as unknown as Record<
-		string,
-		{ keys?: KeyManager } | undefined
-	>;
-
 	for (const [pluginId, fields] of Object.entries(credentials)) {
-		const integrationKeyMgr = integrationKeys[pluginId];
-		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as
-			| KeyManager
-			| undefined;
+		const auth = pluginAuth.get(pluginId);
 
 		for (const [field, value] of Object.entries(fields)) {
 			const setter = `set_${field}`;
+			const integrationSetter = getCallableProperty(auth?.integration, setter);
+			const accountSetter = getCallableProperty(auth?.account, setter);
 
-			if (
-				integrationKeyMgr &&
-				typeof integrationKeyMgr[setter] === 'function'
-			) {
-				await (integrationKeyMgr[setter] as (v: string) => Promise<void>)(
-					value,
-				);
+			if (integrationSetter) {
+				if (tenantScope.tenantIdWasProvided) {
+					throw new Error(
+						`[corsair:setup] '${pluginId}.${field}' is an integration-level credential shared across all tenants. ` +
+							`You passed tenantId="${tenantScope.tenantId}", which only scopes account-level credentials. ` +
+							'Run setup without tenantId if you intend to change this credential globally.',
+					);
+				}
+				await integrationSetter(value);
 				log(`[corsair:setup] Set integration credential: ${pluginId}.${field}`);
-			} else if (accountKeyMgr && typeof accountKeyMgr[setter] === 'function') {
-				await (accountKeyMgr[setter] as (v: string) => Promise<void>)(value);
+			} else if (accountSetter) {
+				await accountSetter(value);
 				log(`[corsair:setup] Set account credential: ${pluginId}.${field}`);
 			} else {
 				warn(
-					`[corsair:setup] No setter found for '${pluginId}.${field}' — skipping.`,
+					`[corsair:setup] No setter found for '${pluginId}.${field}' - skipping.`,
 				);
 			}
 		}
@@ -378,43 +503,40 @@ const OPTIONAL_FIELDS = new Set([
 
 async function checkAuthStatus(
 	pluginId: string,
-	authType: string,
-	integrationKeyMgr: KeyManager,
-	accountKeyMgr: KeyManager,
+	authType: AuthTypes,
+	integrationKeyMgr: BaseKeyManager,
+	accountKeyMgr: BaseKeyManager,
+	integrationFields: readonly string[],
+	accountFields: readonly string[],
+	tenantId: string,
 	log: SetupLog,
 	caller: 'cli' | 'script',
 ): Promise<boolean> {
 	const missingIntegration: string[] = [];
 	const missingAccount: string[] = [];
 
-	for (const key of Object.keys(integrationKeyMgr)) {
-		if (!key.startsWith('set_')) continue;
-		const field = key.slice(4);
+	for (const field of integrationFields) {
 		if (OPTIONAL_FIELDS.has(field)) continue;
-		const getter = integrationKeyMgr[`get_${field}`] as
-			| (() => Promise<string | null>)
-			| undefined;
+		const getter = getCallableProperty(integrationKeyMgr, `get_${field}`);
 		if (!getter) continue;
 		let value: string | null = null;
 		try {
-			value = await getter();
+			const result = await getter();
+			value = typeof result === 'string' ? result : null;
 		} catch {
 			/* treat as missing */
 		}
 		if (!value) missingIntegration.push(field);
 	}
 
-	for (const key of Object.keys(accountKeyMgr)) {
-		if (!key.startsWith('set_')) continue;
-		const field = key.slice(4);
+	for (const field of accountFields) {
 		if (OPTIONAL_FIELDS.has(field)) continue;
-		const getter = accountKeyMgr[`get_${field}`] as
-			| (() => Promise<string | null>)
-			| undefined;
+		const getter = getCallableProperty(accountKeyMgr, `get_${field}`);
 		if (!getter) continue;
 		let value: string | null = null;
 		try {
-			value = await getter();
+			const result = await getter();
+			value = typeof result === 'string' ? result : null;
 		} catch {
 			/* treat as missing */
 		}
@@ -443,7 +565,11 @@ async function checkAuthStatus(
 				lines.push(`  await corsair.keys.${pluginId}.set_${field}(value)`);
 			}
 			for (const field of missingAccount) {
-				lines.push(`  await corsair.${pluginId}.keys.set_${field}(value)`);
+				const accountNamespace =
+					tenantId === 'default'
+						? `corsair.${pluginId}`
+						: `corsair.withTenant(${JSON.stringify(tenantId)}).${pluginId}`;
+				lines.push(`  await ${accountNamespace}.keys.set_${field}(value)`);
 			}
 			log(lines.join('\n'));
 		}
@@ -453,45 +579,26 @@ async function checkAuthStatus(
 }
 
 async function checkAllPluginsAuthStatus(
-	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
-	plugins: readonly CorsairPlugin[],
+	pluginAuth: Map<string, PluginSetupAuth>,
+	tenantId: string,
 	log: SetupLog,
 	caller: 'cli' | 'script',
 ): Promise<Set<string>> {
 	const authReadyPlugins = new Set<string>();
 
-	const integrationKeys = instance.keys as unknown as Record<
-		string,
-		KeyManager | undefined
-	>;
-	const pluginNamespaces = instance as unknown as Record<
-		string,
-		{ keys?: KeyManager } | undefined
-	>;
-
-	for (const plugin of plugins) {
-		const pluginId = plugin.id;
-		const authType =
-			((plugin.options as Record<string, unknown>)?.authType as
-				| string
-				| undefined) ?? 'unknown';
-
-		const integrationKeyMgr = integrationKeys[pluginId];
-		const accountKeyMgr = pluginNamespaces[pluginId]?.keys as
-			| KeyManager
-			| undefined;
-
-		if (integrationKeyMgr && accountKeyMgr) {
-			const isReady = await checkAuthStatus(
-				pluginId,
-				authType,
-				integrationKeyMgr,
-				accountKeyMgr,
-				log,
-				caller,
-			);
-			if (isReady) authReadyPlugins.add(pluginId);
-		}
+	for (const auth of pluginAuth.values()) {
+		const isReady = await checkAuthStatus(
+			auth.pluginId,
+			auth.authType,
+			auth.integration,
+			auth.account,
+			auth.integrationFields,
+			auth.accountFields,
+			tenantId,
+			log,
+			caller,
+		);
+		if (isReady) authReadyPlugins.add(auth.pluginId);
 	}
 
 	return authReadyPlugins;
@@ -502,24 +609,18 @@ async function checkAllPluginsAuthStatus(
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function runBackfill(
-	instance: CorsairSingleTenantClient<readonly CorsairPlugin[]>,
+	instance: object,
 	plugins: readonly CorsairPlugin[],
 	authReadyPlugins: Set<string>,
 	log: SetupLog,
 	warn: SetupWarn,
 ): Promise<void> {
-	const config = backfillConfig as BackfillYaml;
+	if (!isBackfillYaml(backfillConfig)) {
+		warn('[corsair:setup] Backfill config is invalid - skipping backfill.');
+		return;
+	}
+	const config = backfillConfig;
 	const activePluginIds = new Set(plugins.map((p) => p.id));
-	const instanceRecord = instance as unknown as Record<
-		string,
-		| {
-				api: Record<
-					string,
-					Record<string, (params: unknown) => Promise<unknown>>
-				>;
-		  }
-		| undefined
-	>;
 
 	for (const [pluginId, groups] of Object.entries(config)) {
 		if (!activePluginIds.has(pluginId)) continue;
@@ -531,14 +632,21 @@ async function runBackfill(
 			continue;
 		}
 
-		const api = instanceRecord[pluginId]?.api;
+		const pluginNamespace = isObjectRecord(instance)
+			? instance[pluginId]
+			: undefined;
+		const api = isObjectRecord(pluginNamespace)
+			? pluginNamespace.api
+			: undefined;
 		if (!api) continue;
 
 		for (const [group, methods] of Object.entries(groups)) {
 			for (const [method, params] of Object.entries(methods)) {
 				log(`[corsair:setup] Backfilling ${pluginId} › ${group}.${method}...`);
 				try {
-					await api[group]?.[method]?.(params);
+					const groupNamespace = isObjectRecord(api) ? api[group] : undefined;
+					const endpoint = getCallableProperty(groupNamespace, method);
+					await endpoint?.(params);
 				} catch (error) {
 					warn(
 						`[corsair:setup] ${pluginId} › ${group}.${method} failed: ` +
