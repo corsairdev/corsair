@@ -14,6 +14,9 @@ import type {
 	PayoutsCreateResponse,
 	PayoutsGetResponse,
 	PayoutsListResponse,
+	RefundsCreateResponse,
+	RefundsGetResponse,
+	RefundsListResponse,
 } from './endpoints/types';
 import { RazorpayEndpointOutputSchemas } from './endpoints/types';
 
@@ -33,6 +36,12 @@ const CREATE_PAYOUT_PURPOSE = process.env.RAZORPAY_CREATE_PAYOUT_PURPOSE;
 const TEST_PAYMENT_CAPTURE_AMOUNT = process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT;
 const TEST_PAYMENT_CAPTURE_CURRENCY =
 	process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_CURRENCY;
+
+const TEST_REFUND_PAYMENT_ID = process.env.RAZORPAY_TEST_REFUND_PAYMENT_ID;
+const TEST_REFUND_ID = process.env.RAZORPAY_TEST_REFUND_ID;
+const CREATE_REFUND_AMOUNT = process.env.RAZORPAY_CREATE_REFUND_AMOUNT
+	? Number(process.env.RAZORPAY_CREATE_REFUND_AMOUNT)
+	: undefined;
 
 describe('Razorpay API Type Tests', () => {
 
@@ -369,6 +378,81 @@ describe('Razorpay API Type Tests', () => {
 			);
 
 			RazorpayEndpointOutputSchemas.paymentsCapture.parse(result);
+		});
+	});
+
+	describe('refunds', () => {
+
+		beforeAll(() => {
+			const requiredEnvVars = [
+				{
+					key: 'RAZORPAY_TEST_REFUND_PAYMENT_ID',
+					value: TEST_REFUND_PAYMENT_ID,
+				},
+				{
+					key: 'RAZORPAY_TEST_REFUND_ID',
+					value: TEST_REFUND_ID,
+				},
+				{
+					key: 'RAZORPAY_CREATE_REFUND_AMOUNT',
+					value: CREATE_REFUND_AMOUNT,
+				}
+			];
+
+
+			const missingVars = requiredEnvVars
+				.filter(({ value }) => !value)
+				.map(({ key }) => key);
+
+			if (missingVars.length > 0) {
+				throw new Error(
+					`Missing required env vars for payout tests: ${missingVars.join(', ')}`,
+				);
+			}
+		});
+
+		it('refundsCreate returns correct type', async () => {
+
+			const result = await makeRazorpayRequest<RefundsCreateResponse>(
+				`payments/${TEST_REFUND_PAYMENT_ID}/refund`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						amount: CREATE_REFUND_AMOUNT,
+						speed: 'normal',
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.refundsCreate.parse(result);
+		});
+
+		it('refundsList returns correct type', async () => {
+
+			const result = await makeRazorpayRequest<RefundsListResponse>(
+				`payments/${TEST_REFUND_PAYMENT_ID}/refunds`,
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.refundsList.parse(result);
+		});
+
+		it('refundsGet returns correct type', async () => {
+
+			const result = await makeRazorpayRequest<RefundsGetResponse>(
+				`payments/${TEST_REFUND_PAYMENT_ID}/refunds/${TEST_REFUND_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.refundsGet.parse(result);
 		});
 	});
 });
