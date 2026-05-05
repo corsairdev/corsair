@@ -414,7 +414,7 @@ export async function getCorsairInstance({
 // Arg parsing
 // ─────────────────────────────────────────────────────────────────────────────
 
-const RESERVED_FLAGS = new Set(['backfill', 'help', 'h']);
+const RESERVED_FLAGS = new Set(['backfill', 'help', 'h', 'tenant']);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Instance helpers
@@ -574,15 +574,30 @@ function parseAuthArgs(args: string[]): {
 
 function parseSetupArgs(args: string[]): {
 	backfill: boolean;
+	tenantId?: string;
 	credentials: Record<string, Record<string, string>>;
 } {
 	let backfill = false;
+	let tenantId: string | undefined;
 	const credentials: Record<string, Record<string, string>> = {};
 	let currentPlugin: string | null = null;
 
-	for (const arg of args) {
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i]!;
 		if (arg === '--backfill' || arg === '-backfill') {
 			backfill = true;
+			currentPlugin = null;
+			continue;
+		}
+
+		if (arg === '--tenant' && args[i + 1]) {
+			tenantId = args[++i];
+			currentPlugin = null;
+			continue;
+		}
+
+		if (arg.startsWith('--tenant=')) {
+			tenantId = arg.slice('--tenant='.length);
 			currentPlugin = null;
 			continue;
 		}
@@ -605,7 +620,7 @@ function parseSetupArgs(args: string[]): {
 		}
 	}
 
-	return { backfill, credentials };
+	return { backfill, tenantId, credentials };
 }
 
 function parseRunArgs(args: string[]): {
@@ -698,8 +713,8 @@ function printHelp() {
 	const lines = [
 		'Corsair CLI',
 		'',
-		'pnpm corsair setup                              Init (add -backfill to seed data)',
-		'pnpm corsair setup --plugin=<id> <field>=VALUE  Set plugin credentials',
+		'pnpm corsair setup [--tenant=<id>]                  Init (add -backfill to seed data)',
+		'pnpm corsair setup [--tenant=<id>] --plugin=<id> <field>=VALUE  Set plugin credentials',
 		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
 		'pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
 		'pnpm corsair auth --plugin=<id> --credentials   Show credential status',
@@ -730,11 +745,12 @@ async function main() {
 	const command = args[0];
 
 	if (command === 'setup') {
-		const { backfill, credentials } = parseSetupArgs(args.slice(1));
+		const { backfill, tenantId, credentials } = parseSetupArgs(args.slice(1));
 		const { setupCorsair } = await import('corsair/setup');
 		const instance = await getCorsairInstance({ cwd });
 		await setupCorsair(instance as Parameters<typeof setupCorsair>[0], {
 			backfill,
+			tenantId,
 			credentials,
 			caller: 'cli',
 		});
