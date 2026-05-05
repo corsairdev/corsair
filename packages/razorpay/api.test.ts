@@ -8,6 +8,9 @@ import type {
 	OrdersCreateResponse,
 	OrdersGetResponse,
 	OrdersListResponse,
+	PaymentsCaptureResponse,
+	PaymentsGetResponse,
+	PaymentsListResponse,
 	PayoutsCreateResponse,
 	PayoutsGetResponse,
 	PayoutsListResponse,
@@ -26,6 +29,10 @@ const CREATE_PAYOUT_AMOUNT = process.env.RAZORPAY_CREATE_PAYOUT_AMOUNT;
 const CREATE_PAYOUT_CURRENCY = process.env.RAZORPAY_CREATE_PAYOUT_CURRENCY;
 const CREATE_PAYOUT_MODE = process.env.RAZORPAY_CREATE_PAYOUT_MODE;
 const CREATE_PAYOUT_PURPOSE = process.env.RAZORPAY_CREATE_PAYOUT_PURPOSE;
+
+const TEST_PAYMENT_CAPTURE_AMOUNT = process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT;
+const TEST_PAYMENT_CAPTURE_CURRENCY =
+	process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_CURRENCY;
 
 describe('Razorpay API Type Tests', () => {
 
@@ -290,6 +297,78 @@ describe('Razorpay API Type Tests', () => {
 			);
 
 			RazorpayEndpointOutputSchemas.ordersGet.parse(result);
+		});
+	});
+
+	describe('payments', () => {
+
+		beforeAll(() => {
+			const requiredEnvVars = [
+				{
+					key: 'RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT',
+					value: TEST_PAYMENT_CAPTURE_AMOUNT,
+				},
+				{
+					key: 'RAZORPAY_TEST_PAYMENT_CAPTURE_CURRENCY',
+					value: TEST_PAYMENT_CAPTURE_CURRENCY,
+				}
+			];
+
+
+			const missingVars = requiredEnvVars
+				.filter(({ value }) => !value)
+				.map(({ key }) => key);
+
+			if (missingVars.length > 0) {
+				throw new Error(
+					`Missing required env vars for payout tests: ${missingVars.join(', ')}`,
+				);
+			}
+		});
+
+		let paymentId: string | undefined;
+
+		it('paymentsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<PaymentsListResponse>(
+				'payments',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.paymentsList.parse(result);
+			paymentId = result.items[0]?.id;
+
+		});
+
+		it('paymentsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<PaymentsGetResponse>(
+				`payments/${paymentId}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.paymentsGet.parse(result);
+		});
+
+		it('paymentsCapture returns correct type', async () => {
+			const result = await makeRazorpayRequest<PaymentsCaptureResponse>(
+				`payments/${paymentId}/capture`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						amount: TEST_PAYMENT_CAPTURE_AMOUNT,
+						currency: TEST_PAYMENT_CAPTURE_CURRENCY,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.paymentsCapture.parse(result);
 		});
 	});
 });
