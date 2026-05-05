@@ -17,6 +17,8 @@ import type {
 	RefundsCreateResponse,
 	RefundsGetResponse,
 	RefundsListResponse,
+	SettlementsGetResponse,
+	SettlementsListResponse,
 } from './endpoints/types';
 import { RazorpayEndpointOutputSchemas } from './endpoints/types';
 
@@ -42,6 +44,8 @@ const TEST_REFUND_ID = process.env.RAZORPAY_TEST_REFUND_ID;
 const CREATE_REFUND_AMOUNT = process.env.RAZORPAY_CREATE_REFUND_AMOUNT
 	? Number(process.env.RAZORPAY_CREATE_REFUND_AMOUNT)
 	: undefined;
+
+const TEST_SETTLEMENT_ID = process.env.RAZORPAY_TEST_SETTLEMENT_ID;
 
 describe('Razorpay API Type Tests', () => {
 
@@ -453,6 +457,34 @@ describe('Razorpay API Type Tests', () => {
 			);
 
 			RazorpayEndpointOutputSchemas.refundsGet.parse(result);
+		});
+	});
+
+	describe('settlements', () => {
+		it('settlementsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<SettlementsListResponse>(
+				'settlements',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			console.log(result);
+			RazorpayEndpointOutputSchemas.settlementsList.parse(result);
+		});
+
+		it('settlementsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<SettlementsGetResponse>(
+				`settlements/${TEST_SETTLEMENT_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.settlementsGet.parse(result);
 		});
 	});
 });
