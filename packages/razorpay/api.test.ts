@@ -38,6 +38,7 @@ const CREATE_PAYOUT_PURPOSE = process.env.RAZORPAY_CREATE_PAYOUT_PURPOSE;
 const TEST_PAYMENT_CAPTURE_AMOUNT = process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT;
 const TEST_PAYMENT_CAPTURE_CURRENCY =
 	process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_CURRENCY;
+const TEST_PAYMENT_ID = process.env.RAZORPAY_TEST_PAYMENT_ID;
 
 const TEST_REFUND_PAYMENT_ID = process.env.RAZORPAY_TEST_REFUND_PAYMENT_ID;
 const TEST_REFUND_ID = process.env.RAZORPAY_TEST_REFUND_ID;
@@ -324,6 +325,10 @@ describe('Razorpay API Type Tests', () => {
 				{
 					key: 'RAZORPAY_TEST_PAYMENT_CAPTURE_CURRENCY',
 					value: TEST_PAYMENT_CAPTURE_CURRENCY,
+				},
+				{
+					key: 'RAZORPAY_TEST_PAYMENT_ID',
+					value: TEST_PAYMENT_ID,
 				}
 			];
 
@@ -339,8 +344,6 @@ describe('Razorpay API Type Tests', () => {
 			}
 		});
 
-		let paymentId: string | undefined;
-
 		it('paymentsList returns correct type', async () => {
 			const result = await makeRazorpayRequest<PaymentsListResponse>(
 				'payments',
@@ -354,13 +357,12 @@ describe('Razorpay API Type Tests', () => {
 			);
 
 			RazorpayEndpointOutputSchemas.paymentsList.parse(result);
-			paymentId = result.items[0]?.id;
 
 		});
 
 		it('paymentsGet returns correct type', async () => {
 			const result = await makeRazorpayRequest<PaymentsGetResponse>(
-				`payments/${paymentId}`,
+				`payments/${TEST_PAYMENT_ID}`,
 				API_KEY,
 				{ method: 'GET' },
 			);
@@ -370,7 +372,7 @@ describe('Razorpay API Type Tests', () => {
 
 		it('paymentsCapture returns correct type', async () => {
 			const result = await makeRazorpayRequest<PaymentsCaptureResponse>(
-				`payments/${paymentId}/capture`,
+				`payments/${TEST_PAYMENT_ID}/capture`,
 				API_KEY,
 				{
 					method: 'POST',
@@ -461,6 +463,17 @@ describe('Razorpay API Type Tests', () => {
 	});
 
 	describe('settlements', () => {
+
+		beforeAll(() => {
+
+			if (!TEST_SETTLEMENT_ID) {
+				throw new Error(
+					`Missing required env vars for payout tests: TEST_SETTLEMENT_ID`,
+				);
+			}
+
+		});
+
 		it('settlementsList returns correct type', async () => {
 			const result = await makeRazorpayRequest<SettlementsListResponse>(
 				'settlements',
@@ -473,7 +486,6 @@ describe('Razorpay API Type Tests', () => {
 				},
 			);
 
-			console.log(result);
 			RazorpayEndpointOutputSchemas.settlementsList.parse(result);
 		});
 
