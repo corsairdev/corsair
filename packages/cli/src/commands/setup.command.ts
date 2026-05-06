@@ -23,34 +23,45 @@ export default class SetupCommand extends BaseCommand {
 		return [{ name: '[credentials...]', description: 'Credential pairs like key=value' }];
 	}
 
-	async action({ args, options }: CommandActionData) {
+	async action({ options }: CommandActionData) {
 		const cwd = process.cwd();
-		const { backfill, plugin } = options;
-
-		const parsedCredentials = this.parseCredentials(args);
+		const { backfill } = options;
+		const credentials = this.parseCredentialsFromArgv();
 		const instance = await getCorsairInstance({ cwd });
 
 		await setupCorsair(
 			instance as Parameters<typeof setupCorsair>[0],
-			{
-				backfill,
-				credentials: {
-					[plugin]: parsedCredentials,
-				},
-				caller: 'cli',
-			}
+			{ backfill, credentials, caller: 'cli' }
 		);
 	}
 
-	private parseCredentials(
-		args: CommandActionData['args']
-	): Record<string, string> {
-		return args
-			.map(arg => arg.split('='))
-			.reduce<Record<string, string>>((acc, [key, value]) => {
-				if (!key || value === undefined) return acc;
-				acc[key] = value;
-				return acc;
-			}, {});
+	private parseCredentialsFromArgv(): Record<string, Record<string, string>> {
+		const credentials: Record<string, Record<string, string>> = {};
+		let currentPlugin: string | null = null;
+
+		const setupIdx = process.argv.indexOf('setup');
+		const rawArgs = setupIdx >= 0 ? process.argv.slice(setupIdx + 1) : [];
+
+		for (let i = 0; i < rawArgs.length; i++) {
+			const arg = rawArgs[i]!;
+
+			if (arg === '--plugin' || arg === '-p') {
+				currentPlugin = rawArgs[++i] ?? null;
+				if (currentPlugin && !credentials[currentPlugin]) credentials[currentPlugin] = {};
+				continue;
+			}
+			if (arg.startsWith('--plugin=') || arg.startsWith('-p=')) {
+				currentPlugin = arg.slice(arg.indexOf('=') + 1);
+				if (!credentials[currentPlugin]) credentials[currentPlugin] = {};
+				continue;
+			}
+			if (arg.startsWith('-')) continue;
+			if (currentPlugin && arg.includes('=')) {
+				const eqIdx = arg.indexOf('=');
+				credentials[currentPlugin]![arg.slice(0, eqIdx)] = arg.slice(eqIdx + 1);
+			}
+		}
+
+		return credentials;
 	}
 }
