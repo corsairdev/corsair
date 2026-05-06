@@ -1,7 +1,4 @@
-import {
-	generateOAuthUrl,
-	processOAuthCallback,
-} from 'corsair/oauth';
+import { generateOAuthUrl, processOAuthCallback } from 'corsair/oauth';
 import express from 'express';
 
 /**
@@ -74,9 +71,11 @@ app.get('/api/auth', async (req, res) => {
 	const error = req.query.error as string | undefined;
 
 	if (error) {
-		res.status(400).send(
-			`<html><body><h2>Authorization failed</h2><p>${escapeHtml(error)}</p></body></html>`,
-		);
+		res
+			.status(400)
+			.send(
+				`<html><body><h2>Authorization failed</h2><p>${escapeHtml(error)}</p></body></html>`,
+			);
 		return;
 	}
 
@@ -106,9 +105,11 @@ app.get('/api/auth', async (req, res) => {
 		);
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
-		res.status(500).send(
-			`<html><body><h2>OAuth error</h2><p>${escapeHtml(message)}</p></body></html>`,
-		);
+		res
+			.status(500)
+			.send(
+				`<html><body><h2>OAuth error</h2><p>${escapeHtml(message)}</p></body></html>`,
+			);
 	}
 });
 

@@ -823,16 +823,16 @@ Run a script with `corsair` injected — use `return` to output a value:
 
 <CodeGroup>
 ```bash npm
-npx corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+npx corsair script --code "return await corsair.github.api.repositories.list({})"
 ```
 ```bash yarn
-yarn corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+yarn corsair script --code "return await corsair.github.api.repositories.list({})"
 ```
 ```bash pnpm
-pnpm corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+pnpm corsair script --code "return await corsair.github.api.repositories.list({})"
 ```
 ```bash bun
-bunx corsair script --code "return (await corsair.github.db.repositories.search({})).map(r => ({ name: r.data?.name, openIssues: r.data?.openIssuesCount }))"
+bunx corsair script --code "return await corsair.github.api.repositories.list({})"
 ```
 </CodeGroup>
 

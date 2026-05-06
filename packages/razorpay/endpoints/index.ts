@@ -15,6 +15,11 @@ import {
 	list as paymentsList,
 } from './payments';
 import {
+	create as payoutsCreate,
+	get as payoutsGet,
+	list as payoutsList,
+} from './payouts';
+import {
 	create as refundsCreate,
 	get as refundsGet,
 	list as refundsList,
@@ -47,6 +52,12 @@ export const Payments = {
 	get: paymentsGet,
 	list: paymentsList,
 	capture: paymentsCapture,
+};
+
+export const Payouts = {
+	get: payoutsGet,
+	list: payoutsList,
+	create: payoutsCreate,
 };
 
 export const Refunds = {

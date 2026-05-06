@@ -106,6 +106,45 @@ _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` i
 
 ---
 
+## Payouts
+
+Path: `razorpay.db.payouts.search`
+
+```ts
+const rows = await corsair.razorpay.db.payouts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `fund_account_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `fees` | `number` | equals, gt, gte, lt, lte, in |
+| `tax` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `utr` | `string` | equals, contains, startsWith, endsWith, in |
+| `mode` | `string` | equals, contains, startsWith, endsWith, in |
+| `purpose` | `string` | equals, contains, startsWith, endsWith, in |
+| `reference_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `debit_account_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `narration` | `string` | equals, contains, startsWith, endsWith, in |
+| `batch_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `fee_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
 ## Refunds
 
 Path: `razorpay.db.refunds.search`

@@ -1,0 +1,670 @@
+---
+title: Webhooks
+description: "Vapi incoming webhooks: event paths, payloads, and response data."
+---
+
+The Vapi plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/vapi/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `client`
+  - `workflowNodeStarted` (`client.workflowNodeStarted`)
+- `server`
+  - `assistantRequest` (`server.assistantRequest`)
+  - `endOfCallReport` (`server.endOfCallReport`)
+  - `statusUpdate` (`server.statusUpdate`)
+  - `toolCalls` (`server.toolCalls`)
+  - `transferDestinationRequest` (`server.transferDestinationRequest`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Client
+
+### Workflow Node Started
+
+`client.workflowNodeStarted`
+
+Sent when the active workflow node changes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type: workflow.node.started,
+  call: {
+    id: string,
+    orgId?: string,
+    type?: string,
+    status?: string,
+    endedReason?: string | null,
+    assistantId?: string | null,
+    phoneNumberId?: string | null,
+    startedAt?: string | null,
+    endedAt?: string | null,
+    cost?: number,
+    messages?: {
+    }[],
+    artifact?: {
+    },
+    analysis?: {
+    }
+  },
+  node?: {
+  },
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message: {
+    type: workflow.node.started,
+    call: {
+      id: string,
+      orgId?: string,
+      type?: string,
+      status?: string,
+      endedReason?: string | null,
+      assistantId?: string | null,
+      phoneNumberId?: string | null,
+      startedAt?: string | null,
+      endedAt?: string | null,
+      cost?: number,
+      messages?: {
+      }[],
+      artifact?: {
+      },
+      analysis?: {
+      }
+    },
+    node?: {
+    },
+    timestamp?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vapi({
+    webhookHooks: {
+        client: {
+            workflowNodeStarted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Server
+
+### Assistant Request
+
+`server.assistantRequest`
+
+Sent to fetch assistant configuration for an incoming call
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type: assistant-request,
+  call: {
+    id: string,
+    orgId?: string,
+    type?: string,
+    status?: string,
+    endedReason?: string | null,
+    assistantId?: string | null,
+    phoneNumberId?: string | null,
+    startedAt?: string | null,
+    endedAt?: string | null,
+    cost?: number,
+    messages?: {
+    }[],
+    artifact?: {
+    },
+    analysis?: {
+    }
+  },
+  phoneNumber?: {
+  },
+  customer?: {
+  },
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message: {
+    type: assistant-request,
+    call: {
+      id: string,
+      orgId?: string,
+      type?: string,
+      status?: string,
+      endedReason?: string | null,
+      assistantId?: string | null,
+      phoneNumberId?: string | null,
+      startedAt?: string | null,
+      endedAt?: string | null,
+      cost?: number,
+      messages?: {
+      }[],
+      artifact?: {
+      },
+      analysis?: {
+      }
+    },
+    phoneNumber?: {
+    },
+    customer?: {
+    },
+    timestamp?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vapi({
+    webhookHooks: {
+        server: {
+            assistantRequest: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### End Of Call Report
+
+`server.endOfCallReport`
+
+Sent at the end of a call with transcript, summary, and analysis
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type: end-of-call-report,
+  call: {
+    id: string,
+    orgId?: string,
+    type?: string,
+    status?: string,
+    endedReason?: string | null,
+    assistantId?: string | null,
+    phoneNumberId?: string | null,
+    startedAt?: string | null,
+    endedAt?: string | null,
+    cost?: number,
+    messages?: {
+    }[],
+    artifact?: {
+    },
+    analysis?: {
+    }
+  },
+  endedReason?: string,
+  transcript?: string,
+  summary?: string,
+  messages?: {
+  }[],
+  analysis?: {
+  },
+  artifact?: {
+  },
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message: {
+    type: end-of-call-report,
+    call: {
+      id: string,
+      orgId?: string,
+      type?: string,
+      status?: string,
+      endedReason?: string | null,
+      assistantId?: string | null,
+      phoneNumberId?: string | null,
+      startedAt?: string | null,
+      endedAt?: string | null,
+      cost?: number,
+      messages?: {
+      }[],
+      artifact?: {
+      },
+      analysis?: {
+      }
+    },
+    endedReason?: string,
+    transcript?: string,
+    summary?: string,
+    messages?: {
+    }[],
+    analysis?: {
+    },
+    artifact?: {
+    },
+    timestamp?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vapi({
+    webhookHooks: {
+        server: {
+            endOfCallReport: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Update
+
+`server.statusUpdate`
+
+Sent when the call status changes
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type: status-update,
+  call: {
+    id: string,
+    orgId?: string,
+    type?: string,
+    status?: string,
+    endedReason?: string | null,
+    assistantId?: string | null,
+    phoneNumberId?: string | null,
+    startedAt?: string | null,
+    endedAt?: string | null,
+    cost?: number,
+    messages?: {
+    }[],
+    artifact?: {
+    },
+    analysis?: {
+    }
+  },
+  status: string,
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message: {
+    type: status-update,
+    call: {
+      id: string,
+      orgId?: string,
+      type?: string,
+      status?: string,
+      endedReason?: string | null,
+      assistantId?: string | null,
+      phoneNumberId?: string | null,
+      startedAt?: string | null,
+      endedAt?: string | null,
+      cost?: number,
+      messages?: {
+      }[],
+      artifact?: {
+      },
+      analysis?: {
+      }
+    },
+    status: string,
+    timestamp?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vapi({
+    webhookHooks: {
+        server: {
+            statusUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Tool Calls
+
+`server.toolCalls`
+
+Triggered when the assistant makes tool calls during a call
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type: tool-calls,
+  call: {
+    id: string,
+    orgId?: string,
+    type?: string,
+    status?: string,
+    endedReason?: string | null,
+    assistantId?: string | null,
+    phoneNumberId?: string | null,
+    startedAt?: string | null,
+    endedAt?: string | null,
+    cost?: number,
+    messages?: {
+    }[],
+    artifact?: {
+    },
+    analysis?: {
+    }
+  },
+  toolCallList: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  toolWithToolCallList?: {
+  }[],
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message: {
+    type: tool-calls,
+    call: {
+      id: string,
+      orgId?: string,
+      type?: string,
+      status?: string,
+      endedReason?: string | null,
+      assistantId?: string | null,
+      phoneNumberId?: string | null,
+      startedAt?: string | null,
+      endedAt?: string | null,
+      cost?: number,
+      messages?: {
+      }[],
+      artifact?: {
+      },
+      analysis?: {
+      }
+    },
+    toolCallList: {
+      id: string,
+      type: function,
+      function: {
+        name: string,
+        arguments: string
+      }
+    }[],
+    toolWithToolCallList?: {
+    }[],
+    timestamp?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vapi({
+    webhookHooks: {
+        server: {
+            toolCalls: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Transfer Destination Request
+
+`server.transferDestinationRequest`
+
+Triggered when processing a transfer destination request
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  type: transfer-destination-request,
+  call: {
+    id: string,
+    orgId?: string,
+    type?: string,
+    status?: string,
+    endedReason?: string | null,
+    assistantId?: string | null,
+    phoneNumberId?: string | null,
+    startedAt?: string | null,
+    endedAt?: string | null,
+    cost?: number,
+    messages?: {
+    }[],
+    artifact?: {
+    },
+    analysis?: {
+    }
+  },
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message: {
+    type: transfer-destination-request,
+    call: {
+      id: string,
+      orgId?: string,
+      type?: string,
+      status?: string,
+      endedReason?: string | null,
+      assistantId?: string | null,
+      phoneNumberId?: string | null,
+      startedAt?: string | null,
+      endedAt?: string | null,
+      cost?: number,
+      messages?: {
+      }[],
+      artifact?: {
+      },
+      analysis?: {
+      }
+    },
+    timestamp?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+vapi({
+    webhookHooks: {
+        server: {
+            transferDestinationRequest: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

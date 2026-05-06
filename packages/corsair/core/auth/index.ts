@@ -12,7 +12,9 @@ export {
 
 // Auth error utilities
 export { createMissingConfigProxy } from './errors';
-
+export type { TokenResponse } from './exchange';
+// Token exchange utility
+export { exchangeCodeForTokens } from './exchange';
 // Key manager factory and utilities
 export {
 	type AccountKeyManagerOptions,
@@ -22,7 +24,6 @@ export {
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 } from './key-manager';
-
 // Types
 export type {
 	AccountFieldNames,
@@ -37,9 +38,4 @@ export type {
 	OAuth2IntegrationCredentials,
 	PluginAuthConfig,
 } from './types';
-
 export { BASE_AUTH_FIELDS } from './types';
-
-// Token exchange utility
-export { exchangeCodeForTokens } from './exchange';
-export type { TokenResponse } from './exchange';

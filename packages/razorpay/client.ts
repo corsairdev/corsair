@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import { randomUUID } from 'node:crypto';
 
 export class RazorpayAPIError extends Error {
 	constructor(
@@ -29,6 +30,7 @@ export async function makeRazorpayRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
+	addIdempotencyKey = false,
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
@@ -44,6 +46,14 @@ export async function makeRazorpayRequest<T>(
 		},
 	};
 
+	if (addIdempotencyKey) {
+
+		config.HEADERS = {
+			...config.HEADERS,
+			'X-Payout-Idempotency': generateIdempotencyKey(),
+		};
+	}
+
 	const isWriteMethod =
 		method === 'POST' || method === 'PUT' || method === 'PATCH';
 
@@ -57,7 +67,7 @@ export async function makeRazorpayRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions);
-	} catch (error) {
+    } catch (error) {
 		if (error instanceof Error) {
 			// Type assertion: corsair/http's `request` throws a generic Error, but Razorpay
 			// error responses carry a `body` property with structured error details that are
@@ -82,4 +92,8 @@ export async function makeRazorpayRequest<T>(
 		}
 		throw new RazorpayAPIError('Unknown error');
 	}
+}
+
+function generateIdempotencyKey(): string {
+	return randomUUID();
 }

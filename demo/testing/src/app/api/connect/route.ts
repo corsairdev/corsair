@@ -11,7 +11,10 @@ export async function GET(request: NextRequest) {
 	const tenantId = searchParams.get('tenantId') ?? 'demo-user';
 
 	if (!plugin) {
-		return NextResponse.json({ error: 'Missing plugin param' }, { status: 400 });
+		return NextResponse.json(
+			{ error: 'Missing plugin param' },
+			{ status: 400 },
+		);
 	}
 
 	try {
