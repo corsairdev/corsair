@@ -1634,6 +1634,8 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 			return hasGithubEvent && hasGithubSignature;
 		},
 		keyBuilder: async (ctx: GithubKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -1642,7 +1644,9 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:github:webhook_signature]: GitHub webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -1653,7 +1657,9 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:github:api_key]: GitHub API Key is missing',
+						);
 					}
 
 					return res;
@@ -1661,14 +1667,18 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:github:oauth_2]: GitHub access token is missing',
+						);
 					}
 
 					return res;
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:github:${authType}]: GitHub key is missing`,
+			);
 		},
 	} satisfies InternalGithubPlugin;
 }

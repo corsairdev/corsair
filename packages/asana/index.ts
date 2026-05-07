@@ -973,6 +973,8 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AsanaKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -980,7 +982,9 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:asana:webhook_signature]: Asana webhook signature is missing',
+					);
 				}
 				return res;
 			}
@@ -992,12 +996,14 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:asana:api_key]: Asana API Key is missing',
+					);
 				}
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:asana:${authType}]: Asana key is missing`);
 		},
 	} satisfies InternalAsanaPlugin;
 }

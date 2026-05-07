@@ -400,6 +400,8 @@ export function linear<const T extends LinearPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: LinearKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -408,7 +410,9 @@ export function linear<const T extends LinearPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:linear:webhook_signature]: Linear webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -422,13 +426,17 @@ export function linear<const T extends LinearPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:linear:api_key]: Linear API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:linear:${authType}]: Linear key is missing`,
+			);
 		},
 	} satisfies InternalLinearPlugin;
 }

@@ -196,13 +196,19 @@ export function oura<const T extends OuraPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: OuraKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:oura:webhook_signature]: Oura webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -212,11 +218,15 @@ export function oura<const T extends OuraPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:oura:api_key]: Oura API Key is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:oura:${authType}]: Oura key is missing`);
 		},
 	} satisfies InternalOuraPlugin;
 }

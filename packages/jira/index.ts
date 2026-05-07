@@ -513,6 +513,8 @@ export function jira<const T extends JiraPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: JiraKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -520,7 +522,9 @@ export function jira<const T extends JiraPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:jira:webhook_signature]: Jira webhook signature is missing',
+					);
 				}
 				return res;
 			}
@@ -532,12 +536,14 @@ export function jira<const T extends JiraPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:jira:api_key]: Jira API Key is missing',
+					);
 				}
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:jira:${authType}]: Jira key is missing`);
 		},
 	} satisfies InternalJiraPlugin;
 }

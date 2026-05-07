@@ -401,6 +401,8 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: FirefliesKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -409,7 +411,9 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:fireflies:webhook_signature]: Fireflies webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -423,13 +427,17 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:fireflies:api_key]: Fireflies API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:fireflies:${authType}]: Fireflies key is missing`,
+			);
 		},
 	} satisfies InternalFirefliesPlugin;
 }

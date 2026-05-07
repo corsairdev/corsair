@@ -423,6 +423,8 @@ export function trello<const T extends TrelloPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TrelloKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -430,7 +432,9 @@ export function trello<const T extends TrelloPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:trello:webhook_signature]: Trello webhook signature is missing',
+					);
 				}
 				return res;
 			}
@@ -442,12 +446,16 @@ export function trello<const T extends TrelloPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:trello:api_key]: Trello API Key is missing',
+					);
 				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:trello:${authType}]: Trello key is missing`,
+			);
 		},
 	} satisfies InternalTrelloPlugin;
 }

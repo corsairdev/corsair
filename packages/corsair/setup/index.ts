@@ -50,9 +50,9 @@ type BackfillYaml = Record<
 
 export interface SetupCorsairOptions {
 	/**
-	 * Tenant to configure. Defaults to "default" to preserve single-tenant setup
-	 * behavior, and is used to scope account rows, account credentials, auth
-	 * checks, and optional backfill.
+	 * Tenant to provision rows for. Defaults to "default".
+	 * Pass a specific tenant ID to create that tenant's `corsair_accounts` rows
+	 * and issue DEKs without touching other tenants.
 	 */
 	tenantId?: string;
 
@@ -61,17 +61,6 @@ export interface SetupCorsairOptions {
 	 * setup/backfill.yaml to seed the local database with initial data.
 	 */
 	backfill?: boolean;
-
-	/**
-	 * Credentials to store before checking auth status.
-	 * Map of pluginId → { fieldName: value }.
-	 * The system automatically determines whether each field belongs to the
-	 * integration level (corsair.keys.plugin) or account level (corsair.plugin.keys).
-	 *
-	 * @example
-	 * { github: { api_key: 'ghp_...' }, googlecalendar: { client_id: '...', client_secret: '...' } }
-	 */
-	credentials?: Record<string, Record<string, string>>;
 
 	/**
 	 * Whether setupCorsair is being called from the CLI or from a script.
@@ -111,14 +100,17 @@ type PluginSetupAuth = {
  * 1. Checks that all required corsair_* tables exist (warns if any are missing).
  * 2. Ensures every configured plugin has rows in `corsair_integrations` and
  *    `corsair_accounts` for the requested tenant and issues DEKs where needed.
- * 3. Applies any credentials passed via `options.credentials`.
- * 4. Checks auth status for each plugin and logs guidance for any missing credentials.
+ * 3. Checks auth status for each plugin and logs guidance for any missing credentials.
  *    When `caller` is 'cli', guidance is printed as CLI flags instead of JS calls.
- * 5. If `{ backfill: true }`, calls the list endpoints defined in
+ * 4. If `{ backfill: true }`, calls the list endpoints defined in
  *    `setup/backfill.yaml` for each plugin that has auth configured.
  *
- * Multi-tenant corsair instances are accepted; pass `options.tenantId` to target
- * a non-default tenant.
+ * To set credentials, use the corsair client API directly after setup:
+ *   - Integration-level (shared across all tenants): `corsair.keys.plugin.set_*(value)`
+ *   - Account-level (per-tenant): `corsair.withTenant(tenantId).plugin.keys.set_*(value)`
+ *
+ * Multi-tenant corsair instances are accepted; pass `options.tenantId` to provision
+ * rows for a specific tenant instead of the default account.
  *
  * Returns a newline-separated string of all setup output.
  */
@@ -139,7 +131,6 @@ export async function setupCorsair<
 	};
 
 	const caller = options?.caller ?? 'script';
-	const tenantIdWasProvided = options?.tenantId !== undefined;
 	const tenantId = options?.tenantId ?? 'default';
 	if (!tenantId) {
 		throw new Error('setupCorsair: tenantId must be a non-empty string');
@@ -173,18 +164,7 @@ export async function setupCorsair<
 		log,
 	);
 
-	// 3. Apply any credentials provided by the caller (CLI flags or programmatic).
-	if (options?.credentials && Object.keys(options.credentials).length > 0) {
-		await applyCredentials(
-			pluginAuth,
-			options.credentials,
-			{ tenantId, tenantIdWasProvided },
-			log,
-			warn,
-		);
-	}
-
-	// 4. Check auth status for each plugin and log guidance for missing credentials.
+	// 3. Check auth status for each plugin and log guidance for missing credentials.
 	const authReadyPlugins = await checkAllPluginsAuthStatus(
 		pluginAuth,
 		tenantId,
@@ -192,7 +172,7 @@ export async function setupCorsair<
 		caller,
 	);
 
-	// 5. Optional backfill — only for plugins with auth configured.
+	// 4. Optional backfill — only for plugins with auth configured.
 	if (options?.backfill) {
 		log('[corsair:setup] Starting backfill...');
 		const instance = createCorsair({
@@ -446,47 +426,6 @@ async function ensurePluginRowsAndDeks(
 	}
 
 	return pluginAuth;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Credential application
-// ─────────────────────────────────────────────────────────────────────────────
-
-async function applyCredentials(
-	pluginAuth: Map<string, PluginSetupAuth>,
-	credentials: Record<string, Record<string, string>>,
-	tenantScope: { tenantId: string; tenantIdWasProvided: boolean },
-	log: SetupLog,
-	warn: SetupWarn,
-): Promise<void> {
-	for (const [pluginId, fields] of Object.entries(credentials)) {
-		const auth = pluginAuth.get(pluginId);
-
-		for (const [field, value] of Object.entries(fields)) {
-			const setter = `set_${field}`;
-			const integrationSetter = getCallableProperty(auth?.integration, setter);
-			const accountSetter = getCallableProperty(auth?.account, setter);
-
-			if (integrationSetter) {
-				if (tenantScope.tenantIdWasProvided) {
-					throw new Error(
-						`[corsair:setup] '${pluginId}.${field}' is an integration-level credential shared across all tenants. ` +
-							`You passed tenantId="${tenantScope.tenantId}", which only scopes account-level credentials. ` +
-							'Run setup without tenantId if you intend to change this credential globally.',
-					);
-				}
-				await integrationSetter(value);
-				log(`[corsair:setup] Set integration credential: ${pluginId}.${field}`);
-			} else if (accountSetter) {
-				await accountSetter(value);
-				log(`[corsair:setup] Set account credential: ${pluginId}.${field}`);
-			} else {
-				warn(
-					`[corsair:setup] No setter found for '${pluginId}.${field}' - skipping.`,
-				);
-			}
-		}
-	}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

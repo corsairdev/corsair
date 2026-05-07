@@ -670,6 +670,8 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: SlackKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.signingSecret) {
 				return options.signingSecret;
 			}
@@ -678,8 +680,9 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					// prob need to throw an error here
-					return '';
+					throw new Error(
+						'[auth-missing:slack:webhook_signature]: Slack webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -694,8 +697,9 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					// prob need to throw an error here
-					return '';
+					throw new Error(
+						'[auth-missing:slack:api_key]: Slack API Key is missing',
+					);
 				}
 
 				return res;
@@ -703,14 +707,15 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					// prob need to throw an error here
-					return '';
+					throw new Error(
+						'[auth-missing:slack:oauth_2]: Slack access token is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:slack:${authType}]: Slack key is missing`);
 		},
 	} satisfies InternalSlackPlugin;
 }

@@ -497,6 +497,8 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: RazorpayKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -515,7 +517,9 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:razorpay:${authType}]: Razorpay key is missing`,
+			);
 		},
 	} satisfies InternalRazorpayPlugin;
 }
