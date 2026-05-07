@@ -711,6 +711,8 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 			return hasSignature || hasKnownType;
 		},
 		keyBuilder: async (ctx: TwitterApiIOKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -729,7 +731,9 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:twitterapiio:${authType}]: Twitter API IO key is missing`,
+			);
 		},
 	} satisfies InternalTwitterApiIOPlugin;
 }

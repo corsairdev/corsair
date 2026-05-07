@@ -62,6 +62,18 @@ export type PluginCounts = {
 	db: number;
 };
 
+/**
+ * Auth field metadata for a single auth type supported by a plugin.
+ * Merges BASE_AUTH_FIELDS with any plugin-specific authConfig extensions.
+ */
+export type PluginAuthFields = {
+	authType: PluginAuthType;
+	/** Fields stored at the integration (shared/provider) level. */
+	integrationFields: string[];
+	/** Fields stored at the account (per-tenant) level. */
+	accountFields: string[];
+};
+
 export type PluginSummary = {
 	id: string;
 	displayName: string;
@@ -73,6 +85,8 @@ export type PluginSummary = {
 };
 
 export type PluginEntry = PluginSummary & {
+	/** Auth field metadata — one entry per supported auth type. */
+	auth: PluginAuthFields[];
 	api: DocsApiEndpoint[];
 	webhooks: DocsWebhook[];
 	db: DocsDbEntity[];

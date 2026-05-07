@@ -266,6 +266,8 @@ export function grafana<const T extends GrafanaPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: GrafanaKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			// Webhook source is not used for Grafana (no webhooks defined)
 			if (source === 'webhook') {
 				return '';
@@ -278,12 +280,16 @@ export function grafana<const T extends GrafanaPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:grafana:api_key]: Grafana API Key is missing',
+					);
 				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:grafana:${authType}]: Grafana key is missing`,
+			);
 		},
 	} satisfies InternalGrafanaPlugin;
 }

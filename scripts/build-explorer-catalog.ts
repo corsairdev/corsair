@@ -27,6 +27,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import type {
 	DocsApiEndpoint,
 	DocsWebhook,
+	PluginAuthFields,
 	PluginAuthType,
 	PluginCatalog,
 	PluginEntry,
@@ -35,6 +36,7 @@ import type {
 	DocsApiEndpoint as CoreApiEndpoint,
 	DocsWebhook as CoreWebhook,
 } from '../packages/corsair/core/inspect/index.ts';
+import { BASE_AUTH_FIELDS } from '../packages/corsair/core/auth/types.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
 
@@ -255,6 +257,20 @@ async function buildPluginEntry(
 	const api = data.api.map((e) => toApiEndpoint(e, pluginId));
 	const db = data.db.map((d) => ({ ...d }));
 
+	const pluginAuthConfig = (
+		plugin as { authConfig?: Record<string, { integration?: readonly string[]; account?: readonly string[] }> }
+	).authConfig ?? {};
+
+	const auth: PluginAuthFields[] = authTypes.map((authType) => {
+		const base = BASE_AUTH_FIELDS[authType];
+		const extra = pluginAuthConfig[authType] ?? {};
+		return {
+			authType,
+			integrationFields: [...base.integration, ...(extra.integration ?? [])],
+			accountFields: [...base.account, ...(extra.account ?? [])],
+		};
+	});
+
 	return {
 		id: pluginId,
 		displayName,
@@ -263,6 +279,7 @@ async function buildPluginEntry(
 		authTypes,
 		...(defaultAuthType ? { defaultAuthType } : {}),
 		counts: { api: api.length, webhooks: webhooks.length, db: db.length },
+		auth,
 		api,
 		webhooks,
 		db,

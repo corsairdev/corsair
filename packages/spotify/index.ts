@@ -527,6 +527,8 @@ export function spotify<const T extends SpotifyPluginOptions>(
 		 * }
 		 */
 		keyBuilder: async (ctx: SpotifyKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -535,7 +537,9 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:spotify:webhook_signature]: Spotify webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -548,7 +552,9 @@ export function spotify<const T extends SpotifyPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:spotify:api_key]: Spotify API Key is missing',
+					);
 				}
 				return res;
 			}
@@ -559,7 +565,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:spotify] No refresh token. Cannot get access token.',
+						'[auth-missing:spotify:refresh_token]: Spotify refresh token is missing',
 					);
 				}
 
@@ -604,7 +610,9 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:spotify:${authType}]: Spotify key is missing`,
+			);
 		},
 	} satisfies InternalSpotifyPlugin;
 }

@@ -312,6 +312,8 @@ export function resend<const T extends ResendPluginOptions>(
 		},
 		errorHandlers: options.errorHandlers,
 		keyBuilder: async (ctx: ResendKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -320,7 +322,9 @@ export function resend<const T extends ResendPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:resend:webhook_signature]: Resend webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -334,13 +338,17 @@ export function resend<const T extends ResendPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:resend:api_key]: Resend API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:resend:${authType}]: Resend key is missing`,
+			);
 		},
 	} satisfies InternalResendPlugin;
 }

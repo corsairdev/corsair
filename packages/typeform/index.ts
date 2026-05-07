@@ -529,13 +529,19 @@ export function typeform<const T extends TypeformPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TypeformKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:typeform:webhook_signature]: Typeform webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -545,11 +551,17 @@ export function typeform<const T extends TypeformPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:typeform:oauth_2]: Typeform access token is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:typeform:${authType}]: Typeform key is missing`,
+			);
 		},
 	} satisfies InternalTypeformPlugin;
 }

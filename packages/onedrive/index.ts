@@ -804,13 +804,19 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: OnedriveKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:onedrive:webhook_signature]: OneDrive webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -827,7 +833,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:onedrive] No refresh token found. Run `corsair auth --plugin=onedrive` to re-authenticate.',
+						'[auth-missing:onedrive:refresh_token]: OneDrive refresh token is missing',
 					);
 				}
 
@@ -835,7 +841,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 
 				if (!creds.client_id || !creds.client_secret) {
 					throw new Error(
-						'[corsair:onedrive] Missing client_id or client_secret. Run `corsair setup --onedrive` to configure credentials.',
+						'[auth-missing:onedrive:client_credentials]: OneDrive client credentials are missing',
 					);
 				}
 
@@ -896,7 +902,9 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:onedrive:${authType}]: OneDrive key is missing`,
+			);
 		},
 	} satisfies InternalOnedrivePlugin;
 }

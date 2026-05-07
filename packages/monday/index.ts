@@ -544,13 +544,19 @@ export function monday<const T extends MondayPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: MondayKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:monday:webhook_signature]: Monday webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -560,11 +566,17 @@ export function monday<const T extends MondayPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:monday:api_key]: Monday API Key is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:monday:${authType}]: Monday key is missing`,
+			);
 		},
 	} satisfies InternalMondayPlugin;
 }

@@ -274,6 +274,8 @@ export function telegram<const T extends TelegramPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TelegramKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -281,7 +283,9 @@ export function telegram<const T extends TelegramPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:telegram:webhook_signature]: Telegram webhook signature is missing',
+					);
 				}
 				return res;
 			}
@@ -293,12 +297,16 @@ export function telegram<const T extends TelegramPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'bot_token') {
 				const res = await ctx.keys.get_bot_token();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:telegram:bot_token]: Telegram bot token is missing',
+					);
 				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:telegram:${authType}]: Telegram key is missing`,
+			);
 		},
 	} satisfies InternalTelegramPlugin;
 }

@@ -593,13 +593,19 @@ export function vapi<const T extends VapiPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: VapiKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:vapi:webhook_signature]: Vapi webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -609,11 +615,15 @@ export function vapi<const T extends VapiPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:vapi:api_key]: Vapi API Key is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:vapi:${authType}]: Vapi key is missing`);
 		},
 	} satisfies InternalVapiPlugin;
 }

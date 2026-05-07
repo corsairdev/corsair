@@ -426,6 +426,8 @@ export function gmail<const T extends GmailPluginOptions>(
 		endpointSchemas: gmailEndpointSchemas,
 		webhookSchemas: gmailWebhookSchemas,
 		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
+			const authType = ctx.authType;
+
 			if (options.key) {
 				return options.key;
 			}
@@ -439,7 +441,7 @@ export function gmail<const T extends GmailPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:gmail] No refresh token found. Run `corsair auth --plugin=gmail` to re-authenticate.',
+						'[auth-missing:gmail:refresh_token]: Gmail refresh token is missing',
 					);
 				}
 
@@ -447,7 +449,7 @@ export function gmail<const T extends GmailPluginOptions>(
 
 				if (!res.client_id || !res.client_secret) {
 					throw new Error(
-						'[corsair:gmail] Missing client_id or client_secret. Run `corsair setup --gmail` to configure credentials.',
+						'[auth-missing:gmail:client_credentials]: Gmail client credentials are missing',
 					);
 				}
 
@@ -496,7 +498,7 @@ export function gmail<const T extends GmailPluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:gmail:${authType}]: Gmail key is missing`);
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

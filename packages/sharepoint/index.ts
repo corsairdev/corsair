@@ -1365,6 +1365,8 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: SharepointKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookClientState) {
 				return options.webhookClientState;
 			}
@@ -1382,7 +1384,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:sharepoint] No refresh token found. Run `corsair auth --plugin=sharepoint` to re-authenticate.',
+						'[auth-missing:sharepoint:refresh_token]: SharePoint refresh token is missing',
 					);
 				}
 
@@ -1390,7 +1392,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 
 				if (!creds.client_id || !creds.client_secret) {
 					throw new Error(
-						'[corsair:sharepoint] Missing client_id or client_secret. Run `corsair setup --sharepoint` to configure credentials.',
+						'[auth-missing:sharepoint:client_credentials]: SharePoint client credentials are missing',
 					);
 				}
 
@@ -1446,7 +1448,9 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:sharepoint:${authType}]: SharePoint key is missing`,
+			);
 		},
 	} satisfies InternalSharepointPlugin;
 }

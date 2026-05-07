@@ -205,6 +205,8 @@ export function posthog<const T extends PostHogPluginOptions>(
 		},
 		errorHandlers: options.errorHandlers,
 		keyBuilder: async (ctx: PostHogKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -213,7 +215,9 @@ export function posthog<const T extends PostHogPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:posthog:webhook_signature]: PostHog webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -227,13 +231,17 @@ export function posthog<const T extends PostHogPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:posthog:api_key]: PostHog API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:posthog:${authType}]: PostHog key is missing`,
+			);
 		},
 	} satisfies InternalPostHogPlugin;
 }

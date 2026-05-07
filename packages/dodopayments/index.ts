@@ -357,6 +357,8 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: DodoPaymentsKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -375,7 +377,9 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:dodopayments:${authType}]: Dodo Payments key is missing`,
+			);
 		},
 	} satisfies InternalDodoPaymentsPlugin;
 }

@@ -703,6 +703,8 @@ export function youtube<const T extends YoutubePluginOptions>(
 			return false;
 		},
 		keyBuilder: async (ctx: YoutubeKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -718,11 +720,17 @@ export function youtube<const T extends YoutubePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:youtube:oauth_2]: Youtube access token is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:youtube:${authType}]: Youtube key is missing`,
+			);
 		},
 	} satisfies InternalYoutubePlugin;
 }

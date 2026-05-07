@@ -423,6 +423,8 @@ export function strava<const T extends StravaPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: StravaKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -431,13 +433,17 @@ export function strava<const T extends StravaPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:strava:oauth_2]: Strava access token is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:strava:${authType}]: Strava key is missing`,
+			);
 		},
 	} satisfies InternalStravaPlugin;
 }

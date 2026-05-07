@@ -550,6 +550,8 @@ export function box<const T extends BoxPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BoxKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -557,7 +559,9 @@ export function box<const T extends BoxPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:box:webhook_signature]: Box webhook signature is missing',
+					);
 				}
 				return res;
 			}
@@ -569,12 +573,14 @@ export function box<const T extends BoxPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:box:oauth_2]: Box access token is missing',
+					);
 				}
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:box:${authType}]: Box key is missing`);
 		},
 	} satisfies InternalBoxPlugin;
 }

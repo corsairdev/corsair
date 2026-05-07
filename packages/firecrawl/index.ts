@@ -333,6 +333,8 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: FirecrawlKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -351,7 +353,9 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:firecrawl:${authType}]: Firecrawl key is missing`,
+			);
 		},
 	} satisfies InternalFirecrawlPlugin;
 }

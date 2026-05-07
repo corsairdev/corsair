@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { getValidStripeAccessToken } from './client';
 import {
 	Balance,
 	Charges,
@@ -32,7 +33,6 @@ import {
 	StripeEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { getValidStripeAccessToken } from './client';
 import { StripeSchema } from './schema';
 import {
 	ChargeWebhooks,
@@ -475,6 +475,8 @@ export function stripe<const T extends StripePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: StripeKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -483,7 +485,9 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:stripe:webhook_signature]: Stripe webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -497,7 +501,9 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:stripe:api_key]: Stripe API Key is missing',
+					);
 				}
 
 				return res;
@@ -512,7 +518,7 @@ export function stripe<const T extends StripePluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:stripe] No refresh token found. Run `corsair auth --plugin=stripe` to re-authenticate.',
+						'[auth-missing:stripe:refresh_token]: Stripe refresh token is missing',
 					);
 				}
 
@@ -520,7 +526,7 @@ export function stripe<const T extends StripePluginOptions>(
 
 				if (!creds.client_secret) {
 					throw new Error(
-						'[corsair:stripe] Missing client_secret. Run `corsair setup --stripe` to configure credentials.',
+						'[auth-missing:stripe:client_secret]: Stripe client secret is missing',
 					);
 				}
 
@@ -570,7 +576,9 @@ export function stripe<const T extends StripePluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:stripe:${authType}]: Stripe key is missing`,
+			);
 		},
 	} satisfies InternalStripePlugin;
 }

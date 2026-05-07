@@ -806,6 +806,8 @@ export function gitlab<const T extends GitlabPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: GitlabKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -833,7 +835,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:gitlab] No refresh token found. Run `corsair auth --plugin=gitlab` to re-authenticate.',
+						'[auth-missing:gitlab:refresh_token]: GitLab refresh token is missing',
 					);
 				}
 
@@ -841,7 +843,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 
 				if (!res.client_id || !res.client_secret) {
 					throw new Error(
-						'[corsair:gitlab] Missing client_id or client_secret. Configure OAuth application credentials for this integration.',
+						'[auth-missing:gitlab:client_credentials]: GitLab client credentials are missing',
 					);
 				}
 
@@ -906,7 +908,9 @@ export function gitlab<const T extends GitlabPluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:gitlab:${authType}]: GitLab key is missing`,
+			);
 		},
 	} satisfies InternalGitlabPlugin;
 }

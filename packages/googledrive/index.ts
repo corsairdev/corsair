@@ -380,6 +380,8 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 		endpointSchemas: googledriveEndpointSchemas,
 		webhookSchemas: googledriveWebhookSchemas,
 		keyBuilder: async (ctx: GoogleDriveKeyBuilderContext) => {
+			const authType = ctx.authType;
+
 			if (options.key) {
 				return options.key;
 			}
@@ -393,7 +395,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:googledrive] No refresh token. Cannot get access token.',
+						'[auth-missing:googledrive:refresh_token]: Google Drive refresh token is missing',
 					);
 				}
 
@@ -443,7 +445,9 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:googledrive:${authType}]: Google Drive key is missing`,
+			);
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

@@ -346,6 +346,8 @@ export function exa<const T extends ExaPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ExaKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -354,7 +356,9 @@ export function exa<const T extends ExaPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:exa:webhook_signature]: Exa webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -368,13 +372,13 @@ export function exa<const T extends ExaPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error('[auth-missing:exa:api_key]: Exa API Key is missing');
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:exa:${authType}]: Exa key is missing`);
 		},
 	} satisfies InternalExaPlugin;
 }

@@ -286,6 +286,8 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 		endpointSchemas: googlesheetsEndpointSchemas,
 		webhookSchemas: googlesheetsWebhookSchemas,
 		keyBuilder: async (ctx: GoogleSheetsKeyBuilderContext) => {
+			const authType = ctx.authType;
+
 			if (options.key) {
 				return options.key;
 			}
@@ -299,7 +301,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:googlesheets] No refresh token. Cannot get access token.',
+						'[auth-missing:googlesheets:refresh_token]: Google Sheets refresh token is missing',
 					);
 				}
 
@@ -349,7 +351,9 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:googlesheets:${authType}]: Google Sheets key is missing`,
+			);
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as RangeUpdatedEvent;

@@ -278,12 +278,19 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: DropboxKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			// Webhook signing uses the Dropbox app secret (= OAuth client_secret).
 			// See https://www.dropbox.com/developers/reference/webhooks
 			if (source === 'webhook') {
 				if (options.webhookSecret) return options.webhookSecret;
 				const creds = await ctx.keys.get_integration_credentials();
-				return creds.client_secret ?? '';
+				if (!creds.client_secret) {
+					throw new Error(
+						'[auth-missing:dropbox:client_secret]: Dropbox client secret is missing',
+					);
+				}
+				return creds.client_secret;
 			}
 
 			if (options.key) {
@@ -299,14 +306,14 @@ export function dropbox<const T extends DropboxPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:dropbox] No refresh token found. Run `corsair auth --plugin=dropbox` to re-authenticate.',
+						'[auth-missing:dropbox:refresh_token]: Dropbox refresh token is missing',
 					);
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
 				if (!creds.client_id || !creds.client_secret) {
 					throw new Error(
-						'[corsair:dropbox] Missing client_id or client_secret. Run `corsair setup --dropbox` to configure credentials.',
+						'[auth-missing:dropbox:client_credentials]: Dropbox client credentials are missing',
 					);
 				}
 
@@ -357,7 +364,9 @@ export function dropbox<const T extends DropboxPluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:dropbox:${authType}]: Dropbox key is missing`,
+			);
 		},
 	} satisfies InternalDropboxPlugin;
 }

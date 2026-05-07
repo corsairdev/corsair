@@ -191,6 +191,8 @@ export function cursor<const T extends CursorPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CursorKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -198,7 +200,9 @@ export function cursor<const T extends CursorPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:cursor:webhook_signature]: Cursor webhook signature is missing',
+					);
 				}
 				return res;
 			}
@@ -210,12 +214,16 @@ export function cursor<const T extends CursorPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:cursor:api_key]: Cursor API Key is missing',
+					);
 				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:cursor:${authType}]: Cursor key is missing`,
+			);
 		},
 	} satisfies InternalCursorPlugin;
 }

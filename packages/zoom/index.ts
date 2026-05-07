@@ -419,6 +419,8 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ZoomKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -427,7 +429,9 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:zoom:webhook_signature]: Zoom webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -441,13 +445,15 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:zoom:oauth_2]: Zoom access token is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:zoom:${authType}]: Zoom key is missing`);
 		},
 	} satisfies InternalZoomPlugin;
 }

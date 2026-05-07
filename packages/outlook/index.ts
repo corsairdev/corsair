@@ -613,13 +613,19 @@ export function outlook<const T extends OutlookPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: OutlookKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:outlook:webhook_signature]: Outlook webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -661,7 +667,9 @@ export function outlook<const T extends OutlookPluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:outlook:${authType}]: Outlook key is missing`,
+			);
 		},
 	} satisfies InternalOutlookPlugin;
 }
