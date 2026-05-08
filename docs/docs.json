@@ -44,6 +44,7 @@
           {
             "group": "Coding Agents",
             "pages": [
+              "mcp-adapters/coding-agents",
               "mcp-adapters/claude-code",
               "mcp-adapters/cursor"
             ]
