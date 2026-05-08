@@ -7,12 +7,12 @@ description: Use Corsair's CLI discovery commands with coding agents like Claude
 
 Coding agents work best when they can discover integrations and schemas directly instead of inferring APIs from source files.
 
-Corsair provides two CLI commands that expose its full API surface without executing any operations:
+Corsair provides two CLI commands designed for discovery, without making any external API calls to integrated services:
 
 - `pnpm corsair list`
 - `pnpm corsair schema <path>`
 
-These commands expose Corsair's API surface without executing operations, making them ideal for agent-driven discovery workflows.
+These commands load your local Corsair configuration to reflect its full API surface, making them ideal for agent-driven discovery workflows.
 
 This allows agents to inspect available integrations, endpoints, database entities, and schemas before generating integration code.
 
