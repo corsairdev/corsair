@@ -19,6 +19,13 @@ import type {
 	RefundsListResponse,
 	SettlementsGetResponse,
 	SettlementsListResponse,
+	SubscriptionsCreateResponse,
+	SubscriptionsGetResponse,
+	SubscriptionsListResponse,
+	SubscriptionsUpdateResponse,
+	SubscriptionsCancelResponse,
+	SubscriptionsPauseResponse,
+	SubscriptionsResumeResponse,
 } from './endpoints/types';
 import { RazorpayEndpointOutputSchemas } from './endpoints/types';
 
@@ -47,6 +54,21 @@ const CREATE_REFUND_AMOUNT = process.env.RAZORPAY_CREATE_REFUND_AMOUNT
 	: undefined;
 
 const TEST_SETTLEMENT_ID = process.env.RAZORPAY_TEST_SETTLEMENT_ID;
+
+const TEST_SUBSCRIPTION_PLAN_ID = process.env.RAZORPAY_TEST_SUBSCRIPTION_PLAN_ID;
+const TEST_SUBSCRIPTION_ID = process.env.RAZORPAY_TEST_SUBSCRIPTION_ID;
+const TEST_SUBSCRIPTION_CUSTOMER_ID = process.env.RAZORPAY_TEST_SUBSCRIPTION_CUSTOMER_ID;
+const CREATE_SUBSCRIPTION_TOTAL_COUNT = process.env.RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT
+	? Number(process.env.RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT)
+	: undefined;
+const TEST_SUBSCRIPTION_UPDATE_QUANTITY = process.env.RAZORPAY_TEST_SUBSCRIPTION_UPDATE_QUANTITY
+	? Number(process.env.RAZORPAY_TEST_SUBSCRIPTION_UPDATE_QUANTITY)
+	: undefined;
+const TEST_SUBSCRIPTION_PAUSE_INITIATED_BY = process.env.RAZORPAY_TEST_SUBSCRIPTION_PAUSE_INITIATED_BY as
+'test' | 'customer' | 'bank' | undefined;
+const TEST_SUBSCRIPTION_RESUME_AT = process.env.RAZORPAY_TEST_SUBSCRIPTION_RESUME_AT as
+	| 'now'
+	| undefined;
 
 describe('Razorpay API Type Tests', () => {
 
@@ -498,5 +520,152 @@ describe('Razorpay API Type Tests', () => {
 
 			RazorpayEndpointOutputSchemas.settlementsGet.parse(result);
 		});
+	});
+
+	describe('subscriptions', () => {
+
+		beforeAll(() => {
+
+			const requiredEnvVars = [
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_PLAN_ID',
+					value: TEST_SUBSCRIPTION_PLAN_ID,
+				},
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_ID',
+					value: TEST_SUBSCRIPTION_ID,
+				},
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_CUSTOMER_ID',
+					value: TEST_SUBSCRIPTION_CUSTOMER_ID,
+				},
+				{
+					key: 'RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT',
+					value: CREATE_SUBSCRIPTION_TOTAL_COUNT,
+				},
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_UPDATE_QUANTITY',
+					value: TEST_SUBSCRIPTION_UPDATE_QUANTITY,
+				},
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_PAUSE_INITIATED_BY',
+					value: TEST_SUBSCRIPTION_PAUSE_INITIATED_BY,
+				},
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_RESUME_AT',
+					value: TEST_SUBSCRIPTION_RESUME_AT,
+				},
+			];
+
+			const missingVars = requiredEnvVars
+				.filter(({ value }) => !value)
+				.map(({ key }) => key);
+
+			if (missingVars.length > 0) {
+				throw new Error(
+					`Missing required env vars for subscription tests: ${missingVars.join(', ')}`,
+				);
+			}
+		});
+
+		it('subscriptionsCreate returns correct type', async () => {
+			const body: Record<string, unknown> = {
+				plan_id: TEST_SUBSCRIPTION_PLAN_ID,
+				total_count: CREATE_SUBSCRIPTION_TOTAL_COUNT,
+				// customer_id: TEST_SUBSCRIPTION_CUSTOMER_ID,
+			};
+
+			const result = await makeRazorpayRequest<SubscriptionsCreateResponse>(
+				'subscriptions',
+				API_KEY,
+				{
+					method: 'POST',
+					body,
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsCreate.parse(result);
+		});
+
+		it('subscriptionsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsListResponse>(
+				'subscriptions',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsList.parse(result);
+		});
+
+		it('subscriptionsUpdate returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsUpdateResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}`,
+				API_KEY,
+				{
+					method: 'PATCH',
+					body: {
+						quantity: TEST_SUBSCRIPTION_UPDATE_QUANTITY ?? 1,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsUpdate.parse(result);
+		});
+
+		it('subscriptionsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsGetResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsGet.parse(result);
+		});
+
+		it('subscriptionsPause returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsPauseResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}/pause`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						pause_initiated_by: TEST_SUBSCRIPTION_PAUSE_INITIATED_BY,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsPause.parse(result);
+		});
+
+		it('subscriptionsResume returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsResumeResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}/resume`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						resume_at: TEST_SUBSCRIPTION_RESUME_AT,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsResume.parse(result);
+		});
+
+		it('subscriptionsCancel returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsCancelResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}/cancel`,
+				API_KEY,
+				{ method: 'POST', body: { cancel_at_cycle_end: true } },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsCancel.parse(result);
+		});
+			
 	});
 });
