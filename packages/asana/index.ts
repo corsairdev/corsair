@@ -31,6 +31,7 @@ import {
 	AsanaEndpointInputSchemas,
 	AsanaEndpointOutputSchemas,
 } from './endpoints/types';
+import { getValidAccessToken } from './client';
 import { errorHandlers } from './error-handlers';
 import { AsanaSchema } from './schema';
 import { ChallengeWebhooks, TaskWebhooks } from './webhooks';
@@ -914,7 +915,7 @@ export type AsanaWebhooks = {
 export type AsanaBoundWebhooks = BindWebhooks<AsanaWebhooks>;
 
 export type AsanaPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalAsanaPlugin['hooks'];
@@ -957,6 +958,28 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 		id: 'asana',
 		schema: AsanaSchema,
 		options: options,
+		authConfig: asanaAuthConfig,
+		oauthConfig: {
+			providerName: 'Asana',
+			authUrl: 'https://app.asana.com/-/oauth_authorize',
+			tokenUrl: 'https://app.asana.com/-/oauth_token',
+			scopes: [
+				'projects:read',
+				'projects:write',
+				'tasks:read',
+				'tasks:write',
+				'tasks:delete',
+				'tags:read',
+				'tags:write',
+				'teams:read',
+				'users:read',
+				'workspaces:read',
+				'stories:read',
+				'stories:write',
+				'webhooks:read',
+				'webhooks:write',
+			],
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: asanaEndpointsNested,
@@ -1001,6 +1024,73 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 					);
 				}
 				return res;
+			}
+
+			if (ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new Error(
+						'[auth-missing:asana:refresh_token]: Asana refresh token is missing',
+					);
+				}
+
+				const creds = await ctx.keys.get_integration_credentials();
+				if (!creds.client_id || !creds.client_secret) {
+					throw new Error(
+						'[auth-missing:asana:client_credentials]: Asana client credentials are missing',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
+				try {
+					result = await getValidAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientId: creds.client_id,
+						clientSecret: creds.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:asana] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						await Promise.all([
+							ctx.keys.set_access_token(result.accessToken),
+							ctx.keys.set_expires_at(String(result.expiresAt)),
+						]);
+					} catch (error) {
+						throw new Error(
+							`[corsair:asana] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientId: creds.client_id!,
+						clientSecret: creds.client_secret!,
+						forceRefresh: true,
+					});
+					await Promise.all([
+						ctx.keys.set_access_token(freshResult.accessToken),
+						ctx.keys.set_expires_at(String(freshResult.expiresAt)),
+					]);
+					return freshResult.accessToken;
+				};
+
+				return result.accessToken;
 			}
 
 			throw new Error(`[auth-missing:asana:${authType}]: Asana key is missing`);
