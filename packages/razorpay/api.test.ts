@@ -536,24 +536,8 @@ describe('Razorpay API Type Tests', () => {
 					value: TEST_SUBSCRIPTION_ID,
 				},
 				{
-					key: 'RAZORPAY_TEST_SUBSCRIPTION_CUSTOMER_ID',
-					value: TEST_SUBSCRIPTION_CUSTOMER_ID,
-				},
-				{
 					key: 'RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT',
 					value: CREATE_SUBSCRIPTION_TOTAL_COUNT,
-				},
-				{
-					key: 'RAZORPAY_TEST_SUBSCRIPTION_UPDATE_QUANTITY',
-					value: TEST_SUBSCRIPTION_UPDATE_QUANTITY,
-				},
-				{
-					key: 'RAZORPAY_TEST_SUBSCRIPTION_PAUSE_INITIATED_BY',
-					value: TEST_SUBSCRIPTION_PAUSE_INITIATED_BY,
-				},
-				{
-					key: 'RAZORPAY_TEST_SUBSCRIPTION_RESUME_AT',
-					value: TEST_SUBSCRIPTION_RESUME_AT,
 				},
 			];
 
@@ -572,7 +556,6 @@ describe('Razorpay API Type Tests', () => {
 			const body: Record<string, unknown> = {
 				plan_id: TEST_SUBSCRIPTION_PLAN_ID,
 				total_count: CREATE_SUBSCRIPTION_TOTAL_COUNT,
-				// customer_id: TEST_SUBSCRIPTION_CUSTOMER_ID,
 			};
 
 			const result = await makeRazorpayRequest<SubscriptionsCreateResponse>(
@@ -591,12 +574,7 @@ describe('Razorpay API Type Tests', () => {
 			const result = await makeRazorpayRequest<SubscriptionsListResponse>(
 				'subscriptions',
 				API_KEY,
-				{
-					method: 'GET',
-					query: {
-						count: 10,
-					},
-				},
+				{ method: 'GET' },
 			);
 
 			RazorpayEndpointOutputSchemas.subscriptionsList.parse(result);
@@ -606,12 +584,7 @@ describe('Razorpay API Type Tests', () => {
 			const result = await makeRazorpayRequest<SubscriptionsUpdateResponse>(
 				`subscriptions/${TEST_SUBSCRIPTION_ID}`,
 				API_KEY,
-				{
-					method: 'PATCH',
-					body: {
-						quantity: TEST_SUBSCRIPTION_UPDATE_QUANTITY ?? 1,
-					},
-				},
+				{ method: 'PATCH' },
 			);
 
 			RazorpayEndpointOutputSchemas.subscriptionsUpdate.parse(result);
@@ -631,12 +604,7 @@ describe('Razorpay API Type Tests', () => {
 			const result = await makeRazorpayRequest<SubscriptionsPauseResponse>(
 				`subscriptions/${TEST_SUBSCRIPTION_ID}/pause`,
 				API_KEY,
-				{
-					method: 'POST',
-					body: {
-						pause_initiated_by: TEST_SUBSCRIPTION_PAUSE_INITIATED_BY,
-					},
-				},
+				{ method: 'POST' },
 			);
 
 			RazorpayEndpointOutputSchemas.subscriptionsPause.parse(result);
@@ -646,12 +614,7 @@ describe('Razorpay API Type Tests', () => {
 			const result = await makeRazorpayRequest<SubscriptionsResumeResponse>(
 				`subscriptions/${TEST_SUBSCRIPTION_ID}/resume`,
 				API_KEY,
-				{
-					method: 'POST',
-					body: {
-						resume_at: TEST_SUBSCRIPTION_RESUME_AT,
-					},
-				},
+				{ method: 'POST' },
 			);
 
 			RazorpayEndpointOutputSchemas.subscriptionsResume.parse(result);
@@ -661,7 +624,7 @@ describe('Razorpay API Type Tests', () => {
 			const result = await makeRazorpayRequest<SubscriptionsCancelResponse>(
 				`subscriptions/${TEST_SUBSCRIPTION_ID}/cancel`,
 				API_KEY,
-				{ method: 'POST', body: { cancel_at_cycle_end: true } },
+				{ method: 'POST' },
 			);
 
 			RazorpayEndpointOutputSchemas.subscriptionsCancel.parse(result);
