@@ -16,10 +16,4 @@ export type BaseMcpOptions = {
 	 */
 	tenantId?: string;
 	basePermissionUrl?: string;
-	/**
-	 * When provided, auth errors in run_script automatically append a connect
-	 * link so the agent can tell the user where to authorize the integration.
-	 * The function receives the tenant context and returns the full URL.
-	 */
-	makeConnectLink?: (opts: { tenantId?: string }) => string | Promise<string>;
 };
