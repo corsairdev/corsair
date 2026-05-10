@@ -649,6 +649,20 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 	};
 	return {
 		id: 'slack',
+		oauthConfig: {
+			providerName: 'Slack',
+			authUrl: 'https://slack.com/oauth/v2/authorize',
+			tokenUrl: 'https://slack.com/api/oauth.v2.access',
+			scopes: [
+				'channels:read',
+				'channels:history',
+				'chat:write',
+				'users:read',
+				'groups:read',
+				'im:read',
+				'mpim:read',
+			],
+		},
 		schema: SlackSchema,
 		options: options,
 		hooks: options.hooks,
