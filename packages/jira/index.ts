@@ -494,6 +494,18 @@ export function jira<const T extends JiraPluginOptions>(
 	};
 	return {
 		id: 'jira',
+		oauthConfig: {
+			providerName: 'Jira',
+			authUrl: 'https://auth.atlassian.com/authorize',
+			tokenUrl: 'https://auth.atlassian.com/oauth/token',
+			scopes: [
+				'read:jira-work',
+				'write:jira-work',
+				'read:jira-user',
+				'offline_access',
+			],
+			authParams: { audience: 'api.atlassian.com', prompt: 'consent' },
+		},
 		schema: JiraSchema,
 		options: options,
 		hooks: options.hooks,

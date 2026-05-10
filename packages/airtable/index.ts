@@ -214,6 +214,13 @@ export function airtable<const T extends AirtablePluginOptions>(
 	};
 	return {
 		id: 'airtable',
+		oauthConfig: {
+			providerName: 'Airtable',
+			authUrl: 'https://airtable.com/oauth2/v1/authorize',
+			tokenUrl: 'https://airtable.com/oauth2/v1/token',
+			scopes: ['data.records:read', 'data.records:write', 'schema.bases:read'],
+			tokenAuthMethod: 'basic' as const,
+		},
 		schema: AirtableSchema,
 		options: options,
 		hooks: options.hooks,

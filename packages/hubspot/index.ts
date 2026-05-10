@@ -584,6 +584,19 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 	};
 	return {
 		id: 'hubspot',
+		oauthConfig: {
+			providerName: 'HubSpot',
+			authUrl: 'https://app.hubspot.com/oauth/authorize',
+			tokenUrl: 'https://api.hubapi.com/oauth/v1/token',
+			scopes: [
+				'crm.objects.contacts.read',
+				'crm.objects.contacts.write',
+				'crm.objects.companies.read',
+				'crm.objects.companies.write',
+				'crm.objects.deals.read',
+				'crm.objects.deals.write',
+			],
+		},
 		schema: HubSpotSchema,
 		options: options,
 		hooks: options.hooks,

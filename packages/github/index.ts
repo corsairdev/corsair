@@ -1618,6 +1618,12 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 	};
 	return {
 		id: 'github',
+		oauthConfig: {
+			providerName: 'GitHub',
+			authUrl: 'https://github.com/login/oauth/authorize',
+			tokenUrl: 'https://github.com/login/oauth/access_token',
+			scopes: ['repo', 'user', 'read:org'],
+		},
 		schema: GithubSchema,
 		options: options,
 		hooks: options.hooks,
