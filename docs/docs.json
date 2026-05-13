@@ -144,6 +144,14 @@
                 ]
               },
               {
+                "group": "Bitwarden",
+                "pages": [
+                  "plugins/bitwarden/overview",
+                  "plugins/bitwarden/api",
+                  "plugins/bitwarden/database"
+                ]
+              },
+              {
                 "group": "Box",
                 "pages": [
                   "plugins/box/overview",
