@@ -252,7 +252,13 @@ const CustomersListResponseSchema = z
 	.passthrough();
 const CustomersUpdateResponseSchema = RazorpayCustomerSchema;
 
-const SettlementsListResponseSchema = RazorpaySettlementSchema;
+const SettlementsListResponseSchema = z
+	.object({
+		entity: z.literal('collection').optional(),
+		count: z.number(),
+		items: z.array(RazorpaySettlementSchema),
+	})
+	.passthrough();
 const SettlementsGetResponseSchema = RazorpaySettlementSchema;
 
 const SubscriptionsListResponseSchema = z
