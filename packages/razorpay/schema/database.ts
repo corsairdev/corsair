@@ -15,7 +15,7 @@ export const RazorpayOrderSchema = z
 		id: z.string(),
 		entity: z.literal('order'),
 		amount: z.number(),
-		amount_paid: z.number().optional(),
+		amount_paid: z.number().nullable().optional(),
 		amount_due: z.number().optional(),
 		currency: z.string(),
 		receipt: z.string().nullable().optional(),
