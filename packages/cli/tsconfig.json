@@ -1,6 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "lib": ["esnext", "dom", "dom.iterable"],
     "types": ["node", "jest"],
     "jsx": "react-jsx",
@@ -13,9 +18,13 @@
     "emitDeclarationOnly": false,
     "declaration": true,
     "declarationMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "plugins": [{ "transform": "typescript-transform-paths" }]
   },
-  "include": ["./**/*"],
+  "tsc-alias": {
+    "resolveFullPaths": true,
+    "verbose": false
+  },
+  "include": ["src/**/*.ts", "package.json"],
   "exclude": ["dist", "node_modules"],
-  "references": []
 }

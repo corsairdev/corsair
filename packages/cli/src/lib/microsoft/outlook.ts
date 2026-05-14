@@ -1,12 +1,8 @@
-import * as p from '@clack/prompts';
-import { loadInternalConfig } from '../utils/load-config';
-import {
-	promptClientState,
-	promptTenantId,
-	promptWebhookUrl,
-} from '../utils/prompts';
-import { resolveAccessToken, saveWebhookSignature } from './credentials';
-import { createGraphSubscription } from './graph';
+import * as p from '@clack/prompts'
+import { loadInternalConfig } from '../../utils/load-config'
+import { promptClientState, promptTenantId, promptWebhookUrl, } from '../../utils/prompts'
+import { resolveAccessToken, saveWebhookSignature } from './credentials'
+import { createGraphSubscription } from './graph'
 
 type OutlookResourceType =
 	| 'inboxMessages'

@@ -1,6 +1,6 @@
-import type { CorsairInternalConfig } from 'corsair/core';
-import { CORSAIR_INTERNAL } from 'corsair/core';
-import { getCorsairInstance } from '../index';
+import type { CorsairInternalConfig } from 'corsair/core'
+import { CORSAIR_INTERNAL } from 'corsair/core'
+import { getCorsairInstance } from '../index'
 
 export async function extractInternalConfig(
 	cwd: string,
