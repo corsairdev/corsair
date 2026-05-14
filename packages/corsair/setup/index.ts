@@ -131,9 +131,13 @@ export async function setupCorsair<
 	};
 
 	const caller = options?.caller ?? 'script';
-	const tenantId = options?.tenantId ?? 'default';
+	let tenantId = options?.tenantId;
+
 	if (!tenantId) {
-		throw new Error('setupCorsair: tenantId must be a non-empty string');
+		if ((corsair as unknown as any)?.withTenant) {
+			throw new Error('setupCorsair: tenantId must be a non-empty string');
+		}
+		tenantId = 'default';
 	}
 
 	const internal = getCorsairInternal(corsair);
@@ -204,7 +208,9 @@ function isCorsairInternalConfig(
 	return value.database.db instanceof Kysely;
 }
 
-function getCorsairInternal(corsair: object): CorsairInternalConfig | undefined {
+function getCorsairInternal(
+	corsair: object,
+): CorsairInternalConfig | undefined {
 	const descriptor = Object.getOwnPropertyDescriptor(corsair, CORSAIR_INTERNAL);
 	if (!descriptor) return undefined;
 	return isCorsairInternalConfig(descriptor.value)
@@ -235,7 +241,9 @@ function getCallableProperty(
 function isNestedRecord(value: unknown, depth: number): boolean {
 	if (!isObjectRecord(value)) return false;
 	if (depth === 0) return true;
-	return Object.values(value).every((child) => isNestedRecord(child, depth - 1));
+	return Object.values(value).every((child) =>
+		isNestedRecord(child, depth - 1),
+	);
 }
 
 function isBackfillYaml(value: unknown): value is BackfillYaml {
@@ -264,8 +272,7 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 		return `${describeZodSchema(schema.unwrap())} | null`;
 	if (schema instanceof ZodOptional)
 		return `${describeZodSchema(schema.unwrap())} | undefined`;
-	if (schema instanceof ZodEnum)
-		return schema.options.join(' | ');
+	if (schema instanceof ZodEnum) return schema.options.join(' | ');
 	if (schema instanceof ZodString) return 'string';
 	if (schema instanceof ZodNumber) return 'number';
 	if (schema instanceof ZodBoolean) return 'boolean';
