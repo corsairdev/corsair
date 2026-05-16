@@ -126,6 +126,8 @@ const DnsCreateInputSchema = z.object({
 	content: z.string(),
 	ttl: z.number().optional(),
 	proxied: z.boolean().optional(),
+	/** Required for MX, SRV, and URI record types. */
+	priority: z.number().optional(),
 });
 
 const DnsEditInputSchema = z.object({
@@ -136,6 +138,7 @@ const DnsEditInputSchema = z.object({
 	content: z.string().optional(),
 	ttl: z.number().optional(),
 	proxied: z.boolean().optional(),
+	priority: z.number().optional(),
 });
 
 const DnsDeleteInputSchema = z.object({
@@ -273,7 +276,8 @@ export type WorkersListResponse = z.infer<typeof WorkerScriptSchema>[];
 /** Raw Worker script source (`application/javascript`), not JSON metadata. */
 export type WorkersGetResponse = string;
 export type WorkersUploadResponse = z.infer<typeof WorkerScriptSchema>;
-export type WorkersDeleteResponse = Record<string, never>;
+/** Cloudflare DELETE scripts returns `{ result: null }`. */
+export type WorkersDeleteResponse = null;
 
 export type WorkerRoutesListResponse = z.infer<typeof WorkerRouteSchema>[];
 export type WorkerRoutesGetResponse = z.infer<typeof WorkerRouteSchema>;
@@ -285,7 +289,8 @@ export type RulesetsListResponse = z.infer<typeof RulesetSchema>[];
 export type RulesetsGetResponse = z.infer<typeof RulesetSchema>;
 export type RulesetsCreateResponse = z.infer<typeof RulesetSchema>;
 export type RulesetsUpdateResponse = z.infer<typeof RulesetSchema>;
-export type RulesetsDeleteResponse = Record<string, never>;
+/** Cloudflare DELETE rulesets returns `{ result: null }`. */
+export type RulesetsDeleteResponse = null;
 
 export type CloudflareEndpointInputs = {
 	zonesList: ZonesListInput;
@@ -382,7 +387,7 @@ export const CloudflareEndpointOutputSchemas = {
 	workersList: z.array(WorkerScriptSchema),
 	workersGet: z.string(),
 	workersUpload: WorkerScriptSchema,
-	workersDelete: z.object({}).passthrough(),
+	workersDelete: z.null(),
 	workerRoutesList: z.array(WorkerRouteSchema),
 	workerRoutesGet: WorkerRouteSchema,
 	workerRoutesCreate: WorkerRouteSchema,
@@ -392,5 +397,5 @@ export const CloudflareEndpointOutputSchemas = {
 	rulesetsGet: RulesetSchema,
 	rulesetsCreate: RulesetSchema,
 	rulesetsUpdate: RulesetSchema,
-	rulesetsDelete: z.object({}).passthrough(),
+	rulesetsDelete: z.null(),
 } as const;

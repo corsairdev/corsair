@@ -37,6 +37,17 @@ describe('unwrapCloudflareResponse', () => {
 		const payload = { id: 'ruleset-1' };
 		expect(unwrapCloudflareResponse(payload)).toEqual(payload);
 	});
+
+	it('unwraps null result for Workers/Rulesets DELETE', () => {
+		expect(
+			unwrapCloudflareResponse<null>({
+				success: true,
+				result: null,
+				errors: [],
+				messages: [],
+			}),
+		).toBeNull();
+	});
 });
 
 describe('isCloudflareEnvelope', () => {

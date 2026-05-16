@@ -33,6 +33,7 @@ await corsair.cloudflare.api.dns.create({});
 | `content` | `string` | Yes | — |
 | `ttl` | `number` | No | — |
 | `proxied` | `boolean` | No | — |
+| `priority` | `number` | No | — |
 
 
 
@@ -111,6 +112,7 @@ await corsair.cloudflare.api.dns.edit({});
 | `content` | `string` | No | — |
 | `ttl` | `number` | No | — |
 | `proxied` | `boolean` | No | — |
+| `priority` | `number` | No | — |
 
 
 
@@ -314,7 +316,7 @@ await corsair.cloudflare.api.rulesets.delete({});
 
 
 
-**Output:** _empty object_
+**Output:** `null`
 
 
 ---
@@ -665,7 +667,7 @@ await corsair.cloudflare.api.workers.scripts.delete({});
 
 
 
-**Output:** _empty object_
+**Output:** `null`
 
 
 ---
@@ -838,6 +840,7 @@ await corsair.cloudflare.api.zones.create({});
 
 ```ts
 {
+  id: string
 }
 ```
 </Accordion>
@@ -934,6 +937,7 @@ await corsair.cloudflare.api.zones.edit({});
 
 ```ts
 {
+  id: string
 }
 ```
 </Accordion>
@@ -986,6 +990,7 @@ await corsair.cloudflare.api.zones.get({});
 
 ```ts
 {
+  id: string
 }
 ```
 </Accordion>
@@ -1031,6 +1036,7 @@ await corsair.cloudflare.api.zones.list({});
   paused?: boolean,
   type?: string,
   account?: {
+    id: string
   },
   name_servers?: string[],
   original_name_servers?: string[],
