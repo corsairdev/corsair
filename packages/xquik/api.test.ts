@@ -100,4 +100,21 @@ describe('Xquik webhook helpers', () => {
 
 		expect(result.valid).toBe(true);
 	});
+
+	it('rejects webhook signatures when the secret is missing', () => {
+		const rawBody = JSON.stringify({
+			data: { tweetId: '123' },
+			eventType: 'tweet.new',
+			occurredAt: '2026-05-17T12:00:00.000Z',
+			streamEventId: '456',
+		});
+
+		const request = signWebhook(rawBody, 'test-secret');
+		const result = verifyXquikWebhookSignature(request, '');
+
+		expect(result).toEqual({
+			error: 'Missing Xquik webhook secret',
+			valid: false,
+		});
+	});
 });

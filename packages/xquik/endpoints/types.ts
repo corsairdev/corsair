@@ -113,6 +113,7 @@ export const SearchTweetSchema = z
 		bookmarkCount: z.number().int().optional(),
 		conversationId: z.string().optional(),
 		createdAt: z.string().optional(),
+		// X entity payloads are open-ended objects that differ by tweet content.
 		entities: z.record(z.unknown()).optional(),
 		id: z.string(),
 		inReplyToId: z.string().optional(),
@@ -143,6 +144,7 @@ export const TweetDetailSchema = z
 		bookmarkCount: z.number().int(),
 		conversationId: z.string().optional(),
 		createdAt: z.string().optional(),
+		// X entity payloads are open-ended objects that differ by tweet content.
 		entities: z.record(z.unknown()).optional(),
 		id: z.string(),
 		isNoteTweet: z.boolean().optional(),
@@ -300,6 +302,7 @@ export type Delivery = z.infer<typeof DeliverySchema>;
 
 export const EventPayloadSchema = z
 	.object({
+		// Webhook event data is event-type specific and remains provider-defined.
 		data: z.record(z.unknown()),
 		deliveryId: z.string().optional(),
 		eventType: z.union([EventTypeSchema, z.literal('webhook.test')]),

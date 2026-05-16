@@ -20,21 +20,21 @@ export type XquikWebhookOutputs = {
 	test: XquikWebhookPayload;
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
 function parseBody(body: unknown): Record<string, unknown> {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object'
-				? (parsed as Record<string, unknown>)
-				: {};
+			return isRecord(parsed) ? parsed : {};
 		} catch {
 			return {};
 		}
 	}
 
-	return body !== null && typeof body === 'object'
-		? (body as Record<string, unknown>)
-		: {};
+	return isRecord(body) ? body : {};
 }
 
 function firstHeader(
@@ -104,8 +104,8 @@ export function verifyXquikWebhookSignature(
 	request: WebhookRequest<XquikWebhookPayload>,
 	secret: string,
 ): { error?: string; valid: boolean } {
-	if (secret.length === 0) {
-		return { valid: true };
+	if (secret.trim().length === 0) {
+		return { error: 'Missing Xquik webhook secret', valid: false };
 	}
 
 	const signature = firstHeader(request.headers, SIGNATURE_HEADER);

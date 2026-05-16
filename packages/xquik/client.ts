@@ -6,9 +6,11 @@ const XQUIK_API_CONTRACT = '2026-04-29';
 
 export type XquikQuery = Record<string, string | number | boolean | undefined>;
 
+// Endpoint request bodies are provider-defined JSON objects that vary by path.
 export type XquikBody = Record<string, unknown>;
 
 export class XquikAPIError extends Error {
+	// Corsair's OpenAPI client exposes provider error payloads as arbitrary JSON.
 	public readonly body?: unknown;
 	public readonly rateLimitLimit?: number;
 	public readonly rateLimitRemaining?: number;
