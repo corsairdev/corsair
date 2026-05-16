@@ -5,7 +5,7 @@
 
 Corsair is the unified integration layer for your agents. Connect your Corsair instance to your agent and immediately get access to every integration. Your agent never sees the credentials, and you control exactly what it can do.
 
-![Demo](assets/corsair-slack.gif)
+[https://github.com/user-attachments/assets/a5db555a-7688-447d-9777-33f3dddfb03d](https://github.com/user-attachments/assets/a5db555a-7688-447d-9777-33f3dddfb03d)
 
 ---
 ## Why this exists
