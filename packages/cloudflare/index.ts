@@ -241,7 +241,7 @@ const cloudflareEndpointMeta = {
 	},
 	'workers.scripts.get': {
 		riskLevel: 'read',
-		description: 'Retrieve a Workers script by name',
+		description: 'Download Workers script source code by name',
 	},
 	'workers.scripts.upload': {
 		riskLevel: 'write',

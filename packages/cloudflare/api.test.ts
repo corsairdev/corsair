@@ -17,6 +17,7 @@ import { CloudflareEndpointOutputSchemas } from './endpoints/types';
 const TEST_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 const ZONE_ID_OVERRIDE = process.env.CLOUDFLARE_ZONE_ID;
 const ACCOUNT_ID_OVERRIDE = process.env.CLOUDFLARE_ACCOUNT_ID;
+const SCRIPT_NAME_OVERRIDE = process.env.CLOUDFLARE_SCRIPT_NAME;
 
 function requireToken(): string {
 	if (!TEST_API_TOKEN?.trim()) {
@@ -167,7 +168,7 @@ describe('Cloudflare API Type Tests', () => {
 			CloudflareEndpointOutputSchemas.workersList.parse(result);
 		});
 
-		it('workersGet returns correct type', async () => {
+		it('workersGet returns script source as string', async () => {
 			const token = requireToken();
 			if (!accountId) {
 				console.warn('No account_id — skipping workersGet');
@@ -179,9 +180,11 @@ describe('Cloudflare API Type Tests', () => {
 				token,
 				{ method: 'GET' },
 			);
-			const scriptName = list[0]?.id;
+			const scriptName = SCRIPT_NAME_OVERRIDE ?? list[0]?.id;
 			if (!scriptName) {
-				console.warn('No Workers scripts — skipping workersGet');
+				console.warn(
+					'No Workers scripts — set CLOUDFLARE_SCRIPT_NAME or upload a script to test workersGet',
+				);
 				return;
 			}
 
@@ -191,6 +194,7 @@ describe('Cloudflare API Type Tests', () => {
 				{ method: 'GET' },
 			);
 
+			expect(typeof result).toBe('string');
 			CloudflareEndpointOutputSchemas.workersGet.parse(result);
 		});
 	});

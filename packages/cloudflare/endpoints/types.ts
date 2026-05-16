@@ -2,6 +2,14 @@ import { z } from 'zod';
 
 // ── Shared schemas ────────────────────────────────────────────────────────────
 
+/** Nested CF objects (bindings, rules, account metadata) are API-extensible. */
+const CloudflareLooseObjectSchema = z.record(z.unknown());
+
+const ZoneAccountSchema = z
+	.object({ id: z.string() })
+	.passthrough()
+	.optional();
+
 const PaginationInputSchema = z.object({
 	page: z.number().optional(),
 	per_page: z.number().optional(),
@@ -16,7 +24,7 @@ const ZoneSchema = z
 		status: z.string().optional(),
 		paused: z.boolean().optional(),
 		type: z.string().optional(),
-		account: z.record(z.unknown()).optional(),
+		account: ZoneAccountSchema,
 		name_servers: z.array(z.string()).optional(),
 		original_name_servers: z.array(z.string()).optional(),
 		original_registrar: z.string().optional(),
@@ -69,7 +77,7 @@ const RulesetSchema = z
 		version: z.string().optional(),
 		last_updated: z.string().optional(),
 		phase: z.string(),
-		rules: z.array(z.record(z.unknown())).optional(),
+		rules: z.array(CloudflareLooseObjectSchema).optional(),
 	})
 	.passthrough();
 
@@ -148,7 +156,7 @@ const WorkersUploadInputSchema = z.object({
 	account_id: z.string(),
 	script_name: z.string(),
 	script_content: z.string(),
-	bindings: z.array(z.record(z.unknown())).optional(),
+	bindings: z.array(CloudflareLooseObjectSchema).optional(),
 	compatibility_date: z.string().optional(),
 });
 
@@ -198,14 +206,14 @@ const RulesetsCreateInputSchema = z.object({
 	name: z.string(),
 	kind: z.string(),
 	phase: z.string(),
-	rules: z.array(z.record(z.unknown())).optional(),
+	rules: z.array(CloudflareLooseObjectSchema).optional(),
 	description: z.string().optional(),
 });
 
 const RulesetsUpdateInputSchema = z.object({
 	zone_id: z.string(),
 	ruleset_id: z.string(),
-	rules: z.array(z.record(z.unknown())),
+	rules: z.array(CloudflareLooseObjectSchema),
 	description: z.string().optional(),
 });
 
@@ -262,7 +270,8 @@ export type DnsEditResponse = z.infer<typeof DnsRecordSchema>;
 export type DnsDeleteResponse = z.infer<typeof IdDeleteResponseSchema>;
 
 export type WorkersListResponse = z.infer<typeof WorkerScriptSchema>[];
-export type WorkersGetResponse = z.infer<typeof WorkerScriptSchema>;
+/** Raw Worker script source (`application/javascript`), not JSON metadata. */
+export type WorkersGetResponse = string;
 export type WorkersUploadResponse = z.infer<typeof WorkerScriptSchema>;
 export type WorkersDeleteResponse = Record<string, never>;
 
@@ -371,7 +380,7 @@ export const CloudflareEndpointOutputSchemas = {
 	dnsEdit: DnsRecordSchema,
 	dnsDelete: IdDeleteResponseSchema,
 	workersList: z.array(WorkerScriptSchema),
-	workersGet: WorkerScriptSchema,
+	workersGet: z.string(),
 	workersUpload: WorkerScriptSchema,
 	workersDelete: z.object({}).passthrough(),
 	workerRoutesList: z.array(WorkerRouteSchema),

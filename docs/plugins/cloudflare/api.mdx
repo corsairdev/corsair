@@ -674,7 +674,7 @@ await corsair.cloudflare.api.workers.scripts.delete({});
 
 `workers.scripts.get`
 
-Retrieve a Workers script by name
+Download Workers script source code by name
 
 **Risk:** `read`
 
@@ -691,14 +691,7 @@ await corsair.cloudflare.api.workers.scripts.get({});
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `created_on` | `string` | No | — |
-| `modified_on` | `string` | No | — |
-
+**Output:** `string`
 
 
 ---

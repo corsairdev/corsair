@@ -1,50 +1,22 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { CloudflareAPIError } from './api-error';
+import {
+	cloudflareErrorFromApiErrorBody,
+	unwrapCloudflareResponse,
+	type CloudflareApiResponse,
+} from './response';
 
-export class CloudflareAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: number,
-	) {
-		super(message);
-		this.name = 'CloudflareAPIError';
-	}
-}
+export { CloudflareAPIError } from './api-error';
 
 const CLOUDFLARE_API_BASE = 'https://api.cloudflare.com/client/v4';
-
-type CloudflareApiResponse<T> = {
-	result: T;
-	success: boolean;
-	errors: Array<{ code: number; message: string }>;
-	messages: unknown[];
-};
-
-function unwrapCloudflareResponse<T>(response: unknown): T {
-	if (
-		response &&
-		typeof response === 'object' &&
-		'success' in response &&
-		'result' in response
-	) {
-		const wrapped = response as CloudflareApiResponse<T>;
-		if (!wrapped.success) {
-			const message =
-				wrapped.errors?.map((e) => e.message).join('; ') ||
-				'Cloudflare API request failed';
-			const code = wrapped.errors?.[0]?.code;
-			throw new CloudflareAPIError(message, code);
-		}
-		return wrapped.result;
-	}
-	return response as T;
-}
 
 export async function makeCloudflareRequest<T>(
 	path: string,
 	token: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+		// JSON bodies use loose records because each endpoint accepts different fields.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		formData?: Record<string, unknown>;
@@ -75,21 +47,24 @@ export async function makeCloudflareRequest<T>(
 		? {
 				method,
 				url: path,
+				query,
+				// Multipart fields are strings or Blobs; corsair/http accepts a loose record.
 				formData: formData as Record<string, unknown>,
 			}
 		: rawBody != null
 			? {
 					method,
 					url: path,
+					query,
 					body: rawBody,
 					mediaType: mediaType ?? 'application/javascript',
 				}
 			: {
 					method,
 					url: path,
+					query,
 					body: isWriteMethod ? body : undefined,
 					mediaType: 'application/json',
-					query: method === 'GET' ? query : undefined,
 				};
 
 	try {
@@ -103,24 +78,11 @@ export async function makeCloudflareRequest<T>(
 			throw error;
 		}
 		if (error instanceof ApiError) {
-			const apiError = error;
-			const errorBody = apiError.body as
-				| CloudflareApiResponse<unknown>
-				| undefined;
-			if (
-				errorBody &&
-				typeof errorBody === 'object' &&
-				'errors' in errorBody &&
-				Array.isArray(errorBody.errors) &&
-				errorBody.errors.length > 0
-			) {
-				const message = errorBody.errors.map((e) => e.message).join('; ');
-				throw new CloudflareAPIError(
-					message,
-					errorBody.errors[0]?.code ?? apiError.status,
-				);
+			const mapped = cloudflareErrorFromApiErrorBody(error.body);
+			if (mapped) {
+				throw mapped;
 			}
-			throw new CloudflareAPIError(apiError.message, apiError.status);
+			throw new CloudflareAPIError(error.message, error.status);
 		}
 		if (error instanceof Error) {
 			throw new CloudflareAPIError(error.message);
