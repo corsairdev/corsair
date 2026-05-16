@@ -751,6 +751,8 @@ export function figma<const T extends FigmaPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: FigmaKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -759,7 +761,9 @@ export function figma<const T extends FigmaPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:figma:webhook_signature]: Figma webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -773,13 +777,15 @@ export function figma<const T extends FigmaPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:figma:api_key]: Figma API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:figma:${authType}]: Figma key is missing`);
 		},
 	} satisfies InternalFigmaPlugin;
 }

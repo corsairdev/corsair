@@ -456,6 +456,8 @@ export function teams<const T extends TeamsPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TeamsKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.clientState) {
 				return options.clientState;
 			}
@@ -463,7 +465,9 @@ export function teams<const T extends TeamsPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:teams:webhook_signature]: Teams webhook signature is missing',
+					);
 				}
 				return res;
 			}
@@ -505,7 +509,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:teams:${authType}]: Teams key is missing`);
 		},
 	} satisfies InternalTeamsPlugin;
 }

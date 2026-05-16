@@ -224,6 +224,8 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 		endpointSchemas: googlecalendarEndpointSchemas,
 		webhookSchemas: googlecalendarWebhookSchemas,
 		keyBuilder: async (ctx: GoogleCalendarKeyBuilderContext) => {
+			const authType = ctx.authType;
+
 			if (options.key) {
 				return options.key;
 			}
@@ -237,7 +239,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:googlecalendar] No refresh token. Cannot get access token.',
+						'[auth-missing:googlecalendar:refresh_token]: Google Calendar refresh token is missing',
 					);
 				}
 
@@ -289,7 +291,9 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:googlecalendar:${authType}]: Google Calendar key is missing`,
+			);
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

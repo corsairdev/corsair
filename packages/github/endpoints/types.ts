@@ -171,6 +171,29 @@ const RepositoriesGetContentInputSchema = z.object({
 	ref: z.string().optional(),
 });
 
+/** PUT /user/starred/{owner}/{repo} — see GitHub REST "Star a repository for the authenticated user" */
+const RepositoriesStarInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+});
+
+const RepositoriesUnstarInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+});
+
+const RepositoriesCheckStarredInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+});
+
+const RepositoriesListStarredInputSchema = z.object({
+	sort: z.enum(['created', 'updated']).optional(),
+	direction: z.enum(['asc', 'desc']).optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
 const ReleasesListInputSchema = z.object({
 	owner: z.string(),
 	repo: z.string(),
@@ -327,6 +350,10 @@ export const GithubEndpointInputSchemas = {
 	repositoriesListBranches: RepositoriesListBranchesInputSchema,
 	repositoriesListCommits: RepositoriesListCommitsInputSchema,
 	repositoriesGetContent: RepositoriesGetContentInputSchema,
+	repositoriesStar: RepositoriesStarInputSchema,
+	repositoriesUnstar: RepositoriesUnstarInputSchema,
+	repositoriesCheckStarred: RepositoriesCheckStarredInputSchema,
+	repositoriesListStarred: RepositoriesListStarredInputSchema,
 	releasesList: ReleasesListInputSchema,
 	releasesGet: ReleasesGetInputSchema,
 	releasesCreate: ReleasesCreateInputSchema,
@@ -796,6 +823,10 @@ export const GithubEndpointOutputSchemas = {
 	repositoriesListBranches: RepositoryBranchesListResponseSchema,
 	repositoriesListCommits: RepositoryCommitsListResponseSchema,
 	repositoriesGetContent: RepositoryContentGetResponseSchema,
+	repositoriesStar: z.boolean(),
+	repositoriesUnstar: z.boolean(),
+	repositoriesCheckStarred: z.object({ starred: z.boolean() }),
+	repositoriesListStarred: z.array(RepositorySchema),
 	releasesList: z.array(ReleaseSchema),
 	releasesGet: ReleaseSchema,
 	releasesCreate: ReleaseSchema,

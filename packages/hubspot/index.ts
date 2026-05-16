@@ -584,6 +584,19 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 	};
 	return {
 		id: 'hubspot',
+		oauthConfig: {
+			providerName: 'HubSpot',
+			authUrl: 'https://app.hubspot.com/oauth/authorize',
+			tokenUrl: 'https://api.hubapi.com/oauth/v1/token',
+			scopes: [
+				'crm.objects.contacts.read',
+				'crm.objects.contacts.write',
+				'crm.objects.companies.read',
+				'crm.objects.companies.write',
+				'crm.objects.deals.read',
+				'crm.objects.deals.write',
+			],
+		},
 		schema: HubSpotSchema,
 		options: options,
 		hooks: options.hooks,
@@ -609,6 +622,8 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 		},
 		errorHandlers: options.errorHandlers || errorHandlers,
 		keyBuilder: async (ctx: HubSpotKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -617,7 +632,9 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:hubspot:webhook_signature]: HubSpot webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -628,7 +645,9 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:hubspot:api_key]: HubSpot API Key is missing',
+						);
 					}
 
 					return res;
@@ -636,14 +655,18 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:hubspot:oauth_2]: HubSpot access token is missing',
+						);
 					}
 
 					return res;
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:hubspot:${authType}]: HubSpot key is missing`,
+			);
 		},
 	} satisfies InternalHubSpotPlugin;
 }

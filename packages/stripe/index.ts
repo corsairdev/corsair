@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { getValidStripeAccessToken } from './client';
 import {
 	Balance,
 	Charges,
@@ -69,7 +70,7 @@ import {
 } from './webhooks/types';
 
 export type StripePluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalStripePlugin['hooks'];
@@ -451,6 +452,14 @@ export function stripe<const T extends StripePluginOptions>(
 		id: 'stripe',
 		schema: StripeSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Stripe',
+			authUrl: 'https://marketplace.stripe.com/oauth/v2/authorize',
+			tokenUrl: 'https://api.stripe.com/v1/oauth/token',
+			scopes: ['stripe_apps'],
+			tokenAuthMethod: 'basic',
+			requiresRegisteredRedirect: true,
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: stripeEndpointsNested,
@@ -466,6 +475,8 @@ export function stripe<const T extends StripePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: StripeKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -474,7 +485,9 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:stripe:webhook_signature]: Stripe webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -488,13 +501,84 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:stripe:api_key]: Stripe API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new Error(
+						'[auth-missing:stripe:refresh_token]: Stripe refresh token is missing',
+					);
+				}
+
+				const creds = await ctx.keys.get_integration_credentials();
+
+				if (!creds.client_secret) {
+					throw new Error(
+						'[auth-missing:stripe:client_secret]: Stripe client secret is missing',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidStripeAccessToken>>;
+				try {
+					result = await getValidStripeAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientSecret: creds.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:stripe] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						// Stripe reissues the refresh token on every exchange — persist both
+						await ctx.keys.set_access_token(result.accessToken);
+						await ctx.keys.set_refresh_token(result.refreshToken);
+						await ctx.keys.set_expires_at(String(result.expiresAt));
+					} catch (error) {
+						throw new Error(
+							`[corsair:stripe] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				// Expose force-refresh so endpoints can retry on 401 (e.g. revoked token)
+				// without waiting for the 1-hour expiry window to lapse.
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidStripeAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientSecret: creds.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_refresh_token(freshResult.refreshToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					return freshResult.accessToken;
+				};
+
+				return result.accessToken;
+			}
+
+			throw new Error(
+				`[auth-missing:stripe:${authType}]: Stripe key is missing`,
+			);
 		},
 	} satisfies InternalStripePlugin;
 }

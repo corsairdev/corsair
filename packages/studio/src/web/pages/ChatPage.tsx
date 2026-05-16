@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, EmptyState, Textarea } from '../components/Primitives';
 
 type ToolBlock = {
@@ -15,11 +15,20 @@ type TextBlock = {
 
 type MsgBlock = TextBlock | ToolBlock;
 
+type MessageUsage = {
+	model: string;
+	inputTokens: number;
+	outputTokens: number;
+	totalTokens: number;
+	cost: number | null;
+};
+
 type Msg = {
 	id: string;
 	role: 'user' | 'assistant';
 	blocks: MsgBlock[];
 	error?: string;
+	usage?: MessageUsage;
 };
 
 type ApiChat = {
@@ -33,14 +42,63 @@ type ApiMessage = {
 	role: 'user' | 'assistant';
 	blocks: MsgBlock[];
 	error: string | null;
+	usage: MessageUsage | null;
 };
 
 type SseEvent =
 	| { type: 'text'; text: string }
 	| { type: 'tool-start'; name: string; args: unknown }
 	| { type: 'tool-end'; name: string; result: unknown }
+	| { type: 'usage'; usage: MessageUsage }
 	| { type: 'done' }
 	| { type: 'error'; message: string };
+
+type UsageTotal = {
+	inputTokens: number;
+	outputTokens: number;
+	totalTokens: number;
+	cost: number;
+	hasUnknownCost: boolean;
+	hasAnyKnownCost: boolean;
+};
+
+function aggregateUsage(messages: Msg[]): UsageTotal {
+	const total: UsageTotal = {
+		inputTokens: 0,
+		outputTokens: 0,
+		totalTokens: 0,
+		cost: 0,
+		hasUnknownCost: false,
+		hasAnyKnownCost: false,
+	};
+	for (const msg of messages) {
+		const u = msg.usage;
+		if (!u) continue;
+		total.inputTokens += u.inputTokens;
+		total.outputTokens += u.outputTokens;
+		total.totalTokens += u.totalTokens;
+		if (u.cost === null) {
+			total.hasUnknownCost = true;
+		} else {
+			total.cost += u.cost;
+			total.hasAnyKnownCost = true;
+		}
+	}
+	return total;
+}
+
+function formatTokens(n: number): string {
+	if (n < 1000) return String(n);
+	if (n < 1_000_000) return `${(n / 1000).toFixed(1)}K`;
+	return `${(n / 1_000_000).toFixed(2)}M`;
+}
+
+function formatCost(cost: number): string {
+	if (cost === 0) return '$0.00';
+	if (cost < 0.01) return `$${cost.toFixed(4)}`;
+	if (cost < 1) return `$${cost.toFixed(3)}`;
+	return `$${cost.toFixed(2)}`;
+}
 
 function ToolCallRow({ tc }: { tc: ToolBlock }) {
 	const [open, setOpen] = useState(false);
@@ -90,6 +148,28 @@ function ToolCallRow({ tc }: { tc: ToolBlock }) {
 	);
 }
 
+function MessageUsageRow({ usage }: { usage: MessageUsage }) {
+	return (
+		<div
+			className="flex flex-wrap items-center gap-1.5 text-[10px] font-mono pl-1"
+			title={`model: ${usage.model}`}
+		>
+			<span className="px-1.5 py-0.5 rounded bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-[var(--color-text-muted)]">
+				↑ {formatTokens(usage.inputTokens)}
+			</span>
+			<span className="px-1.5 py-0.5 rounded bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-[var(--color-text-muted)]">
+				↓ {formatTokens(usage.outputTokens)}
+			</span>
+			{usage.cost !== null ? (
+				<span className="px-1.5 py-0.5 rounded bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 text-[var(--color-accent)]">
+					{formatCost(usage.cost)}
+				</span>
+			) : null}
+			<span className="text-[var(--color-text-subtle)]">{usage.model}</span>
+		</div>
+	);
+}
+
 function MessageBubble({ msg }: { msg: Msg }) {
 	const isUser = msg.role === 'user';
 
@@ -121,6 +201,8 @@ function MessageBubble({ msg }: { msg: Msg }) {
 				) : null,
 			)}
 
+			{msg.usage ? <MessageUsageRow usage={msg.usage} /> : null}
+
 			{msg.error ? (
 				<div className="px-3 py-2 rounded-xl border border-[var(--color-err)]/40 bg-[var(--color-err)]/5 text-xs text-[var(--color-err)]">
 					{msg.error}
@@ -136,6 +218,7 @@ function toMsg(m: ApiMessage): Msg {
 		role: m.role,
 		blocks: m.blocks,
 		error: m.error ?? undefined,
+		usage: m.usage ?? undefined,
 	};
 }
 
@@ -151,6 +234,8 @@ export function ChatPage({ tenant }: { tenant: string }) {
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [messages]);
+
+	const usageTotal = useMemo(() => aggregateUsage(messages), [messages]);
 
 	const loadMessages = async (chatId: string) => {
 		const res = await fetch(`/api/chats/messages?chatId=${chatId}`);
@@ -316,6 +401,12 @@ export function ChatPage({ tenant }: { tenant: string }) {
 								return { ...m, blocks };
 							}),
 						);
+					} else if (event.type === 'usage') {
+						setMessages((prev) =>
+							prev.map((m) =>
+								m.id === asstId ? { ...m, usage: event.usage } : m,
+							),
+						);
 					} else if (event.type === 'error') {
 						setMessages((prev) =>
 							prev.map((m) =>
@@ -348,9 +439,10 @@ export function ChatPage({ tenant }: { tenant: string }) {
 		}
 	};
 
+	const hasUsage = usageTotal.totalTokens > 0;
+
 	return (
 		<div className="h-full flex flex-col">
-			{/* Chat selector */}
 			<div className="flex-shrink-0 border-b border-[var(--color-border)] px-4 py-2 flex items-center gap-2">
 				<select
 					value={activeChatId ?? ''}
@@ -374,7 +466,6 @@ export function ChatPage({ tenant }: { tenant: string }) {
 				</Button>
 			</div>
 
-			{/* Messages */}
 			<div className="flex-1 overflow-auto p-4 flex flex-col gap-3 min-h-0">
 				{chatLoading ? (
 					<div className="flex items-center gap-1.5 text-[11px] text-[var(--color-text-subtle)]">
@@ -402,18 +493,74 @@ export function ChatPage({ tenant }: { tenant: string }) {
 				<div ref={bottomRef} />
 			</div>
 
-			{/* Input */}
 			<div className="flex-shrink-0 border-t border-[var(--color-border)] p-4">
 				<div className="flex gap-2 items-end">
-					<Textarea
-						className="flex-1 resize-none"
-						rows={3}
-						value={input}
-						onChange={(e) => setInput(e.target.value)}
-						onKeyDown={onKeyDown}
-						placeholder="Ask about your integrations… (Ctrl+Enter to send)"
-						disabled={streaming || chatLoading}
-					/>
+					<div className="flex-1 flex flex-col  min-w-0">
+						{hasUsage ? (
+							<div className="px-3 py-1.5 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border)] flex items-center justify-between gap-3 text-xs font-mono">
+								<div className="flex items-center gap-2 flex-wrap">
+									<span className="text-[10px] uppercase tracking-wider text-[var(--color-text-subtle)]">
+										Usage
+									</span>
+									<span
+										className="px-2 py-0.5 rounded-md bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)]"
+										title="input tokens"
+									>
+										<span className="text-[var(--color-text-subtle)]">
+											↑ in
+										</span>{' '}
+										<span className="font-semibold">
+											{formatTokens(usageTotal.inputTokens)}
+										</span>
+									</span>
+									<span
+										className="px-2 py-0.5 rounded-md bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)]"
+										title="output tokens"
+									>
+										<span className="text-[var(--color-text-subtle)]">
+											↓ out
+										</span>{' '}
+										<span className="font-semibold">
+											{formatTokens(usageTotal.outputTokens)}
+										</span>
+									</span>
+									<span
+										className="px-2 py-0.5 rounded-md bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)]"
+										title="total tokens"
+									>
+										<span className="text-[var(--color-text-subtle)]">
+											Σ total
+										</span>{' '}
+										<span className="font-semibold">
+											{formatTokens(usageTotal.totalTokens)}
+										</span>
+									</span>
+								</div>
+								{usageTotal.hasAnyKnownCost ? (
+									<div
+										className="px-2.5 py-0.5 rounded-md bg-[var(--color-accent)]/15 border border-[var(--color-accent)]/40 text-[var(--color-accent)] font-semibold whitespace-nowrap"
+										title={
+											usageTotal.hasUnknownCost
+												? 'Estimated cost (some messages used a model without pricing data)'
+												: 'Estimated cost for this chat'
+										}
+									>
+										{formatCost(usageTotal.cost)}
+										{usageTotal.hasUnknownCost ? '+' : ''}
+									</div>
+								) : null}
+							</div>
+						) : null}
+						<Textarea
+							className="resize-none"
+							rows={3}
+							value={input}
+							onChange={(e) => setInput(e.target.value)}
+							onKeyDown={onKeyDown}
+							placeholder="Ask about your integrations… (Ctrl+Enter to send)"
+							disabled={streaming || chatLoading}
+						/>
+					</div>
 					<Button
 						variant="primary"
 						onClick={() => void send()}

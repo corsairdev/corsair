@@ -308,6 +308,8 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: PagerdutyKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -316,7 +318,9 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:pagerduty:webhook_signature]: PagerDuty webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -330,13 +334,17 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:pagerduty:api_key]: PagerDuty API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:pagerduty:${authType}]: PagerDuty key is missing`,
+			);
 		},
 	} satisfies InternalPagerdutyPlugin;
 }

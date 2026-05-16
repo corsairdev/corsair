@@ -301,6 +301,10 @@ export type GithubEndpoints = {
 	repositoriesListBranches: GithubEndpoint<'repositoriesListBranches'>;
 	repositoriesListCommits: GithubEndpoint<'repositoriesListCommits'>;
 	repositoriesGetContent: GithubEndpoint<'repositoriesGetContent'>;
+	repositoriesStar: GithubEndpoint<'repositoriesStar'>;
+	repositoriesUnstar: GithubEndpoint<'repositoriesUnstar'>;
+	repositoriesCheckStarred: GithubEndpoint<'repositoriesCheckStarred'>;
+	repositoriesListStarred: GithubEndpoint<'repositoriesListStarred'>;
 	releasesList: GithubEndpoint<'releasesList'>;
 	releasesGet: GithubEndpoint<'releasesGet'>;
 	releasesCreate: GithubEndpoint<'releasesCreate'>;
@@ -606,6 +610,10 @@ const githubEndpointsNested = {
 		listBranches: RepositoriesEndpoints.listBranches,
 		listCommits: RepositoriesEndpoints.listCommits,
 		getContent: RepositoriesEndpoints.getContent,
+		star: RepositoriesEndpoints.star,
+		unstar: RepositoriesEndpoints.unstar,
+		checkStarred: RepositoriesEndpoints.checkStarred,
+		listStarred: RepositoriesEndpoints.listStarred,
 	},
 	releases: {
 		list: ReleasesEndpoints.list,
@@ -690,6 +698,22 @@ export const githubEndpointSchemas = {
 	'repositories.getContent': {
 		input: GithubEndpointInputSchemas.repositoriesGetContent,
 		output: GithubEndpointOutputSchemas.repositoriesGetContent,
+	},
+	'repositories.star': {
+		input: GithubEndpointInputSchemas.repositoriesStar,
+		output: GithubEndpointOutputSchemas.repositoriesStar,
+	},
+	'repositories.unstar': {
+		input: GithubEndpointInputSchemas.repositoriesUnstar,
+		output: GithubEndpointOutputSchemas.repositoriesUnstar,
+	},
+	'repositories.checkStarred': {
+		input: GithubEndpointInputSchemas.repositoriesCheckStarred,
+		output: GithubEndpointOutputSchemas.repositoriesCheckStarred,
+	},
+	'repositories.listStarred': {
+		input: GithubEndpointInputSchemas.repositoriesListStarred,
+		output: GithubEndpointOutputSchemas.repositoriesListStarred,
 	},
 	'releases.list': {
 		input: GithubEndpointInputSchemas.releasesList,
@@ -1505,6 +1529,22 @@ const githubEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get file or directory content from a repository',
 	},
+	'repositories.star': {
+		riskLevel: 'write',
+		description: 'Star a repository for the authenticated user',
+	},
+	'repositories.unstar': {
+		riskLevel: 'write',
+		description: 'Unstar a repository for the authenticated user',
+	},
+	'repositories.checkStarred': {
+		riskLevel: 'read',
+		description: 'Check whether the authenticated user has starred a repository',
+	},
+	'repositories.listStarred': {
+		riskLevel: 'read',
+		description: 'List repositories starred by the authenticated user',
+	},
 	'releases.list': {
 		riskLevel: 'read',
 		description: 'List releases in a repository',
@@ -1618,6 +1658,12 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 	};
 	return {
 		id: 'github',
+		oauthConfig: {
+			providerName: 'GitHub',
+			authUrl: 'https://github.com/login/oauth/authorize',
+			tokenUrl: 'https://github.com/login/oauth/access_token',
+			scopes: ['repo', 'user', 'read:org'],
+		},
 		schema: GithubSchema,
 		options: options,
 		hooks: options.hooks,
@@ -1634,6 +1680,8 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 			return hasGithubEvent && hasGithubSignature;
 		},
 		keyBuilder: async (ctx: GithubKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -1642,7 +1690,9 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:github:webhook_signature]: GitHub webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -1653,7 +1703,9 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:github:api_key]: GitHub API Key is missing',
+						);
 					}
 
 					return res;
@@ -1661,14 +1713,18 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:github:oauth_2]: GitHub access token is missing',
+						);
 					}
 
 					return res;
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:github:${authType}]: GitHub key is missing`,
+			);
 		},
 	} satisfies InternalGithubPlugin;
 }

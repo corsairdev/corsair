@@ -448,6 +448,8 @@ export function discord<const T extends DiscordPluginOptions>(
 		 * - source === 'endpoint' → Bot token for Discord REST API calls (used as "Bot <token>")
 		 */
 		keyBuilder: async (ctx: DiscordKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook') {
 				if (options.publicKey) return options.publicKey;
 				const res = await ctx.keys.get_webhook_signature();
@@ -462,7 +464,9 @@ export function discord<const T extends DiscordPluginOptions>(
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:discord:${authType}]: Discord key is missing`,
+			);
 		},
 	} satisfies InternalDiscordPlugin;
 }

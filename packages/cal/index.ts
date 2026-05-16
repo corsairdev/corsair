@@ -268,6 +268,8 @@ export function cal<const T extends CalPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CalKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -276,7 +278,9 @@ export function cal<const T extends CalPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:cal:webhook_signature]: Cal webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -290,13 +294,13 @@ export function cal<const T extends CalPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error('[auth-missing:cal:api_key]: Cal API Key is missing');
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:cal:${authType}]: Cal key is missing`);
 		},
 	} satisfies InternalCalPlugin;
 }

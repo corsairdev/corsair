@@ -747,13 +747,19 @@ export function intercom<const T extends IntercomPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: IntercomKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:intercom:webhook_signature]: Intercom webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -763,11 +769,17 @@ export function intercom<const T extends IntercomPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:intercom:api_key]: Intercom API Key is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:intercom:${authType}]: Intercom key is missing`,
+			);
 		},
 	} satisfies InternalIntercomPlugin;
 }

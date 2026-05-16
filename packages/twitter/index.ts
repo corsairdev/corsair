@@ -160,6 +160,8 @@ export function twitter<const T extends TwitterPluginOptions>(
 			return false;
 		},
 		keyBuilder: async (ctx: TwitterKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -175,11 +177,17 @@ export function twitter<const T extends TwitterPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:twitter:oauth_2]: Twitter access token is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:twitter:${authType}]: Twitter key is missing`,
+			);
 		},
 	} satisfies InternalTwitterPlugin;
 }

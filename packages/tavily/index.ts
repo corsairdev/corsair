@@ -145,6 +145,8 @@ export function tavily<const T extends TavilyPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TavilyKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -154,7 +156,9 @@ export function tavily<const T extends TavilyPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:tavily:${authType}]: Tavily key is missing`,
+			);
 		},
 	} satisfies InternalTavilyPlugin;
 }
