@@ -28,6 +28,10 @@ export const RepositoriesEndpoints = {
 	listBranches: Repositories.listBranches,
 	listCommits: Repositories.listCommits,
 	getContent: Repositories.getContent,
+	star: Repositories.star,
+	unstar: Repositories.unstar,
+	checkStarred: Repositories.checkStarred,
+	listStarred: Repositories.listStarred,
 };
 
 export const ReleasesEndpoints = {
