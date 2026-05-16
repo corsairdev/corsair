@@ -19,7 +19,23 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "App",
+        "groups": [
+          {
+            "group": "Corsair App",
+            "pages": [
+              "hosted-sdk/overview",
+              "hosted-sdk/quickstart",
+              "hosted-sdk/instances-and-plugins",
+              "hosted-sdk/tenants-and-auth",
+              "hosted-sdk/mcp-and-run",
+              "hosted-sdk/types-and-errors"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
         "groups": [
           {
             "group": "Get Started",
