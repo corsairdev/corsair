@@ -1,6 +1,6 @@
 # www
 
-This is the Corsair marketing landing page. It is built with [Next.js](https://nextjs.org/) and [shadcn/ui](https://ui.shadcn.com/) (Tailwind CSS v4, Lyra preset).
+This is the Corsair landing page. It is not in production yet. Eventually, corsair.dev will point to this project.
 
 Add more components from the monorepo root with:
 
