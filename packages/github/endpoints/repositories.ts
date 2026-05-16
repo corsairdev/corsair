@@ -173,6 +173,7 @@ export const star: GithubEndpoints['repositoriesStar'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
+	return true;
 };
 
 /** Unstar a repository for the authenticated user (DELETE /user/starred/{owner}/{repo}). */
@@ -190,6 +191,7 @@ export const unstar: GithubEndpoints['repositoriesUnstar'] = async (
 		{ ...input },
 		'completed',
 	);
+	return true;
 };
 
 /**
