@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-06T00:36:34.127Z",
-  "corsairVersion": "0.1.67",
+  "generatedAt": "2026-05-16T03:39:46.590Z",
+  "corsairVersion": "0.1.68",
   "catalogVersion": 1,
   "plugins": [
     {
@@ -2127,7 +2127,8 @@
       "description": "Asana plugin for Corsair",
       "npmPackageName": "@corsair-dev/asana",
       "authTypes": [
-        "api_key"
+        "api_key",
+        "oauth_2"
       ],
       "defaultAuthType": "api_key",
       "counts": {
@@ -2141,6 +2142,22 @@
           "integrationFields": [],
           "accountFields": [
             "api_key",
+            "webhook_signature",
+            "one"
+          ]
+        },
+        {
+          "authType": "oauth_2",
+          "integrationFields": [
+            "client_id",
+            "client_secret",
+            "redirect_url"
+          ],
+          "accountFields": [
+            "access_token",
+            "refresh_token",
+            "expires_at",
+            "scope",
             "webhook_signature"
           ]
         }
@@ -25349,7 +25366,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 29,
+        "api": 33,
         "webhooks": 100,
         "db": 10
       },
@@ -27382,6 +27399,37 @@
           }
         },
         {
+          "path": "github.api.repositories.checkStarred",
+          "shortPath": "repositories.checkStarred",
+          "description": "Check whether the authenticated user has starred a repository",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "owner",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "repo",
+                "optional": false,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "starred",
+                "optional": false,
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        {
           "path": "github.api.repositories.get",
           "shortPath": "repositories.get",
           "description": "Get a specific repository",
@@ -27695,6 +27743,91 @@
           "output": {
             "kind": "inline",
             "type": "{ url?: string, sha: string, nodeId?: string, htmlUrl?: string, commentsUrl?: string, commit: { url?: string, author?: { name: string, email: string, date?: date | null } | null, committer?: { name: string, email: string, date?: date | null } | null, message: string, commentCount?: number, tree?: { sha: string, url?: string } }, author?: { login: string, id: number } | null, committer?: { login: string, id: number } | null, parents?: { sha: string, url?: string, htmlUrl?: string }[] }[]"
+          }
+        },
+        {
+          "path": "github.api.repositories.listStarred",
+          "shortPath": "repositories.listStarred",
+          "description": "List repositories starred by the authenticated user",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "sort",
+                "optional": true,
+                "type": "created | updated"
+              },
+              {
+                "key": "direction",
+                "optional": true,
+                "type": "asc | desc"
+              },
+              {
+                "key": "perPage",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "page",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          },
+          "output": {
+            "kind": "inline",
+            "type": "{ id: number, nodeId?: string, name: string, fullName?: string, private?: boolean, htmlUrl?: string, description?: string | null, fork?: boolean, url?: string, createdAt?: date | null, updatedAt?: date | null, pushedAt?: date | null, defaultBranch?: string, language?: string | null, stargazersCount?: number, watchersCount?: number, forksCount?: number, openIssuesCount?: number, archived?: boolean, disabled?: boolean, owner?: { name?: string | null, email?: string | null, login: string, id: number, nodeId?: string, avatarUrl?: string, gravatarId?: string | null, url?: string, htmlUrl?: string, followersUrl?: string, followingUrl?: string, gistsUrl?: string, starredUrl?: string, subscriptionsUrl?: string, organizationsUrl?: string, reposUrl?: string, eventsUrl?: string, receivedEventsUrl?: string, type?: string, siteAdmin?: boolean, starredAt?: date | null } }[]"
+          }
+        },
+        {
+          "path": "github.api.repositories.star",
+          "shortPath": "repositories.star",
+          "description": "Star a repository for the authenticated user",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "owner",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "repo",
+                "optional": false,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "inline",
+            "type": "void"
+          }
+        },
+        {
+          "path": "github.api.repositories.unstar",
+          "shortPath": "repositories.unstar",
+          "description": "Unstar a repository for the authenticated user",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "owner",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "repo",
+                "optional": false,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "inline",
+            "type": "void"
           }
         },
         {
@@ -60198,7 +60331,8 @@
       "description": "Linear plugin for Corsair",
       "npmPackageName": "@corsair-dev/linear",
       "authTypes": [
-        "api_key"
+        "api_key",
+        "oauth_2"
       ],
       "defaultAuthType": "api_key",
       "counts": {
@@ -60212,6 +60346,21 @@
           "integrationFields": [],
           "accountFields": [
             "api_key",
+            "webhook_signature"
+          ]
+        },
+        {
+          "authType": "oauth_2",
+          "integrationFields": [
+            "client_id",
+            "client_secret",
+            "redirect_url"
+          ],
+          "accountFields": [
+            "access_token",
+            "refresh_token",
+            "expires_at",
+            "scope",
             "webhook_signature"
           ]
         }
@@ -77478,7 +77627,7 @@
               {
                 "key": "items",
                 "optional": false,
-                "type": "{ id: string, entity: order, amount: number, amount_paid?: number, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number }[]"
+                "type": "{ id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number }[]"
               }
             ]
           }
@@ -78412,44 +78561,19 @@
             "kind": "object",
             "fields": [
               {
-                "key": "id",
-                "optional": false,
-                "type": "string"
-              },
-              {
                 "key": "entity",
+                "optional": true,
+                "type": "collection"
+              },
+              {
+                "key": "count",
                 "optional": false,
-                "type": "settlement"
-              },
-              {
-                "key": "amount",
-                "optional": true,
                 "type": "number"
               },
               {
-                "key": "status",
+                "key": "items",
                 "optional": false,
-                "type": "created | processed | failed"
-              },
-              {
-                "key": "fees",
-                "optional": true,
-                "type": "number"
-              },
-              {
-                "key": "tax",
-                "optional": true,
-                "type": "number"
-              },
-              {
-                "key": "utr",
-                "optional": true,
-                "type": "string"
-              },
-              {
-                "key": "created_at",
-                "optional": true,
-                "type": "number"
+                "type": "{ id: string, entity: settlement, amount?: number | null, status: created | processed | failed, fees?: number | null, tax?: number | null, utr?: string | null, created_at?: number }[]"
               }
             ]
           }
@@ -79509,11 +79633,11 @@
               {
                 "key": "payload",
                 "optional": false,
-                "type": "{ order: { entity: { id: string, entity: order, amount: number, amount_paid?: number, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+                "type": "{ order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
               }
             ]
           },
-          "responseType": "{ entity: event, account_id: string, event: order.paid, contains: string[], created_at: number, payload: { order: { entity: { id: string, entity: order, amount: number, amount_paid?: number, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+          "responseType": "{ entity: event, account_id: string, event: order.paid, contains: string[], created_at: number, payload: { order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
           "usageExample": "razorpay({\n    webhookHooks: {\n        orders: {\n            paid: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
         },
         {
