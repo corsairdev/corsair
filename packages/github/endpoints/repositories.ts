@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeGithubRequest } from '../client';
+import { GithubAPIError, makeGithubRequest } from '../client';
 import type { GithubBoundEndpoints, GithubEndpoints } from '../index';
 import type {
 	RepositoriesListResponse,
@@ -155,6 +155,108 @@ export const getContent: GithubEndpoints['repositoriesGetContent'] = async (
 	await logEventFromContext(
 		ctx,
 		'github.repositories.getContent',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+/** Star a repository for the authenticated user (PUT /user/starred/{owner}/{repo}). */
+export const star: GithubEndpoints['repositoriesStar'] = async (ctx, input) => {
+	const { owner, repo } = input;
+	const endpoint = `/user/starred/${owner}/${repo}`;
+	await makeGithubRequest<void>(endpoint, ctx.key, { method: 'PUT' });
+
+	await logEventFromContext(
+		ctx,
+		'github.repositories.star',
+		{ ...input },
+		'completed',
+	);
+};
+
+/** Unstar a repository for the authenticated user (DELETE /user/starred/{owner}/{repo}). */
+export const unstar: GithubEndpoints['repositoriesUnstar'] = async (
+	ctx,
+	input,
+) => {
+	const { owner, repo } = input;
+	const endpoint = `/user/starred/${owner}/${repo}`;
+	await makeGithubRequest<void>(endpoint, ctx.key, { method: 'DELETE' });
+
+	await logEventFromContext(
+		ctx,
+		'github.repositories.unstar',
+		{ ...input },
+		'completed',
+	);
+};
+
+/**
+ * Whether the authenticated user has starred the repo (GET /user/starred/{owner}/{repo}).
+ * 204 = starred; 404 = not starred.
+ */
+export const checkStarred: GithubEndpoints['repositoriesCheckStarred'] = async (
+	ctx,
+	input,
+) => {
+	const { owner, repo } = input;
+	const endpoint = `/user/starred/${owner}/${repo}`;
+	try {
+		await makeGithubRequest<void>(endpoint, ctx.key);
+		await logEventFromContext(
+			ctx,
+			'github.repositories.checkStarred',
+			{ ...input },
+			'completed',
+		);
+		return { starred: true };
+	} catch (error) {
+		if (error instanceof GithubAPIError && error.code === 404) {
+			await logEventFromContext(
+				ctx,
+				'github.repositories.checkStarred',
+				{ ...input },
+				'completed',
+			);
+			return { starred: false };
+		}
+		throw error;
+	}
+};
+
+/** List repositories starred by the authenticated user (GET /user/starred). */
+export const listStarred: GithubEndpoints['repositoriesListStarred'] = async (
+	ctx,
+	input,
+) => {
+	const { sort, direction, perPage, page } = input;
+	const result = await makeGithubRequest<RepositoriesListResponse>(
+		'/user/starred',
+		ctx.key,
+		{
+			query: {
+				sort,
+				direction,
+				per_page: perPage,
+				page,
+			},
+		},
+	);
+
+	if (result && ctx.db.repositories) {
+		try {
+			for (const repo of result) {
+				await ctx.db.repositories.upsertByEntityId(repo.id.toString(), repo);
+			}
+		} catch (error) {
+			console.warn('Failed to save starred repositories to database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'github.repositories.listStarred',
 		{ ...input },
 		'completed',
 	);
