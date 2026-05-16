@@ -8,9 +8,11 @@ export const list: TallyEndpoints['workspacesList'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (input.page !== undefined) query.page = input.page;
 
-	const result = await makeTallyRequest<
-		TallyEndpointOutputs['workspacesList']
-	>('workspaces', ctx.key, { method: 'GET', query });
+	const result = await makeTallyRequest<TallyEndpointOutputs['workspacesList']>(
+		'workspaces',
+		ctx.key,
+		{ method: 'GET', query },
+	);
 
 	if (result.items) {
 		for (const workspace of result.items) {
@@ -62,9 +64,11 @@ export const create: TallyEndpoints['workspacesCreate'] = async (
 };
 
 export const get: TallyEndpoints['workspacesGet'] = async (ctx, input) => {
-	const result = await makeTallyRequest<
-		TallyEndpointOutputs['workspacesGet']
-	>(`workspaces/${input.workspaceId}`, ctx.key, { method: 'GET' });
+	const result = await makeTallyRequest<TallyEndpointOutputs['workspacesGet']>(
+		`workspaces/${input.workspaceId}`,
+		ctx.key,
+		{ method: 'GET' },
+	);
 
 	if (result.id) {
 		await safeDbUpsert(
@@ -95,6 +99,15 @@ export const update: TallyEndpoints['workspacesUpdate'] = async (
 		method: 'PATCH',
 		body: { ...body },
 	});
+
+	if (result.id) {
+		await safeDbUpsert(
+			ctx.db.workspaces,
+			result.id,
+			toWorkspaceRecord(result),
+			'workspace',
+		);
+	}
 
 	await logEventFromContext(
 		ctx,

@@ -332,7 +332,7 @@ const WorkspacesListResponseSchema = z
 
 const WorkspacesCreateResponseSchema = TallyWorkspaceSchema;
 const WorkspacesGetResponseSchema = TallyWorkspaceSchema;
-const WorkspacesUpdateResponseSchema = z.void();
+const WorkspacesUpdateResponseSchema = TallyWorkspaceSchema;
 const WorkspacesDeleteResponseSchema = z.void();
 
 const WebhookManagementListResponseSchema = z

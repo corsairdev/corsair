@@ -4,9 +4,10 @@ import { makeTallyRequest } from '../../client';
 import type {
 	WorkspacesGetResponse,
 	WorkspacesListResponse,
+	WorkspacesUpdateResponse,
 } from '../../endpoints/types';
 import { TallyEndpointOutputSchemas } from '../../endpoints/types';
-import { getKey, tallyDescribe } from '../utils';
+import { getFirstWorkspaceId, getKey, tallyDescribe } from '../utils';
 
 tallyDescribe('Tally API – Workspaces', () => {
 	const key = getKey();
@@ -55,6 +56,36 @@ tallyDescribe('Tally API – Workspaces', () => {
 		TallyEndpointOutputSchemas.workspacesGet.parse(result);
 		expect(result.id).toBe(first.id);
 		expect(result.name).toBe(first.name);
+	});
+
+	it('workspacesUpdate renames workspace and returns updated object', async () => {
+		const workspaceId = await getFirstWorkspaceId(key);
+		if (!workspaceId) return;
+
+		const original = await makeTallyRequest<WorkspacesGetResponse>(
+			`workspaces/${workspaceId}`,
+			key,
+			{ method: 'GET' },
+		);
+		const originalName = original.name;
+		const updatedName = `${originalName} (test-rename)`;
+
+		try {
+			const result = await makeTallyRequest<WorkspacesUpdateResponse>(
+				`workspaces/${workspaceId}`,
+				key,
+				{ method: 'PATCH', body: { name: updatedName } },
+			);
+
+			TallyEndpointOutputSchemas.workspacesUpdate.parse(result);
+			expect(result.id).toBe(workspaceId);
+			expect(result.name).toBe(updatedName);
+		} finally {
+			await makeTallyRequest(`workspaces/${workspaceId}`, key, {
+				method: 'PATCH',
+				body: { name: originalName },
+			});
+		}
 	});
 
 	it('workspacesGet with invalid id throws', async () => {
