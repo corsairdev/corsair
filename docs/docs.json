@@ -190,6 +190,15 @@
                 ]
               },
               {
+                "group": "Cloudflare",
+                "pages": [
+                  "plugins/cloudflare/overview",
+                  "plugins/cloudflare/get-credentials",
+                  "plugins/cloudflare/api",
+                  "plugins/cloudflare/database"
+                ]
+              },
+              {
                 "group": "Cursor",
                 "pages": [
                   "plugins/cursor/overview",

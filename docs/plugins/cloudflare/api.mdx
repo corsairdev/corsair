@@ -1,0 +1,1056 @@
+---
+title: API
+description: "API reference for Cloudflare: every `cloudflare.api.*` operation with input and output types."
+---
+
+Every `cloudflare.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Dns
+
+### create
+
+`dns.create`
+
+Create a DNS record in a zone
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.dns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `ttl` | `number` | No | — |
+| `proxied` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `zone_id` | `string` | No | — |
+| `zone_name` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `proxiable` | `boolean` | No | — |
+| `proxied` | `boolean` | No | — |
+| `ttl` | `number` | No | — |
+| `locked` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`dns.delete`
+
+Delete a DNS record [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflare.api.dns.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `dns_record_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### edit
+
+`dns.edit`
+
+Update a DNS record
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.dns.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `dns_record_id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+| `ttl` | `number` | No | — |
+| `proxied` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `zone_id` | `string` | No | — |
+| `zone_name` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `proxiable` | `boolean` | No | — |
+| `proxied` | `boolean` | No | — |
+| `ttl` | `number` | No | — |
+| `locked` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`dns.get`
+
+Retrieve a DNS record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.dns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `dns_record_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `zone_id` | `string` | No | — |
+| `zone_name` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `proxiable` | `boolean` | No | — |
+| `proxied` | `boolean` | No | — |
+| `ttl` | `number` | No | — |
+| `locked` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`dns.list`
+
+List DNS records for a zone
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.dns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `zone_id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  zone_id?: string,
+  zone_name?: string,
+  type: string,
+  name: string,
+  content: string,
+  proxiable?: boolean,
+  proxied?: boolean,
+  ttl?: number,
+  locked?: boolean,
+  created_on?: string,
+  modified_on?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Rulesets
+
+### create
+
+`rulesets.create`
+
+Create a ruleset in a zone
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.rulesets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `kind` | `string` | Yes | — |
+| `phase` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+| `description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `kind` | `string` | Yes | — |
+| `version` | `string` | No | — |
+| `last_updated` | `string` | No | — |
+| `phase` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`rulesets.delete`
+
+Delete a ruleset [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflare.api.rulesets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `ruleset_id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`rulesets.get`
+
+Retrieve a ruleset by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.rulesets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `ruleset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `kind` | `string` | Yes | — |
+| `version` | `string` | No | — |
+| `last_updated` | `string` | No | — |
+| `phase` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`rulesets.list`
+
+List rulesets for a zone
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.rulesets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  kind: string,
+  version?: string,
+  last_updated?: string,
+  phase: string,
+  rules?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`rulesets.update`
+
+Update a ruleset
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.rulesets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `ruleset_id` | `string` | Yes | — |
+| `rules` | `object[]` | Yes | — |
+| `description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `kind` | `string` | Yes | — |
+| `version` | `string` | No | — |
+| `last_updated` | `string` | No | — |
+| `phase` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workers
+
+### routes.create
+
+`workers.routes.create`
+
+Create a Workers route
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.workers.routes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `pattern` | `string` | Yes | — |
+| `script` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `pattern` | `string` | Yes | — |
+| `script` | `string` | No | — |
+
+
+
+---
+
+### routes.delete
+
+`workers.routes.delete`
+
+Delete a Workers route [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflare.api.workers.routes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `route_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### routes.edit
+
+`workers.routes.edit`
+
+Update a Workers route
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.workers.routes.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `route_id` | `string` | Yes | — |
+| `pattern` | `string` | No | — |
+| `script` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `pattern` | `string` | Yes | — |
+| `script` | `string` | No | — |
+
+
+
+---
+
+### routes.get
+
+`workers.routes.get`
+
+Retrieve a Workers route by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.workers.routes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `route_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `pattern` | `string` | Yes | — |
+| `script` | `string` | No | — |
+
+
+
+---
+
+### routes.list
+
+`workers.routes.list`
+
+List Workers routes for a zone
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.workers.routes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  pattern: string,
+  script?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### scripts.delete
+
+`workers.scripts.delete`
+
+Delete a Workers script [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflare.api.workers.scripts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `script_name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### scripts.get
+
+`workers.scripts.get`
+
+Retrieve a Workers script by name
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.workers.scripts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `script_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+
+
+
+---
+
+### scripts.list
+
+`workers.scripts.list`
+
+List Workers scripts for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.workers.scripts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  created_on?: string,
+  modified_on?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### scripts.upload
+
+`workers.scripts.upload`
+
+Upload or overwrite a Workers script
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.workers.scripts.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `script_name` | `string` | Yes | — |
+| `script_content` | `string` | Yes | — |
+| `bindings` | `object[]` | No | — |
+| `compatibility_date` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="bindings full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+
+
+
+---
+
+## Zones
+
+### create
+
+`zones.create`
+
+Create a new Cloudflare zone
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.zones.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `account` | `object` | Yes | — |
+| `jump_start` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `paused` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `account` | `object` | No | — |
+| `name_servers` | `string[]` | No | — |
+| `original_name_servers` | `string[]` | No | — |
+| `original_registrar` | `string` | No | — |
+| `original_dnshost` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+| `activated_on` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`zones.delete`
+
+Delete a Cloudflare zone [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.cloudflare.api.zones.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### edit
+
+`zones.edit`
+
+Update a Cloudflare zone
+
+**Risk:** `write`
+
+```ts
+await corsair.cloudflare.api.zones.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+| `paused` | `boolean` | No | — |
+| `plan` | `object` | No | — |
+| `vanity_name_servers` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="plan full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `paused` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `account` | `object` | No | — |
+| `name_servers` | `string[]` | No | — |
+| `original_name_servers` | `string[]` | No | — |
+| `original_registrar` | `string` | No | — |
+| `original_dnshost` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+| `activated_on` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`zones.get`
+
+Retrieve a Cloudflare zone by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.zones.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `paused` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `account` | `object` | No | — |
+| `name_servers` | `string[]` | No | — |
+| `original_name_servers` | `string[]` | No | — |
+| `original_registrar` | `string` | No | — |
+| `original_dnshost` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `modified_on` | `string` | No | — |
+| `activated_on` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`zones.list`
+
+List Cloudflare zones
+
+**Risk:** `read`
+
+```ts
+await corsair.cloudflare.api.zones.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  status?: string,
+  paused?: boolean,
+  type?: string,
+  account?: {
+  },
+  name_servers?: string[],
+  original_name_servers?: string[],
+  original_registrar?: string,
+  original_dnshost?: string,
+  created_on?: string,
+  modified_on?: string,
+  activated_on?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
