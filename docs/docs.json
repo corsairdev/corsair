@@ -31,6 +31,16 @@
               "hosted-sdk/mcp-and-run",
               "hosted-sdk/types-and-errors"
             ]
+          },
+          {
+            "group": "Hosted MCP SDKs",
+            "pages": [
+              "hosted-mcp/overview",
+              "hosted-mcp/vercel-ai",
+              "hosted-mcp/openai",
+              "hosted-mcp/claude",
+              "hosted-mcp/custom-connector"
+            ]
           }
         ]
       },

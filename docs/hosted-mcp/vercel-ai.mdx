@@ -1,0 +1,92 @@
+---
+title: Vercel AI SDK
+description: Use Corsair App's hosted MCP server with streamText and generateText.
+---
+
+Use `createVercelAiMcpClient` from `@corsair-dev/app` when your app uses the Vercel AI SDK. The helper connects to Corsair's hosted HTTP MCP endpoint and returns tools in the shape expected by `streamText` and `generateText`.
+
+## Install
+
+```bash
+npm install @corsair-dev/app ai @ai-sdk/mcp @ai-sdk/openai
+```
+
+## Example
+
+```ts
+import "dotenv/config";
+
+import { openai } from "@ai-sdk/openai";
+import { createClient, createVercelAiMcpClient } from "@corsair-dev/app";
+import { stepCountIs, streamText } from "ai";
+
+const corsair = createClient({
+  apiKey: process.env.CORSAIR_API_KEY!,
+});
+
+const tenant = corsair
+  .instance(process.env.CORSAIR_INSTANCE_ID!)
+  .tenant("dev");
+
+const conn = await tenant.mcpKeys.connection();
+
+const mcpClient = await createVercelAiMcpClient({
+  url: conn.mcpHttpUrl,
+  apiKey: process.env.CORSAIR_MCP_API_KEY!,
+});
+
+const tools = await mcpClient.tools();
+
+const stream = streamText({
+  model: openai("gpt-4.1"),
+  prompt: "Star the corsairdev/corsair repo on GitHub",
+  stopWhen: stepCountIs(10),
+  tools,
+});
+
+for await (const textPart of stream.textStream) {
+  process.stdout.write(textPart);
+}
+
+await mcpClient.close?.();
+```
+
+## Common mistakes
+
+`mcpClient.tools()` is async. Always await it before passing tools to `streamText`:
+
+```ts
+const tools = await mcpClient.tools();
+```
+
+Do not do this:
+
+```ts
+tools: mcpClient.tools(),
+```
+
+Also make sure `url` is the tenant `mcpHttpUrl`, not the Corsair API base URL:
+
+```ts
+// Good
+url: conn.mcpHttpUrl
+
+// Wrong
+url: "https://api.corsair.dev"
+```
+
+## Key usage
+
+| Value | Use |
+| --- | --- |
+| `CORSAIR_API_KEY` | Developer API key for `createClient()` |
+| `CORSAIR_MCP_API_KEY` | Tenant MCP secret for `createVercelAiMcpClient()` |
+
+The tenant MCP secret comes from:
+
+```ts
+const key = await tenant.mcpKeys.create("vercel-ai-agent");
+
+console.log(key.mcpHttpUrl);
+console.log(key.secret);
+```
