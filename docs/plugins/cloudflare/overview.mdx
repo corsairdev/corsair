@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Cloudflare plugin for Corsair"
+---
+
+Use **Cloudflare** through Corsair: one client, typed API calls against Cloudflare API v4, and optional local DB sync for zones, DNS, Workers, and rulesets.
+
+**What you get:**
+
+- 24 typed API operations
+- Local search via `corsair.cloudflare.db.*` (synced on API calls when a database is configured)
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/cloudflare
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { cloudflare } from '@corsair-dev/cloudflare';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [cloudflare()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { cloudflare } from '@corsair-dev/cloudflare';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [cloudflare()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/cloudflare/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=cloudflare
+```
+
+Use the key names documented in [Get Credentials](/plugins/cloudflare/get-credentials) (for example `api_key=`).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=cloudflare --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+cloudflare()
+```
+
+Store credentials with `pnpm corsair setup --plugin=cloudflare` (see [Get Credentials](/plugins/cloudflare/get-credentials) for field names).
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+
+
+## Example API calls
+
+**Read-style (read):** `dns.get`
+
+```ts
+await corsair.cloudflare.api.dns.get({
+	zone_id: 'your-zone-id',
+	dns_record_id: 'your-record-id',
+});
+```
+
+
+**Write-style (write):** `dns.create`
+
+```ts
+await corsair.cloudflare.api.dns.create({
+	zone_id: 'your-zone-id',
+	type: 'A',
+	name: 'www.example.com',
+	content: '192.0.2.1',
+});
+```
+
+
+See the full list on the [API](/plugins/cloudflare/api) page. Use `pnpm corsair list --plugin=cloudflare` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls to add logging, approvals, or side effects. See [Hooks](/concepts/hooks).
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/cloudflare/api) |
+| Credentials | [Get credentials](/plugins/cloudflare/get-credentials) |
+
