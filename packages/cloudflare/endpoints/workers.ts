@@ -1,6 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCloudflareRequest } from '../client';
 import type { CloudflareEndpoints } from '../index';
+import {
+	deleteWorkerRoute,
+	deleteWorkerScript,
+	persistWorkerRoute,
+	persistWorkerScript,
+} from '../persist';
 import type { CloudflareEndpointOutputs } from './types';
 
 export const list: CloudflareEndpoints['workersList'] = async (ctx, input) => {
@@ -8,6 +14,13 @@ export const list: CloudflareEndpoints['workersList'] = async (ctx, input) => {
 	const result = await makeCloudflareRequest<
 		CloudflareEndpointOutputs['workersList']
 	>(`/accounts/${account_id}/workers/scripts`, ctx.key, { method: 'GET' });
+
+	if (ctx.db.workerScripts) {
+		for (const script of result) {
+			await persistWorkerScript(script, account_id, ctx.db);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.scripts.list',
@@ -17,6 +30,7 @@ export const list: CloudflareEndpoints['workersList'] = async (ctx, input) => {
 	return result;
 };
 
+/** Returns raw script source; not persisted locally (use list/upload metadata). */
 export const get: CloudflareEndpoints['workersGet'] = async (ctx, input) => {
 	const { account_id, script_name } = input;
 	const result = await makeCloudflareRequest<
@@ -73,6 +87,12 @@ export const upload: CloudflareEndpoints['workersUpload'] = async (
 				},
 			);
 
+	await persistWorkerScript(
+		{ ...result, id: result.id ?? script_name },
+		account_id,
+		ctx.db,
+	);
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.scripts.upload',
@@ -92,6 +112,9 @@ export const deleteWorker: CloudflareEndpoints['workersDelete'] = async (
 	>(`/accounts/${account_id}/workers/scripts/${script_name}`, ctx.key, {
 		method: 'DELETE',
 	});
+
+	await deleteWorkerScript(script_name, ctx.db);
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.scripts.delete',
@@ -109,6 +132,13 @@ export const routesList: CloudflareEndpoints['workerRoutesList'] = async (
 	const result = await makeCloudflareRequest<
 		CloudflareEndpointOutputs['workerRoutesList']
 	>(`/zones/${zone_id}/workers/routes`, ctx.key, { method: 'GET' });
+
+	if (ctx.db.workerRoutes) {
+		for (const route of result) {
+			await persistWorkerRoute(route, zone_id, ctx.db);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.routes.list',
@@ -126,6 +156,9 @@ export const routesGet: CloudflareEndpoints['workerRoutesGet'] = async (
 	const result = await makeCloudflareRequest<
 		CloudflareEndpointOutputs['workerRoutesGet']
 	>(`/zones/${zone_id}/workers/routes/${route_id}`, ctx.key, { method: 'GET' });
+
+	await persistWorkerRoute(result, zone_id, ctx.db);
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.routes.get',
@@ -143,6 +176,9 @@ export const routesCreate: CloudflareEndpoints['workerRoutesCreate'] = async (
 	const result = await makeCloudflareRequest<
 		CloudflareEndpointOutputs['workerRoutesCreate']
 	>(`/zones/${zone_id}/workers/routes`, ctx.key, { method: 'POST', body });
+
+	await persistWorkerRoute(result, zone_id, ctx.db);
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.routes.create',
@@ -163,6 +199,9 @@ export const routesEdit: CloudflareEndpoints['workerRoutesEdit'] = async (
 		method: 'PUT',
 		body,
 	});
+
+	await persistWorkerRoute(result, zone_id, ctx.db);
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.routes.edit',
@@ -182,6 +221,9 @@ export const routesDelete: CloudflareEndpoints['workerRoutesDelete'] = async (
 	>(`/zones/${zone_id}/workers/routes/${route_id}`, ctx.key, {
 		method: 'DELETE',
 	});
+
+	await deleteWorkerRoute(route_id, ctx.db);
+
 	await logEventFromContext(
 		ctx,
 		'cloudflare.workers.routes.delete',

@@ -1,10 +1,158 @@
 ---
 title: Database
-description: "Cloudflare plugin local database entities."
+description: "Cloudflare local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-This plugin does not define local database entities. Use the [API](/plugins/cloudflare/api) (`corsair.cloudflare.api.*`) to read and manage zones, DNS, Workers, and rulesets.
+The Cloudflare plugin syncs data locally. Use `corsair.cloudflare.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
-**New to Corsair?** See [database operations](/concepts/database) for how local sync works on plugins that define entities.
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
+
+## Dns Records
+
+Path: `cloudflare.db.dnsRecords.search`
+
+```ts
+const rows = await corsair.cloudflare.db.dnsRecords.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `proxiable` | `boolean` | equals |
+| `proxied` | `boolean` | equals |
+| `ttl` | `number` | equals, gt, gte, lt, lte, in |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
+| `locked` | `boolean` | equals |
+| `created_on` | `date` | equals, before, after, between |
+| `modified_on` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Rulesets
+
+Path: `cloudflare.db.rulesets.search`
+
+```ts
+const rows = await corsair.cloudflare.db.rulesets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated` | `date` | equals, before, after, between |
+| `phase` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Worker Routes
+
+Path: `cloudflare.db.workerRoutes.search`
+
+```ts
+const rows = await corsair.cloudflare.db.workerRoutes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `zone_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pattern` | `string` | equals, contains, startsWith, endsWith, in |
+| `script` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Worker Scripts
+
+Path: `cloudflare.db.workerScripts.search`
+
+```ts
+const rows = await corsair.cloudflare.db.workerScripts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_on` | `date` | equals, before, after, between |
+| `modified_on` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Zones
+
+Path: `cloudflare.db.zones.search`
+
+```ts
+const rows = await corsair.cloudflare.db.zones.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `paused` | `boolean` | equals |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_on` | `date` | equals, before, after, between |
+| `modified_on` | `date` | equals, before, after, between |
+| `activated_on` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
