@@ -42,14 +42,7 @@ export const TABLE_SCHEMAS = {
 	corsair_accounts: CorsairAccountsSchema,
 	corsair_entities: CorsairEntitiesSchema,
 	corsair_events: CorsairEventsSchema,
-} as const satisfies {
-	// Allow different input types (e.g. nullable from DB) as long as output matches
-	[K in CorsairOrmTableName]: z.ZodType<
-		CorsairOrmDatabase[K],
-		z.ZodTypeDef,
-		unknown
-	>;
-};
+} as const;
 
 function getTableSchema<TName extends CorsairOrmTableName>(tableName: TName) {
 	return TABLE_SCHEMAS[tableName];

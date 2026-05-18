@@ -3,19 +3,16 @@ import { z } from 'zod';
 // ── Shared schemas ────────────────────────────────────────────────────────────
 
 /** Nested CF objects (bindings, rules, account metadata) are API-extensible. */
-const CloudflareLooseObjectSchema = z.record(z.unknown());
+const CloudflareLooseObjectSchema = z.record(z.string(), z.unknown());
 
-const ZoneAccountSchema = z
-	.object({ id: z.string() })
-	.passthrough()
-	.optional();
+const ZoneAccountSchema = z.object({ id: z.string() }).loose().optional();
 
 const PaginationInputSchema = z.object({
 	page: z.number().optional(),
 	per_page: z.number().optional(),
 });
 
-const IdDeleteResponseSchema = z.object({ id: z.string() }).passthrough();
+const IdDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 const ZoneSchema = z
 	.object({
@@ -33,7 +30,7 @@ const ZoneSchema = z
 		modified_on: z.string().optional(),
 		activated_on: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DnsRecordSchema = z
 	.object({
@@ -50,7 +47,7 @@ const DnsRecordSchema = z
 		created_on: z.string().optional(),
 		modified_on: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkerScriptSchema = z
 	.object({
@@ -58,7 +55,7 @@ const WorkerScriptSchema = z
 		created_on: z.string().optional(),
 		modified_on: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkerRouteSchema = z
 	.object({
@@ -66,7 +63,7 @@ const WorkerRouteSchema = z
 		pattern: z.string(),
 		script: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RulesetSchema = z
 	.object({
@@ -79,7 +76,7 @@ const RulesetSchema = z
 		phase: z.string(),
 		rules: z.array(CloudflareLooseObjectSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Zones ─────────────────────────────────────────────────────────────────────
 

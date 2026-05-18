@@ -20,7 +20,7 @@ const JiraUserSchema = z.object({
 	displayName: z.string().optional(),
 	emailAddress: z.string().optional(),
 	active: z.boolean().optional(),
-	avatarUrls: z.record(z.string()).optional(),
+	avatarUrls: z.record(z.string(), z.string()).optional(),
 });
 
 const JiraStatusSchema = z.object({
@@ -500,7 +500,7 @@ const ProjectsGetRolesInputSchema = z.object({
 });
 export type ProjectsGetRolesInput = z.infer<typeof ProjectsGetRolesInputSchema>;
 
-const ProjectsGetRolesResponseSchema = z.record(z.string());
+const ProjectsGetRolesResponseSchema = z.record(z.string(), z.string());
 export type ProjectsGetRolesResponse = z.infer<
 	typeof ProjectsGetRolesResponseSchema
 >;

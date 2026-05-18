@@ -14,7 +14,7 @@ export class OpenAIAgentsProvider {
 	build(options: OpenAIAgentsProviderOptions): Tool<unknown>[] {
 		const { tool, ...mcpOptions } = options;
 		return buildCorsairToolDefs(mcpOptions).map((def) => {
-			const jsonSchema = zodToJsonSchema(z.object(def.shape));
+			const jsonSchema = zodToJsonSchema(z.object(def.shape) as never);
 			const shapeKeys = new Set(Object.keys(def.shape));
 
 			// zodToJsonSchema produces a structurally valid JsonObjectSchemaNonStrict at

@@ -70,28 +70,28 @@ const LogsCreateOtlpInputSchema = z
 	.object({
 		resourceLogs: z.array(ResourceLogSchema),
 	})
-	.passthrough();
+	.loose();
 
-const HealthGetInputSchema = z.object({}).passthrough();
+const HealthGetInputSchema = z.object({}).loose();
 
-const StatusGetInputSchema = z.object({}).passthrough();
+const StatusGetInputSchema = z.object({}).loose();
 
-const RingGetDistributorHaTrackerInputSchema = z.object({}).passthrough();
+const RingGetDistributorHaTrackerInputSchema = z.object({}).loose();
 
-const RingGetIndexGatewayInputSchema = z.object({}).passthrough();
+const RingGetIndexGatewayInputSchema = z.object({}).loose();
 
-const RingGetOverridesExporterInputSchema = z.object({}).passthrough();
+const RingGetOverridesExporterInputSchema = z.object({}).loose();
 
-const RingGetRulerInputSchema = z.object({}).passthrough();
+const RingGetRulerInputSchema = z.object({}).loose();
 
-const StoreGatewayGetTenantsInputSchema = z.object({}).passthrough();
+const StoreGatewayGetTenantsInputSchema = z.object({}).loose();
 
 const SamlPostAcsInputSchema = z
 	.object({
 		saml_response: z.string(),
 		relay_state: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DashboardsQueryPublicInputSchema = z
 	.object({
@@ -103,9 +103,9 @@ const DashboardsQueryPublicInputSchema = z
 		maxDataPoints: z.number().optional(),
 		base_url_override: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
-const JwksRetrieveInputSchema = z.object({}).passthrough();
+const JwksRetrieveInputSchema = z.object({}).loose();
 
 // ── Output Schemas ────────────────────────────────────────────────────────────
 
@@ -117,11 +117,11 @@ const LogsCreateOtlpOutputSchema = z
 				status_code: z.number(),
 				message: z.string(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const HealthGetOutputSchema = z
 	.object({
@@ -132,11 +132,11 @@ const HealthGetOutputSchema = z
 				database: z.string().optional(),
 				enterpriseCommit: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const StatusGetOutputSchema = z
 	.object({
@@ -144,11 +144,11 @@ const StatusGetOutputSchema = z
 			.object({
 				license_available: z.boolean(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const RingGetDistributorHaTrackerOutputSchema = z
 	.object({
@@ -157,11 +157,11 @@ const RingGetDistributorHaTrackerOutputSchema = z
 				html_content: z.string(),
 				status_code: z.number(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const RingGetIndexGatewayOutputSchema = z
 	.object({
@@ -170,11 +170,11 @@ const RingGetIndexGatewayOutputSchema = z
 				content: z.string(),
 				content_type: z.string(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const RingGetOverridesExporterOutputSchema = z
 	.object({
@@ -182,11 +182,11 @@ const RingGetOverridesExporterOutputSchema = z
 			.object({
 				html_content: z.string(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const RingGetRulerOutputSchema = z
 	.object({
@@ -195,11 +195,11 @@ const RingGetRulerOutputSchema = z
 				content: z.string(),
 				content_type: z.string(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const StoreGatewayGetTenantsOutputSchema = z
 	.object({
@@ -208,11 +208,11 @@ const StoreGatewayGetTenantsOutputSchema = z
 				content: z.string(),
 				content_type: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const SamlPostAcsOutputSchema = z
 	.object({
@@ -222,11 +222,11 @@ const SamlPostAcsOutputSchema = z
 				message: z.string(),
 				location: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const DashboardsQueryPublicOutputSchema = z
 	.object({
@@ -234,14 +234,14 @@ const DashboardsQueryPublicOutputSchema = z
 			.object({
 				status_code: z.number(),
 				message: z.string().optional(),
-				// results is z.record(z.unknown()) because its keys are RefIDs and values vary by panel type
-				results: z.record(z.unknown()).optional(),
+				// results is z.record(z.string(), z.unknown()) because its keys are RefIDs and values vary by panel type
+				results: z.record(z.string(), z.unknown()).optional(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const JwksRetrieveOutputSchema = z
 	.object({
@@ -249,11 +249,11 @@ const JwksRetrieveOutputSchema = z
 			.object({
 				keys: z.array(JsonWebKeySchema).optional(),
 			})
-			.passthrough(),
+			.loose(),
 		error: z.string().optional(),
 		successful: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Schema Maps ───────────────────────────────────────────────────────────────
 
