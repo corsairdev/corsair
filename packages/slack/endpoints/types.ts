@@ -122,7 +122,7 @@ const UsersGetPresenceInputSchema = z.object({
 });
 
 const UsersUpdateProfileInputSchema = z.object({
-	profile: z.record(z.unknown()).optional(),
+	profile: z.record(z.string(), z.unknown()).optional(),
 	user: z.string().optional(),
 	name: z.string().optional(),
 	value: z.string().optional(),
@@ -229,10 +229,10 @@ const PostMessageInputSchema = z.object({
 				.object({
 					type: z.string(),
 				})
-				.passthrough(),
+				.loose(),
 		)
 		.optional(),
-	attachments: z.array(z.record(z.unknown())).optional(),
+	attachments: z.array(z.record(z.string(), z.unknown())).optional(),
 	thread_ts: z.string().optional(),
 	reply_broadcast: z.boolean().optional(),
 	parse: z.enum(['full', 'none']).optional(),
@@ -247,7 +247,7 @@ const PostMessageInputSchema = z.object({
 	metadata: z
 		.object({
 			event_type: z.string(),
-			event_payload: z.record(z.unknown()),
+			event_payload: z.record(z.string(), z.unknown()),
 		})
 		.optional(),
 });
@@ -262,10 +262,10 @@ const MessagesUpdateInputSchema = z.object({
 				.object({
 					type: z.string(),
 				})
-				.passthrough(),
+				.loose(),
 		)
 		.optional(),
-	attachments: z.array(z.record(z.unknown())).optional(),
+	attachments: z.array(z.record(z.string(), z.unknown())).optional(),
 	parse: z.enum(['full', 'none']).optional(),
 	link_names: z.boolean().optional(),
 	as_user: z.boolean().optional(),
@@ -274,7 +274,7 @@ const MessagesUpdateInputSchema = z.object({
 	metadata: z
 		.object({
 			event_type: z.string(),
-			event_payload: z.record(z.unknown()),
+			event_payload: z.record(z.string(), z.unknown()),
 		})
 		.optional(),
 });
@@ -378,7 +378,7 @@ const ResponseMetadataSchema = z
 		next_cursor: z.string().optional(),
 		messages: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SlackResponseSchema = z
 	.object({
@@ -388,7 +388,7 @@ const SlackResponseSchema = z
 		provided: z.string().optional(),
 		response_metadata: ResponseMetadataSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelTopicSchema = z
 	.object({
@@ -396,7 +396,7 @@ const ChannelTopicSchema = z
 		creator: z.string(),
 		last_set: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelSchema = z
 	.object({
@@ -424,7 +424,7 @@ const ChannelSchema = z
 		topic: ChannelTopicSchema.optional(),
 		purpose: ChannelTopicSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const UserProfileSchema = z
 	.object({
@@ -450,7 +450,7 @@ const UserProfileSchema = z
 		first_name: z.string().optional(),
 		last_name: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const UserSchema = z
 	.object({
@@ -476,7 +476,7 @@ const UserSchema = z
 		who_can_share_contact_card: z.string().optional(),
 		locale: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const UsergroupSchema = z
 	.object({
@@ -507,7 +507,7 @@ const UsergroupSchema = z
 		user_count: z.number().optional(),
 		channel_count: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FileSchema = z
 	.object({
@@ -538,15 +538,15 @@ const FileSchema = z
 		groups: z.array(z.string()).optional(),
 		ims: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BlockSchema = z
 	.object({
 		type: z.string(),
 	})
-	.passthrough();
+	.loose();
 
-const AttachmentSchema = z.record(z.unknown());
+const AttachmentSchema = z.record(z.string(), z.unknown());
 
 const ReactionSchema = z
 	.object({
@@ -554,7 +554,7 @@ const ReactionSchema = z
 		count: z.number(),
 		users: z.array(z.string()),
 	})
-	.passthrough();
+	.loose();
 
 const MessageSchema = z
 	.object({
@@ -593,7 +593,7 @@ const MessageSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PagingSchema = z
 	.object({
@@ -602,7 +602,7 @@ const PagingSchema = z
 		page: z.number(),
 		pages: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const PaginationSchema = z
 	.object({
@@ -613,75 +613,75 @@ const PaginationSchema = z
 		first: z.number().optional(),
 		last: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ConversationsArchiveResponseSchema = SlackResponseSchema;
 const ConversationsCloseResponseSchema = SlackResponseSchema.extend({
 	no_op: z.boolean().optional(),
 	already_closed: z.boolean().optional(),
-}).passthrough();
+}).loose();
 const ConversationsCreateResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
-}).passthrough();
+}).loose();
 const ConversationsInfoResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
-}).passthrough();
+}).loose();
 const ConversationsListResponseSchema = SlackResponseSchema.extend({
 	channels: z.array(ChannelSchema).optional(),
-}).passthrough();
+}).loose();
 const ConversationsHistoryResponseSchema = SlackResponseSchema.extend({
 	messages: z.array(MessageSchema).optional(),
 	has_more: z.boolean().optional(),
 	pin_count: z.number().optional(),
 	channel_actions_count: z.number().optional(),
 	channel_actions_ts: z.number().nullable().optional(),
-}).passthrough();
+}).loose();
 const ConversationsInviteResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
-}).passthrough();
+}).loose();
 const ConversationsJoinResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
 	warning: z.string().optional(),
-}).passthrough();
+}).loose();
 const ConversationsKickResponseSchema = SlackResponseSchema;
 const ConversationsLeaveResponseSchema = SlackResponseSchema.extend({
 	not_in_channel: z.boolean().optional(),
-}).passthrough();
+}).loose();
 const ConversationsMembersResponseSchema = SlackResponseSchema.extend({
 	members: z.array(z.string()).optional(),
-}).passthrough();
+}).loose();
 const ConversationsOpenResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
 	no_op: z.boolean().optional(),
 	already_open: z.boolean().optional(),
-}).passthrough();
+}).loose();
 const ConversationsRenameResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
-}).passthrough();
+}).loose();
 const ConversationsRepliesResponseSchema = SlackResponseSchema.extend({
 	messages: z.array(MessageSchema).optional(),
 	has_more: z.boolean().optional(),
-}).passthrough();
+}).loose();
 const ConversationsSetPurposeResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
 	purpose: z.string().optional(),
-}).passthrough();
+}).loose();
 const ConversationsSetTopicResponseSchema = SlackResponseSchema.extend({
 	channel: ChannelSchema.optional(),
 	topic: z.string().optional(),
-}).passthrough();
+}).loose();
 const ConversationsUnarchiveResponseSchema = SlackResponseSchema;
 
 const UsersInfoResponseSchema = SlackResponseSchema.extend({
 	user: UserSchema.optional(),
-}).passthrough();
+}).loose();
 const UsersListResponseSchema = SlackResponseSchema.extend({
 	members: z.array(UserSchema).optional(),
 	cache_ts: z.number().optional(),
-}).passthrough();
+}).loose();
 const UsersProfileGetResponseSchema = SlackResponseSchema.extend({
 	profile: UserProfileSchema.optional(),
-}).passthrough();
+}).loose();
 const UsersGetPresenceResponseSchema = SlackResponseSchema.extend({
 	presence: z.string().optional(),
 	online: z.boolean().optional(),
@@ -689,26 +689,26 @@ const UsersGetPresenceResponseSchema = SlackResponseSchema.extend({
 	manual_away: z.boolean().optional(),
 	connection_count: z.number().optional(),
 	last_activity: z.number().optional(),
-}).passthrough();
+}).loose();
 const UsersProfileSetResponseSchema = SlackResponseSchema.extend({
 	profile: UserProfileSchema.optional(),
-}).passthrough();
+}).loose();
 
 const UsergroupsCreateResponseSchema = SlackResponseSchema.extend({
 	usergroup: UsergroupSchema.optional(),
-}).passthrough();
+}).loose();
 const UsergroupsDisableResponseSchema = SlackResponseSchema.extend({
 	usergroup: UsergroupSchema.optional(),
-}).passthrough();
+}).loose();
 const UsergroupsEnableResponseSchema = SlackResponseSchema.extend({
 	usergroup: UsergroupSchema.optional(),
-}).passthrough();
+}).loose();
 const UsergroupsListResponseSchema = SlackResponseSchema.extend({
 	userGroups: z.array(UsergroupSchema).optional(),
-}).passthrough();
+}).loose();
 const UsergroupsUpdateResponseSchema = SlackResponseSchema.extend({
 	usergroup: UsergroupSchema.optional(),
-}).passthrough();
+}).loose();
 
 const FilesInfoResponseSchema = SlackResponseSchema.extend({
 	file: FileSchema.optional(),
@@ -723,23 +723,23 @@ const FilesInfoResponseSchema = SlackResponseSchema.extend({
 		)
 		.optional(),
 	paging: PagingSchema.optional(),
-}).passthrough();
+}).loose();
 const FilesListResponseSchema = SlackResponseSchema.extend({
 	files: z.array(FileSchema).optional(),
 	paging: PagingSchema.optional(),
-}).passthrough();
+}).loose();
 const FilesUploadResponseSchema = SlackResponseSchema.extend({
 	file: FileSchema.optional(),
-}).passthrough();
+}).loose();
 
 const ChatDeleteResponseSchema = SlackResponseSchema.extend({
 	channel: z.string().optional(),
 	ts: z.string().optional(),
-}).passthrough();
+}).loose();
 const ChatGetPermalinkResponseSchema = SlackResponseSchema.extend({
 	channel: z.string().optional(),
 	permalink: z.string().optional(),
-}).passthrough();
+}).loose();
 const SearchMessagesResponseSchema = SlackResponseSchema.extend({
 	query: z.string().optional(),
 	messages: z
@@ -762,18 +762,18 @@ const SearchMessagesResponseSchema = SlackResponseSchema.extend({
 				.optional(),
 		})
 		.optional(),
-}).passthrough();
+}).loose();
 const ChatPostMessageResponseSchema = SlackResponseSchema.extend({
 	channel: z.string().optional(),
 	ts: z.string().optional(),
 	message: MessageSchema.optional(),
-}).passthrough();
+}).loose();
 const ChatUpdateResponseSchema = SlackResponseSchema.extend({
 	channel: z.string().optional(),
 	ts: z.string().optional(),
 	text: z.string().optional(),
 	message: MessageSchema.optional(),
-}).passthrough();
+}).loose();
 
 const ReactionsAddResponseSchema = SlackResponseSchema;
 const ReactionsGetResponseSchema = SlackResponseSchema.extend({
@@ -788,7 +788,7 @@ const ReactionsGetResponseSchema = SlackResponseSchema.extend({
 			reactions: z.array(ReactionSchema).optional(),
 		})
 		.optional(),
-}).passthrough();
+}).loose();
 const ReactionsRemoveResponseSchema = SlackResponseSchema;
 
 const StarsAddResponseSchema = SlackResponseSchema;
@@ -812,7 +812,7 @@ const StarsListResponseSchema = SlackResponseSchema.extend({
 		)
 		.optional(),
 	paging: PagingSchema.optional(),
-}).passthrough();
+}).loose();
 
 export const SlackEndpointOutputSchemas = {
 	channelsArchive: ConversationsArchiveResponseSchema,

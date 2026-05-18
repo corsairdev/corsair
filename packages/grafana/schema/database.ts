@@ -10,7 +10,7 @@ export const GrafanaHealthStatus = z
 		licenseAvailable: z.boolean().optional(),
 		checkedAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GrafanaLog = z
 	.object({
@@ -22,14 +22,14 @@ export const GrafanaLog = z
 		traceId: z.string().optional(),
 		spanId: z.string().optional(),
 		flags: z.number().optional(),
-		// resource is z.record(z.string()) because attribute keys/values are arbitrary string pairs
-		resource: z.record(z.string()).optional(),
+		// resource is z.record(z.string(), z.string()) because attribute keys/values are arbitrary string pairs
+		resource: z.record(z.string(), z.string()).optional(),
 		scope: z.string().optional(),
 		scopeVersion: z.string().optional(),
 		droppedAttributesCount: z.number().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GrafanaDashboardQuery = z
 	.object({
@@ -44,7 +44,7 @@ export const GrafanaDashboardQuery = z
 		results: z.unknown().optional(),
 		queriedAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GrafanaRingStatus = z
 	.object({
@@ -54,7 +54,7 @@ export const GrafanaRingStatus = z
 		statusCode: z.number().optional(),
 		fetchedAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GrafanaJwksKey = z
 	.object({
@@ -67,7 +67,7 @@ export const GrafanaJwksKey = z
 		keyMaterial: z.unknown().optional(),
 		fetchedAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GrafanaSamlSession = z
 	.object({
@@ -78,7 +78,7 @@ export const GrafanaSamlSession = z
 		successful: z.boolean().optional(),
 		processedAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type GrafanaHealthStatus = z.infer<typeof GrafanaHealthStatus>;
 export type GrafanaLog = z.infer<typeof GrafanaLog>;

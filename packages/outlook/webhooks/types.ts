@@ -20,7 +20,7 @@ export const OutlookChangeNotificationSchema = z.object({
 			'@odata.etag': z.string().optional(),
 			id: z.string().optional(),
 		})
-		.passthrough()
+		.loose()
 		.optional(),
 	clientState: z.string().optional(),
 	tenantId: z.string().optional(),

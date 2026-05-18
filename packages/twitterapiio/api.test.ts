@@ -5,6 +5,7 @@ import type {
 	TrendsGetResponse,
 	TweetsGetByIdsResponse,
 	TweetsSearchResponse,
+	TwitterApiIOEndpointOutputs,
 	UsersBatchGetByIdsResponse,
 	UsersGetByUsernameResponse,
 } from './endpoints/types';
@@ -49,7 +50,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.usersSearch._type
+				TwitterApiIOEndpointOutputs['usersSearch']
 			>('/twitter/user/search', TEST_API_KEY, {
 				query: { keyword: 'openai' },
 			});
@@ -62,7 +63,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !process.env.TEST_TWITTER_RUN_EXPENSIVE) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.usersGetFollowers._type
+				TwitterApiIOEndpointOutputs['usersGetFollowers']
 			>('/twitter/user/followers', TEST_API_KEY, {
 				query: { userName: TEST_USERNAME },
 			});
@@ -75,7 +76,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !process.env.TEST_TWITTER_RUN_EXPENSIVE) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.usersGetFollowings._type
+				TwitterApiIOEndpointOutputs['usersGetFollowings']
 			>('/twitter/user/followings', TEST_API_KEY, {
 				query: { userName: TEST_USERNAME },
 			});
@@ -87,7 +88,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.usersCheckFollowRelationship._type
+				TwitterApiIOEndpointOutputs['usersCheckFollowRelationship']
 			>('/twitter/user/follow_relation', TEST_API_KEY, {
 				query: {
 					sourceUserName: TEST_USERNAME,
@@ -130,7 +131,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.tweetsGetUserLastTweets._type
+				TwitterApiIOEndpointOutputs['tweetsGetUserLastTweets']
 			>('/twitter/user/last_tweets', TEST_API_KEY, {
 				query: { userName: TEST_USERNAME },
 			});
@@ -142,7 +143,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_USER_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.tweetsGetUserTimeline._type
+				TwitterApiIOEndpointOutputs['tweetsGetUserTimeline']
 			>('/twitter/user/timeline', TEST_API_KEY, {
 				query: { userId: TEST_USER_ID },
 			});
@@ -154,7 +155,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.tweetsGetUserMentions._type
+				TwitterApiIOEndpointOutputs['tweetsGetUserMentions']
 			>('/twitter/user/mentions', TEST_API_KEY, {
 				query: { userName: TEST_USERNAME },
 			});
@@ -166,7 +167,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_TWEET_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.repliesGet._type
+				TwitterApiIOEndpointOutputs['repliesGet']
 			>('/twitter/tweet/replies', TEST_API_KEY, {
 				query: { tweetId: TEST_TWEET_ID },
 			});
@@ -178,7 +179,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_TWEET_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.tweetsGetQuotations._type
+				TwitterApiIOEndpointOutputs['tweetsGetQuotations']
 			>('/twitter/tweet/quotes', TEST_API_KEY, {
 				query: { tweetId: TEST_TWEET_ID },
 			});
@@ -190,7 +191,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_TWEET_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.tweetsGetRetweeters._type
+				TwitterApiIOEndpointOutputs['tweetsGetRetweeters']
 			>('/twitter/tweet/retweeters', TEST_API_KEY, {
 				query: { tweetId: TEST_TWEET_ID },
 			});
@@ -202,7 +203,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_TWEET_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.tweetsGetThreadContext._type
+				TwitterApiIOEndpointOutputs['tweetsGetThreadContext']
 			>('/twitter/tweet/thread_context', TEST_API_KEY, {
 				query: { tweetId: TEST_TWEET_ID },
 			});
@@ -216,7 +217,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_LIST_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.listsGetMembers._type
+				TwitterApiIOEndpointOutputs['listsGetMembers']
 			>('/twitter/list/members', TEST_API_KEY, {
 				query: { listId: TEST_LIST_ID },
 			});
@@ -228,7 +229,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_LIST_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.listsGetFollowers._type
+				TwitterApiIOEndpointOutputs['listsGetFollowers']
 			>('/twitter/list/followers', TEST_API_KEY, {
 				query: { listId: TEST_LIST_ID },
 			});
@@ -240,7 +241,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_LIST_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.listsGetTweets._type
+				TwitterApiIOEndpointOutputs['listsGetTweets']
 			>('/twitter/list/tweets', TEST_API_KEY, {
 				query: { listId: TEST_LIST_ID },
 			});
@@ -267,7 +268,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_COMMUNITY_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.communitiesGetMembers._type
+				TwitterApiIOEndpointOutputs['communitiesGetMembers']
 			>('/twitter/community/members', TEST_API_KEY, {
 				query: { communityId: TEST_COMMUNITY_ID },
 			});
@@ -279,7 +280,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY || !TEST_COMMUNITY_ID) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.communitiesGetTweets._type
+				TwitterApiIOEndpointOutputs['communitiesGetTweets']
 			>('/twitter/community/tweets', TEST_API_KEY, {
 				query: { communityId: TEST_COMMUNITY_ID },
 			});
@@ -291,7 +292,7 @@ describe('TwitterApiIO API Type Tests', () => {
 			if (!TEST_API_KEY) return;
 
 			const response = await makeTwitterApiIORequest<
-				typeof TwitterApiIOEndpointOutputSchemas.communitiesSearchTweets._type
+				TwitterApiIOEndpointOutputs['communitiesSearchTweets']
 			>('/twitter/tweet/advanced_search', TEST_API_KEY, {
 				query: { query: 'AI', queryType: 'community' },
 			});

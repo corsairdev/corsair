@@ -8,7 +8,7 @@ const IdentitySchema = z
 		id: z.string().optional(),
 		displayName: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Microsoft Graph identitySet: user/application/device
 const IdentitySetSchema = z
@@ -17,7 +17,7 @@ const IdentitySetSchema = z
 		application: IdentitySchema.optional(),
 		device: IdentitySchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // SharePoint-extended identity set (adds siteUser / siteGroup / group)
 const SiteUserSchema = z
@@ -27,7 +27,7 @@ const SiteUserSchema = z
 		loginName: z.string().optional(),
 		email: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SiteGroupSchema = z
 	.object({
@@ -35,7 +35,7 @@ const SiteGroupSchema = z
 		displayName: z.string().optional(),
 		loginName: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const IdentityRefSchema = IdentitySetSchema.extend({
 	siteUser: SiteUserSchema.optional(),
@@ -53,7 +53,7 @@ const SharingLinkSchema = z
 		preventsDownload: z.boolean().optional(),
 		application: IdentitySchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Thumbnail entry (large/medium/small/source inside a ThumbnailSet)
 const ThumbnailSchema = z
@@ -63,7 +63,7 @@ const ThumbnailSchema = z
 		url: z.string().optional(),
 		content: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ThumbnailSet — one element of the thumbnails value array
 const ThumbnailSetSchema = z
@@ -74,7 +74,7 @@ const ThumbnailSetSchema = z
 		small: ThumbnailSchema.optional(),
 		source: ThumbnailSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // DriveItem version entry
 const DriveItemVersionSchema = z
@@ -88,10 +88,10 @@ const DriveItemVersionSchema = z
 				level: z.string().optional(),
 				versionId: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Item activity entry
 const ItemActivitySchema = z
@@ -100,26 +100,23 @@ const ItemActivitySchema = z
 		// action sub-types vary; capture the known keys, passthrough the rest
 		action: z
 			.object({
-				comment: z.record(z.unknown()).optional(),
-				create: z.record(z.unknown()).optional(),
-				delete: z.record(z.unknown()).optional(),
-				edit: z.record(z.unknown()).optional(),
-				mention: z.record(z.unknown()).optional(),
-				move: z.record(z.unknown()).optional(),
-				rename: z.record(z.unknown()).optional(),
-				restore: z.record(z.unknown()).optional(),
-				share: z.record(z.unknown()).optional(),
-				version: z.record(z.unknown()).optional(),
+				comment: z.record(z.string(), z.unknown()).optional(),
+				create: z.record(z.string(), z.unknown()).optional(),
+				delete: z.record(z.string(), z.unknown()).optional(),
+				edit: z.record(z.string(), z.unknown()).optional(),
+				mention: z.record(z.string(), z.unknown()).optional(),
+				move: z.record(z.string(), z.unknown()).optional(),
+				rename: z.record(z.string(), z.unknown()).optional(),
+				restore: z.record(z.string(), z.unknown()).optional(),
+				share: z.record(z.string(), z.unknown()).optional(),
+				version: z.record(z.string(), z.unknown()).optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		actor: IdentitySetSchema.optional(),
-		times: z
-			.object({ recordedTime: z.string().optional() })
-			.passthrough()
-			.optional(),
+		times: z.object({ recordedTime: z.string().optional() }).loose().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Microsoft Graph subscription resource
 const SubscriptionSchema = z
@@ -135,7 +132,7 @@ const SubscriptionSchema = z
 		notificationQueryOptions: z.string().nullable().optional(),
 		lifecycleNotificationUrl: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // SharePoint-specific site IDs facet
 const SharepointIdsSchema = z
@@ -147,16 +144,16 @@ const SharepointIdsSchema = z
 		listId: z.string().optional(),
 		tenantId: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // SharePoint site collection facet
 const SiteCollectionSchema = z
 	.object({
 		hostname: z.string().optional(),
 		dataLocationCode: z.string().optional(),
-		root: z.object({}).passthrough().optional(),
+		root: z.object({}).loose().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // SharePoint list object (returned by listSiteLists)
 const SharepointListSchema = z
@@ -176,10 +173,10 @@ const SharepointListSchema = z
 				hidden: z.boolean().optional(),
 				template: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // SharePoint list item (fields are dynamic per list — typed as passthrough)
 const SharepointListItemSchema = z
@@ -194,13 +191,13 @@ const SharepointListItemSchema = z
 				id: z.string().optional(),
 				name: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
-		fields: z.record(z.unknown()).optional(),
+		fields: z.record(z.string(), z.unknown()).optional(),
 		createdBy: IdentitySetSchema.optional(),
 		lastModifiedBy: IdentitySetSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // SharePoint column definition (type-specific facets use passthrough)
 const ColumnDefinitionSchema = z
@@ -215,14 +212,14 @@ const ColumnDefinitionSchema = z
 		required: z.boolean().optional(),
 		hidden: z.boolean().optional(),
 		enforceUniqueValues: z.boolean().optional(),
-		boolean: z.object({}).passthrough().optional(),
+		boolean: z.object({}).loose().optional(),
 		text: z
 			.object({
 				allowMultipleLines: z.boolean().optional(),
 				maxLength: z.number().optional(),
 				textType: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		number: z
 			.object({
@@ -231,14 +228,14 @@ const ColumnDefinitionSchema = z
 				maximum: z.number().optional(),
 				minimum: z.number().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		dateTime: z
 			.object({
 				displayAs: z.string().optional(),
 				format: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		choice: z
 			.object({
@@ -246,7 +243,7 @@ const ColumnDefinitionSchema = z
 				choices: z.array(z.string()).optional(),
 				displayAs: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		lookup: z
 			.object({
@@ -254,10 +251,10 @@ const ColumnDefinitionSchema = z
 				columnName: z.string().optional(),
 				listId: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // DriveItem base (without children to avoid circular reference at the schema level)
 const DriveItemBaseSchema = z
@@ -280,7 +277,7 @@ const DriveItemBaseSchema = z
 				name: z.string().optional(),
 				siteId: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		file: z
 			.object({
@@ -291,26 +288,26 @@ const DriveItemBaseSchema = z
 						sha1Hash: z.string().optional(),
 						sha256Hash: z.string().optional(),
 					})
-					.passthrough()
+					.loose()
 					.optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		folder: z
 			.object({
 				childCount: z.number().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		deleted: z
 			.object({
 				state: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		'@microsoft.graph.downloadUrl': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Full DriveItem — adds one level of children (covers all real API use cases)
 const DriveItemSchema = DriveItemBaseSchema.extend({
@@ -335,10 +332,10 @@ const DriveSchema = z
 				used: z.number().optional(),
 				state: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PermissionSchema = z
 	.object({
@@ -350,7 +347,7 @@ const PermissionSchema = z
 		hasPassword: z.boolean().optional(),
 		expirationDateTime: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Items Input Schemas ───────────────────────────────────────────────────────
 
@@ -382,7 +379,7 @@ const ItemsUpdateMetadataInputSchema = z.object({
 	parent_reference_id: z.string().optional(),
 	parent_reference_drive_id: z.string().optional(),
 	// any/unknown for additional_properties since they are arbitrary key-value pairs
-	additional_properties: z.record(z.unknown()).optional(),
+	additional_properties: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type ItemsUpdateMetadataInput = z.infer<
@@ -1005,7 +1002,7 @@ export type DriveListResponse = z.infer<typeof DriveListResponseSchema>;
 const DriveGetRootResponseSchema = DriveItemBaseSchema.extend({
 	name: z.string(),
 	// root facet marks this item as the drive root — always an empty object
-	root: z.object({}).passthrough().optional(),
+	root: z.object({}).loose().optional(),
 	description: z.string().optional(),
 });
 export type DriveGetRootResponse = z.infer<typeof DriveGetRootResponseSchema>;
@@ -1205,9 +1202,9 @@ const PermissionsCreateForItemInputSchema = z.object({
 	roles: z.array(z.string()),
 	grantedToV2: z.object({
 		// any/unknown for siteGroup since SharePoint group shape varies
-		siteGroup: z.record(z.unknown()).optional(),
+		siteGroup: z.record(z.string(), z.unknown()).optional(),
 		// any/unknown for application since app identity shape varies
-		application: z.record(z.unknown()).optional(),
+		application: z.record(z.string(), z.unknown()).optional(),
 	}),
 });
 export type PermissionsCreateForItemInput = z.infer<
@@ -1242,7 +1239,7 @@ export type PermissionsDeleteFromItemInput = z.infer<
 const PermissionsInviteUserInputSchema = z.object({
 	item_id: z.string(),
 	roles: z.array(z.string()),
-	recipients: z.array(z.record(z.string())),
+	recipients: z.array(z.record(z.string(), z.string())),
 	drive_id: z.string().optional(),
 	site_id: z.string().optional(),
 	user_id: z.string().optional(),
@@ -1291,7 +1288,7 @@ export type PermissionsDeleteSharePermissionInput = z.infer<
 const PermissionsGrantSharePermissionInputSchema = z.object({
 	encoded_sharing_url: z.string(),
 	roles: z.array(z.string()),
-	recipients: z.array(z.record(z.string())),
+	recipients: z.array(z.record(z.string(), z.string())),
 });
 export type PermissionsGrantSharePermissionInput = z.infer<
 	typeof PermissionsGrantSharePermissionInputSchema
@@ -1380,7 +1377,7 @@ export type PermissionsGrantSharePermissionResponse = z.infer<
 const PermissionsGetShareResponseSchema = z.object({
 	id: z.string().optional(),
 	name: z.string().optional(),
-	root: z.object({}).passthrough().optional(),
+	root: z.object({}).loose().optional(),
 	items: z.array(DriveItemSchema).optional(),
 	owner: IdentitySetSchema.optional(),
 	children: z.array(DriveItemSchema).optional(),
@@ -1732,10 +1729,7 @@ export type OnedriveEndpointOutputs = {
 	subscriptionsList: SubscriptionsListResponse;
 };
 
-export const OnedriveEndpointInputSchemas: Record<
-	keyof OnedriveEndpointInputs,
-	z.ZodTypeAny
-> = {
+export const OnedriveEndpointInputSchemas = {
 	// Items
 	itemsGet: ItemsGetInputSchema,
 	itemsUpdateMetadata: ItemsUpdateMetadataInputSchema,
@@ -1805,10 +1799,7 @@ export const OnedriveEndpointInputSchemas: Record<
 	subscriptionsList: SubscriptionsListInputSchema,
 } as const;
 
-export const OnedriveEndpointOutputSchemas: Record<
-	keyof OnedriveEndpointOutputs,
-	z.ZodTypeAny
-> = {
+export const OnedriveEndpointOutputSchemas = {
 	// Items
 	itemsGet: ItemsGetResponseSchema,
 	itemsUpdateMetadata: ItemsUpdateMetadataResponseSchema,

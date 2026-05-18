@@ -42,41 +42,41 @@ const WebhookScrapeDocumentSchema = z
 		screenshot: z.string().nullable().optional(),
 		metadata: FirecrawlScrapeMetadata.optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** Extract-result document delivered in extract.completed data arrays. */
 const WebhookExtractCompletedItemSchema = z
 	.object({
 		success: z.boolean(),
-		data: z.record(z.unknown()),
+		data: z.record(z.string(), z.unknown()),
 		extractId: z.string(),
 		llmUsage: z.number().optional(),
 		totalUrlsScraped: z.number().optional(),
-		sources: z.record(z.array(z.string())).optional(),
+		sources: z.record(z.string(), z.array(z.string())).optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** Agent action entry delivered in agent.action data arrays. */
 const WebhookAgentActionSchema = z
 	.object({
 		creditsUsed: z.number().optional(),
 		action: z.string().optional(),
-		input: z.record(z.unknown()).optional(),
+		input: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookAgentCompletedItemSchema = z
 	.object({
 		creditsUsed: z.number().optional(),
-		data: z.record(z.unknown()).optional(),
+		data: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookAgentFailedItemSchema = z
 	.object({
 		creditsUsed: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EmptyDataArraySchema = z.array(z.never());
 
@@ -90,10 +90,10 @@ export const CrawlStartedEventSchema = z
 		type: z.literal('crawl.started'),
 		id: z.string(),
 		data: EmptyDataArraySchema,
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const CrawlPageEventSchema = z
 	.object({
@@ -101,10 +101,10 @@ export const CrawlPageEventSchema = z
 		type: z.literal('crawl.page'),
 		id: z.string(),
 		data: z.array(WebhookScrapeDocumentSchema),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const CrawlCompletedEventSchema = z
 	.object({
@@ -112,10 +112,10 @@ export const CrawlCompletedEventSchema = z
 		type: z.literal('crawl.completed'),
 		id: z.string(),
 		data: EmptyDataArraySchema,
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BatchScrapeStartedEventSchema = z
 	.object({
@@ -123,10 +123,10 @@ export const BatchScrapeStartedEventSchema = z
 		type: z.literal('batch_scrape.started'),
 		id: z.string(),
 		data: EmptyDataArraySchema,
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BatchScrapePageEventSchema = z
 	.object({
@@ -134,10 +134,10 @@ export const BatchScrapePageEventSchema = z
 		type: z.literal('batch_scrape.page'),
 		id: z.string(),
 		data: z.array(WebhookScrapeDocumentSchema),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BatchScrapeCompletedEventSchema = z
 	.object({
@@ -145,10 +145,10 @@ export const BatchScrapeCompletedEventSchema = z
 		type: z.literal('batch_scrape.completed'),
 		id: z.string(),
 		data: EmptyDataArraySchema,
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const ExtractStartedEventSchema = z
 	.object({
@@ -156,10 +156,10 @@ export const ExtractStartedEventSchema = z
 		type: z.literal('extract.started'),
 		id: z.string(),
 		data: EmptyDataArraySchema,
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const ExtractCompletedEventSchema = z
 	.object({
@@ -167,10 +167,10 @@ export const ExtractCompletedEventSchema = z
 		type: z.literal('extract.completed'),
 		id: z.string(),
 		data: z.array(WebhookExtractCompletedItemSchema),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const ExtractFailedEventSchema = z
 	.object({
@@ -178,10 +178,10 @@ export const ExtractFailedEventSchema = z
 		type: z.literal('extract.failed'),
 		id: z.string(),
 		data: EmptyDataArraySchema,
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AgentStartedEventSchema = z
 	.object({
@@ -189,10 +189,10 @@ export const AgentStartedEventSchema = z
 		type: z.literal('agent.started'),
 		id: z.string(),
 		data: EmptyDataArraySchema,
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AgentActionEventSchema = z
 	.object({
@@ -200,10 +200,10 @@ export const AgentActionEventSchema = z
 		type: z.literal('agent.action'),
 		id: z.string(),
 		data: z.array(WebhookAgentActionSchema),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AgentCompletedEventSchema = z
 	.object({
@@ -211,10 +211,10 @@ export const AgentCompletedEventSchema = z
 		type: z.literal('agent.completed'),
 		id: z.string(),
 		data: z.array(WebhookAgentCompletedItemSchema),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AgentFailedEventSchema = z
 	.object({
@@ -222,10 +222,10 @@ export const AgentFailedEventSchema = z
 		type: z.literal('agent.failed'),
 		id: z.string(),
 		data: z.array(WebhookAgentFailedItemSchema),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AgentCancelledEventSchema = z
 	.object({
@@ -233,10 +233,10 @@ export const AgentCancelledEventSchema = z
 		type: z.literal('agent.cancelled'),
 		id: z.string(),
 		data: z.array(WebhookAgentFailedItemSchema),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Inferred types

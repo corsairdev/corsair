@@ -20,7 +20,7 @@ export class OllamaProvider extends BaseProvider<CorsairOllamaTool> {
 	readonly name = 'ollama';
 
 	wrapTool(def: CorsairToolDef): CorsairOllamaTool {
-		const schema = zodToJsonSchema(z.object(def.shape));
+		const schema = zodToJsonSchema(z.object(def.shape) as never);
 
 		return {
 			type: 'function',

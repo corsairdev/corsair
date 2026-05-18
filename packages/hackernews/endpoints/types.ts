@@ -19,7 +19,7 @@ const HackerNewsHitSchema = z
 		num_comments: z.number().nullable().optional(),
 		_tags: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const HackerNewsPostSchema = z
 	.object({
@@ -32,11 +32,11 @@ const HackerNewsPostSchema = z
 		created_at: z.string().optional(),
 		num_comments: z.number().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FrontpagePostSchema = HackerNewsPostSchema.extend({
 	story_text: z.string().nullable().optional(),
-}).passthrough();
+}).loose();
 
 const HackerNewsItemDetailedSchema = z
 	.object({
@@ -53,15 +53,15 @@ const HackerNewsItemDetailedSchema = z
 		created_at_i: z.number().optional(),
 		// options contains pollopt child IDs for poll items
 		options: z.array(z.number()).optional(),
-		// children is z.record(z.unknown()) because each child has the same nested shape
+		// children is z.record(z.string(), z.unknown()) because each child has the same nested shape
 		// but strict recursive typing at runtime causes schema complexity issues
-		children: z.array(z.record(z.unknown())).optional(),
+		children: z.array(z.record(z.string(), z.unknown())).optional(),
 		children_shown: z.number().optional(),
 		max_depth_reached: z.boolean().optional(),
 		children_truncated: z.boolean().optional(),
 		total_children_count: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
@@ -159,7 +159,7 @@ const GetItemResponseSchema = z
 		dead: z.boolean().optional(),
 		deleted: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetItemWithIdResponseSchema = z
 	.object({
@@ -167,51 +167,51 @@ const GetItemWithIdResponseSchema = z
 		item: HackerNewsItemDetailedSchema.optional(),
 		error_message: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetMaxItemIdResponseSchema = z
 	.object({
 		max_item_id: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetTopStoriesResponseSchema = z
 	.object({
 		story_ids: z.array(z.number()),
 		count: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetBestStoriesResponseSchema = z
 	.object({
 		story_ids: z.array(z.number()),
 		count: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetNewStoriesResponseSchema = z
 	.object({
 		story_ids: z.array(z.number()),
 	})
-	.passthrough();
+	.loose();
 
 const GetAskStoriesResponseSchema = z
 	.object({
 		story_ids: z.array(z.number()),
 	})
-	.passthrough();
+	.loose();
 
 const GetShowStoriesResponseSchema = z
 	.object({
 		story_ids: z.array(z.number()),
 	})
-	.passthrough();
+	.loose();
 
 const GetJobStoriesResponseSchema = z
 	.object({
 		job_story_ids: z.array(z.number()),
 	})
-	.passthrough();
+	.loose();
 
 const GetUserResponseSchema = z
 	.object({
@@ -219,7 +219,7 @@ const GetUserResponseSchema = z
 		karma: z.number(),
 		about: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetUserByUsernameResponseSchema = z
 	.object({
@@ -229,7 +229,7 @@ const GetUserByUsernameResponseSchema = z
 		about: z.string().optional(),
 		submitted: z.array(z.number()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchPostsResponseSchema = z
 	.object({
@@ -240,7 +240,7 @@ const SearchPostsResponseSchema = z
 		hitsPerPage: z.number(),
 		query: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const GetLatestPostsResponseSchema = z
 	.object({
@@ -250,14 +250,14 @@ const GetLatestPostsResponseSchema = z
 		nbPages: z.number(),
 		hitsPerPage: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetFrontpageResponseSchema = z
 	.object({
 		posts: z.array(FrontpagePostSchema),
 		total_hits: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetTodaysPostsResponseSchema = z
 	.object({
@@ -267,14 +267,14 @@ const GetTodaysPostsResponseSchema = z
 		nbPages: z.number(),
 		hitsPerPage: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetUpdatesResponseSchema = z
 	.object({
 		items: z.array(z.number()),
 		profiles: z.array(z.string()),
 	})
-	.passthrough();
+	.loose();
 
 // ── Endpoint I/O Maps ─────────────────────────────────────────────────────────
 

@@ -15,7 +15,7 @@ const RecordsCreateInputSchema = z.object({
 	baseId: z.string(),
 	tableIdOrName: z.string(),
 	// Record fields use unknown here because Airtable field types vary by base
-	fields: z.record(z.unknown()),
+	fields: z.record(z.string(), z.unknown()),
 	typecast: z.boolean().optional(),
 });
 
@@ -23,7 +23,7 @@ const RecordsCreateOrUpdateInputSchema = z.object({
 	baseId: z.string(),
 	tableIdOrName: z.string(),
 	// Upsert payload fields use unknown because their types are defined in Airtable, not statically
-	fields: z.record(z.unknown()),
+	fields: z.record(z.string(), z.unknown()),
 	fieldsToMergeOn: z.array(z.string()),
 	typecast: z.boolean().optional(),
 });
@@ -69,7 +69,7 @@ const RecordsUpdateInputSchema = z.object({
 	tableIdOrName: z.string(),
 	recordId: z.string(),
 	// Update payload fields use unknown because Airtable controls the field schema
-	fields: z.record(z.unknown()),
+	fields: z.record(z.string(), z.unknown()),
 	typecast: z.boolean().optional(),
 });
 
@@ -104,9 +104,9 @@ const AirtableRecordSchema = z
 	.object({
 		id: z.string(),
 		createdTime: z.string(),
-		fields: z.record(z.unknown()),
+		fields: z.record(z.string(), z.unknown()),
 	})
-	.passthrough();
+	.loose();
 
 const AirtableBaseSchema = z
 	.object({
@@ -114,7 +114,7 @@ const AirtableBaseSchema = z
 		name: z.string(),
 		permissionLevel: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // Airtable field options use unknown because option shapes depend on the field type
 const AirtableFieldSchema = z
@@ -123,9 +123,9 @@ const AirtableFieldSchema = z
 		type: z.string(),
 		name: z.string(),
 		description: z.string().optional(),
-		options: z.record(z.unknown()).optional(),
+		options: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AirtableViewSchema = z
 	.object({
@@ -134,7 +134,7 @@ const AirtableViewSchema = z
 		name: z.string(),
 		personalForCreator: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AirtableTableSchema = z
 	.object({
@@ -145,39 +145,39 @@ const AirtableTableSchema = z
 		fields: z.array(AirtableFieldSchema),
 		views: z.array(AirtableViewSchema),
 	})
-	.passthrough();
+	.loose();
 
 const BasesGetManyResponseSchema = z
 	.object({
 		bases: z.array(AirtableBaseSchema),
 		offset: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BasesGetSchemaResponseSchema = z
 	.object({
 		tables: z.array(AirtableTableSchema),
 	})
-	.passthrough();
+	.loose();
 
 const RecordsCreateResponseSchema = z
 	.object({
 		records: z.array(AirtableRecordSchema),
 	})
-	.passthrough();
+	.loose();
 
 const RecordsCreateOrUpdateResponseSchema = z
 	.object({
 		records: z.array(AirtableRecordSchema),
 	})
-	.passthrough();
+	.loose();
 
 const RecordsDeleteResponseSchema = z
 	.object({
 		id: z.string(),
 		deleted: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const RecordsGetResponseSchema = AirtableRecordSchema;
 
@@ -186,13 +186,13 @@ const RecordsSearchResponseSchema = z
 		records: z.array(AirtableRecordSchema),
 		offset: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RecordsUpdateResponseSchema = z
 	.object({
 		records: z.array(AirtableRecordSchema),
 	})
-	.passthrough();
+	.loose();
 
 // Webhook payload items use unknown for payloads because they mirror Airtable’s dynamic webhook format
 const WebhooksGetPayloadsResponseSchema = z
@@ -200,7 +200,7 @@ const WebhooksGetPayloadsResponseSchema = z
 		cursorForNextPayload: z.number().optional(),
 		payloads: z.array(z.unknown()).default([]),
 	})
-	.passthrough();
+	.loose();
 
 export const AirtableEndpointOutputSchemas = {
 	basesGetMany: BasesGetManyResponseSchema,

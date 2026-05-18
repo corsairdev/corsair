@@ -82,7 +82,7 @@ const TaskFullSchema = z.object({
 	num_subtasks: z.number().optional(),
 	approval_status: z.string().optional(),
 	// any/unknown for custom_fields since they vary per workspace
-	custom_fields: z.array(z.record(z.unknown())).optional(),
+	custom_fields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
 const ProjectFullSchema = z.object({
@@ -109,7 +109,7 @@ const ProjectFullSchema = z.object({
 	privacy_setting: z.string().optional(),
 	icon: z.string().nullable().optional(),
 	// any/unknown for custom_fields since they vary per workspace
-	custom_fields: z.array(z.record(z.unknown())).optional(),
+	custom_fields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
 const SectionFullSchema = z.object({
@@ -126,7 +126,7 @@ const UserFullSchema = z.object({
 	name: z.string().optional(),
 	email: z.string().optional(),
 	resource_type: z.string().optional(),
-	photo: z.record(z.string()).nullable().optional(),
+	photo: z.record(z.string(), z.string()).nullable().optional(),
 	workspaces: z.array(WorkspaceCompactSchema).optional(),
 });
 
@@ -274,7 +274,7 @@ const TasksCreateInputSchema = z.object({
 		liked: z.boolean().optional(),
 		resource_subtype: z.string().optional(),
 		// any/unknown for custom_fields since they vary per workspace
-		custom_fields: z.record(z.unknown()).optional(),
+		custom_fields: z.record(z.string(), z.unknown()).optional(),
 		assignee_section: z.string().optional(),
 	}),
 	opt_fields: z.array(z.string()).optional(),
@@ -300,7 +300,7 @@ const TasksUpdateInputSchema = z.object({
 		assignee_section: z.string().optional(),
 		workspace: z.string().optional(),
 		// any/unknown for custom_fields since they vary per workspace
-		custom_fields: z.record(z.unknown()).optional(),
+		custom_fields: z.record(z.string(), z.unknown()).optional(),
 	}),
 	opt_fields: z.array(z.string()).optional(),
 	opt_pretty: z.boolean().optional(),

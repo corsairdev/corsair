@@ -8,7 +8,7 @@ import type { Event } from '../types';
 
 export const PubSubMessageSchema = z.object({
 	data: z.string().optional(),
-	attributes: z.record(z.string()).optional(),
+	attributes: z.record(z.string(), z.string()).optional(),
 	messageId: z.string().optional(),
 	publishTime: z.string().optional(),
 });

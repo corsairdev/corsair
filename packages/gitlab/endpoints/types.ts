@@ -13,7 +13,7 @@ const GitlabUserRefSchema = z
 		avatar_url: z.string().nullable().optional(),
 		web_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabNamespaceSchema = z
 	.object({
@@ -24,7 +24,7 @@ const GitlabNamespaceSchema = z
 		full_path: z.string().optional(),
 		web_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabMilestoneRefSchema = z
 	.object({
@@ -34,7 +34,7 @@ const GitlabMilestoneRefSchema = z
 		state: z.string().optional(),
 		due_date: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabLabelRefSchema = z.string();
 
@@ -51,7 +51,7 @@ const GitlabNoteSchema = z
 		noteable_iid: z.number().optional(),
 		resolvable: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabCommitRefSchema = z
 	.object({
@@ -68,7 +68,7 @@ const GitlabCommitRefSchema = z
 		parent_ids: z.array(z.string()).optional(),
 		web_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabDiffSchema = z
 	.object({
@@ -81,7 +81,7 @@ const GitlabDiffSchema = z
 		renamed_file: z.boolean().optional(),
 		deleted_file: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabJobSchema = z
 	.object({
@@ -97,10 +97,10 @@ const GitlabJobSchema = z
 		web_url: z.string().optional(),
 		pipeline: z
 			.object({ id: z.number(), status: z.string().optional() })
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabTreeItemSchema = z
 	.object({
@@ -110,7 +110,7 @@ const GitlabTreeItemSchema = z
 		path: z.string(),
 		mode: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabFileSchema = z
 	.object({
@@ -125,7 +125,7 @@ const GitlabFileSchema = z
 		commit_id: z.string().optional(),
 		last_commit_id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GitlabCompareSchema = z
 	.object({
@@ -135,7 +135,7 @@ const GitlabCompareSchema = z
 		compare_timeout: z.boolean().optional(),
 		compare_same_ref: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PaginationQuerySchema = z.object({
 	page: z.number().optional(),
@@ -163,7 +163,7 @@ const UsersGetCurrentUserResponseSchema = z
 		bot: z.boolean().optional(),
 		two_factor_enabled: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const UsersGetUserInputSchema = z.object({ user_id: z.number() });
 const UsersGetUserResponseSchema = GitlabUserRefSchema;
@@ -204,7 +204,7 @@ const ProjectSchema = z
 		topics: z.array(z.string()).optional(),
 		empty_repo: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ProjectsListInputSchema = PaginationQuerySchema.extend({
 	search: z.string().optional(),
@@ -250,7 +250,7 @@ const ProjectsUpdateResponseSchema = ProjectSchema;
 const ProjectsDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 });
-const ProjectsDeleteResponseSchema = z.object({}).passthrough();
+const ProjectsDeleteResponseSchema = z.object({}).loose();
 
 const ProjectsForkInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
@@ -295,7 +295,7 @@ const IssueSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const IssuesListInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -349,7 +349,7 @@ const IssuesDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	issue_iid: z.number(),
 });
-const IssuesDeleteResponseSchema = z.object({}).passthrough();
+const IssuesDeleteResponseSchema = z.object({}).loose();
 
 const IssuesListNotesInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -406,7 +406,7 @@ const MergeRequestSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MergeRequestsListInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -467,7 +467,7 @@ const MergeRequestsDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	merge_request_iid: z.number(),
 });
-const MergeRequestsDeleteResponseSchema = z.object({}).passthrough();
+const MergeRequestsDeleteResponseSchema = z.object({}).loose();
 
 const MergeRequestsMergeInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
@@ -486,7 +486,7 @@ const MergeRequestsApproveInputSchema = z.object({
 	merge_request_iid: z.number(),
 	sha: z.string().optional(),
 });
-const MergeRequestsApproveResponseSchema = z.object({}).passthrough();
+const MergeRequestsApproveResponseSchema = z.object({}).loose();
 
 const MergeRequestsListNotesInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -519,7 +519,7 @@ const BranchSchema = z
 		web_url: z.string().optional(),
 		commit: GitlabCommitRefSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BranchesListInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -544,7 +544,7 @@ const BranchesDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	branch: z.string(),
 });
-const BranchesDeleteResponseSchema = z.object({}).passthrough();
+const BranchesDeleteResponseSchema = z.object({}).loose();
 
 // ============================================================================
 // Commits
@@ -603,7 +603,7 @@ const PipelineSchema = z
 		name: z.string().nullable().optional(),
 		user: GitlabUserRefSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PipelinesListInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -653,7 +653,7 @@ const PipelinesDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	pipeline_id: z.number(),
 });
-const PipelinesDeleteResponseSchema = z.object({}).passthrough();
+const PipelinesDeleteResponseSchema = z.object({}).loose();
 
 const PipelinesListJobsInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -680,7 +680,7 @@ const GroupSchema = z
 		created_at: z.string().optional(),
 		avatar_url: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GroupsListInputSchema = PaginationQuerySchema.extend({
 	search: z.string().optional(),
@@ -719,7 +719,7 @@ const GroupsUpdateResponseSchema = GroupSchema;
 const GroupsDeleteInputSchema = z.object({
 	group_id: z.union([z.number(), z.string()]),
 });
-const GroupsDeleteResponseSchema = z.object({}).passthrough();
+const GroupsDeleteResponseSchema = z.object({}).loose();
 
 const GroupsListProjectsInputSchema = PaginationQuerySchema.extend({
 	group_id: z.union([z.number(), z.string()]),
@@ -749,7 +749,7 @@ const LabelSchema = z
 		subscribed: z.boolean().optional(),
 		is_project_label: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const LabelsListInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -780,7 +780,7 @@ const LabelsDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	label_id: z.number(),
 });
-const LabelsDeleteResponseSchema = z.object({}).passthrough();
+const LabelsDeleteResponseSchema = z.object({}).loose();
 
 // ============================================================================
 // Milestones
@@ -800,7 +800,7 @@ const MilestoneSchema = z
 		updated_at: z.string().optional(),
 		web_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MilestonesListInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -839,7 +839,7 @@ const MilestonesDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	milestone_id: z.number(),
 });
-const MilestonesDeleteResponseSchema = z.object({}).passthrough();
+const MilestonesDeleteResponseSchema = z.object({}).loose();
 
 // ============================================================================
 // Releases
@@ -857,7 +857,7 @@ const ReleaseSchema = z
 		commit: GitlabCommitRefSchema.optional(),
 		milestones: z.array(GitlabMilestoneRefSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ReleasesListInputSchema = PaginationQuerySchema.extend({
 	project_id: z.union([z.number(), z.string()]),
@@ -897,7 +897,7 @@ const ReleasesDeleteInputSchema = z.object({
 	project_id: z.union([z.number(), z.string()]),
 	tag_name: z.string(),
 });
-const ReleasesDeleteResponseSchema = z.object({}).passthrough();
+const ReleasesDeleteResponseSchema = z.object({}).loose();
 
 // ============================================================================
 // Repository

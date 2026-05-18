@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/mcp",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "MCP server and SDK adapters for Corsair — list operations, inspect schemas, run API calls",
   "type": "module",
   "main": "./dist/index.js",
@@ -25,7 +25,7 @@
     "@modelcontextprotocol/sdk": "^1.27.1",
     "corsair": "workspace:*",
     "express": "^4.21.0",
-    "zod": "^3.25.0",
+    "zod": "^4.1.13",
     "zod-to-json-schema": "^3.25.0"
   },
   "peerDependencies": {

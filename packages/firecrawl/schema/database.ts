@@ -20,7 +20,7 @@ export const FirecrawlScrapeMetadata = z
 		concurrencyLimited: z.boolean().optional(),
 		concurrencyQueueDurationMs: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** `data.actions` when `actions` were sent with the scrape request. */
 export const FirecrawlScrapeActionResults = z
@@ -44,7 +44,7 @@ export const FirecrawlScrapeActionResults = z
 			.optional(),
 		pdfs: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** `data.changeTracking` when `changeTracking` format is requested. */
 export const FirecrawlScrapeChangeTracking = z
@@ -53,9 +53,9 @@ export const FirecrawlScrapeChangeTracking = z
 		changeStatus: z.enum(['new', 'same', 'changed', 'removed']).optional(),
 		visibility: z.enum(['visible', 'hidden']).optional(),
 		diff: z.string().nullable().optional(),
-		json: z.record(z.unknown()).nullable().optional(),
+		json: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /**
  * Cached single-page scrape row (entity id = `metadata.scrapeId`).
@@ -77,10 +77,10 @@ export const FirecrawlScrape = z.object({
 	metadata: FirecrawlScrapeMetadata.optional(),
 	warning: z.string().nullable().optional(),
 	changeTracking: FirecrawlScrapeChangeTracking.nullable().optional(),
-	branding: z.record(z.unknown()).nullable().optional(),
+	branding: z.record(z.string(), z.unknown()).nullable().optional(),
 	/** LLM JSON extraction / structured output when requested via `formats`. */
 	json: z.unknown().optional(),
-	images: z.array(z.record(z.unknown())).optional(),
+	images: z.array(z.record(z.string(), z.unknown())).optional(),
 	fetchedAt: z.coerce.date().nullable().optional(),
 });
 
@@ -96,7 +96,7 @@ export const FirecrawlMapApiResponse = z
 		success: z.boolean().optional(),
 		links: z.array(FirecrawlMapLink).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlSiteMap = z.object({
 	id: z.string(),
@@ -121,7 +121,7 @@ export const FirecrawlSearchWebItem = z
 		category: z.string().optional(),
 		metadata: FirecrawlScrapeMetadata.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlSearchImageItem = z
 	.object({
@@ -132,7 +132,7 @@ export const FirecrawlSearchImageItem = z
 		url: z.string().optional(),
 		position: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlSearchNewsItem = z
 	.object({
@@ -150,7 +150,7 @@ export const FirecrawlSearchNewsItem = z
 		audio: z.string().nullable().optional(),
 		metadata: FirecrawlScrapeMetadata.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlSearchData = z
 	.object({
@@ -161,14 +161,14 @@ export const FirecrawlSearchData = z
 		id: z.string().optional(),
 		creditsUsed: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlSearchApiResponse = z
 	.object({
 		success: z.boolean().optional(),
 		data: FirecrawlSearchData.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlSearchRecord = z.object({
 	id: z.string(),
@@ -183,7 +183,7 @@ export const FirecrawlCrawlStartResponse = z
 		id: z.string().optional(),
 		url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** One element of `data` from GET /v2/crawl/{id}. */
 export const FirecrawlCrawlPageDocument = z
@@ -195,7 +195,7 @@ export const FirecrawlCrawlPageDocument = z
 		screenshot: z.string().nullable().optional(),
 		metadata: FirecrawlScrapeMetadata.optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** @see https://docs.firecrawl.dev/api-reference/endpoint/crawl-get */
 export const FirecrawlCrawlStatusResponse = z
@@ -208,7 +208,7 @@ export const FirecrawlCrawlStatusResponse = z
 		next: z.string().nullable().optional(),
 		data: z.array(FirecrawlCrawlPageDocument).optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** @see https://docs.firecrawl.dev/api-reference/endpoint/agent */
 export const FirecrawlAgentStartResponse = z
@@ -216,20 +216,20 @@ export const FirecrawlAgentStartResponse = z
 		success: z.boolean().optional(),
 		id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** @see https://docs.firecrawl.dev/api-reference/endpoint/agent-get */
 export const FirecrawlAgentStatusResponse = z
 	.object({
 		success: z.boolean().optional(),
 		status: z.enum(['processing', 'completed', 'failed']).optional(),
-		data: z.record(z.unknown()).optional(),
+		data: z.record(z.string(), z.unknown()).optional(),
 		model: z.enum(['spark-1-pro', 'spark-1-mini']).optional(),
 		error: z.string().optional(),
 		expiresAt: z.string().optional(),
 		creditsUsed: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /**
  * Last API response stored for a crawl or agent job (`snapshot` in the DB row).
@@ -237,7 +237,7 @@ export const FirecrawlAgentStatusResponse = z
  * {@link FirecrawlAgentStartResponse}, or {@link FirecrawlAgentStatusResponse}; a plain record
  * avoids ambiguous Zod unions and still allows DELETE or future payloads.
  */
-export const FirecrawlJobSnapshot = z.record(z.unknown());
+export const FirecrawlJobSnapshot = z.record(z.string(), z.unknown());
 
 /** Crawl or agent async job (entity id = job UUID from Firecrawl). */
 export const FirecrawlJob = z.object({

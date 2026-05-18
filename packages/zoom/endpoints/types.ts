@@ -15,7 +15,7 @@ const MeetingSettingsSchema = z
 		auto_recording: z.string().optional(),
 		waiting_room: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MeetingSchema = z
 	.object({
@@ -34,7 +34,7 @@ const MeetingSchema = z
 		password: z.string().optional(),
 		settings: MeetingSettingsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RecordingFileSchema = z
 	.object({
@@ -49,7 +49,7 @@ const RecordingFileSchema = z
 		recording_start: z.string().optional(),
 		recording_end: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebinarSettingsSchema = z
 	.object({
@@ -64,7 +64,7 @@ const WebinarSettingsSchema = z
 		registrants_restrict_number: z.number().optional(),
 		meeting_authentication: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebinarSchema = z
 	.object({
@@ -83,7 +83,7 @@ const WebinarSchema = z
 		password: z.string().optional(),
 		settings: WebinarSettingsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RegistrantSchema = z
 	.object({
@@ -95,7 +95,7 @@ const RegistrantSchema = z
 		create_time: z.string().optional(),
 		join_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ParticipantSchema = z
 	.object({
@@ -119,7 +119,7 @@ const ParticipantSchema = z
 		recording: z.boolean().optional(),
 		status: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DeviceSchema = z
 	.object({
@@ -135,7 +135,7 @@ const DeviceSchema = z
 		tag: z.string().optional(),
 		enrollment_token: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ArchiveMeetingSchema = z
 	.object({
@@ -148,9 +148,9 @@ const ArchiveMeetingSchema = z
 		file_size: z.number().optional(),
 		status: z.string().optional(),
 		// Archive file entries have variable structure depending on file type
-		archive_files: z.array(z.record(z.unknown())).optional(),
+		archive_files: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DailyReportSchema = z
 	.object({
@@ -160,7 +160,7 @@ const DailyReportSchema = z
 		participants: z.number().optional(),
 		meeting_minutes: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PaginationSchema = z
 	.object({
@@ -170,7 +170,7 @@ const PaginationSchema = z
 		total_records: z.number().optional(),
 		next_page_token: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
@@ -299,9 +299,9 @@ const MeetingsGetResponseSchema = MeetingSchema;
 
 const MeetingsListResponseSchema = PaginationSchema.extend({
 	meetings: z.array(MeetingSchema).optional(),
-}).passthrough();
+}).loose();
 
-const MeetingsUpdateResponseSchema = z.object({}).passthrough();
+const MeetingsUpdateResponseSchema = z.object({}).loose();
 
 const MeetingsAddRegistrantResponseSchema = z
 	.object({
@@ -311,7 +311,7 @@ const MeetingsAddRegistrantResponseSchema = z
 		start_time: z.string().optional(),
 		join_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MeetingsGetSummaryResponseSchema = z
 	.object({
@@ -329,12 +329,12 @@ const MeetingsGetSummaryResponseSchema = z
 		summary_title: z.string().optional(),
 		summary_overview: z.string().optional(),
 		// AI-generated summary detail items have an open-ended structure that Zoom may extend
-		summary_details: z.array(z.record(z.unknown())).optional(),
+		summary_details: z.array(z.record(z.string(), z.unknown())).optional(),
 		next_steps: z.array(z.string()).optional(),
 		// Edited summary is a freeform object whose shape is not constrained by Zoom's API schema
-		edited_summary: z.record(z.unknown()).optional(),
+		edited_summary: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RecordingsGetMeetingResponseSchema = z
 	.object({
@@ -353,9 +353,9 @@ const RecordingsGetMeetingResponseSchema = z
 		password: z.string().optional(),
 		share_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
-const RecordingsDeleteMeetingResponseSchema = z.object({}).passthrough();
+const RecordingsDeleteMeetingResponseSchema = z.object({}).loose();
 
 const RecordingsListAllResponseSchema = z
 	.object({
@@ -382,17 +382,17 @@ const RecordingsListAllResponseSchema = z
 						recording_count: z.number().optional(),
 						recording_files: z.array(RecordingFileSchema).optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebinarsGetResponseSchema = WebinarSchema;
 
 const WebinarsListResponseSchema = PaginationSchema.extend({
 	webinars: z.array(WebinarSchema).optional(),
-}).passthrough();
+}).loose();
 
 const WebinarsAddRegistrantResponseSchema = z
 	.object({
@@ -402,7 +402,7 @@ const WebinarsAddRegistrantResponseSchema = z
 		join_url: z.string().optional(),
 		registrant_id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebinarsListParticipantsResponseSchema = z
 	.object({
@@ -412,7 +412,7 @@ const WebinarsListParticipantsResponseSchema = z
 		total_records: z.number().optional(),
 		participants: z.array(ParticipantSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ReportsDailyUsageResponseSchema = z
 	.object({
@@ -420,7 +420,7 @@ const ReportsDailyUsageResponseSchema = z
 		month: z.number().optional(),
 		dates: z.array(DailyReportSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ParticipantsGetPastMeetingResponseSchema = z
 	.object({
@@ -430,7 +430,7 @@ const ParticipantsGetPastMeetingResponseSchema = z
 		total_records: z.number().optional(),
 		participants: z.array(ParticipantSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DevicesListResponseSchema = z
 	.object({
@@ -439,7 +439,7 @@ const DevicesListResponseSchema = z
 		total_records: z.number().optional(),
 		devices: z.array(DeviceSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ArchiveFilesListResponseSchema = z
 	.object({
@@ -450,7 +450,7 @@ const ArchiveFilesListResponseSchema = z
 		to: z.string().optional(),
 		meetings: z.array(ArchiveMeetingSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Endpoint I/O Maps ─────────────────────────────────────────────────────────
 

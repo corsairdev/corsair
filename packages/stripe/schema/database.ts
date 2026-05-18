@@ -5,10 +5,10 @@ export const StripeBalance = z.object({
 	object: z.literal('balance').optional(),
 	livemode: z.boolean().optional(),
 	available: z
-		.array(z.object({ amount: z.number(), currency: z.string() }).passthrough())
+		.array(z.object({ amount: z.number(), currency: z.string() }).loose())
 		.optional(),
 	pending: z
-		.array(z.object({ amount: z.number(), currency: z.string() }).passthrough())
+		.array(z.object({ amount: z.number(), currency: z.string() }).loose())
 		.optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
@@ -27,7 +27,7 @@ export const StripeCharge = z.object({
 	payment_intent: z.string().nullable().optional(),
 	failure_code: z.string().nullable().optional(),
 	failure_message: z.string().nullable().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 export const StripeCoupon = z.object({
@@ -44,7 +44,7 @@ export const StripeCoupon = z.object({
 	created: z.number().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	livemode: z.boolean().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 export const StripeCustomer = z.object({
@@ -58,7 +58,7 @@ export const StripeCustomer = z.object({
 	created: z.number().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	livemode: z.boolean().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 export const StripePaymentIntent = z.object({
@@ -74,7 +74,7 @@ export const StripePaymentIntent = z.object({
 	client_secret: z.string().nullable().optional(),
 	canceled_at: z.number().nullable().optional(),
 	cancellation_reason: z.string().nullable().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 export const StripePrice = z.object({
@@ -95,7 +95,7 @@ export const StripePrice = z.object({
 	created: z.number().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	livemode: z.boolean().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 export const StripeSource = z.object({
@@ -107,7 +107,7 @@ export const StripeSource = z.object({
 	created: z.number().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	livemode: z.boolean().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 export type StripeBalance = z.infer<typeof StripeBalance>;

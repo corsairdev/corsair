@@ -18,7 +18,7 @@ const LocationSchema = z
 		status: z.string().optional(),
 		additional_info: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ScheduledEventSchema = z
 	.object({
@@ -57,7 +57,7 @@ const ScheduledEventSchema = z
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EventTypeSchema = z
 	.object({
@@ -101,7 +101,7 @@ const EventTypeSchema = z
 			.optional(),
 		deleted_at: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const InviteeSchema = z
 	.object({
@@ -154,7 +154,7 @@ const InviteeSchema = z
 		scheduling_method: z.string().nullable().optional(),
 		invitee_scheduled_by: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const UserSchema = z
 	.object({
@@ -169,7 +169,7 @@ const UserSchema = z
 		updated_at: z.string(),
 		current_organization: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookSubscriptionSchema = z
 	.object({
@@ -185,7 +185,7 @@ const WebhookSubscriptionSchema = z
 		user: z.string().nullable().optional(),
 		creator: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const OrganizationMembershipSchema = z
 	.object({
@@ -196,7 +196,7 @@ const OrganizationMembershipSchema = z
 		updated_at: z.string(),
 		created_at: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const OrganizationInvitationSchema = z
 	.object({
@@ -209,7 +209,7 @@ const OrganizationInvitationSchema = z
 		last_sent_at: z.string().optional(),
 		user: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GroupSchema = z
 	.object({
@@ -222,7 +222,7 @@ const GroupSchema = z
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RoutingFormSchema = z
 	.object({
@@ -233,7 +233,7 @@ const RoutingFormSchema = z
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AvailabilityScheduleSchema = z
 	.object({
@@ -243,11 +243,11 @@ const AvailabilityScheduleSchema = z
 		user: z.string(),
 		timezone: z.string(),
 		// Availability rule objects vary in shape by type (wday, date, etc.); structure is not stable in the public API
-		rules: z.array(z.record(z.unknown())).optional(),
+		rules: z.array(z.record(z.string(), z.unknown())).optional(),
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
@@ -638,7 +638,7 @@ const ScheduledEventsCancelResponseSchema = z.object({
 			canceler_type: z.string().optional(),
 			reason: z.string().optional(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 // 204 No Content — empty body
@@ -664,7 +664,7 @@ const EventTypesCreateOneOffResponseSchema = z.object({
 			uri: z.string(),
 			scheduling_url: z.string(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const EventTypesUpdateResponseSchema = z.object({
@@ -678,9 +678,9 @@ const EventTypesUpdateAvailabilityResponseSchema = z.object({
 			user: z.string(),
 			timezone: z.string(),
 			// Availability rule objects vary in shape by type (wday, date, etc.); structure is not stable in the public API
-			rules: z.array(z.record(z.unknown())).optional(),
+			rules: z.array(z.record(z.string(), z.unknown())).optional(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const EventTypesListAvailableTimesResponseSchema = z.object({
@@ -692,7 +692,7 @@ const EventTypesListAvailableTimesResponseSchema = z.object({
 				start_time: z.string(),
 				scheduling_url: z.string(),
 			})
-			.passthrough(),
+			.loose(),
 	),
 });
 
@@ -705,7 +705,7 @@ const EventTypesListHostsResponseSchema = z.object({
 				user: z.string().optional(),
 				user_membership_uri: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 	),
 	pagination: PaginationSchema,
 });
@@ -735,7 +735,7 @@ const InviteesGetNoShowResponseSchema = z.object({
 			created_at: z.string(),
 			updated_at: z.string(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const InviteesMarkNoShowResponseSchema = z.object({
@@ -746,7 +746,7 @@ const InviteesMarkNoShowResponseSchema = z.object({
 			created_at: z.string(),
 			updated_at: z.string(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 // 204 No Content — empty body
@@ -780,11 +780,11 @@ const UsersListBusyTimesResponseSchema = z.object({
 				buffered_end_time: z.string().optional(),
 				// event can be a nested object (event details) or a URI string
 				event: z
-					.union([z.string(), z.record(z.unknown())])
+					.union([z.string(), z.record(z.string(), z.unknown())])
 					.nullable()
 					.optional(),
 			})
-			.passthrough(),
+			.loose(),
 	),
 });
 
@@ -796,7 +796,7 @@ const UsersListMeetingLocationsResponseSchema = z.object({
 				additional_info: z.string().optional(),
 				location: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 	),
 });
 
@@ -816,7 +816,7 @@ const OrganizationsGetResponseSchema = z.object({
 			created_at: z.string().optional(),
 			updated_at: z.string().optional(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const OrganizationsGetInvitationResponseSchema = z.object({
@@ -864,7 +864,7 @@ const GroupsGetRelationshipResponseSchema = z.object({
 			user_or_event_type: z.string().optional(),
 			managed_event_types: z.array(z.string()).optional(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const GroupsListResponseSchema = z.object({
@@ -880,7 +880,7 @@ const GroupsListRelationshipsResponseSchema = z.object({
 				type: z.string(),
 				group: z.string(),
 			})
-			.passthrough(),
+			.loose(),
 	),
 	pagination: PaginationSchema,
 });
@@ -896,15 +896,17 @@ const RoutingFormsGetSubmissionResponseSchema = z.object({
 			uri: z.string(),
 			routing_form: z.string(),
 			// Each Q&A entry differs by question type; no fixed schema in Calendly's docs
-			questions_and_answers: z.array(z.record(z.unknown())).optional(),
+			questions_and_answers: z
+				.array(z.record(z.string(), z.unknown()))
+				.optional(),
 			// UTM/source tracking fields vary by integration and campaign
-			tracking: z.record(z.unknown()).optional(),
+			tracking: z.record(z.string(), z.unknown()).optional(),
 			created_at: z.string().optional(),
 			updated_at: z.string().optional(),
 			// Routing result structure depends on the form's routing rules configuration
-			result: z.record(z.unknown()).optional(),
+			result: z.record(z.string(), z.unknown()).optional(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const RoutingFormsListResponseSchema = z.object({
@@ -914,7 +916,7 @@ const RoutingFormsListResponseSchema = z.object({
 
 const RoutingFormsGetSampleWebhookDataResponseSchema = z.object({
 	// Sample webhook body mirrors live webhook payloads, which are open-ended by event type
-	body: z.record(z.unknown()),
+	body: z.record(z.string(), z.unknown()),
 });
 
 // Scheduling Links
@@ -925,7 +927,7 @@ const SchedulingLinksCreateResponseSchema = z.object({
 			owner: z.string(),
 			owner_type: z.string(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const SchedulingLinksCreateSingleUseResponseSchema = z.object({
@@ -935,7 +937,7 @@ const SchedulingLinksCreateSingleUseResponseSchema = z.object({
 			owner: z.string(),
 			owner_type: z.string(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 const SchedulingLinksCreateShareResponseSchema = z.object({
@@ -947,7 +949,7 @@ const SchedulingLinksCreateShareResponseSchema = z.object({
 			last_booking_at: z.string().nullable().optional(),
 			event_type: z.string().optional(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 // Webhook Subscriptions
@@ -975,14 +977,14 @@ const ActivityLogListResponseSchema = z.object({
 				uri: z.string().optional(),
 				action: z.string(),
 				// Actor shape varies by actor type (user, system, API key, etc.)
-				actor: z.record(z.unknown()),
+				actor: z.record(z.string(), z.unknown()),
 				// Details are action-specific; each action type has a different payload shape
-				details: z.record(z.unknown()),
+				details: z.record(z.string(), z.unknown()),
 				organization: z.string(),
 				occurred_at: z.string(),
 				namespace: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 	),
 	pagination: PaginationSchema,
 });
@@ -997,7 +999,7 @@ const ActivityLogListOutgoingCommunicationsResponseSchema = z.object({
 				status: z.string().optional(),
 				to: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 	),
 	pagination: PaginationSchema,
 });

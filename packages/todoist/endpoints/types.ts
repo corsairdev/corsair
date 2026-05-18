@@ -13,7 +13,7 @@ const TaskSchema = z
 		order: z.number().optional(),
 		priority: z.number().optional(),
 		// due is loosely typed because the Todoist due object structure is not strictly defined
-		due: z.record(z.unknown()).nullable().optional(),
+		due: z.record(z.string(), z.unknown()).nullable().optional(),
 		url: z.string().optional(),
 		comment_count: z.number().optional(),
 		created_at: z.string().optional(),
@@ -21,7 +21,7 @@ const TaskSchema = z
 		assignee_id: z.string().optional(),
 		assigner_id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ProjectSchema = z
 	.object({
@@ -37,7 +37,7 @@ const ProjectSchema = z
 		is_favorite: z.boolean().optional(),
 		view_style: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SectionSchema = z
 	.object({
@@ -46,7 +46,7 @@ const SectionSchema = z
 		name: z.string(),
 		order: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CommentSchema = z
 	.object({
@@ -56,7 +56,7 @@ const CommentSchema = z
 		content: z.string(),
 		posted_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const LabelSchema = z
 	.object({
@@ -66,7 +66,7 @@ const LabelSchema = z
 		order: z.number().optional(),
 		favorite: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ReminderSchema = z
 	.object({
@@ -74,9 +74,9 @@ const ReminderSchema = z
 		task_id: z.string().optional(),
 		notify_uid: z.string().optional(),
 		// due is loosely typed because the Todoist due object structure is not strictly defined
-		due: z.record(z.unknown()).optional(),
+		due: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TasksCloseInputSchema = z.object({
 	id: z.string(),
@@ -330,11 +330,11 @@ export const TodoistEndpointInputSchemas = {
 } as const;
 
 const TasksCloseResponseSchema = z
-	.union([z.undefined(), z.object({}).passthrough()])
+	.union([z.undefined(), z.object({}).loose()])
 	.optional();
 const TasksCreateResponseSchema = TaskSchema;
 const TasksDeleteResponseSchema = z
-	.union([z.undefined(), z.object({}).passthrough()])
+	.union([z.undefined(), z.object({}).loose()])
 	.optional();
 const TasksGetResponseSchema = TaskSchema;
 const TasksGetManyResponseSchema = z.union([
@@ -343,18 +343,18 @@ const TasksGetManyResponseSchema = z.union([
 		.object({
 			tasks: z.array(TaskSchema).optional(),
 		})
-		.passthrough(),
+		.loose(),
 ]);
 const TasksMoveResponseSchema = TaskSchema;
 const TasksQuickAddResponseSchema = TaskSchema;
 const TasksReopenResponseSchema = z
-	.union([z.undefined(), z.object({}).passthrough()])
+	.union([z.undefined(), z.object({}).loose()])
 	.optional();
 const TasksUpdateResponseSchema = TaskSchema;
 
-const ProjectsArchiveResponseSchema = z.object({}).passthrough();
+const ProjectsArchiveResponseSchema = z.object({}).loose();
 const ProjectsCreateResponseSchema = ProjectSchema;
-const ProjectsDeleteResponseSchema = z.object({}).passthrough();
+const ProjectsDeleteResponseSchema = z.object({}).loose();
 const ProjectsGetResponseSchema = ProjectSchema;
 const ProjectsGetCollaboratorsResponseSchema = z
 	.array(
@@ -364,7 +364,7 @@ const ProjectsGetCollaboratorsResponseSchema = z
 				name: z.string().optional(),
 				email: z.string().optional(),
 			})
-			.passthrough(),
+			.loose(),
 	)
 	.optional()
 	.default([]);
@@ -374,31 +374,31 @@ const ProjectsGetManyResponseSchema = z.union([
 		.object({
 			projects: z.array(ProjectSchema).optional(),
 		})
-		.passthrough(),
+		.loose(),
 ]);
-const ProjectsUnarchiveResponseSchema = z.object({}).passthrough();
+const ProjectsUnarchiveResponseSchema = z.object({}).loose();
 const ProjectsUpdateResponseSchema = ProjectSchema;
 
 const SectionsCreateResponseSchema = SectionSchema;
-const SectionsDeleteResponseSchema = z.object({}).passthrough();
+const SectionsDeleteResponseSchema = z.object({}).loose();
 const SectionsGetResponseSchema = SectionSchema;
 const SectionsGetManyResponseSchema = z.array(SectionSchema);
 const SectionsUpdateResponseSchema = SectionSchema;
 
 const CommentsCreateResponseSchema = CommentSchema;
-const CommentsDeleteResponseSchema = z.object({}).passthrough();
+const CommentsDeleteResponseSchema = z.object({}).loose();
 const CommentsGetResponseSchema = CommentSchema;
 const CommentsGetManyResponseSchema = z.array(CommentSchema);
 const CommentsUpdateResponseSchema = CommentSchema;
 
 const LabelsCreateResponseSchema = LabelSchema;
-const LabelsDeleteResponseSchema = z.object({}).passthrough();
+const LabelsDeleteResponseSchema = z.object({}).loose();
 const LabelsGetResponseSchema = LabelSchema;
 const LabelsGetManyResponseSchema = z.array(LabelSchema);
 const LabelsUpdateResponseSchema = LabelSchema;
 
 const RemindersCreateResponseSchema = ReminderSchema;
-const RemindersDeleteResponseSchema = z.object({}).passthrough();
+const RemindersDeleteResponseSchema = z.object({}).loose();
 const RemindersGetManyResponseSchema = z.array(ReminderSchema);
 const RemindersUpdateResponseSchema = ReminderSchema;
 

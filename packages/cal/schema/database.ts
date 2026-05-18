@@ -29,7 +29,7 @@ export const CalBooking = z
 						email: z.string(),
 						timeZone: z.string().optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 		hosts: z
@@ -41,12 +41,12 @@ export const CalBooking = z
 						email: z.string().optional(),
 						timeZone: z.string().optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 		// Custom metadata fields that can contain arbitrary data from Cal.com
-		metadata: z.record(z.unknown()).nullable().optional(),
+		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type CalBooking = z.infer<typeof CalBooking>;

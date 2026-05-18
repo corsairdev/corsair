@@ -8,20 +8,20 @@ const AliasCreateInputSchema = z.object({
 const EventCreateInputSchema = z.object({
 	distinct_id: z.string(),
 	event: z.string(),
-	properties: z.record(z.unknown()).optional(),
+	properties: z.record(z.string(), z.unknown()).optional(),
 	timestamp: z.string().optional(),
 	uuid: z.string().optional(),
 });
 
 const IdentityCreateInputSchema = z.object({
 	distinct_id: z.string(),
-	properties: z.record(z.unknown()).optional(),
+	properties: z.record(z.string(), z.unknown()).optional(),
 });
 
 const TrackPageInputSchema = z.object({
 	distinct_id: z.string(),
 	url: z.string(),
-	properties: z.record(z.unknown()).optional(),
+	properties: z.record(z.string(), z.unknown()).optional(),
 	timestamp: z.string().optional(),
 	uuid: z.string().optional(),
 });
@@ -29,7 +29,7 @@ const TrackPageInputSchema = z.object({
 const TrackScreenInputSchema = z.object({
 	distinct_id: z.string(),
 	screen_name: z.string(),
-	properties: z.record(z.unknown()).optional(),
+	properties: z.record(z.string(), z.unknown()).optional(),
 	timestamp: z.string().optional(),
 	uuid: z.string().optional(),
 });
@@ -56,7 +56,7 @@ const PostHogSuccessResponseSchema = z.union([
 			status: z.union([z.number(), z.string()]).optional(),
 			message: z.string().optional(),
 		})
-		.passthrough(),
+		.loose(),
 	z.any(),
 ]);
 

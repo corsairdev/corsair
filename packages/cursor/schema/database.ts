@@ -16,7 +16,7 @@ export const CursorAgent = z
 		targetBranchName: z.string().optional(),
 		targetAutoCreatePr: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type CursorAgent = z.infer<typeof CursorAgent>;
 
@@ -27,7 +27,7 @@ export const CursorRepository = z
 		owner: z.string().optional(),
 		repository: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type CursorRepository = z.infer<typeof CursorRepository>;
 
@@ -35,7 +35,7 @@ export const CursorModel = z
 	.object({
 		id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 export type CursorModel = z.infer<typeof CursorModel>;
 
@@ -46,6 +46,6 @@ export const CursorApiKey = z
 		createdAt: z.coerce.date().nullable().optional(),
 		userEmail: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type CursorApiKey = z.infer<typeof CursorApiKey>;

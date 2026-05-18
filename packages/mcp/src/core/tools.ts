@@ -160,7 +160,7 @@ export function buildCorsairToolDefs(
 						'Full endpoint path from the PERMISSION_REQUIRED message, e.g. "slack.messages.post"',
 					),
 				args: z
-					.record(z.unknown())
+					.record(z.string(), z.unknown())
 					.describe(
 						'The arguments object from the PERMISSION_REQUIRED message',
 					),

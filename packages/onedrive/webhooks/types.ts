@@ -7,7 +7,7 @@ export const OnedriveNotificationSchema = z.object({
 	clientState: z.string().optional(),
 	resource: z.string().optional(),
 	// any/unknown for resourceData since Microsoft Graph resource data shape varies by resource type
-	resourceData: z.record(z.unknown()).optional(),
+	resourceData: z.record(z.string(), z.unknown()).optional(),
 	tenantId: z.string().optional(),
 	subscriptionExpirationDateTime: z.string().optional(),
 });

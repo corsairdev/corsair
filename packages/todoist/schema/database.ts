@@ -13,7 +13,7 @@ export const TodoistTask = z
 		order: z.number().optional(),
 		priority: z.number().optional(),
 		// due is loosely typed because the Todoist due object structure is not strictly defined
-		due: z.record(z.unknown()).nullable().optional(),
+		due: z.record(z.string(), z.unknown()).nullable().optional(),
 		url: z.string().optional(),
 		comment_count: z.number().optional(),
 		created_at: z.string().optional(),
@@ -21,7 +21,7 @@ export const TodoistTask = z
 		assignee_id: z.string().optional(),
 		assigner_id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TodoistProject = z
 	.object({
@@ -37,7 +37,7 @@ export const TodoistProject = z
 		is_favorite: z.boolean().optional(),
 		view_style: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TodoistSection = z
 	.object({
@@ -46,7 +46,7 @@ export const TodoistSection = z
 		name: z.string(),
 		order: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TodoistComment = z
 	.object({
@@ -56,7 +56,7 @@ export const TodoistComment = z
 		content: z.string(),
 		posted_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TodoistLabel = z
 	.object({
@@ -66,7 +66,7 @@ export const TodoistLabel = z
 		order: z.number().optional(),
 		favorite: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TodoistReminder = z
 	.object({
@@ -74,9 +74,9 @@ export const TodoistReminder = z
 		task_id: z.string().optional(),
 		notify_uid: z.string().optional(),
 		// due is loosely typed because the Todoist due object structure is not strictly defined
-		due: z.record(z.unknown()).optional(),
+		due: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type TodoistTask = z.infer<typeof TodoistTask>;
 export type TodoistProject = z.infer<typeof TodoistProject>;

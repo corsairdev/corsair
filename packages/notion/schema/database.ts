@@ -14,7 +14,7 @@ export const NotionBlock = z
 		// NOTE: Block content varies by type (paragraph, heading, list, etc.)
 		// Using passthrough to allow additional type-specific properties
 	})
-	.passthrough();
+	.loose();
 
 export const NotionDatabase = z
 	.object({
@@ -33,7 +33,7 @@ export const NotionDatabase = z
 		parent_id: z.string().optional(),
 		parent_type: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const NotionPage = z
 	.object({
@@ -52,7 +52,7 @@ export const NotionPage = z
 		// Storing as JSON string for database storage
 		properties_json: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const NotionUser = z
 	.object({
@@ -64,7 +64,7 @@ export const NotionUser = z
 		// NOTE: Bot users have additional fields
 		// Using passthrough to allow additional fields
 	})
-	.passthrough();
+	.loose();
 
 export type NotionBlock = z.infer<typeof NotionBlock>;
 export type NotionDatabase = z.infer<typeof NotionDatabase>;

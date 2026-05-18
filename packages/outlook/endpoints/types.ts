@@ -7,45 +7,45 @@ const RecipientSchema = z
 		name: z.string().optional(),
 		address: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EmailAddressSchema = z
 	.object({
 		name: z.string().optional(),
 		address: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BodySchema = z
 	.object({
 		contentType: z.string().optional(),
 		content: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DateTimeTimeZoneSchema = z
 	.object({
 		dateTime: z.string(),
 		timeZone: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const LocationSchema = z
 	.object({
 		displayName: z.string().optional(),
 		// Graph returns a physicalAddress object with highly variable regional sub-fields
-		address: z.record(z.unknown()).optional(),
+		address: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AttendeeSchema = z
 	.object({
 		type: z.string().optional(),
 		// status contains { response: string, time: string } — kept loose to avoid version-drift
-		status: z.record(z.unknown()).optional(),
+		status: z.record(z.string(), z.unknown()).optional(),
 		emailAddress: EmailAddressSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const OnlineMeetingSchema = z
 	.object({
@@ -53,7 +53,7 @@ const OnlineMeetingSchema = z
 		conferenceId: z.string().optional(),
 		tollNumber: z.string().optional(),
 	})
-	.passthrough()
+	.loose()
 	.nullable()
 	.optional();
 
@@ -83,14 +83,14 @@ const MessageSchema = z
 		changeKey: z.string().optional(),
 		categories: z.array(z.string()).optional(),
 		// flag contains { flagStatus, completedDateTime, dueDateTime, startDateTime } sub-fields
-		flag: z.record(z.unknown()).optional(),
+		flag: z.record(z.string(), z.unknown()).optional(),
 		internetMessageId: z.string().optional(),
 		conversationIndex: z.string().optional(),
 		inferenceClassification: z.string().optional(),
 		isReadReceiptRequested: z.boolean().nullable().optional(),
 		isDeliveryReceiptRequested: z.boolean().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EventSchema = z
 	.object({
@@ -119,9 +119,9 @@ const EventSchema = z
 		changeKey: z.string().optional(),
 		categories: z.array(z.string()).optional(),
 		// recurrence holds { pattern: {...}, range: {...} } — deep schema varies by recurrence type
-		recurrence: z.record(z.unknown()).nullable().optional(),
+		recurrence: z.record(z.string(), z.unknown()).nullable().optional(),
 		// responseStatus holds { response: string, time: string } — kept loose to avoid version-drift
-		responseStatus: z.record(z.unknown()).optional(),
+		responseStatus: z.record(z.string(), z.unknown()).optional(),
 		responseRequested: z.boolean().optional(),
 		seriesMasterId: z.string().nullable().optional(),
 		transactionId: z.string().nullable().optional(),
@@ -135,7 +135,7 @@ const EventSchema = z
 		hasAttachments: z.boolean().optional(),
 		hideAttendees: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CalendarSchema = z
 	.object({
@@ -154,7 +154,7 @@ const CalendarSchema = z
 		allowedOnlineMeetingProviders: z.array(z.string()).optional(),
 		defaultOnlineMeetingProvider: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ContactSchema = z
 	.object({
@@ -180,7 +180,7 @@ const ContactSchema = z
 		changeKey: z.string().optional(),
 		categories: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MailFolderSchema = z
 	.object({
@@ -193,7 +193,7 @@ const MailFolderSchema = z
 		isHidden: z.boolean().optional(),
 		sizeInBytes: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AttachmentSchema = z
 	.object({
@@ -208,7 +208,7 @@ const AttachmentSchema = z
 		contentId: z.string().optional(),
 		contentLocation: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BatchMoveResultSchema = z.object({
 	original_message_id: z.string(),
@@ -246,7 +246,7 @@ const MeetingSuggestionSchema = z
 			.optional(),
 		locations: z.array(LocationSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ────────────────────────────────────────────────────────────
 
@@ -261,7 +261,7 @@ const MessagesSendInputSchema = z.object({
 	bcc_emails: z.array(z.string()).optional(),
 	from_address: z.string().optional(),
 	save_to_sent_items: z.boolean().optional(),
-	attachment: z.record(z.unknown()).optional(),
+	attachment: z.record(z.string(), z.unknown()).optional(),
 });
 
 const MessagesCreateDraftInputSchema = z.object({
@@ -271,7 +271,7 @@ const MessagesCreateDraftInputSchema = z.object({
 	to_recipients: z.array(z.string()).optional(),
 	cc_recipients: z.array(z.string()).optional(),
 	bcc_recipients: z.array(z.string()).optional(),
-	attachment: z.record(z.unknown()).optional(),
+	attachment: z.record(z.string(), z.unknown()).optional(),
 });
 
 const MessagesGetInputSchema = z.object({
@@ -359,11 +359,11 @@ const MessagesUpdateInputSchema = z.object({
 	importance: z.string().optional(),
 	categories: z.array(z.string()).optional(),
 	// Recipient/flag fields accept pre-formed Graph API objects passed through verbatim
-	to_recipients: z.array(z.record(z.unknown())).optional(),
-	cc_recipients: z.array(z.record(z.unknown())).optional(),
-	bcc_recipients: z.array(z.record(z.unknown())).optional(),
-	reply_to: z.array(z.record(z.unknown())).optional(),
-	flag: z.record(z.unknown()).optional(),
+	to_recipients: z.array(z.record(z.string(), z.unknown())).optional(),
+	cc_recipients: z.array(z.record(z.string(), z.unknown())).optional(),
+	bcc_recipients: z.array(z.record(z.string(), z.unknown())).optional(),
+	reply_to: z.array(z.record(z.string(), z.unknown())).optional(),
+	flag: z.record(z.string(), z.unknown()).optional(),
 	inference_classification: z.string().optional(),
 	is_read_receipt_requested: z.boolean().optional(),
 	is_delivery_receipt_requested: z.boolean().optional(),
@@ -385,7 +385,7 @@ const MessagesBatchUpdateInputSchema = z.object({
 		z.object({
 			message_id: z.string(),
 			// patch is an arbitrary PATCH body; callers construct it per the Graph API spec
-			patch: z.record(z.unknown()),
+			patch: z.record(z.string(), z.unknown()),
 		}),
 	),
 	user_id: z.string().optional(),
@@ -402,7 +402,7 @@ const MessagesAddAttachmentInputSchema = z.object({
 	contentLocation: z.string().optional(),
 	isInline: z.boolean().optional(),
 	// item holds a pre-formed itemAttachment object passed through verbatim to Graph
-	item: z.record(z.unknown()).optional(),
+	item: z.record(z.string(), z.unknown()).optional(),
 	attachment: z
 		.object({
 			name: z.string(),
@@ -461,13 +461,13 @@ const EventsUpdateInputSchema = z.object({
 	user_id: z.string().optional(),
 	subject: z.string().optional(),
 	// body is a pre-formed { contentType, content } object or rich HTML body passed through verbatim
-	body: z.record(z.unknown()).optional(),
+	body: z.record(z.string(), z.unknown()).optional(),
 	start_datetime: z.string().optional(),
 	end_datetime: z.string().optional(),
 	time_zone: z.string().optional(),
 	location: z.string().optional(),
 	// attendees are pre-formed Graph attendee objects passed through verbatim
-	attendees: z.array(z.record(z.unknown())).optional(),
+	attendees: z.array(z.record(z.string(), z.unknown())).optional(),
 	show_as: z.string().optional(),
 	categories: z.array(z.string()).optional(),
 });
@@ -490,15 +490,15 @@ const EventsDeclineInputSchema = z.object({
 	user_id: z.string().optional(),
 	sendResponse: z.boolean().optional(),
 	// proposedNewTime holds { start: DateTimeTimeZone, end: DateTimeTimeZone } — passed through verbatim
-	proposedNewTime: z.record(z.unknown()).optional(),
+	proposedNewTime: z.record(z.string(), z.unknown()).optional(),
 });
 
 const EventsFindMeetingTimesInputSchema = z.object({
 	user_id: z.string().optional(),
 	// attendees/timeConstraint/locationConstraint are Graph API constraint objects passed through verbatim
-	attendees: z.array(z.record(z.unknown())).optional(),
-	timeConstraint: z.record(z.unknown()).optional(),
-	locationConstraint: z.record(z.unknown()).optional(),
+	attendees: z.array(z.record(z.string(), z.unknown())).optional(),
+	timeConstraint: z.record(z.string(), z.unknown()).optional(),
+	locationConstraint: z.record(z.string(), z.unknown()).optional(),
 	meetingDuration: z.string().optional(),
 	maxCandidates: z.number().optional(),
 	isOrganizerOptional: z.boolean().optional(),
@@ -638,7 +638,7 @@ const MessagesSendResponseSchema = z
 	.object({
 		status_code: z.number().optional(),
 		// body captures any unexpected response payload; normally absent on 202
-		body: z.record(z.unknown()).optional(),
+		body: z.record(z.string(), z.unknown()).optional(),
 	})
 	.optional();
 
@@ -652,7 +652,7 @@ const MessagesListResponseSchema = z
 		'@odata.context': z.string().optional(),
 		'@odata.nextLink': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesQueryResponseSchema = z
 	.object({
@@ -661,19 +661,19 @@ const MessagesQueryResponseSchema = z
 		'@odata.context': z.string().optional(),
 		'@odata.nextLink': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesSearchResponseSchema = z
 	.object({
 		value: z.array(MessageSchema).optional(),
 		'@odata.context': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesReplyResponseSchema = z.object({
 	status_code: z.number().optional(),
 	// response_body captures any unexpected payload; /messages/{id}/reply normally returns 202 No Content
-	response_body: z.record(z.unknown()).optional(),
+	response_body: z.record(z.string(), z.unknown()).optional(),
 });
 
 const MessagesForwardResponseSchema = z.object({
@@ -718,7 +718,7 @@ const EventsListResponseSchema = z
 		'@odata.context': z.string().optional(),
 		'@odata.nextLink': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EventsUpdateResponseSchema = EventSchema;
 
@@ -748,10 +748,10 @@ const EventsFindMeetingTimesResponseSchema = z.object({
 const EventsGetScheduleResponseSchema = z
 	.object({
 		// Each schedule item contains availabilityView, workingHours, scheduleItems — shape varies by calendar config
-		value: z.array(z.record(z.unknown())).optional(),
+		value: z.array(z.record(z.string(), z.unknown())).optional(),
 		'@odata.context': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CalendarsCreateResponseSchema = CalendarSchema;
 
@@ -764,7 +764,7 @@ const CalendarsListResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		'@odata.deltaLink': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CalendarsDeleteResponseSchema = z.object({
 	success: z.boolean().optional(),
@@ -778,7 +778,7 @@ const ContactsListResponseSchema = z
 		'@odata.context': z.string().optional(),
 		'@odata.nextLink': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ContactsUpdateResponseSchema = ContactSchema;
 
@@ -797,7 +797,7 @@ const FoldersListResponseSchema = z
 		'@odata.context': z.string().optional(),
 		'@odata.nextLink': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FoldersUpdateResponseSchema = MailFolderSchema;
 

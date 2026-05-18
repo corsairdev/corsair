@@ -47,7 +47,7 @@ export const PostDataSchema = z
 		thumbnail: z.string(),
 		total_awards_received: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** Reddit `t1` comment payload. */
 export const CommentDataSchema = z
@@ -78,7 +78,7 @@ export const CommentDataSchema = z
 		subreddit_name_prefixed: z.string(),
 		over_18: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** Reddit `t5` subreddit about payload. */
 export const SubredditDataSchema = z
@@ -110,7 +110,7 @@ export const SubredditDataSchema = z
 		wiki_enabled: z.boolean().optional(),
 		subreddit_type: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 /** Reddit `t2` user about payload. */
 export const UserDataSchema = z
@@ -131,7 +131,7 @@ export const UserDataSchema = z
 		pref_show_snoovatar: z.boolean().optional(),
 		accept_followers: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Reddit "thing" type prefixes used in listing children:
 // t1 = comment, t2 = account, t3 = link/post, t4 = message, t5 = subreddit, t6 = award
@@ -173,7 +173,7 @@ const PostListingResponseSchema = z
 		before: z.string().nullable(),
 		dist: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 // ── 1. SUBREDDIT ENDPOINTS ───────────────────────────────────────────────────
 
@@ -225,7 +225,7 @@ const GetPostCommentsResponseSchema = z
 		after: z.string().nullable(),
 		before: z.string().nullable(),
 	})
-	.passthrough();
+	.loose();
 
 const GetByIdInputSchema = z.object({
 	names: z.string(),
@@ -260,7 +260,7 @@ const GetUserCommentsResponseSchema = z
 		before: z.string().nullable(),
 		dist: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetUserOverviewInputSchema = z
 	.object({
@@ -275,7 +275,7 @@ const GetUserOverviewResponseSchema = z
 		before: z.string().nullable(),
 		dist: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 // ── 4. SEARCH ENDPOINTS ─────────────────────────────────────────────────────
 
@@ -319,7 +319,7 @@ const SearchSubredditsResponseSchema = z
 		before: z.string().nullable(),
 		dist: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 // ── 5. GLOBAL FEEDS ──────────────────────────────────────────────────────────
 
@@ -339,7 +339,7 @@ const GetSubredditsPopularResponseSchema = z
 		before: z.string().nullable(),
 		dist: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 const GetSubredditsNewInputSchema = ListingParamsSchema;
 const GetSubredditsNewResponseSchema = z
@@ -349,7 +349,7 @@ const GetSubredditsNewResponseSchema = z
 		before: z.string().nullable(),
 		dist: z.number(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Endpoint I/O Maps ────────────────────────────────────────────────────────
 

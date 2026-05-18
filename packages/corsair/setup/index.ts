@@ -3,7 +3,6 @@ import type { ZodTypeAny } from 'zod';
 import {
 	ZodBoolean,
 	ZodDate,
-	ZodEffects,
 	ZodEnum,
 	ZodNullable,
 	ZodNumber,
@@ -266,12 +265,10 @@ function describeZodSchema(schema: ZodTypeAny): unknown {
 		}
 		return shape;
 	}
-	if (schema instanceof ZodEffects)
-		return describeZodSchema(schema.innerType());
 	if (schema instanceof ZodNullable)
-		return `${describeZodSchema(schema.unwrap())} | null`;
+		return `${describeZodSchema(schema.unwrap() as ZodTypeAny)} | null`;
 	if (schema instanceof ZodOptional)
-		return `${describeZodSchema(schema.unwrap())} | undefined`;
+		return `${describeZodSchema(schema.unwrap() as ZodTypeAny)} | undefined`;
 	if (schema instanceof ZodEnum) return schema.options.join(' | ');
 	if (schema instanceof ZodString) return 'string';
 	if (schema instanceof ZodNumber) return 'number';

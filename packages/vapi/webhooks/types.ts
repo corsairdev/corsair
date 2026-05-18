@@ -9,7 +9,7 @@ import { z } from 'zod';
 // ── Shared call sub-schema ────────────────────────────────────────────────────
 // Nested call fields (messages, artifact, analysis, phoneNumber, customer, node,
 // toolWithToolCallList) are opaque Vapi-defined objects whose exact shapes vary
-// by provider and call configuration; z.record(z.unknown()) avoids re-implementing
+// by provider and call configuration; z.record(z.string(), z.unknown()) avoids re-implementing
 // the full Vapi OpenAPI spec here.
 
 export const VapiCallSchema = z
@@ -24,11 +24,11 @@ export const VapiCallSchema = z
 		startedAt: z.string().nullable().optional(),
 		endedAt: z.string().nullable().optional(),
 		cost: z.number().optional(),
-		messages: z.array(z.record(z.unknown())).optional(),
-		artifact: z.record(z.unknown()).optional(),
-		analysis: z.record(z.unknown()).optional(),
+		messages: z.array(z.record(z.string(), z.unknown())).optional(),
+		artifact: z.record(z.string(), z.unknown()).optional(),
+		analysis: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Server message schemas ────────────────────────────────────────────────────
 
@@ -36,8 +36,8 @@ export const VapiAssistantRequestEventSchema = z.object({
 	message: z.object({
 		type: z.literal('assistant-request'),
 		call: VapiCallSchema,
-		phoneNumber: z.record(z.unknown()).optional(),
-		customer: z.record(z.unknown()).optional(),
+		phoneNumber: z.record(z.string(), z.unknown()).optional(),
+		customer: z.record(z.string(), z.unknown()).optional(),
 		timestamp: z.string().optional(),
 	}),
 });
@@ -59,7 +59,7 @@ export const VapiToolCallsEventSchema = z.object({
 				}),
 			}),
 		),
-		toolWithToolCallList: z.array(z.record(z.unknown())).optional(),
+		toolWithToolCallList: z.array(z.record(z.string(), z.unknown())).optional(),
 		timestamp: z.string().optional(),
 	}),
 });
@@ -83,9 +83,9 @@ export const VapiEndOfCallReportEventSchema = z.object({
 		endedReason: z.string().optional(),
 		transcript: z.string().optional(),
 		summary: z.string().optional(),
-		messages: z.array(z.record(z.unknown())).optional(),
-		analysis: z.record(z.unknown()).optional(),
-		artifact: z.record(z.unknown()).optional(),
+		messages: z.array(z.record(z.string(), z.unknown())).optional(),
+		analysis: z.record(z.string(), z.unknown()).optional(),
+		artifact: z.record(z.string(), z.unknown()).optional(),
 		timestamp: z.string().optional(),
 	}),
 });
@@ -109,7 +109,7 @@ export const VapiWorkflowNodeStartedEventSchema = z.object({
 	message: z.object({
 		type: z.literal('workflow.node.started'),
 		call: VapiCallSchema,
-		node: z.record(z.unknown()).optional(),
+		node: z.record(z.string(), z.unknown()).optional(),
 		timestamp: z.string().optional(),
 	}),
 });

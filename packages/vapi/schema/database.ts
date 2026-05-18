@@ -73,7 +73,7 @@ export const VapiKnowledgeBase = z.object({
 	orgId: z.string().optional(),
 	provider: z.string().optional(),
 	name: z.string().nullable().optional(),
-	server: z.record(z.unknown()).optional(),
+	server: z.record(z.string(), z.unknown()).optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 });

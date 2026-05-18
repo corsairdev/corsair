@@ -10,14 +10,14 @@ const TeamsMemberSettingsSchema = z
 		allowCreateUpdateRemoveTabs: z.boolean().optional(),
 		allowCreateUpdateRemoveConnectors: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsGuestSettingsSchema = z
 	.object({
 		allowCreateUpdateChannels: z.boolean().optional(),
 		allowDeleteChannels: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsMessagingSettingsSchema = z
 	.object({
@@ -27,7 +27,7 @@ const TeamsMessagingSettingsSchema = z
 		allowTeamMentions: z.boolean().optional(),
 		allowChannelMentions: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsFunSettingsSchema = z
 	.object({
@@ -36,7 +36,7 @@ const TeamsFunSettingsSchema = z
 		allowStickersAndMemes: z.boolean().optional(),
 		allowCustomMemes: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsTeamObjectSchema = z
 	.object({
@@ -54,7 +54,7 @@ const TeamsTeamObjectSchema = z
 		messagingSettings: TeamsMessagingSettingsSchema.nullable().optional(),
 		funSettings: TeamsFunSettingsSchema.nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsChannelObjectSchema = z
 	.object({
@@ -67,21 +67,21 @@ const TeamsChannelObjectSchema = z
 		isFavoriteByDefault: z.boolean().nullable().optional(),
 		createdDateTime: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsMessageBodySchema = z
 	.object({
 		contentType: z.enum(['text', 'html']).optional(),
 		content: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsMessageFromSchema = z
 	.object({
 		// Application identity fields are dynamic and vary per Graph API version/context
-		application: z.record(z.unknown()).nullable().optional(),
+		application: z.record(z.string(), z.unknown()).nullable().optional(),
 		// Device identity fields are dynamic and vary per Graph API version/context
-		device: z.record(z.unknown()).nullable().optional(),
+		device: z.record(z.string(), z.unknown()).nullable().optional(),
 		user: z
 			.object({
 				id: z.string().optional(),
@@ -91,7 +91,7 @@ const TeamsMessageFromSchema = z
 			.nullable()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsMessageObjectSchema = z
 	.object({
@@ -118,13 +118,13 @@ const TeamsMessageObjectSchema = z
 			.nullable()
 			.optional(),
 		// Attachment shape varies by attachment type (file, image, card, etc.)
-		attachments: z.array(z.record(z.unknown())).optional(),
+		attachments: z.array(z.record(z.string(), z.unknown())).optional(),
 		// Mention shape varies depending on whether user, team, tag, or channel is mentioned
-		mentions: z.array(z.record(z.unknown())).optional(),
+		mentions: z.array(z.record(z.string(), z.unknown())).optional(),
 		// Reaction shape varies by emoji/reaction type
-		reactions: z.array(z.record(z.unknown())).optional(),
+		reactions: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsMemberObjectSchema = z
 	.object({
@@ -136,7 +136,7 @@ const TeamsMemberObjectSchema = z
 		roles: z.array(z.string()).optional(),
 		visibleHistoryStartDateTime: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsChatObjectSchema = z
 	.object({
@@ -148,7 +148,7 @@ const TeamsChatObjectSchema = z
 		webUrl: z.string().optional(),
 		tenantId: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Team Input Schemas ────────────────────────────────────────────────────────
 
@@ -159,13 +159,13 @@ const TeamsListInputSchema = z
 		top: z.number().optional(),
 		skipToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsGetInputSchema = z
 	.object({
 		teamId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsCreateInputSchema = z
 	.object({
@@ -177,7 +177,7 @@ const TeamsCreateInputSchema = z
 		messagingSettings: TeamsMessagingSettingsSchema.optional(),
 		funSettings: TeamsFunSettingsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsUpdateInputSchema = z
 	.object({
@@ -190,13 +190,13 @@ const TeamsUpdateInputSchema = z
 		messagingSettings: TeamsMessagingSettingsSchema.optional(),
 		funSettings: TeamsFunSettingsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsDeleteInputSchema = z
 	.object({
 		teamId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Channel Input Schemas ─────────────────────────────────────────────────────
 
@@ -205,14 +205,14 @@ const ChannelsListInputSchema = z
 		teamId: z.string(),
 		filter: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsGetInputSchema = z
 	.object({
 		teamId: z.string(),
 		channelId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsCreateInputSchema = z
 	.object({
@@ -222,7 +222,7 @@ const ChannelsCreateInputSchema = z
 		membershipType: z.enum(['standard', 'private', 'shared']).optional(),
 		isFavoriteByDefault: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsUpdateInputSchema = z
 	.object({
@@ -232,14 +232,14 @@ const ChannelsUpdateInputSchema = z
 		description: z.string().optional(),
 		isFavoriteByDefault: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsDeleteInputSchema = z
 	.object({
 		teamId: z.string(),
 		channelId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Message Input Schemas ─────────────────────────────────────────────────────
 
@@ -250,7 +250,7 @@ const MessagesListInputSchema = z
 		top: z.number().optional(),
 		skipToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesGetInputSchema = z
 	.object({
@@ -258,7 +258,7 @@ const MessagesGetInputSchema = z
 		channelId: z.string(),
 		messageId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesSendInputSchema = z
 	.object({
@@ -269,11 +269,11 @@ const MessagesSendInputSchema = z
 				content: z.string(),
 				contentType: z.enum(['text', 'html']).optional(),
 			})
-			.passthrough(),
+			.loose(),
 		subject: z.string().optional(),
 		importance: z.enum(['normal', 'high', 'urgent']).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesReplyInputSchema = z
 	.object({
@@ -285,10 +285,10 @@ const MessagesReplyInputSchema = z
 				content: z.string(),
 				contentType: z.enum(['text', 'html']).optional(),
 			})
-			.passthrough(),
+			.loose(),
 		importance: z.enum(['normal', 'high', 'urgent']).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesListRepliesInputSchema = z
 	.object({
@@ -297,7 +297,7 @@ const MessagesListRepliesInputSchema = z
 		messageId: z.string(),
 		top: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesDeleteInputSchema = z
 	.object({
@@ -305,7 +305,7 @@ const MessagesDeleteInputSchema = z
 		channelId: z.string(),
 		messageId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Member Input Schemas ──────────────────────────────────────────────────────
 
@@ -314,14 +314,14 @@ const MembersListInputSchema = z
 		teamId: z.string(),
 		filter: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MembersGetInputSchema = z
 	.object({
 		teamId: z.string(),
 		membershipId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const MembersAddInputSchema = z
 	.object({
@@ -329,14 +329,14 @@ const MembersAddInputSchema = z
 		userId: z.string(),
 		roles: z.array(z.enum(['owner', 'member'])).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MembersRemoveInputSchema = z
 	.object({
 		teamId: z.string(),
 		membershipId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Chat Input Schemas ────────────────────────────────────────────────────────
 
@@ -345,13 +345,13 @@ const ChatsListInputSchema = z
 		filter: z.string().optional(),
 		top: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChatsGetInputSchema = z
 	.object({
 		chatId: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const ChatsCreateInputSchema = z
 	.object({
@@ -363,10 +363,10 @@ const ChatsCreateInputSchema = z
 					userId: z.string(),
 					roles: z.array(z.string()).optional(),
 				})
-				.passthrough(),
+				.loose(),
 		),
 	})
-	.passthrough();
+	.loose();
 
 const ChatsListMessagesInputSchema = z
 	.object({
@@ -374,7 +374,7 @@ const ChatsListMessagesInputSchema = z
 		top: z.number().optional(),
 		skipToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChatsSendMessageInputSchema = z
 	.object({
@@ -384,10 +384,10 @@ const ChatsSendMessageInputSchema = z
 				content: z.string(),
 				contentType: z.enum(['text', 'html']).optional(),
 			})
-			.passthrough(),
+			.loose(),
 		importance: z.enum(['normal', 'high', 'urgent']).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Team Response Schemas ─────────────────────────────────────────────────────
 
@@ -398,7 +398,7 @@ const TeamsListResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		value: z.array(TeamsTeamObjectSchema),
 	})
-	.passthrough();
+	.loose();
 
 const TeamsGetResponseSchema = TeamsTeamObjectSchema;
 
@@ -409,12 +409,12 @@ const TeamsCreateResponseSchema = z
 		displayName: z.string().optional(),
 		description: z.string().nullable().optional(),
 	})
-	.passthrough()
+	.loose()
 	.optional();
 
-const TeamsUpdateResponseSchema = z.object({}).passthrough();
+const TeamsUpdateResponseSchema = z.object({}).loose();
 
-const TeamsDeleteResponseSchema = z.object({}).passthrough();
+const TeamsDeleteResponseSchema = z.object({}).loose();
 
 // ── Channel Response Schemas ──────────────────────────────────────────────────
 
@@ -424,15 +424,15 @@ const ChannelsListResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		value: z.array(TeamsChannelObjectSchema),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsGetResponseSchema = TeamsChannelObjectSchema;
 
 const ChannelsCreateResponseSchema = TeamsChannelObjectSchema;
 
-const ChannelsUpdateResponseSchema = z.object({}).passthrough();
+const ChannelsUpdateResponseSchema = z.object({}).loose();
 
-const ChannelsDeleteResponseSchema = z.object({}).passthrough();
+const ChannelsDeleteResponseSchema = z.object({}).loose();
 
 // ── Message Response Schemas ──────────────────────────────────────────────────
 
@@ -442,7 +442,7 @@ const MessagesListResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		value: z.array(TeamsMessageObjectSchema),
 	})
-	.passthrough();
+	.loose();
 
 const MessagesGetResponseSchema = TeamsMessageObjectSchema;
 
@@ -456,9 +456,9 @@ const MessagesListRepliesResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		value: z.array(TeamsMessageObjectSchema),
 	})
-	.passthrough();
+	.loose();
 
-const MessagesDeleteResponseSchema = z.object({}).passthrough();
+const MessagesDeleteResponseSchema = z.object({}).loose();
 
 // ── Member Response Schemas ───────────────────────────────────────────────────
 
@@ -468,13 +468,13 @@ const MembersListResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		value: z.array(TeamsMemberObjectSchema),
 	})
-	.passthrough();
+	.loose();
 
 const MembersGetResponseSchema = TeamsMemberObjectSchema;
 
 const MembersAddResponseSchema = TeamsMemberObjectSchema;
 
-const MembersRemoveResponseSchema = z.object({}).passthrough();
+const MembersRemoveResponseSchema = z.object({}).loose();
 
 // ── Chat Response Schemas ─────────────────────────────────────────────────────
 
@@ -484,7 +484,7 @@ const ChatsListResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		value: z.array(TeamsChatObjectSchema),
 	})
-	.passthrough();
+	.loose();
 
 const ChatsGetResponseSchema = TeamsChatObjectSchema;
 
@@ -496,7 +496,7 @@ const ChatsListMessagesResponseSchema = z
 		'@odata.nextLink': z.string().optional(),
 		value: z.array(TeamsMessageObjectSchema),
 	})
-	.passthrough();
+	.loose();
 
 const ChatsSendMessageResponseSchema = TeamsMessageObjectSchema;
 

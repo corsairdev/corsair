@@ -348,11 +348,11 @@ export const vapiEndpointSchemas = {
 // Vapi docs: https://docs.vapi.ai/api-reference
 const VapiAssistantRequestResponseSchema = z
 	.object({
-		assistant: z.record(z.unknown()).optional(),
+		assistant: z.record(z.string(), z.unknown()).optional(),
 		assistantId: z.string().optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VapiToolCallsResponseSchema = z
 	.object({
@@ -363,17 +363,17 @@ const VapiToolCallsResponseSchema = z
 			}),
 		),
 	})
-	.passthrough();
+	.loose();
 
 const VapiTransferDestinationRequestResponseSchema = z
 	.object({
-		destination: z.record(z.unknown()).optional(),
+		destination: z.record(z.string(), z.unknown()).optional(),
 		error: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Notification-only events — Vapi does not use the response body.
-const VapiAckResponseSchema = z.object({}).passthrough();
+const VapiAckResponseSchema = z.object({}).loose();
 
 const vapiWebhookSchemas = {
 	'server.assistantRequest': {

@@ -69,22 +69,22 @@ export const TypeformFormResponsePayloadSchema = z
 				submitted_at: z.string(),
 				landed_at: z.string(),
 				// hidden fields have dynamic keys; typed as string record
-				hidden: z.record(z.string()).optional(),
+				hidden: z.record(z.string(), z.string()).optional(),
 				calculated: z
 					.object({ score: z.number().optional() })
-					.passthrough()
+					.loose()
 					.optional(),
 				definition: z
 					.object({
 						id: z.string().optional(),
 						title: z.string().optional(),
 						// fields within definition have variable shape per form
-						fields: z.array(z.record(z.unknown())).optional(),
+						fields: z.array(z.record(z.string(), z.unknown())).optional(),
 					})
-					.passthrough()
+					.loose()
 					.optional(),
 				// answers have dynamic shape depending on each field's type
-				answers: z.array(z.record(z.unknown())).optional(),
+				answers: z.array(z.record(z.string(), z.unknown())).optional(),
 				variables: z
 					.array(
 						z
@@ -94,7 +94,7 @@ export const TypeformFormResponsePayloadSchema = z
 								text: z.string().optional(),
 								number: z.number().optional(),
 							})
-							.passthrough(),
+							.loose(),
 					)
 					.optional(),
 				metadata: z
@@ -105,12 +105,12 @@ export const TypeformFormResponsePayloadSchema = z
 						network_id: z.string().optional(),
 						user_agent: z.string().optional(),
 					})
-					.passthrough()
+					.loose()
 					.optional(),
 			})
-			.passthrough(),
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 export const TypeformFormResponseEventSchema =
 	TypeformFormResponsePayloadSchema;

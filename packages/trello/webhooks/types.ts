@@ -27,14 +27,14 @@ export const TrelloActionBoardSchema = z
 		name: z.string().optional(),
 		shortLink: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TrelloActionListSchema = z
 	.object({
 		id: z.string(),
 		name: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TrelloActionCardSchema = z
 	.object({
@@ -50,7 +50,7 @@ export const TrelloActionCardSchema = z
 		closed: z.boolean().optional(),
 		pos: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TrelloActionMemberSchema = z
 	.object({
@@ -60,7 +60,7 @@ export const TrelloActionMemberSchema = z
 		avatarUrl: z.string().nullable().optional(),
 		initials: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Webhook action data schemas ───────────────────────────────────────────────
 
@@ -78,7 +78,7 @@ export const CardUpdatedDataSchema = z.object({
 	listBefore: TrelloActionListSchema.optional(),
 	listAfter: TrelloActionListSchema.optional(),
 	// Sparse map of only the changed fields and their previous values; keys are dynamic per update
-	old: z.record(z.unknown()).optional(),
+	old: z.record(z.string(), z.unknown()).optional(),
 });
 export type CardUpdatedData = z.infer<typeof CardUpdatedDataSchema>;
 
@@ -124,7 +124,7 @@ export const TrelloCardCreatedPayloadSchema = z.object({
 		data: CardCreatedDataSchema,
 	}),
 	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
-	model: z.record(z.unknown()),
+	model: z.record(z.string(), z.unknown()),
 });
 
 export const TrelloCardUpdatedPayloadSchema = z.object({
@@ -133,7 +133,7 @@ export const TrelloCardUpdatedPayloadSchema = z.object({
 		data: CardUpdatedDataSchema,
 	}),
 	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
-	model: z.record(z.unknown()),
+	model: z.record(z.string(), z.unknown()),
 });
 
 export const TrelloMemberAddedToCardPayloadSchema = z.object({
@@ -142,7 +142,7 @@ export const TrelloMemberAddedToCardPayloadSchema = z.object({
 		data: MemberAddedToCardDataSchema,
 	}),
 	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
-	model: z.record(z.unknown()),
+	model: z.record(z.string(), z.unknown()),
 });
 
 export const TrelloListCreatedPayloadSchema = z.object({
@@ -151,14 +151,14 @@ export const TrelloListCreatedPayloadSchema = z.object({
 		data: ListCreatedDataSchema,
 	}),
 	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
-	model: z.record(z.unknown()),
+	model: z.record(z.string(), z.unknown()),
 });
 
 export const ListUpdatedDataSchema = z.object({
 	board: TrelloActionBoardSchema.optional(),
 	list: TrelloActionListSchema.optional(),
 	// Sparse map of only the changed fields and their previous values; keys are dynamic per update
-	old: z.record(z.unknown()).optional(),
+	old: z.record(z.string(), z.unknown()).optional(),
 });
 export type ListUpdatedData = z.infer<typeof ListUpdatedDataSchema>;
 
@@ -168,7 +168,7 @@ export const TrelloListUpdatedPayloadSchema = z.object({
 		data: ListUpdatedDataSchema,
 	}),
 	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
-	model: z.record(z.unknown()),
+	model: z.record(z.string(), z.unknown()),
 });
 
 export const TrelloCommentCreatedPayloadSchema = z.object({
@@ -177,7 +177,7 @@ export const TrelloCommentCreatedPayloadSchema = z.object({
 		data: CommentCreatedDataSchema,
 	}),
 	// The full board/resource snapshot Trello sends alongside every action; shape varies by event type
-	model: z.record(z.unknown()),
+	model: z.record(z.string(), z.unknown()),
 });
 
 // ── Inferred event types ──────────────────────────────────────────────────────

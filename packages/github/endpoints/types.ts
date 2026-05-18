@@ -837,7 +837,7 @@ export const GithubEndpointOutputSchemas = {
 			total_count: z.number().optional(),
 			workflows: z.array(WorkflowSchema).optional(),
 		})
-		.passthrough(),
+		.loose(),
 	workflowsGet: WorkflowSchema,
 	workflowsListRuns: z
 		.object({
@@ -846,7 +846,7 @@ export const GithubEndpointOutputSchemas = {
 			workflowRuns: z.array(WorkflowRunSchema).optional(),
 			workflow_runs: z.array(WorkflowRunSchema).optional(),
 		})
-		.passthrough(),
+		.loose(),
 	discussionsList: z.array(DiscussionEndpointSchema),
 	discussionsGet: DiscussionEndpointSchema,
 	forksList: z.array(RepositorySchema),

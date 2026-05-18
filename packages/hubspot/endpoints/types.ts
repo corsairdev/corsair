@@ -296,7 +296,7 @@ const EngagementsCreateInputSchema = z.object({
 		})
 		.optional(),
 	// keeping metadata as any for now
-	metadata: z.record(z.any()).optional(),
+	metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const EngagementsDeleteInputSchema = z.object({
@@ -367,7 +367,7 @@ const ContactResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CompanyResponseSchema = z
 	.object({
@@ -378,7 +378,7 @@ const CompanyResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DealResponseSchema = z
 	.object({
@@ -389,7 +389,7 @@ const DealResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TicketResponseSchema = z
 	.object({
@@ -400,7 +400,7 @@ const TicketResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EngagementResponseSchema = z
 	.object({
@@ -421,9 +421,9 @@ const EngagementResponseSchema = z
 			.optional(),
 		associations: AssociationsSchema.optional(),
 		// keeping metadata as any for now
-		metadata: z.record(z.any()).optional(),
+		metadata: z.record(z.string(), z.any()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PagingResponseSchema = z.object({
 	next: z
@@ -443,41 +443,41 @@ const GetManyContactsResponseSchema = z
 		results: z.array(ContactResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyCompaniesResponseSchema = z
 	.object({
 		results: z.array(CompanyResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyDealsResponseSchema = z
 	.object({
 		results: z.array(DealResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyTicketsResponseSchema = z
 	.object({
 		results: z.array(TicketResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyEngagementsResponseSchema = z
 	.object({
 		results: z.array(EngagementResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchCompanyByDomainResponseSchema = z
 	.object({
 		results: z.array(CompanyResponseSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AddContactToListResponseSchema = z.object({
 	updated: z.array(z.number()).optional(),

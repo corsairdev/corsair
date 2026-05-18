@@ -26,7 +26,7 @@ const EmailsSendInputSchema = z.object({
 			}),
 		)
 		.optional(),
-	headers: z.record(z.string()).optional(),
+	headers: z.record(z.string(), z.string()).optional(),
 });
 
 const EmailsGetInputSchema = z.object({
@@ -93,7 +93,7 @@ const EmailSchema = z.object({
 	subject: z.string().optional(),
 });
 
-const GetEmailResponseSchema = EmailSchema.passthrough();
+const GetEmailResponseSchema = EmailSchema.loose();
 
 const ListEmailsResponseSchema = z.object({
 	data: z.array(EmailSchema),
@@ -116,9 +116,9 @@ const DomainSchema = z.object({
 	region: z.string().optional(),
 });
 
-const CreateDomainResponseSchema = DomainSchema.passthrough();
+const CreateDomainResponseSchema = DomainSchema.loose();
 
-const GetDomainResponseSchema = DomainSchema.passthrough();
+const GetDomainResponseSchema = DomainSchema.loose();
 
 const ListDomainsResponseSchema = z.object({
 	data: z.array(DomainSchema),
@@ -148,7 +148,7 @@ const VerifyDomainResponseSchema = z
 		created_at: z.coerce.date().nullable().optional(),
 		region: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const ResendEndpointOutputSchemas = {
 	emailsSend: SendEmailResponseSchema,

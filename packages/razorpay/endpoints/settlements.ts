@@ -14,17 +14,19 @@ export const list: RazorpayEndpoints['settlementsList'] = async (
 		query: input,
 	});
 
-	if (result.id && ctx.db.settlements) {
-		try {
-			await ctx.db.settlements.upsertByEntityId(result.id, {
-				...result,
-				// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
-				createdAt: result.created_at
-					? new Date(result.created_at * 1000)
-					: undefined,
-			});
-		} catch (error) {
-			console.warn('Failed to save Razorpay settlement to database:', error);
+	if (ctx.db.settlements) {
+		for (const settlement of result.items) {
+			try {
+				await ctx.db.settlements.upsertByEntityId(settlement.id, {
+					...settlement,
+					// created_at is a Unix timestamp in seconds; multiply by 1000 for ms
+					createdAt: settlement.created_at
+						? new Date(settlement.created_at * 1000)
+						: undefined,
+				});
+			} catch (error) {
+				console.warn('Failed to save Razorpay settlement to database:', error);
+			}
 		}
 	}
 

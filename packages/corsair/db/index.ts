@@ -12,7 +12,7 @@ export const CorsairIntegrationsSchema = z.object({
 	name: z.string(),
 	// Coerce DB null to empty object
 	config: z
-		.record(z.unknown())
+		.record(z.string(), z.unknown())
 		.nullable()
 		.transform((v) => v ?? {}),
 	dek: z.string().nullish(),
@@ -35,7 +35,7 @@ export const CorsairAccountsSchema = z.object({
 
 	// Coerce DB null to empty object
 	config: z
-		.record(z.unknown())
+		.record(z.string(), z.unknown())
 		.nullable()
 		.transform((v) => v ?? {}),
 	dek: z.string().nullish(),
@@ -62,7 +62,7 @@ export const CorsairEntitiesSchema = z.object({
 
 	// Coerce DB null to empty object
 	data: z
-		.record(z.unknown())
+		.record(z.string(), z.unknown())
 		.nullable()
 		.transform((v) => v ?? {}),
 });
@@ -84,7 +84,7 @@ export const CorsairEventsSchema = z.object({
 
 	// Coerce DB null to empty object
 	payload: z
-		.record(z.unknown())
+		.record(z.string(), z.unknown())
 		.nullable()
 		.transform((v) => v ?? {}),
 

@@ -16,7 +16,7 @@ export class AnthropicProvider extends BaseProvider<CorsairAnthropicTool> {
 	readonly name = 'anthropic';
 
 	wrapTool(def: CorsairToolDef): CorsairAnthropicTool {
-		const schema = zodToJsonSchema(z.object(def.shape), { target: 'openApi3' });
+		const schema = zodToJsonSchema(z.object(def.shape) as never, { target: 'openApi3' });
 		return {
 			type: 'custom',
 			name: def.name,

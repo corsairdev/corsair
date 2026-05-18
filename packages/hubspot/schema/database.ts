@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const HubSpotContact = z.object({
 	id: z.string(),
-	properties: z.record(z.any()).optional(),
+	properties: z.record(z.string(), z.any()).optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 	archived: z.boolean().optional(),
@@ -10,7 +10,7 @@ export const HubSpotContact = z.object({
 
 export const HubSpotCompany = z.object({
 	id: z.string(),
-	properties: z.record(z.any()).optional(),
+	properties: z.record(z.string(), z.any()).optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 	archived: z.boolean().optional(),
@@ -18,7 +18,7 @@ export const HubSpotCompany = z.object({
 
 export const HubSpotDeal = z.object({
 	id: z.string(),
-	properties: z.record(z.any()).optional(),
+	properties: z.record(z.string(), z.any()).optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 	archived: z.boolean().optional(),
@@ -26,7 +26,7 @@ export const HubSpotDeal = z.object({
 
 export const HubSpotTicket = z.object({
 	id: z.string(),
-	properties: z.record(z.any()).optional(),
+	properties: z.record(z.string(), z.any()).optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 	archived: z.boolean().optional(),
