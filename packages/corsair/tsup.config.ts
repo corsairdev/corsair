@@ -48,6 +48,5 @@ export default defineConfig({
 		'setup.ts',
 		'http.ts',
 		'tests.ts',
-		'plugins.ts',
 	],
 });
