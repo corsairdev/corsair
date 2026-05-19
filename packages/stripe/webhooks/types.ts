@@ -23,9 +23,9 @@ export const StripeChargeDataSchema = z
 		payment_intent: z.string().nullable().optional(),
 		failure_code: z.string().nullable().optional(),
 		failure_message: z.string().nullable().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 export type StripeChargeData = z.infer<typeof StripeChargeDataSchema>;
 
 export const StripeCustomerDataSchema = z
@@ -40,9 +40,9 @@ export const StripeCustomerDataSchema = z
 		balance: z.number().optional(),
 		created: z.number().optional(),
 		livemode: z.boolean().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 export type StripeCustomerData = z.infer<typeof StripeCustomerDataSchema>;
 
 export const StripePaymentIntentDataSchema = z
@@ -59,7 +59,7 @@ export const StripePaymentIntentDataSchema = z
 		client_secret: z.string().nullable().optional(),
 		canceled_at: z.number().nullable().optional(),
 		cancellation_reason: z.string().nullable().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 		last_payment_error: z
 			.object({
 				code: z.string().optional(),
@@ -69,7 +69,7 @@ export const StripePaymentIntentDataSchema = z
 			.nullable()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 export type StripePaymentIntentData = z.infer<
 	typeof StripePaymentIntentDataSchema
 >;
@@ -89,9 +89,9 @@ export const StripeCouponDataSchema = z
 		valid: z.boolean().optional(),
 		created: z.number().optional(),
 		livemode: z.boolean().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 export type StripeCouponData = z.infer<typeof StripeCouponDataSchema>;
 
 // ── Stripe webhook event envelope ─────────────────────────────────────────────
@@ -219,7 +219,7 @@ export type StripeCouponDeletedEvent = z.infer<
 export const StripePingEventSchema = StripeEventBaseSchema.extend({
 	type: z.literal('v2.core.event_destination.ping'),
 	// unknown: ping event data.object is unstructured; Stripe does not document its shape
-	data: z.object({ object: z.record(z.unknown()) }),
+	data: z.object({ object: z.record(z.string(), z.unknown()) }),
 });
 export type StripePingEvent = z.infer<typeof StripePingEventSchema>;
 

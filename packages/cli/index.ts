@@ -751,7 +751,7 @@ async function main() {
 		await setupCorsair(instance as Parameters<typeof setupCorsair>[0], {
 			backfill,
 			tenantId,
-			credentials,
+			// credentials,
 			caller: 'cli',
 		});
 		return;

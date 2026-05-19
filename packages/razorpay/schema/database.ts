@@ -5,7 +5,7 @@ import { z } from 'zod';
 // document a fixed element type for array-style notes; elements can be
 // arbitrary values.
 export const RazorpayNotesSchema = z.union([
-	z.record(z.string()),
+	z.record(z.string(), z.string()),
 	z.array(z.unknown()),
 ]);
 
@@ -25,7 +25,7 @@ export const RazorpayOrderSchema = z
 		notes: RazorpayNotesSchema.optional(),
 		created_at: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Base payment schema for API responses
 export const RazorpayPaymentSchema = z
@@ -45,8 +45,8 @@ export const RazorpayPaymentSchema = z
 		notes: RazorpayNotesSchema.optional(),
 		created_at: z.number().optional(),
 	})
-    .passthrough();
-    
+	.loose();
+
 // Base payout schema for API responses
 export const RazorpayPayoutStatusDetailsSchema = z
 	.object({
@@ -54,7 +54,7 @@ export const RazorpayPayoutStatusDetailsSchema = z
 		source: z.string(),
 		reason: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 export const RazorpayPayoutSchema = z
 	.object({
@@ -70,15 +70,15 @@ export const RazorpayPayoutSchema = z
 		utr: z.string().nullable().optional(),
 		mode: z.string().optional(),
 		purpose: z.string().optional(),
-        reference_id: z.string().nullable().optional(),
-        debit_account_number: z.string().optional(),
+		reference_id: z.string().nullable().optional(),
+		debit_account_number: z.string().optional(),
 		narration: z.string().nullable().optional(),
 		batch_id: z.string().nullable().optional(),
 		status_details: RazorpayPayoutStatusDetailsSchema.nullable().optional(),
-        created_at: z.number().optional(),
-        fee_type: z.string().optional()
+		created_at: z.number().optional(),
+		fee_type: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Base refund schema for API responses
 export const RazorpayRefundSchema = z
@@ -95,7 +95,7 @@ export const RazorpayRefundSchema = z
 		status: z.string(),
 		created_at: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const RazorpayCustomerSchema = z
 	.object({
@@ -108,7 +108,7 @@ export const RazorpayCustomerSchema = z
 		notes: RazorpayNotesSchema.optional(),
 		created_at: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const RazorpaySettlementSchema = z
 	.object({
@@ -121,7 +121,7 @@ export const RazorpaySettlementSchema = z
 		utr: z.string().nullable().optional(),
 		created_at: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 export const RazorpaySubscriptionSchema = z
 	.object({
 		id: z.string(),
@@ -150,7 +150,7 @@ export const RazorpaySubscriptionSchema = z
 		notes: RazorpayNotesSchema.optional(),
 		created_at: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Database schemas (extend base schemas with createdAt for DB storage)
 export const RazorpayOrder = RazorpayOrderSchema.extend({

@@ -121,7 +121,7 @@ export const ZoomArchiveFile = z.object({
 	file_size: z.number().optional(),
 	status: z.string().optional(),
 	// Archive file entries have variable structure depending on file type
-	archive_files: z.array(z.record(z.unknown())).optional(),
+	archive_files: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
 export type ZoomMeeting = z.infer<typeof ZoomMeeting>;
