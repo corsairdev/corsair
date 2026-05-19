@@ -1,0 +1,118 @@
+---
+title: Coding Agents
+description: Use Corsair's CLI discovery commands with coding agents like Claude Code, Cursor, and Copilot.
+---
+
+## Why coding agents should use Corsair discovery
+
+Coding agents work best when they can discover integrations and schemas directly instead of inferring APIs from source files.
+
+Corsair provides two CLI commands designed for discovery, without making any external API calls to integrated services:
+
+- `pnpm corsair list`
+- `pnpm corsair schema <path>`
+
+These commands load your local Corsair configuration to reflect its full API surface, making them ideal for agent-driven discovery workflows.
+
+This allows agents to inspect available integrations, endpoints, database entities, and schemas before generating integration code.
+
+## CLI commands
+
+```bash
+pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]
+```
+
+Lists every available operation path.
+
+```bash
+pnpm corsair schema <path>
+```
+
+Prints the input/output schema for an endpoint, webhook, or DB entity.
+
+## Discover available operations
+
+Use `pnpm corsair list` to inspect all available plugins and operations.
+
+```bash
+pnpm corsair list
+```
+
+Filter by plugin:
+
+```bash
+pnpm corsair list --plugin=slack
+```
+
+Filter by type:
+
+```bash
+pnpm corsair list --type=db
+```
+
+This command allows coding agents to discover available operations without reading implementation files.
+
+## Inspect schemas
+
+Use `pnpm corsair schema <path>` to inspect the input and output schema for a specific operation.
+
+```bash
+pnpm corsair schema slack.api.messages.post
+```
+
+This command returns:
+
+- request schema
+- response schema
+- entity shapes
+- webhook payload structures
+
+Agents should inspect schemas before generating integration code.
+
+## Example skill file
+
+You can provide these instructions to coding agents using a reusable markdown skill file.
+
+```md
+# Corsair integration
+
+When writing code that uses Corsair:
+
+1. Run `pnpm corsair list` to discover available operations.
+
+   Examples:
+   - `pnpm corsair list --plugin=slack`
+   - `pnpm corsair list --type=db`
+
+2. Run `pnpm corsair schema <path>` before calling any operation.
+
+   Example:
+   - `pnpm corsair schema slack.api.messages.post`
+
+Never infer endpoint names or argument shapes from source files.
+
+Always use the CLI commands as the source of truth.
+```
+
+## Where to place the skill file
+
+For Claude Code:
+
+```text
+.claude/corsair.md
+```
+
+Or append the contents to an existing:
+
+```text
+CLAUDE.md
+```
+
+Other coding agents can use the same instructions as part of their workspace context or system prompts.
+
+## Recommended workflow for coding agents
+
+1. Discover available operations using `pnpm corsair list`
+2. Inspect operation schemas using `pnpm corsair schema`
+3. Generate integration code from the schema output
+4. Avoid inferring APIs from implementation details
