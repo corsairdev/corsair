@@ -26,6 +26,7 @@ export const BaseProviders = [
 	'dodopayments',
 	'dropbox',
 	'exa',
+	'facebook',
 	'figma',
 	'firecrawl',
 	'fireflies',
@@ -85,6 +86,7 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
+	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
