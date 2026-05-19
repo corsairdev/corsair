@@ -10,7 +10,7 @@ export const TeamsResourceDataSchema = z
 		'@odata.etag': z.string().optional(),
 		id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 export const TeamsNotificationSchema = z.object({
 	subscriptionId: z.string(),
@@ -45,7 +45,7 @@ export const TeamsChannelMessageEventSchema = z.object({
 			'@odata.id': z.string().optional(),
 			id: z.string(),
 		})
-		.passthrough()
+		.loose()
 		.optional(),
 });
 export type TeamsChannelMessageEvent = z.infer<
@@ -66,7 +66,7 @@ export const TeamsChatMessageEventSchema = z.object({
 			'@odata.id': z.string().optional(),
 			id: z.string(),
 		})
-		.passthrough()
+		.loose()
 		.optional(),
 });
 export type TeamsChatMessageEvent = z.infer<typeof TeamsChatMessageEventSchema>;
@@ -85,7 +85,7 @@ export const TeamsChannelCreatedEventSchema = z.object({
 			'@odata.id': z.string().optional(),
 			id: z.string(),
 		})
-		.passthrough()
+		.loose()
 		.optional(),
 });
 export type TeamsChannelCreatedEvent = z.infer<
@@ -108,7 +108,7 @@ export const TeamsMembershipChangedEventSchema = z.object({
 			'@odata.id': z.string().optional(),
 			id: z.string(),
 		})
-		.passthrough()
+		.loose()
 		.optional(),
 });
 export type TeamsMembershipChangedEvent = z.infer<

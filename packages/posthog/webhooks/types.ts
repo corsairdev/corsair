@@ -18,16 +18,16 @@ export const PostHogWebhookPayloadSchema = z.object({
 	distinct_id: z.string(),
 	timestamp: z.string().optional(),
 	uuid: z.string().optional(),
-	properties: z.record(z.unknown()).optional(),
+	properties: z.record(z.string(), z.unknown()).optional(),
 	person: z
 		.object({
 			distinct_id: z.string(),
-			properties: z.record(z.unknown()).optional(),
+			properties: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
-	groups: z.record(z.unknown()).optional(),
-	$set: z.record(z.unknown()).optional(),
-	$set_once: z.record(z.unknown()).optional(),
+	groups: z.record(z.string(), z.unknown()).optional(),
+	$set: z.record(z.string(), z.unknown()).optional(),
+	$set_once: z.record(z.string(), z.unknown()).optional(),
 	$unset: z.array(z.string()).optional(),
 });
 export type PostHogWebhookPayload = z.infer<typeof PostHogWebhookPayloadSchema>;

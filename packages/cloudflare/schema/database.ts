@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /** Zone account metadata from the API; extra keys allowed by Cloudflare. */
-const ZoneAccountSchema = z.object({ id: z.string() }).passthrough().optional();
+const ZoneAccountSchema = z.object({ id: z.string() }).loose().optional();
 
 export const CloudflareZone = z.object({
 	id: z.string(),
@@ -57,5 +57,5 @@ export const CloudflareRuleset = z.object({
 	version: z.string().optional(),
 	last_updated: z.coerce.date().nullable().optional(),
 	phase: z.string(),
-	rules: z.array(z.record(z.unknown())).optional(),
+	rules: z.array(z.record(z.string(), z.unknown())).optional(),
 });

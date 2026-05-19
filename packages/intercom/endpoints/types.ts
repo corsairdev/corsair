@@ -229,7 +229,7 @@ const ContactsUpdateInputSchema = z.object({
 	external_id: z.string().optional(),
 	unsubscribed_from_emails: z.boolean().optional(),
 	// Unknwon type because the custom attributes are dynamic and depend on the contact.
-	custom_attributes: z.record(z.unknown()).optional(),
+	custom_attributes: z.record(z.string(), z.unknown()).optional(),
 });
 export type ContactsUpdateInput = z.infer<typeof ContactsUpdateInputSchema>;
 const ContactsUpdateResponseSchema = ContactSchema;
@@ -567,7 +567,7 @@ const CompaniesCreateOrUpdateInputSchema = z.object({
 	website: z.string().optional(),
 	industry: z.string().optional(),
 	monthly_spend: z.number().optional(),
-	custom_attributes: z.record(z.unknown()).optional(),
+	custom_attributes: z.record(z.string(), z.unknown()).optional(),
 });
 export type CompaniesCreateOrUpdateInput = z.infer<
 	typeof CompaniesCreateOrUpdateInputSchema
@@ -859,7 +859,7 @@ const AdminsListActivityLogsResponseSchema = z.object({
 				})
 				.optional(),
 			// Unknown type because the metadata is dynamic and depend on the activity.
-			metadata: z.record(z.unknown()).optional(),
+			metadata: z.record(z.string(), z.unknown()).optional(),
 			created_at: z.number().optional(),
 			activity_type: z.string().optional(),
 			activity_description: z.string().optional(),

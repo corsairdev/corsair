@@ -32,7 +32,7 @@ export const DropboxChangeNotificationSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type DropboxChangeNotification = z.infer<
 	typeof DropboxChangeNotificationSchema
