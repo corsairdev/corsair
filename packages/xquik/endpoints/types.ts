@@ -114,7 +114,7 @@ export const SearchTweetSchema = z
 		conversationId: z.string().optional(),
 		createdAt: z.string().optional(),
 		// X entity payloads are open-ended objects that differ by tweet content.
-		entities: z.record(z.unknown()).optional(),
+		entities: z.record(z.string(), z.unknown()).optional(),
 		id: z.string(),
 		inReplyToId: z.string().optional(),
 		inReplyToUserId: z.string().optional(),
@@ -145,7 +145,7 @@ export const TweetDetailSchema = z
 		conversationId: z.string().optional(),
 		createdAt: z.string().optional(),
 		// X entity payloads are open-ended objects that differ by tweet content.
-		entities: z.record(z.unknown()).optional(),
+		entities: z.record(z.string(), z.unknown()).optional(),
 		id: z.string(),
 		isNoteTweet: z.boolean().optional(),
 		isQuoteStatus: z.boolean().optional(),
@@ -165,7 +165,7 @@ export type TweetDetail = z.infer<typeof TweetDetailSchema>;
 
 export const PaginatedTweetsSchema = z.object({
 	has_next_page: z.boolean(),
-	next_cursor: z.string(),
+	next_cursor: z.string().nullable().optional(),
 	tweets: z.array(SearchTweetSchema),
 });
 
@@ -173,7 +173,7 @@ export type PaginatedTweets = z.infer<typeof PaginatedTweetsSchema>;
 
 export const PaginatedUsersSchema = z.object({
 	has_next_page: z.boolean(),
-	next_cursor: z.string(),
+	next_cursor: z.string().nullable().optional(),
 	users: z.array(UserProfileSchema),
 });
 
@@ -303,7 +303,7 @@ export type Delivery = z.infer<typeof DeliverySchema>;
 export const EventPayloadSchema = z
 	.object({
 		// Webhook event data is event-type specific and remains provider-defined.
-		data: z.record(z.unknown()),
+		data: z.record(z.string(), z.unknown()),
 		deliveryId: z.string().optional(),
 		eventType: z.union([EventTypeSchema, z.literal('webhook.test')]),
 		occurredAt: IsoDateTimeSchema.optional(),

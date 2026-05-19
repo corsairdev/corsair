@@ -1868,8 +1868,8 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       zod:
-        specifier: ^3.25.76
-        version: 3.25.76
+        specifier: ^4.1.13
+        version: 4.1.13
 
   packages/youtube:
     dependencies:

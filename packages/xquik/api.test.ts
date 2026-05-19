@@ -67,6 +67,23 @@ describe('Xquik plugin schemas', () => {
 
 		expect(parsed.tweets[0]?.id).toBe('123');
 	});
+
+	it('accepts last-page paginated responses without a cursor', () => {
+		expect(() =>
+			XquikEndpointOutputSchemas.tweetsSearch.parse({
+				has_next_page: false,
+				next_cursor: null,
+				tweets: [],
+			}),
+		).not.toThrow();
+
+		expect(() =>
+			XquikEndpointOutputSchemas.usersSearch.parse({
+				has_next_page: false,
+				users: [],
+			}),
+		).not.toThrow();
+	});
 });
 
 describe('Xquik webhook helpers', () => {
