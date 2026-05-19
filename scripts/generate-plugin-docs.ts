@@ -1124,6 +1124,7 @@ function syncPluginDocsJson(
 	}
 
 	const { pages } = pluginsGroup;
+	const originalPluginPagesJson = JSON.stringify(pages);
 	const newEntry: DocsNavEntry =
 		pagePaths.length === 1
 			? pagePaths[0]!
@@ -1146,6 +1147,10 @@ function syncPluginDocsJson(
 			},
 		),
 	);
+
+	if (JSON.stringify(pages) === originalPluginPagesJson) {
+		return;
+	}
 
 	writeFileSync(docsJsonPath, `${JSON.stringify(doc, null, 2)}\n`, 'utf8');
 }

@@ -32,11 +32,11 @@ import type {
 	PluginCatalog,
 	PluginEntry,
 } from '../explorer/src/types.ts';
+import { BASE_AUTH_FIELDS } from '../packages/corsair/core/auth/types.ts';
 import type {
 	DocsApiEndpoint as CoreApiEndpoint,
 	DocsWebhook as CoreWebhook,
 } from '../packages/corsair/core/inspect/index.ts';
-import { BASE_AUTH_FIELDS } from '../packages/corsair/core/auth/types.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
 
@@ -257,9 +257,15 @@ async function buildPluginEntry(
 	const api = data.api.map((e) => toApiEndpoint(e, pluginId));
 	const db = data.db.map((d) => ({ ...d }));
 
-	const pluginAuthConfig = (
-		plugin as { authConfig?: Record<string, { integration?: readonly string[]; account?: readonly string[] }> }
-	).authConfig ?? {};
+	const pluginAuthConfig =
+		(
+			plugin as {
+				authConfig?: Record<
+					string,
+					{ integration?: readonly string[]; account?: readonly string[] }
+				>;
+			}
+		).authConfig ?? {};
 
 	const auth: PluginAuthFields[] = authTypes.map((authType) => {
 		const base = BASE_AUTH_FIELDS[authType];
