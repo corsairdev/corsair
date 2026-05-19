@@ -10,6 +10,7 @@ import { openweathermap } from '@corsair-dev/openweathermap';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { vapi } from '@corsair-dev/vapi';
+import { xquik } from '@corsair-dev/xquik';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
@@ -34,6 +35,10 @@ export const corsair = createCorsair({
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		}),
+		xquik({
+			key: process.env.XQUIK_API_KEY,
+			webhookSecret: process.env.XQUIK_WEBHOOK_SECRET,
 		}),
 	],
 });
