@@ -36,6 +36,7 @@ export default defineConfig({
 		'@ngrok/ngrok',
 		'jiti',
 		'better-sqlite3',
+		/^@corsair-dev\//,
 	],
 	esbuildPlugins: [yamlPlugin],
 	entry: [
