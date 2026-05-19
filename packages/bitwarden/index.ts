@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -9,9 +8,9 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
-	PluginAuthConfig,
 	PluginPermissionsConfig,
 } from 'corsair/core';
+import { getValidBitwardenAccessToken } from './client';
 import { Collections, Members, Organizations } from './endpoints';
 import type {
 	BitwardenEndpointInputs,
@@ -26,7 +25,10 @@ import { BitwardenSchema } from './schema';
 import type { BitwardenWebhookOutputs } from './webhooks/types';
 
 export type BitwardenPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'oauth_2'>;
+	/** Identity API base URL. Defaults to https://identity.bitwarden.com */
+	identityBaseUrl?: string;
+	/** Pre-resolved Bitwarden bearer token override. */
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalBitwardenPlugin['hooks'];
@@ -132,12 +134,12 @@ export const bitwardenEndpointSchemas = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'oauth_2' as const;
 
 const bitwardenEndpointMeta = {
 	'organizations.list': {
 		riskLevel: 'read',
-		description: 'List all organizations the API key has access to',
+		description: 'List all organizations the authenticated account can access',
 	},
 	'organizations.get': {
 		riskLevel: 'read',
@@ -160,12 +162,6 @@ const bitwardenEndpointMeta = {
 		description: 'Get details for a specific organization member',
 	},
 } as const;
-
-export const bitwardenAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
-} as const satisfies PluginAuthConfig;
 
 export type BaseBitwardenPlugin<T extends BitwardenPluginOptions> =
 	CorsairPlugin<
@@ -206,16 +202,68 @@ export function bitwarden<const T extends BitwardenPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BitwardenKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys.get_webhook_signature();
+				return res ?? '';
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, credentials] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_integration_credentials(),
+				]);
+
+				if (!credentials.client_id || !credentials.client_secret) {
+					throw new Error(
+						'[auth-missing:bitwarden:client_credentials]: Bitwarden client credentials are missing',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidBitwardenAccessToken>>;
+				try {
+					result = await getValidBitwardenAccessToken({
+						accessToken,
+						expiresAt,
+						clientId: credentials.client_id,
+						clientSecret: credentials.client_secret,
+						identityBaseUrl: options.identityBaseUrl,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:bitwarden] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						await Promise.all([
+							ctx.keys.set_access_token(result.accessToken),
+							ctx.keys.set_expires_at(String(result.expiresAt)),
+						]);
+					} catch (error) {
+						throw new Error(
+							`[corsair:bitwarden] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:bitwarden:${authType}]: Bitwarden key is missing`,
+			);
 		},
 	} satisfies InternalBitwardenPlugin;
 }
