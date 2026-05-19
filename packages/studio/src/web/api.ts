@@ -38,6 +38,12 @@ export type FormFieldSchema =
 	| { kind: 'number'; optional: boolean; description?: string }
 	| { kind: 'boolean'; optional: boolean; description?: string }
 	| {
+			kind: 'literal';
+			optional: boolean;
+			description?: string;
+			value: string | number | boolean;
+	  }
+	| {
 			kind: 'object';
 			optional: boolean;
 			description?: string;

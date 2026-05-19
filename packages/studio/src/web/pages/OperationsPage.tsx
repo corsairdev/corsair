@@ -57,7 +57,10 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 				setStructuredSchema(r.structured?.input ?? null);
 				setInputMode(r.structured?.input ? 'form' : 'json');
 			})
-			.catch(() => setStructuredSchema(null));
+			.catch(() => {
+				setStructuredSchema(null);
+				setInputMode('json');
+			});
 	}, [selected]);
 
 	const handleFormChange = useCallback((json: Record<string, unknown>) => {
@@ -203,7 +206,22 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 											<div className="flex gap-1">
 												<Button
 													variant={inputMode === 'form' ? 'primary' : 'ghost'}
-													onClick={() => setInputMode('form')}
+													onClick={() => {
+														// Sync JSON editor content to form state when switching
+														try {
+															const parsed = JSON.parse(inputText || '{}');
+															if (
+																parsed &&
+																typeof parsed === 'object' &&
+																!Array.isArray(parsed)
+															) {
+																setFormJson(parsed);
+															}
+														} catch {
+															// Keep existing formJson if JSON is invalid
+														}
+														setInputMode('form');
+													}}
 												>
 													Form
 												</Button>

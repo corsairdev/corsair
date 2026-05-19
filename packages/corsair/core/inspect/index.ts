@@ -227,6 +227,12 @@ export type FormFieldSchema =
 	| { kind: 'number'; optional: boolean; description?: string }
 	| { kind: 'boolean'; optional: boolean; description?: string }
 	| {
+			kind: 'literal';
+			optional: boolean;
+			description?: string;
+			value: string | number | boolean;
+	  }
+	| {
 			kind: 'object';
 			optional: boolean;
 			description?: string;
@@ -253,12 +259,18 @@ function zodToFormSchema(schema: ZodTypeAny): FormFieldSchema {
 		case 'ZodBoolean':
 			return { kind: 'boolean', optional: false, description };
 		case 'ZodLiteral': {
-			const val = def.value ?? getZodOptions(def)[0];
+			const raw = def.value ?? getZodOptions(def)[0];
+			const val: string | number | boolean =
+				typeof raw === 'string' ||
+				typeof raw === 'number' ||
+				typeof raw === 'boolean'
+					? raw
+					: String(raw ?? '');
 			return {
-				kind: 'string',
+				kind: 'literal',
 				optional: false,
 				description,
-				enum: [String(val ?? '')],
+				value: val,
 			};
 		}
 		case 'ZodEnum': {

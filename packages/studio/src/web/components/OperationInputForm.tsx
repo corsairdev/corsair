@@ -27,6 +27,7 @@ type FieldRendererProps = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function defaultValueFor(schema: FormFieldSchema): FormValue {
+	if (schema.optional) return null;
 	switch (schema.kind) {
 		case 'string':
 			return '';
@@ -34,6 +35,8 @@ function defaultValueFor(schema: FormFieldSchema): FormValue {
 			return 0;
 		case 'boolean':
 			return false;
+		case 'literal':
+			return schema.value as FormValue;
 		case 'object': {
 			const obj: Record<string, FormValue> = {};
 			for (const [key, field] of Object.entries(schema.fields)) {
@@ -48,6 +51,8 @@ function defaultValueFor(schema: FormFieldSchema): FormValue {
 	}
 }
 
+// Returns `unknown` because the output shape depends on the schema —
+// it could be a primitive, array, or nested object at any level.
 function formValueToJson(value: FormValue): unknown {
 	if (value === null || value === undefined) return undefined;
 	if (Array.isArray(value)) return value.map(formValueToJson);
@@ -143,7 +148,7 @@ function NumberField({
 			value={value === null || value === undefined ? '' : String(value)}
 			onChange={(e) => {
 				const raw = e.target.value;
-				onChange(raw === '' ? 0 : Number(raw));
+				onChange(raw === '' ? null : Number(raw));
 			}}
 		/>
 	);
@@ -325,6 +330,14 @@ function FieldRenderer({
 					path={path}
 				/>
 			)}
+			{schema.kind === 'literal' && (
+				<Input
+					type="text"
+					value={String(value ?? schema.value)}
+					disabled
+					className="opacity-70"
+				/>
+			)}
 			{schema.kind === 'unknown' && (
 				<Input
 					type="text"
@@ -351,6 +364,8 @@ export function OperationInputForm({
 	onChange,
 	initialValue,
 }: OperationInputFormProps) {
+	// Intentionally empty deps — initial values are computed once per mount.
+	// A new operation selection causes a full remount via React key, resetting state.
 	const initial = useMemo<FormValue>(() => {
 		if (initialValue && typeof initialValue === 'object') {
 			return initialValue as FormValue;
