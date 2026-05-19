@@ -38,71 +38,11 @@ export async function POST(request: Request) {
 
 A new form response was submitted
 
-**Payload**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `eventId` | `string` | Yes | — |
-| `eventType` | `FORM_RESPONSE` | Yes | — |
-| `createdAt` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  responseId?: string,
-  submissionId: string,
-  respondentId?: string | null,
-  formId: string,
-  formName?: string,
-  createdAt?: string,
-  fields: {
-    key: string,
-    label?: string,
-    type?: string,
-    value?: any,
-    options?: any[],
-    rows?: any[],
-    columns?: any[]
-  }[]
-}
-```
-</Accordion>
-</AccordionGroup>
+**Payload:** `unknown`
 
 
+**Response `data`:** `unknown`
 
-<AccordionGroup>
-<Accordion title="Response data full type">
-
-```ts
-{
-  eventId: string,
-  eventType: FORM_RESPONSE,
-  createdAt: string,
-  data: {
-    responseId?: string,
-    submissionId: string,
-    respondentId?: string | null,
-    formId: string,
-    formName?: string,
-    createdAt?: string,
-    fields: {
-      key: string,
-      label?: string,
-      type?: string,
-      value?: any,
-      options?: any[],
-      rows?: any[],
-      columns?: any[]
-    }[]
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
 
 **`webhookHooks` example**
 

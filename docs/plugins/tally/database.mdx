@@ -26,12 +26,6 @@ const rows = await corsair.tally.db.forms.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
-| `workspaceId` | `string` | equals, contains, startsWith, endsWith, in |
-| `createdAt` | `date` | equals, before, after, between |
-| `updatedAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -54,11 +48,6 @@ const rows = await corsair.tally.db.submissions.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `formId` | `string` | equals, contains, startsWith, endsWith, in |
-| `respondentId` | `string` | equals, contains, startsWith, endsWith, in |
-| `isCompleted` | `boolean` | equals |
-| `createdAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -81,10 +70,6 @@ const rows = await corsair.tally.db.workspaces.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `createdAt` | `date` | equals, before, after, between |
-| `updatedAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

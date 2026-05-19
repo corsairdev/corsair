@@ -23,67 +23,10 @@ Create a new form
 await corsair.tally.api.forms.create({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `workspaceId` | `string` | No | — |
-| `templateId` | `string` | No | — |
-| `status` | `string` | Yes | — |
-| `blocks` | `object[]` | Yes | — |
-| `settings` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `settings` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -100,15 +43,10 @@ Delete a form [DESTRUCTIVE]
 await corsair.tally.api.forms.delete({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -125,45 +63,10 @@ Retrieve a form by ID
 await corsair.tally.api.forms.get({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `settings` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -180,46 +83,10 @@ List all forms with optional pagination and workspace filter
 await corsair.tally.api.forms.list({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `workspaceIds` | `string[]` | No | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `total` | `number` | No | — |
-| `hasMore` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-  id: string,
-  name?: string,
-  status?: string,
-  workspaceId?: string | null,
-  createdAt?: string,
-  updatedAt?: string,
-  blocks?: {
-  }[],
-  settings?: {
-  }
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -236,67 +103,10 @@ Update an existing form
 await corsair.tally.api.forms.update({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `settings` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `string` | No | — |
-| `workspaceId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `blocks` | `object[]` | No | — |
-| `settings` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="blocks full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -315,16 +125,10 @@ Cancel a pending organization invite [DESTRUCTIVE]
 await corsair.tally.api.organizations.cancelInvite({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `organizationId` | `string` | Yes | — |
-| `inviteId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -341,17 +145,10 @@ Invite users to an organization
 await corsair.tally.api.organizations.createInvite({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `organizationId` | `string` | Yes | — |
-| `workspaceIds` | `string[]` | Yes | — |
-| `emails` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -368,30 +165,10 @@ List pending invites for an organization
 await corsair.tally.api.organizations.listInvites({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `organizationId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  id: string,
-  organizationId?: string,
-  email?: string,
-  createdAt?: string,
-  updatedAt?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `unknown`
 
 
 ---
@@ -408,29 +185,10 @@ List all users in an organization
 await corsair.tally.api.organizations.listUsers({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `organizationId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  id: string,
-  email?: string,
-  name?: string | null,
-  subscriptionPlan?: string | null
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `unknown`
 
 
 ---
@@ -447,16 +205,10 @@ Remove a user from an organization [DESTRUCTIVE]
 await corsair.tally.api.organizations.removeUser({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `organizationId` | `string` | Yes | — |
-| `userId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -475,42 +227,10 @@ List all questions for a form
 await corsair.tally.api.questions.list({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `questions` | `object[]` | Yes | — |
-| `hasResponses` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="questions full type">
-
-```ts
-{
-  id: string,
-  type?: string,
-  title?: string | null,
-  isTitleModifiedByUser?: boolean,
-  formId?: string,
-  isDeleted?: boolean,
-  numberOfResponses?: number,
-  createdAt?: string,
-  updatedAt?: string,
-  fields?: {
-  }[]
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -529,16 +249,10 @@ Delete a form submission [DESTRUCTIVE]
 await corsair.tally.api.submissions.delete({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
-| `submissionId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -555,68 +269,10 @@ Retrieve a specific form submission
 await corsair.tally.api.submissions.get({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
-| `submissionId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `questions` | `object[]` | No | — |
-| `submission` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="questions full type">
-
-```ts
-{
-  id: string,
-  type?: string,
-  title?: string | null,
-  isTitleModifiedByUser?: boolean,
-  formId?: string,
-  isDeleted?: boolean,
-  numberOfResponses?: number,
-  createdAt?: string,
-  updatedAt?: string,
-  fields?: {
-  }[]
-}[]
-```
-</Accordion>
-
-<Accordion title="submission full type">
-
-```ts
-{
-  id: string,
-  respondentId?: string | null,
-  formId?: string,
-  createdAt?: string,
-  isCompleted?: boolean,
-  responses?: {
-    id: string,
-    formId?: string,
-    questionId?: string,
-    respondentId?: string,
-    submissionId?: string | null,
-    sessionUuid?: string,
-    answer?: any,
-    formattedAnswer?: string,
-    createdAt?: string,
-    updatedAt?: string
-  }[]
-}
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -633,85 +289,10 @@ List form submissions with optional filters
 await corsair.tally.api.submissions.list({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `filter` | `all \| completed \| partial` | No | — |
-| `startDate` | `string` | No | — |
-| `endDate` | `string` | No | — |
-| `afterId` | `string` | No | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `hasMore` | `boolean` | No | — |
-| `totalNumberOfSubmissionsPerFilter` | `object` | No | — |
-| `questions` | `object[]` | No | — |
-| `submissions` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="totalNumberOfSubmissionsPerFilter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="questions full type">
-
-```ts
-{
-  id: string,
-  type?: string,
-  title?: string | null,
-  isTitleModifiedByUser?: boolean,
-  formId?: string,
-  isDeleted?: boolean,
-  numberOfResponses?: number,
-  createdAt?: string,
-  updatedAt?: string,
-  fields?: {
-  }[]
-}[]
-```
-</Accordion>
-
-<Accordion title="submissions full type">
-
-```ts
-{
-  id: string,
-  respondentId?: string | null,
-  formId?: string,
-  createdAt?: string,
-  isCompleted?: boolean,
-  responses?: {
-    id: string,
-    formId?: string,
-    questionId?: string,
-    respondentId?: string,
-    submissionId?: string | null,
-    sessionUuid?: string,
-    answer?: any,
-    formattedAnswer?: string,
-    createdAt?: string,
-    updatedAt?: string
-  }[]
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -730,18 +311,10 @@ Retrieve the current authenticated user
 await corsair.tally.api.users.getMe({});
 ```
 
-**Input:** _empty object_
+**Input:** `unknown`
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `name` | `string` | No | — |
-| `subscriptionPlan` | `string` | No | — |
-
+**Output:** `unknown`
 
 
 ---
@@ -760,42 +333,10 @@ Create a new webhook subscription
 await corsair.tally.api.webhookManagement.create({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `formId` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `eventTypes` | `string[]` | Yes | — |
-| `signingSecret` | `string` | No | — |
-| `httpHeaders` | `object[]` | No | — |
-| `externalSubscriber` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="httpHeaders full type">
-
-```ts
-{
-  name: string,
-  value: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `url` | `string` | No | — |
-| `eventTypes` | `string[]` | No | — |
-| `isEnabled` | `boolean` | No | — |
-| `signingSecret` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-
+**Output:** `unknown`
 
 
 ---
@@ -812,15 +353,10 @@ Delete a webhook subscription [DESTRUCTIVE]
 await corsair.tally.api.webhookManagement.delete({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `webhookId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -837,41 +373,10 @@ List all webhooks
 await corsair.tally.api.webhookManagement.list({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `webhooks` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `hasMore` | `boolean` | No | — |
-| `totalCount` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="webhooks full type">
-
-```ts
-{
-  id: string,
-  url?: string,
-  eventTypes?: string[],
-  isEnabled?: boolean,
-  signingSecret?: string | null,
-  createdAt?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -888,45 +393,10 @@ List delivery events for a webhook
 await corsair.tally.api.webhookManagement.listEvents({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `webhookId` | `string` | Yes | — |
-| `page` | `number` | No | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `events` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `hasMore` | `boolean` | No | — |
-| `totalNumberOfEvents` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="events full type">
-
-```ts
-{
-  id?: string,
-  eventType?: string,
-  deliveryStatus?: string,
-  statusCode?: number | null,
-  response?: string | null,
-  retry?: number,
-  payload?: {
-  },
-  createdAt?: string,
-  updatedAt?: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -943,16 +413,10 @@ Retry a failed webhook event delivery
 await corsair.tally.api.webhookManagement.retryEvent({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `webhookId` | `string` | Yes | — |
-| `eventId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -969,33 +433,10 @@ Update a webhook subscription
 await corsair.tally.api.webhookManagement.update({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `webhookId` | `string` | Yes | — |
-| `formId` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `eventTypes` | `string[]` | Yes | — |
-| `isEnabled` | `boolean` | Yes | — |
-| `signingSecret` | `string` | No | — |
-| `httpHeaders` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="httpHeaders full type">
-
-```ts
-{
-  name: string,
-  value: string
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -1014,25 +455,10 @@ Create a new workspace (Pro subscription required)
 await corsair.tally.api.workspaces.create({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `members` | `any[]` | No | — |
-| `invites` | `any[]` | No | — |
-
+**Output:** `unknown`
 
 
 ---
@@ -1049,15 +475,10 @@ Delete a workspace [DESTRUCTIVE]
 await corsair.tally.api.workspaces.delete({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `workspaceId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
@@ -1074,25 +495,10 @@ Retrieve a workspace by ID
 await corsair.tally.api.workspaces.get({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `workspaceId` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `members` | `any[]` | No | — |
-| `invites` | `any[]` | No | — |
-
+**Output:** `unknown`
 
 
 ---
@@ -1109,40 +515,10 @@ List all workspaces
 await corsair.tally.api.workspaces.list({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | — |
+**Input:** `unknown`
 
 
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `items` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `total` | `number` | No | — |
-| `hasMore` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-  id: string,
-  name?: string,
-  createdAt?: string,
-  updatedAt?: string,
-  members?: any[],
-  invites?: any[]
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
+**Output:** `unknown`
 
 
 ---
@@ -1159,16 +535,10 @@ Update a workspace name
 await corsair.tally.api.workspaces.update({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `workspaceId` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
+**Input:** `unknown`
 
 
-
-**Output:** `void`
+**Output:** `unknown`
 
 
 ---
