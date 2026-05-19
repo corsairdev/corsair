@@ -1,6 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import type { OperationResult } from '../api';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { FormFieldSchema, OperationResult } from '../api';
 import { api } from '../api';
+import {
+	JsonFallbackEditor,
+	OperationInputForm,
+} from '../components/OperationInputForm';
 import {
 	Badge,
 	Button,
@@ -8,7 +12,6 @@ import {
 	EmptyState,
 	JsonView,
 	Section,
-	Textarea,
 } from '../components/Primitives';
 
 type OpType = 'api' | 'webhooks' | 'db';
@@ -19,6 +22,10 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 	const [filter, setFilter] = useState('');
 	const [selected, setSelected] = useState<string | null>(null);
 	const [schema, setSchema] = useState<string | null>(null);
+	const [structuredSchema, setStructuredSchema] =
+		useState<FormFieldSchema | null>(null);
+	const [inputMode, setInputMode] = useState<'form' | 'json'>('form');
+	const [formJson, setFormJson] = useState<Record<string, unknown>>({});
 	const [inputText, setInputText] = useState('{\n  \n}');
 	const [running, setRunning] = useState(false);
 	const [result, setResult] = useState<OperationResult | null>(null);
@@ -28,6 +35,7 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 		setPaths(null);
 		setSelected(null);
 		setSchema(null);
+		setStructuredSchema(null);
 		setResult(null);
 		api
 			.listOperations({ type })
@@ -38,11 +46,24 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 	useEffect(() => {
 		if (!selected) return;
 		setSchema(null);
+		setStructuredSchema(null);
 		api
 			.schema(selected)
 			.then((r) => setSchema(r.schema))
 			.catch((e) => setError(e.message));
+		api
+			.structuredSchema(selected)
+			.then((r) => {
+				setStructuredSchema(r.structured?.input ?? null);
+				setInputMode(r.structured?.input ? 'form' : 'json');
+			})
+			.catch(() => setStructuredSchema(null));
 	}, [selected]);
+
+	const handleFormChange = useCallback((json: Record<string, unknown>) => {
+		setFormJson(json);
+		setInputText(JSON.stringify(json, null, 2));
+	}, []);
 
 	const filtered = useMemo(() => {
 		if (!paths) return {};
@@ -62,10 +83,14 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 		setRunning(true);
 		try {
 			let parsed: unknown;
-			try {
-				parsed = JSON.parse(inputText || '{}');
-			} catch {
-				throw new Error('Input is not valid JSON.');
+			if (inputMode === 'form') {
+				parsed = formJson;
+			} else {
+				try {
+					parsed = JSON.parse(inputText || '{}');
+				} catch {
+					throw new Error('Input is not valid JSON.');
+				}
 			}
 			const r = await api.runOperation({
 				path: selected,
@@ -173,25 +198,64 @@ export function OperationsPage({ tenant }: { tenant: string }) {
 							<Section
 								title="Run"
 								action={
-									<Button variant="primary" onClick={run} disabled={running}>
-										{running
-											? 'Running…'
-											: type === 'db'
-												? 'Query'
-												: '▶ Execute'}
-									</Button>
+									<div className="flex items-center gap-2">
+										{structuredSchema && (
+											<div className="flex gap-1">
+												<Button
+													variant={inputMode === 'form' ? 'primary' : 'ghost'}
+													onClick={() => setInputMode('form')}
+												>
+													Form
+												</Button>
+												<Button
+													variant={inputMode === 'json' ? 'primary' : 'ghost'}
+													onClick={() => setInputMode('json')}
+												>
+													JSON
+												</Button>
+											</div>
+										)}
+										<Button variant="primary" onClick={run} disabled={running}>
+											{running
+												? 'Running…'
+												: type === 'db'
+													? 'Query'
+													: '▶ Execute'}
+										</Button>
+									</div>
 								}
 							>
 								<Card className="p-3">
-									<div className="text-[11px] text-[var(--color-text-muted)] mb-1">
-										Input (JSON)
-									</div>
-									<Textarea
-										rows={8}
-										value={inputText}
-										onChange={(e) => setInputText(e.target.value)}
-										spellCheck={false}
-									/>
+									{inputMode === 'form' && structuredSchema ? (
+										<div className="space-y-1">
+											<div className="text-[11px] text-[var(--color-text-muted)] mb-2">
+												Input
+											</div>
+											<OperationInputForm
+												schema={structuredSchema}
+												onChange={handleFormChange}
+											/>
+											<details className="mt-3">
+												<summary className="text-[10px] text-[var(--color-text-muted)] cursor-pointer hover:text-[var(--color-text)]">
+													JSON preview
+												</summary>
+												<pre className="mt-1 p-2 rounded bg-[var(--color-bg)] border border-[var(--color-border)] text-[10px] overflow-auto max-h-[200px]">
+													{JSON.stringify(formJson, null, 2)}
+												</pre>
+											</details>
+										</div>
+									) : (
+										<div className="space-y-1">
+											<div className="text-[11px] text-[var(--color-text-muted)] mb-1">
+												Input (JSON)
+											</div>
+											<JsonFallbackEditor
+												value={inputText}
+												onChange={setInputText}
+												rows={8}
+											/>
+										</div>
+									)}
 								</Card>
 							</Section>
 						)}
@@ -252,7 +316,7 @@ function groupByPlugin(paths: string[]): Record<string, string[]> {
 		grouped[plugin].push(path);
 	}
 	for (const plugin of Object.keys(grouped)) {
-		grouped[plugin].sort((a, b) => a.localeCompare(b));
+		grouped[plugin]?.sort((a, b) => a.localeCompare(b));
 	}
 	return grouped;
 }
