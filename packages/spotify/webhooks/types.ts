@@ -19,7 +19,7 @@ import { z } from 'zod';
 export const SpotifyWebhookPayloadSchema = z.object({
 	type: z.string(),
 	created_at: z.string(),
-	data: z.record(z.unknown()),
+	data: z.record(z.string(), z.unknown()),
 });
 export type SpotifyWebhookPayload = z.infer<typeof SpotifyWebhookPayloadSchema>;
 

@@ -10,7 +10,7 @@ const ChargesCreateInputSchema = z.object({
 	source: z.string().optional(),
 	customer: z.string().optional(),
 	description: z.string().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 const ChargesGetInputSchema = z.object({
@@ -28,10 +28,10 @@ const ChargesListInputSchema = z.object({
 const ChargesUpdateInputSchema = z.object({
 	id: z.string(),
 	description: z.string().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 	receipt_email: z.string().optional(),
 	// unknown: shipping is a freeform Stripe object (address, tracking, etc.) with no fixed schema
-	shipping: z.record(z.unknown()).optional(),
+	shipping: z.record(z.string(), z.unknown()).optional(),
 });
 
 const CouponsCreateInputSchema = z.object({
@@ -43,7 +43,7 @@ const CouponsCreateInputSchema = z.object({
 	duration: z.enum(['forever', 'once', 'repeating']).optional(),
 	duration_in_months: z.number().optional(),
 	max_redemptions: z.number().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 const CouponsListInputSchema = z.object({
@@ -57,7 +57,7 @@ const CustomersCreateInputSchema = z.object({
 	name: z.string().optional(),
 	phone: z.string().optional(),
 	description: z.string().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 const CustomersDeleteInputSchema = z.object({
@@ -82,7 +82,7 @@ const PaymentIntentsCreateInputSchema = z.object({
 	description: z.string().optional(),
 	payment_method: z.string().optional(),
 	confirm: z.boolean().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 const PaymentIntentsGetInputSchema = z.object({
@@ -103,14 +103,14 @@ const PaymentIntentsUpdateInputSchema = z.object({
 	customer: z.string().optional(),
 	description: z.string().optional(),
 	payment_method: z.string().optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 const PricesCreateInputSchema = z.object({
 	currency: z.string(),
 	unit_amount: z.number().optional(),
 	product: z.string().optional(),
-	product_data: z.object({ name: z.string() }).passthrough().optional(),
+	product_data: z.object({ name: z.string() }).loose().optional(),
 	nickname: z.string().optional(),
 	recurring: z
 		.object({
@@ -118,7 +118,7 @@ const PricesCreateInputSchema = z.object({
 			interval_count: z.number().optional(),
 		})
 		.optional(),
-	metadata: z.record(z.string()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 });
 
 const PricesListInputSchema = z.object({
@@ -137,10 +137,10 @@ const SourcesCreateInputSchema = z.object({
 	currency: z.string().optional(),
 	flow: z.string().optional(),
 	// unknown: owner is a freeform address/contact object whose fields vary by source type
-	owner: z.record(z.unknown()).optional(),
+	owner: z.record(z.string(), z.unknown()).optional(),
 	// unknown: redirect params (return_url, etc.) vary by source type and payment flow
-	redirect: z.record(z.unknown()).optional(),
-	metadata: z.record(z.string()).optional(),
+	redirect: z.record(z.string(), z.unknown()).optional(),
+	metadata: z.record(z.string(), z.string()).optional(),
 	token: z.string().optional(),
 });
 
@@ -150,11 +150,11 @@ const SourcesGetInputSchema = z.object({
 
 const TokensCreateInputSchema = z.object({
 	// card details are sensitive — passthrough allows arbitrary card token data
-	card: z.object({}).passthrough().optional(),
+	card: z.object({}).loose().optional(),
 	// unknown: bank account token fields vary by country and account type (routing/account numbers, etc.)
-	bank_account: z.record(z.unknown()).optional(),
+	bank_account: z.record(z.string(), z.unknown()).optional(),
 	// unknown: PII token data has no fixed shape in the Stripe API
-	pii: z.record(z.unknown()).optional(),
+	pii: z.record(z.string(), z.unknown()).optional(),
 });
 
 // ── Output Schemas ────────────────────────────────────────────────────────────
@@ -164,17 +164,13 @@ const StripeBalanceSchema = z
 		object: z.literal('balance'),
 		livemode: z.boolean().optional(),
 		available: z
-			.array(
-				z.object({ amount: z.number(), currency: z.string() }).passthrough(),
-			)
+			.array(z.object({ amount: z.number(), currency: z.string() }).loose())
 			.optional(),
 		pending: z
-			.array(
-				z.object({ amount: z.number(), currency: z.string() }).passthrough(),
-			)
+			.array(z.object({ amount: z.number(), currency: z.string() }).loose())
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripeChargeSchema = z
 	.object({
@@ -191,9 +187,9 @@ const StripeChargeSchema = z
 		payment_intent: z.string().nullable().optional(),
 		failure_code: z.string().nullable().optional(),
 		failure_message: z.string().nullable().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripeCouponSchema = z
 	.object({
@@ -210,9 +206,9 @@ const StripeCouponSchema = z
 		valid: z.boolean().optional(),
 		created: z.number().optional(),
 		livemode: z.boolean().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripeCustomerSchema = z
 	.object({
@@ -226,9 +222,9 @@ const StripeCustomerSchema = z
 		balance: z.number().optional(),
 		created: z.number().optional(),
 		livemode: z.boolean().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripePaymentIntentSchema = z
 	.object({
@@ -244,9 +240,9 @@ const StripePaymentIntentSchema = z
 		client_secret: z.string().nullable().optional(),
 		canceled_at: z.number().nullable().optional(),
 		cancellation_reason: z.string().nullable().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripePriceSchema = z
 	.object({
@@ -264,9 +260,9 @@ const StripePriceSchema = z
 			.optional(),
 		created: z.number().optional(),
 		livemode: z.boolean().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripeSourceSchema = z
 	.object({
@@ -278,9 +274,9 @@ const StripeSourceSchema = z
 		status: z.string().optional(),
 		created: z.number().optional(),
 		livemode: z.boolean().optional(),
-		metadata: z.record(z.string()).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripeTokenSchema = z
 	.object({
@@ -290,7 +286,7 @@ const StripeTokenSchema = z
 		created: z.number().optional(),
 		livemode: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const StripeDeleteResponseSchema = z
 	.object({
@@ -298,7 +294,7 @@ const StripeDeleteResponseSchema = z
 		object: z.literal('customer'),
 		deleted: z.literal(true),
 	})
-	.passthrough();
+	.loose();
 
 const StripeListMetaSchema = z.object({
 	object: z.literal('list'),
@@ -308,23 +304,23 @@ const StripeListMetaSchema = z.object({
 
 const ChargesListResponseSchema = StripeListMetaSchema.extend({
 	data: z.array(StripeChargeSchema),
-}).passthrough();
+}).loose();
 
 const CouponsListResponseSchema = StripeListMetaSchema.extend({
 	data: z.array(StripeCouponSchema),
-}).passthrough();
+}).loose();
 
 const CustomersListResponseSchema = StripeListMetaSchema.extend({
 	data: z.array(StripeCustomerSchema),
-}).passthrough();
+}).loose();
 
 const PaymentIntentsListResponseSchema = StripeListMetaSchema.extend({
 	data: z.array(StripePaymentIntentSchema),
-}).passthrough();
+}).loose();
 
 const PricesListResponseSchema = StripeListMetaSchema.extend({
 	data: z.array(StripePriceSchema),
-}).passthrough();
+}).loose();
 
 // ── Endpoint I/O Maps ─────────────────────────────────────────────────────────
 

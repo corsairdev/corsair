@@ -8,14 +8,14 @@ const ConversationMessageSchema = z
 		text: z.string().optional(),
 		type: z.enum(['user_message', 'assistant_message']).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AgentSourceSchema = z
 	.object({
 		ref: z.string().optional(),
 		repository: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AgentTargetSchema = z
 	.object({
@@ -26,7 +26,7 @@ const AgentTargetSchema = z
 		skipReviewerRequest: z.boolean().optional(),
 		openAsCursorGithubApp: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AgentSchema = z
 	.object({
@@ -40,7 +40,7 @@ const AgentSchema = z
 		summary: z.string().optional(),
 		createdAt: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RepositorySchema = z
 	.object({
@@ -48,7 +48,7 @@ const RepositorySchema = z
 		owner: z.string().optional(),
 		repository: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ────────────────────────────────────────────────────────────
 
@@ -86,7 +86,7 @@ const AgentsListResponseSchema = z
 		agents: z.array(AgentSchema),
 		nextCursor: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type AgentsListResponse = z.infer<typeof AgentsListResponseSchema>;
 
@@ -95,7 +95,7 @@ const AgentsGetConversationResponseSchema = z
 		id: z.string(),
 		messages: z.array(ConversationMessageSchema),
 	})
-	.passthrough();
+	.loose();
 
 export type AgentsGetConversationResponse = z.infer<
 	typeof AgentsGetConversationResponseSchema
@@ -107,7 +107,7 @@ const AccountGetMeResponseSchema = z
 		createdAt: z.string(),
 		userEmail: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type AccountGetMeResponse = z.infer<typeof AccountGetMeResponseSchema>;
 
@@ -115,7 +115,7 @@ const ModelsListResponseSchema = z
 	.object({
 		models: z.array(z.string()),
 	})
-	.passthrough();
+	.loose();
 
 export type ModelsListResponse = z.infer<typeof ModelsListResponseSchema>;
 
@@ -123,7 +123,7 @@ const RepositoriesListResponseSchema = z
 	.object({
 		repositories: z.array(RepositorySchema),
 	})
-	.passthrough();
+	.loose();
 
 export type RepositoriesListResponse = z.infer<
 	typeof RepositoriesListResponseSchema

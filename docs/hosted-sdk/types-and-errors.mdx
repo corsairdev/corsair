@@ -1,0 +1,219 @@
+---
+title: Types and Errors
+description: Use generated plugin types, Zod schemas, catalog data, and structured API errors.
+---
+
+The Hosted SDK is generated from Corsair's plugin catalog. That gives your editor autocomplete for plugin IDs, auth types, root credential fields, and tenant credential fields.
+
+```ts
+import {
+  createClient,
+  PluginIdSchema,
+  InstanceDetailSchema,
+  type PluginId,
+  type PluginAuthTypes,
+  type PluginAccountFields,
+  type PluginIntegrationFields,
+} from "@corsair-dev/app";
+```
+
+## Plugin IDs
+
+`PluginId` is a union of every plugin ID in the catalog.
+
+```ts
+import type { PluginId } from "@corsair-dev/app";
+
+function installDefaultPlugin(pluginId: PluginId) {
+  return inst.plugins.upsert(pluginId, { mode: "cautious" });
+}
+
+await installDefaultPlugin("slack");
+await installDefaultPlugin("github");
+```
+
+You can validate external input with the matching Zod schema:
+
+```ts
+import { PluginIdSchema } from "@corsair-dev/app";
+
+const pluginId = PluginIdSchema.parse(request.body.pluginId);
+await inst.plugins.upsert(pluginId, { mode: "cautious" });
+```
+
+## Auth types by plugin
+
+`PluginAuthTypes<T>` narrows the auth type to what a selected plugin supports.
+
+```ts
+import type { PluginAuthTypes, PluginId } from "@corsair-dev/app";
+
+async function installWithAuth<T extends PluginId>(
+  pluginId: T,
+  authType: PluginAuthTypes<T>,
+) {
+  await inst.plugins.upsert(pluginId, { authType });
+}
+
+await installWithAuth("github", "oauth_2");
+await installWithAuth("linear", "api_key");
+```
+
+If you pass an unsupported auth type, TypeScript catches it before runtime.
+
+## Credential fields by plugin
+
+Root fields are instance-level integration credentials. Account fields are tenant-level credentials.
+
+```ts
+import type {
+  PluginAccountFields,
+  PluginId,
+  PluginIntegrationFields,
+} from "@corsair-dev/app";
+
+async function setRootCredential<T extends PluginId>(
+  pluginId: T,
+  field: PluginIntegrationFields<T> & string,
+  value: string,
+) {
+  await inst.plugins.credentials.setRoot(pluginId, field, value);
+}
+
+async function setTenantCredential<T extends PluginId>(
+  pluginId: T,
+  field: PluginAccountFields<T> & string,
+  value: string,
+) {
+  await tenant.plugins.credentials.set(pluginId, field, value);
+}
+```
+
+This makes credential UIs safer. Your code can model each plugin's setup requirements without hardcoding a separate field registry.
+
+## Runtime schemas
+
+The package exports Zod schemas for API response shapes.
+
+```ts
+import {
+  InstanceDetailSchema,
+  McpApiKeyCreatedSchema,
+  TenantSummarySchema,
+} from "@corsair-dev/app";
+
+const instance = InstanceDetailSchema.parse(rawInstance);
+const tenant = TenantSummarySchema.parse(rawTenant);
+const key = McpApiKeyCreatedSchema.parse(rawKey);
+```
+
+Common schemas include:
+
+| Schema | Validates |
+| --- | --- |
+| `InstanceSummarySchema` | Instance list items |
+| `InstanceDetailSchema` | Full instance details |
+| `PluginStateSchema` | Installed plugin state |
+| `PermissionsDetailSchema` | Permission mode and overrides |
+| `TenantSummarySchema` | Tenant metadata |
+| `McpApiKeyCreatedSchema` | Newly created MCP key and one-time secret |
+| `McpConnectionInfoSchema` | Tenant MCP connection metadata |
+| `RuntimeStatusSchema` | Runtime warm and database health state |
+
+## Static catalog data
+
+Use `PLUGINS` or `PLUGINS_BY_ID` for build-time plugin metadata.
+
+```ts
+import { PLUGINS, PLUGINS_BY_ID } from "@corsair-dev/app";
+
+const pluginOptions = PLUGINS.map((plugin) => ({
+  value: plugin.id,
+  label: plugin.displayName,
+  description: plugin.description,
+}));
+
+const slack = PLUGINS_BY_ID.slack;
+console.log(slack.defaultAuthType);
+```
+
+Use the live hosted catalog when you want the server's current view:
+
+```ts
+const { plugins } = await corsair.catalog.plugins.list();
+```
+
+## Handling API errors
+
+All non-2xx responses throw `CorsairApiError`.
+
+```ts
+import { CorsairApiError } from "@corsair-dev/app";
+
+try {
+  await inst.plugins.upsert("slack", { mode: "cautious" });
+} catch (error) {
+  if (error instanceof CorsairApiError) {
+    console.error(error.status);
+    console.error(error.code);
+    console.error(error.message);
+    console.error(error.details);
+  }
+}
+```
+
+`CorsairApiError` includes:
+
+| Field | Meaning |
+| --- | --- |
+| `status` | HTTP status code |
+| `code` | Machine-readable error code from the API |
+| `message` | Human-readable error message |
+| `details` | Optional structured details, such as validation issues |
+
+## Recommended wrapper
+
+Wrap SDK calls at your API boundary so product code gets consistent application errors.
+
+```ts
+import { CorsairApiError } from "@corsair-dev/app";
+
+export async function withCorsairErrors<T>(operation: () => Promise<T>) {
+  try {
+    return await operation();
+  } catch (error) {
+    if (error instanceof CorsairApiError) {
+      if (error.status === 401) {
+        throw new Error("Corsair API key is invalid or missing");
+      }
+
+      if (error.status === 403) {
+        throw new Error(`Corsair blocked the operation: ${error.message}`);
+      }
+
+      throw new Error(`Corsair API error ${error.code}: ${error.message}`);
+    }
+
+    throw error;
+  }
+}
+```
+
+## Regenerating types
+
+The SDK's generated file is produced from the plugin catalog. When the catalog changes inside the repo, regenerate before publishing the package.
+
+```bash
+pnpm --filter @corsair-dev/app gen
+pnpm --filter @corsair-dev/app build
+```
+
+The generated surface includes:
+
+- `PluginId`
+- `PluginAuthTypes<T>`
+- `PluginIntegrationFields<T>`
+- `PluginAccountFields<T>`
+- `PLUGINS`
+- `PLUGINS_BY_ID`
+- Zod schemas for API responses

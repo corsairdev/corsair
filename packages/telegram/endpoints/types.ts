@@ -109,7 +109,7 @@ const TelegramChatSchema: z.ZodType<any> = z
 		can_set_sticker_set: z.boolean().optional(),
 		linked_chat_id: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TelegramMessageEntitySchema = z.object({
 	type: z.string(),
@@ -252,7 +252,7 @@ const TelegramInlineKeyboardButtonSchema = z.object({
 	switch_inline_query_current_chat: z.string().optional(),
 	switch_inline_query_chosen_chat:
 		TelegramSwitchInlineQueryChosenChatSchema.optional(),
-	callback_game: z.object({}).passthrough().optional(),
+	callback_game: z.object({}).loose().optional(),
 	pay: z.boolean().optional(),
 });
 
@@ -313,7 +313,7 @@ const TelegramChatMemberSchema = z
 		status: z.string(),
 		user: TelegramUserSchema,
 	})
-	.passthrough();
+	.loose();
 
 const GetChatInputSchema = z.object({
 	chat_id: z.union([z.string(), z.number()]),

@@ -19,7 +19,33 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "App",
+        "groups": [
+          {
+            "group": "Corsair App",
+            "pages": [
+              "hosted-sdk/overview",
+              "hosted-sdk/quickstart",
+              "hosted-sdk/instances-and-plugins",
+              "hosted-sdk/tenants-and-auth",
+              "hosted-sdk/mcp-and-run",
+              "hosted-sdk/types-and-errors"
+            ]
+          },
+          {
+            "group": "Hosted MCP SDKs",
+            "pages": [
+              "hosted-mcp/overview",
+              "hosted-mcp/vercel-ai",
+              "hosted-mcp/openai",
+              "hosted-mcp/claude",
+              "hosted-mcp/custom-connector"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
         "groups": [
           {
             "group": "Get Started",
@@ -43,7 +69,11 @@
           },
           {
             "group": "Coding Agents",
-            "pages": ["mcp-adapters/claude-code", "mcp-adapters/cursor"]
+            "pages": [
+              "mcp-adapters/coding-agents",
+              "mcp-adapters/claude-code",
+              "mcp-adapters/cursor"
+            ]
           },
           {
             "group": "Studio",
@@ -166,6 +196,15 @@
                   "plugins/calendly/api",
                   "plugins/calendly/database",
                   "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "Cloudflare",
+                "pages": [
+                  "plugins/cloudflare/overview",
+                  "plugins/cloudflare/get-credentials",
+                  "plugins/cloudflare/api",
+                  "plugins/cloudflare/database"
                 ]
               },
               {
@@ -609,6 +648,16 @@
                   "plugins/vapi/api",
                   "plugins/vapi/database",
                   "plugins/vapi/webhooks"
+                ]
+              },
+              {
+                "group": "Xquik",
+                "pages": [
+                  "plugins/xquik/overview",
+                  "plugins/xquik/get-credentials",
+                  "plugins/xquik/api",
+                  "plugins/xquik/database",
+                  "plugins/xquik/webhooks"
                 ]
               },
               {

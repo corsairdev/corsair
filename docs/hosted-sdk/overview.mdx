@@ -1,0 +1,241 @@
+---
+title: Introduction
+description: Corsair App gives AI products managed integrations, authentication, permissions, and hosted MCP servers.
+---
+
+Corsair App is the hosted integration layer for AI products. It gives your agents and workflows safe, authenticated access to real-world services like Slack, GitHub, Gmail, Notion, Linear, Google Calendar, and more, without making your team rebuild OAuth, credential storage, tenant isolation, permission checks, MCP servers, or tool execution for every app.
+
+If you are building an AI assistant, internal agent, customer-facing copilot, workflow builder, or developer platform, Corsair App handles the integration infrastructure so your product can focus on the user experience.
+
+<CardGroup cols={2}>
+  <Card title="Managed authentication" icon="shield-check">
+    Handle OAuth, API keys, bot tokens, credential storage, tenant scoping, and token lifecycle through one hosted control plane.
+  </Card>
+  <Card title="Hosted MCP servers" icon="bot">
+    Issue tenant-specific MCP endpoints and secrets that work with MCP-compatible agents and AI frameworks.
+  </Card>
+  <Card title="Tool execution" icon="terminal">
+    Let agents execute plugin operations through MCP, or call operations directly from your backend for deterministic workflows.
+  </Card>
+  <Card title="Permissions by design" icon="lock-keyhole">
+    Configure plugin modes and endpoint overrides so risky operations can be allowed, denied, or routed through approval.
+  </Card>
+</CardGroup>
+
+## Why Corsair App?
+
+AI products need to do more than chat. They need to read issues, send messages, schedule meetings, update CRMs, search files, create tickets, and react to events across the tools people already use.
+
+The hard part is rarely the final API call. The hard part is everything around it:
+
+- Getting each customer through the right OAuth or API-key flow
+- Storing credentials securely per user, team, or workspace
+- Making sure one tenant can never use another tenant's connection
+- Translating hundreds of APIs into agent-usable tools
+- Giving agents enough discovery power without dumping every tool into context
+- Enforcing permissions on destructive or sensitive actions
+- Exposing the tools through MCP and SDK integrations
+
+Corsair App is built to take that plumbing off your plate. You define which plugins your product supports, connect each tenant's accounts, and give your agent a scoped MCP endpoint or execute operations directly from your backend.
+
+## How it works
+
+Corsair App has a simple model:
+
+| Concept | What it means |
+| --- | --- |
+| Instance | A hosted Corsair environment for one product or deployment, such as production or staging |
+| Plugin | An integration your instance enables, such as Slack, GitHub, Gmail, or Linear |
+| Tenant | A user, team, organization, or customer workspace inside your product |
+| Credential | A tenant's connected account or an instance-level integration credential |
+| MCP key | A tenant-scoped secret and URL that lets an agent use Corsair tools |
+
+In practice, the flow looks like this:
+
+<Steps>
+<Step>
+
+## Create an instance
+
+An instance is the hosted environment your app connects to. Most products create one instance for production and one for staging.
+
+</Step>
+<Step>
+
+## Enable plugins
+
+Install the tools your product should support, then configure default permission modes and endpoint-level overrides.
+
+</Step>
+<Step>
+
+## Create tenants
+
+Map your product's users, teams, or customer workspaces to Corsair tenants so every connection and MCP key is isolated.
+
+</Step>
+<Step>
+
+## Connect accounts
+
+Store API keys directly or send users through OAuth. Corsair stores the resulting credentials against the tenant.
+
+</Step>
+<Step>
+
+## Give agents access
+
+Create an MCP key for the tenant, or call plugin operations directly with the SDK when your backend already knows the exact action to perform.
+
+</Step>
+</Steps>
+
+The whole flow can live in a small amount of backend code:
+
+```ts
+import { createClient } from "@corsair-dev/app";
+
+const corsair = createClient({
+  apiKey: process.env.CORSAIR_API_KEY!,
+});
+
+const instance = await corsair.instances.create({ name: "acme-prod" });
+const inst = corsair.instance(instance.id);
+
+await inst.plugins.upsert("slack", { mode: "cautious" });
+
+const tenant = await inst.tenants.create("user_123");
+const t = inst.tenant(tenant.id);
+
+await t.plugins.credentials.set("slack", "api_key", "xoxb-...");
+
+const key = await t.mcpKeys.create("production-agent");
+
+console.log(key.mcpHttpUrl);
+console.log(key.secret);
+```
+
+## Who it is for
+
+Corsair App is for teams building products where agents need authenticated access to external apps.
+
+<CardGroup cols={2}>
+  <Card title="AI app builders" icon="sparkles">
+    Add real actions to assistants, copilots, chat apps, and workflow agents without building one-off integrations.
+  </Card>
+  <Card title="SaaS teams" icon="building-2">
+    Let every customer workspace connect its own accounts while your app keeps credentials, permissions, and execution scoped.
+  </Card>
+  <Card title="Platform teams" icon="blocks">
+    Offer a consistent integration layer across internal products, agent frameworks, and customer-facing automation surfaces.
+  </Card>
+  <Card title="Automation teams" icon="workflow">
+    Run deterministic jobs through the same authenticated plugins your agents use.
+  </Card>
+</CardGroup>
+
+## What you can build
+
+- A customer support agent that reads Gmail, opens Linear issues, and posts Slack summaries
+- A sales copilot that updates HubSpot, schedules follow-ups, and drafts customer emails
+- A developer assistant that triages GitHub issues and creates project updates
+- A workflow builder where each tenant connects its own tools
+- An internal operations agent with strict approvals on destructive actions
+- A hosted MCP connection page for users who bring their own AI client
+
+## App and SDK
+
+The docs are split into two surfaces:
+
+| Surface | Use it for |
+| --- | --- |
+| App | Hosted Corsair: instances, tenants, plugin setup, credentials, MCP keys, and direct operation execution |
+| SDK | Self-hosted Corsair packages, MCP adapters, concepts, auth models, and framework integration guides |
+
+Use the App docs when you want the managed experience at `app.corsair.dev`. Use the SDK docs when you want to embed or self-host Corsair directly in your own infrastructure.
+
+## What the app manages
+
+<CardGroup cols={2}>
+  <Card title="Provision instances" icon="server">
+    Create hosted Corsair instances, inspect status, refresh runtimes, and delete environments when they are no longer needed.
+  </Card>
+  <Card title="Install plugins" icon="plug">
+    Enable Slack, GitHub, Gmail, Notion, Linear, and the rest of the Corsair catalog with typed plugin IDs and auth options.
+  </Card>
+  <Card title="Scope tenants" icon="users">
+    Map your users, teams, or workspaces to Corsair tenants so credentials and MCP keys stay isolated.
+  </Card>
+  <Card title="Manage credentials" icon="key-round">
+    Store shared integration credentials and per-tenant account credentials without building credential tables yourself.
+  </Card>
+  <Card title="Connect via OAuth" icon="shield-check">
+    Generate tenant-specific OAuth authorize URLs and let Corsair store the resulting account tokens.
+  </Card>
+  <Card title="Run operations" icon="terminal">
+    Execute catalog operations directly through the server, or hand a tenant-specific MCP URL to an AI client.
+  </Card>
+</CardGroup>
+
+## When to use the TypeScript SDK
+
+Use `@corsair-dev/app` from your backend when your product owns provisioning and account lifecycle.
+
+<Info>
+The SDK should run from your backend. It uses a developer API key and can create instances, mutate permissions, manage credentials, and issue tenant MCP keys.
+</Info>
+
+Good fits:
+
+- A SaaS app that creates a Corsair tenant for every customer workspace
+- A developer dashboard that lets users connect plugins and rotate credentials
+- An agent product that needs per-user MCP URLs and API keys
+- Internal tooling that provisions staging and production Corsair instances
+- Server jobs that execute plugin operations directly with `tenant.run()`
+
+## Scope model
+
+Corsair App has three important SDK scopes:
+
+| Scope | What it represents | SDK entry point |
+| --- | --- | --- |
+| Account | Your Corsair developer account and API key | `createClient()` |
+| Instance | A provisioned Corsair environment with installed plugins | `corsair.instance(instanceId)` |
+| Tenant | One user, team, organization, or customer inside an instance | `inst.tenant(tenantId)` |
+
+Most apps create one instance per environment, then create many tenants inside it.
+
+```ts
+const corsair = createClient({ apiKey: process.env.CORSAIR_API_KEY! });
+
+const { instances } = await corsair.instances.list();
+const production = instances.find((instance) => instance.name === "prod");
+
+if (!production) {
+  throw new Error("Create the production instance first");
+}
+
+const inst = corsair.instance(production.id);
+const tenant = inst.tenant("team_abc");
+```
+
+<Warning>
+Pass the instance `id` to `corsair.instance(...)`, not the display `name`. Instance names are human-readable labels; IDs are the stable API path identifiers.
+</Warning>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/hosted-sdk/quickstart">
+    Install the SDK and create your first instance, plugin, tenant, and MCP key.
+  </Card>
+  <Card title="Instances and plugins" icon="sliders-horizontal" href="/hosted-sdk/instances-and-plugins">
+    Learn how to configure plugins, permissions, credentials, and runtime refreshes.
+  </Card>
+  <Card title="Tenants and auth" icon="user-lock" href="/hosted-sdk/tenants-and-auth">
+    Connect customer accounts with API keys or OAuth.
+  </Card>
+  <Card title="MCP and run" icon="bot" href="/hosted-sdk/mcp-and-run">
+    Give agents an MCP endpoint or call plugin operations directly from your backend.
+  </Card>
+</CardGroup>

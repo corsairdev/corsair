@@ -16,7 +16,7 @@ const FileMetadataSchema = z
 		rev: z.string().optional(),
 		content_hash: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FolderMetadataSchema = z
 	.object({
@@ -26,7 +26,7 @@ const FolderMetadataSchema = z
 		path_lower: z.string().optional(),
 		path_display: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Returned by list_folder when include_deleted: true; has no id field
 const DeletedMetadataSchema = z
@@ -36,7 +36,7 @@ const DeletedMetadataSchema = z
 		path_lower: z.string().optional(),
 		path_display: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EntryMetadataSchema = z.discriminatedUnion('.tag', [
 	FileMetadataSchema,
@@ -129,13 +129,13 @@ const FilesCopyOutputSchema = z
 	.object({
 		metadata: EntryMetadataSchema,
 	})
-	.passthrough();
+	.loose();
 
 const FilesDeleteOutputSchema = z
 	.object({
 		metadata: EntryMetadataSchema,
 	})
-	.passthrough();
+	.loose();
 
 const FilesDownloadOutputSchema = z.object({
 	content: z.string(),
@@ -148,7 +148,7 @@ const FilesMoveOutputSchema = z
 	.object({
 		metadata: EntryMetadataSchema,
 	})
-	.passthrough();
+	.loose();
 
 const FilesUploadOutputSchema = z
 	.object({
@@ -163,25 +163,25 @@ const FilesUploadOutputSchema = z
 		rev: z.string().optional(),
 		content_hash: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FoldersCopyOutputSchema = z
 	.object({
 		metadata: EntryMetadataSchema,
 	})
-	.passthrough();
+	.loose();
 
 const FoldersCreateOutputSchema = z
 	.object({
 		metadata: FolderMetadataSchema,
 	})
-	.passthrough();
+	.loose();
 
 const FoldersDeleteOutputSchema = z
 	.object({
 		metadata: EntryMetadataSchema,
 	})
-	.passthrough();
+	.loose();
 
 const FoldersListOutputSchema = z
 	.object({
@@ -189,13 +189,13 @@ const FoldersListOutputSchema = z
 		cursor: z.string(),
 		has_more: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const FoldersMoveOutputSchema = z
 	.object({
 		metadata: EntryMetadataSchema,
 	})
-	.passthrough();
+	.loose();
 
 const FoldersListContinueOutputSchema = z
 	.object({
@@ -203,7 +203,7 @@ const FoldersListContinueOutputSchema = z
 		cursor: z.string(),
 		has_more: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchMatchSchema = z
 	.object({
@@ -211,12 +211,12 @@ const SearchMatchSchema = z
 			.object({
 				metadata: EntryMetadataSchema,
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		// unknown used because Dropbox's match_type object has an undocumented/variable structure
-		match_type: z.record(z.unknown()).optional(),
+		match_type: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchQueryOutputSchema = z
 	.object({
@@ -224,7 +224,7 @@ const SearchQueryOutputSchema = z
 		has_more: z.boolean(),
 		cursor: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Endpoint I/O Maps ─────────────────────────────────────────────────────────
 
