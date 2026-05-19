@@ -35,9 +35,15 @@ export type BitwardenMember = z.infer<typeof BitwardenMember>;
 // Cipher metadata - cached for listing (NO full credential payloads)
 export const BitwardenCipherMetadata = z.object({
 	id: z.string().describe('Cipher ID'),
-	organizationId: z.string().nullable().optional().describe('Organization ID if org cipher'),
+	organizationId: z
+		.string()
+		.nullable()
+		.optional()
+		.describe('Organization ID if org cipher'),
 	name: z.string().describe('Cipher name'),
-	type: z.number().describe('Cipher type (1=login, 2=note, 3=card, 4=identity)'),
+	type: z
+		.number()
+		.describe('Cipher type (1=login, 2=note, 3=card, 4=identity)'),
 	favorite: z.boolean().describe('Marked as favorite'),
 	edit: z.boolean().describe('User can edit'),
 });
