@@ -1,0 +1,170 @@
+---
+title: MCP and Direct Execution
+description: Connect AI agents over MCP or execute plugin operations directly through the hosted server.
+---
+
+Once an instance has plugins and a tenant has credentials, you have two ways to use Corsair:
+
+- Give an AI agent the tenant's MCP endpoint and API key
+- Call a single plugin operation directly from your backend with `tenant.run()`
+
+## Create an MCP key
+
+MCP keys are scoped to one tenant. They let MCP-compatible clients call the tenant's installed and permitted plugin operations.
+
+```ts
+const inst = corsair.instance(process.env.CORSAIR_INSTANCE_ID!);
+const tenant = inst.tenant("user_123");
+
+const key = await tenant.mcpKeys.create("production-agent");
+
+console.log(key.mcpHttpUrl);
+console.log(key.secret);
+```
+
+<Warning>
+`key.secret` is returned exactly once. Store it securely if your app needs to use it later.
+</Warning>
+
+## Connection info
+
+Fetch connection metadata without creating a new secret:
+
+```ts
+const connection = await tenant.mcpKeys.connection();
+
+console.log(connection.mcpHttpUrl);
+console.log(connection.oauthDiscoveryUrl);
+console.log(connection.protectedResourceMetadataUrl);
+```
+
+Use this when your UI needs to show the MCP endpoint after setup.
+
+## List and revoke keys
+
+```ts
+const { keys } = await tenant.mcpKeys.list();
+
+for (const key of keys) {
+  console.log(key.name, key.keyPrefix, key.lastUsedAt);
+}
+```
+
+```ts
+await tenant.mcpKeys.revoke("key_123");
+```
+
+Revoked keys receive authentication errors immediately.
+
+## Connect an MCP client
+
+Use the created `mcpHttpUrl` as the MCP server URL and the `secret` as the bearer token.
+
+```ts
+const key = await tenant.mcpKeys.create("chat-agent");
+
+const mcp = {
+  url: key.mcpHttpUrl,
+  headers: {
+    Authorization: `Bearer ${key.secret}`,
+  },
+};
+```
+
+Different AI frameworks shape MCP configuration differently. The important parts are the same: the URL comes from `mcpHttpUrl`, and authorization uses the tenant MCP secret.
+
+<Tip>
+For framework-specific hosted MCP examples, see [Hosted MCP SDKs](/hosted-mcp/overview). Those guides show the exact Vercel AI, OpenAI, Claude, and custom connector setup for `mcpHttpUrl` and tenant MCP secrets.
+</Tip>
+
+## Run one operation directly
+
+Use `tenant.run()` when your backend wants to call a plugin operation without going through an agent loop.
+
+```ts
+const result = await tenant.run("slack.api.messages.post", {
+  channel: "#general",
+  text: "Hello from Corsair Hosted",
+});
+
+console.log(result.data);
+```
+
+The operation path uses the catalog's dot-separated path format.
+
+```ts
+await tenant.run("github.api.repositories.star", {
+  owner: "corsairdev",
+  repo: "corsair",
+});
+```
+
+For read operations with no input, omit the second argument:
+
+```ts
+const { data } = await tenant.run<{ messages: unknown[] }>(
+  "gmail.api.messages.list",
+);
+```
+
+## Permissions still apply
+
+Direct execution uses the same server-side permission enforcement as MCP. If the instance policy denies an operation or requires approval, `tenant.run()` will not bypass it.
+
+```ts
+await inst.plugins.permissions.setOverride(
+  "github",
+  "api.repositories.delete",
+  "deny",
+);
+
+await tenant.run("github.api.repositories.delete", {
+  owner: "acme",
+  repo: "legacy",
+});
+// Throws CorsairApiError with a 403 response.
+```
+
+## Choosing MCP or run
+
+| Use case | Recommended path |
+| --- | --- |
+| Agent can discover tools and decide what to call | MCP |
+| Your backend already knows the exact operation | `tenant.run()` |
+| Multi-turn assistant with many possible apps | MCP |
+| Scheduled job or deterministic workflow step | `tenant.run()` |
+| End-user brings their own MCP client | Tenant MCP key |
+
+## Example: agent setup endpoint
+
+```ts
+import { createClient } from "@corsair-dev/app";
+
+const corsair = createClient({ apiKey: process.env.CORSAIR_API_KEY! });
+
+export async function createAgentConnection(userId: string) {
+  const inst = corsair.instance(process.env.CORSAIR_INSTANCE_ID!);
+  const tenant = inst.tenant(userId);
+
+  const key = await tenant.mcpKeys.create("agent");
+
+  return {
+    mcpHttpUrl: key.mcpHttpUrl,
+    bearerToken: key.secret,
+  };
+}
+```
+
+## Example: deterministic workflow
+
+```ts
+export async function notifyWorkspace(workspaceId: string, text: string) {
+  const inst = corsair.instance(process.env.CORSAIR_INSTANCE_ID!);
+  const tenant = inst.tenant(workspaceId);
+
+  await tenant.run("slack.api.messages.post", {
+    channel: "#alerts",
+    text,
+  });
+}
+```

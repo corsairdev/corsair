@@ -13,6 +13,80 @@ import type {
 
 const INDENT = '  ';
 
+type ZodDef = Record<string, unknown>;
+
+function getZodDef(schema: ZodTypeAny): ZodDef {
+	const zodSchema = schema as unknown as { _def?: ZodDef; def?: ZodDef };
+	return zodSchema._def ?? zodSchema.def ?? {};
+}
+
+function getZodTypeName(def: ZodDef): string | undefined {
+	const typeName = def.typeName as string | undefined;
+	if (typeName) return typeName;
+	const type = def.type as string | undefined;
+	if (!type) return undefined;
+	return `Zod${type
+		.split('_')
+		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+		.join('')}`;
+}
+
+function getZodInner(def: ZodDef): ZodTypeAny | undefined {
+	return (def.innerType ?? def.schema ?? def.out ?? def.in) as
+		| ZodTypeAny
+		| undefined;
+}
+
+function getZodArrayItem(def: ZodDef): ZodTypeAny | undefined {
+	const type = def.type;
+	return (def.element ?? (typeof type === 'string' ? undefined : type)) as
+		| ZodTypeAny
+		| undefined;
+}
+
+function getZodShape(
+	schema: ZodTypeAny,
+	def: ZodDef,
+): Record<string, ZodTypeAny> {
+	const shape = def.shape ?? (schema as unknown as { shape?: unknown }).shape;
+	return (typeof shape === 'function' ? shape() : shape) as Record<
+		string,
+		ZodTypeAny
+	>;
+}
+
+function getZodOptions(def: ZodDef): unknown[] {
+	if (Array.isArray(def.options)) return def.options;
+	if (Array.isArray(def.values)) return def.values;
+	if (
+		def.entries !== null &&
+		typeof def.entries === 'object' &&
+		!Array.isArray(def.entries)
+	) {
+		return Object.values(def.entries);
+	}
+	return [];
+}
+
+function getZodDescription(
+	schema: ZodTypeAny,
+	def: ZodDef,
+): string | undefined {
+	return (
+		(schema as unknown as { description?: string }).description ??
+		(def.description as string | undefined)
+	);
+}
+
+function isOptionalish(typeName: string | undefined): boolean {
+	return (
+		typeName === 'ZodOptional' ||
+		typeName === 'ZodNullable' ||
+		typeName === 'ZodDefault' ||
+		typeName === 'ZodCatch'
+	);
+}
+
 /**
  * Produces a compact single-line TypeScript-like type string.
  * Used for array item types, union members, and simple inline fields.
@@ -21,8 +95,8 @@ const INDENT = '  ';
  * Enums render as pipe-separated values: full | none
  */
 function zodToInlineType(schema: ZodTypeAny): string {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 
 	switch (typeName) {
 		case 'ZodString':
@@ -37,41 +111,57 @@ function zodToInlineType(schema: ZodTypeAny): string {
 		case 'ZodAny':
 			return 'any';
 		case 'ZodLiteral':
-			return String(def.value);
+			return String(def.value ?? getZodOptions(def)[0] ?? 'unknown');
 		case 'ZodEnum':
-			return (def.values as unknown[]).map((v) => String(v)).join(' | ');
-		case 'ZodOptional':
-			return zodToInlineType(def.innerType as ZodTypeAny);
-		case 'ZodNullable':
-			return `${zodToInlineType(def.innerType as ZodTypeAny)} | null`;
+			return getZodOptions(def)
+				.map((v) => String(v))
+				.join(' | ');
+		case 'ZodOptional': {
+			const inner = getZodInner(def);
+			return inner ? zodToInlineType(inner) : 'unknown';
+		}
+		case 'ZodNullable': {
+			const inner = getZodInner(def);
+			return `${inner ? zodToInlineType(inner) : 'unknown'} | null`;
+		}
+		case 'ZodDefault':
+		case 'ZodCatch': {
+			const inner = getZodInner(def);
+			return inner ? zodToInlineType(inner) : 'unknown';
+		}
 		case 'ZodArray': {
-			const itemType = def.type as ZodTypeAny;
-			const itemDef = (itemType as { _def: Record<string, unknown> })._def;
-			const isUnion = itemDef.typeName === 'ZodUnion';
+			const itemType = getZodArrayItem(def);
+			if (!itemType) return 'unknown[]';
+			const itemDef = getZodDef(itemType);
+			const isUnion = getZodTypeName(itemDef) === 'ZodUnion';
 			const inner = zodToInlineType(itemType);
 			return `${isUnion ? `(${inner})` : inner}[]`;
 		}
 		case 'ZodRecord':
 			return '{}';
 		case 'ZodObject': {
-			const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+			const shape = getZodShape(schema, def);
 			const entries = Object.entries(shape);
 			if (entries.length === 0) return '{}';
 			const fields = entries.map(([key, val]) => {
-				const ft = (val as { _def: Record<string, unknown> })._def.typeName as
-					| string
-					| undefined;
+				const ft = getZodTypeName(getZodDef(val));
 				const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
 				return `${optional ? key + '?' : key}: ${zodToInlineType(val)}`;
 			});
 			return `{ ${fields.join(', ')} }`;
 		}
 		case 'ZodUnion':
-			return (def.options as ZodTypeAny[]).map(zodToInlineType).join(' | ');
+			return getZodOptions(def)
+				.map((option) => zodToInlineType(option as ZodTypeAny))
+				.join(' | ');
 		case 'ZodIntersection':
 			return `${zodToInlineType(def.left as ZodTypeAny)} & ${zodToInlineType(def.right as ZodTypeAny)}`;
-		case 'ZodEffects':
-			return zodToInlineType(def.schema as ZodTypeAny);
+		case 'ZodPipe':
+		case 'ZodTransform':
+		case 'ZodEffects': {
+			const inner = getZodInner(def);
+			return inner ? zodToInlineType(inner) : 'unknown';
+		}
 		default:
 			return (typeName ?? 'unknown').replace('Zod', '').toLowerCase();
 	}
@@ -83,18 +173,16 @@ function zodToInlineType(schema: ZodTypeAny): string {
  * Direct object-valued fields are expanded recursively; everything else is inlined.
  */
 function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 
-	if (typeName === 'ZodOptional' || typeName === 'ZodEffects') {
-		return zodToExpandedType(
-			(typeName === 'ZodOptional' ? def.innerType : def.schema) as ZodTypeAny,
-			depth,
-		);
+	if (isOptionalish(typeName)) {
+		const inner = getZodInner(def);
+		return inner ? zodToExpandedType(inner, depth) : 'unknown';
 	}
 	if (typeName !== 'ZodObject') return zodToInlineType(schema);
 
-	const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+	const shape = getZodShape(schema, def);
 	const entries = Object.entries(shape);
 	if (entries.length === 0) return '{}';
 
@@ -103,19 +191,19 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 	const lines: string[] = [];
 
 	for (const [key, val] of entries) {
-		const valDef = (val as { _def: Record<string, unknown> })._def;
-		const ft = valDef.typeName as string | undefined;
+		const valDef = getZodDef(val);
+		const ft = getZodTypeName(valDef);
 		const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
 		const k = optional ? `${key}?` : key;
 
 		// Unwrap optional/nullable to check whether the inner type is an object worth expanding
 		const innerVal =
 			ft === 'ZodOptional' || ft === 'ZodNullable'
-				? (valDef.innerType as ZodTypeAny)
+				? (getZodInner(valDef) ?? val)
 				: val;
-		const innerDef = (innerVal as { _def: Record<string, unknown> })?._def;
-		const innerTypeName = innerDef?.typeName as string | undefined;
-		const description = innerDef?.description as string | undefined;
+		const innerDef = getZodDef(innerVal);
+		const innerTypeName = getZodTypeName(innerDef);
+		const description = getZodDescription(innerVal, innerDef);
 		const comment = description ? `  // ${description}` : '';
 
 		if (innerTypeName === 'ZodObject') {
@@ -142,20 +230,20 @@ const DATE_OPERATORS = ['equals', 'before', 'after', 'between'];
 type DbFieldType = 'string' | 'number' | 'boolean' | 'date';
 
 /**
- * Unwraps Optional/Nullable/Default/Effects wrappers to find the primitive leaf type.
+ * Unwraps Optional/Nullable/Default wrappers to find the primitive leaf type.
  * Returns null for complex types (objects, arrays, unions) that are not directly filterable.
  */
 function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 	switch (typeName) {
 		case 'ZodOptional':
 		case 'ZodNullable':
 		case 'ZodDefault':
-			return getSchemaLeafType(def.innerType as ZodTypeAny);
-		case 'ZodEffects':
-			// Covers z.coerce.date() and other transforms
-			return getSchemaLeafType(def.schema as ZodTypeAny);
+		case 'ZodCatch': {
+			const inner = getZodInner(def);
+			return inner ? getSchemaLeafType(inner) : null;
+		}
 		case 'ZodString':
 			return 'string';
 		case 'ZodNumber':
@@ -177,22 +265,16 @@ function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
 function buildFilterableFields(
 	schema: ZodTypeAny,
 ): Record<string, { type: DbFieldType; operators: string[] }> {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 
-	if (
-		typeName === 'ZodOptional' ||
-		typeName === 'ZodNullable' ||
-		typeName === 'ZodDefault'
-	) {
-		return buildFilterableFields(def.innerType as ZodTypeAny);
-	}
-	if (typeName === 'ZodEffects') {
-		return buildFilterableFields(def.schema as ZodTypeAny);
+	if (isOptionalish(typeName)) {
+		const inner = getZodInner(def);
+		return inner ? buildFilterableFields(inner) : {};
 	}
 	if (typeName !== 'ZodObject') return {};
 
-	const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+	const shape = getZodShape(schema, def);
 	const result: Record<string, { type: DbFieldType; operators: string[] }> = {};
 	for (const [key, fieldSchema] of Object.entries(shape)) {
 		const leafType = getSchemaLeafType(fieldSchema);
@@ -745,18 +827,12 @@ export type IntrospectPluginForDocsResult =
 function unwrapZodForDocs(schema: ZodTypeAny): ZodTypeAny {
 	let current = schema;
 	for (;;) {
-		const def = (current as { _def: Record<string, unknown> })._def;
-		const typeName = def.typeName as string | undefined;
-		if (
-			typeName === 'ZodOptional' ||
-			typeName === 'ZodNullable' ||
-			typeName === 'ZodDefault'
-		) {
-			current = def.innerType as ZodTypeAny;
-			continue;
-		}
-		if (typeName === 'ZodEffects') {
-			current = def.schema as ZodTypeAny;
+		const def = getZodDef(current);
+		const typeName = getZodTypeName(def);
+		if (isOptionalish(typeName)) {
+			const inner = getZodInner(def);
+			if (!inner) return current;
+			current = inner;
 			continue;
 		}
 		return current;
@@ -768,18 +844,18 @@ function zodToDocSchemaShape(schema: ZodTypeAny | undefined): DocSchemaShape {
 		return { kind: 'inline', type: 'unknown' };
 	}
 	const base = unwrapZodForDocs(schema);
-	const def = (base as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(base);
+	const typeName = getZodTypeName(def);
 	if (typeName === 'ZodObject') {
-		const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+		const shape = getZodShape(base, def);
 		const fields: DocSchemaFieldRow[] = [];
 		for (const [key, val] of Object.entries(shape)) {
-			const valDef = (val as { _def: Record<string, unknown> })._def;
-			const ft = valDef.typeName as string | undefined;
+			const valDef = getZodDef(val);
+			const ft = getZodTypeName(valDef);
 			const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
 			const inner = unwrapZodForDocs(val);
-			const innerDef = (inner as { _def: Record<string, unknown> })._def;
-			const description = innerDef?.description as string | undefined;
+			const innerDef = getZodDef(inner);
+			const description = getZodDescription(inner, innerDef);
 			fields.push({
 				key,
 				optional,

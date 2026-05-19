@@ -157,7 +157,7 @@ const IntercomWebhookPayloadSchema = z.object({
 	first_sent_at: z.number().optional(),
 	data: z.object({
 		type: z.string().optional(),
-		item: z.record(z.unknown()),
+		item: z.record(z.string(), z.unknown()),
 	}),
 });
 

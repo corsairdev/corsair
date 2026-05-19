@@ -22,7 +22,7 @@ const LocationSchema = z
 			.optional(),
 		languages: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ViewportSchema = z.object({
 	width: z.number().int(),
@@ -66,13 +66,13 @@ const FormatSchema = z.union([
 	}),
 	z.object({
 		type: z.literal('json'),
-		schema: z.record(z.unknown()).optional(),
+		schema: z.record(z.string(), z.unknown()).optional(),
 		prompt: z.string().optional(),
 	}),
 	z.object({
 		type: z.literal('changeTracking'),
 		modes: z.array(z.enum(['git-diff', 'json'])).optional(),
-		schema: z.record(z.unknown()).optional(),
+		schema: z.record(z.string(), z.unknown()).optional(),
 		prompt: z.string().optional(),
 		tag: z.string().nullable().optional(),
 	}),
@@ -157,7 +157,7 @@ const ScrapeOptionsSchema = z
 		excludeTags: z.array(z.string()).optional(),
 		maxAge: z.number().int().optional(),
 		minAge: z.number().int().optional(),
-		headers: z.record(z.string()).optional(),
+		headers: z.record(z.string(), z.string()).optional(),
 		waitFor: z.number().int().optional(),
 		mobile: z.boolean().optional(),
 		skipTlsVerification: z.boolean().optional(),
@@ -176,7 +176,7 @@ const ScrapeOptionsSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ScrapeRunInputSchema = z
 	.object({
@@ -202,7 +202,7 @@ const ScrapeRunInputSchema = z
 		profile: ScrapeOptionsSchema.shape.profile,
 		zeroDataRetention: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MapRunInputSchema = z
 	.object({
@@ -216,7 +216,7 @@ const MapRunInputSchema = z
 		timeout: z.number().int().optional(),
 		location: LocationSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchRunInputSchema = z
 	.object({
@@ -252,18 +252,18 @@ const SearchRunInputSchema = z
 		enterprise: z.array(z.enum(['anon', 'zdr'])).optional(),
 		scrapeOptions: ScrapeOptionsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookSchema = z
 	.object({
 		url: z.string(),
-		headers: z.record(z.string()).optional(),
-		metadata: z.record(z.unknown()).optional(),
+		headers: z.record(z.string(), z.string()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		events: z
 			.array(z.enum(['completed', 'page', 'failed', 'started']))
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CrawlStartInputSchema = z
 	.object({
@@ -285,7 +285,7 @@ const CrawlStartInputSchema = z
 		scrapeOptions: ScrapeOptionsSchema.optional(),
 		zeroDataRetention: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const JobIdInputSchema = z.object({
 	id: z.string(),
@@ -295,12 +295,12 @@ const AgentStartInputSchema = z
 	.object({
 		prompt: z.string(),
 		urls: z.array(z.string()).optional(),
-		schema: z.record(z.unknown()).optional(),
+		schema: z.record(z.string(), z.unknown()).optional(),
 		maxCredits: z.number().optional(),
 		strictConstrainToURLs: z.boolean().optional(),
 		model: z.enum(['spark-1-mini', 'spark-1-pro']).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlEndpointInputSchemas = {
 	scrapeRun: ScrapeRunInputSchema,
@@ -337,25 +337,25 @@ const ScrapeDataSchema = z
 		metadata: FirecrawlScrapeMetadata.optional(),
 		warning: z.string().nullable().optional(),
 		changeTracking: FirecrawlScrapeChangeTracking.nullable().optional(),
-		branding: z.record(z.unknown()).nullable().optional(),
+		branding: z.record(z.string(), z.unknown()).nullable().optional(),
 		json: z.unknown().optional(),
-		images: z.array(z.record(z.unknown())).optional(),
+		images: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ScrapeRunOutputSchema = z
 	.object({
 		success: z.boolean(),
 		data: ScrapeDataSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MapRunOutputSchema = z
 	.object({
 		success: z.boolean(),
 		links: z.array(FirecrawlMapLink).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchDataSchema = z
 	.object({
@@ -363,7 +363,7 @@ const SearchDataSchema = z
 		images: z.array(FirecrawlSearchImageItem).optional(),
 		news: z.array(FirecrawlSearchNewsItem).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchRunOutputSchema = z
 	.object({
@@ -373,7 +373,7 @@ const SearchRunOutputSchema = z
 		id: z.string().optional(),
 		creditsUsed: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CrawlStartOutputSchema = z
 	.object({
@@ -381,7 +381,7 @@ const CrawlStartOutputSchema = z
 		id: z.string().optional(),
 		url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CrawlGetOutputSchema = z
 	.object({
@@ -394,39 +394,39 @@ const CrawlGetOutputSchema = z
 		next: z.string().nullable().optional(),
 		data: z.array(FirecrawlCrawlPageDocument).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CrawlCancelOutputSchema = z
 	.object({
 		success: z.boolean().optional(),
 		status: z.literal('cancelled').optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AgentStartOutputSchema = z
 	.object({
 		success: z.boolean(),
 		id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AgentGetOutputSchema = z
 	.object({
 		success: z.boolean(),
 		status: z.enum(['processing', 'completed', 'failed']).optional(),
-		data: z.record(z.unknown()).optional(),
+		data: z.record(z.string(), z.unknown()).optional(),
 		model: z.enum(['spark-1-pro', 'spark-1-mini']).optional(),
 		error: z.string().optional(),
 		expiresAt: z.string().optional(),
 		creditsUsed: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AgentCancelOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.passthrough();
+	.loose();
 
 export const FirecrawlEndpointOutputSchemas = {
 	scrapeRun: ScrapeRunOutputSchema,

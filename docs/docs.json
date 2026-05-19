@@ -19,7 +19,33 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "App",
+        "groups": [
+          {
+            "group": "Corsair App",
+            "pages": [
+              "hosted-sdk/overview",
+              "hosted-sdk/quickstart",
+              "hosted-sdk/instances-and-plugins",
+              "hosted-sdk/tenants-and-auth",
+              "hosted-sdk/mcp-and-run",
+              "hosted-sdk/types-and-errors"
+            ]
+          },
+          {
+            "group": "Hosted MCP SDKs",
+            "pages": [
+              "hosted-mcp/overview",
+              "hosted-mcp/vercel-ai",
+              "hosted-mcp/openai",
+              "hosted-mcp/claude",
+              "hosted-mcp/custom-connector"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
         "groups": [
           {
             "group": "Get Started",
@@ -179,6 +205,15 @@
                   "plugins/calendly/api",
                   "plugins/calendly/database",
                   "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "Cloudflare",
+                "pages": [
+                  "plugins/cloudflare/overview",
+                  "plugins/cloudflare/get-credentials",
+                  "plugins/cloudflare/api",
+                  "plugins/cloudflare/database"
                 ]
               },
               {

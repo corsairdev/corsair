@@ -18,7 +18,7 @@ export const TelegramMessage = z
 		forward_from_chat_id: z.number().optional(),
 		forward_from_message_id: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TelegramChat = z
 	.object({
@@ -34,7 +34,7 @@ export const TelegramChat = z
 		invite_link: z.string().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TelegramUser = z
 	.object({
@@ -48,7 +48,7 @@ export const TelegramUser = z
 		is_premium: z.boolean().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TelegramFile = z
 	.object({
@@ -59,7 +59,7 @@ export const TelegramFile = z
 		file_path: z.string().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const TelegramPoll = z
 	.object({
@@ -73,7 +73,7 @@ export const TelegramPoll = z
 		allows_multiple_answers: z.boolean().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type TelegramMessage = z.infer<typeof TelegramMessage>;
 export type TelegramChat = z.infer<typeof TelegramChat>;

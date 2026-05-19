@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/cli",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -32,7 +32,7 @@
     "@clack/prompts": "^1.0.0",
     "c12": "^3.3.3",
     "corsair": "workspace:*",
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

@@ -34,9 +34,9 @@ const BookingsCreateInputSchema = z.object({
 	meetingUrl: z.string().optional(),
 	lengthInMinutes: z.number().optional(),
 	// Custom form field responses with dynamic field names and values
-	bookingFieldsResponses: z.record(z.unknown()).optional(),
+	bookingFieldsResponses: z.record(z.string(), z.unknown()).optional(),
 	// Additional metadata that can be attached to the booking
-	metadata: z.record(z.unknown()).optional(),
+	metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 const BookingsCancelInputSchema = z.object({
@@ -78,7 +78,7 @@ const AttendeeSchema = z
 		language: z.string().optional(),
 		absent: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const HostSchema = z
 	.object({
@@ -88,7 +88,7 @@ const HostSchema = z
 		username: z.string().optional(),
 		timeZone: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BookingSchema = z
 	.object({
@@ -106,7 +106,7 @@ const BookingSchema = z
 				id: z.number(),
 				slug: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		meetingUrl: z.string().nullable().optional(),
 		location: z.string().nullable().optional(),
@@ -120,11 +120,14 @@ const BookingSchema = z
 		hosts: z.array(HostSchema).optional(),
 		guests: z.array(z.string()).optional(),
 		// Custom metadata associated with the booking
-		metadata: z.record(z.unknown()).nullable().optional(),
+		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 		// Responses to custom booking form fields
-		bookingFieldsResponses: z.record(z.unknown()).nullable().optional(),
+		bookingFieldsResponses: z
+			.record(z.string(), z.unknown())
+			.nullable()
+			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CalResponseSchema = z
 	.object({
@@ -132,35 +135,35 @@ const CalResponseSchema = z
 		// Response data from Cal.com API - structure varies by endpoint
 		data: z.unknown().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BookingsListResponseSchema = CalResponseSchema.extend({
 	data: z.array(BookingSchema).optional(),
-}).passthrough();
+}).loose();
 
 const BookingsGetResponseSchema = CalResponseSchema.extend({
 	data: BookingSchema.optional(),
-}).passthrough();
+}).loose();
 
 const BookingsCreateResponseSchema = CalResponseSchema.extend({
 	data: BookingSchema.optional(),
-}).passthrough();
+}).loose();
 
 const BookingsCancelResponseSchema = CalResponseSchema.extend({
 	data: BookingSchema.optional(),
-}).passthrough();
+}).loose();
 
 const BookingsRescheduleResponseSchema = CalResponseSchema.extend({
 	data: BookingSchema.optional(),
-}).passthrough();
+}).loose();
 
 const BookingsConfirmResponseSchema = CalResponseSchema.extend({
 	data: BookingSchema.optional(),
-}).passthrough();
+}).loose();
 
 const BookingsDeclineResponseSchema = CalResponseSchema.extend({
 	data: BookingSchema.optional(),
-}).passthrough();
+}).loose();
 
 export const CalEndpointInputSchemas = {
 	bookingsList: BookingsListInputSchema,

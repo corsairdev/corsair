@@ -301,6 +301,10 @@ export type GithubEndpoints = {
 	repositoriesListBranches: GithubEndpoint<'repositoriesListBranches'>;
 	repositoriesListCommits: GithubEndpoint<'repositoriesListCommits'>;
 	repositoriesGetContent: GithubEndpoint<'repositoriesGetContent'>;
+	repositoriesStar: GithubEndpoint<'repositoriesStar'>;
+	repositoriesUnstar: GithubEndpoint<'repositoriesUnstar'>;
+	repositoriesCheckStarred: GithubEndpoint<'repositoriesCheckStarred'>;
+	repositoriesListStarred: GithubEndpoint<'repositoriesListStarred'>;
 	releasesList: GithubEndpoint<'releasesList'>;
 	releasesGet: GithubEndpoint<'releasesGet'>;
 	releasesCreate: GithubEndpoint<'releasesCreate'>;
@@ -606,6 +610,10 @@ const githubEndpointsNested = {
 		listBranches: RepositoriesEndpoints.listBranches,
 		listCommits: RepositoriesEndpoints.listCommits,
 		getContent: RepositoriesEndpoints.getContent,
+		star: RepositoriesEndpoints.star,
+		unstar: RepositoriesEndpoints.unstar,
+		checkStarred: RepositoriesEndpoints.checkStarred,
+		listStarred: RepositoriesEndpoints.listStarred,
 	},
 	releases: {
 		list: ReleasesEndpoints.list,
@@ -690,6 +698,22 @@ export const githubEndpointSchemas = {
 	'repositories.getContent': {
 		input: GithubEndpointInputSchemas.repositoriesGetContent,
 		output: GithubEndpointOutputSchemas.repositoriesGetContent,
+	},
+	'repositories.star': {
+		input: GithubEndpointInputSchemas.repositoriesStar,
+		output: GithubEndpointOutputSchemas.repositoriesStar,
+	},
+	'repositories.unstar': {
+		input: GithubEndpointInputSchemas.repositoriesUnstar,
+		output: GithubEndpointOutputSchemas.repositoriesUnstar,
+	},
+	'repositories.checkStarred': {
+		input: GithubEndpointInputSchemas.repositoriesCheckStarred,
+		output: GithubEndpointOutputSchemas.repositoriesCheckStarred,
+	},
+	'repositories.listStarred': {
+		input: GithubEndpointInputSchemas.repositoriesListStarred,
+		output: GithubEndpointOutputSchemas.repositoriesListStarred,
 	},
 	'releases.list': {
 		input: GithubEndpointInputSchemas.releasesList,
@@ -1504,6 +1528,22 @@ const githubEndpointMeta = {
 	'repositories.getContent': {
 		riskLevel: 'read',
 		description: 'Get file or directory content from a repository',
+	},
+	'repositories.star': {
+		riskLevel: 'write',
+		description: 'Star a repository for the authenticated user',
+	},
+	'repositories.unstar': {
+		riskLevel: 'write',
+		description: 'Unstar a repository for the authenticated user',
+	},
+	'repositories.checkStarred': {
+		riskLevel: 'read',
+		description: 'Check whether the authenticated user has starred a repository',
+	},
+	'repositories.listStarred': {
+		riskLevel: 'read',
+		description: 'List repositories starred by the authenticated user',
 	},
 	'releases.list': {
 		riskLevel: 'read',

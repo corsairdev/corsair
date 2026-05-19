@@ -24,21 +24,21 @@ const AssistantsCreateInputSchema = z.object({
 	// provider-specific objects (e.g. OpenAI, ElevenLabs, Deepgram) whose
 	// shapes vary by provider selection and cannot be statically typed without
 	// re-implementing the full Vapi OpenAPI spec.
-	model: z.record(z.unknown()).optional(),
-	voice: z.record(z.unknown()).optional(),
-	transcriber: z.record(z.unknown()).optional(),
+	model: z.record(z.string(), z.unknown()).optional(),
+	voice: z.record(z.string(), z.unknown()).optional(),
+	transcriber: z.record(z.string(), z.unknown()).optional(),
 	firstMessage: z.string().optional(),
 	systemPrompt: z.string().optional(),
 	endCallMessage: z.string().optional(),
 	endCallPhrases: z.array(z.string()).optional(),
-	metadata: z.record(z.unknown()).optional(),
+	metadata: z.record(z.string(), z.unknown()).optional(),
 	serverUrl: z.string().optional(),
 	serverUrlSecret: z.string().optional(),
-	analysisPlan: z.record(z.unknown()).optional(),
-	artifactPlan: z.record(z.unknown()).optional(),
-	messagePlan: z.record(z.unknown()).optional(),
-	startSpeakingPlan: z.record(z.unknown()).optional(),
-	stopSpeakingPlan: z.record(z.unknown()).optional(),
+	analysisPlan: z.record(z.string(), z.unknown()).optional(),
+	artifactPlan: z.record(z.string(), z.unknown()).optional(),
+	messagePlan: z.record(z.string(), z.unknown()).optional(),
+	startSpeakingPlan: z.record(z.string(), z.unknown()).optional(),
+	stopSpeakingPlan: z.record(z.string(), z.unknown()).optional(),
 	hipaaEnabled: z.boolean().optional(),
 	clientMessages: z.array(z.string()).optional(),
 	serverMessages: z.array(z.string()).optional(),
@@ -65,28 +65,26 @@ const AssistantSchema = z
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 		name: z.string().nullable().optional(),
-		model: z.record(z.unknown()).optional(),
-		voice: z.record(z.unknown()).optional(),
-		transcriber: z.record(z.unknown()).optional(),
+		model: z.record(z.string(), z.unknown()).optional(),
+		voice: z.record(z.string(), z.unknown()).optional(),
+		transcriber: z.record(z.string(), z.unknown()).optional(),
 		firstMessage: z.string().nullable().optional(),
 		systemPrompt: z.string().nullable().optional(),
 		endCallMessage: z.string().nullable().optional(),
 		endCallPhrases: z.array(z.string()).optional(),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 		serverUrl: z.string().nullable().optional(),
 		hipaaEnabled: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AssistantsListResponseSchema = z.array(AssistantSchema);
-const AssistantsDeleteResponseSchema = z
-	.object({ id: z.string() })
-	.passthrough();
+const AssistantsDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 // ── Call schemas ──────────────────────────────────────────────────────────────
 // Nested fields (assistant, squad, phoneNumber, customer, artifact, analysis,
 // messages, metadata) are opaque Vapi-defined objects that vary by provider
-// and call type; z.record(z.unknown()) avoids duplicating the full upstream spec.
+// and call type; z.record(z.string(), z.unknown()) avoids duplicating the full upstream spec.
 
 const CallsListInputSchema = PaginationInputSchema.extend({
 	id: z.string().optional(),
@@ -96,16 +94,16 @@ const CallsListInputSchema = PaginationInputSchema.extend({
 
 const CallsCreateInputSchema = z.object({
 	assistantId: z.string().optional(),
-	assistant: z.record(z.unknown()).optional(),
-	assistantOverrides: z.record(z.unknown()).optional(),
+	assistant: z.record(z.string(), z.unknown()).optional(),
+	assistantOverrides: z.record(z.string(), z.unknown()).optional(),
 	squadId: z.string().optional(),
-	squad: z.record(z.unknown()).optional(),
+	squad: z.record(z.string(), z.unknown()).optional(),
 	phoneNumberId: z.string().optional(),
-	phoneNumber: z.record(z.unknown()).optional(),
+	phoneNumber: z.record(z.string(), z.unknown()).optional(),
 	customerId: z.string().optional(),
-	customer: z.record(z.unknown()).optional(),
+	customer: z.record(z.string(), z.unknown()).optional(),
 	name: z.string().optional(),
-	metadata: z.record(z.unknown()).optional(),
+	metadata: z.record(z.string(), z.unknown()).optional(),
 	scheduledAt: z.string().optional(),
 });
 
@@ -114,8 +112,8 @@ const CallsGetInputSchema = z.object({ id: z.string() });
 const CallsUpdateInputSchema = z.object({
 	id: z.string(),
 	name: z.string().optional(),
-	assistantOverrides: z.record(z.unknown()).optional(),
-	metadata: z.record(z.unknown()).optional(),
+	assistantOverrides: z.record(z.string(), z.unknown()).optional(),
+	metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 const CallsDeleteInputSchema = z.object({ id: z.string() });
@@ -135,15 +133,15 @@ const CallSchema = z
 		startedAt: z.string().nullable().optional(),
 		endedAt: z.string().nullable().optional(),
 		cost: z.number().optional(),
-		messages: z.array(z.record(z.unknown())).optional(),
-		artifact: z.record(z.unknown()).optional(),
-		analysis: z.record(z.unknown()).optional(),
-		metadata: z.record(z.unknown()).optional(),
+		messages: z.array(z.record(z.string(), z.unknown())).optional(),
+		artifact: z.record(z.string(), z.unknown()).optional(),
+		analysis: z.record(z.string(), z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CallsListResponseSchema = z.array(CallSchema);
-const CallsDeleteResponseSchema = z.object({ id: z.string() }).passthrough();
+const CallsDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 // ── Phone Number schemas ──────────────────────────────────────────────────────
 
@@ -189,24 +187,22 @@ const PhoneNumberSchema = z
 		squadId: z.string().nullable().optional(),
 		serverUrl: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PhoneNumbersListResponseSchema = z.array(PhoneNumberSchema);
-const PhoneNumbersDeleteResponseSchema = z
-	.object({ id: z.string() })
-	.passthrough();
+const PhoneNumbersDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 // ── Squad schemas ─────────────────────────────────────────────────────────────
 // members and membersOverrides are arrays/maps of assistant configurations with
-// provider-specific shapes; z.record(z.unknown()) avoids duplicating upstream types.
+// provider-specific shapes; z.record(z.string(), z.unknown()) avoids duplicating upstream types.
 
 const SquadsListInputSchema = PaginationInputSchema;
 
 const SquadsCreateInputSchema = z.object({
 	name: z.string().optional(),
-	members: z.array(z.record(z.unknown())).optional(),
-	membersOverrides: z.record(z.unknown()).optional(),
-	metadata: z.record(z.unknown()).optional(),
+	members: z.array(z.record(z.string(), z.unknown())).optional(),
+	membersOverrides: z.record(z.string(), z.unknown()).optional(),
+	metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 const SquadsGetInputSchema = z.object({ id: z.string() });
@@ -224,27 +220,27 @@ const SquadSchema = z
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 		name: z.string().nullable().optional(),
-		members: z.array(z.record(z.unknown())).optional(),
-		metadata: z.record(z.unknown()).optional(),
+		members: z.array(z.record(z.string(), z.unknown())).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SquadsListResponseSchema = z.array(SquadSchema);
-const SquadsDeleteResponseSchema = z.object({ id: z.string() }).passthrough();
+const SquadsDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 // ── Tool schemas ──────────────────────────────────────────────────────────────
 // messages, function, and server are opaque Vapi-defined objects that vary by
-// tool type and provider; z.record(z.unknown()) avoids duplicating upstream types.
+// tool type and provider; z.record(z.string(), z.unknown()) avoids duplicating upstream types.
 
 const ToolsListInputSchema = PaginationInputSchema;
 
 const ToolsCreateInputSchema = z.object({
 	type: z.string().optional(),
 	async: z.boolean().optional(),
-	messages: z.array(z.record(z.unknown())).optional(),
-	function: z.record(z.unknown()).optional(),
-	server: z.record(z.unknown()).optional(),
-	metadata: z.record(z.unknown()).optional(),
+	messages: z.array(z.record(z.string(), z.unknown())).optional(),
+	function: z.record(z.string(), z.unknown()).optional(),
+	server: z.record(z.string(), z.unknown()).optional(),
+	metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 const ToolsGetInputSchema = z.object({ id: z.string() });
@@ -262,14 +258,14 @@ const ToolSchema = z
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 		type: z.string().optional(),
-		function: z.record(z.unknown()).optional(),
-		server: z.record(z.unknown()).optional(),
-		metadata: z.record(z.unknown()).optional(),
+		function: z.record(z.string(), z.unknown()).optional(),
+		server: z.record(z.string(), z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ToolsListResponseSchema = z.array(ToolSchema);
-const ToolsDeleteResponseSchema = z.object({ id: z.string() }).passthrough();
+const ToolsDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 // ── File schemas ──────────────────────────────────────────────────────────────
 
@@ -296,12 +292,12 @@ const FileSchema = z
 		size: z.number().optional(),
 		status: z.string().optional(),
 		url: z.string().optional(),
-		metadata: z.record(z.unknown()).optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FilesListResponseSchema = z.array(FileSchema);
-const FilesDeleteResponseSchema = z.object({ id: z.string() }).passthrough();
+const FilesDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 // ── Knowledge Base schemas ────────────────────────────────────────────────────
 
@@ -312,16 +308,14 @@ const KnowledgeBasesListInputSchema = PaginationInputSchema;
 const KnowledgeBasesCreateInputSchema = z
 	.object({
 		provider: z.string(),
-		server: z.object({ url: z.string() }).passthrough().optional(),
+		server: z.object({ url: z.string() }).loose().optional(),
 		name: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const KnowledgeBasesGetInputSchema = z.object({ id: z.string() });
 
-const KnowledgeBasesUpdateInputSchema = z
-	.object({ id: z.string() })
-	.passthrough();
+const KnowledgeBasesUpdateInputSchema = z.object({ id: z.string() }).loose();
 
 const KnowledgeBasesDeleteInputSchema = z.object({ id: z.string() });
 
@@ -333,14 +327,12 @@ const KnowledgeBaseSchema = z
 		updatedAt: z.string().optional(),
 		provider: z.string().optional(),
 		name: z.string().nullable().optional(),
-		server: z.record(z.unknown()).optional(),
+		server: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const KnowledgeBasesListResponseSchema = z.array(KnowledgeBaseSchema);
-const KnowledgeBasesDeleteResponseSchema = z
-	.object({ id: z.string() })
-	.passthrough();
+const KnowledgeBasesDeleteResponseSchema = z.object({ id: z.string() }).loose();
 
 // ── Input type map ────────────────────────────────────────────────────────────
 
