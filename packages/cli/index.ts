@@ -747,7 +747,7 @@ function printHelp() {
 		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
 		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
-		'pnpm corsair add <plugin> [--dry-run]           Install a plugin and wire it into corsair.ts',
+		'pnpm corsair add <plugin> [--dry-run] [--skip-install] [--skip-config]  Install a plugin and wire it into corsair.ts',
 		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'pnpm corsair ui [--port=4317] [--no-open]       Open the Corsair Studio dashboard (requires @corsair-dev/studio)',
 		'pnpm corsair script --code "<js>" [--tenant=<id>]',
@@ -1027,7 +1027,9 @@ async function main() {
 	if (command === 'add') {
 		const addArgs = parseAddArgs(args.slice(1));
 		if (!addArgs.plugin) {
-			console.error('[#corsair]: Usage: corsair add <plugin> [--dry-run]');
+			console.error(
+				'[#corsair]: Usage: corsair add <plugin> [--dry-run] [--skip-install] [--skip-config]',
+			);
 			console.error('[#corsair]: Example: corsair add slack');
 			process.exit(1);
 		}

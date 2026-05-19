@@ -72,6 +72,11 @@ export type AddOptions = {
 	skipConfig?: boolean;
 };
 
+type ResolvedPlugin = {
+	package: string;
+	id: string;
+};
+
 function detectPackageManager(cwd: string): PackageManager {
 	if (fs.existsSync(path.join(cwd, 'pnpm-lock.yaml'))) return 'pnpm';
 	if (fs.existsSync(path.join(cwd, 'yarn.lock'))) return 'yarn';
@@ -97,10 +102,10 @@ function installCommand(pm: PackageManager, pkg: string): string {
 	}
 }
 
-function resolvePluginPackage(pluginId: string): string | null {
+function resolvePluginPackage(pluginId: string): ResolvedPlugin | null {
 	const normalised = pluginId.toLowerCase().replace(/^@corsair-dev\//, '');
 	if (KNOWN_PLUGINS.includes(normalised as (typeof KNOWN_PLUGINS)[number])) {
-		return `@corsair-dev/${normalised}`;
+		return { package: `@corsair-dev/${normalised}`, id: normalised };
 	}
 	return null;
 }
@@ -124,6 +129,18 @@ function findConfigPath(cwd: string): string | null {
 	return null;
 }
 
+function findClosingBracket(source: string, openIndex: number): number {
+	let depth = 0;
+	for (let i = openIndex; i < source.length; i++) {
+		if (source[i] === '[') depth++;
+		else if (source[i] === ']') {
+			depth--;
+			if (depth === 0) return i;
+		}
+	}
+	return -1;
+}
+
 function updateConfig(
 	configPath: string,
 	pluginId: string,
@@ -132,11 +149,10 @@ function updateConfig(
 	const importName = pluginId;
 	const packageName = `@corsair-dev/${pluginId}`;
 
-	// Already registered?
-	if (
-		source.includes(`${importName}(`) ||
-		source.includes(`${importName} ()`)
-	) {
+	// Already registered? Use word-boundary-aware match to avoid false positives
+	// (e.g. 'cal' matching 'local(' or 'box' matching 'sandbox(')
+	const registeredRegex = new RegExp(`\\b${importName}\\s*\\(`);
+	if (registeredRegex.test(source)) {
 		return {
 			updated: false,
 			reason: `Plugin '${pluginId}' is already registered in ${path.basename(configPath)}`,
@@ -166,31 +182,45 @@ function updateConfig(
 		}
 	}
 
-	// Add to plugins array
-	// Match: plugins: [ ... ] or plugins:[ ... ]
-	const pluginsRegex = /(plugins\s*:\s*\[)([^\]]*)(\])/;
-	const pluginsMatch = newSource.match(pluginsRegex);
-
-	if (pluginsMatch) {
-		const existing = pluginsMatch[2] ?? '';
-		const trimmedExisting = existing.trim();
-		let newPlugins: string;
-
-		if (!trimmedExisting) {
-			newPlugins = `${importName}()`;
-		} else if (trimmedExisting.endsWith(',')) {
-			newPlugins = `${existing} ${importName}()`;
-		} else {
-			newPlugins = `${existing}, ${importName}()`;
-		}
-
-		newSource = newSource.replace(pluginsRegex, `$1${newPlugins}$3`);
-	} else {
+	// Add to plugins array using bracket-counting to handle nested brackets
+	// (e.g. vapi({ scopes: ['a', 'b'] }) won't break the parser)
+	const pluginsKey = newSource.indexOf('plugins:');
+	if (pluginsKey === -1) {
 		return {
 			updated: false,
-			reason: 'Could not find plugins array in config. Add it manually.',
+			reason: 'Could not find plugins key in config. Add it manually.',
 		};
 	}
+
+	const bracketStart = newSource.indexOf('[', pluginsKey);
+	if (bracketStart === -1) {
+		return {
+			updated: false,
+			reason: 'Could not find plugins array opening bracket. Add it manually.',
+		};
+	}
+
+	const bracketEnd = findClosingBracket(newSource, bracketStart);
+	if (bracketEnd === -1) {
+		return {
+			updated: false,
+			reason: 'Could not find plugins array closing bracket. Add it manually.',
+		};
+	}
+
+	const arrayContent = newSource.slice(bracketStart + 1, bracketEnd);
+	const trimmedContent = arrayContent.trim();
+
+	let newContent: string;
+	if (!trimmedContent) {
+		newContent = `${importName}()`;
+	} else if (trimmedContent.endsWith(',')) {
+		newContent = `${arrayContent} ${importName}()`;
+	} else {
+		newContent = `${arrayContent}, ${importName}()`;
+	}
+
+	newSource = `${newSource.slice(0, bracketStart + 1)}${newContent}${newSource.slice(bracketEnd)}`;
 
 	fs.writeFileSync(configPath, newSource, 'utf-8');
 	return { updated: true };
@@ -201,19 +231,20 @@ export async function runAdd(options: AddOptions): Promise<void> {
 	const cwd = process.cwd();
 
 	// Validate plugin id
-	const pkg = resolvePluginPackage(plugin);
-	if (!pkg) {
+	const resolved = resolvePluginPackage(plugin);
+	if (!resolved) {
 		console.error(`[#corsair]: Unknown plugin '${plugin}'.`);
 		console.error(`[#corsair]: Known plugins: ${KNOWN_PLUGINS.join(', ')}`);
 		process.exit(1);
 	}
 
+	const { package: pkg, id: pluginId } = resolved;
 	const pm = detectPackageManager(cwd);
 	const installCmd = installCommand(pm, pkg);
 	const configPath = findConfigPath(cwd);
 
 	// Summary
-	console.log(`[#corsair]: Plugin: ${plugin}`);
+	console.log(`[#corsair]: Plugin: ${pluginId}`);
 	console.log(`[#corsair]: Package: ${pkg}`);
 	console.log(`[#corsair]: Package manager: ${pm}`);
 	if (configPath) {
@@ -224,12 +255,14 @@ export async function runAdd(options: AddOptions): Promise<void> {
 		console.log('');
 		console.log('[#corsair]: Dry run — no changes made.');
 		console.log('');
-		console.log('  Would run:');
-		console.log(`    ${installCmd}`);
-		if (configPath) {
+		if (!skipInstall) {
+			console.log('  Would run:');
+			console.log(`    ${installCmd}`);
+		}
+		if (!skipConfig && configPath) {
 			console.log(`  Would update: ${path.relative(cwd, configPath)}`);
-			console.log(`    - Add import: import { ${plugin} } from '${pkg}';`);
-			console.log(`    - Add to plugins: ${plugin}()`);
+			console.log(`    - Add import: import { ${pluginId} } from '${pkg}';`);
+			console.log(`    - Add to plugins: ${pluginId}()`);
 		}
 		console.log('');
 		return;
@@ -256,17 +289,17 @@ export async function runAdd(options: AddOptions): Promise<void> {
 			console.log('[#corsair]: No corsair.ts found. Create one manually:');
 			console.log('');
 			console.log(`  import { createCorsair } from 'corsair';`);
-			console.log(`  import { ${plugin} } from '${pkg}';`);
+			console.log(`  import { ${pluginId} } from '${pkg}';`);
 			console.log('');
 			console.log(`  export const corsair = createCorsair({`);
-			console.log(`    plugins: [${plugin}()],`);
+			console.log(`    plugins: [${pluginId}()],`);
 			console.log(`  });`);
 			console.log('');
 		} else {
-			const result = updateConfig(configPath, plugin);
+			const result = updateConfig(configPath, pluginId);
 			if (result.updated) {
 				console.log(
-					`[#corsair]: Updated ${path.relative(cwd, configPath)} with ${plugin} plugin.`,
+					`[#corsair]: Updated ${path.relative(cwd, configPath)} with ${pluginId} plugin.`,
 				);
 			} else {
 				console.log(`[#corsair]: ${result.reason}`);
@@ -278,10 +311,10 @@ export async function runAdd(options: AddOptions): Promise<void> {
 	console.log('');
 	console.log('[#corsair]: Next steps:');
 	console.log(
-		`  1. Run 'corsair auth --plugin=${plugin}' to set up credentials.`,
+		`  1. Run 'corsair auth --plugin=${pluginId}' to set up credentials.`,
 	);
 	console.log(
-		`  2. Visit https://docs.corsair.dev/plugins/${plugin} for setup guide.`,
+		`  2. Visit https://docs.corsair.dev/plugins/${pluginId} for setup guide.`,
 	);
 	console.log('');
 }
