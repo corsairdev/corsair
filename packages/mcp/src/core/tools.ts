@@ -11,32 +11,6 @@ export type CorsairToolDef = {
 	handler: (args: Record<string, unknown>) => Promise<CallToolResult>;
 };
 
-function isAuthError(err: unknown): boolean {
-	if (
-		err != null &&
-		typeof err === 'object' &&
-		'status' in err &&
-		(err as { status: unknown }).status === 401
-	) {
-		return true;
-	}
-	const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
-	return (
-		msg.includes('unauthorized') ||
-		msg.includes('invalid_auth') ||
-		msg.includes('token_revoked') ||
-		msg.includes('token_expired') ||
-		msg.includes('not_authed') ||
-		msg.includes('credentials not configured') ||
-		msg.includes('integration not found') ||
-		msg.includes('account not found') ||
-		msg.includes('no access_token') ||
-		msg.includes('access_denied') ||
-		msg.includes('invalid token') ||
-		msg.includes('authentication failed')
-	);
-}
-
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
@@ -46,7 +20,6 @@ export function buildCorsairToolDefs(
 		basePermissionUrl,
 		setup,
 		tenantId: defaultTenantId,
-		makeConnectLink,
 	} = options;
 
 	const defs: CorsairToolDef[] = [
@@ -122,26 +95,12 @@ export function buildCorsairToolDefs(
 							? `\nCause: ${String(err.cause)}`
 							: '';
 					const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-
-					let connectNote = '';
-					if (isAuthError(err) && makeConnectLink) {
-						try {
-							const url = await makeConnectLink({ tenantId: defaultTenantId });
-							connectNote =
-								`\n\nAuthentication required — this integration is not connected yet.\n` +
-								`Tell the user to authorize here: ${url}\n` +
-								`Ask them to let you know when done, then retry.`;
-						} catch {
-							// don't block on connect link errors
-						}
-					}
-
 					return {
 						isError: true,
 						content: [
 							{
 								type: 'text',
-								text: `Error running snippet: ${message}${extra}\n${full}${connectNote}`,
+								text: `Error running snippet: ${message}${extra}\n${full}`,
 							},
 						],
 					};
@@ -201,7 +160,7 @@ export function buildCorsairToolDefs(
 						'Full endpoint path from the PERMISSION_REQUIRED message, e.g. "slack.messages.post"',
 					),
 				args: z
-					.record(z.unknown())
+					.record(z.string(), z.unknown())
 					.describe(
 						'The arguments object from the PERMISSION_REQUIRED message',
 					),

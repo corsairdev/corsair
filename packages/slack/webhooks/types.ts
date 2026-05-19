@@ -24,7 +24,7 @@ export const BotProfileSchema = z.object({
 	name: z.string(),
 	app_id: z.string(),
 	team_id: z.string(),
-	icons: z.record(z.string()),
+	icons: z.record(z.string(), z.string()),
 	updated: z.number(),
 	deleted: z.boolean(),
 });
@@ -148,7 +148,7 @@ export const GenericMessageEventSchema = z.object({
 			}),
 		)
 		.optional(),
-	assistant_thread: z.record(z.unknown()).optional(),
+	assistant_thread: z.record(z.string(), z.unknown()).optional(),
 });
 export type GenericMessageEvent = z.infer<typeof GenericMessageEventSchema>;
 
@@ -394,9 +394,7 @@ export const SlackMessageObjectSchema = z.object({
 	edited: z.object({ user: z.string(), ts: z.string() }).optional(),
 	blocks: z
 		.array(
-			z
-				.object({ type: z.string(), block_id: z.string().optional() })
-				.passthrough(),
+			z.object({ type: z.string(), block_id: z.string().optional() }).loose(),
 		)
 		.optional(),
 	thread_ts: z.string().optional(),
@@ -671,7 +669,7 @@ const UserProfileSchema = z.object({
 	image_1024: z.string().optional(),
 	team: z.string(),
 	fields: z.union([
-		z.record(z.object({ value: z.string(), alt: z.string() })),
+		z.record(z.string(), z.object({ value: z.string(), alt: z.string() })),
 		z.array(z.never()),
 		z.null(),
 	]),

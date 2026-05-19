@@ -147,7 +147,7 @@ const MeetingAnalyticsSchema = z.object({
 		.optional(),
 	// speakers is a list; sub-type fields vary — use passthrough
 	// type: unknown[] - Fireflies speaker analytics sub-type is not publicly documented
-	speakers: z.array(z.record(z.unknown())).nullable().optional(),
+	speakers: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
 });
 
 // ── Input Schemas ────────────────────────────────────────────────────────────

@@ -20,6 +20,7 @@ export const BaseProviders = [
 	'box',
 	'cal',
 	'calendly',
+	'cloudflare',
 	'cursor',
 	'discord',
 	'dodopayments',
@@ -65,6 +66,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'xquik',
 	'youtube',
 	'zoom',
 ] as const;
@@ -77,6 +79,7 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'cloudflare'
 	| 'cursor'
 	| 'discord'
 	| 'dodopayments'
@@ -122,6 +125,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'xquik'
 	| 'youtube'
 	| 'zoom'
 	| (string & {});

@@ -1,25 +1,19 @@
 import 'dotenv/config';
 
-import { setupCorsair } from 'corsair/setup';
 import { corsair } from '@/server/corsair';
 
 const main = async () => {
-	await setupCorsair(corsair);
+	if (!process.env.XQUIK_API_KEY) {
+		console.log('Set XQUIK_API_KEY to run the Xquik demo request.');
+		return;
+	}
 
-	// List all assistants
-	const assistants = await corsair.vapi.api.assistants.list({});
-	console.log('Assistants:', JSON.stringify(assistants, null, 2));
-
-	// Create an assistant
-	const created = await corsair.vapi.api.assistants.create({
-		name: 'Demo Assistant',
-		firstMessage: 'Hello! How can I help you today?',
+	const trends = await corsair.xquik.trends.get({
+		count: 5,
+		woeid: 1,
 	});
-	console.log('Created:', created.id, created.name);
 
-	// List calls
-	const calls = await corsair.vapi.api.calls.list({ limit: 5 });
-	console.log('Recent calls:', calls.length);
+	console.log(trends);
 };
 
 main().catch((err) => {

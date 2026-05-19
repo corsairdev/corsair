@@ -217,7 +217,7 @@ const SentryEventOutputSchema = z.object({
 	tags: z.array(SentryTagSchema).nullable().optional(),
 	// Sentry's event context is a free-form map whose value shapes vary by
 	// platform and SDK; unknown is the only honest type here.
-	context: z.record(z.unknown()).nullable().optional(),
+	context: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
 const SentryIssueOutputSchema = z.object({
@@ -240,7 +240,7 @@ const SentryIssueOutputSchema = z.object({
 	isSubscribed: z.boolean().nullable().optional(),
 	// Issue metadata is an open-ended map set by Sentry internals; its value
 	// type differs per issue type (string, number, object), so unknown is correct.
-	metadata: z.record(z.unknown()).nullable().optional(),
+	metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 	project: z
 		.object({
 			id: z.string(),

@@ -74,7 +74,7 @@ const GitlabPushCommitSchema = z
 		modified: z.array(z.string()).optional(),
 		removed: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const PushEventSchema = z
 	.object({
@@ -97,12 +97,12 @@ export const PushEventSchema = z
 				path_with_namespace: z.string().optional(),
 				default_branch: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		commits: z.array(GitlabPushCommitSchema).optional(),
 		total_commits_count: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export interface PushEvent extends GitlabWebhookPayload {
 	object_kind: 'push';
@@ -129,7 +129,7 @@ export const MergeRequestEventSchema = z
 				username: z.string().optional(),
 				avatar_url: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		project: z
 			.object({
@@ -138,7 +138,7 @@ export const MergeRequestEventSchema = z
 				web_url: z.string().optional(),
 				path_with_namespace: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		object_attributes: z
 			.object({
@@ -154,10 +154,10 @@ export const MergeRequestEventSchema = z
 				merge_status: z.string().optional(),
 				draft: z.boolean().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export interface MergeRequestEvent extends GitlabWebhookPayload {
 	object_kind: 'merge_request';
@@ -180,7 +180,7 @@ export const IssueEventSchema = z
 				username: z.string().optional(),
 				avatar_url: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		project: z
 			.object({
@@ -189,7 +189,7 @@ export const IssueEventSchema = z
 				web_url: z.string().optional(),
 				path_with_namespace: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		object_attributes: z
 			.object({
@@ -202,10 +202,10 @@ export const IssueEventSchema = z
 				description: z.string().nullable().optional(),
 				confidential: z.boolean().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export interface IssueEvent extends GitlabWebhookPayload {
 	object_kind: 'issue';
@@ -231,7 +231,7 @@ export const PipelineEventSchema = z
 				finished_at: z.string().nullable().optional(),
 				duration: z.number().nullable().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		user: z
 			.object({
@@ -240,7 +240,7 @@ export const PipelineEventSchema = z
 				username: z.string().optional(),
 				avatar_url: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		project: z
 			.object({
@@ -249,7 +249,7 @@ export const PipelineEventSchema = z
 				web_url: z.string().optional(),
 				path_with_namespace: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		builds: z
 			.array(
@@ -260,11 +260,11 @@ export const PipelineEventSchema = z
 						name: z.string().optional(),
 						status: z.string().optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export interface PipelineEvent extends GitlabWebhookPayload {
 	object_kind: 'pipeline';
@@ -287,7 +287,7 @@ export const NoteEventSchema = z
 				username: z.string().optional(),
 				avatar_url: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		project: z
 			.object({
@@ -296,7 +296,7 @@ export const NoteEventSchema = z
 				web_url: z.string().optional(),
 				path_with_namespace: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		object_attributes: z
 			.object({
@@ -307,7 +307,7 @@ export const NoteEventSchema = z
 				url: z.string().optional(),
 				action: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		issue: z
 			.object({
@@ -315,7 +315,7 @@ export const NoteEventSchema = z
 				iid: z.number().optional(),
 				title: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		merge_request: z
 			.object({
@@ -323,17 +323,17 @@ export const NoteEventSchema = z
 				iid: z.number().optional(),
 				title: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		commit: z
 			.object({
 				id: z.string().optional(),
 				message: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export interface NoteEvent extends GitlabWebhookPayload {
 	object_kind: 'note';

@@ -30,7 +30,7 @@ export const BoxFileMiniSchema = z
 		sha1: z.string().optional(),
 		name: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BoxFolderMiniSchema = z
 	.object({
@@ -40,7 +40,7 @@ export const BoxFolderMiniSchema = z
 		etag: z.string().optional(),
 		name: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BoxCollaborationMiniSchema = z
 	.object({
@@ -49,7 +49,7 @@ export const BoxCollaborationMiniSchema = z
 		role: z.string().optional(),
 		status: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BoxCommentMiniSchema = z
 	.object({
@@ -58,10 +58,10 @@ export const BoxCommentMiniSchema = z
 		message: z.string().optional(),
 		created_at: z.string().optional(),
 		// unknown: Box webhook comment.item can reference a file, folder, or task — no fixed schema
-		item: z.record(z.unknown()).optional(),
+		item: z.record(z.string(), z.unknown()).optional(),
 		created_by: BoxUserMiniSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BoxMetadataInstanceMiniSchema = z
 	.object({
@@ -70,7 +70,7 @@ export const BoxMetadataInstanceMiniSchema = z
 		scope: z.string().optional(),
 		template_key: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const BoxSharedLinkMiniSchema = z
 	.object({
@@ -83,7 +83,7 @@ export const BoxSharedLinkMiniSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Webhook payload envelope ──────────────────────────────────────────────────
 
@@ -96,8 +96,8 @@ export const BoxWebhookPayloadSchema = z.object({
 	created_by: BoxUserMiniSchema,
 	// source varies by trigger type; typed as passthrough record
 	// any/unknown here because Box sends different source shapes per trigger
-	source: z.record(z.unknown()),
-	additional_info: z.record(z.unknown()).optional(),
+	source: z.record(z.string(), z.unknown()),
+	additional_info: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type BoxWebhookPayload = z.infer<typeof BoxWebhookPayloadSchema>;

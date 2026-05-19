@@ -16,10 +16,10 @@ const AttendeeSchema = z
 		email: z.string(),
 		timeZone: z.string().optional(),
 		// Language configuration object with dynamic keys and values
-		language: z.record(z.unknown()).optional(),
+		language: z.record(z.string(), z.unknown()).optional(),
 		absent: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const HostSchema = z
 	.object({
@@ -29,7 +29,7 @@ const HostSchema = z
 		username: z.string().optional(),
 		timeZone: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BookingDataSchema = z
 	.object({
@@ -50,9 +50,9 @@ const BookingDataSchema = z
 		attendees: z.array(AttendeeSchema).optional(),
 		hosts: z.array(HostSchema).optional(),
 		// Flexible metadata object containing arbitrary key-value pairs from Cal.com
-		metadata: z.record(z.unknown()).nullable().optional(),
+		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Webhook event schemas
@@ -92,7 +92,7 @@ export const PingEventSchema = z.object({
 	triggerEvent: z.literal('PING'),
 	createdAt: z.string().optional(),
 	// Ping payload can contain arbitrary test data
-	payload: z.record(z.unknown()).optional(),
+	payload: z.record(z.string(), z.unknown()).optional(),
 });
 export type PingEvent = z.infer<typeof PingEventSchema>;
 

@@ -72,7 +72,7 @@ const PlaylistItemSchema = z
 		status: z.object({ privacyStatus: z.string().optional() }).optional(),
 		contentDetails: z.object({ itemCount: z.number().optional() }).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PlaylistsListResponseSchema = z
 	.object({
@@ -83,7 +83,7 @@ const PlaylistsListResponseSchema = z
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PlaylistsCreateInputSchema = z.object({
 	title: z.string().describe('Playlist title (max 150 characters)'),
@@ -103,7 +103,7 @@ const PlaylistsCreateResponseSchema = z
 		status: z.object({ privacyStatus: z.string().optional() }).optional(),
 		contentDetails: z.object({ itemCount: z.number().optional() }).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PlaylistsUpdateInputSchema = z.object({
 	id: z.string().describe('The ID of the playlist to update'),
@@ -171,7 +171,7 @@ const PlaylistItemResourceSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PlaylistItemsAddInputSchema = z.object({
 	videoId: z.string().describe('The YouTube video ID to add to the playlist'),
@@ -206,7 +206,7 @@ const PlaylistItemsListResponseSchema = z
 		eventId: z.string().optional(),
 		visitorId: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PlaylistItemsUpdateInputSchema = z.object({
 	id: z.string().describe('The ID of the playlist item to update'),
@@ -291,7 +291,7 @@ const VideoResourceSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideosGetInputSchema = z.object({
 	video_id: z.string().describe('The YouTube video ID'),
@@ -310,7 +310,7 @@ const VideosGetResponseSchema = z
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideosGetBatchInputSchema = z.object({
 	id: z
@@ -336,7 +336,7 @@ const VideosGetBatchResponseSchema = z
 		prevPageToken: z.string().optional(),
 		composio_execution_message: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideosListInputSchema = z.object({
 	mine: z
@@ -359,7 +359,7 @@ const VideosListResponseSchema = z
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideosListMostPopularInputSchema = z.object({
 	part: z.string().optional(),
@@ -404,7 +404,7 @@ const VideosUpdateResponseSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideoFileSchema = z.object({
 	name: z.string().optional(),
@@ -431,7 +431,7 @@ const VideosUploadResponseSchema = z
 		// Upload response structure varies by resumable upload state and YouTube API version
 		response_data: z.unknown().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideosUploadMultipartInputSchema = z.object({
 	title: z.string().describe('Video title'),
@@ -448,7 +448,7 @@ const VideosUploadMultipartResponseSchema = z
 	.object({
 		video: VideoResourceSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideosDeleteInputSchema = z.object({
 	videoId: z.string().describe('The ID of the video to delete'),
@@ -512,7 +512,7 @@ const ChannelResourceSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsGetStatisticsInputSchema = z.object({
 	id: z.string().optional().describe('Channel ID(s), comma-separated'),
@@ -538,7 +538,7 @@ const ChannelsGetStatisticsResponseSchema = z
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsGetIdByHandleInputSchema = z.object({
 	channel_handle: z
@@ -585,16 +585,16 @@ const ChannelsGetActivitiesResponseSchema = z
 							})
 							.optional(),
 						// contentDetails varies per activity type (upload, like, favorite, etc.) — no fixed shape
-						contentDetails: z.record(z.unknown()).optional(),
+						contentDetails: z.record(z.string(), z.unknown()).optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 		pageInfo: PageInfoSchema.optional(),
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelsUpdateInputSchema = z.object({
 	id: z.string().describe('The channel ID to update'),
@@ -612,7 +612,7 @@ const ChannelsUpdateInputSchema = z.object({
 		})
 		.optional(),
 	// localizations is a map of language code to localized strings — shape varies per channel
-	localizations: z.record(z.unknown()).optional(),
+	localizations: z.record(z.string(), z.unknown()).optional(),
 	onBehalfOfContentOwner: z.string().optional(),
 });
 
@@ -630,11 +630,11 @@ const ChannelsUpdateResponseSchema = z
 			})
 			.optional(),
 		// brandingSettings and localizations have deeply nested arbitrary structures not fully documented
-		brandingSettings: z.record(z.unknown()).optional(),
+		brandingSettings: z.record(z.string(), z.unknown()).optional(),
 		// localizations is a map of BCP-47 language tags to localized channel metadata
-		localizations: z.record(z.unknown()).optional(),
+		localizations: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelSectionsListInputSchema = z.object({
 	part: z
@@ -667,7 +667,7 @@ const ChannelSectionSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelSectionsListResponseSchema = z
 	.object({
@@ -677,7 +677,7 @@ const ChannelSectionsListResponseSchema = z
 		eventId: z.string().optional(),
 		visitorId: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ChannelSectionsCreateInputSchema = z.object({
 	snippet: z
@@ -781,7 +781,7 @@ const CommentResourceSchema = z
 		kind: z.string().optional(),
 		snippet: CommentSnippetSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CommentsListInputSchema = z.object({
 	id: z.string().optional().describe('Comment ID(s), comma-separated'),
@@ -803,7 +803,7 @@ const CommentsListResponseSchema = z
 		pageInfo: PageInfoSchema.optional(),
 		nextPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CommentThreadResourceSchema = z
 	.object({
@@ -825,7 +825,7 @@ const CommentThreadResourceSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CommentThreadsListInputSchema = z.object({
 	id: z.string().optional(),
@@ -847,7 +847,7 @@ const CommentThreadsListResponseSchema = z
 		pageInfo: PageInfoSchema.optional(),
 		nextPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CommentThreadsList2InputSchema = z.object({
 	id: z.string().optional(),
@@ -888,7 +888,7 @@ const CommentsPostResponseSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CommentsCreateReplyInputSchema = z.object({
 	parentId: z
@@ -977,7 +977,7 @@ const SearchResultSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchYouTubeResponseSchema = z
 	.object({
@@ -989,7 +989,7 @@ const SearchYouTubeResponseSchema = z
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Subscriptions ─────────────────────────────────────────────────────────────
 
@@ -1025,7 +1025,7 @@ const SubscriptionResourceSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SubscriptionsListInputSchema = z.object({
 	part: z.string().optional(),
@@ -1042,7 +1042,7 @@ const SubscriptionsListResponseSchema = z
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SubscriptionsSubscribeInputSchema = z.object({
 	channelId: z.string().describe('The ID of the channel to subscribe to'),
@@ -1069,7 +1069,7 @@ const SubscriptionsSubscribeResponseSchema = z
 		already_subscribed: z.boolean().optional(),
 		composio_execution_message: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SubscriptionsUnsubscribeInputSchema = z.object({
 	subscriptionId: z.string().describe('The ID of the subscription to remove'),
@@ -1114,7 +1114,7 @@ const VideoActionsGetRatingResponseSchema = z
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideoActionsReportAbuseInputSchema = z.object({
 	videoId: z.string().describe('The YouTube video ID to report'),
@@ -1161,7 +1161,7 @@ const VideoActionsListAbuseReasonsResponseSchema = z
 		eventId: z.string().optional(),
 		visitorId: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideoActionsUpdateThumbnailInputSchema = z.object({
 	videoId: z
@@ -1186,7 +1186,7 @@ const VideoActionsUpdateThumbnailResponseSchema = z
 		eventId: z.string().optional(),
 		visitorId: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Captions ──────────────────────────────────────────────────────────────────
 
@@ -1212,7 +1212,7 @@ const CaptionResourceSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CaptionsListInputSchema = z.object({
 	video_id: z.string().describe('The YouTube video ID to list captions for'),
@@ -1227,7 +1227,7 @@ const CaptionsListResponseSchema = z
 		eventId: z.string().optional(),
 		visitorId: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CaptionsUpdateInputSchema = z.object({
 	id: z.string().describe('The caption track ID to update'),
@@ -1252,7 +1252,7 @@ const CaptionsLoadResponseSchema = z
 	.object({
 		captions_text: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Live Chat ─────────────────────────────────────────────────────────────────
 
@@ -1297,7 +1297,7 @@ const LiveChatMessageSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const LiveChatListMessagesResponseSchema = z
 	.object({
@@ -1311,7 +1311,7 @@ const LiveChatListMessagesResponseSchema = z
 		activePollItem: z.unknown().optional(),
 		pollingIntervalMillis: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const LiveChatListSuperChatEventsInputSchema = z.object({
 	hl: z.string().optional(),
@@ -1339,13 +1339,13 @@ const LiveChatListSuperChatEventsResponseSchema = z
 							})
 							.optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 		pageInfo: PageInfoSchema.optional(),
 		nextPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── i18n ──────────────────────────────────────────────────────────────────────
 
@@ -1371,7 +1371,7 @@ const I18nListLanguagesResponseSchema = z
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const I18nListRegionsInputSchema = z.object({
 	hl: z.string().optional(),
@@ -1395,7 +1395,7 @@ const I18nListRegionsResponseSchema = z
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideoCategoriesListInputSchema = z.object({
 	hl: z.string().optional(),
@@ -1428,7 +1428,7 @@ const VideoCategoriesListResponseSchema = z
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Playlist Images ───────────────────────────────────────────────────────────
 
@@ -1460,14 +1460,14 @@ const PlaylistImagesListResponseSchema = z
 							})
 							.optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 		pageInfo: PageInfoSchema.optional(),
 		nextPageToken: z.string().optional(),
 		prevPageToken: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input/Output Maps ─────────────────────────────────────────────────────────
 // YoutubeEndpointInputs and YoutubeEndpointOutputs are defined explicitly (not derived
@@ -1626,12 +1626,7 @@ export type YoutubeEndpointOutputs = {
 	playlistImagesList: z.infer<typeof PlaylistImagesListResponseSchema>;
 };
 
-// Schema maps annotated with Record<> to avoid "inferred type exceeds serialization limit" with 51 schemas
-// ZodTypeAny used here to prevent TypeScript from serializing the full union type across all 51 schemas
-export const YoutubeEndpointInputSchemas: Record<
-	keyof YoutubeEndpointInputs,
-	z.ZodTypeAny
-> = {
+export const YoutubeEndpointInputSchemas = {
 	// Playlists
 	playlistsList: PlaylistsListInputSchema,
 	playlistsCreate: PlaylistsCreateInputSchema,
@@ -1695,13 +1690,9 @@ export const YoutubeEndpointInputSchemas: Record<
 	videoCategoriesList: VideoCategoriesListInputSchema,
 	// Playlist Images
 	playlistImagesList: PlaylistImagesListInputSchema,
-};
+} as const;
 
-// ZodTypeAny used here to prevent TypeScript from serializing the full union type across all 51 schemas
-export const YoutubeEndpointOutputSchemas: Record<
-	keyof YoutubeEndpointOutputs,
-	z.ZodTypeAny
-> = {
+export const YoutubeEndpointOutputSchemas = {
 	// Playlists
 	playlistsList: PlaylistsListResponseSchema,
 	playlistsCreate: PlaylistsCreateResponseSchema,
@@ -1765,7 +1756,7 @@ export const YoutubeEndpointOutputSchemas: Record<
 	videoCategoriesList: VideoCategoriesListResponseSchema,
 	// Playlist Images
 	playlistImagesList: PlaylistImagesListResponseSchema,
-};
+} as const;
 
 // ── Named Type Aliases ────────────────────────────────────────────────────────
 

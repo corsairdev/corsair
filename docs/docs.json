@@ -19,7 +19,33 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "App",
+        "groups": [
+          {
+            "group": "Corsair App",
+            "pages": [
+              "hosted-sdk/overview",
+              "hosted-sdk/quickstart",
+              "hosted-sdk/instances-and-plugins",
+              "hosted-sdk/tenants-and-auth",
+              "hosted-sdk/mcp-and-run",
+              "hosted-sdk/types-and-errors"
+            ]
+          },
+          {
+            "group": "Hosted MCP SDKs",
+            "pages": [
+              "hosted-mcp/overview",
+              "hosted-mcp/vercel-ai",
+              "hosted-mcp/openai",
+              "hosted-mcp/claude",
+              "hosted-mcp/custom-connector"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
         "groups": [
           {
             "group": "Get Started",
@@ -51,9 +77,7 @@
           },
           {
             "group": "Studio",
-            "pages": [
-              "studio/overview"
-            ]
+            "pages": ["studio/overview"]
           },
           {
             "group": "Core Concepts",
@@ -71,16 +95,11 @@
           },
           {
             "group": "Auth Types",
-            "pages": [
-              "concepts/api-key",
-              "concepts/oauth"
-            ]
+            "pages": ["concepts/api-key", "concepts/oauth"]
           },
           {
             "group": "Production",
-            "pages": [
-              "production/oauth-process"
-            ]
+            "pages": ["production/oauth-process"]
           },
           {
             "group": "Workflow Engines",
@@ -98,10 +117,7 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "guides/plugins",
-              "guides/create-your-own-plugin"
-            ]
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
@@ -172,6 +188,15 @@
                   "plugins/calendly/api",
                   "plugins/calendly/database",
                   "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "Cloudflare",
+                "pages": [
+                  "plugins/cloudflare/overview",
+                  "plugins/cloudflare/get-credentials",
+                  "plugins/cloudflare/api",
+                  "plugins/cloudflare/database"
                 ]
               },
               {
@@ -618,6 +643,16 @@
                 ]
               },
               {
+                "group": "Xquik",
+                "pages": [
+                  "plugins/xquik/overview",
+                  "plugins/xquik/get-credentials",
+                  "plugins/xquik/api",
+                  "plugins/xquik/database",
+                  "plugins/xquik/webhooks"
+                ]
+              },
+              {
                 "group": "Youtube",
                 "pages": [
                   "plugins/youtube/overview",
@@ -645,11 +680,7 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": [
-              "guides/webhooks",
-              "guides/workflows",
-              "guides/dashboard"
-            ]
+            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
           }
         ]
       }

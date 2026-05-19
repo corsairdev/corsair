@@ -43,10 +43,6 @@ function unwrapSchema(schema: ZodTypeAny): ZodTypeAny {
 			current = current._def.innerType as ZodTypeAny;
 			continue;
 		}
-		if (current instanceof z.ZodEffects) {
-			current = current._def.schema as ZodTypeAny;
-			continue;
-		}
 		break;
 	}
 	return current;
@@ -330,7 +326,11 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			if (existing?.id) {
 				await db
 					.updateTable('corsair_entities')
-					.set({ version, data: parsed, updated_at: now })
+					.set({
+						version,
+						data: parsed as Record<string, unknown>,
+						updated_at: now,
+					})
 					.where('id', '=', existing.id)
 					.execute();
 				const updated = await db
@@ -352,7 +352,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					entity_id: entityId,
 					entity_type: entityTypeName,
 					version,
-					data: parsed,
+					data: parsed as Record<string, unknown>,
 				})
 				.execute();
 

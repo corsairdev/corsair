@@ -15,7 +15,7 @@ export const GitlabUser = z
 		is_admin: z.boolean().optional(),
 		bot: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabProject = z
 	.object({
@@ -39,7 +39,7 @@ export const GitlabProject = z
 		open_issues_count: z.number().optional(),
 		topics: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabIssue = z
 	.object({
@@ -60,7 +60,7 @@ export const GitlabIssue = z
 		confidential: z.boolean().optional(),
 		due_date: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabMergeRequest = z
 	.object({
@@ -85,7 +85,7 @@ export const GitlabMergeRequest = z
 		has_conflicts: z.boolean().optional(),
 		draft: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabPipeline = z
 	.object({
@@ -103,7 +103,7 @@ export const GitlabPipeline = z
 		finished_at: z.string().nullable().optional(),
 		name: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabGroup = z
 	.object({
@@ -117,7 +117,7 @@ export const GitlabGroup = z
 		web_url: z.string().optional(),
 		created_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabBranch = z
 	.object({
@@ -130,7 +130,7 @@ export const GitlabBranch = z
 		can_push: z.boolean().optional(),
 		web_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabCommit = z
 	.object({
@@ -147,7 +147,7 @@ export const GitlabCommit = z
 		parent_ids: z.array(z.string()).optional(),
 		web_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabLabel = z
 	.object({
@@ -161,7 +161,7 @@ export const GitlabLabel = z
 		subscribed: z.boolean().optional(),
 		is_project_label: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabMilestone = z
 	.object({
@@ -177,7 +177,7 @@ export const GitlabMilestone = z
 		updated_at: z.string().optional(),
 		web_url: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const GitlabRelease = z
 	.object({
@@ -188,7 +188,7 @@ export const GitlabRelease = z
 		released_at: z.string().optional(),
 		upcoming_release: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type GitlabUser = z.infer<typeof GitlabUser>;
 export type GitlabProject = z.infer<typeof GitlabProject>;

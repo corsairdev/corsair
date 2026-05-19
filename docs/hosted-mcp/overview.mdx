@@ -1,0 +1,114 @@
+---
+title: Hosted MCP SDKs
+description: Connect Corsair App's hosted MCP server to Vercel AI, OpenAI, Claude, and custom MCP clients.
+---
+
+Corsair App gives each tenant a hosted HTTP MCP server. Your agent framework connects to that server with a tenant-scoped MCP secret, then the agent can discover and call the tenant's installed, authenticated, and permitted tools.
+
+This section is for hosted Corsair App users. If you are running Corsair in your own process and building tools directly from a local `corsair` instance, use the [MCP Adapters](/mcp-adapters/mcp-adapters) docs instead.
+
+## The two keys
+
+Most setup issues come from mixing up the two different secrets.
+
+| Secret | Where it is used | What it can do |
+| --- | --- | --- |
+| Developer API key | `createClient({ apiKey })` | Provisions and manages instances, plugins, tenants, credentials, and MCP keys |
+| Tenant MCP secret | SDK MCP config, usually as `Authorization: Bearer ...` | Lets an MCP client call tools for one tenant |
+
+Use the developer API key only from your backend. Do not pass it to an agent SDK as the MCP bearer token.
+
+Use the tenant MCP secret only for the tenant and agent connection it was created for. It is returned once by `tenant.mcpKeys.create()`.
+
+## Create or fetch the MCP connection
+
+Create a tenant-scoped MCP secret when you need a new bearer token:
+
+```ts
+import { createClient } from "@corsair-dev/app";
+
+const corsair = createClient({
+  apiKey: process.env.CORSAIR_API_KEY!,
+});
+
+const tenant = corsair
+  .instance(process.env.CORSAIR_INSTANCE_ID!)
+  .tenant("user_123");
+
+const key = await tenant.mcpKeys.create("agent");
+
+console.log(key.mcpHttpUrl);
+console.log(key.secret);
+```
+
+Fetch the URL later without creating a new secret:
+
+```ts
+const conn = await tenant.mcpKeys.connection();
+
+console.log(conn.mcpHttpUrl);
+console.log(conn.oauthDiscoveryUrl);
+console.log(conn.protectedResourceMetadataUrl);
+```
+
+<Warning>
+`key.secret` is returned exactly once. Store it in your own secret store if your app needs to reuse it.
+</Warning>
+
+## Shared config shape
+
+All SDK examples start from the same values:
+
+```ts
+const corsairMcp = {
+  url: key.mcpHttpUrl,
+  apiKey: key.secret,
+};
+```
+
+If you already stored the secret:
+
+```ts
+const conn = await tenant.mcpKeys.connection();
+
+const corsairMcp = {
+  url: conn.mcpHttpUrl,
+  apiKey: process.env.CORSAIR_MCP_API_KEY!,
+};
+```
+
+The `apiKey` above is the tenant MCP secret, not the developer API key.
+
+## What the hosted MCP server exposes
+
+The hosted MCP server exposes a small discovery-first tool surface rather than one huge tool per API endpoint.
+
+| Tool | What it does |
+| --- | --- |
+| `corsair_setup` | Checks whether tenant credentials are configured |
+| `list_operations` | Lists available operations across installed plugins |
+| `get_schema` | Shows the input schema for a specific operation |
+| `run_script` | Executes a JavaScript snippet with `corsair` in scope |
+
+This lets the agent discover what is available at runtime, inspect the operation it needs, and then perform an action such as:
+
+```txt
+Star the corsairdev/corsair repo on GitHub
+```
+
+## Pick your SDK
+
+<CardGroup cols={2}>
+  <Card title="Vercel AI SDK" icon="sparkles" href="/hosted-mcp/vercel-ai">
+    Use `createVercelAiMcpClient()` and pass `await client.tools()` to `streamText` or `generateText`.
+  </Card>
+  <Card title="OpenAI" icon="bot" href="/hosted-mcp/openai">
+    Use hosted MCP with the OpenAI Responses API or OpenAI Agents SDK.
+  </Card>
+  <Card title="Claude" icon="message-circle" href="/hosted-mcp/claude">
+    Pass an HTTP MCP server config to the Claude Agent SDK.
+  </Card>
+  <Card title="Custom connector" icon="plug" href="/hosted-mcp/custom-connector">
+    Use the MCP URL and bearer token in any HTTP MCP-compatible client or connector UI.
+  </Card>
+</CardGroup>

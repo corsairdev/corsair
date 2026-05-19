@@ -191,7 +191,7 @@ const WebhooksGetRequestsResponseSchema = z.object({
 				webhook_id: z.string(),
 				status: z.string().optional(),
 				created_at: z.string().optional(),
-				error: z.object({}).passthrough().optional(),
+				error: z.object({}).loose().optional(),
 			}),
 		)
 		.optional(),
@@ -317,7 +317,7 @@ const VariablesCreateModifyDeleteInputSchema = z.object({
 const VariablesCreateModifyDeleteResponseSchema = z.object({
 	meta: z
 		.object({
-			tempIdToRealId: z.record(z.string()).optional(),
+			tempIdToRealId: z.record(z.string(), z.string()).optional(),
 		})
 		.optional(),
 	status: z.number().optional(),
@@ -332,9 +332,9 @@ const VariablesGetLocalResponseSchema = z.object({
 	meta: z
 		.object({
 			// any: variable data structure is deeply nested and provider-defined
-			variables: z.record(z.unknown()).optional(),
+			variables: z.record(z.string(), z.unknown()).optional(),
 			// any: variable data structure is deeply nested and provider-defined
-			variableCollections: z.record(z.unknown()).optional(),
+			variableCollections: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
 	status: z.number().optional(),
@@ -349,9 +349,9 @@ const VariablesGetPublishedResponseSchema = z.object({
 	meta: z
 		.object({
 			// any: variable data structure is deeply nested and provider-defined
-			variables: z.record(z.unknown()).optional(),
+			variables: z.record(z.string(), z.unknown()).optional(),
 			// any: variable data structure is deeply nested and provider-defined
-			variableCollections: z.record(z.unknown()).optional(),
+			variableCollections: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
 	status: z.number().optional(),
@@ -478,9 +478,9 @@ const FilesGetJSONResponseSchema = z.object({
 	// any: Figma document tree has recursive node structure
 	document: z.unknown().optional(),
 	// any: Figma document tree has recursive node structure
-	components: z.record(z.unknown()).optional(),
+	components: z.record(z.string(), z.unknown()).optional(),
 	// any: Figma document tree has recursive node structure
-	styles: z.record(z.unknown()).optional(),
+	styles: z.record(z.string(), z.unknown()).optional(),
 });
 
 const FilesGetMetadataInputSchema = z.object({
@@ -508,7 +508,7 @@ const FilesGetNodesInputSchema = z.object({
 const FilesGetNodesResponseSchema = z.object({
 	name: z.string().optional(),
 	// any: node structure varies by node type
-	nodes: z.record(z.unknown()).optional(),
+	nodes: z.record(z.string(), z.unknown()).optional(),
 });
 
 const FilesGetStylesInputSchema = z.object({
@@ -541,7 +541,7 @@ const FilesGetImageFillsInputSchema = z.object({
 const FilesGetImageFillsResponseSchema = z.object({
 	meta: z
 		.object({
-			images: z.record(z.string()).optional(),
+			images: z.record(z.string(), z.string()).optional(),
 		})
 		.optional(),
 	error: z.boolean().optional(),
@@ -584,7 +584,7 @@ const FilesRenderImagesInputSchema = z.object({
 });
 
 const FilesRenderImagesResponseSchema = z.object({
-	images: z.record(z.string().nullable()).optional(),
+	images: z.record(z.string(), z.string().nullable()).optional(),
 	err: z.string().nullable().optional(),
 });
 
@@ -828,7 +828,7 @@ const DesignToolsExtractDesignTokensInputSchema = z.object({
 
 const DesignToolsExtractDesignTokensResponseSchema = z.object({
 	// any: design token structure varies by token type (color, typography, spacing, etc.)
-	tokens: z.record(z.unknown()).optional(),
+	tokens: z.record(z.string(), z.unknown()).optional(),
 });
 
 const DesignToolsExtractPrototypeInteractionsInputSchema = z.object({
@@ -854,12 +854,12 @@ const DesignToolsDownloadImagesInputSchema = z.object({
 });
 
 const DesignToolsDownloadImagesResponseSchema = z.object({
-	images: z.record(z.string().nullable()).optional(),
+	images: z.record(z.string(), z.string().nullable()).optional(),
 });
 
 const DesignToolsDesignTokensToTailwindInputSchema = z.object({
 	// any: token input map has dynamic keys and values
-	tokens: z.record(z.unknown()),
+	tokens: z.record(z.string(), z.unknown()),
 	prefix: z.string().optional(),
 	config_format: z.string().optional(),
 	include_font_imports: z.boolean().optional(),
