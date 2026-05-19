@@ -67,7 +67,7 @@ Follow [Get Credentials](/plugins/xquik/get-credentials) if you need help gettin
 pnpm corsair setup --plugin=xquik
 ```
 
-Use the key names documented in [Get Credentials](/plugins/xquik/get-credentials), including `api_key=` and optional `webhook_signature=`.
+Use the key names documented in [Get Credentials](/plugins/xquik/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
@@ -93,7 +93,7 @@ Each tab shows how to register the plugin for that authentication method. The de
 xquik()
 ```
 
-Store credentials with `pnpm corsair setup --plugin=xquik` (see [Get Credentials](/plugins/xquik/get-credentials) for field names).
+Store credentials with `pnpm corsair setup --plugin=xquik` (see [Get Credentials](/plugins/xquik/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
@@ -146,3 +146,4 @@ Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, a
 | Database | [Database](/plugins/xquik/database) |
 | Webhooks | [Webhooks](/plugins/xquik/webhooks) |
 | Credentials | [Get credentials](/plugins/xquik/get-credentials) |
+

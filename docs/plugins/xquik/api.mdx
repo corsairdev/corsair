@@ -44,6 +44,8 @@ await corsair.xquik.api.media.download({});
 | `totalTweets` | `number` | No | — |
 | `tweetId` | `string` | No | — |
 
+
+
 ---
 
 ### uploadFromUrl
@@ -155,7 +157,7 @@ await corsair.xquik.api.tweets.batch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | Yes | — |
+| `next_cursor` | `string` | No | — |
 | `tweets` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -487,7 +489,7 @@ await corsair.xquik.api.tweets.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | Yes | — |
+| `next_cursor` | `string` | No | — |
 | `tweets` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -604,7 +606,7 @@ await corsair.xquik.api.users.batch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | Yes | — |
+| `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -691,7 +693,7 @@ await corsair.xquik.api.users.followers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | Yes | — |
+| `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -747,7 +749,7 @@ await corsair.xquik.api.users.following({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | Yes | — |
+| `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -843,7 +845,7 @@ await corsair.xquik.api.users.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | Yes | — |
+| `next_cursor` | `string` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -926,7 +928,7 @@ await corsair.xquik.api.users.tweets({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | Yes | — |
+| `next_cursor` | `string` | No | — |
 | `tweets` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -1287,3 +1289,4 @@ await corsair.xquik.api.writeActions.get({});
 
 
 ---
+
