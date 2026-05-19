@@ -1,8 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TallyEndpoints } from '..';
-import type { TallyEndpointOutputs } from './types';
 import { makeTallyRequest } from '../client';
-import { toSubmissionRecord, safeDbUpsert, safeDbDelete } from '../utils';
+import { safeDbDelete, safeDbUpsert, toSubmissionRecord } from '../utils';
+import type { TallyEndpointOutputs } from './types';
 
 export const list: TallyEndpoints['submissionsList'] = async (ctx, input) => {
 	const { formId, ...queryParams } = input;
@@ -40,11 +40,13 @@ export const list: TallyEndpoints['submissionsList'] = async (ctx, input) => {
 };
 
 export const get: TallyEndpoints['submissionsGet'] = async (ctx, input) => {
-	const result = await makeTallyRequest<
-		TallyEndpointOutputs['submissionsGet']
-	>(`forms/${input.formId}/submissions/${input.submissionId}`, ctx.key, {
-		method: 'GET',
-	});
+	const result = await makeTallyRequest<TallyEndpointOutputs['submissionsGet']>(
+		`forms/${input.formId}/submissions/${input.submissionId}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 
 	if (result.submission?.id) {
 		await safeDbUpsert(

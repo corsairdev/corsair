@@ -88,7 +88,9 @@ describe('safeDbUpsert / safeDbDelete', () => {
 		await expect(
 			safeDbUpsert(undefined, 'id', { x: 1 } as never, 'label'),
 		).resolves.toBeUndefined();
-		await expect(safeDbDelete(undefined, 'id', 'label')).resolves.toBeUndefined();
+		await expect(
+			safeDbDelete(undefined, 'id', 'label'),
+		).resolves.toBeUndefined();
 	});
 
 	it('swallows upsert errors', async () => {

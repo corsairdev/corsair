@@ -1,8 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TallyEndpoints } from '..';
-import type { TallyEndpointOutputs } from './types';
 import { makeTallyRequest } from '../client';
-import { toWorkspaceRecord, safeDbUpsert, safeDbDelete } from '../utils';
+import { safeDbDelete, safeDbUpsert, toWorkspaceRecord } from '../utils';
+import type { TallyEndpointOutputs } from './types';
 
 export const list: TallyEndpoints['workspacesList'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};

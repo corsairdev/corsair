@@ -58,8 +58,18 @@ export type TallyWebhookOutputs = {
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
-function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+function parseBody(body: unknown): Record<string, unknown> | null {
+	if (typeof body === 'string') {
+		try {
+			return JSON.parse(body) as Record<string, unknown>;
+		} catch {
+			return null;
+		}
+	}
+	if (body && typeof body === 'object' && !Array.isArray(body)) {
+		return body as Record<string, unknown>;
+	}
+	return null;
 }
 
 /**
@@ -110,7 +120,7 @@ export function createTallyMatch(eventType: string): CorsairWebhookMatcher {
 		if (!('tally-signature' in request.headers)) {
 			return false;
 		}
-		const body = parseBody(request.body) as Record<string, unknown>;
-		return body.eventType === eventType;
+		const body = parseBody(request.body);
+		return body !== null && body.eventType === eventType;
 	};
 }

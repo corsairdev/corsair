@@ -1,28 +1,34 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TallyEndpoints } from '..';
-import type { TallyEndpointOutputs } from './types';
 import { makeTallyRequest } from '../client';
 import {
 	buildFormsListWorkspaceQuerySegment,
-	toFormRecord,
-	safeDbUpsert,
 	safeDbDelete,
+	safeDbUpsert,
+	toFormRecord,
 } from '../utils';
+import type { TallyEndpointOutputs } from './types';
 
 export const list: TallyEndpoints['formsList'] = async (ctx, input) => {
-	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page !== undefined) query.page = input.page;
-	if (input.limit !== undefined) query.limit = input.limit;
-
-	let endpoint = 'forms';
+	const queryParts: string[] = [];
 	if (input.workspaceIds?.length) {
-		endpoint = `forms?${buildFormsListWorkspaceQuerySegment(input.workspaceIds)}`;
+		queryParts.push(buildFormsListWorkspaceQuerySegment(input.workspaceIds));
 	}
+	if (input.page !== undefined) {
+		queryParts.push(`page=${encodeURIComponent(input.page)}`);
+	}
+	if (input.limit !== undefined) {
+		queryParts.push(`limit=${encodeURIComponent(input.limit)}`);
+	}
+
+	const endpoint = queryParts.length
+		? `forms?${queryParts.join('&')}`
+		: 'forms';
 
 	const result = await makeTallyRequest<TallyEndpointOutputs['formsList']>(
 		endpoint,
 		ctx.key,
-		{ method: 'GET', query },
+		{ method: 'GET' },
 	);
 
 	if (result.items) {
@@ -91,10 +97,7 @@ export const update: TallyEndpoints['formsUpdate'] = async (ctx, input) => {
 	return result;
 };
 
-export const deleteForm: TallyEndpoints['formsDelete'] = async (
-	ctx,
-	input,
-) => {
+export const deleteForm: TallyEndpoints['formsDelete'] = async (ctx, input) => {
 	const result = await makeTallyRequest<TallyEndpointOutputs['formsDelete']>(
 		`forms/${input.formId}`,
 		ctx.key,

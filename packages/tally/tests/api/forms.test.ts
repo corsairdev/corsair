@@ -6,7 +6,12 @@ import type {
 	FormsListResponse,
 } from '../../endpoints/types';
 import { TallyEndpointOutputSchemas } from '../../endpoints/types';
-import { getFirstFormId, getFirstWorkspaceId, getKey, tallyDescribe } from '../utils';
+import {
+	getFirstFormId,
+	getFirstWorkspaceId,
+	getKey,
+	tallyDescribe,
+} from '../utils';
 
 tallyDescribe('Tally API – Forms', () => {
 	const key = getKey();
@@ -40,9 +45,7 @@ tallyDescribe('Tally API – Forms', () => {
 			expect(form.id).toBeTruthy();
 			expect(typeof form.name).toBe('string');
 			expect(form.status).toBeTruthy();
-			expect(['BLANK', 'DRAFT', 'PUBLISHED', 'DELETED']).toContain(
-				form.status,
-			);
+			expect(['BLANK', 'DRAFT', 'PUBLISHED', 'DELETED']).toContain(form.status);
 		}
 	});
 

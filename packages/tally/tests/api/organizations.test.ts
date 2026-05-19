@@ -29,9 +29,11 @@ tallyDescribe('Tally API – Organizations', () => {
 	});
 
 	it('org users contain the current user', async () => {
-		const me = await makeTallyRequest<
-			UsersGetMeResponse & { email?: string }
-		>('users/me', key, { method: 'GET' });
+		const me = await makeTallyRequest<UsersGetMeResponse & { email?: string }>(
+			'users/me',
+			key,
+			{ method: 'GET' },
+		);
 		const users = await makeTallyRequest<OrganizationsListUsersResponse>(
 			`organizations/${organizationId}/users`,
 			key,

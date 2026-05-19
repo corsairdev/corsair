@@ -54,10 +54,7 @@ describe('createTallyMatch', () => {
 describe('verifyTallyWebhookSignature', () => {
 	const secret = 'whsec_test';
 	const rawBody = '{"hello":"world"}';
-	const sig = crypto
-		.createHmac('sha256', secret)
-		.update(rawBody)
-		.digest('hex');
+	const sig = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
 
 	const baseRequest = (): WebhookRequest<unknown> => ({
 		rawBody,

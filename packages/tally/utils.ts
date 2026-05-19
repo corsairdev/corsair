@@ -1,4 +1,8 @@
-import type { TallyForm, TallySubmission, TallyWorkspace } from './schema/database';
+import type {
+	TallyForm,
+	TallySubmission,
+	TallyWorkspace,
+} from './schema/database';
 
 /**
  * Serializes workspace IDs for `GET /forms` query (OpenAPI `style: form`, `explode: true`).
@@ -67,7 +71,9 @@ export function toSubmissionRecord(submission: {
 }
 
 export async function safeDbUpsert<T>(
-	db: { upsertByEntityId: (id: string, data: T) => Promise<unknown> } | undefined,
+	db:
+		| { upsertByEntityId: (id: string, data: T) => Promise<unknown> }
+		| undefined,
 	entityId: string,
 	data: T,
 	label: string,
