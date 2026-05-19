@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 // ── Shared sub-schemas ────────────────────────────────────────────────────────
 
-const TallyBlockSchema = z.object({}).passthrough();
+const TallyBlockSchema = z.object({}).loose();
 
-const TallyFormSettingsSchema = z.object({}).passthrough();
+const TallyFormSettingsSchema = z.object({}).loose();
 
 const TallyFormSchema = z
 	.object({
@@ -17,7 +17,7 @@ const TallyFormSchema = z
 		blocks: z.array(TallyBlockSchema).optional(),
 		settings: TallyFormSettingsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyQuestionSchema = z
 	.object({
@@ -30,9 +30,9 @@ const TallyQuestionSchema = z
 		numberOfResponses: z.number().optional(),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
-		fields: z.array(z.record(z.unknown())).optional(),
+		fields: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyFieldResponseSchema = z
 	.object({
@@ -47,7 +47,7 @@ const TallyFieldResponseSchema = z
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallySubmissionSchema = z
 	.object({
@@ -58,7 +58,7 @@ const TallySubmissionSchema = z
 		isCompleted: z.boolean().optional(),
 		responses: z.array(TallyFieldResponseSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyUserSchema = z
 	.object({
@@ -67,7 +67,7 @@ const TallyUserSchema = z
 		name: z.string().nullable().optional(),
 		subscriptionPlan: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyWorkspaceSchema = z
 	.object({
@@ -78,7 +78,7 @@ const TallyWorkspaceSchema = z
 		members: z.array(z.unknown()).optional(),
 		invites: z.array(z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyInviteSchema = z
 	.object({
@@ -88,7 +88,7 @@ const TallyInviteSchema = z
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyWebhookSchema = z
 	.object({
@@ -99,7 +99,7 @@ const TallyWebhookSchema = z
 		signingSecret: z.string().nullable().optional(),
 		createdAt: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyWebhookEventSchema = z
 	.object({
@@ -109,11 +109,11 @@ const TallyWebhookEventSchema = z
 		statusCode: z.number().nullable().optional(),
 		response: z.string().nullable().optional(),
 		retry: z.number().optional(),
-		payload: z.record(z.unknown()).optional(),
+		payload: z.record(z.string(), z.unknown()).optional(),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TallyHttpHeaderSchema = z.object({
 	name: z.string(),
@@ -278,7 +278,7 @@ const FormsListResponseSchema = z
 		total: z.number().optional(),
 		hasMore: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsCreateResponseSchema = TallyFormSchema;
 const FormsGetResponseSchema = TallyFormSchema;
@@ -290,25 +290,27 @@ const QuestionsListResponseSchema = z
 		questions: z.array(TallyQuestionSchema),
 		hasResponses: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SubmissionsListResponseSchema = z
 	.object({
 		page: z.number().optional(),
 		limit: z.number().optional(),
 		hasMore: z.boolean().optional(),
-		totalNumberOfSubmissionsPerFilter: z.record(z.number()).optional(),
+		totalNumberOfSubmissionsPerFilter: z
+			.record(z.string(), z.number())
+			.optional(),
 		questions: z.array(TallyQuestionSchema).optional(),
 		submissions: z.array(TallySubmissionSchema),
 	})
-	.passthrough();
+	.loose();
 
 const SubmissionsGetResponseSchema = z
 	.object({
 		questions: z.array(TallyQuestionSchema).optional(),
 		submission: TallySubmissionSchema,
 	})
-	.passthrough();
+	.loose();
 
 const SubmissionsDeleteResponseSchema = z.void();
 
@@ -328,7 +330,7 @@ const WorkspacesListResponseSchema = z
 		total: z.number().optional(),
 		hasMore: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesCreateResponseSchema = TallyWorkspaceSchema;
 const WorkspacesGetResponseSchema = TallyWorkspaceSchema;
@@ -343,7 +345,7 @@ const WebhookManagementListResponseSchema = z
 		hasMore: z.boolean().optional(),
 		totalCount: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookManagementCreateResponseSchema = TallyWebhookSchema;
 const WebhookManagementUpdateResponseSchema = z.void();
@@ -357,7 +359,7 @@ const WebhookManagementListEventsResponseSchema = z
 		hasMore: z.boolean().optional(),
 		totalNumberOfEvents: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookManagementRetryEventResponseSchema = z.void();
 

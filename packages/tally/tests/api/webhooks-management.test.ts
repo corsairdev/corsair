@@ -136,12 +136,11 @@ tallyDescribe('Tally API – Webhook Management', () => {
 		);
 		cleanupWebhookIds.push(created.id);
 
-		const events =
-			await makeTallyRequest<WebhookManagementListEventsResponse>(
-				`webhooks/${created.id}/events`,
-				key,
-				{ method: 'GET', query: { page: 1 } },
-			);
+		const events = await makeTallyRequest<WebhookManagementListEventsResponse>(
+			`webhooks/${created.id}/events`,
+			key,
+			{ method: 'GET', query: { page: 1 } },
+		);
 		TallyEndpointOutputSchemas.webhookManagementListEvents.parse(events);
 		expect(Array.isArray(events.events)).toBe(true);
 	});

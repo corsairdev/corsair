@@ -12,15 +12,16 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import {
 	Forms,
+	Organizations,
 	Questions,
 	Submissions,
 	Users,
-	Organizations,
-	Workspaces,
 	WebhookManagement,
+	Workspaces,
 } from './endpoints';
 import type {
 	TallyEndpointInputs,
@@ -105,10 +106,11 @@ export type TallyEndpoints = {
 // Webhook Type Map
 // ─────────────────────────────────────────────────────────────────────────────
 
-type TallyWebhook<
-	K extends keyof TallyWebhookOutputs,
+type TallyWebhook<K extends keyof TallyWebhookOutputs, TEvent> = CorsairWebhook<
+	TallyContext,
 	TEvent,
-> = CorsairWebhook<TallyContext, TEvent, TallyWebhookOutputs[K]>;
+	TallyWebhookOutputs[K]
+>;
 
 export type TallyWebhooks = {
 	formResponse: TallyWebhook<'formResponse', TallyFormResponseEvent>;
@@ -278,7 +280,7 @@ export const tallyEndpointSchemas = {
 		input: TallyEndpointInputSchemas.webhookManagementRetryEvent,
 		output: TallyEndpointOutputSchemas.webhookManagementRetryEvent,
 	},
-} as const;
+} as const satisfies RequiredPluginEndpointSchemas<typeof tallyEndpointsNested>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Meta (risk levels)
@@ -512,58 +514,58 @@ export { createTallyMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	FormsListInput,
-	FormsListResponse,
 	FormsCreateInput,
 	FormsCreateResponse,
-	FormsGetInput,
-	FormsGetResponse,
-	FormsUpdateInput,
-	FormsUpdateResponse,
 	FormsDeleteInput,
 	FormsDeleteResponse,
-	QuestionsListInput,
-	QuestionsListResponse,
-	SubmissionsListInput,
-	SubmissionsListResponse,
-	SubmissionsGetInput,
-	SubmissionsGetResponse,
-	SubmissionsDeleteInput,
-	SubmissionsDeleteResponse,
-	UsersGetMeInput,
-	UsersGetMeResponse,
+	FormsGetInput,
+	FormsGetResponse,
+	FormsListInput,
+	FormsListResponse,
+	FormsUpdateInput,
+	FormsUpdateResponse,
+	OrganizationsCancelInviteInput,
+	OrganizationsCancelInviteResponse,
+	OrganizationsCreateInviteInput,
+	OrganizationsCreateInviteResponse,
+	OrganizationsListInvitesInput,
+	OrganizationsListInvitesResponse,
 	OrganizationsListUsersInput,
 	OrganizationsListUsersResponse,
 	OrganizationsRemoveUserInput,
 	OrganizationsRemoveUserResponse,
-	OrganizationsListInvitesInput,
-	OrganizationsListInvitesResponse,
-	OrganizationsCreateInviteInput,
-	OrganizationsCreateInviteResponse,
-	OrganizationsCancelInviteInput,
-	OrganizationsCancelInviteResponse,
-	WorkspacesListInput,
-	WorkspacesListResponse,
-	WorkspacesCreateInput,
-	WorkspacesCreateResponse,
-	WorkspacesGetInput,
-	WorkspacesGetResponse,
-	WorkspacesUpdateInput,
-	WorkspacesUpdateResponse,
-	WorkspacesDeleteInput,
-	WorkspacesDeleteResponse,
-	WebhookManagementListInput,
-	WebhookManagementListResponse,
+	QuestionsListInput,
+	QuestionsListResponse,
+	SubmissionsDeleteInput,
+	SubmissionsDeleteResponse,
+	SubmissionsGetInput,
+	SubmissionsGetResponse,
+	SubmissionsListInput,
+	SubmissionsListResponse,
+	TallyEndpointInputs,
+	TallyEndpointOutputs,
+	UsersGetMeInput,
+	UsersGetMeResponse,
 	WebhookManagementCreateInput,
 	WebhookManagementCreateResponse,
-	WebhookManagementUpdateInput,
-	WebhookManagementUpdateResponse,
 	WebhookManagementDeleteInput,
 	WebhookManagementDeleteResponse,
 	WebhookManagementListEventsInput,
 	WebhookManagementListEventsResponse,
+	WebhookManagementListInput,
+	WebhookManagementListResponse,
 	WebhookManagementRetryEventInput,
 	WebhookManagementRetryEventResponse,
-	TallyEndpointInputs,
-	TallyEndpointOutputs,
+	WebhookManagementUpdateInput,
+	WebhookManagementUpdateResponse,
+	WorkspacesCreateInput,
+	WorkspacesCreateResponse,
+	WorkspacesDeleteInput,
+	WorkspacesDeleteResponse,
+	WorkspacesGetInput,
+	WorkspacesGetResponse,
+	WorkspacesListInput,
+	WorkspacesListResponse,
+	WorkspacesUpdateInput,
+	WorkspacesUpdateResponse,
 } from './endpoints/types';

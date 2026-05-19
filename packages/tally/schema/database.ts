@@ -15,7 +15,7 @@ export const TallySubmission = z.object({
 	respondentId: z.string().nullable().optional(),
 	isCompleted: z.boolean().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
-	fields: z.array(z.record(z.unknown())).optional(),
+	fields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
 export const TallyWorkspace = z.object({

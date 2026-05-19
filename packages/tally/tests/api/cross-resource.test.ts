@@ -7,7 +7,12 @@ import type {
 	QuestionsListResponse,
 	SubmissionsListResponse,
 } from '../../endpoints/types';
-import { getFirstFormId, getFirstWorkspaceId, getKey, tallyDescribe } from '../utils';
+import {
+	getFirstFormId,
+	getFirstWorkspaceId,
+	getKey,
+	tallyDescribe,
+} from '../utils';
 
 tallyDescribe('Tally API – Cross-resource Consistency', () => {
 	const key = getKey();

@@ -9,11 +9,9 @@ tallyDescribe('Tally API – Users', () => {
 	const key = getKey();
 
 	it('usersGetMe returns user object with expected fields', async () => {
-		const result = await makeTallyRequest<UsersGetMeResponse>(
-			'users/me',
-			key,
-			{ method: 'GET' },
-		);
+		const result = await makeTallyRequest<UsersGetMeResponse>('users/me', key, {
+			method: 'GET',
+		});
 		TallyEndpointOutputSchemas.usersGetMe.parse(result);
 		expect(result.id).toBeTruthy();
 		expect(typeof result.id).toBe('string');

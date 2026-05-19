@@ -144,11 +144,9 @@ tallyDescribe('Tally API – Submissions', () => {
 
 	it('submissionsGet with invalid submissionId throws', async () => {
 		await expect(
-			makeTallyRequest(
-				`forms/${formId}/submissions/invalid_sub_999`,
-				key,
-				{ method: 'GET' },
-			),
+			makeTallyRequest(`forms/${formId}/submissions/invalid_sub_999`, key, {
+				method: 'GET',
+			}),
 		).rejects.toThrow();
 	});
 });

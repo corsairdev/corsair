@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { ApiRequestOptions, ApiResult } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 
 import { makeTallyRequest } from '../client';
 import type {
@@ -49,11 +49,10 @@ export async function getFirstFormId(key: string): Promise<string> {
 export async function getFirstWorkspaceId(
 	key: string,
 ): Promise<string | undefined> {
-	const ws = await makeTallyRequest<WorkspacesListResponse>(
-		'workspaces',
-		key,
-		{ method: 'GET', query: { page: 1 } },
-	);
+	const ws = await makeTallyRequest<WorkspacesListResponse>('workspaces', key, {
+		method: 'GET',
+		query: { page: 1 },
+	});
 	return ws.items[0]?.id;
 }
 

@@ -6,9 +6,7 @@ describe('tally errorHandlers', () => {
 		const handler = errorHandlers.RATE_LIMIT_ERROR;
 
 		it('matches ApiError 429', () => {
-			expect(
-				handler.match(mockApiError(429, 'slow down', 5000)),
-			).toBe(true);
+			expect(handler.match(mockApiError(429, 'slow down', 5000))).toBe(true);
 		});
 
 		it('matches message containing rate', () => {
