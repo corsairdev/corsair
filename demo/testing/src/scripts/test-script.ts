@@ -1,14 +1,19 @@
 import 'dotenv/config';
 
-import { setupCorsair } from 'corsair/setup';
 import { corsair } from '@/server/corsair';
 
 const main = async () => {
-	const res = await corsair.keys.gmail.get_client_id();
-	const res2 = await corsair.keys.gmail.get_client_secret();
+	if (!process.env.XQUIK_API_KEY) {
+		console.log('Set XQUIK_API_KEY to run the Xquik demo request.');
+		return;
+	}
 
-	console.log(res);
-	console.log(res2);
+	const trends = await corsair.xquik.trends.get({
+		count: 5,
+		woeid: 1,
+	});
+
+	console.log(trends);
 };
 
 main().catch((err) => {

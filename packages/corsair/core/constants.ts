@@ -66,6 +66,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'xquik',
 	'youtube',
 	'zoom',
 ] as const;
@@ -124,6 +125,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'xquik'
 	| 'youtube'
 	| 'zoom'
 	| (string & {});
