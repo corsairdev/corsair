@@ -2,7 +2,9 @@ import { z } from 'zod';
 
 // Organizations Endpoints
 const OrganizationsListInputSchema = z.object({}).optional();
-export type OrganizationsListInput = z.infer<typeof OrganizationsListInputSchema>;
+export type OrganizationsListInput = z.infer<
+	typeof OrganizationsListInputSchema
+>;
 
 const OrganizationsListResponseSchema = z.object({
 	data: z.array(
@@ -10,10 +12,12 @@ const OrganizationsListResponseSchema = z.object({
 			id: z.string(),
 			name: z.string(),
 			billingEmail: z.string(),
-		})
+		}),
 	),
 });
-export type OrganizationsListResponse = z.infer<typeof OrganizationsListResponseSchema>;
+export type OrganizationsListResponse = z.infer<
+	typeof OrganizationsListResponseSchema
+>;
 
 const OrganizationsGetInputSchema = z.object({
 	id: z.string(),
@@ -31,7 +35,9 @@ const OrganizationsGetResponseSchema = z.object({
 	businessCountry: z.string().nullable(),
 	businessTaxNumber: z.string().nullable(),
 });
-export type OrganizationsGetResponse = z.infer<typeof OrganizationsGetResponseSchema>;
+export type OrganizationsGetResponse = z.infer<
+	typeof OrganizationsGetResponseSchema
+>;
 
 // Collections Endpoints
 const CollectionsListInputSchema = z.object({
@@ -46,10 +52,12 @@ const CollectionsListResponseSchema = z.object({
 			organizationId: z.string(),
 			name: z.string(),
 			externalId: z.string().nullable(),
-		})
+		}),
 	),
 });
-export type CollectionsListResponse = z.infer<typeof CollectionsListResponseSchema>;
+export type CollectionsListResponse = z.infer<
+	typeof CollectionsListResponseSchema
+>;
 
 const CollectionsGetInputSchema = z.object({
 	organizationId: z.string(),
@@ -63,7 +71,9 @@ const CollectionsGetResponseSchema = z.object({
 	name: z.string(),
 	externalId: z.string().nullable(),
 });
-export type CollectionsGetResponse = z.infer<typeof CollectionsGetResponseSchema>;
+export type CollectionsGetResponse = z.infer<
+	typeof CollectionsGetResponseSchema
+>;
 
 // Members Endpoints
 const MembersListInputSchema = z.object({
@@ -82,7 +92,7 @@ const MembersListResponseSchema = z.object({
 			type: z.number(),
 			twoFactorEnabled: z.boolean(),
 			accessAll: z.boolean(),
-		})
+		}),
 	),
 });
 export type MembersListResponse = z.infer<typeof MembersListResponseSchema>;
