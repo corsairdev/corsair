@@ -1,8 +1,8 @@
 import {
-	BitwardenOrganization,
+	BitwardenCipherMetadata,
 	BitwardenCollection,
 	BitwardenMember,
-	BitwardenCipherMetadata,
+	BitwardenOrganization,
 } from './database';
 
 export const BitwardenSchema = {

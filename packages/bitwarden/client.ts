@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class BitwardenAPIError extends Error {
@@ -34,7 +33,7 @@ export async function makeBitwardenRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${apiKey}`,
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 

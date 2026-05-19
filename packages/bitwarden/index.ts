@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -10,16 +11,19 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { BitwardenEndpointInputs, BitwardenEndpointOutputs } from './endpoints/types';
-import { BitwardenEndpointInputSchemas, BitwardenEndpointOutputSchemas } from './endpoints/types';
-import type { BitwardenWebhookOutputs } from './webhooks/types';
-import { Organizations, Collections, Members } from './endpoints';
-import { BitwardenSchema } from './schema';
+import { Collections, Members, Organizations } from './endpoints';
+import type {
+	BitwardenEndpointInputs,
+	BitwardenEndpointOutputs,
+} from './endpoints/types';
+import {
+	BitwardenEndpointInputSchemas,
+	BitwardenEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { BitwardenSchema } from './schema';
+import type { BitwardenWebhookOutputs } from './webhooks/types';
 
 export type BitwardenPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -36,9 +40,12 @@ export type BitwardenContext = CorsairPluginContext<
 	BitwardenPluginOptions
 >;
 
-export type BitwardenKeyBuilderContext = KeyBuilderContext<BitwardenPluginOptions>;
+export type BitwardenKeyBuilderContext =
+	KeyBuilderContext<BitwardenPluginOptions>;
 
-export type BitwardenBoundEndpoints = BindEndpoints<typeof bitwardenEndpointsNested>;
+export type BitwardenBoundEndpoints = BindEndpoints<
+	typeof bitwardenEndpointsNested
+>;
 
 type BitwardenEndpoint<
 	K extends keyof BitwardenEndpointOutputs,
@@ -46,12 +53,30 @@ type BitwardenEndpoint<
 > = CorsairEndpoint<BitwardenContext, Input, BitwardenEndpointOutputs[K]>;
 
 export type BitwardenEndpoints = {
-	organizationsList: BitwardenEndpoint<'organizationsList', BitwardenEndpointInputs['organizationsList']>;
-	organizationsGet: BitwardenEndpoint<'organizationsGet', BitwardenEndpointInputs['organizationsGet']>;
-	collectionsList: BitwardenEndpoint<'collectionsList', BitwardenEndpointInputs['collectionsList']>;
-	collectionsGet: BitwardenEndpoint<'collectionsGet', BitwardenEndpointInputs['collectionsGet']>;
-	membersList: BitwardenEndpoint<'membersList', BitwardenEndpointInputs['membersList']>;
-	membersGet: BitwardenEndpoint<'membersGet', BitwardenEndpointInputs['membersGet']>;
+	organizationsList: BitwardenEndpoint<
+		'organizationsList',
+		BitwardenEndpointInputs['organizationsList']
+	>;
+	organizationsGet: BitwardenEndpoint<
+		'organizationsGet',
+		BitwardenEndpointInputs['organizationsGet']
+	>;
+	collectionsList: BitwardenEndpoint<
+		'collectionsList',
+		BitwardenEndpointInputs['collectionsList']
+	>;
+	collectionsGet: BitwardenEndpoint<
+		'collectionsGet',
+		BitwardenEndpointInputs['collectionsGet']
+	>;
+	membersList: BitwardenEndpoint<
+		'membersList',
+		BitwardenEndpointInputs['membersList']
+	>;
+	membersGet: BitwardenEndpoint<
+		'membersGet',
+		BitwardenEndpointInputs['membersGet']
+	>;
 };
 
 type BitwardenWebhook<
@@ -142,22 +167,25 @@ export const bitwardenAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseBitwardenPlugin<T extends BitwardenPluginOptions> = CorsairPlugin<
-	'bitwarden',
-	typeof BitwardenSchema,
-	typeof bitwardenEndpointsNested,
-	typeof bitwardenWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseBitwardenPlugin<T extends BitwardenPluginOptions> =
+	CorsairPlugin<
+		'bitwarden',
+		typeof BitwardenSchema,
+		typeof bitwardenEndpointsNested,
+		typeof bitwardenWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalBitwardenPlugin = BaseBitwardenPlugin<BitwardenPluginOptions>;
+export type InternalBitwardenPlugin =
+	BaseBitwardenPlugin<BitwardenPluginOptions>;
 
 export type ExternalBitwardenPlugin<T extends BitwardenPluginOptions> =
 	BaseBitwardenPlugin<T>;
 
 export function bitwarden<const T extends BitwardenPluginOptions>(
-	incomingOptions: BitwardenPluginOptions & T = {} as BitwardenPluginOptions & T,
+	incomingOptions: BitwardenPluginOptions & T = {} as BitwardenPluginOptions &
+		T,
 ): ExternalBitwardenPlugin<T> {
 	const options = {
 		...incomingOptions,
