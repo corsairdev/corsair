@@ -39,6 +39,7 @@ export const corsair = createCorsair({
 		}),
 		bitwarden({
 			key: process.env.BITWARDEN_API_KEY,
+		}),
 		xquik({
 			key: process.env.XQUIK_API_KEY,
 			webhookSecret: process.env.XQUIK_WEBHOOK_SECRET,
