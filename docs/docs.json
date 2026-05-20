@@ -573,6 +573,15 @@
                 ]
               },
               {
+                "group": "Tally",
+                "pages": [
+                  "plugins/tally/overview",
+                  "plugins/tally/api",
+                  "plugins/tally/database",
+                  "plugins/tally/webhooks"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
