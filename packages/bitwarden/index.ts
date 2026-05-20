@@ -252,7 +252,7 @@ export function bitwarden<const T extends BitwardenPluginOptions>(
 							ctx.keys.set_expires_at(String(result.expiresAt)),
 						]);
 					} catch (error) {
-						throw new Error(
+						console.warn(
 							`[corsair:bitwarden] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
 						);
 					}
