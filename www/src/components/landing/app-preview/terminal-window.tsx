@@ -796,25 +796,35 @@ export function TerminalWindow() {
 								<span className="rounded-md border border-[#1c1c1c1a] bg-white px-2 py-0.5 text-[10px] text-[#1c1c1c99]">
 									Claude Sonnet
 								</span>
-								<button
-									type="button"
-									onClick={handleSend}
-									disabled={!showInput}
-									className="flex size-6 items-center justify-center rounded-full bg-[#4a38f5] text-white transition-opacity disabled:cursor-default disabled:opacity-40"
-									aria-label="Send message"
-								>
-									<svg
-										width="12"
-										height="12"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										strokeWidth="2"
+								<span className="relative flex size-6 items-center justify-center">
+									{showInput ? (
+										<span
+											className="landing-send-cta-ring pointer-events-none absolute inset-0 rounded-full bg-[#4a38f5]"
+											aria-hidden
+										/>
+									) : null}
+									<button
+										type="button"
+										onClick={handleSend}
+										disabled={!showInput}
+										className={`relative z-10 flex size-6 items-center justify-center rounded-full bg-[#4a38f5] text-white transition-[opacity,transform,box-shadow] hover:brightness-110 disabled:cursor-default disabled:opacity-40 ${
+											showInput ? 'landing-send-cta-pulse cursor-pointer' : ''
+										}`}
+										aria-label="Send message"
 									>
-										<line x1="12" y1="19" x2="12" y2="5" />
-										<polyline points="5 12 12 5 19 12" />
-									</svg>
-								</button>
+										<svg
+											width="12"
+											height="12"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="2"
+										>
+											<line x1="12" y1="19" x2="12" y2="5" />
+											<polyline points="5 12 12 5 19 12" />
+										</svg>
+									</button>
+								</span>
 							</div>
 						</div>
 					</div>

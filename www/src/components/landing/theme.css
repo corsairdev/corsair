@@ -41,3 +41,39 @@
 .landing-integration-cell-pulse {
 	animation: landing-integration-pulse 0.85s ease-in-out infinite;
 }
+
+@keyframes landing-send-cta-ring {
+	0%,
+	100% {
+		opacity: 0.55;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0;
+		transform: scale(1.85);
+	}
+}
+
+@keyframes landing-send-cta-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		box-shadow:
+			0 0 0 0 rgba(74, 56, 245, 0.55),
+			0 2px 8px rgba(74, 56, 245, 0.35);
+	}
+	50% {
+		transform: scale(1.14);
+		box-shadow:
+			0 0 0 6px rgba(74, 56, 245, 0),
+			0 4px 16px rgba(74, 56, 245, 0.55);
+	}
+}
+
+.landing-send-cta-ring {
+	animation: landing-send-cta-ring 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.landing-send-cta-pulse {
+	animation: landing-send-cta-pulse 1.4s ease-in-out infinite;
+}
