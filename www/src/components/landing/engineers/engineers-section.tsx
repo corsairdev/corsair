@@ -33,14 +33,7 @@ const ENGINEER_OPTIONS = [
 ] as const;
 
 const CARD_CLASS =
-	'relative flex h-[550px] w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-5 md:p-6';
-
-const INNER_BOX_CLASS =
-	'relative h-[320px] w-full shrink-0 rounded-sm border border-[#1c1c1c1a] bg-[#fafafa]';
-
-function AnimationPlaceholder({ label }: { label: string }) {
-	return <div className={INNER_BOX_CLASS} aria-label={label} />;
-}
+	'relative flex w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-5 md:p-6';
 
 function EngineerCard({
 	option,
@@ -62,9 +55,7 @@ function EngineerCard({
 				<PlusCorner />
 			</span>
 
-			<AnimationPlaceholder label={`${option.title} animation`} />
-
-			<div className="flex min-h-0 flex-1 flex-col gap-3 pt-5 md:pt-6">
+			<div className="flex flex-col gap-3">
 				<h3 className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-lg font-medium leading-snug tracking-[-0.01em] text-[#1c1c1c] md:text-[1.125rem]">
 					<span>{option.title}</span>
 					{'installCommand' in option ? (
@@ -79,7 +70,7 @@ function EngineerCard({
 				<p className="text-[15px] leading-[1.65] text-[#1c1c1c99] md:text-base md:leading-[1.7]">
 					{option.body}
 				</p>
-				<p className="mt-auto text-[15px] leading-[1.65] text-[#1c1c1c99] md:text-base md:leading-[1.7]">
+				<p className="text-[15px] leading-[1.65] text-[#1c1c1c99] md:text-base md:leading-[1.7]">
 					<span className="font-medium text-[#1c1c1c]">Best for: </span>
 					{option.bestFor}
 				</p>
