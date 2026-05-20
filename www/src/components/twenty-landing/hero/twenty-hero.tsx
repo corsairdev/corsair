@@ -27,16 +27,20 @@ export function TwentyHero() {
 
 				<div className="flex flex-wrap items-center justify-center gap-3">
 					<a
-						href="https://app.twenty.com/welcome"
-						className="inline-flex items-center justify-center rounded-sm border border-[#1c1c1c] bg-[#1c1c1c] px-6 py-3 text-sm font-medium text-white no-underline transition-colors hover:bg-[#333]"
+						href="https://github.com/corsairdev/corsair/"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="inline-flex items-center justify-center rounded-sm border border-[#1c1c1c] bg-transparent px-6 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#1c1c1c0d] hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)]"
 					>
-						Get started
+						⭐ on Github
 					</a>
 					<a
-						href="#"
-						className="inline-flex items-center justify-center rounded-sm border border-[#1c1c1c] bg-transparent px-6 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d]"
+						href="https://app.corsair.dev"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="inline-flex items-center justify-center rounded-sm border border-[#1c1c1c] bg-[#1c1c1c] px-6 py-3 text-sm font-medium text-white no-underline transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#333] hover:shadow-[0_4px_12px_rgba(0,0,0,0.18)]"
 					>
-						Talk to us
+						Go to app
 					</a>
 				</div>
 
