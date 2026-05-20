@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'airtable',
 	'amplitude',
 	'asana',
+	'bitwarden',
 	'box',
 	'cal',
 	'calendly',
@@ -57,6 +58,7 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'tally',
 	'tavily',
 	'teams',
 	'telegram',
@@ -76,6 +78,7 @@ export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
+	| 'bitwarden'
 	| 'box'
 	| 'cal'
 	| 'calendly'
@@ -116,6 +119,7 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'tally'
 	| 'tavily'
 	| 'teams'
 	| 'telegram'
