@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-const DOCS_URL = 'https://doc.corsair.dev';
+const DOCS_URL = 'https://docs.corsair.dev';
 const GITHUB_URL = 'https://github.com/corsairdev/corsair/';
 const APP_URL = 'https://app.corsair.dev';
 
@@ -62,15 +62,22 @@ export function SiteMenu() {
 					className="flex min-h-12 w-full min-w-0 items-center justify-between gap-4 rounded-sm px-4 md:px-10"
 					aria-label="Primary navigation"
 				>
-					<Link href="/" aria-label="Corsair home" className="shrink-0">
+					<Link
+						href="/"
+						aria-label="Corsair home"
+						className="inline-flex shrink-0 items-center gap-2.5 no-underline"
+					>
 						<Image
-							src="/corsair-logo.ico"
-							alt="Corsair"
+							src="/corsair-logo.png"
+							alt=""
 							width={40}
 							height={40}
 							className="rounded-sm"
 							priority
 						/>
+						<span className="font-[family-name:var(--landing-font-sans)] text-lg font-medium tracking-[-0.02em] text-[#1c1c1c]">
+							Corsair
+						</span>
 					</Link>
 
 					<div className="flex shrink-0 items-center gap-2">

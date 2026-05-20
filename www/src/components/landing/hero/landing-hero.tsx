@@ -1,4 +1,5 @@
 import { DesktopPreview } from '../app-preview/desktop-preview';
+import { YcBackedLink } from '../yc-backed-link';
 import { HeroBackground } from './hero-background';
 
 export function LandingHero() {
@@ -44,7 +45,11 @@ export function LandingHero() {
 					</a>
 				</div>
 
-				<div className="w-full">
+				<div className="flex w-full flex-col items-center gap-4 sm:gap-5">
+					<YcBackedLink
+						height={56}
+						className="opacity-95 transition-opacity hover:opacity-100"
+					/>
 					<DesktopPreview />
 				</div>
 			</div>
