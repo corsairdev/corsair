@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
+const DOCS_URL = 'https://doc.corsair.dev';
 const GITHUB_URL = 'https://github.com/corsairdev/corsair/';
 const APP_URL = 'https://app.corsair.dev';
 
@@ -73,6 +74,14 @@ export function SiteMenu() {
 					</Link>
 
 					<div className="flex shrink-0 items-center gap-2">
+						<a
+							href={DOCS_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="rounded-sm border border-[#1c1c1c] bg-transparent px-3 py-2 text-xs font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d] md:px-4 md:text-[13px]"
+						>
+							Docs
+						</a>
 						<a
 							href={GITHUB_URL}
 							target="_blank"

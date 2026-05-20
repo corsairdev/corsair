@@ -21,7 +21,7 @@ export function ProblemStatementSection() {
 	return (
 		<section
 			id="problem"
-			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-20 md:py-28 lg:py-32"
+			className="relative w-full scroll-mt-16 bg-[#f4f4f4] pt-10 pb-20 md:pt-12 md:pb-28 lg:pb-32"
 			aria-labelledby="problem-heading"
 		>
 			<div className="mx-auto max-w-[1440px] px-4 md:px-10">
@@ -35,7 +35,7 @@ export function ProblemStatementSection() {
 						className="w-full text-[clamp(1.75rem,3.8vw,2.75rem)] font-light leading-[1.12] tracking-[-0.02em] text-[#1c1c1c]"
 					>
 						<span className="font-[family-name:var(--landing-font-serif)]">
-							Every app your product can talk to makes it exponentially more
+							Every app your product talks to makes it exponentially more
 							powerful.
 						</span>
 						<br />
@@ -59,12 +59,14 @@ export function ProblemStatementSection() {
 						<PlusCorner />
 					</span>
 
-					<div className="grid grid-cols-1 md:grid-cols-2">
+					<div className="grid grid-cols-1 lg:grid-cols-2">
 						{SUPPLEMENTAL_POINTS.map((point, index) => (
 							<div
 								key={point.lead}
 								className={`px-6 py-8 md:px-10 md:py-10 ${
-									index === 0 ? 'md:border-r md:border-[#1c1c1c1a]' : ''
+									index === 0
+										? 'border-b border-[#1c1c1c1a] lg:border-b-0 lg:border-r'
+										: ''
 								}`}
 							>
 								<p className="text-[15px] leading-[1.65] text-[#1c1c1c99] md:text-base md:leading-[1.7]">

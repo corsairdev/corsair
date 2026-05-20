@@ -1,8 +1,4 @@
-import {
-	OpenSourceVisual,
-	PermissionVisual,
-	SelfHostVisual,
-} from './visuals';
+import { OpenSourceVisual, PermissionVisual, SelfHostVisual } from './visuals';
 
 function PlusCorner() {
 	return (
@@ -37,7 +33,7 @@ const SOLUTION_PILLARS = [
 ] as const;
 
 const CARD_CLASS =
-	'relative flex h-[550px] w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-5 md:p-6';
+	'relative flex min-h-[420px] w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-5 md:min-h-[480px] md:p-6 lg:h-[550px] lg:min-h-0';
 
 function SolutionCard({
 	pillar,
@@ -80,17 +76,30 @@ export function SolutionFramingSection() {
 		<section
 			id="solution"
 			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-20 md:py-28 lg:py-32"
-			aria-labelledby="solution-eyebrow"
+			aria-labelledby="solution-heading"
 		>
 			<div className="mx-auto max-w-[1440px] px-4 md:px-10">
-				<p
-					id="solution-eyebrow"
-					className="mb-14 text-center font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.02em] text-[#1c1c1c99] md:mb-20"
-				>
-					The solution
-				</p>
+				<div className="mx-auto flex max-w-[720px] flex-col items-center gap-6 text-center md:max-w-[960px] md:gap-8">
+					<p className="font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.02em] text-[#1c1c1c99]">
+						The solution
+					</p>
 
-				<ul className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-6 lg:gap-8">
+					<h2
+						id="solution-heading"
+						className="w-full text-[clamp(1.75rem,3.8vw,2.75rem)] font-light leading-[1.12] tracking-[-0.02em] text-[#1c1c1c]"
+					>
+						<span className="font-[family-name:var(--landing-font-serif)]">
+							Corsair takes the integration layer off your plate.
+						</span>
+						<br />
+						<span className="font-[family-name:var(--landing-font-sans)]">
+							Production-grade, open source, and a product you&apos;ll
+							confidently ship.
+						</span>
+					</h2>
+				</div>
+
+				<ul className="mt-14 grid grid-cols-1 gap-6 md:mt-20 lg:grid-cols-3 lg:gap-8">
 					{SOLUTION_PILLARS.map((pillar) => (
 						<SolutionCard key={pillar.id} pillar={pillar} />
 					))}

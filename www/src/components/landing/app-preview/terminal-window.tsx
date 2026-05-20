@@ -14,6 +14,7 @@ import { useWindowOrder } from '../hooks/use-window-order';
 import { useWindowPointerInteractions } from '../hooks/use-window-pointer-interactions';
 import type { WindowPosition, WindowSize } from '../hooks/window-geometry';
 import { TrafficLights } from '../icons/window-chrome';
+import { usePreviewLayout } from './preview-layout-context';
 import { FaviconLogo, PersonAvatar } from './table-ui';
 
 const TERMINAL_ID = 'terminal-window';
@@ -462,12 +463,14 @@ function ChatMessages({
 export function TerminalWindow() {
 	const shellRef = useRef<HTMLDivElement>(null);
 	const scrollRef = useRef<HTMLDivElement>(null);
+	const interactingRef = useRef(false);
 	const [position, setPosition] = useState<WindowPosition | null>(null);
 	const [size, setSize] = useState<WindowSize>({
 		width: INITIAL_WIDTH,
 		height: INITIAL_HEIGHT,
 	});
 	const { activate, zIndex } = useWindowOrder(TERMINAL_ID);
+	const previewLayout = usePreviewLayout();
 	const { pulseIntegration, unpulseIntegration, clearPulses } =
 		useChatDemoSync();
 	const mainToolsOrchestratorRef = useRef(false);
@@ -520,9 +523,25 @@ export function TerminalWindow() {
 		return parent?.getBoundingClientRect() ?? null;
 	}, []);
 
-	useLayoutEffect(() => {
+	const recalcLayout = useCallback(() => {
 		const bounds = getParentBounds();
 		if (!bounds) return;
+
+		if (previewLayout.isMobile && previewLayout.width > 0) {
+			const terminalHeight = Math.max(
+				240,
+				previewLayout.height -
+					previewLayout.mobileAppHeight -
+					previewLayout.stackGap,
+			);
+			setSize({ width: previewLayout.width, height: terminalHeight });
+			setPosition({
+				left: 0,
+				top: previewLayout.mobileAppHeight + previewLayout.stackGap,
+			});
+			return;
+		}
+
 		const w = Math.min(INITIAL_WIDTH, bounds.width);
 		const h = Math.min(INITIAL_HEIGHT, bounds.height);
 		setSize({ width: w, height: h });
@@ -530,7 +549,18 @@ export function TerminalWindow() {
 			left: Math.max(0, bounds.width - w),
 			top: Math.max(0, bounds.height - h - INITIAL_BOTTOM_OFFSET),
 		});
-	}, [getParentBounds]);
+	}, [getParentBounds, previewLayout]);
+
+	useLayoutEffect(() => {
+		recalcLayout();
+		const parent = shellRef.current?.parentElement;
+		if (!parent) return;
+		const observer = new ResizeObserver(() => {
+			if (!interactingRef.current) recalcLayout();
+		});
+		observer.observe(parent);
+		return () => observer.disconnect();
+	}, [recalcLayout]);
 
 	useEffect(() => {
 		if (phase !== 'assistant' || !assistantComplete) return;
@@ -646,7 +676,7 @@ export function TerminalWindow() {
 	]);
 
 	const {
-		handleDragStart,
+		handleDragStart: onDragStart,
 		isDragging,
 		isResizing,
 		latestPositionRef,
@@ -664,7 +694,9 @@ export function TerminalWindow() {
 		size,
 	});
 
+	const handleDragStart = previewLayout.isMobile ? undefined : onDragStart;
 	const isInteracting = isDragging || isResizing;
+	interactingRef.current = isInteracting;
 	const renderPosition = isInteracting
 		? (latestPositionRef.current ?? position)
 		: position;
@@ -676,7 +708,9 @@ export function TerminalWindow() {
 		<div
 			ref={shellRef}
 			onPointerDown={activate}
-			className="absolute left-0 top-0 flex touch-none flex-col overflow-hidden rounded-[20px] border border-[#1c1c1c1a] bg-white transition-[box-shadow,opacity] duration-200 will-change-[transform,width,height]"
+			className={`absolute left-0 top-0 flex flex-col overflow-hidden rounded-[20px] border border-[#1c1c1c1a] bg-white transition-[box-shadow,opacity] duration-200 will-change-[transform,width,height] ${
+				previewLayout.isMobile ? 'max-md:rounded-2xl' : 'touch-none'
+			}`}
 			style={{
 				opacity: isReady ? 1 : 0,
 				height: `${renderSize.height}px`,
@@ -692,8 +726,14 @@ export function TerminalWindow() {
 			}}
 		>
 			<div
-				className="grid h-12 w-full shrink-0 select-none grid-cols-[auto_1fr_auto] items-center gap-2 border-b border-[#1c1c1c1a] px-3"
-				style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+				className="grid h-12 w-full shrink-0 select-none grid-cols-[auto_1fr_auto] items-center gap-2 border-b border-[#1c1c1c1a] px-3 touch-none"
+				style={{
+					cursor: previewLayout.isMobile
+						? 'default'
+						: isDragging
+							? 'grabbing'
+							: 'grab',
+				}}
 				onPointerDown={handleDragStart}
 			>
 				<TrafficLights />
@@ -706,7 +746,7 @@ export function TerminalWindow() {
 				<div className="w-[52px]" />
 			</div>
 
-			<div className="flex min-h-0 flex-1 flex-col gap-2 p-3 pt-2">
+			<div className="flex min-h-0 flex-1 touch-auto flex-col gap-2 p-3 pt-2">
 				<ChatMessages
 					scrollRef={scrollRef}
 					sentMessage={sentMessage}
@@ -724,13 +764,13 @@ export function TerminalWindow() {
 				/>
 
 				<div className="mt-auto shrink-0">
-					<div className="mb-1.5 flex items-center gap-1.5 px-0.5">
-						<span className="size-1.5 rounded-full bg-[#1a7f4b]" />
+					<div className="mb-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 px-0.5">
+						<span className="size-1.5 shrink-0 rounded-full bg-[#1a7f4b]" />
 						<span className="text-[10px] font-medium text-[#1c1c1c80]">
 							Corsair connected
 						</span>
-						<span className="text-[10px] text-[#1c1c1c4d]">·</span>
-						<span className="truncate text-[10px] text-[#1c1c1c66]">
+						<span className="hidden text-[10px] text-[#1c1c1c4d] sm:inline">·</span>
+						<span className="text-[10px] leading-snug text-[#1c1c1c66] sm:truncate">
 							Granola, HubSpot, Notion, GCal, Gmail, Slack
 						</span>
 					</div>

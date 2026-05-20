@@ -11,13 +11,13 @@ import { useWindowOrder } from '../hooks/use-window-order';
 import { useWindowPointerInteractions } from '../hooks/use-window-pointer-interactions';
 import type { WindowPosition, WindowSize } from '../hooks/window-geometry';
 import { MacWindowBar } from './mac-window-bar';
+import { usePreviewLayout } from './preview-layout-context';
 
 const WINDOW_ID = 'landing-app-window';
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 420;
 const INITIAL_MAX_WIDTH = 1040;
 const INITIAL_ASPECT_RATIO = 1280 / 832;
-const MOBILE_PARENT_BREAKPOINT = 640;
 
 export function AppWindow({ children }: { children: ReactNode }) {
 	const shellRef = useRef<HTMLDivElement>(null);
@@ -25,6 +25,7 @@ export function AppWindow({ children }: { children: ReactNode }) {
 	const [position, setPosition] = useState<WindowPosition | null>(null);
 	const [size, setSize] = useState<WindowSize | null>(null);
 	const { activate, zIndex } = useWindowOrder(WINDOW_ID);
+	const previewLayout = usePreviewLayout();
 
 	const recalcLayout = () => {
 		const shell = shellRef.current;
@@ -32,13 +33,11 @@ export function AppWindow({ children }: { children: ReactNode }) {
 		if (!parent) return;
 		const parentRect = parent.getBoundingClientRect();
 
-		if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-			const mobileWidth = parentRect.width;
-			const mobileHeight = Math.min(
-				parentRect.height,
-				mobileWidth / INITIAL_ASPECT_RATIO,
-			);
-			setSize({ width: mobileWidth, height: mobileHeight });
+		if (previewLayout.isMobile && previewLayout.width > 0) {
+			setSize({
+				width: previewLayout.width,
+				height: previewLayout.mobileAppHeight,
+			});
 			setPosition({ left: 0, top: 0 });
 			return;
 		}
@@ -64,13 +63,17 @@ export function AppWindow({ children }: { children: ReactNode }) {
 		});
 		observer.observe(parent);
 		return () => observer.disconnect();
-	}, []);
+	}, [
+		previewLayout.isMobile,
+		previewLayout.width,
+		previewLayout.mobileAppHeight,
+	]);
 
 	const getParentRect = () =>
 		shellRef.current?.parentElement?.getBoundingClientRect() ?? null;
 
 	const {
-		handleDragStart,
+		handleDragStart: onDragStart,
 		isDragging,
 		isResizing,
 		latestPositionRef,
@@ -90,6 +93,8 @@ export function AppWindow({ children }: { children: ReactNode }) {
 		size,
 	});
 
+	const handleDragStart = previewLayout.isMobile ? undefined : onDragStart;
+
 	const isReady = position !== null && size !== null;
 	const isInteracting = isDragging || isResizing;
 	interactingRef.current = isInteracting;
@@ -105,7 +110,9 @@ export function AppWindow({ children }: { children: ReactNode }) {
 		<div
 			ref={shellRef}
 			onPointerDown={activate}
-			className="absolute left-0 top-0 flex touch-none flex-col overflow-hidden rounded-[20px] border border-[#1c1c1c1a] bg-white transition-[box-shadow,opacity] duration-200 will-change-[transform,width,height]"
+			className={`absolute left-0 top-0 flex flex-col overflow-hidden rounded-[20px] border border-[#1c1c1c1a] bg-white transition-[box-shadow,opacity] duration-200 will-change-[transform,width,height] ${
+				previewLayout.isMobile ? 'max-md:rounded-2xl' : 'touch-none'
+			}`}
 			style={{
 				opacity: isReady ? 1 : 0,
 				height: renderSize ? `${renderSize.height}px` : undefined,
@@ -120,12 +127,20 @@ export function AppWindow({ children }: { children: ReactNode }) {
 						: 'var(--landing-shadow-resting)',
 			}}
 		>
-			<ResizeHandle edge="top" onStart={resizeHandle('top')} />
-			<ResizeHandle edge="right" onStart={resizeHandle('right')} />
-			<ResizeHandle edge="bottom" onStart={resizeHandle('bottom')} />
-			<ResizeHandle edge="left" onStart={resizeHandle('left')} />
-			<MacWindowBar isDragging={isDragging} onDragStart={handleDragStart} />
-			<div className="flex min-h-0 w-full flex-1">{children}</div>
+			{!previewLayout.isMobile ? (
+				<>
+					<ResizeHandle edge="top" onStart={resizeHandle('top')} />
+					<ResizeHandle edge="right" onStart={resizeHandle('right')} />
+					<ResizeHandle edge="bottom" onStart={resizeHandle('bottom')} />
+					<ResizeHandle edge="left" onStart={resizeHandle('left')} />
+				</>
+			) : null}
+			<MacWindowBar
+				isDragging={isDragging}
+				onDragStart={handleDragStart}
+				draggable={!previewLayout.isMobile}
+			/>
+			<div className="flex min-h-0 w-full flex-1 touch-auto">{children}</div>
 		</div>
 	);
 }
