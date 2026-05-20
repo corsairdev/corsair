@@ -205,7 +205,7 @@ export function TableDetailSidebar({
 
 	return (
 		<aside
-			className="flex w-[260px] shrink-0 flex-col border-l border-[#ebebeb] bg-white"
+			className="absolute right-0 top-0 z-20 flex h-full w-[260px] flex-col border-l border-[#ebebeb] bg-white shadow-[-6px_0_20px_rgba(0,0,0,0.08)]"
 			style={{ fontFamily: TABLE.font }}
 		>
 			{selection.kind === 'integration' ? (
