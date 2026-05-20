@@ -161,6 +161,14 @@
                 ]
               },
               {
+                "group": "Bitwarden",
+                "pages": [
+                  "plugins/bitwarden/overview",
+                  "plugins/bitwarden/api",
+                  "plugins/bitwarden/database"
+                ]
+              },
+              {
                 "group": "Box",
                 "pages": [
                   "plugins/box/overview",
@@ -562,6 +570,15 @@
                   "plugins/stripe/api",
                   "plugins/stripe/database",
                   "plugins/stripe/webhooks"
+                ]
+              },
+              {
+                "group": "Tally",
+                "pages": [
+                  "plugins/tally/overview",
+                  "plugins/tally/api",
+                  "plugins/tally/database",
+                  "plugins/tally/webhooks"
                 ]
               },
               {
