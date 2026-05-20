@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'airtable',
 	'amplitude',
 	'asana',
+	'bitwarden',
 	'box',
 	'cal',
 	'calendly',
@@ -76,6 +77,7 @@ export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
+	| 'bitwarden'
 	| 'box'
 	| 'cal'
 	| 'calendly'

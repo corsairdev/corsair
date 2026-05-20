@@ -1,0 +1,257 @@
+---
+title: API
+description: "API reference for Bitwarden: every `bitwarden.api.*` operation with input and output types."
+---
+
+Every `bitwarden.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collections
+
+### get
+
+`collections.get`
+
+Get details for a specific collection
+
+**Risk:** `read`
+
+```ts
+await corsair.bitwarden.api.collections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `externalId` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List all collections in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.bitwarden.api.collections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  organizationId: string,
+  name: string,
+  externalId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Get details for a specific organization member
+
+**Risk:** `read`
+
+```ts
+await corsair.bitwarden.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `number` | Yes | — |
+| `type` | `number` | Yes | — |
+| `twoFactorEnabled` | `boolean` | Yes | — |
+| `accessAll` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+List all members in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.bitwarden.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  organizationId: string,
+  email: string,
+  name: string,
+  status: number,
+  type: number,
+  twoFactorEnabled: boolean,
+  accessAll: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### get
+
+`organizations.get`
+
+Get details for a specific organization
+
+**Risk:** `read`
+
+```ts
+await corsair.bitwarden.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `billingEmail` | `string` | Yes | — |
+| `businessName` | `string` | No | — |
+| `businessAddress1` | `string` | No | — |
+| `businessAddress2` | `string` | No | — |
+| `businessAddress3` | `string` | No | — |
+| `businessCountry` | `string` | No | — |
+| `businessTaxNumber` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List all organizations the API key has access to
+
+**Risk:** `read`
+
+```ts
+await corsair.bitwarden.api.organizations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  billingEmail: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
