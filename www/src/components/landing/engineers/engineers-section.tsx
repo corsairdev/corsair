@@ -104,7 +104,7 @@ export function EngineersSection() {
 					</h2>
 				</div>
 
-				<ul className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-6 lg:gap-8">
+				<ul className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
 					{ENGINEER_OPTIONS.map((option) => (
 						<EngineerCard key={option.id} option={option} />
 					))}

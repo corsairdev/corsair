@@ -20,7 +20,7 @@ export function RecordNavbar() {
 
 			<div className="flex items-start justify-between gap-3">
 				<div className="min-w-0">
-					<h2 className="truncate text-[22px] font-semibold tracking-[-0.02em] text-[#1c1c1c]">
+					<h2 className="truncate text-lg font-semibold tracking-[-0.02em] text-[#1c1c1c] md:text-[22px]">
 						{activeInstance.label}
 					</h2>
 					<p className="mt-0.5 text-[12px] text-[#737373]">
@@ -28,7 +28,7 @@ export function RecordNavbar() {
 					</p>
 				</div>
 
-				<div className="flex shrink-0 items-center gap-1">
+				<div className="hidden shrink-0 items-center gap-1 sm:flex">
 					<button
 						type="button"
 						className="inline-flex h-7 items-center gap-1 rounded px-2 text-[12px] font-medium text-[#1c1c1c] underline decoration-[#1c1c1c33] underline-offset-4"

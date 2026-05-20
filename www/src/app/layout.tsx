@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
 import './globals.css';
@@ -26,10 +26,20 @@ const azeretMono = Azeret_Mono({
 	display: 'swap',
 });
 
+export const viewport: Viewport = {
+	width: 'device-width',
+	initialScale: 1,
+};
+
 export const metadata: Metadata = {
 	title: 'Corsair — Add any integration in minutes',
 	description:
 		'Corsair is the open source integration layer for products and agents.',
+	icons: {
+		icon: '/corsair-logo.ico',
+		shortcut: '/corsair-logo.ico',
+		apple: '/corsair-logo.ico',
+	},
 };
 
 export default function RootLayout({

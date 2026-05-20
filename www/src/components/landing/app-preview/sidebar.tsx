@@ -122,7 +122,7 @@ function NavSection({
 export function PreviewSidebar() {
 	return (
 		<aside
-			className="grid w-[210px] shrink-0 grid-rows-[auto_1fr] gap-3 border-r border-[#ebebeb] bg-[#fafafa] p-3"
+			className="hidden w-[210px] shrink-0 grid-rows-[auto_1fr] gap-3 border-r border-[#ebebeb] bg-[#fafafa] p-3 md:grid"
 			style={{ fontFamily: TABLE.font }}
 		>
 			<div className="flex min-h-8 items-center gap-2 px-1">
