@@ -79,8 +79,8 @@
 }
 
 @keyframes heroFadeUp {
-	0% { opacity: 0; transform: translateY(16px) scale(0.98); filter: blur(4px); }
-	100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+	0% { opacity: 0; transform: translateY(16px) scale(0.98); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -95,7 +95,6 @@
 		opacity: 1;
 		animation: none;
 		transform: none;
-		filter: none;
 	}
 }
 

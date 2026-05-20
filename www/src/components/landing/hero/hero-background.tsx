@@ -18,16 +18,6 @@ export function HeroBackground() {
 				preserveAspectRatio="xMidYMid slice"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				<defs>
-					<pattern
-						id="halftone-dots"
-						width="12"
-						height="12"
-						patternUnits="userSpaceOnUse"
-					>
-						<circle cx="2" cy="2" r="1" fill="#4a38f5" opacity="0.06" />
-					</pattern>
-				</defs>
 				<path
 					className="path-flow-1"
 					d="M-50 420 C 200 280, 400 520, 650 380 S 1100 300, 1250 450"
