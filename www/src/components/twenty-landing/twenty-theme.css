@@ -1,0 +1,43 @@
+.twenty-landing {
+	--twenty-black: #1c1c1c;
+	--twenty-black-60: #1c1c1c99;
+	--twenty-black-40: #1c1c1c66;
+	--twenty-black-20: #1c1c1c33;
+	--twenty-black-10: #1c1c1c1a;
+	--twenty-black-5: #1c1c1c0d;
+	--twenty-white: #ffffff;
+	--twenty-neutral: #f4f4f4;
+	--twenty-blue: #4a38f5;
+	--twenty-blue-70: #8174f8;
+	--twenty-highlight: #4a38f5;
+	--twenty-font-sans: var(--font-twenty-sans), system-ui, sans-serif;
+	--twenty-font-serif: var(--font-twenty-serif), Georgia, serif;
+	--twenty-font-mono: var(--font-twenty-mono), ui-monospace, monospace;
+	--twenty-shadow-resting: 0 10px 64px 0 rgba(0, 0, 0, 0.2);
+	--twenty-shadow-elevated:
+		0 14px 80px 0 rgba(0, 0, 0, 0.26), 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+	color: var(--twenty-black);
+	font-family: var(--twenty-font-sans);
+}
+
+.twenty-landing *,
+.twenty-landing *::before,
+.twenty-landing *::after {
+	box-sizing: border-box;
+}
+
+@keyframes twenty-integration-pulse {
+	0%,
+	100% {
+		box-shadow: inset 0 0 0 2px rgba(74, 56, 245, 0.35);
+		background-color: #f0edff;
+	}
+	50% {
+		box-shadow: inset 0 0 0 2px rgba(74, 56, 245, 0.85);
+		background-color: #e2dcff;
+	}
+}
+
+.twenty-integration-cell-pulse {
+	animation: twenty-integration-pulse 0.85s ease-in-out infinite;
+}
