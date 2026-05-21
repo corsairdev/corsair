@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.69",
+  "version": "0.1.70",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",

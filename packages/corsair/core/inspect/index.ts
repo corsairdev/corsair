@@ -37,6 +37,23 @@ function getZodInner(def: ZodDef): ZodTypeAny | undefined {
 		| undefined;
 }
 
+/** Input-side schema for pipes/effects — used when rendering TypeScript-like types. */
+function getZodSchemaForTypeDisplay(
+	def: ZodDef,
+	typeName: string | undefined,
+): ZodTypeAny | undefined {
+	switch (typeName) {
+		case 'ZodPipe':
+			return (def.in ?? def.innerType) as ZodTypeAny | undefined;
+		case 'ZodEffects':
+			return (def.schema ?? def.innerType) as ZodTypeAny | undefined;
+		case 'ZodTransform':
+			return (def.schema ?? def.innerType ?? def.in) as ZodTypeAny | undefined;
+		default:
+			return getZodInner(def);
+	}
+}
+
 function getZodArrayItem(def: ZodDef): ZodTypeAny | undefined {
 	const type = def.type;
 	return (def.element ?? (typeof type === 'string' ? undefined : type)) as
@@ -78,6 +95,28 @@ function getZodDescription(
 	);
 }
 
+/** Walks optional/nullable/effect wrappers outward→inward to find `.describe()` text. */
+function collectZodDescription(schema: ZodTypeAny): string | undefined {
+	let current: ZodTypeAny | undefined = schema;
+	while (current) {
+		const def = getZodDef(current);
+		const description = getZodDescription(current, def);
+		if (description) return description;
+		const typeName = getZodTypeName(def);
+		if (
+			isOptionalish(typeName) ||
+			typeName === 'ZodPipe' ||
+			typeName === 'ZodEffects' ||
+			typeName === 'ZodTransform'
+		) {
+			current = getZodSchemaForTypeDisplay(def, typeName);
+			continue;
+		}
+		break;
+	}
+	return undefined;
+}
+
 function isOptionalish(typeName: string | undefined): boolean {
 	return (
 		typeName === 'ZodOptional' ||
@@ -105,6 +144,8 @@ function zodToInlineType(schema: ZodTypeAny): string {
 			return 'number';
 		case 'ZodBoolean':
 			return 'boolean';
+		case 'ZodDate':
+			return 'Date';
 		case 'ZodNull':
 			return 'null';
 		case 'ZodUnknown':
@@ -159,7 +200,7 @@ function zodToInlineType(schema: ZodTypeAny): string {
 		case 'ZodPipe':
 		case 'ZodTransform':
 		case 'ZodEffects': {
-			const inner = getZodInner(def);
+			const inner = getZodSchemaForTypeDisplay(def, typeName);
 			return inner ? zodToInlineType(inner) : 'unknown';
 		}
 		default:
@@ -203,7 +244,7 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 				: val;
 		const innerDef = getZodDef(innerVal);
 		const innerTypeName = getZodTypeName(innerDef);
-		const description = getZodDescription(innerVal, innerDef);
+		const description = collectZodDescription(val);
 		const comment = description ? `  // ${description}` : '';
 
 		if (innerTypeName === 'ZodObject') {
@@ -692,7 +733,9 @@ export function getSchema(
 						const parts: string[] = [];
 						if (schemas?.description) parts.push(schemas.description);
 						if (schemas?.payload) {
-							parts.push(`payload ${zodToExpandedType(schemas.payload, 0)}`);
+							parts.push(
+								`payload ${formatDocSchemaShape(zodToDocSchemaShape(schemas.payload))}`,
+							);
 						}
 						if (responseTypeStr) {
 							parts.push(`response: ${responseTypeStr}`);
@@ -739,10 +782,14 @@ export function getSchema(
 				if (header) parts.push(header);
 
 				if (schemas?.input) {
-					parts.push(`input ${zodToExpandedType(schemas.input, 0)}`);
+					parts.push(
+						`input ${formatDocSchemaShape(zodToDocSchemaShape(schemas.input))}`,
+					);
 				}
 				if (schemas?.output) {
-					parts.push(`output ${zodToExpandedType(schemas.output, 0)}`);
+					parts.push(
+						`output ${formatDocSchemaShape(zodToDocSchemaShape(schemas.output))}`,
+					);
 				}
 				return parts.join('\n\n');
 			}
@@ -854,18 +901,41 @@ function zodToDocSchemaShape(schema: ZodTypeAny | undefined): DocSchemaShape {
 			const ft = getZodTypeName(valDef);
 			const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
 			const inner = unwrapZodForDocs(val);
-			const innerDef = getZodDef(inner);
-			const description = getZodDescription(inner, innerDef);
+			const description = collectZodDescription(val);
 			fields.push({
 				key,
 				optional,
 				type: zodToInlineType(inner),
-				description,
+				...(description !== undefined ? { description } : {}),
 			});
 		}
 		return { kind: 'object', fields };
 	}
 	return { kind: 'inline', type: zodToInlineType(base) };
+}
+
+/**
+ * Renders a {@link DocSchemaShape} as a TypeScript-like block with `// description`
+ * comments on each field row. Used by `getSchema`, catalog builders, and hosted MCP.
+ */
+export function formatDocSchemaShape(
+	shape: DocSchemaShape | undefined,
+	depth = 0,
+): string {
+	if (shape === undefined) return '{}';
+	if (shape.kind === 'inline') return shape.type;
+	if (shape.kind === 'object') {
+		if (shape.fields.length === 0) return '{}';
+		const pad = INDENT.repeat(depth + 1);
+		const closePad = INDENT.repeat(depth);
+		const lines = shape.fields.map((field) => {
+			const key = field.optional ? `${field.key}?` : field.key;
+			const comment = field.description ? `  // ${field.description}` : '';
+			return `${pad}${key}: ${field.type}${comment}`;
+		});
+		return `{\n${lines.join('\n')}\n${closePad}}`;
+	}
+	return 'unknown';
 }
 
 /**
