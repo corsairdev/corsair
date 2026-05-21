@@ -577,16 +577,16 @@ await corsair.hubspot.api.contactLists.removeContact({});
 
 ## Contacts
 
-### createOrUpdate
+### create
 
-`contacts.createOrUpdate`
+`contacts.create`
 
-Create a new contact or update an existing one
+Create a new contact
 
 **Risk:** `write`
 
 ```ts
-await corsair.hubspot.api.contacts.createOrUpdate({});
+await corsair.hubspot.api.contacts.create({});
 ```
 
 **Input**
@@ -1027,6 +1027,70 @@ await corsair.hubspot.api.contacts.search({});
   prev?: {
     before: string
   }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact
+
+**Risk:** `write`
+
+```ts
+await corsair.hubspot.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `createdAt` | `date` | No | — |
+| `updatedAt` | `date` | No | — |
+| `archived` | `boolean` | No | — |
+| `associations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="associations full type">
+
+```ts
+{
 }
 ```
 </Accordion>

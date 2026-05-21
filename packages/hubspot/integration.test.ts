@@ -6,7 +6,7 @@ import { HubSpotAPIError } from './client';
 import type {
 	CreateCompanyResponse,
 	CreateDealResponse,
-	CreateOrUpdateContactResponse,
+	CreateContactResponse,
 } from './endpoints/types';
 import { hubspot } from './index';
 
@@ -109,13 +109,13 @@ describe('HubSpot plugin integration', () => {
 			},
 		};
 
-		const createdContact: CreateOrUpdateContactResponse =
-			await corsair.hubspot.api.contacts.createOrUpdate(createInput);
+		const createdContact: CreateContactResponse =
+			await corsair.hubspot.api.contacts.create(createInput);
 
 		expect(createdContact).toBeDefined();
 
 		const createEvents = await orm.events.findMany({
-			where: { event_type: 'hubspot.contacts.createOrUpdate' },
+			where: { event_type: 'hubspot.contacts.create' },
 		});
 
 		expect(createEvents.length).toBeGreaterThan(0);

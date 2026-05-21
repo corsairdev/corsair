@@ -51302,9 +51302,9 @@
           }
         },
         {
-          "path": "hubspot.api.contacts.createOrUpdate",
-          "shortPath": "contacts.createOrUpdate",
-          "description": "Create a new contact or update an existing one",
+          "path": "hubspot.api.contacts.create",
+          "shortPath": "contacts.create",
+          "description": "Create a new contact",
           "riskLevel": "write",
           "input": {
             "kind": "object",
@@ -51318,6 +51318,62 @@
                 "key": "associations",
                 "optional": true,
                 "type": "{ to: { id: string }, types: { associationCategory: string, associationTypeId: number }[] }[]"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "properties",
+                "optional": true,
+                "type": "{}"
+              },
+              {
+                "key": "createdAt",
+                "optional": true,
+                "type": "date"
+              },
+              {
+                "key": "updatedAt",
+                "optional": true,
+                "type": "date"
+              },
+              {
+                "key": "archived",
+                "optional": true,
+                "type": "boolean"
+              },
+              {
+                "key": "associations",
+                "optional": true,
+                "type": "{}"
+              }
+            ]
+          }
+        },
+        {
+          "path": "hubspot.api.contacts.update",
+          "shortPath": "contacts.update",
+          "description": "Update an existing contact",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "contactId",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "properties",
+                "optional": true,
+                "type": "{}"
               }
             ]
           },

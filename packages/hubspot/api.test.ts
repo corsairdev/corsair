@@ -3,7 +3,8 @@ import { makeHubSpotRequest } from './client';
 import type {
 	CreateCompanyResponse,
 	CreateDealResponse,
-	CreateOrUpdateContactResponse,
+	CreateContactResponse,
+	UpdateContactResponse,
 	CreateTicketResponse,
 	GetCompanyResponse,
 	GetContactResponse,
@@ -65,8 +66,8 @@ describe('HubSpot API Type Tests', () => {
 			HubSpotEndpointOutputSchemas.contactsGet.parse(result);
 		});
 
-		it('contactsCreateOrUpdate returns correct type', async () => {
-			const response = await makeHubSpotRequest<CreateOrUpdateContactResponse>(
+		it('contactsCreate returns correct type', async () => {
+			const response = await makeHubSpotRequest<CreateContactResponse>(
 				'/crm/v3/objects/contacts',
 				TEST_TOKEN,
 				{
@@ -80,7 +81,7 @@ describe('HubSpot API Type Tests', () => {
 			);
 			const result = response;
 
-			HubSpotEndpointOutputSchemas.contactsCreateOrUpdate.parse(result);
+			HubSpotEndpointOutputSchemas.contactsCreate.parse(result);
 		});
 
 		it('contactsGetRecentlyCreated returns correct type', async () => {
