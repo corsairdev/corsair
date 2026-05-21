@@ -8,10 +8,12 @@ import type {
 import { CORSAIR_INTERNAL } from './core';
 import type { ListOperationsOptions } from './core/inspect';
 import {
+	formatDocSchemaShape,
 	getSchema as getSchemaCore,
 	listOperations as listOperationsCore,
 } from './core/inspect';
 
+export { formatDocSchemaShape };
 export type { ListOperationsOptions };
 
 // Deliberately shallow plugin shape for inspect helpers.
