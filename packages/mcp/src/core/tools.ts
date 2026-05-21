@@ -86,7 +86,12 @@ export function buildCorsairToolDefs(
 						corsair,
 					);
 					return {
-						content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+						content: [
+							{
+								type: 'text',
+								text: JSON.stringify(result ?? null, null, 2),
+							},
+						],
 					};
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);

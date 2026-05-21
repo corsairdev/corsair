@@ -79,6 +79,13 @@ const FilterGroupSchema = z.object({
 	filters: z.array(FilterSchema),
 });
 
+const SearchSortDirection = z.enum(['ASCENDING', 'DESCENDING']);
+
+const SearchSortSchema = z.object({
+	propertyName: z.string(),
+	direction: SearchSortDirection,
+});
+
 const AssociationRecords = z.object({
 	id: z.string(),
 	type: z.string().optional(),
@@ -97,7 +104,7 @@ const ContactsSearchInputSchema = z.object({
 	query: z.string().optional(),
 	limit: z.number().optional(),
 	after: z.string().optional(),
-	sorts: z.array(z.string()).optional(),
+	sorts: z.array(SearchSortSchema).optional(),
 	properties: z.array(z.string()).optional(),
 	filterGroups: z.array(FilterGroupSchema).optional(),
 });
@@ -223,7 +230,7 @@ const DealsSearchInputSchema = z.object({
 	query: z.string().optional(),
 	limit: z.number().optional(),
 	after: z.string().optional(),
-	sorts: z.array(z.string()).optional(),
+	sorts: z.array(SearchSortSchema).optional(),
 	properties: z.array(z.string()).optional(),
 	filterGroups: z.array(FilterGroupSchema).optional(),
 });
@@ -440,6 +447,7 @@ const PagingResponseSchema = z.object({
 
 const GetManyContactsResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(ContactResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
@@ -447,6 +455,7 @@ const GetManyContactsResponseSchema = z
 
 const GetManyCompaniesResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(CompanyResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
@@ -454,6 +463,7 @@ const GetManyCompaniesResponseSchema = z
 
 const GetManyDealsResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(DealResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
@@ -475,7 +485,9 @@ const GetManyEngagementsResponseSchema = z
 
 const SearchCompanyByDomainResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(CompanyResponseSchema).optional(),
+		paging: PagingResponseSchema.optional(),
 	})
 	.loose();
 

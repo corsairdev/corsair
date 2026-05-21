@@ -202,6 +202,7 @@ await corsair.hubspot.api.companies.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -267,6 +268,7 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -332,6 +334,7 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -396,7 +399,9 @@ await corsair.hubspot.api.companies.searchByDomain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
+| `paging` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -412,6 +417,20 @@ await corsair.hubspot.api.companies.searchByDomain({});
   associations?: {
   }
 }[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  next?: {
+    after: string
+  },
+  prev?: {
+    before: string
+  }
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -749,6 +768,7 @@ await corsair.hubspot.api.contacts.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -814,6 +834,7 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -879,6 +900,7 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -937,11 +959,21 @@ await corsair.hubspot.api.contacts.search({});
 | `query` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
-| `sorts` | `string[]` | No | — |
+| `sorts` | `object[]` | No | — |
 | `properties` | `string[]` | No | — |
 | `filterGroups` | `object[]` | No | — |
 
 <AccordionGroup>
+<Accordion title="sorts full type">
+
+```ts
+{
+  propertyName: string,
+  direction: ASCENDING | DESCENDING
+}[]
+```
+</Accordion>
+
 <Accordion title="filterGroups full type">
 
 ```ts
@@ -964,6 +996,7 @@ await corsair.hubspot.api.contacts.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -1196,6 +1229,7 @@ await corsair.hubspot.api.deals.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -1261,6 +1295,7 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -1326,6 +1361,7 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
@@ -1384,11 +1420,21 @@ await corsair.hubspot.api.deals.search({});
 | `query` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
-| `sorts` | `string[]` | No | — |
+| `sorts` | `object[]` | No | — |
 | `properties` | `string[]` | No | — |
 | `filterGroups` | `object[]` | No | — |
 
 <AccordionGroup>
+<Accordion title="sorts full type">
+
+```ts
+{
+  propertyName: string,
+  direction: ASCENDING | DESCENDING
+}[]
+```
+</Accordion>
+
 <Accordion title="filterGroups full type">
 
 ```ts
@@ -1411,6 +1457,7 @@ await corsair.hubspot.api.deals.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number` | No | — |
 | `results` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 
