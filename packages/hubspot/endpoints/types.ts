@@ -18,7 +18,7 @@ const ContactsGetManyInputSchema = z.object({
 	archived: z.boolean().optional(),
 });
 
-const ContactsCreateOrUpdateInputSchema = z.object({
+const ContactsCreateInputSchema = z.object({
 	properties: z.record(z.string(), z.string()).optional(),
 	associations: z
 		.array(
@@ -33,6 +33,11 @@ const ContactsCreateOrUpdateInputSchema = z.object({
 			}),
 		)
 		.optional(),
+});
+
+const ContactsUpdateInputSchema = z.object({
+	contactId: z.string(),
+	properties: z.record(z.string(), z.string()).optional(),
 });
 
 const ContactsDeleteInputSchema = z.object({
@@ -325,7 +330,8 @@ const ContactListsRemoveContactInputSchema = z.object({
 export const HubSpotEndpointInputSchemas = {
 	contactsGet: ContactsGetInputSchema,
 	contactsGetMany: ContactsGetManyInputSchema,
-	contactsCreateOrUpdate: ContactsCreateOrUpdateInputSchema,
+	contactsCreate: ContactsCreateInputSchema,
+	contactsUpdate: ContactsUpdateInputSchema,
 	contactsDelete: ContactsDeleteInputSchema,
 	contactsGetRecentlyCreated: ContactsGetRecentlyCreatedInputSchema,
 	contactsGetRecentlyUpdated: ContactsGetRecentlyUpdatedInputSchema,
@@ -501,7 +507,8 @@ const AddContactToListResponseSchema = z.object({
 export const HubSpotEndpointOutputSchemas = {
 	contactsGet: ContactResponseSchema,
 	contactsGetMany: GetManyContactsResponseSchema,
-	contactsCreateOrUpdate: ContactResponseSchema,
+	contactsCreate: ContactResponseSchema,
+	contactsUpdate: ContactResponseSchema,
 	contactsDelete: z.void(),
 	contactsGetRecentlyCreated: GetManyContactsResponseSchema,
 	contactsGetRecentlyUpdated: GetManyContactsResponseSchema,
@@ -547,8 +554,11 @@ export type GetContactResponse = z.infer<
 export type GetManyContactsResponse = z.infer<
 	typeof HubSpotEndpointOutputSchemas.contactsGetMany
 >;
-export type CreateOrUpdateContactResponse = z.infer<
-	typeof HubSpotEndpointOutputSchemas.contactsCreateOrUpdate
+export type CreateContactResponse = z.infer<
+	typeof HubSpotEndpointOutputSchemas.contactsCreate
+>;
+export type UpdateContactResponse = z.infer<
+	typeof HubSpotEndpointOutputSchemas.contactsUpdate
 >;
 export type GetCompanyResponse = z.infer<
 	typeof HubSpotEndpointOutputSchemas.companiesGet
