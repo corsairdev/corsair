@@ -181,6 +181,16 @@ export const search: HubSpotEndpoints['contactsSearch'] = async (
 		{ method: 'POST', body },
 	);
 
+	if (result.results && ctx.db.contacts) {
+		try {
+			for (const contact of result.results) {
+				await ctx.db.contacts.upsertByEntityId(contact.id, contact);
+			}
+		} catch (error) {
+			console.warn('Failed to save contacts to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'hubspot.contacts.search',
