@@ -30,6 +30,7 @@ module.exports = {
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
 					target: 'ESNext',
+					types: ['node', 'jest'],
 				},
 			},
 		],
@@ -40,6 +41,7 @@ module.exports = {
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
+					types: ['node', 'jest'],
 				},
 			},
 		],

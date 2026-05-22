@@ -21,6 +21,12 @@ export async function makeZendeskRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!subdomain) {
+		throw new ZendeskAPIError(
+			'Subdomain is required for Zendesk integration',
+			'MISSING_SUBDOMAIN',
+		);
+	}
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {

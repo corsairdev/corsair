@@ -33,6 +33,7 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
+			// Type assertion is used here because we have already narrowed body type by checking that it is non-null, an object, and not an array.
 			return parsed !== null &&
 				typeof parsed === 'object' &&
 				!Array.isArray(parsed)
@@ -42,6 +43,7 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 			return null;
 		}
 	}
+	// Type assertion is used here because we have already narrowed body type by checking that it is non-null, an object, and not an array.
 	return body !== null && typeof body === 'object' && !Array.isArray(body)
 		? (body as Record<string, unknown>)
 		: null;
@@ -59,7 +61,10 @@ export function verifyZendeskWebhookSignature(
 	secret?: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return {
+			valid: false,
+			error: 'Missing webhook signing secret configuration',
+		};
 	}
 
 	const rawBody = request.rawBody;
@@ -92,6 +97,24 @@ export function verifyZendeskWebhookSignature(
 		return {
 			valid: false,
 			error: 'Missing x-zendesk-webhook-signature-timestamp header',
+		};
+	}
+
+	const parsedTimestamp = Date.parse(timestamp);
+	if (Number.isNaN(parsedTimestamp)) {
+		return {
+			valid: false,
+			error: 'Invalid x-zendesk-webhook-signature-timestamp header format',
+		};
+	}
+
+	const now = Date.now();
+	const diffSeconds = Math.abs(now - parsedTimestamp) / 1000;
+	// Enforce a 5-minute freshness window (300 seconds)
+	if (diffSeconds > 300) {
+		return {
+			valid: false,
+			error: 'Webhook request timestamp is stale (outside 5-minute window)',
 		};
 	}
 

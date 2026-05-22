@@ -59,6 +59,7 @@ export const ZendeskCommentResponseSchema = z.object({
 	plain_body: z.string().optional().nullable(),
 	public: z.boolean().optional().nullable(),
 	author_id: z.number().optional().nullable(),
+	// z.unknown() is used because Zendesk attachment objects have a highly variable/dynamic structure and we only need to verify the array presence.
 	attachments: z.array(z.unknown()).optional().nullable(),
 	created_at: z.string().optional().nullable(),
 });

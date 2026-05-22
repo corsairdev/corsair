@@ -139,6 +139,7 @@ export const deleteUser: ZendeskEndpoints['usersDelete'] = async (
 ) => {
 	const subdomain =
 		ctx.options.subdomain ?? (await ctx.keys.get_subdomain()) ?? '';
+	// makeZendeskRequest<unknown> is used because Zendesk delete APIs return 204 No Content and we do not expect a structured response body.
 	await makeZendeskRequest<unknown>(
 		`users/${input.id}.json`,
 		ctx.key,
