@@ -176,9 +176,6 @@ importers:
       '@corsair-dev/teams':
         specifier: workspace:*
         version: link:../../packages/teams
-      '@corsair-dev/twilio':
-        specifier: workspace:*
-        version: link:../../packages/twilio
       '@corsair-dev/vapi':
         specifier: workspace:*
         version: link:../../packages/vapi
