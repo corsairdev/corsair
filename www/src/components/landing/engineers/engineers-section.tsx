@@ -1,14 +1,7 @@
 import { CopyableCodeSnippet } from '../copyable-code-snippet';
+import { PlusCorner } from '../icons';
 
 const SDK_INSTALL_COMMAND = 'npm install corsair';
-
-function PlusCorner() {
-	return (
-		<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-			<path d="M7 0v14M0 7h14" stroke="#4a38f5" strokeWidth="1" />
-		</svg>
-	);
-}
 
 const ENGINEER_OPTIONS = [
 	{
@@ -33,7 +26,7 @@ const ENGINEER_OPTIONS = [
 ] as const;
 
 const CARD_CLASS =
-	'relative flex w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-5 md:p-6';
+	'relative flex w-full flex-col border border-[#1c1c1c1a] bg-white p-5 md:p-6';
 
 function EngineerCard({
 	option,

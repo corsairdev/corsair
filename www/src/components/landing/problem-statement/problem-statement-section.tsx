@@ -1,10 +1,4 @@
-function PlusCorner() {
-	return (
-		<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-			<path d="M7 0v14M0 7h14" stroke="#4a38f5" strokeWidth="1" />
-		</svg>
-	);
-}
+import { PlusCorner } from '../icons';
 
 const SUPPLEMENTAL_POINTS = [
 	{
@@ -45,7 +39,7 @@ export function ProblemStatementSection() {
 					</h2>
 				</div>
 
-				<div className="relative mx-auto mt-14 max-w-[960px] rounded-sm border border-[#1c1c1c1a] bg-white md:mt-20">
+				<div className="relative mx-auto mt-14 max-w-[960px] border border-[#1c1c1c1a] bg-white md:mt-20">
 					<span className="pointer-events-none absolute -left-[7px] -top-[7px]">
 						<PlusCorner />
 					</span>

@@ -3,30 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { ArrowRightIcon, PlusCorner } from '../icons';
 
 const DOCS_URL = 'https://docs.corsair.dev';
 const GITHUB_URL = 'https://github.com/corsairdev/corsair/';
 const APP_URL = 'https://app.corsair.dev';
-
-function ArrowRightIcon() {
-	return (
-		<svg
-			width="14"
-			height="14"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			aria-hidden="true"
-			focusable="false"
-			className="shrink-0"
-		>
-			<path d="M5 12h14M13 6l6 6-6 6" />
-		</svg>
-	);
-}
 
 function MenuIcon() {
 	return (
@@ -71,15 +52,11 @@ function CloseIcon() {
 
 export function SiteMenu() {
 	const [hasScrolled, setHasScrolled] = useState(false);
-	const [isScrolling, setIsScrolling] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	const handleScroll = useCallback(() => {
 		const scrolled = window.scrollY > 8;
 		setHasScrolled(scrolled);
-		setIsScrolling(true);
-		const t = window.setTimeout(() => setIsScrolling(false), 150);
-		return () => window.clearTimeout(t);
 	}, []);
 
 	useEffect(() => {
@@ -90,47 +67,58 @@ export function SiteMenu() {
 
 	return (
 		<header
-			className="sticky top-0 z-50 w-full transition-shadow duration-200"
-			style={{
-				backgroundColor: 'rgba(244, 244, 244, 0.9)',
-				backdropFilter: 'blur(10px)',
-				WebkitBackdropFilter: 'blur(10px)',
-				boxShadow:
-					hasScrolled || isScrolling || isMobileMenuOpen
-						? '0 1px 3px 0 rgba(0, 0, 0, 0.06)'
-						: '0 1px 3px 0 rgba(0, 0, 0, 0)',
-			}}
+			className="sticky top-4 z-50 mx-4 md:mx-10 transition-all duration-300"
 		>
-			<div className="mx-auto max-w-[1440px] px-4 py-2 md:px-10">
+			<div
+				className={`relative mx-auto max-w-[1440px] transition-all duration-300 ${
+					hasScrolled || isMobileMenuOpen
+						? 'bg-[#f4f4f4]/90 backdrop-blur-xl shadow-sm'
+						: 'bg-[#f4f4f4]/40 backdrop-blur-md'
+				}`}
+			>
+				{/* The signature plus signs at all four corners */}
+				<span className="pointer-events-none absolute -left-[7px] -top-[7px] z-10 transition-opacity duration-300">
+					<PlusCorner />
+				</span>
+				<span className="pointer-events-none absolute -right-[7px] -top-[7px] z-10 transition-opacity duration-300">
+					<PlusCorner />
+				</span>
+				<span className="pointer-events-none absolute -bottom-[7px] -left-[7px] z-10 transition-opacity duration-300">
+					<PlusCorner />
+				</span>
+				<span className="pointer-events-none absolute -bottom-[7px] -right-[7px] z-10 transition-opacity duration-300">
+					<PlusCorner />
+				</span>
+
 				<nav
-					className="flex min-h-12 w-full min-w-0 items-center justify-between gap-4 rounded-sm px-2 sm:px-4 md:px-10"
+					className="flex min-h-16 w-full min-w-0 items-center justify-between gap-4 px-4 md:px-6"
 					aria-label="Primary navigation"
 				>
 					<Link
 						href="/"
 						aria-label="Corsair home"
-						className="inline-flex shrink-0 items-center gap-2 sm:gap-2.5 no-underline"
+						className="inline-flex shrink-0 items-center gap-2.5 no-underline transition-opacity hover:opacity-80"
 					>
 						<Image
 							src="/corsair-logo.png"
 							alt=""
-							width={36}
-							height={36}
-							className="rounded-sm sm:w-10 sm:h-10"
+							width={32}
+							height={32}
+							className="rounded-sm"
 							priority
 						/>
-						<span className="font-[family-name:var(--landing-font-sans)] text-base sm:text-lg font-medium tracking-[-0.02em] text-[#1c1c1c]">
+						<span className="font-[family-name:var(--landing-font-sans)] text-lg font-semibold tracking-tight text-[#1c1c1c]">
 							Corsair
 						</span>
 					</Link>
 
 					{/* Desktop Menu */}
-					<div className="hidden md:flex shrink-0 items-center gap-2">
+					<div className="hidden md:flex shrink-0 items-center gap-1 sm:gap-2">
 						<a
 							href={DOCS_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="rounded-sm border border-[#1c1c1c] bg-transparent px-3 py-2 text-xs font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d] md:px-4 md:text-[13px]"
+							className="px-3 py-2 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c]"
 						>
 							Docs
 						</a>
@@ -138,19 +126,23 @@ export function SiteMenu() {
 							href={GITHUB_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="rounded-sm border border-[#1c1c1c] bg-transparent px-3 py-2 text-xs font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d] md:px-4 md:text-[13px]"
+							className="px-3 py-2 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c]"
 						>
 							GitHub
 						</a>
-						<a
-							href={APP_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="inline-flex items-center gap-1.5 rounded-sm border border-[#1c1c1c] bg-[#1c1c1c] px-3 py-2 text-xs font-medium text-white no-underline transition-colors hover:bg-[#333] md:px-4 md:text-[13px]"
-						>
-							Start free
-							<ArrowRightIcon />
-						</a>
+						<div className="ml-2 sm:ml-4 flex items-center">
+							<a
+								href={APP_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="group inline-flex items-center justify-center gap-2 rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] px-4 py-2 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] no-underline transition-all duration-300 ease-out hover:bg-[#2a2a2a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_16px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:translate-y-0"
+							>
+								Go to app
+								<span className="transition-transform duration-300 ease-out group-hover:translate-x-0.5">
+									<ArrowRightIcon />
+								</span>
+							</a>
+						</div>
 					</div>
 
 					{/* Mobile Controls */}
@@ -159,15 +151,15 @@ export function SiteMenu() {
 							href={APP_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="inline-flex items-center gap-1 rounded-sm border border-[#1c1c1c] bg-[#1c1c1c] px-2.5 py-1.5 text-[11px] sm:text-xs font-medium text-white no-underline transition-colors hover:bg-[#333]"
+							className="group inline-flex items-center justify-center gap-2 rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] px-3 py-1.5 text-xs font-[family-name:var(--landing-font-sans)] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] no-underline transition-all duration-300 ease-out hover:bg-[#2a2a2a] active:translate-y-0"
 						>
-							Start free
+							Go to app
 						</a>
 						<button
 							onClick={() => setIsMobileMenuOpen((open) => !open)}
 							aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
 							aria-expanded={isMobileMenuOpen}
-							className="flex h-8 w-8 items-center justify-center rounded-sm border border-[#1c1c1c] bg-transparent text-[#1c1c1c] hover:bg-[#1c1c1c0d] transition-colors"
+							className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#1c1c1c]/10 bg-white/50 text-[#1c1c1c] hover:bg-white hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] backdrop-blur-sm transition-colors"
 						>
 							{isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
 						</button>
@@ -177,13 +169,13 @@ export function SiteMenu() {
 
 			{/* Mobile Dropdown Menu */}
 			{isMobileMenuOpen && (
-				<div className="md:hidden w-full border-t border-[#1c1c1c1a] bg-[#f4f4f4] px-6 py-6 shadow-lg">
+				<div className="md:hidden w-full border-t border-[#1c1c1c1a] bg-[#f4f4f4]/95 backdrop-blur-xl px-6 py-6 shadow-lg rounded-b-lg">
 					<div className="flex flex-col gap-3">
 						<a
 							href={DOCS_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center justify-between rounded-sm border border-[#1c1c1c] bg-transparent px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d]"
+							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-colors hover:bg-white"
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							<span>Docs</span>
@@ -193,7 +185,7 @@ export function SiteMenu() {
 							href={GITHUB_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center justify-between rounded-sm border border-[#1c1c1c] bg-transparent px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d]"
+							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-colors hover:bg-white"
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							<span>GitHub</span>
