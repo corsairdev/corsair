@@ -56,7 +56,11 @@ export function CopyableCodeSnippet({
 				aria-label={copied ? 'Copied' : `Copy ${code}`}
 			>
 				{copied ? (
-					<Check className={`${iconClass} text-[#4a38f5]`} weight="bold" aria-hidden />
+					<Check
+						className={`${iconClass} text-[#4a38f5]`}
+						weight="bold"
+						aria-hidden
+					/>
 				) : (
 					<Copy className={iconClass} aria-hidden />
 				)}
