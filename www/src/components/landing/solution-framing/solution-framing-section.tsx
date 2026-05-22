@@ -1,12 +1,5 @@
 import { OpenSourceVisual, PermissionVisual, SelfHostVisual } from './visuals';
-
-function PlusCorner() {
-	return (
-		<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-			<path d="M7 0v14M0 7h14" stroke="#4a38f5" strokeWidth="1" />
-		</svg>
-	);
-}
+import { PlusCorner } from '../icons';
 
 const PILLAR_VISUALS = {
 	permissions: PermissionVisual,
@@ -33,7 +26,7 @@ const SOLUTION_PILLARS = [
 ] as const;
 
 const CARD_CLASS =
-	'relative flex min-h-[420px] w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-5 md:min-h-[480px] md:p-6 lg:h-[550px] lg:min-h-0';
+	'relative flex min-h-[420px] w-full flex-col border border-[#1c1c1c1a] bg-white p-5 md:min-h-[480px] md:p-6 lg:h-[550px] lg:min-h-0';
 
 function SolutionCard({
 	pillar,

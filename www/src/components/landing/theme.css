@@ -77,3 +77,43 @@
 .landing-send-cta-pulse {
 	animation: landing-send-cta-pulse 1.4s ease-in-out infinite;
 }
+
+@keyframes heroFadeUp {
+	0% { opacity: 0; transform: translateY(16px) scale(0.98); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.animate-hero-fade-up {
+		animation: heroFadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.animate-hero-fade-up {
+		opacity: 1;
+		animation: none;
+		transform: none;
+	}
+}
+
+@keyframes flowRight {
+	to { stroke-dashoffset: -400; }
+}
+
+@keyframes flowLeft {
+	to { stroke-dashoffset: 400; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.path-flow-1 { animation: flowRight 30s linear infinite; }
+	.path-flow-2 { animation: flowLeft 40s linear infinite; }
+	.path-flow-3 { animation: flowRight 50s linear infinite; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.path-flow-1, .path-flow-2, .path-flow-3 {
+		animation: none;
+	}
+}
