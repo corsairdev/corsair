@@ -73,51 +73,51 @@ export const metadata: Metadata = {
 	},
 };
 
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'Organization',
+			'@id': 'https://corsair.dev/#organization',
+			name: 'Corsair',
+			url: 'https://corsair.dev',
+			logo: 'https://corsair.dev/corsair-logo.png',
+			sameAs: [
+				'https://github.com/corsairdev/corsair',
+				'https://x.com/corsairdotdev',
+			],
+		},
+		{
+			'@type': 'WebSite',
+			'@id': 'https://corsair.dev/#website',
+			url: 'https://corsair.dev',
+			name: 'Corsair',
+			publisher: {
+				'@id': 'https://corsair.dev/#organization',
+			},
+		},
+		{
+			'@type': 'SoftwareApplication',
+			'@id': 'https://corsair.dev/#software',
+			name: 'Corsair',
+			applicationCategory: 'DeveloperApplication',
+			operatingSystem: 'All',
+			description:
+				'Corsair helps AI products add secure, multi-tenant integrations with OAuth, permissions, MCP, webhooks, and hosted or self-hosted execution.',
+			offers: {
+				'@type': 'Offer',
+				price: '0',
+				priceCurrency: 'USD',
+			},
+		},
+	],
+};
+
 export default function RootLayout({
 	children,
 }: Readonly<{
 	children: ReactNode;
 }>) {
-	const jsonLd = {
-		'@context': 'https://schema.org',
-		'@graph': [
-			{
-				'@type': 'Organization',
-				'@id': 'https://corsair.dev/#organization',
-				name: 'Corsair',
-				url: 'https://corsair.dev',
-				logo: 'https://corsair.dev/corsair-logo.png',
-				sameAs: [
-					'https://github.com/corsairdev/corsair',
-					'https://x.com/corsairdotdev',
-				],
-			},
-			{
-				'@type': 'WebSite',
-				'@id': 'https://corsair.dev/#website',
-				url: 'https://corsair.dev',
-				name: 'Corsair',
-				publisher: {
-					'@id': 'https://corsair.dev/#organization',
-				},
-			},
-			{
-				'@type': 'SoftwareApplication',
-				'@id': 'https://corsair.dev/#software',
-				name: 'Corsair',
-				applicationCategory: 'DeveloperApplication',
-				operatingSystem: 'All',
-				description:
-					'Corsair helps AI products add secure, multi-tenant integrations with OAuth, permissions, MCP, webhooks, and hosted or self-hosted execution.',
-				offers: {
-					'@type': 'Offer',
-					price: '0',
-					priceCurrency: 'USD',
-				},
-			},
-		],
-	};
-
 	return (
 		<html
 			lang="en"
@@ -128,13 +128,15 @@ export default function RootLayout({
 				azeretMono.variable,
 			)}
 		>
-			<head>
+			<body className="min-h-screen antialiased">
 				<script
 					type="application/ld+json"
-					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+					}}
 				/>
-			</head>
-			<body className="min-h-screen antialiased">{children}</body>
+				{children}
+			</body>
 		</html>
 	);
 }

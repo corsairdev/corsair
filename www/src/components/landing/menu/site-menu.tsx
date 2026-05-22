@@ -19,7 +19,8 @@ function ArrowRightIcon() {
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			aria-hidden
+			aria-hidden="true"
+			focusable="false"
 			className="shrink-0"
 		>
 			<path d="M5 12h14M13 6l6 6-6 6" />
@@ -38,6 +39,8 @@ function MenuIcon() {
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"
+			aria-hidden="true"
+			focusable="false"
 		>
 			<line x1="4" y1="12" x2="20" y2="12" />
 			<line x1="4" y1="6" x2="20" y2="6" />
@@ -57,6 +60,8 @@ function CloseIcon() {
 			strokeWidth="2"
 			strokeLinecap="round"
 			strokeLinejoin="round"
+			aria-hidden="true"
+			focusable="false"
 		>
 			<line x1="18" y1="6" x2="6" y2="18" />
 			<line x1="6" y1="6" x2="18" y2="18" />
@@ -135,7 +140,7 @@ export function SiteMenu() {
 							rel="noopener noreferrer"
 							className="rounded-sm border border-[#1c1c1c] bg-transparent px-3 py-2 text-xs font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d] md:px-4 md:text-[13px]"
 						>
-							Github
+							GitHub
 						</a>
 						<a
 							href={APP_URL}
@@ -159,8 +164,9 @@ export function SiteMenu() {
 							Start free
 						</a>
 						<button
-							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+							onClick={() => setIsMobileMenuOpen((open) => !open)}
 							aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+							aria-expanded={isMobileMenuOpen}
 							className="flex h-8 w-8 items-center justify-center rounded-sm border border-[#1c1c1c] bg-transparent text-[#1c1c1c] hover:bg-[#1c1c1c0d] transition-colors"
 						>
 							{isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
@@ -190,7 +196,7 @@ export function SiteMenu() {
 							className="flex items-center justify-between rounded-sm border border-[#1c1c1c] bg-transparent px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c0d]"
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
-							<span>Github</span>
+							<span>GitHub</span>
 							<ArrowRightIcon />
 						</a>
 					</div>

@@ -47,7 +47,7 @@ export function LandingHero() {
 						rel="noopener noreferrer"
 						className="inline-flex items-center justify-center rounded-sm border border-[#1c1c1c] bg-transparent px-6 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-all duration-200 ease-out hover:bg-[#1c1c1c0d] sm:hover:-translate-y-0.5 sm:hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)]"
 					>
-						⭐ on Github
+						⭐ on GitHub
 					</a>
 				</div>
 
