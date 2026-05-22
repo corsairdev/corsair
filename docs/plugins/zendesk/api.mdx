@@ -1,0 +1,689 @@
+---
+title: API
+description: "API reference for Zendesk: every `zendesk.api.*` operation with input and output types."
+---
+
+Every `zendesk.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### list
+
+`comments.list`
+
+List comments for a specific ticket
+
+**Risk:** `read`
+
+```ts
+await corsair.zendesk.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+| `next_page` | `string` | No | — |
+| `previous_page` | `string` | No | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  body?: string | null,
+  html_body?: string | null,
+  plain_body?: string | null,
+  public?: boolean | null,
+  author_id?: number | null,
+  attachments?: any[] | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tickets
+
+### create
+
+`tickets.create`
+
+Create a new ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.zendesk.api.tickets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | No | — |
+| `description` | `string` | No | — |
+| `comment` | `object` | No | — |
+| `status` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `requester_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `group_id` | `number` | No | — |
+| `organization_id` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  body: string,
+  public?: boolean,
+  author_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  external_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  type?: string | null,
+  subject?: string | null,
+  raw_subject?: string | null,
+  description?: string | null,
+  priority?: string | null,
+  status?: string | null,
+  recipient?: string | null,
+  requester_id?: number | null,
+  submitter_id?: number | null,
+  assignee_id?: number | null,
+  organization_id?: number | null,
+  group_id?: number | null,
+  collaborator_ids?: number[] | null,
+  follower_ids?: number[] | null,
+  email_cc_ids?: number[] | null,
+  forum_topic_id?: number | null,
+  problem_id?: number | null,
+  has_incidents?: boolean | null,
+  is_public?: boolean | null,
+  due_at?: string | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tickets.delete`
+
+Delete a ticket by its ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zendesk.api.tickets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`tickets.get`
+
+Retrieve a ticket by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.zendesk.api.tickets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  external_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  type?: string | null,
+  subject?: string | null,
+  raw_subject?: string | null,
+  description?: string | null,
+  priority?: string | null,
+  status?: string | null,
+  recipient?: string | null,
+  requester_id?: number | null,
+  submitter_id?: number | null,
+  assignee_id?: number | null,
+  organization_id?: number | null,
+  group_id?: number | null,
+  collaborator_ids?: number[] | null,
+  follower_ids?: number[] | null,
+  email_cc_ids?: number[] | null,
+  forum_topic_id?: number | null,
+  problem_id?: number | null,
+  has_incidents?: boolean | null,
+  is_public?: boolean | null,
+  due_at?: string | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tickets.list`
+
+List tickets with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.zendesk.api.tickets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort_by` | `string` | No | — |
+| `sort_order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tickets` | `object[]` | Yes | — |
+| `next_page` | `string` | No | — |
+| `previous_page` | `string` | No | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="tickets full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  external_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  type?: string | null,
+  subject?: string | null,
+  raw_subject?: string | null,
+  description?: string | null,
+  priority?: string | null,
+  status?: string | null,
+  recipient?: string | null,
+  requester_id?: number | null,
+  submitter_id?: number | null,
+  assignee_id?: number | null,
+  organization_id?: number | null,
+  group_id?: number | null,
+  collaborator_ids?: number[] | null,
+  follower_ids?: number[] | null,
+  email_cc_ids?: number[] | null,
+  forum_topic_id?: number | null,
+  problem_id?: number | null,
+  has_incidents?: boolean | null,
+  is_public?: boolean | null,
+  due_at?: string | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tickets.update`
+
+Update an existing ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.zendesk.api.tickets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `subject` | `string` | No | — |
+| `status` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `requester_id` | `number` | No | — |
+| `assignee_id` | `number` | No | — |
+| `comment` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  body: string,
+  public?: boolean,
+  author_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  external_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  type?: string | null,
+  subject?: string | null,
+  raw_subject?: string | null,
+  description?: string | null,
+  priority?: string | null,
+  status?: string | null,
+  recipient?: string | null,
+  requester_id?: number | null,
+  submitter_id?: number | null,
+  assignee_id?: number | null,
+  organization_id?: number | null,
+  group_id?: number | null,
+  collaborator_ids?: number[] | null,
+  follower_ids?: number[] | null,
+  email_cc_ids?: number[] | null,
+  forum_topic_id?: number | null,
+  problem_id?: number | null,
+  has_incidents?: boolean | null,
+  is_public?: boolean | null,
+  due_at?: string | null,
+  tags?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a new user
+
+**Risk:** `write`
+
+```ts
+await corsair.zendesk.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `role` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  name: string,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  time_zone?: string | null,
+  iana_time_zone?: string | null,
+  phone?: string | null,
+  shared_phone?: boolean | null,
+  locale_id?: number | null,
+  locale?: string | null,
+  organization_id?: number | null,
+  role?: string | null,
+  verified?: boolean | null,
+  external_id?: string | null,
+  tags?: string[] | null,
+  active?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a user by their ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.zendesk.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Retrieve a user by their ID
+
+**Risk:** `read`
+
+```ts
+await corsair.zendesk.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  name: string,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  time_zone?: string | null,
+  iana_time_zone?: string | null,
+  phone?: string | null,
+  shared_phone?: boolean | null,
+  locale_id?: number | null,
+  locale?: string | null,
+  organization_id?: number | null,
+  role?: string | null,
+  verified?: boolean | null,
+  external_id?: string | null,
+  tags?: string[] | null,
+  active?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.zendesk.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `role` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `next_page` | `string` | No | — |
+| `previous_page` | `string` | No | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  name: string,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  time_zone?: string | null,
+  iana_time_zone?: string | null,
+  phone?: string | null,
+  shared_phone?: boolean | null,
+  locale_id?: number | null,
+  locale?: string | null,
+  organization_id?: number | null,
+  role?: string | null,
+  verified?: boolean | null,
+  external_id?: string | null,
+  tags?: string[] | null,
+  active?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update an existing user
+
+**Risk:** `write`
+
+```ts
+await corsair.zendesk.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  url?: string | null,
+  name: string,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  time_zone?: string | null,
+  iana_time_zone?: string | null,
+  phone?: string | null,
+  shared_phone?: boolean | null,
+  locale_id?: number | null,
+  locale?: string | null,
+  organization_id?: number | null,
+  role?: string | null,
+  verified?: boolean | null,
+  external_id?: string | null,
+  tags?: string[] | null,
+  active?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
