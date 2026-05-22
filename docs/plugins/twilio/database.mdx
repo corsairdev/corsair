@@ -1,0 +1,99 @@
+---
+title: Database
+description: "Twilio local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Twilio plugin syncs data locally. Use `corsair.twilio.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Calls
+
+Path: `twilio.db.calls.search`
+
+```ts
+const rows = await corsair.twilio.db.calls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `answered_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `api_version` | `string` | equals, contains, startsWith, endsWith, in |
+| `caller_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_created` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `direction` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration` | `string` | equals, contains, startsWith, endsWith, in |
+| `end_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `forwarded_from` | `string` | equals, contains, startsWith, endsWith, in |
+| `from` | `string` | equals, contains, startsWith, endsWith, in |
+| `from_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `group_sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_call_sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number_sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `price` | `string` | equals, contains, startsWith, endsWith, in |
+| `price_unit` | `string` | equals, contains, startsWith, endsWith, in |
+| `sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `to` | `string` | equals, contains, startsWith, endsWith, in |
+| `to_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `trunk_sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `queue_time` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `twilio.db.messages.search`
+
+```ts
+const rows = await corsair.twilio.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `api_version` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_created` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_sent` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `direction` | `string` | equals, contains, startsWith, endsWith, in |
+| `error_code` | `number` | equals, gt, gte, lt, lte, in |
+| `error_message` | `string` | equals, contains, startsWith, endsWith, in |
+| `from` | `string` | equals, contains, startsWith, endsWith, in |
+| `messaging_service_sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `num_media` | `string` | equals, contains, startsWith, endsWith, in |
+| `num_segments` | `string` | equals, contains, startsWith, endsWith, in |
+| `price` | `string` | equals, contains, startsWith, endsWith, in |
+| `price_unit` | `string` | equals, contains, startsWith, endsWith, in |
+| `sid` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `to` | `string` | equals, contains, startsWith, endsWith, in |
+| `uri` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

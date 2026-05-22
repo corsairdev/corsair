@@ -64,6 +64,7 @@ export const BaseProviders = [
 	'telegram',
 	'todoist',
 	'trello',
+	'twilio',
 	'twitter',
 	'twitterapiio',
 	'typeform',
@@ -125,6 +126,7 @@ export type AllProviders =
 	| 'telegram'
 	| 'todoist'
 	| 'trello'
+	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
 	| 'typeform'

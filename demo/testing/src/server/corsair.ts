@@ -13,6 +13,8 @@ import { vapi } from '@corsair-dev/vapi';
 import { xquik } from '@corsair-dev/xquik';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
+import { bitwarden } from '@corsair-dev/bitwarden';
+import { twilio } from '@corsair-dev/twilio';
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -32,9 +34,21 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
+		bitwarden({
+			key: process.env.BITWARDEN_API_KEY,
+		}),
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		}),
+		twilio({
+			accountSid: process.env.TWILIO_ACCOUNT_SID,
+			authToken: process.env.TWILIO_AUTH_TOKEN,
+			webhookSecret: process.env.TWILIO_WEBHOOK_SECRET,
+		}),
+		xquik({
+			key: process.env.XQUIK_API_KEY,
+			webhookSecret: process.env.XQUIK_WEBHOOK_SECRET,
 		}),
 	],
 });

@@ -1,0 +1,270 @@
+---
+title: API
+description: "API reference for Twilio: every `twilio.api.*` operation with input and output types."
+---
+
+Every `twilio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calls
+
+### get
+
+`calls.get`
+
+Fetch a Twilio call by SID
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.calls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_sid` | `string` | Yes | — |
+| `answered_by` | `string` | No | — |
+| `api_version` | `string` | Yes | — |
+| `caller_name` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `direction` | `string` | Yes | — |
+| `duration` | `string` | No | — |
+| `end_time` | `string` | No | — |
+| `forwarded_from` | `string` | No | — |
+| `from` | `string` | No | — |
+| `from_formatted` | `string` | No | — |
+| `group_sid` | `string` | No | — |
+| `parent_call_sid` | `string` | No | — |
+| `phone_number_sid` | `string` | No | — |
+| `price` | `string` | No | — |
+| `price_unit` | `string` | No | — |
+| `sid` | `string` | Yes | — |
+| `start_time` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `to` | `string` | No | — |
+| `to_formatted` | `string` | No | — |
+| `trunk_sid` | `string` | No | — |
+| `uri` | `string` | No | — |
+| `queue_time` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List Twilio calls for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.calls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `to` | `string` | No | — |
+| `from` | `string` | No | — |
+| `status` | `queued \| ringing \| in-progress \| canceled \| completed \| busy \| failed \| no-answer` | No | — |
+| `startTimeAfter` | `string` | No | — |
+| `startTimeBefore` | `string` | No | — |
+| `endTimeAfter` | `string` | No | — |
+| `endTimeBefore` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calls` | `object[]` | Yes | — |
+| `end` | `number` | No | — |
+| `first_page_uri` | `string` | No | — |
+| `next_page_uri` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `previous_page_uri` | `string` | No | — |
+| `start` | `number` | No | — |
+| `uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="calls full type">
+
+```ts
+{
+  account_sid: string,
+  answered_by?: string | null,
+  api_version: string,
+  caller_name?: string | null,
+  date_created?: string | null,
+  date_updated?: string | null,
+  direction: string,
+  duration?: string | null,
+  end_time?: string | null,
+  forwarded_from?: string | null,
+  from?: string | null,
+  from_formatted?: string | null,
+  group_sid?: string | null,
+  parent_call_sid?: string | null,
+  phone_number_sid?: string | null,
+  price?: string | null,
+  price_unit?: string | null,
+  sid: string,
+  start_time?: string | null,
+  status: string,
+  to?: string | null,
+  to_formatted?: string | null,
+  trunk_sid?: string | null,
+  uri?: string | null,
+  queue_time?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+Fetch a Twilio message by SID
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_sid` | `string` | Yes | — |
+| `api_version` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_sent` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `direction` | `string` | Yes | — |
+| `error_code` | `number` | No | — |
+| `error_message` | `string` | No | — |
+| `from` | `string` | No | — |
+| `messaging_service_sid` | `string` | No | — |
+| `num_media` | `string` | No | — |
+| `num_segments` | `string` | No | — |
+| `price` | `string` | No | — |
+| `price_unit` | `string` | No | — |
+| `sid` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `to` | `string` | No | — |
+| `uri` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List Twilio messages for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `to` | `string` | No | — |
+| `from` | `string` | No | — |
+| `dateSentAfter` | `string` | No | — |
+| `dateSentBefore` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `end` | `number` | No | — |
+| `first_page_uri` | `string` | No | — |
+| `next_page_uri` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `previous_page_uri` | `string` | No | — |
+| `start` | `number` | No | — |
+| `uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  account_sid: string,
+  api_version: string,
+  body?: string | null,
+  date_created?: string | null,
+  date_sent?: string | null,
+  date_updated?: string | null,
+  direction: string,
+  error_code?: number | null,
+  error_message?: string | null,
+  from?: string | null,
+  messaging_service_sid?: string | null,
+  num_media?: string | null,
+  num_segments?: string | null,
+  price?: string | null,
+  price_unit?: string | null,
+  sid: string,
+  status: string,
+  to?: string | null,
+  uri?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

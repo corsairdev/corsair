@@ -77,7 +77,9 @@
           },
           {
             "group": "Studio",
-            "pages": ["studio/overview"]
+            "pages": [
+              "studio/overview"
+            ]
           },
           {
             "group": "Core Concepts",
@@ -95,11 +97,16 @@
           },
           {
             "group": "Auth Types",
-            "pages": ["concepts/api-key", "concepts/oauth"]
+            "pages": [
+              "concepts/api-key",
+              "concepts/oauth"
+            ]
           },
           {
             "group": "Production",
-            "pages": ["production/oauth-process"]
+            "pages": [
+              "production/oauth-process"
+            ]
           },
           {
             "group": "Workflow Engines",
@@ -117,7 +124,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -621,6 +631,15 @@
                 ]
               },
               {
+                "group": "Twilio",
+                "pages": [
+                  "plugins/twilio/overview",
+                  "plugins/twilio/api",
+                  "plugins/twilio/database",
+                  "plugins/twilio/webhooks"
+                ]
+              },
+              {
                 "group": "Twitter",
                 "pages": [
                   "plugins/twitter/overview",
@@ -697,7 +716,11 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
+            "pages": [
+              "guides/webhooks",
+              "guides/workflows",
+              "guides/dashboard"
+            ]
           }
         ]
       }
