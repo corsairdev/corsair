@@ -7,8 +7,8 @@ import {
 	useRef,
 	useState,
 } from 'react';
-import { INTEGRATION_BY_ID } from '../data/companies-data';
 import type { IntegrationId } from '../data/companies-data';
+import { INTEGRATION_BY_ID } from '../data/companies-data';
 import { useChatDemoSync } from '../hooks/use-chat-demo-sync';
 import { useWindowOrder } from '../hooks/use-window-order';
 import { useWindowPointerInteractions } from '../hooks/use-window-pointer-interactions';
@@ -207,7 +207,13 @@ function useStreamText(text: string, active: boolean, charMs = CHAR_MS) {
 
 function LightningIcon({ size = 16 }: { size?: number }) {
 	return (
-		<svg width={size} height={size} viewBox="0 0 24 24" fill="#f59e0b" aria-hidden>
+		<svg
+			width={size}
+			height={size}
+			viewBox="0 0 24 24"
+			fill="#f59e0b"
+			aria-hidden
+		>
 			<path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z" />
 		</svg>
 	);
@@ -230,7 +236,11 @@ function ClockIcon({ size = 16 }: { size?: number }) {
 	);
 }
 
-function ToolStatusIcon({ status }: { status: 'pending' | 'running' | 'done' }) {
+function ToolStatusIcon({
+	status,
+}: {
+	status: 'pending' | 'running' | 'done';
+}) {
 	if (status === 'running') {
 		return (
 			<span className="size-3 animate-spin rounded-full border-2 border-[#1c1c1c1a] border-t-[#4a38f5]" />
@@ -287,7 +297,10 @@ function ToolCallRow({
 						{tool.description}
 					</p>
 				</div>
-				<span className="flex size-4 shrink-0 items-center justify-center" aria-hidden>
+				<span
+					className="flex size-4 shrink-0 items-center justify-center"
+					aria-hidden
+				>
 					<ToolStatusIcon status={status} />
 				</span>
 			</div>
@@ -317,18 +330,22 @@ function ToolCallRow({
 				/>
 			</span>
 			<div className="min-w-0 flex-1">
-				<p className="truncate text-[11px] font-medium text-[#1c1c1c]">{title}</p>
+				<p className="truncate text-[11px] font-medium text-[#1c1c1c]">
+					{title}
+				</p>
 				<p className="truncate text-[10px] leading-tight text-[#1c1c1c80]">
 					{subtitle}
 				</p>
 			</div>
-			<span className="flex size-4 shrink-0 items-center justify-center" aria-hidden>
+			<span
+				className="flex size-4 shrink-0 items-center justify-center"
+				aria-hidden
+			>
 				<ToolStatusIcon status={status} />
 			</span>
 		</div>
 	);
 }
-
 
 function TypingIndicator() {
 	return (
@@ -769,7 +786,9 @@ export function TerminalWindow() {
 						<span className="text-[10px] font-medium text-[#1c1c1c80]">
 							Corsair connected
 						</span>
-						<span className="hidden text-[10px] text-[#1c1c1c4d] sm:inline">·</span>
+						<span className="hidden text-[10px] text-[#1c1c1c4d] sm:inline">
+							·
+						</span>
 						<span className="text-[10px] leading-snug text-[#1c1c1c66] sm:truncate">
 							Granola, HubSpot, Notion, GCal, Gmail, Slack
 						</span>

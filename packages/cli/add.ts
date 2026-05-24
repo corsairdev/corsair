@@ -1,67 +1,7 @@
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-
-// Source of truth: packages/corsair/core/constants.ts
-// Kept in sync with BaseProviders from corsair/core.
-const KNOWN_PLUGINS = [
-	'ably',
-	'airtable',
-	'amplitude',
-	'asana',
-	'box',
-	'cal',
-	'calendly',
-	'cloudflare',
-	'cursor',
-	'discord',
-	'dodopayments',
-	'dropbox',
-	'exa',
-	'figma',
-	'firecrawl',
-	'fireflies',
-	'github',
-	'gitlab',
-	'gmail',
-	'googlecalendar',
-	'googledrive',
-	'googlesheets',
-	'hackernews',
-	'hubspot',
-	'intercom',
-	'jira',
-	'linear',
-	'monday',
-	'notion',
-	'onedrive',
-	'openweathermap',
-	'oura',
-	'outlook',
-	'pagerduty',
-	'posthog',
-	'razorpay',
-	'reddit',
-	'resend',
-	'sentry',
-	'sharepoint',
-	'slack',
-	'spotify',
-	'strava',
-	'stripe',
-	'tavily',
-	'teams',
-	'telegram',
-	'todoist',
-	'trello',
-	'twitter',
-	'twitterapiio',
-	'typeform',
-	'vapi',
-	'xquik',
-	'youtube',
-	'zoom',
-] as const;
+import { BaseProviders } from 'corsair';
 
 type PackageManager = 'pnpm' | 'yarn' | 'npm' | 'bun';
 
@@ -104,7 +44,7 @@ function installCommand(pm: PackageManager, pkg: string): string {
 
 function resolvePluginPackage(pluginId: string): ResolvedPlugin | null {
 	const normalised = pluginId.toLowerCase().replace(/^@corsair-dev\//, '');
-	if (KNOWN_PLUGINS.includes(normalised as (typeof KNOWN_PLUGINS)[number])) {
+	if ((BaseProviders as readonly string[]).includes(normalised)) {
 		return { package: `@corsair-dev/${normalised}`, id: normalised };
 	}
 	return null;
@@ -234,7 +174,7 @@ export async function runAdd(options: AddOptions): Promise<void> {
 	const resolved = resolvePluginPackage(plugin);
 	if (!resolved) {
 		console.error(`[#corsair]: Unknown plugin '${plugin}'.`);
-		console.error(`[#corsair]: Known plugins: ${KNOWN_PLUGINS.join(', ')}`);
+		console.error(`[#corsair]: Known plugins: ${BaseProviders.join(', ')}`);
 		process.exit(1);
 	}
 

@@ -2,7 +2,11 @@
 
 import { CaretDown, GitFork, Star } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
-import { FeatureScene, PreviewPanel, WINDOW_SLICE_FRAME } from './feature-scene';
+import {
+	FeatureScene,
+	PreviewPanel,
+	WINDOW_SLICE_FRAME,
+} from './feature-scene';
 import { SkeletonLine } from './skeleton-line';
 
 const DIM_ON_HOVER =
@@ -35,7 +39,9 @@ export function OpenSourceVisual() {
 						</div>
 					</div>
 
-					<div className={`grid min-h-0 flex-1 grid-cols-[1fr_72px] ${DIM_ON_HOVER}`}>
+					<div
+						className={`grid min-h-0 flex-1 grid-cols-[1fr_72px] ${DIM_ON_HOVER}`}
+					>
 						<div className="border-r border-[#d0d7de] p-2.5">
 							<button
 								type="button"

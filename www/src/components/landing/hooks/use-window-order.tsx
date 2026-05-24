@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
 	createContext,
 	useCallback,
@@ -7,7 +8,6 @@ import {
 	useEffect,
 	useMemo,
 	useState,
-	type ReactNode,
 } from 'react';
 
 type WindowOrderApi = {
@@ -26,7 +26,8 @@ export function WindowOrderProvider({ children }: { children: ReactNode }) {
 		() => ({
 			register: (id) =>
 				setStack((prev) => (prev.includes(id) ? prev : [...prev, id])),
-			unregister: (id) => setStack((prev) => prev.filter((item) => item !== id)),
+			unregister: (id) =>
+				setStack((prev) => prev.filter((item) => item !== id)),
 			activate: (id) =>
 				setStack((prev) => {
 					if (prev[prev.length - 1] === id) return prev;

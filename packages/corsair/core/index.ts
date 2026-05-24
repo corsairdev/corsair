@@ -179,11 +179,11 @@ export type {
 	CorsairTenantWrapper,
 } from './client';
 // Constants
-export type {
-	AllProviders,
-	AuthTypes,
+export {
+	type AllProviders,
+	type AuthTypes,
 	BaseProviders,
-	PickAuth,
+	type PickAuth,
 } from './constants';
 // Endpoint types
 export type {
@@ -218,7 +218,7 @@ export type {
 	ListOperationsOptions,
 	PluginDocsIntrospection,
 } from './inspect';
-export { introspectPluginForDocs, formatDocSchemaShape } from './inspect';
+export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,

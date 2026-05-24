@@ -24,9 +24,7 @@ export function SiteMenu() {
 	}, [handleScroll]);
 
 	return (
-		<header
-			className="sticky top-4 z-50 mx-4 md:mx-10 transition-all duration-300"
-		>
+		<header className="sticky top-4 z-50 mx-4 md:mx-10 transition-all duration-300">
 			<div
 				className={`relative mx-auto max-w-[1440px] transition-all duration-300 ${
 					hasScrolled

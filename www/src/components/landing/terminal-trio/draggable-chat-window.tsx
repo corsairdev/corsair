@@ -1,17 +1,12 @@
 'use client';
 
-import {
-	useCallback,
-	useLayoutEffect,
-	useRef,
-	useState,
-	type ReactNode,
-} from 'react';
+import type { ReactNode } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { PersonAvatar } from '../app-preview/table-ui';
 import { useWindowOrder } from '../hooks/use-window-order';
 import { useWindowPointerInteractions } from '../hooks/use-window-pointer-interactions';
 import type { WindowPosition, WindowSize } from '../hooks/window-geometry';
 import { TrafficLights } from '../icons/window-chrome';
-import { PersonAvatar } from '../app-preview/table-ui';
 
 export const DESKTOP_WIDTH = 340;
 export const DESKTOP_HEIGHT = 420;
@@ -46,7 +41,9 @@ function computeLayout(
 		};
 	}
 
-	const maxWidth = Math.floor((bounds.width - WINDOW_GAP * (total - 1)) / total);
+	const maxWidth = Math.floor(
+		(bounds.width - WINDOW_GAP * (total - 1)) / total,
+	);
 	const width = Math.min(DESKTOP_WIDTH, Math.max(MIN_WIDTH, maxWidth));
 	const height = Math.min(DESKTOP_HEIGHT, bounds.height);
 	const rowWidth = total * width + WINDOW_GAP * (total - 1);

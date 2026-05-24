@@ -1,9 +1,9 @@
 'use client';
 
 import type { JSX } from 'react';
+import { FaviconLogo } from '../app-preview/table-ui';
 import type { IntegrationId } from '../data/companies-data';
 import { INTEGRATION_BY_ID } from '../data/companies-data';
-import { FaviconLogo } from '../app-preview/table-ui';
 import {
 	AssistantBubble,
 	ToolCallRow,
@@ -72,7 +72,11 @@ function ConnectorLines({
 	);
 }
 
-function PersonalAssistantVisual({ integrations }: { integrations: IntegrationId[] }) {
+function PersonalAssistantVisual({
+	integrations,
+}: {
+	integrations: IntegrationId[];
+}) {
 	const positions = [
 		{ x: '12%', y: '18%' },
 		{ x: '78%', y: '14%' },
@@ -139,7 +143,11 @@ function PersonalAssistantVisual({ integrations }: { integrations: IntegrationId
 					<div
 						key={id}
 						className="landing-use-case-node absolute z-10"
-						style={{ left: pos.x, top: pos.y, animationDelay: `${index * 120}ms` }}
+						style={{
+							left: pos.x,
+							top: pos.y,
+							animationDelay: `${index * 120}ms`,
+						}}
 					>
 						<IntegrationChip id={id} size={24} />
 					</div>
@@ -156,7 +164,11 @@ function PersonalAssistantVisual({ integrations }: { integrations: IntegrationId
 	);
 }
 
-function WorkflowAutomationVisual({ integrations }: { integrations: IntegrationId[] }) {
+function WorkflowAutomationVisual({
+	integrations,
+}: {
+	integrations: IntegrationId[];
+}) {
 	const steps = integrations.map((id, index) => ({
 		id,
 		label:
@@ -229,7 +241,11 @@ function WorkflowAutomationVisual({ integrations }: { integrations: IntegrationI
 	);
 }
 
-function KnowledgeBaseVisual({ integrations }: { integrations: IntegrationId[] }) {
+function KnowledgeBaseVisual({
+	integrations,
+}: {
+	integrations: IntegrationId[];
+}) {
 	return (
 		<div className="relative flex h-full w-full flex-col items-center px-4 pb-2 pt-4">
 			<div className="relative z-10 flex w-full max-w-[520px] flex-wrap items-start justify-center gap-3">
@@ -294,7 +310,11 @@ function KnowledgeBaseVisual({ integrations }: { integrations: IntegrationId[] }
 	);
 }
 
-function AgentChatbotVisual({ integrations }: { integrations: IntegrationId[] }) {
+function AgentChatbotVisual({
+	integrations,
+}: {
+	integrations: IntegrationId[];
+}) {
 	const person = { name: 'Dev', tone: 'blue' };
 
 	return (

@@ -1,12 +1,12 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
 	createContext,
 	useContext,
 	useLayoutEffect,
 	useRef,
 	useState,
-	type ReactNode,
 } from 'react';
 
 /** Match Tailwind `md` — preview stacks below this width. */
