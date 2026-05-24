@@ -183,6 +183,9 @@ const PEOPLE: PersonCell[] = [
 	},
 ];
 
+/** People used in the terminal trio landing demos (OAuth, permissions, triggers). */
+export const TRIO_DEMO_PEOPLE = [PEOPLE[0], PEOPLE[1], PEOPLE[2]] as const;
+
 export const TENANT_ROWS: TableRow[] = PEOPLE.map((person, index) => ({
 	id: person.name.toLowerCase().replace(/\s+/g, '-'),
 	cells: {
