@@ -1,5 +1,6 @@
 import 'dotenv/config';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, ApiResult } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { makeZendeskRequest } from './client';
 import type {
 	CommentsListResponse,
@@ -16,9 +17,13 @@ import type {
 } from './endpoints/types';
 import { ZendeskEndpointOutputSchemas } from './endpoints/types';
 
-jest.mock('corsair/http', () => ({
-	request: jest.fn(),
-}));
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual<typeof import('corsair/http')>('corsair/http');
+	return {
+		...actual,
+		request: jest.fn(),
+	};
+});
 
 const mockedRequest = request as jest.MockedFunction<typeof request>;
 
@@ -55,6 +60,28 @@ describe('Zendesk API Type Tests', () => {
 				}),
 			);
 			expect(response).toEqual({ ticket: { id: 123, subject: 'Test' } });
+		});
+
+		it('re-throws ApiError so error handlers can inspect status and Retry-After', async () => {
+			const requestOptions: ApiRequestOptions = {
+				method: 'GET',
+				url: 'tickets.json',
+			};
+			const response: ApiResult = {
+				url: 'https://subdomain.zendesk.com/api/v2/tickets.json',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			};
+			const apiError = new ApiError(requestOptions, response, 'Rate limited', {
+				retryAfter: 5000,
+			});
+			mockedRequest.mockRejectedValueOnce(apiError);
+
+			await expect(
+				makeZendeskRequest('tickets.json', 'key', 'subdomain', { method: 'GET' }),
+			).rejects.toBe(apiError);
 		});
 	});
 
