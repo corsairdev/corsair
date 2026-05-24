@@ -6,13 +6,16 @@ import type {
 	CorsairTenantWrapper,
 } from './core';
 import { CORSAIR_INTERNAL } from './core';
-import type { ListOperationsOptions } from './core/inspect';
+import type { FormFieldSchema, ListOperationsOptions } from './core/inspect';
 import {
+	formatDocSchemaShape,
 	getSchema as getSchemaCore,
+	getStructuredSchema as getStructuredSchemaCore,
 	listOperations as listOperationsCore,
 } from './core/inspect';
 
-export type { ListOperationsOptions };
+export type { ListOperationsOptions, FormFieldSchema };
+export { formatDocSchemaShape };
 
 // Deliberately shallow plugin shape for inspect helpers.
 type InspectCorsairPlugin = {
@@ -84,4 +87,22 @@ export function listOperations(
  */
 export function getSchema(corsair: AnyCorsairInstance, path: string): string {
 	return getSchemaCore(getPlugins(corsair), path);
+}
+
+/**
+ * Returns a machine-readable, JSON-serializable form schema for a given operation path.
+ * Unlike {@link getSchema} (which returns a TypeScript-style string), this returns
+ * structured field definitions suitable for driving dynamic form UIs.
+ *
+ * Returns `null` if the path does not resolve to a known endpoint.
+ */
+export function getStructuredSchema(
+	corsair: AnyCorsairInstance,
+	path: string,
+): {
+	input: FormFieldSchema | null;
+	output: FormFieldSchema | null;
+	description?: string;
+} | null {
+	return getStructuredSchemaCore(getPlugins(corsair), path);
 }

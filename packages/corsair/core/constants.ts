@@ -13,10 +13,10 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'ably',
 	'airtable',
 	'amplitude',
 	'asana',
+	'bitwarden',
 	'box',
 	'cal',
 	'calendly',
@@ -35,6 +35,7 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledrive',
 	'googlesheets',
+	'grafana',
 	'hackernews',
 	'hubspot',
 	'intercom',
@@ -57,6 +58,7 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'tally',
 	'tavily',
 	'teams',
 	'telegram',
@@ -72,10 +74,10 @@ export const BaseProviders = [
 ] as const;
 
 export type AllProviders =
-	| 'ably'
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
+	| 'bitwarden'
 	| 'box'
 	| 'cal'
 	| 'calendly'
@@ -94,6 +96,7 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledrive'
 	| 'googlesheets'
+	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
 	| 'intercom'
@@ -116,6 +119,7 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'tally'
 	| 'tavily'
 	| 'teams'
 	| 'telegram'

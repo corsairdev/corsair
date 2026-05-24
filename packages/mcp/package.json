@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/mcp",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "MCP server and SDK adapters for Corsair — list operations, inspect schemas, run API calls",
   "type": "module",
   "main": "./dist/index.js",

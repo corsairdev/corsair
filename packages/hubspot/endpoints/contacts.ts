@@ -2,9 +2,10 @@ import { logEventFromContext } from 'corsair/core';
 import { makeHubSpotRequest } from '../client';
 import type { HubSpotEndpoints } from '../index';
 import type {
-	CreateOrUpdateContactResponse,
+	CreateContactResponse,
 	GetContactResponse,
 	GetManyContactsResponse,
+	UpdateContactResponse,
 } from './types';
 
 export const get: HubSpotEndpoints['contactsGet'] = async (ctx, input) => {
@@ -78,32 +79,60 @@ export const getMany: HubSpotEndpoints['contactsGetMany'] = async (
 	return result;
 };
 
-export const createOrUpdate: HubSpotEndpoints['contactsCreateOrUpdate'] =
-	async (ctx, input) => {
-		const { ...body } = input;
-		const endpoint = '/crm/v3/objects/contacts';
-		const result = await makeHubSpotRequest<CreateOrUpdateContactResponse>(
-			endpoint,
-			ctx.key,
-			{ method: 'POST', body },
-		);
+export const create: HubSpotEndpoints['contactsCreate'] = async (ctx, input) => {
+	const { ...body } = input;
+	const endpoint = '/crm/v3/objects/contacts';
+	const result = await makeHubSpotRequest<CreateContactResponse>(
+		endpoint,
+		ctx.key,
+		{ method: 'POST', body },
+	);
 
-		if (result && ctx.db.contacts) {
-			try {
-				await ctx.db.contacts.upsertByEntityId(result.id, result);
-			} catch (error) {
-				console.warn('Failed to save contact to database:', error);
-			}
+	if (result && ctx.db.contacts) {
+		try {
+			await ctx.db.contacts.upsertByEntityId(result.id, result);
+		} catch (error) {
+			console.warn('Failed to save contact to database:', error);
 		}
+	}
 
-		await logEventFromContext(
-			ctx,
-			'hubspot.contacts.createOrUpdate',
-			{ ...input },
-			'completed',
-		);
-		return result;
-	};
+	await logEventFromContext(
+		ctx,
+		'hubspot.contacts.create',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+export const update: HubSpotEndpoints['contactsUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const { contactId, ...body } = input;
+	const endpoint = `/crm/v3/objects/contacts/${contactId}`;
+	const result = await makeHubSpotRequest<UpdateContactResponse>(
+		endpoint,
+		ctx.key,
+		{ method: 'PATCH', body },
+	);
+
+	if (result && ctx.db.contacts) {
+		try {
+			await ctx.db.contacts.upsertByEntityId(result.id, result);
+		} catch (error) {
+			console.warn('Failed to save contact to database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'hubspot.contacts.update',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
 
 export const deleteContact: HubSpotEndpoints['contactsDelete'] = async (
 	ctx,
@@ -180,6 +209,16 @@ export const search: HubSpotEndpoints['contactsSearch'] = async (
 		ctx.key,
 		{ method: 'POST', body },
 	);
+
+	if (result.results && ctx.db.contacts) {
+		try {
+			for (const contact of result.results) {
+				await ctx.db.contacts.upsertByEntityId(contact.id, contact);
+			}
+		} catch (error) {
+			console.warn('Failed to save contacts to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
