@@ -1,8 +1,9 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { getSchema, listOperations, setupCorsair } from 'corsair';
+import { listOperations, setupCorsair } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
+import { formatGetSchemaResponse } from './schema-format.js';
 
 export type CorsairToolDef = {
 	name: string;
@@ -59,9 +60,12 @@ export function buildCorsairToolDefs(
 					),
 			},
 			handler: async ({ path }) => {
-				const result = getSchema(corsair as AnyCorsairInstance, path as string);
+				const result = formatGetSchemaResponse(
+					corsair as AnyCorsairInstance,
+					path as string,
+				);
 				return {
-					content: [{ type: 'text', text: result as string }],
+					content: [{ type: 'text', text: result }],
 				};
 			},
 		},
@@ -86,7 +90,12 @@ export function buildCorsairToolDefs(
 						corsair,
 					);
 					return {
-						content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+						content: [
+							{
+								type: 'text',
+								text: JSON.stringify(result ?? null, null, 2),
+							},
+						],
 					};
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);

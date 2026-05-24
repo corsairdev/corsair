@@ -1,24 +1,5 @@
-# www
+https://www.corsair.dev
 
-This is the Corsair landing page. It is not in production yet. Eventually, corsair.dev will point to this project.
+Landing page heavily inspired by twenty.com
 
-Add more components from the monorepo root with:
-
-```bash
-pnpm --filter @corsair/www exec shadcn add <component>
-```
-
-## Development
-
-From this directory:
-
-```bash
-pnpm install
-pnpm dev
-```
-
-From the monorepo root:
-
-```bash
-pnpm --filter @corsair/www dev
-```
+Start with `pnpm run dev`

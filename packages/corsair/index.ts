@@ -2,6 +2,7 @@ export { createCorsair } from './core';
 export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,
+	formatDocSchemaShape,
 	getSchema,
 	getStructuredSchema,
 	type ListOperationsOptions,

@@ -85,7 +85,8 @@ type HubSpotEndpoint<K extends keyof HubSpotEndpointOutputs> = CorsairEndpoint<
 export type HubSpotEndpoints = {
 	contactsGet: HubSpotEndpoint<'contactsGet'>;
 	contactsGetMany: HubSpotEndpoint<'contactsGetMany'>;
-	contactsCreateOrUpdate: HubSpotEndpoint<'contactsCreateOrUpdate'>;
+	contactsCreate: HubSpotEndpoint<'contactsCreate'>;
+	contactsUpdate: HubSpotEndpoint<'contactsUpdate'>;
 	contactsDelete: HubSpotEndpoint<'contactsDelete'>;
 	contactsGetRecentlyCreated: HubSpotEndpoint<'contactsGetRecentlyCreated'>;
 	contactsGetRecentlyUpdated: HubSpotEndpoint<'contactsGetRecentlyUpdated'>;
@@ -153,7 +154,8 @@ const hubspotEndpointsNested = {
 	contacts: {
 		get: ContactsEndpoints.get,
 		getMany: ContactsEndpoints.getMany,
-		createOrUpdate: ContactsEndpoints.createOrUpdate,
+		create: ContactsEndpoints.create,
+		update: ContactsEndpoints.update,
 		delete: ContactsEndpoints.delete,
 		getRecentlyCreated: ContactsEndpoints.getRecentlyCreated,
 		getRecentlyUpdated: ContactsEndpoints.getRecentlyUpdated,
@@ -207,9 +209,13 @@ export const hubspotEndpointSchemas = {
 		input: HubSpotEndpointInputSchemas.contactsGetMany,
 		output: HubSpotEndpointOutputSchemas.contactsGetMany,
 	},
-	'contacts.createOrUpdate': {
-		input: HubSpotEndpointInputSchemas.contactsCreateOrUpdate,
-		output: HubSpotEndpointOutputSchemas.contactsCreateOrUpdate,
+	'contacts.create': {
+		input: HubSpotEndpointInputSchemas.contactsCreate,
+		output: HubSpotEndpointOutputSchemas.contactsCreate,
+	},
+	'contacts.update': {
+		input: HubSpotEndpointInputSchemas.contactsUpdate,
+		output: HubSpotEndpointOutputSchemas.contactsUpdate,
 	},
 	'contacts.delete': {
 		input: HubSpotEndpointInputSchemas.contactsDelete,
@@ -427,9 +433,13 @@ const hubspotEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get multiple contacts',
 	},
-	'contacts.createOrUpdate': {
+	'contacts.create': {
 		riskLevel: 'write',
-		description: 'Create a new contact or update an existing one',
+		description: 'Create a new contact',
+	},
+	'contacts.update': {
+		riskLevel: 'write',
+		description: 'Update an existing contact',
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
@@ -718,9 +728,9 @@ export type {
 export type {
 	AddContactToListResponse,
 	CreateCompanyResponse,
+	CreateContactResponse,
 	CreateDealResponse,
 	CreateEngagementResponse,
-	CreateOrUpdateContactResponse,
 	CreateTicketResponse,
 	GetCompanyResponse,
 	GetContactResponse,
@@ -737,6 +747,7 @@ export type {
 	RemoveContactFromListResponse,
 	SearchCompanyByDomainResponse,
 	UpdateCompanyResponse,
+	UpdateContactResponse,
 	UpdateDealResponse,
 	UpdateTicketResponse,
 } from './endpoints/types';

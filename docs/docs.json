@@ -70,15 +70,14 @@
           {
             "group": "Coding Agents",
             "pages": [
+              "mcp-adapters/coding-agents",
               "mcp-adapters/claude-code",
               "mcp-adapters/cursor"
             ]
           },
           {
             "group": "Studio",
-            "pages": [
-              "studio/overview"
-            ]
+            "pages": ["studio/overview"]
           },
           {
             "group": "Core Concepts",
@@ -96,16 +95,11 @@
           },
           {
             "group": "Auth Types",
-            "pages": [
-              "concepts/api-key",
-              "concepts/oauth"
-            ]
+            "pages": ["concepts/api-key", "concepts/oauth"]
           },
           {
             "group": "Production",
-            "pages": [
-              "production/oauth-process"
-            ]
+            "pages": ["production/oauth-process"]
           },
           {
             "group": "Workflow Engines",
@@ -123,10 +117,7 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "guides/plugins",
-              "guides/create-your-own-plugin"
-            ]
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
@@ -167,6 +158,14 @@
                   "plugins/asana/api",
                   "plugins/asana/database",
                   "plugins/asana/webhooks"
+                ]
+              },
+              {
+                "group": "Bitwarden",
+                "pages": [
+                  "plugins/bitwarden/overview",
+                  "plugins/bitwarden/api",
+                  "plugins/bitwarden/database"
                 ]
               },
               {
@@ -574,6 +573,15 @@
                 ]
               },
               {
+                "group": "Tally",
+                "pages": [
+                  "plugins/tally/overview",
+                  "plugins/tally/api",
+                  "plugins/tally/database",
+                  "plugins/tally/webhooks"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
@@ -652,6 +660,16 @@
                 ]
               },
               {
+                "group": "Xquik",
+                "pages": [
+                  "plugins/xquik/overview",
+                  "plugins/xquik/get-credentials",
+                  "plugins/xquik/api",
+                  "plugins/xquik/database",
+                  "plugins/xquik/webhooks"
+                ]
+              },
+              {
                 "group": "Youtube",
                 "pages": [
                   "plugins/youtube/overview",
@@ -679,11 +697,7 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": [
-              "guides/webhooks",
-              "guides/workflows",
-              "guides/dashboard"
-            ]
+            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
           }
         ]
       }
