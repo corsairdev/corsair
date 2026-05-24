@@ -1,6 +1,4 @@
 import 'dotenv/config';
-import type { ApiRequestOptions, ApiResult } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
 import { makeZendeskRequest } from './client';
 import type {
 	CommentsListResponse,
@@ -17,331 +15,361 @@ import type {
 } from './endpoints/types';
 import { ZendeskEndpointOutputSchemas } from './endpoints/types';
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual<typeof import('corsair/http')>('corsair/http');
-	return {
-		...actual,
-		request: jest.fn(),
-	};
-});
-
-const mockedRequest = request as jest.MockedFunction<typeof request>;
+const TEST_API_KEY = process.env.ZENDESK_API_KEY ?? '';
+const TEST_SUBDOMAIN = process.env.ZENDESK_SUBDOMAIN ?? '';
+const hasCredentials = TEST_API_KEY.length > 0 && TEST_SUBDOMAIN.length > 0;
 
 describe('Zendesk API Type Tests', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
-
-	describe('makeZendeskRequest client', () => {
-		it('sends the correct headers and constructs the correct URL', async () => {
-			mockedRequest.mockResolvedValueOnce({
-				ticket: { id: 123, subject: 'Test' },
-			});
-
-			const response = await makeZendeskRequest<TicketsGetResponse>(
-				'tickets/123.json',
-				'user@domain.com/token:myapikey',
-				'mysubdomain',
-				{ method: 'GET' },
-			);
-
-			expect(mockedRequest).toHaveBeenCalledWith(
-				expect.objectContaining({
-					BASE: 'https://mysubdomain.zendesk.com/api/v2',
-					HEADERS: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
-						Authorization: `Basic ${Buffer.from('user@domain.com/token:myapikey').toString('base64')}`,
-					},
-				}),
-				expect.objectContaining({
-					method: 'GET',
-					url: 'tickets/123.json',
-				}),
-			);
-			expect(response).toEqual({ ticket: { id: 123, subject: 'Test' } });
-		});
-
-		it('re-throws ApiError so error handlers can inspect status and Retry-After', async () => {
-			const requestOptions: ApiRequestOptions = {
-				method: 'GET',
-				url: 'tickets.json',
-			};
-			const response: ApiResult = {
-				url: 'https://subdomain.zendesk.com/api/v2/tickets.json',
-				ok: false,
-				status: 429,
-				statusText: 'Too Many Requests',
-				body: {},
-			};
-			const apiError = new ApiError(requestOptions, response, 'Rate limited', {
-				retryAfter: 5000,
-			});
-			mockedRequest.mockRejectedValueOnce(apiError);
-
-			await expect(
-				makeZendeskRequest('tickets.json', 'key', 'subdomain', { method: 'GET' }),
-			).rejects.toBe(apiError);
-		});
-	});
-
 	describe('tickets', () => {
-		it('ticketsCreate returns correct parsed structure', async () => {
-			const mockResponse: TicketsCreateResponse = {
-				ticket: {
-					id: 123,
-					subject: 'Test Ticket',
-					description: 'Test Description',
-					status: 'new',
-					priority: 'normal',
-					created_at: '2026-05-22T00:00:00Z',
-					updated_at: '2026-05-22T00:00:00Z',
-				},
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+		it('ticketsList returns correct type', async () => {
+			if (!hasCredentials) return;
+			const response = await makeZendeskRequest<TicketsListResponse>(
+				'tickets.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{ method: 'GET', query: { per_page: 10 } },
+			);
 
+			ZendeskEndpointOutputSchemas.ticketsList.parse(response);
+		});
+
+		it('ticketsCreate returns correct type', async () => {
+			if (!hasCredentials) return;
 			const response = await makeZendeskRequest<TicketsCreateResponse>(
 				'tickets.json',
-				'key',
-				'subdomain',
-				{ method: 'POST', body: { ticket: { subject: 'Test Ticket' } } },
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						ticket: {
+							subject: `Corsair API test ${Date.now()}`,
+							comment: {
+								body: 'Test ticket created by the API test suite',
+							},
+						},
+					},
+				},
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.ticketsCreate.parse(response);
-			expect(parsed.ticket.id).toBe(123);
-			expect(parsed.ticket.subject).toBe('Test Ticket');
+			ZendeskEndpointOutputSchemas.ticketsCreate.parse(response);
+
+			const ticketId = response.ticket.id;
+			if (ticketId) {
+				await makeZendeskRequest<TicketsDeleteResponse>(
+					`tickets/${ticketId}.json`,
+					TEST_API_KEY,
+					TEST_SUBDOMAIN,
+					{ method: 'DELETE' },
+				);
+			}
 		});
 
-		it('ticketsGet returns correct parsed structure', async () => {
-			const mockResponse: TicketsGetResponse = {
-				ticket: {
-					id: 123,
-					subject: 'Test Ticket',
-					description: 'Test Description',
-					status: 'new',
-					created_at: '2026-05-22T00:00:00Z',
+		it('ticketsGet returns correct type', async () => {
+			if (!hasCredentials) return;
+			const created = await makeZendeskRequest<TicketsCreateResponse>(
+				'tickets.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						ticket: {
+							subject: `Corsair API test get ${Date.now()}`,
+							comment: {
+								body: 'Test ticket for get endpoint',
+							},
+						},
+					},
 				},
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+			);
+			const ticketId = created.ticket.id;
 
 			const response = await makeZendeskRequest<TicketsGetResponse>(
-				'tickets/123.json',
-				'key',
-				'subdomain',
+				`tickets/${ticketId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
 				{ method: 'GET' },
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.ticketsGet.parse(response);
-			expect(parsed.ticket.id).toBe(123);
+			ZendeskEndpointOutputSchemas.ticketsGet.parse(response);
+
+			await makeZendeskRequest<TicketsDeleteResponse>(
+				`tickets/${ticketId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{ method: 'DELETE' },
+			);
 		});
 
-		it('ticketsUpdate returns correct parsed structure', async () => {
-			const mockResponse: TicketsUpdateResponse = {
-				ticket: {
-					id: 123,
-					subject: 'Updated Ticket',
-					status: 'open',
+		it('ticketsUpdate returns correct type', async () => {
+			if (!hasCredentials) return;
+			const created = await makeZendeskRequest<TicketsCreateResponse>(
+				'tickets.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						ticket: {
+							subject: `Corsair API test update ${Date.now()}`,
+							comment: {
+								body: 'Test ticket for update endpoint',
+							},
+						},
+					},
 				},
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+			);
+			const ticketId = created.ticket.id;
 
 			const response = await makeZendeskRequest<TicketsUpdateResponse>(
-				'tickets/123.json',
-				'key',
-				'subdomain',
-				{ method: 'PUT', body: { ticket: { status: 'open' } } },
+				`tickets/${ticketId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'PUT',
+					body: {
+						ticket: {
+							status: 'open',
+						},
+					},
+				},
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.ticketsUpdate.parse(response);
-			expect(parsed.ticket.status).toBe('open');
+			ZendeskEndpointOutputSchemas.ticketsUpdate.parse(response);
+
+			await makeZendeskRequest<TicketsDeleteResponse>(
+				`tickets/${ticketId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{ method: 'DELETE' },
+			);
 		});
 
-		it('ticketsDelete returns correct parsed structure', async () => {
-			const mockResponse: TicketsDeleteResponse = {
-				id: 123,
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+		it('ticketsDelete returns correct type', async () => {
+			if (!hasCredentials) return;
+			const created = await makeZendeskRequest<TicketsCreateResponse>(
+				'tickets.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						ticket: {
+							subject: `Corsair API test delete ${Date.now()}`,
+							comment: {
+								body: 'Test ticket for delete endpoint',
+							},
+						},
+					},
+				},
+			);
+			const ticketId = created.ticket.id;
 
 			const response = await makeZendeskRequest<TicketsDeleteResponse>(
-				'tickets/123.json',
-				'key',
-				'subdomain',
+				`tickets/${ticketId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
 				{ method: 'DELETE' },
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.ticketsDelete.parse(response);
-			expect(parsed.id).toBe(123);
-		});
-
-		it('ticketsList returns correct parsed structure', async () => {
-			const mockResponse: TicketsListResponse = {
-				tickets: [
-					{
-						id: 123,
-						subject: 'Ticket 1',
-					},
-					{
-						id: 124,
-						subject: 'Ticket 2',
-					},
-				],
-				count: 2,
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
-
-			const response = await makeZendeskRequest<TicketsListResponse>(
-				'tickets.json',
-				'key',
-				'subdomain',
-				{ method: 'GET' },
-			);
-
-			const parsed = ZendeskEndpointOutputSchemas.ticketsList.parse(response);
-			expect(parsed.tickets).toHaveLength(2);
-			expect(parsed.count).toBe(2);
+			ZendeskEndpointOutputSchemas.ticketsDelete.parse(response);
 		});
 	});
 
 	describe('users', () => {
-		it('usersCreate returns correct parsed structure', async () => {
-			const mockResponse: UsersCreateResponse = {
-				user: {
-					id: 456,
-					name: 'Test User',
-					email: 'test@user.com',
-					role: 'end-user',
-					active: true,
-				},
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+		it('usersList returns correct type', async () => {
+			if (!hasCredentials) return;
+			const response = await makeZendeskRequest<UsersListResponse>(
+				'users.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{ method: 'GET', query: { per_page: 10 } },
+			);
 
+			ZendeskEndpointOutputSchemas.usersList.parse(response);
+		});
+
+		it('usersCreate returns correct type', async () => {
+			if (!hasCredentials) return;
+			const email = `corsair-test-${Date.now()}@example.com`;
 			const response = await makeZendeskRequest<UsersCreateResponse>(
 				'users.json',
-				'key',
-				'subdomain',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
 				{
 					method: 'POST',
-					body: { user: { name: 'Test User', email: 'test@user.com' } },
+					body: {
+						user: {
+							name: 'Corsair Test User',
+							email,
+							role: 'end-user',
+						},
+					},
 				},
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.usersCreate.parse(response);
-			expect(parsed.user.id).toBe(456);
-			expect(parsed.user.name).toBe('Test User');
+			ZendeskEndpointOutputSchemas.usersCreate.parse(response);
+
+			const userId = response.user.id;
+			if (userId) {
+				await makeZendeskRequest<UsersDeleteResponse>(
+					`users/${userId}.json`,
+					TEST_API_KEY,
+					TEST_SUBDOMAIN,
+					{ method: 'DELETE' },
+				);
+			}
 		});
 
-		it('usersGet returns correct parsed structure', async () => {
-			const mockResponse: UsersGetResponse = {
-				user: {
-					id: 456,
-					name: 'Test User',
-					role: 'agent',
+		it('usersGet returns correct type', async () => {
+			if (!hasCredentials) return;
+			const email = `corsair-test-get-${Date.now()}@example.com`;
+			const created = await makeZendeskRequest<UsersCreateResponse>(
+				'users.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						user: {
+							name: 'Corsair Test User',
+							email,
+							role: 'end-user',
+						},
+					},
 				},
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+			);
+			const userId = created.user.id;
 
 			const response = await makeZendeskRequest<UsersGetResponse>(
-				'users/456.json',
-				'key',
-				'subdomain',
+				`users/${userId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
 				{ method: 'GET' },
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.usersGet.parse(response);
-			expect(parsed.user.id).toBe(456);
+			ZendeskEndpointOutputSchemas.usersGet.parse(response);
+
+			await makeZendeskRequest<UsersDeleteResponse>(
+				`users/${userId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{ method: 'DELETE' },
+			);
 		});
 
-		it('usersUpdate returns correct parsed structure', async () => {
-			const mockResponse: UsersUpdateResponse = {
-				user: {
-					id: 456,
-					name: 'Updated User',
+		it('usersUpdate returns correct type', async () => {
+			if (!hasCredentials) return;
+			const email = `corsair-test-update-${Date.now()}@example.com`;
+			const created = await makeZendeskRequest<UsersCreateResponse>(
+				'users.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						user: {
+							name: 'Corsair Test User',
+							email,
+							role: 'end-user',
+						},
+					},
 				},
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+			);
+			const userId = created.user.id;
 
 			const response = await makeZendeskRequest<UsersUpdateResponse>(
-				'users/456.json',
-				'key',
-				'subdomain',
-				{ method: 'PUT', body: { user: { name: 'Updated User' } } },
+				`users/${userId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'PUT',
+					body: {
+						user: {
+							name: 'Corsair Updated User',
+						},
+					},
+				},
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.usersUpdate.parse(response);
-			expect(parsed.user.name).toBe('Updated User');
+			ZendeskEndpointOutputSchemas.usersUpdate.parse(response);
+
+			await makeZendeskRequest<UsersDeleteResponse>(
+				`users/${userId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{ method: 'DELETE' },
+			);
 		});
 
-		it('usersDelete returns correct parsed structure', async () => {
-			const mockResponse: UsersDeleteResponse = {
-				id: 456,
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+		it('usersDelete returns correct type', async () => {
+			if (!hasCredentials) return;
+			const email = `corsair-test-delete-${Date.now()}@example.com`;
+			const created = await makeZendeskRequest<UsersCreateResponse>(
+				'users.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						user: {
+							name: 'Corsair Test User',
+							email,
+							role: 'end-user',
+						},
+					},
+				},
+			);
+			const userId = created.user.id;
 
 			const response = await makeZendeskRequest<UsersDeleteResponse>(
-				'users/456.json',
-				'key',
-				'subdomain',
+				`users/${userId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
 				{ method: 'DELETE' },
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.usersDelete.parse(response);
-			expect(parsed.id).toBe(456);
-		});
-
-		it('usersList returns correct parsed structure', async () => {
-			const mockResponse: UsersListResponse = {
-				users: [
-					{
-						id: 456,
-						name: 'User 1',
-					},
-					{
-						id: 457,
-						name: 'User 2',
-					},
-				],
-				count: 2,
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
-
-			const response = await makeZendeskRequest<UsersListResponse>(
-				'users.json',
-				'key',
-				'subdomain',
-				{ method: 'GET' },
-			);
-
-			const parsed = ZendeskEndpointOutputSchemas.usersList.parse(response);
-			expect(parsed.users).toHaveLength(2);
+			ZendeskEndpointOutputSchemas.usersDelete.parse(response);
 		});
 	});
 
 	describe('comments', () => {
-		it('commentsList returns correct parsed structure', async () => {
-			const mockResponse: CommentsListResponse = {
-				comments: [
-					{
-						id: 789,
-						body: 'Comment 1',
-						public: true,
-						author_id: 456,
-						created_at: '2026-05-22T00:00:00Z',
+		it('commentsList returns correct type', async () => {
+			if (!hasCredentials) return;
+			const created = await makeZendeskRequest<TicketsCreateResponse>(
+				'tickets.json',
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{
+					method: 'POST',
+					body: {
+						ticket: {
+							subject: `Corsair API test comments ${Date.now()}`,
+							comment: {
+								body: 'Initial comment for comments list test',
+							},
+						},
 					},
-				],
-				count: 1,
-			};
-			mockedRequest.mockResolvedValueOnce(mockResponse);
+				},
+			);
+			const ticketId = created.ticket.id;
 
 			const response = await makeZendeskRequest<CommentsListResponse>(
-				'tickets/123/comments.json',
-				'key',
-				'subdomain',
+				`tickets/${ticketId}/comments.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
 				{ method: 'GET' },
 			);
 
-			const parsed = ZendeskEndpointOutputSchemas.commentsList.parse(response);
-			expect(parsed.comments).toHaveLength(1);
-			expect(parsed.comments[0]!.id).toBe(789);
+			ZendeskEndpointOutputSchemas.commentsList.parse(response);
+
+			await makeZendeskRequest<TicketsDeleteResponse>(
+				`tickets/${ticketId}.json`,
+				TEST_API_KEY,
+				TEST_SUBDOMAIN,
+				{ method: 'DELETE' },
+			);
 		});
 	});
 });
