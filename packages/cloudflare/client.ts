@@ -1,10 +1,10 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { CloudflareAPIError } from './api-error';
+import type { CloudflareApiResponse } from './response';
 import {
 	cloudflareErrorFromApiErrorBody,
 	unwrapCloudflareResponse,
-	type CloudflareApiResponse,
 } from './response';
 
 export { CloudflareAPIError } from './api-error';

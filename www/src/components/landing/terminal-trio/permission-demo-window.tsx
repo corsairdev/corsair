@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { TRIO_DEMO_PEOPLE } from '../data/companies-data';
 import {
 	ChatInputShell,
 	ChatScrollArea,
@@ -12,7 +13,6 @@ import {
 	UserBubble,
 } from './chat-ui';
 import { PermissionModalContent } from './corsair-demo-modal';
-import { TRIO_DEMO_PEOPLE } from '../data/companies-data';
 import { DraggableWindowShell } from './draggable-chat-window';
 import { useTrioModal } from './trio-modal-context';
 import { useDemoChatSend, useStreamText } from './use-demo-chat';
@@ -25,7 +25,7 @@ const USER_PROMPT =
 const FIRST_REPLY = "Let me find Dev's email";
 
 const SECOND_REPLY_PREFIX =
-	'Found it! Let me draft that email up. Looks like you\'ll need to grant permission to send. Use ';
+	"Found it! Let me draft that email up. Looks like you'll need to grant permission to send. Use ";
 
 export function PermissionDemoWindow({
 	index,
@@ -110,7 +110,9 @@ export function PermissionDemoWindow({
 			person={PERSON}
 		>
 			<ChatScrollArea scrollRef={scrollRef}>
-				{sentMessage ? <UserBubble person={PERSON}>{sentMessage}</UserBubble> : null}
+				{sentMessage ? (
+					<UserBubble person={PERSON}>{sentMessage}</UserBubble>
+				) : null}
 
 				{phase === 'thinking' ? <TypingIndicator /> : null}
 
