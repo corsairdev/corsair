@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -146,7 +145,7 @@ const blueskyEndpointMeta = {
 
 // ── Plugin Types ──────────────────────────────────────────────────────────────
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 export type BaseBlueskyPlugin<T extends BlueskyPluginOptions> = CorsairPlugin<
 	'bluesky',

@@ -5,6 +5,7 @@ import { z } from 'zod';
 const PostsCreateInputSchema = z.object({
 	text: z
 		.string()
+		.max(300)
 		.describe('The text content of the post (max 300 characters)'),
 });
 

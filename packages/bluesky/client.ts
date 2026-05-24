@@ -22,6 +22,83 @@ interface SessionResponse {
 	did: string;
 }
 
+interface CachedSession {
+	accessJwt: string;
+	did: string;
+	createdAt: number;
+}
+
+const sessionCache = new Map<string, CachedSession>();
+
+async function getOrUpdateSession(
+	apiKey: string,
+	handle: string,
+): Promise<CachedSession> {
+	const cacheKey = `${handle}:${apiKey}`;
+	const now = Date.now();
+	const cached = sessionCache.get(cacheKey);
+
+	// Reuse the cached session if it's less than 50 minutes old
+	if (cached && now - cached.createdAt < 50 * 60 * 1000) {
+		return cached;
+	}
+
+	const sessionConfig: OpenAPIConfig = {
+		BASE: BLUESKY_API_BASE,
+		VERSION: '1.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TOKEN: undefined,
+		HEADERS: {
+			'Content-Type': 'application/json',
+		},
+	};
+
+	const sessionRequestOptions: ApiRequestOptions = {
+		method: 'POST',
+		url: '/xrpc/com.atproto.server.createSession',
+		body: {
+			identifier: handle,
+			password: apiKey,
+		},
+		mediaType: 'application/json; charset=utf-8',
+	};
+
+	try {
+		const session = await request<SessionResponse>(
+			sessionConfig,
+			sessionRequestOptions,
+		);
+		const newSession: CachedSession = {
+			accessJwt: session.accessJwt,
+			did: session.did,
+			createdAt: now,
+		};
+		sessionCache.set(cacheKey, newSession);
+		return newSession;
+	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new BlueskyAPIError(
+				`Failed to create Bluesky session: ${error.message}`,
+				error.status,
+				error.retryAfter,
+				'SESSION_CREATION_FAILED',
+			);
+		}
+		if (error instanceof Error) {
+			throw new BlueskyAPIError(
+				`Failed to create Bluesky session: ${error.message}`,
+			);
+		}
+		throw new BlueskyAPIError('Unknown error during session creation');
+	}
+}
+
+export function clearSessionCache(apiKey: string, handle: string): void {
+	const cacheKey = `${handle}:${apiKey}`;
+	sessionCache.delete(cacheKey);
+}
+
 export async function makeBlueskyRequest<T>(
 	endpoint: string,
 	apiKey: string, // This will store the app password
@@ -52,88 +129,67 @@ export async function makeBlueskyRequest<T>(
 		);
 	}
 
-	// 1. Create a session to get the accessJwt and did
-	const sessionConfig: OpenAPIConfig = {
-		BASE: BLUESKY_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: undefined,
-		HEADERS: {
-			'Content-Type': 'application/json',
-		},
-	};
+	const session = await getOrUpdateSession(apiKey, handle);
 
-	const sessionRequestOptions: ApiRequestOptions = {
-		method: 'POST',
-		url: '/xrpc/com.atproto.server.createSession',
-		body: {
-			identifier: handle,
-			password: apiKey,
-		},
-		mediaType: 'application/json; charset=utf-8',
-	};
-
-	let session: SessionResponse;
-	try {
-		session = await request<SessionResponse>(
-			sessionConfig,
-			sessionRequestOptions,
-		);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new BlueskyAPIError(
-				`Failed to create Bluesky session: ${error.message}`,
-				error.status,
-				error.retryAfter,
-				'SESSION_CREATION_FAILED',
-			);
-		}
-		if (error instanceof Error) {
-			throw new BlueskyAPIError(
-				`Failed to create Bluesky session: ${error.message}`,
-			);
-		}
-		throw new BlueskyAPIError('Unknown error during session creation');
-	}
-
-	// 2. Make the actual request using the accessJwt
-	const config: OpenAPIConfig = {
-		BASE: BLUESKY_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: undefined,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${session.accessJwt}`,
-		},
-	};
-
-	// Merge did into body if requested
-	let finalBody = body;
-	if (requiresDid && body) {
-		finalBody = {
-			repo: session.did,
-			...body,
+	const executeRequest = async (currentSession: CachedSession): Promise<T> => {
+		const config: OpenAPIConfig = {
+			BASE: BLUESKY_API_BASE,
+			VERSION: '1.0.0',
+			WITH_CREDENTIALS: false,
+			CREDENTIALS: 'omit',
+			TOKEN: undefined,
+			HEADERS: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${currentSession.accessJwt}`,
+			},
 		};
-	}
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: `/xrpc/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? finalBody
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		let finalBody = body;
+		if (requiresDid && body) {
+			finalBody = {
+				repo: currentSession.did,
+				...body,
+			};
+		}
+
+		const requestOptions: ApiRequestOptions = {
+			method,
+			url: `/xrpc/${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`,
+			body:
+				method === 'POST' || method === 'PUT' || method === 'PATCH'
+					? finalBody
+					: undefined,
+			mediaType: 'application/json; charset=utf-8',
+			query: method === 'GET' ? query : undefined,
+		};
+
+		return await request<T>(config, requestOptions);
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions);
-		return response;
+		return await executeRequest(session);
 	} catch (error) {
+		// If unauthorized (401), clear session cache and try one more time
+		if (error instanceof ApiError && error.status === 401) {
+			clearSessionCache(apiKey, handle);
+			const freshSession = await getOrUpdateSession(apiKey, handle);
+			try {
+				return await executeRequest(freshSession);
+			} catch (retryError) {
+				if (retryError instanceof ApiError) {
+					throw new BlueskyAPIError(
+						retryError.message,
+						retryError.status,
+						retryError.retryAfter,
+					);
+				}
+				if (retryError instanceof Error) {
+					throw new BlueskyAPIError(retryError.message);
+				}
+				throw new BlueskyAPIError('Unknown error during retry');
+			}
+		}
+
 		if (error instanceof ApiError) {
 			throw new BlueskyAPIError(error.message, error.status, error.retryAfter);
 		}

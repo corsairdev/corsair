@@ -1,4 +1,5 @@
 import { createCorsair } from 'corsair/core';
+import type { OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
@@ -22,7 +23,7 @@ describe('Bluesky plugin integration', () => {
 	it('creates session and creates post, deleting post, getting profile, and timeline', async () => {
 		// Mock responses
 		mockRequest.mockImplementation(
-			(config: unknown, options: { url: string }) => {
+			(config: OpenAPIConfig, options: { url: string }) => {
 				if (options.url === '/xrpc/com.atproto.server.createSession') {
 					return Promise.resolve({
 						accessJwt: 'mock-access-jwt',
