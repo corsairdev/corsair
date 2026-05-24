@@ -70,6 +70,7 @@ export const BaseProviders = [
 	'vapi',
 	'xquik',
 	'youtube',
+	'zendesk',
 	'zoom',
 ] as const;
 
@@ -131,6 +132,7 @@ export type AllProviders =
 	| 'vapi'
 	| 'xquik'
 	| 'youtube'
+	| 'zendesk'
 	| 'zoom'
 	| (string & {});
 
