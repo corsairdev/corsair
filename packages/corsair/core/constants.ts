@@ -13,7 +13,6 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'ably',
 	'airtable',
 	'amplitude',
 	'asana',
@@ -36,6 +35,7 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledrive',
 	'googlesheets',
+	'grafana',
 	'hackernews',
 	'hubspot',
 	'intercom',
@@ -74,7 +74,6 @@ export const BaseProviders = [
 ] as const;
 
 export type AllProviders =
-	| 'ably'
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
@@ -97,6 +96,7 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledrive'
 	| 'googlesheets'
+	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
 	| 'intercom'
