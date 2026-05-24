@@ -135,3 +135,103 @@
 		animation: none;
 	}
 }
+@keyframes landing-modal-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes landing-use-case-visual-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes landing-use-case-flow {
+	to {
+		stroke-dashoffset: -12;
+	}
+}
+
+@keyframes landing-workflow-step-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+	}
+	50% {
+		transform: scale(1.04);
+		box-shadow: 0 4px 16px rgba(74, 56, 245, 0.2);
+	}
+}
+
+@keyframes landing-workflow-dot-pulse {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.5;
+		transform: scale(0.85);
+	}
+}
+
+@keyframes landing-knowledge-feed {
+	0%,
+	100% {
+		opacity: 0.35;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes landing-use-case-node-in {
+	from {
+		opacity: 0;
+		transform: scale(0.92);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.landing-use-case-visual-enter {
+	animation: landing-use-case-visual-in 0.35s ease-out both;
+}
+
+.landing-use-case-flow-line {
+	animation: landing-use-case-flow 1.2s linear infinite;
+}
+
+.landing-workflow-step > div {
+	animation: landing-workflow-step-pulse 2.4s ease-in-out infinite;
+}
+
+.landing-workflow-pulse-dot {
+	animation: landing-workflow-dot-pulse 1.4s ease-in-out infinite;
+}
+
+.landing-knowledge-feed-line {
+	animation: landing-knowledge-feed 1.6s ease-in-out infinite;
+}
+
+.landing-use-case-downstream-line {
+	animation: landing-knowledge-feed 1.8s ease-in-out infinite;
+}
+
+.landing-use-case-node {
+	animation: landing-use-case-node-in 0.4s ease-out both;
+}

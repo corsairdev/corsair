@@ -3,13 +3,18 @@
 import { Check, Copy } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
 
+export const LANDING_CTA_BOX_CLASS =
+	'inline-flex max-w-full items-center rounded-sm border border-[#1c1c1c14] bg-[#f4f4f4] px-2 py-0.5 font-[family-name:var(--landing-font-mono)] text-[12px] font-normal leading-none text-[#1c1c1c] no-underline transition-colors hover:border-[#1c1c1c33] hover:text-[#4a38f5] md:text-[13px]';
+
 export function CopyableCodeSnippet({
 	code,
 	inline = false,
+	cta = false,
 	className = '',
 }: {
 	code: string;
 	inline?: boolean;
+	cta?: boolean;
 	className?: string;
 }) {
 	const [copied, setCopied] = useState(false);
@@ -25,6 +30,21 @@ export function CopyableCodeSnippet({
 	}, [code]);
 
 	const iconClass = inline ? 'size-3.5' : 'size-4';
+
+	if (cta) {
+		return (
+			<button
+				type="button"
+				onClick={() => {
+					void copy();
+				}}
+				className={`${LANDING_CTA_BOX_CLASS} cursor-pointer ${className}`}
+				aria-label={copied ? 'Copied' : `Copy ${code}`}
+			>
+				{copied ? 'Copied!' : code}
+			</button>
+		);
+	}
 
 	return (
 		<span

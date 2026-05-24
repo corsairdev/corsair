@@ -1,6 +1,7 @@
-import { EngineersSection } from './engineers/engineers-section';
+import { ChooseYourPathSection } from './choose-your-path/choose-your-path-section';
 import { FaqSection } from './faq/faq-section';
 import { SiteFooter } from './footer/site-footer';
+import { TerminalTrioSection } from './terminal-trio/terminal-trio-section';
 import { LandingHero } from './hero/landing-hero';
 import { SiteMenu } from './menu/site-menu';
 import { ProblemStatementSection } from './problem-statement/problem-statement-section';
@@ -20,7 +21,9 @@ export function LandingPage() {
 			<LandingHero />
 			<ProblemStatementSection />
 			<SolutionFramingSection />
-			<EngineersSection />
+			<ChooseYourPathSection />
+			<TerminalTrioSection />
+			{/* <UseCasesSection /> */}
 			<FaqSection />
 			<SiteFooter />
 		</div>

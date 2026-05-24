@@ -33,6 +33,30 @@ export type TenantListResp = {
 	tenants: string[];
 };
 
+export type FormFieldSchema =
+	| { kind: 'string'; optional: boolean; description?: string; enum?: string[] }
+	| { kind: 'number'; optional: boolean; description?: string }
+	| { kind: 'boolean'; optional: boolean; description?: string }
+	| {
+			kind: 'literal';
+			optional: boolean;
+			description?: string;
+			value: string | number | boolean;
+	  }
+	| {
+			kind: 'object';
+			optional: boolean;
+			description?: string;
+			fields: Record<string, FormFieldSchema>;
+	  }
+	| {
+			kind: 'array';
+			optional: boolean;
+			description?: string;
+			items: FormFieldSchema;
+	  }
+	| { kind: 'unknown'; optional: boolean; description?: string };
+
 export type OperationResult =
 	| { ok: true; durationMs: number; result: unknown }
 	| { ok: false; durationMs: number; error: string };
@@ -118,6 +142,14 @@ export const api = {
 		),
 	schema: (path: string) =>
 		request<{ schema: string }>('POST', '/api/operations/schema', { path }),
+	structuredSchema: (path: string) =>
+		request<{
+			structured: {
+				input: FormFieldSchema | null;
+				output: FormFieldSchema | null;
+				description?: string;
+			} | null;
+		}>('POST', '/api/operations/structured-schema', { path }),
 	runOperation: (input: { path: string; input: unknown; tenant?: string }) =>
 		request<OperationResult>('POST', '/api/operations/run', input),
 	runScript: (input: { code: string; tenant?: string }) =>
