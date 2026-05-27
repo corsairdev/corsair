@@ -1,0 +1,74 @@
+---
+title: Types and errors
+description: Generated plugin types, Zod schemas, and CorsairApiError.
+---
+
+Types are generated from the plugin catalog — plugin IDs, auth types, and credential field names all autocomplete.
+
+```ts
+import {
+  createClient,
+  CorsairApiError,
+  PluginIdSchema,
+  type PluginId,
+  type PluginAuthTypes,
+  type PluginAccountFields,
+  type PluginIntegrationFields,
+} from "@corsair-dev/app";
+```
+
+## Plugin types
+
+```ts
+await inst.plugins.upsert("slack", { mode: "cautious" });
+
+// Validate external input
+const pluginId = PluginIdSchema.parse(body.pluginId);
+```
+
+```ts
+await inst.plugins.upsert("github", { authType: "oauth_2" }); // typed per plugin
+await t.plugins.credentials.set("slack", "api_key", "xoxb-...");
+await inst.plugins.credentials.setRoot("github", "client_id", "...");
+```
+
+## Zod schemas
+
+```ts
+import { InstanceDetailSchema, TenantSummarySchema } from "@corsair-dev/app";
+
+const instance = InstanceDetailSchema.parse(raw);
+```
+
+## Catalog helpers
+
+```ts
+import { PLUGINS, PLUGINS_BY_ID } from "@corsair-dev/app";
+
+const slack = PLUGINS_BY_ID.slack;
+```
+
+## Errors
+
+Non-2xx responses throw `CorsairApiError`:
+
+```ts
+try {
+  await inst.plugins.upsert("slack", { mode: "cautious" });
+} catch (err) {
+  if (err instanceof CorsairApiError) {
+    console.error(err.status, err.code, err.message, err.details);
+  }
+}
+```
+
+| Field | Meaning |
+| --- | --- |
+| `status` | HTTP status |
+| `code` | Machine-readable code |
+| `message` | Human-readable message |
+| `details` | Optional validation details |
+
+## `run()` results
+
+`tenant.run()` returns `{ success: true, data }` or `{ success: false, signInLink }` when auth is missing — it does not throw for missing credentials.

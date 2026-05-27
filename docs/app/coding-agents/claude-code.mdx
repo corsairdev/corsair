@@ -1,0 +1,70 @@
+---
+title: Claude Code
+description: Connect Claude Code to Corsair's hosted MCP server.
+---
+
+You can set up **Claude Code** with Corsair through the [dashboard](#in-the-dashboard) or [in code](#in-code).
+
+## In the dashboard {#in-the-dashboard}
+
+1. Sign in at [app.corsair.dev](https://app.corsair.dev).
+2. Open **Dashboard** and click **New instance**.
+3. Open your instance and click **Add Plugin** to enable an integration (e.g. GitHub, Slack).
+4. Click **New User** to add a tenant — enter a tenant ID and click **Save**.
+5. Connect the integration for that tenant: click the cell where the tenant row meets the plugin column, then sign in with OAuth or enter credentials.
+6. Click the **tenant name** in the first column to open the side panel.
+7. Copy the **MCP URL** and create an **API key** (**New key** → name → **Create** → copy the secret once).
+
+<Tip>
+[Quick Start](https://app.corsair.dev/quick-start) is an optional guided demo if you want Corsair to provision a sample instance for you.
+</Tip>
+
+## In code {#in-code}
+
+### Configure Claude Code
+
+**`.mcp.json`** in your project root:
+
+```json .mcp.json
+{
+  "mcpServers": {
+    "corsair": {
+      "type": "http",
+      "url": "https://api.corsair.dev/mcp/YOUR_INSTANCE_ID?tenantId=your-tenant-id",
+      "headers": {
+        "Authorization": "Bearer ${CORSAIR_MCP_SECRET}"
+      }
+    }
+  }
+}
+```
+
+**CLI** (alternative):
+
+```bash
+claude mcp add --transport http corsair "YOUR_MCP_HTTP_URL" \
+  --header "Authorization: Bearer $CORSAIR_MCP_SECRET"
+```
+
+Run `/mcp` in Claude Code to confirm `corsair` is listed.
+
+### With the SDK
+
+```typescript
+import { createClient } from "@corsair-dev/app";
+
+const key = await createClient({ apiKey: process.env.CORSAIR_DEV_KEY! })
+  .instance(process.env.CORSAIR_INSTANCE_ID!)
+  .tenant("your-tenant-id")
+  .mcpKeys.create("claude-code");
+```
+
+## Try it
+
+Run a prompt in Claude Code.
+
+If you connected GitHub, try:
+
+```
+Use Corsair to star the Corsair repo on GitHub
+```
