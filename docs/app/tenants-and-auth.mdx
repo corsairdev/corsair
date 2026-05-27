@@ -1,0 +1,60 @@
+---
+title: Tenants and auth
+description: Create tenants and connect API keys or OAuth per customer.
+---
+
+A **tenant** maps to a user, team, or workspace. Credentials and MCP keys are isolated per tenant.
+
+```ts
+const inst = corsair.instance(instanceId);
+
+const tenant = await inst.tenants.create("workspace_123"); // your ID
+// or: await inst.tenants.create();  // Corsair generates ID
+
+const { tenants } = await inst.tenants.list();
+const t = inst.tenant("workspace_123");
+```
+
+## API keys
+
+```ts
+await t.plugins.credentials.set("slack", "api_key", "xoxb-...");
+await t.plugins.credentials.clear("slack", "api_key");
+```
+
+Field names autocomplete per plugin (`slack` → `api_key`; `jira` → `api_key`, `cloud_url`, …).
+
+## OAuth
+
+Set root OAuth credentials on the instance first, then redirect the tenant:
+
+```ts
+await inst.plugins.upsert("github", { authType: "oauth_2" });
+await inst.plugins.credentials.setRoot("github", "client_id", "Iv1...");
+await inst.plugins.credentials.setRoot("github", "client_secret", "...");
+
+const { authorizeUrl } = await t.plugins.oauth.authorizeUrl(
+  "github",
+  "https://myapp.com/integrations/done",
+);
+// Redirect user to authorizeUrl; tokens stored on callback
+```
+
+## Ensure tenant exists
+
+```ts
+async function ensureTenant(workspaceId: string) {
+  const inst = corsair.instance(process.env.CORSAIR_INSTANCE_ID!);
+  try {
+    return await inst.tenant(workspaceId).get();
+  } catch {
+    return inst.tenants.create(workspaceId);
+  }
+}
+```
+
+## Delete
+
+```ts
+await t.delete(); // removes credentials, MCP keys, account data
+```

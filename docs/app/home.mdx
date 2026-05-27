@@ -1,0 +1,48 @@
+---
+title: Introduction
+description: Corsair lets your app integrate with hundreds of services through chat agents or deterministic UI actions.
+---
+
+Corsair is an open source product that lets an app integrate with anything. Hundreds of integrations are available — Gmail, Slack, Google Calendar, Microsoft Teams, GitHub, Linear, and more.
+
+For the full list, see [corsair.dev/integrations](https://corsair.dev/integrations).
+
+## Two ways to use Corsair
+
+You can use Corsair in chat or a UI (or both). Each works in single-tenant or multi-tenant setups.
+
+| Mode | What it is | Best for |
+| --- | --- | --- |
+| **Agentic (chat)** | An MCP server that exposes your enabled integrations as tools for coding agents and AI harnesses | Cursor, Claude Code, Vercel AI SDK, OpenAI Agents |
+| **Deterministic (UI)** | Execute catalog operations directly from your backend | Workflow automation, buttons like "Send calendar invite" |
+
+## Install
+
+```bash
+npm install @corsair-dev/app
+```
+
+Get a developer API key from the [Corsair dashboard](https://app.corsair.dev), then:
+
+```ts
+import { createClient } from "@corsair-dev/app";
+
+const corsair = createClient({ apiKey: process.env.CORSAIR_DEV_KEY! });
+```
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="Coding agents" icon="terminal" href="/app/coding-agents">
+    Cursor, Claude Code, Codex, Antigravity, and custom MCP clients.
+  </Card>
+  <Card title="Agent SDKs" icon="bot" href="/app/agent-sdks">
+    Wire Corsair into Vercel AI, OpenAI, or Claude from your backend.
+  </Card>
+  <Card title="Direct execution" icon="play" href="/app/direct-execution">
+    Call plugin operations with `tenant.run()` — no agent loop.
+  </Card>
+  <Card title="@corsair-dev/app" icon="code" href="/app/installation">
+    Provision instances, plugins, tenants, and credentials.
+  </Card>
+</CardGroup>
