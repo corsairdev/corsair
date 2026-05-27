@@ -134,6 +134,10 @@
 	.path-flow-3 {
 		animation: none;
 	}
+
+	.landing-copy-feedback-icon * {
+		transition: none !important;
+	}
 }
 @keyframes landing-modal-in {
 	from {
