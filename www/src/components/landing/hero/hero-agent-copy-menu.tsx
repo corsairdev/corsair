@@ -12,7 +12,7 @@ const SKILLS_CMD = 'npx skills add corsairdev/corsair';
 const COPY_OPTIONS = [
 	{
 		id: 'llms',
-		label: 'LLMs.txt prompt',
+		label: 'Setup prompt',
 		preview: LLMS_PROMPT,
 		value: LLMS_PROMPT,
 	},
@@ -24,7 +24,11 @@ const COPY_OPTIONS = [
 	},
 ] as const;
 
-export function HeroAgentCopyMenu({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
+export function HeroAgentCopyMenu({
+	variant = 'light',
+}: {
+	variant?: 'light' | 'dark';
+}) {
 	const menuId = useId();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [open, setOpen] = useState(false);
