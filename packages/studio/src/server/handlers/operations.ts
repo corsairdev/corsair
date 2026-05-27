@@ -1,6 +1,7 @@
 import type { AnyCorsairInstance } from 'corsair';
 import {
 	getSchema as getCorsairSchema,
+	getStructuredSchema as getCorsairStructuredSchema,
 	listOperations as listCorsairOperations,
 } from 'corsair';
 import { readJsonBody } from '../router';
@@ -44,6 +45,19 @@ export const schemaForOperation: HandlerFn = async (ctx) => {
 	const { instance } = await ctx.getCorsair();
 	const schema = getCorsairSchema(instance as AnyCorsairInstance, path);
 	return { schema };
+};
+
+export const structuredSchemaForOperation: HandlerFn = async (ctx) => {
+	const body = await readJsonBody(ctx.req);
+	const path = String(body.path ?? '');
+	if (!path) throw new Error('Missing path.');
+
+	const { instance } = await ctx.getCorsair();
+	const structured = getCorsairStructuredSchema(
+		instance as AnyCorsairInstance,
+		path,
+	);
+	return { structured };
 };
 
 export const runOperation: HandlerFn = async (ctx) => {

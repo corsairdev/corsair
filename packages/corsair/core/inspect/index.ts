@@ -260,6 +260,181 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Structured Form Schema (JSON-serializable, for UI form generation)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type FormFieldSchema =
+	| { kind: 'string'; optional: boolean; description?: string; enum?: string[] }
+	| { kind: 'number'; optional: boolean; description?: string }
+	| { kind: 'boolean'; optional: boolean; description?: string }
+	| {
+			kind: 'literal';
+			optional: boolean;
+			description?: string;
+			value: string | number | boolean;
+	  }
+	| {
+			kind: 'object';
+			optional: boolean;
+			description?: string;
+			fields: Record<string, FormFieldSchema>;
+	  }
+	| {
+			kind: 'array';
+			optional: boolean;
+			description?: string;
+			items: FormFieldSchema;
+	  }
+	| { kind: 'unknown'; optional: boolean; description?: string };
+
+function zodToFormSchema(schema: ZodTypeAny): FormFieldSchema {
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
+	const description = getZodDescription(schema, def);
+
+	switch (typeName) {
+		case 'ZodString':
+			return { kind: 'string', optional: false, description };
+		case 'ZodNumber':
+			return { kind: 'number', optional: false, description };
+		case 'ZodBoolean':
+			return { kind: 'boolean', optional: false, description };
+		case 'ZodLiteral': {
+			const raw = def.value ?? getZodOptions(def)[0];
+			const val: string | number | boolean =
+				typeof raw === 'string' ||
+				typeof raw === 'number' ||
+				typeof raw === 'boolean'
+					? raw
+					: String(raw ?? '');
+			return {
+				kind: 'literal',
+				optional: false,
+				description,
+				value: val,
+			};
+		}
+		case 'ZodEnum': {
+			const values = getZodOptions(def).map((v) => String(v));
+			return { kind: 'string', optional: false, description, enum: values };
+		}
+		case 'ZodOptional': {
+			const inner = getZodInner(def);
+			const base = inner
+				? zodToFormSchema(inner)
+				: { kind: 'unknown' as const, optional: false };
+			return {
+				...base,
+				optional: true,
+				description: description ?? base.description,
+			};
+		}
+		case 'ZodNullable': {
+			const inner = getZodInner(def);
+			const base = inner
+				? zodToFormSchema(inner)
+				: { kind: 'unknown' as const, optional: false };
+			return {
+				...base,
+				optional: true,
+				description: description ?? base.description,
+			};
+		}
+		case 'ZodDefault':
+		case 'ZodCatch': {
+			const inner = getZodInner(def);
+			return inner
+				? { ...zodToFormSchema(inner), description }
+				: { kind: 'unknown', optional: false, description };
+		}
+		case 'ZodArray': {
+			const itemType = getZodArrayItem(def);
+			return {
+				kind: 'array',
+				optional: false,
+				description,
+				items: itemType
+					? zodToFormSchema(itemType)
+					: { kind: 'unknown', optional: false },
+			};
+		}
+		case 'ZodObject': {
+			const shape = getZodShape(schema, def);
+			const fields: Record<string, FormFieldSchema> = {};
+			for (const [key, val] of Object.entries(shape)) {
+				fields[key] = zodToFormSchema(val);
+			}
+			return { kind: 'object', optional: false, description, fields };
+		}
+		case 'ZodRecord':
+			return { kind: 'unknown', optional: false, description };
+		case 'ZodUnion': {
+			// For unions, try to pick the first object or fall back to unknown
+			const options = getZodOptions(def);
+			for (const opt of options) {
+				const optDef = getZodDef(opt as ZodTypeAny);
+				if (getZodTypeName(optDef) === 'ZodObject') {
+					return { ...zodToFormSchema(opt as ZodTypeAny), description };
+				}
+			}
+			return { kind: 'unknown', optional: false, description };
+		}
+		case 'ZodIntersection':
+		case 'ZodPipe':
+		case 'ZodTransform':
+		case 'ZodEffects': {
+			const inner = getZodInner(def);
+			return inner
+				? { ...zodToFormSchema(inner), description }
+				: { kind: 'unknown', optional: false, description };
+		}
+		default:
+			return { kind: 'unknown', optional: false, description };
+	}
+}
+
+export function getStructuredSchema(
+	plugins: readonly CorsairPlugin[],
+	path: string,
+): {
+	input: FormFieldSchema | null;
+	output: FormFieldSchema | null;
+	description?: string;
+} | null {
+	const normalised = path.toLowerCase();
+	const dotIndex = normalised.indexOf('.');
+	if (dotIndex === -1) return null;
+
+	const pluginId = normalised.slice(0, dotIndex);
+	const remainder = normalised.slice(dotIndex + 1);
+	const plugin = plugins.find((p) => p.id === pluginId);
+	if (!plugin) return null;
+
+	// Only API endpoints have structured input schemas
+	let endpointPath = remainder;
+	if (endpointPath.startsWith('api.')) {
+		endpointPath = endpointPath.slice(4);
+	}
+
+	const meta = findEndpointCaseInsensitive(
+		plugin.endpointMeta as Record<string, EndpointMetaEntry> | undefined,
+		endpointPath,
+	);
+	const schemas = findEndpointCaseInsensitive(
+		plugin.endpointSchemas,
+		endpointPath,
+	);
+
+	if (!meta && !schemas) return null;
+
+	return {
+		input: schemas?.input ? zodToFormSchema(schemas.input) : null,
+		output: schemas?.output ? zodToFormSchema(schemas.output) : null,
+		description: meta?.description,
+	};
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // DB Entity Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 

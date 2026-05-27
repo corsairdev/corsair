@@ -18,6 +18,7 @@ import {
 	runOperation,
 	runScript,
 	schemaForOperation,
+	structuredSchemaForOperation,
 } from './handlers/operations';
 import { setupPlugin } from './handlers/plugin-setup';
 import { listPlugins } from './handlers/plugins';
@@ -43,6 +44,11 @@ const routes: Route[] = [
 		method: 'POST',
 		path: '/api/operations/schema',
 		handler: schemaForOperation,
+	},
+	{
+		method: 'POST',
+		path: '/api/operations/structured-schema',
+		handler: structuredSchemaForOperation,
 	},
 	{ method: 'POST', path: '/api/operations/run', handler: runOperation },
 	{ method: 'POST', path: '/api/operations/script', handler: runScript },
