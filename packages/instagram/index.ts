@@ -10,12 +10,12 @@ import {
 
 export const instagramAuthConfig = {
     oauth_2: {
-        integration: [] as const,
+        integration: ['client_id', 'client_secret'] as const,
     },
 } as const satisfies PluginAuthConfig;
 
 export type InstagramPluginOptions = {
-    authType?: 'oauth_2';
+    authType: 'oauth_2';
 };
 
 type InstagramKeyBuilderContext =
@@ -25,8 +25,13 @@ type InstagramKeyBuilderContext =
     >;
 
 export function instagram(
-    options: InstagramPluginOptions = {}
-): CorsairPlugin {
+    options: InstagramPluginOptions = {
+        authType: 'oauth_2'
+    }
+): CorsairPlugin<'instagram', any, {},
+    {}, InstagramPluginOptions,
+    'oauth_2',
+    typeof instagramAuthConfig> {
 
     return {
 
@@ -102,5 +107,5 @@ export function instagram(
 
             return result.accessToken;
         },
-    } as any;
+    };
 }

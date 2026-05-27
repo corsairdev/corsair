@@ -70,21 +70,21 @@ describe(
                 });
 
             // Integration Keys
-            await corsair.keys.instagram!
+            await corsair.keys.instagram
                 .issue_new_dek();
 
-            await corsair.keys.instagram!
+            await corsair.keys.instagram
                 .set_client_id(appId);
 
-            await corsair.keys.instagram!
+            await corsair.keys.instagram
                 .set_client_secret(appSecret);
 
             // User Keys
 
-            await corsair.instagram!.keys
+            await corsair.instagram.keys
                 .issue_new_dek();
 
-            await corsair.instagram!.keys
+            await corsair.instagram.keys
                 .set_access_token(accessToken);
 
             return {
@@ -108,13 +108,19 @@ describe(
                 );
 
                 const token =
-                    await corsair.instagram!.keys
+                    await corsair.instagram.keys
                         .get_access_token();
+                        
+                if (!token) {
+                    throw new Error(
+                        'Missing access token'
+                    );
+                }
 
                 const me =
                     await makeInstagramRequest(
                         '/me',
-                        token!,
+                        token,
                         {
                             query: {
                                 fields:
@@ -150,7 +156,7 @@ describe(
                 );
 
                 const appId =
-                    await corsair.keys.instagram!
+                    await corsair.keys.instagram
                         .get_client_id();
                 if (!appId) {
                     throw new Error(
@@ -159,7 +165,7 @@ describe(
                 }
 
                 const appSecret =
-                    await corsair.keys.instagram!
+                    await corsair.keys.instagram
                         .get_client_secret();
                 if (!appSecret) {
                     throw new Error(
@@ -168,7 +174,7 @@ describe(
                 }
 
                 const accessToken =
-                    await corsair.instagram!.keys
+                    await corsair.instagram.keys
                         .get_access_token();
                 if (!accessToken) {
                     throw new Error(
@@ -217,7 +223,7 @@ describe(
                 );
 
                 const appId =
-                    await corsair.keys.instagram!
+                    await corsair.keys.instagram
                         .get_client_id();
                 if (!appId) {
                     throw new Error(
@@ -226,7 +232,7 @@ describe(
                 }
 
                 const appSecret =
-                    await corsair.keys.instagram!
+                    await corsair.keys.instagram
                         .get_client_secret();
                 if (!appSecret) {
                     throw new Error(
@@ -235,7 +241,7 @@ describe(
                 }
 
                 const accessToken =
-                    await corsair.instagram!.keys
+                    await corsair.instagram.keys
                         .get_access_token();
                 if (!accessToken) {
                     throw new Error(
