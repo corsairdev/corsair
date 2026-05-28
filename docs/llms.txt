@@ -4,9 +4,8 @@
 
 ## Get started (Corsair App)
 
-Start here to understand what Corsair is and how to choose a path.
-
-- [Introduction](https://docs.corsair.dev/app/home.md): What Corsair is, agentic vs deterministic usage, and install `@corsair-dev/app`.
+- [Agent setup](https://docs.corsair.dev/app/agent-setup.md): **Start here for coding agents** — clarify intent, provision instance/plugins/tenant via SDK, ask when ambiguous.
+- [Introduction](https://docs.corsair.dev/app/home.md): What Corsair is, agentic vs deterministic usage, and install `@corsair-dev/app` (humans).
 
 ### Use Corsair in chat (MCP)
 
