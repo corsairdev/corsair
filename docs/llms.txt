@@ -36,11 +36,11 @@ Call plugin operations from your backend without an agent loop.
 
 ### Provision and manage (@corsair-dev/app)
 
-Dashboard setup: instance → plugin → tenant → credentials → MCP URL and API keys at [app.corsair.dev](https://app.corsair.dev).
+Provision via the SDK after the user creates a developer API key at [app.corsair.dev/api-keys](https://app.corsair.dev/api-keys). After setup, call `t.connectLink.create()` and send the URL to the user.
 
 - [Installation](https://docs.corsair.dev/app/installation.md): Install `@corsair-dev/app` and minimal provisioning.
 - [Instances and plugins](https://docs.corsair.dev/app/instances-and-plugins.md): Create instances, install plugins, permissions, root credentials.
-- [Tenants and auth](https://docs.corsair.dev/app/tenants-and-auth.md): Tenants, API keys, OAuth per customer.
+- [Tenants and auth](https://docs.corsair.dev/app/tenants-and-auth.md): Tenants, connect links, API keys, OAuth per customer.
 - [Types and errors](https://docs.corsair.dev/app/types-and-errors.md): Generated types, Zod schemas, `CorsairApiError`.
 
 ## Integrations catalog

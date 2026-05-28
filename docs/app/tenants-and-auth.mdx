@@ -1,6 +1,6 @@
 ---
 title: Tenants and auth
-description: Create tenants and connect API keys or OAuth per customer.
+description: Create tenants, connect links, API keys, and OAuth per customer.
 ---
 
 A **tenant** maps to a user, team, or workspace. Credentials and MCP keys are isolated per tenant.
@@ -23,6 +23,29 @@ await t.plugins.credentials.clear("slack", "api_key");
 ```
 
 Field names autocomplete per plugin (`slack` → `api_key`; `jira` → `api_key`, `cloud_url`, …).
+
+## Connect link
+
+After provisioning an instance, installing plugins, and creating a tenant, mint a self-service connect URL and send it to the user. They open it in a browser to connect OAuth accounts and enter API keys for every installed plugin (or a subset you choose).
+
+```ts
+const { url } = await t.connectLink.create();
+// Send url to the user — e.g. "Connect your accounts: {url}"
+```
+
+Optional parameters:
+
+```ts
+// Short-lived link for specific plugins
+const link = await t.connectLink.create({
+  plugins: ["github", "slack"],
+  ttlMs: 30 * 60 * 1000, // 30 minutes (default is 7 days)
+});
+```
+
+Returns `{ url, token, expiresAt, ttlMs }`. Prefer this after setup instead of sending users to the dashboard.
+
+Use `credentials.set()` when you already have secrets. Use `oauth.authorizeUrl()` when you only need one plugin's OAuth flow.
 
 ## OAuth
 
