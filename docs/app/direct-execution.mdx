@@ -26,6 +26,17 @@ await t.run("slack.api.messages.post", {
 
 Paths use the catalog's dot notation: `plugin.section.operation` (e.g. `github.api.repositories.star`).
 
+## Connect the user
+
+After provisioning, mint a connect link proactively and send it to the user:
+
+```ts
+const { url } = await t.connectLink.create();
+// Send url to the user so they can connect all installed plugins
+```
+
+See [Tenants and auth](/app/tenants-and-auth) for options (`plugins`, `ttlMs`).
+
 ## Handle missing auth
 
 `run()` returns a result object instead of throwing when the tenant still needs to connect a plugin:
@@ -34,13 +45,15 @@ Paths use the catalog's dot notation: `plugin.section.operation` (e.g. `github.a
 const result = await t.run<{ messages: unknown[] }>("gmail.api.messages.list");
 
 if (!result.success) {
-  // Redirect user to connect Gmail
+  // Reactive fallback — same connect page as connectLink.create()
   redirect(result.signInLink);
   return;
 }
 
 console.log(result.data);
 ```
+
+Prefer `connectLink.create()` when you know the user still needs to connect accounts. Use `signInLink` when you discover missing auth at call time.
 
 ## Permissions
 

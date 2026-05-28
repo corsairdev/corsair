@@ -69,6 +69,24 @@ try {
 | `message` | Human-readable message |
 | `details` | Optional validation details |
 
+## Connect links
+
+`tenant.connectLink.create()` returns a `ConnectLinkCreated` object:
+
+| Field | Meaning |
+| --- | --- |
+| `url` | Self-service connect page — send this to the user |
+| `token` | Signed token embedded in the URL |
+| `expiresAt` | ISO timestamp when the link expires |
+| `ttlMs` | TTL in milliseconds (default 7 days) |
+
+```ts
+import { ConnectLinkCreatedSchema, type ConnectLinkCreated } from "@corsair-dev/app";
+
+const link: ConnectLinkCreated = await t.connectLink.create();
+ConnectLinkCreatedSchema.parse(link);
+```
+
 ## `run()` results
 
-`tenant.run()` returns `{ success: true, data }` or `{ success: false, signInLink }` when auth is missing — it does not throw for missing credentials.
+`tenant.run()` returns `{ success: true, data }` or `{ success: false, signInLink }` when auth is missing — it does not throw for missing credentials. `signInLink` points to the same connect page as `connectLink.create()`.

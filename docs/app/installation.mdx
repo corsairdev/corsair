@@ -29,13 +29,17 @@ await inst.plugins.upsert("slack", { mode: "cautious" });
 const tenant = await inst.tenants.create("user-abc");
 const t = inst.tenant(tenant.id);
 
-await t.plugins.credentials.set("slack", "api_key", "xoxb-...");
+// Send the user a link to connect their accounts (OAuth + API keys)
+const { url } = await t.connectLink.create();
+
+// Or set credentials directly if you already have them:
+// await t.plugins.credentials.set("slack", "api_key", "xoxb-...");
 ```
 
 ## Next
 
 - [Instances and plugins](/app/instances-and-plugins) — permissions, root credentials, runtime
-- [Tenants and auth](/app/tenants-and-auth) — OAuth, per-tenant credentials
+- [Tenants and auth](/app/tenants-and-auth) — connect links, OAuth, per-tenant credentials
 - [Types and errors](/app/types-and-errors) — generated types, `CorsairApiError`
 
 For agents and UI actions, see [Coding agents](/app/coding-agents), [Agent SDKs](/app/agent-sdks), and [Direct execution](/app/direct-execution).

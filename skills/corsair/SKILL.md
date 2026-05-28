@@ -45,7 +45,7 @@ Once `CORSAIR_DEV_KEY` is set:
 
 1. `npm install @corsair-dev/app`
 2. Create **instance** → **upsert plugins** → **create tenant**
-3. Set **tenant credentials** (API keys the user provides) or generate **OAuth authorize URLs** for the user to open in the browser
+3. Call **`t.connectLink.create()`** and send the returned **`url`** to the user so they can connect OAuth accounts and enter API keys for all installed plugins — or use `credentials.set()` / `oauth.authorizeUrl()` when you already have secrets or only need one plugin
 4. Create **tenant MCP keys** (`mcpKeys.create()`) and wire MCP config (e.g. `.cursor/mcp.json`)
 5. Persist `CORSAIR_INSTANCE_ID`, tenant id, and MCP secrets in env — never commit them
 
@@ -62,11 +62,14 @@ await inst.plugins.upsert("slack", { mode: "cautious" });
 const tenant = await inst.tenants.create("user-abc");
 const t = inst.tenant(tenant.id);
 
+const { url } = await t.connectLink.create();
+// Send url to the user to connect their accounts on Corsair
+
 const mcpKey = await t.mcpKeys.create("cursor");
 // mcpKey.mcpHttpUrl + mcpKey.secret (shown once) → CORSAIR_MCP_SECRET + MCP URL in agent config
 ```
 
-Provisioning order: **developer API key → instance → plugin → tenant → credentials → MCP keys / agent config**
+Provisioning order: **developer API key → instance → plugin → tenant → connect link (or credentials) → MCP keys / agent config**
 
 Integrations catalog: https://api.corsair.dev/md/integrations
 
@@ -106,7 +109,8 @@ const inst = corsair.instance(id);
 await inst.plugins.upsert("slack", { mode: "cautious" });
 
 const tenant = await inst.tenants.create("user-abc");
-await inst.tenant(tenant.id).plugins.credentials.set("slack", "api_key", "xoxb-...");
+const { url } = await inst.tenant(tenant.id).connectLink.create();
+// Send url to the user to connect their accounts
 ```
 
 Use instance `id` (not display `name`) in API calls.
@@ -212,7 +216,14 @@ await t.run("slack.api.messages.post", {
 
 Paths use catalog dot notation: `plugin.section.operation` (e.g. `github.api.repositories.star`).
 
-Handle missing auth:
+After provisioning, send the user a connect link:
+
+```ts
+const { url } = await t.connectLink.create();
+// Tell the user: open this URL to connect their accounts
+```
+
+Handle missing auth at call time (reactive fallback — same connect page):
 
 ```ts
 const result = await t.run("gmail.api.messages.list");
@@ -234,10 +245,10 @@ console.log(result.data);
 
 ## Provision and manage (@corsair-dev/app)
 
-Prefer provisioning via the SDK after the user creates a developer API key at [app.corsair.dev/api-keys](https://app.corsair.dev/api-keys). Use the dashboard for OAuth sign-in flows or debugging only.
+Prefer provisioning via the SDK after the user creates a developer API key at [app.corsair.dev/api-keys](https://app.corsair.dev/api-keys). After setup, call `t.connectLink.create()` and send `url` to the user — do not send them to the dashboard to connect accounts. Use the dashboard for debugging only.
 
 - [Instances and plugins](https://docs.corsair.dev/app/instances-and-plugins.md): Create instances, install plugins, permissions, root credentials
-- [Tenants and auth](https://docs.corsair.dev/app/tenants-and-auth.md): Tenants, API keys, OAuth per customer
+- [Tenants and auth](https://docs.corsair.dev/app/tenants-and-auth.md): Tenants, connect links, API keys, OAuth per customer
 - [Types and errors](https://docs.corsair.dev/app/types-and-errors.md): Generated types, Zod schemas, `CorsairApiError`
 
 Permission modes: `permissive`, `cautious` (recommended), `strict`.
