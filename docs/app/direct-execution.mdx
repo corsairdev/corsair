@@ -1,0 +1,75 @@
+---
+title: Direct execution
+description: Run plugin operations from your backend without an agent loop.
+---
+
+Use **direct execution** when your app already knows the operation — scheduled jobs, workflow steps, or UI buttons like "Send calendar invite". No MCP client required.
+
+## Run an operation
+
+```typescript
+import { createClient } from "@corsair-dev/app";
+
+const corsair = createClient({ apiKey: process.env.CORSAIR_DEV_KEY! });
+const inst = corsair.instance(process.env.CORSAIR_INSTANCE_ID!);
+
+// List tenants your backend can act on behalf of
+const { tenants } = await inst.tenants.list();
+
+// Run an operation for a specific tenant
+const t = inst.tenant("alice");
+await t.run("slack.api.messages.post", {
+  channel: "#general",
+  text: "Hello from chat",
+});
+```
+
+Paths use the catalog's dot notation: `plugin.section.operation` (e.g. `github.api.repositories.star`).
+
+## Connect the user
+
+After provisioning, mint a connect link proactively and send it to the user:
+
+```ts
+const { url } = await t.connectLink.create();
+// Send url to the user so they can connect all installed plugins
+```
+
+See [Tenants and auth](/app/tenants-and-auth) for options (`plugins`, `ttlMs`).
+
+## Handle missing auth
+
+`run()` returns a result object instead of throwing when the tenant still needs to connect a plugin:
+
+```ts
+const result = await t.run<{ messages: unknown[] }>("gmail.api.messages.list");
+
+if (!result.success) {
+  // Reactive fallback — same connect page as connectLink.create()
+  redirect(result.signInLink);
+  return;
+}
+
+console.log(result.data);
+```
+
+Prefer `connectLink.create()` when you know the user still needs to connect accounts. Use `signInLink` when you discover missing auth at call time.
+
+## Permissions
+
+Direct execution respects the same instance policies as MCP. Denied operations return `CorsairApiError` with status 403.
+
+```ts
+await inst.plugins.permissions.setOverride(
+  "github",
+  "api.repositories.delete",
+  "deny",
+);
+```
+
+## MCP vs direct
+
+| Use case | Use |
+| --- | --- |
+| Agent picks tools at runtime | [Coding agents](/app/coding-agents) or [Agent SDKs](/app/agent-sdks) |
+| Backend knows the exact operation | `tenant.run()` |

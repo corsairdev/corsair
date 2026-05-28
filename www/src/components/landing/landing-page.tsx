@@ -19,10 +19,10 @@ export function LandingPage() {
 		>
 			<SiteMenu />
 			<LandingHero />
+			<TerminalTrioSection />
 			<ProblemStatementSection />
 			<SolutionFramingSection />
 			<ChooseYourPathSection />
-			<TerminalTrioSection />
 			{/* <UseCasesSection /> */}
 			<FaqSection />
 			<SiteFooter />
