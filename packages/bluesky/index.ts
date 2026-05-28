@@ -165,6 +165,10 @@ export type ExternalBlueskyPlugin<T extends BlueskyPluginOptions> =
 // ── Plugin Factory ────────────────────────────────────────────────────────────
 
 export function bluesky<const T extends BlueskyPluginOptions>(
+	// `{} as BlueskyPluginOptions & T` is used here as the default parameter
+	// value because TypeScript cannot infer that an empty object satisfies the generic
+	// intersection type `BlueskyPluginOptions & T` at the call site; callers always
+	// override this via their own options object.
 	incomingOptions: BlueskyPluginOptions & T = {} as BlueskyPluginOptions & T,
 ): ExternalBlueskyPlugin<T> {
 	const options = {
