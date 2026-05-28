@@ -1,6 +1,6 @@
 import { DesktopPreview } from '../app-preview/desktop-preview';
 import { YcBackedLink } from '../yc-backed-link';
-import { HeroAgentCopyMenu } from './hero-agent-copy-menu';
+import { HeroAppCta } from './hero-app-cta';
 import { HeroBackground } from './hero-background';
 
 export function LandingHero() {
@@ -45,20 +45,7 @@ export function LandingHero() {
 						</span>
 						Star on Github
 					</a>
-					<div className="group/app-cta inline-flex items-stretch overflow-visible rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition-all duration-300 ease-out hover:bg-[#2a2a2a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_16px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:translate-y-0">
-						<a
-							href="https://app.corsair.dev"
-							target="_blank"
-							rel="noopener noreferrer"
-							className="inline-flex flex-1 items-center justify-center gap-2 px-6 py-3 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white no-underline sm:flex-none"
-						>
-							Go to app
-							<span className="transition-transform duration-300 ease-out group-hover/app-cta:translate-x-1">
-								→
-							</span>
-						</a>
-						<HeroAgentCopyMenu variant="dark" />
-					</div>
+					<HeroAppCta />
 				</div>
 
 				<div className="animate-hero-fade-up delay-[400ms] relative z-0 flex w-full flex-col items-center gap-6 sm:gap-8 mt-4">
