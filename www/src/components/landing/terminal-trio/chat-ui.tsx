@@ -342,6 +342,7 @@ export function ChatInputShell({
 								type="button"
 								onClick={onSend}
 								disabled={!showInput}
+								data-cursor={showInput ? 'btn' : undefined}
 								className={`relative z-10 flex size-6 items-center justify-center rounded-full bg-[#4a38f5] text-white transition-[opacity,transform,box-shadow] hover:brightness-110 disabled:cursor-default disabled:opacity-40 ${
 									showInput ? 'landing-send-cta-pulse cursor-pointer' : ''
 								}`}

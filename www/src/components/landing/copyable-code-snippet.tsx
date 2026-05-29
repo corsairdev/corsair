@@ -38,6 +38,7 @@ export function CopyableCodeSnippet({
 				onClick={() => {
 					void copy();
 				}}
+				data-cursor="btn"
 				className={`${LANDING_CTA_BOX_CLASS} cursor-pointer ${className}`}
 				aria-label={copied ? 'Copied' : `Copy ${code}`}
 			>

@@ -90,6 +90,7 @@ export function SiteMenu() {
 								href={APP_URL}
 								target="_blank"
 								rel="noopener noreferrer"
+								data-cursor="btn"
 								className="group inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] no-underline transition-all duration-300 ease-out hover:bg-[#2a2a2a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_16px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:translate-y-0"
 							>
 								Go to app
