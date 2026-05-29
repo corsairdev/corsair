@@ -29,9 +29,9 @@ Wire Corsair into Vercel AI SDK, OpenAI, or Claude Agent SDK from your backend.
 
 ### Use Corsair in your UI (direct execution)
 
-Call plugin operations from your backend without an agent loop.
+Call plugin operations from your backend without an agent loop. **Read feeds from `*.db.*`; refresh with `*.api.*`.**
 
-- [Direct execution](https://docs.corsair.dev/app/direct-execution.md): `tenant.run()` for deterministic workflows and UI actions.
+- [Direct execution](https://docs.corsair.dev/app/direct-execution.md): `tenant.run()` — API vs DB paths, Resync pattern, writes, UI actions.
 
 ### Provision and manage (@corsair-dev/app)
 
