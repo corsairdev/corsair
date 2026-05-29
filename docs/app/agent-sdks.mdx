@@ -7,6 +7,17 @@ Agent SDKs use the same hosted MCP server as coding agents. If you already run V
 
 In the [dashboard](https://app.corsair.dev/dashboard): create an instance, add a plugin, add a tenant, connect credentials, then open the tenant side panel for the MCP URL and API keys. [Quick Start](https://app.corsair.dev/quick-start) is an optional guided demo.
 
+## Hosted MCP meta tools
+
+In-app and coding agents use Corsair's MCP server at runtime. It exposes **`list_operations`**, **`get_schema`**, and **`run_script`** so the agent can pick operations dynamically without the full catalog in context.
+
+Setup agents wiring **direct execution** do not need these tools — fetch paths and schemas from the [integrations catalog](https://api.corsair.dev/md/integrations) and call `tenant.run()`.
+
+| Tool | Who uses it |
+| --- | --- |
+| [Integrations catalog](https://api.corsair.dev/md/integrations) | Setup agents — list paths, read schemas, then `tenant.run()` |
+| `list_operations` / `get_schema` / `run_script` | Runtime chat/coding agents via MCP |
+
 ## Quick example (Vercel AI SDK)
 
 When your backend already has the developer API key, use `tenant.mcp.createVercelClient()` — no separate MCP secret required:

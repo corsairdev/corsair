@@ -5,6 +5,44 @@ description: Run plugin operations from your backend without an agent loop.
 
 Use **direct execution** when your app already knows the operation — scheduled jobs, workflow steps, or UI buttons like "Send calendar invite". No MCP client required.
 
+## API vs DB paths
+
+Corsair plugins expose two families of operations:
+
+| Path pattern | What it does | When to use |
+| --- | --- | --- |
+| `<plugin>.api.*` | Live call to the third-party API (GitHub, Slack, …) | Writes, one-off reads, **refreshing** the synced cache |
+| `<plugin>.db.*` | Read/search Corsair's **synced database** for that instance | UI feeds, lists, search, detail pages — avoids rate limits |
+
+**Default for read-heavy UI:** `tenant.run("github.db.issues.search", …)` (or the relevant entity). Corsair populates the DB when **`*.api.*`** endpoints run (e.g. during an explicit **Resync**). Design the UI to read from **`.db`** on every render and call **`.api`** only when the user asks to refresh or when performing a write.
+
+```typescript
+// Feed: read from cache
+const { data: issueRows } = await t.run("github.db.issues.search", {
+  data: { url: { contains: "corsairdev/corsair" } },
+  limit: 100,
+  offset: 0,
+});
+
+// Resync button: pull from GitHub into the cache
+await t.run("github.api.issues.list", {
+  owner: "corsairdev",
+  repo: "corsair",
+  state: "open",
+  perPage: 100,
+});
+
+// Post comment: write via API
+await t.run("github.api.issues.createComment", {
+  owner: "corsairdev",
+  repo: "corsair",
+  issueNumber: 42,
+  body: "On it!",
+});
+```
+
+Paths and schemas: [integrations catalog](https://api.corsair.dev/md/integrations) — e.g. `/md/integrations/github` for all GitHub paths, `/md/integrations/github.api.issues.list` for that endpoint's schema. Then call `tenant.run(path, input)`.
+
 ## Run an operation
 
 ```typescript
@@ -24,7 +62,7 @@ await t.run("slack.api.messages.post", {
 });
 ```
 
-Paths use the catalog's dot notation: `plugin.section.operation` (e.g. `github.api.repositories.star`).
+Paths use the catalog's dot notation: `plugin.section.operation` (e.g. `github.api.repositories.star`, `github.db.pullRequests.search`).
 
 ## Connect the user
 
@@ -71,5 +109,7 @@ await inst.plugins.permissions.setOverride(
 
 | Use case | Use |
 | --- | --- |
-| Agent picks tools at runtime | [Coding agents](/app/coding-agents) or [Agent SDKs](/app/agent-sdks) |
-| Backend knows the exact operation | `tenant.run()` |
+| Agent picks tools at runtime | [Coding agents](/app/coding-agents) or [Agent SDKs](/app/agent-sdks) — MCP meta tools only; no operation hints in the system prompt |
+| UI feeds / lists / search | `tenant.run("<plugin>.db.*")` |
+| User-triggered refresh into cache | `tenant.run("<plugin>.api.*")` list/read endpoints |
+| Backend knows the exact write | `tenant.run("<plugin>.api.*")` |
