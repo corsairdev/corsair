@@ -82,7 +82,7 @@ function TerminalTrioGrid() {
 	const { isOpen } = useTrioModal();
 
 	return (
-		<div className="grid grid-cols-1 gap-10 sm:gap-12 md:grid-cols-2 md:gap-10 lg:grid-cols-3 lg:gap-8">
+		<div className="grid grid-cols-1 gap-10 sm:gap-12 md:grid-cols-2 md:gap-10 md:[&>div:nth-child(3)]:col-span-2 lg:grid-cols-3 lg:gap-8 lg:[&>div:nth-child(3)]:col-span-1">
 			{TRIO_COLUMNS.map(({ id, title, Window }) => (
 				<TerminalTrioColumn
 					key={id}
