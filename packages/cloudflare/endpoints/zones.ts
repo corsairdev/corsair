@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCloudflareRequest } from '../client';
 import type { CloudflareEndpoints } from '../index';
-import { deleteZone as removeZoneFromDb, persistZone } from '../persist';
+import { persistZone, deleteZone as removeZoneFromDb } from '../persist';
 import type { CloudflareEndpointOutputs } from './types';
 
 export const list: CloudflareEndpoints['zonesList'] = async (ctx, input) => {

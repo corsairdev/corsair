@@ -1,4 +1,4 @@
-export { createCorsair } from './core';
+export { BaseProviders, createCorsair } from './core';
 export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,

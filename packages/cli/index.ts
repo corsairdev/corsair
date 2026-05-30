@@ -705,6 +705,32 @@ function parseScriptArgs(args: string[]): {
 	return { code, tenant };
 }
 
+function parseAddArgs(args: string[]): {
+	plugin: string | undefined;
+	dryRun: boolean;
+	skipInstall: boolean;
+	skipConfig: boolean;
+} {
+	let plugin: string | undefined;
+	let dryRun = false;
+	let skipInstall = false;
+	let skipConfig = false;
+
+	for (const arg of args) {
+		if (arg === '--dry-run') {
+			dryRun = true;
+		} else if (arg === '--skip-install') {
+			skipInstall = true;
+		} else if (arg === '--skip-config') {
+			skipConfig = true;
+		} else if (!arg.startsWith('-')) {
+			if (!plugin) plugin = arg;
+		}
+	}
+
+	return { plugin, dryRun, skipInstall, skipConfig };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Help
 // ─────────────────────────────────────────────────────────────────────────────
@@ -721,6 +747,7 @@ function printHelp() {
 		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
 		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
 		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
+		'pnpm corsair add <plugin> [--dry-run] [--skip-install] [--skip-config]  Install a plugin and wire it into corsair.ts',
 		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
 		'pnpm corsair ui [--port=4317] [--no-open]       Open the Corsair Studio dashboard (requires @corsair-dev/studio)',
 		'pnpm corsair script --code "<js>" [--tenant=<id>]',
@@ -994,6 +1021,25 @@ async function main() {
 		const instance = await getCorsairInstance({ cwd });
 		const result = getSchema(instance as AnyCorsairInstance, schemaPath);
 		console.log(result);
+		return;
+	}
+
+	if (command === 'add') {
+		const addArgs = parseAddArgs(args.slice(1));
+		if (!addArgs.plugin) {
+			console.error(
+				'[#corsair]: Usage: corsair add <plugin> [--dry-run] [--skip-install] [--skip-config]',
+			);
+			console.error('[#corsair]: Example: corsair add slack');
+			process.exit(1);
+		}
+		const { runAdd } = await import('./add');
+		await runAdd({
+			plugin: addArgs.plugin,
+			dryRun: addArgs.dryRun,
+			skipInstall: addArgs.skipInstall,
+			skipConfig: addArgs.skipConfig,
+		});
 		return;
 	}
 

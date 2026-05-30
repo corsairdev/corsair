@@ -24,11 +24,9 @@ export const list: BitwardenEndpoints['collectionsList'] = async (
 export const get: BitwardenEndpoints['collectionsGet'] = async (ctx, input) => {
 	const response = await makeBitwardenRequest<
 		BitwardenEndpointOutputs['collectionsGet']
-	>(
-		`/organizations/${input.organizationId}/collections/${input.id}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	>(`/organizations/${input.organizationId}/collections/${input.id}`, ctx.key, {
+		method: 'GET',
+	});
 	await logEventFromContext(
 		ctx,
 		'bitwarden.collections.get',

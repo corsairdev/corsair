@@ -1,9 +1,9 @@
 'use client';
 
 import type { ReactNode, RefObject } from 'react';
-import { INTEGRATION_BY_ID } from '../data/companies-data';
-import type { IntegrationId } from '../data/companies-data';
 import { FaviconLogo, PersonAvatar } from '../app-preview/table-ui';
+import type { IntegrationId } from '../data/companies-data';
+import { INTEGRATION_BY_ID } from '../data/companies-data';
 
 type ChatPerson = {
 	name: string;
@@ -212,7 +212,13 @@ export function TriggerToolRow({
 	return (
 		<div className="flex items-center gap-2 rounded-lg border border-[#1c1c1c12] bg-[#fafafa] px-2 py-1.5">
 			<span className="flex shrink-0 items-center gap-0.5">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" aria-hidden>
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 24 24"
+					fill="#f59e0b"
+					aria-hidden
+				>
 					<path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z" />
 				</svg>
 				{integrations.map((item) => {
@@ -231,7 +237,9 @@ export function TriggerToolRow({
 				})}
 			</span>
 			<div className="min-w-0 flex-1">
-				<p className="truncate text-[11px] font-medium text-[#1c1c1c]">Trigger</p>
+				<p className="truncate text-[11px] font-medium text-[#1c1c1c]">
+					Trigger
+				</p>
 				<p className="truncate text-[10px] leading-tight text-[#1c1c1c80]">
 					{description}
 				</p>

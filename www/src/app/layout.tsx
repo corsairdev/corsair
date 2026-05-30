@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import type { ReactNode } from 'react';
 import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
+import type { ReactNode } from 'react';
 import './globals.css';
 import '@/components/landing/theme.css';
 import { cn } from '@/lib/utils';
