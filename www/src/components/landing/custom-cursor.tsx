@@ -15,6 +15,7 @@ export function CustomCursor() {
 	const mouseRef = useRef({ x: 0, y: 0 });
 	
 	const hoveredElRef = useRef<HTMLElement | null>(null);
+	const hoveredRadiusRef = useRef(0);
 
 	const animationRef = useRef({
 		// Current values
@@ -23,12 +24,6 @@ export function CustomCursor() {
 		currentWidth: 32,
 		currentHeight: 32,
 		currentRadius: 16,
-		
-		targetX: 0,
-		targetY: 0,
-		targetWidth: 32,
-		targetHeight: 32,
-		targetRadius: 16,
 		
 		isHovered: false,
 		hasMoved: false,
@@ -77,6 +72,11 @@ export function CustomCursor() {
 			if (clickable && clickable instanceof HTMLElement) {
 				hoveredElRef.current = clickable;
 				animationRef.current.isHovered = true;
+
+				// Cache the border radius once on hover start
+				const computedStyle = window.getComputedStyle(clickable);
+				const computedRadius = parseFloat(computedStyle.borderRadius) || 0;
+				hoveredRadiusRef.current = computedRadius;
 				
 				if (visualRef.current) {
 					visualRef.current.classList.add('is-hovered');
@@ -91,6 +91,7 @@ export function CustomCursor() {
 			if (currentTarget && (!relatedTarget || !currentTarget.contains(relatedTarget))) {
 				hoveredElRef.current = null;
 				animationRef.current.isHovered = false;
+				hoveredRadiusRef.current = 0;
 				
 				if (visualRef.current) {
 					visualRef.current.classList.remove('is-hovered');
@@ -110,22 +111,11 @@ export function CustomCursor() {
 			}
 		};
 
-		const handleScroll = () => {
-			if (animationRef.current.isHovered && hoveredElRef.current) {
-				const rect = hoveredElRef.current.getBoundingClientRect();
-				animationRef.current.targetX = rect.left - padding;
-				animationRef.current.targetY = rect.top - padding;
-				animationRef.current.targetWidth = rect.width + padding * 2;
-				animationRef.current.targetHeight = rect.height + padding * 2;
-			}
-		};
-
 		document.addEventListener('mousemove', handleMouseMove);
 		document.addEventListener('mouseover', handleMouseOver);
 		document.addEventListener('mouseout', handleMouseOut);
 		document.addEventListener('mouseleave', handleMouseLeave);
 		document.addEventListener('mouseenter', handleMouseEnter);
-		window.addEventListener('scroll', handleScroll, { passive: true });
 
 		let rafId: number;
 
@@ -139,10 +129,7 @@ export function CustomCursor() {
 				anim.currentHeight = rect.height + padding * 2;
 				anim.currentX = rect.left - padding;
 				anim.currentY = rect.top - padding;
-
-				const computedStyle = window.getComputedStyle(hoveredElRef.current);
-				const computedRadius = parseFloat(computedStyle.borderRadius) || 0;
-				anim.currentRadius = computedRadius + padding;
+				anim.currentRadius = hoveredRadiusRef.current + padding;
 			} else {
 				anim.currentWidth = defaultSize;
 				anim.currentHeight = defaultSize;
@@ -169,7 +156,6 @@ export function CustomCursor() {
 			document.removeEventListener('mouseout', handleMouseOut);
 			document.removeEventListener('mouseleave', handleMouseLeave);
 			document.removeEventListener('mouseenter', handleMouseEnter);
-			window.removeEventListener('scroll', handleScroll);
 			cancelAnimationFrame(rafId);
 		};
 	}, [isEnabled]);

@@ -68,7 +68,7 @@ export function SiteMenu() {
 						</span>
 					</Link>
 
-					<div className="flex items-center gap-1 sm:gap-2">
+					<div className="flex shrink-0 items-center gap-1 sm:gap-2">
 						<a
 							href={DOCS_URL}
 							target="_blank"

@@ -349,7 +349,6 @@
 }
 
 /* CTA wrapper margin */
-.site-menu-container nav .group + div,
 .site-menu-container nav div:has(> .group) {
 	transition: margin 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
