@@ -110,7 +110,7 @@ describe(
                 const token =
                     await corsair.instagram.keys
                         .get_access_token();
-                        
+
                 if (!token) {
                     throw new Error(
                         'Missing access token'
@@ -129,10 +129,10 @@ describe(
                         }
                     );
 
-                console.log(
-                    'User Data:',
-                    me
-                );
+                // console.log(
+                //     'User Data:',
+                //     me
+                // );
 
                 expect(me)
                     .toBeDefined();
@@ -182,10 +182,10 @@ describe(
                     );
                 }
 
-                console.log(
-                    'Old Token:',
-                    accessToken
-                );
+                // console.log(
+                //     'Old Token:',
+                //     accessToken
+                // );
 
                 const refreshed =
                     await getValidFacebookAccessToken({
@@ -195,10 +195,10 @@ describe(
                         forceRefresh: true,
                     });
 
-                console.log(
-                    'New Token:',
-                    refreshed.accessToken
-                );
+                // console.log(
+                //     'New Token:',
+                //     refreshed.accessToken
+                // );
 
                 expect(
                     refreshed.accessToken
@@ -271,10 +271,10 @@ describe(
                                             forceRefresh: true,
                                         });
 
-                                    console.log(
-                                        'Refreshed Token:',
-                                        refreshed.accessToken
-                                    );
+                                    // console.log(
+                                    //     'Refreshed Token:',
+                                    //     refreshed.accessToken
+                                    // );
 
                                     return refreshed.accessToken;
                                 },
@@ -288,10 +288,10 @@ describe(
                         }
                     );
 
-                console.log(
-                    'Final Response:',
-                    result
-                );
+                // console.log(
+                //     'Final Response:',
+                //     result
+                // );
 
                 expect(result)
                     .toBeDefined();
@@ -311,7 +311,7 @@ describe(
                     await createInstagramClient();
 
                 const token =
-                    await corsair.instagram!.keys
+                    await corsair.instagram.keys
                         .get_access_token();
 
                 if (!token) {
@@ -332,10 +332,10 @@ describe(
                         }
                     );
 
-                console.log(
-                    'Pages:',
-                    pages
-                );
+                // console.log(
+                //     'Pages:',
+                //     pages
+                // );
 
                 const igUserId =
                     pages.data?.[0]
@@ -360,10 +360,10 @@ describe(
                         }
                     );
 
-                console.log(
-                    'Instagram Media:',
-                    media
-                );
+                // console.log(
+                //     'Instagram Media:',
+                //     media
+                // );
 
                 expect(media)
                     .toBeDefined();
