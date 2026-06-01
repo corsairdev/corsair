@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
 	createContext,
 	useCallback,
@@ -7,7 +8,6 @@ import {
 	useMemo,
 	useState,
 } from 'react';
-import type { ReactNode } from 'react';
 import type { IntegrationId } from '../data/companies-data';
 
 type ChatDemoSyncContextValue = {
@@ -17,7 +17,9 @@ type ChatDemoSyncContextValue = {
 	clearPulses: () => void;
 };
 
-const ChatDemoSyncContext = createContext<ChatDemoSyncContextValue | null>(null);
+const ChatDemoSyncContext = createContext<ChatDemoSyncContextValue | null>(
+	null,
+);
 
 export function ChatDemoSyncProvider({ children }: { children: ReactNode }) {
 	const [pulseCounts, setPulseCounts] = useState<
@@ -63,12 +65,7 @@ export function ChatDemoSyncProvider({ children }: { children: ReactNode }) {
 			unpulseIntegration,
 			clearPulses,
 		}),
-		[
-			activeIntegrationIds,
-			pulseIntegration,
-			unpulseIntegration,
-			clearPulses,
-		],
+		[activeIntegrationIds, pulseIntegration, unpulseIntegration, clearPulses],
 	);
 
 	return (

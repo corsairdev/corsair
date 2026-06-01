@@ -9,12 +9,7 @@ export const list: BitwardenEndpoints['membersList'] = async (ctx, input) => {
 	>(`/organizations/${input.organizationId}/members`, ctx.key, {
 		method: 'GET',
 	});
-	await logEventFromContext(
-		ctx,
-		'bitwarden.members.list',
-		input,
-		'completed',
-	);
+	await logEventFromContext(ctx, 'bitwarden.members.list', input, 'completed');
 	return response;
 };
 

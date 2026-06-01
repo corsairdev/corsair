@@ -1,23 +1,19 @@
 'use client';
 
-import {
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-	type PointerEvent as ReactPointerEvent,
-	type RefObject,
-} from 'react';
+import type { PointerEvent as ReactPointerEvent, RefObject } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLatestRef } from './use-latest-ref';
+import type {
+	WindowBounds,
+	WindowDragState,
+	WindowPosition,
+	WindowResizeHandle,
+	WindowResizeState,
+	WindowSize,
+} from './window-geometry';
 import {
 	clampWindowPosition,
 	resizeWindowFromPointer,
-	type WindowBounds,
-	type WindowDragState,
-	type WindowPosition,
-	type WindowResizeHandle,
-	type WindowResizeState,
-	type WindowSize,
 } from './window-geometry';
 
 type Options = {
@@ -66,8 +62,7 @@ export function useWindowPointerInteractions({
 	const handleDragStart = useCallback(
 		(event: ReactPointerEvent<HTMLElement>) => {
 			if (!isPrimaryPointer(event)) return;
-			if (isBlockedDragTarget(event.target, blockedDragTargetSelector))
-				return;
+			if (isBlockedDragTarget(event.target, blockedDragTargetSelector)) return;
 			if (position === null) return;
 
 			event.preventDefault();
@@ -147,28 +142,27 @@ export function useWindowPointerInteractions({
 	]);
 
 	const startResize = useCallback(
-		(handle: WindowResizeHandle) =>
-			(event: ReactPointerEvent<HTMLElement>) => {
-				if (!isPrimaryPointer(event) || position === null || size === null)
-					return;
+		(handle: WindowResizeHandle) => (event: ReactPointerEvent<HTMLElement>) => {
+			if (!isPrimaryPointer(event) || position === null || size === null)
+				return;
 
-				event.preventDefault();
-				event.stopPropagation();
-				activate();
+			event.preventDefault();
+			event.stopPropagation();
+			activate();
 
-				shellRef.current?.setPointerCapture?.(event.pointerId);
-				resizeStateRef.current = {
-					pointerId: event.pointerId,
-					originX: event.clientX,
-					originY: event.clientY,
-					startWidth: size.width,
-					startHeight: size.height,
-					startLeft: position.left,
-					startTop: position.top,
-					handle,
-				};
-				setIsResizing(true);
-			},
+			shellRef.current?.setPointerCapture?.(event.pointerId);
+			resizeStateRef.current = {
+				pointerId: event.pointerId,
+				originX: event.clientX,
+				originY: event.clientY,
+				startWidth: size.width,
+				startHeight: size.height,
+				startLeft: position.left,
+				startTop: position.top,
+				handle,
+			};
+			setIsResizing(true);
+		},
 		[activate, position, shellRef, size],
 	);
 

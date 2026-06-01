@@ -17,7 +17,9 @@ export function MacWindowBar({
 	return (
 		<div
 			className="grid w-full shrink-0 select-none grid-cols-[auto_1fr_auto] items-center border-b border-black/5 bg-[#f7f7f7] px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]"
-			style={{ cursor: draggable ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+			style={{
+				cursor: draggable ? (isDragging ? 'grabbing' : 'grab') : 'default',
+			}}
 			onPointerDown={draggable ? onDragStart : undefined}
 		>
 			<TrafficLights />

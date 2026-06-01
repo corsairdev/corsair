@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { getValidLinearAccessToken } from './client';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
 import {
@@ -18,7 +19,6 @@ import {
 	LinearEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { getValidLinearAccessToken } from './client';
 import { LinearSchema } from './schema';
 import type {
 	CommentCreatedEvent,

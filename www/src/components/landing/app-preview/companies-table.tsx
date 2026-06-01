@@ -1,7 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import type { PointerEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type {
+	CellValue,
+	ConnectionStatus,
+	IntegrationId,
+	PersonCell,
+	StatusCell,
+	TableColumn,
+} from '../data/companies-data';
 import {
 	CHAT_DEMO_ROW_ID,
 	CONNECTION_STATUS_COLORS,
@@ -12,14 +20,6 @@ import {
 	TENANT_ROWS,
 } from '../data/companies-data';
 import { useChatDemoSync } from '../hooks/use-chat-demo-sync';
-import type {
-	CellValue,
-	ConnectionStatus,
-	IntegrationId,
-	PersonCell,
-	StatusCell,
-	TableColumn,
-} from '../data/companies-data';
 import type { TableCellSelection } from './table-detail-sidebar';
 import { TABLE } from './table-theme';
 import { FaviconLogo, PersonAvatar } from './table-ui';
@@ -178,8 +178,7 @@ export function CompaniesTable({
 		);
 		const colWidth = TENANT_COLUMNS[colIndex]?.width ?? 0;
 		const el = scrollRef.current;
-		const target =
-			colLeft - (el.clientWidth - colWidth) / 2 + colWidth / 2;
+		const target = colLeft - (el.clientWidth - colWidth) / 2 + colWidth / 2;
 		el.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
 	}, [activeIntegrationIds]);
 

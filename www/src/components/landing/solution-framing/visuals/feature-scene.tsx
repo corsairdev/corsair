@@ -21,20 +21,16 @@ export const WINDOW_SLICE_FRAME: Record<
 	{ default: string; github: string }
 > = {
 	left: {
-		default:
-			'rounded-tl-[6px] border border-[#ebebeb] border-b-0 border-r-0',
-		github:
-			'rounded-tl-[6px] border border-[#d0d7de] border-b-0 border-r-0',
+		default: 'rounded-tl-[6px] border border-[#ebebeb] border-b-0 border-r-0',
+		github: 'rounded-tl-[6px] border border-[#d0d7de] border-b-0 border-r-0',
 	},
 	center: {
 		default: 'rounded-none border border-[#ebebeb] border-b-0 border-x-0',
 		github: 'rounded-none border border-[#d0d7de] border-b-0 border-x-0',
 	},
 	right: {
-		default:
-			'rounded-tr-[6px] border border-[#ebebeb] border-b-0 border-l-0',
-		github:
-			'rounded-tr-[6px] border border-[#d0d7de] border-b-0 border-l-0',
+		default: 'rounded-tr-[6px] border border-[#ebebeb] border-b-0 border-l-0',
+		github: 'rounded-tr-[6px] border border-[#d0d7de] border-b-0 border-l-0',
 	},
 };
 

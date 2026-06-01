@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { OperationResult } from '../api';
 import { api } from '../api';
 import {
@@ -40,7 +40,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 					refreshTenants();
 				}
 			} catch (e) {
-				console.error(e)
+				console.error(e);
 			}
 		};
 		fetchStatus();
@@ -63,7 +63,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 		try {
 			const r = await api.runScript({
 				code,
-				tenant: multiTenancy ? activeTenant : undefined
+				tenant: multiTenancy ? activeTenant : undefined,
 			});
 			setResult(r);
 		} catch (e) {

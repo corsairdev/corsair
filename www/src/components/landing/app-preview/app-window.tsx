@@ -1,12 +1,7 @@
 'use client';
 
-import {
-	useLayoutEffect,
-	useRef,
-	useState,
-	type PointerEvent,
-	type ReactNode,
-} from 'react';
+import type { PointerEvent, ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { useWindowOrder } from '../hooks/use-window-order';
 import { useWindowPointerInteractions } from '../hooks/use-window-pointer-interactions';
 import type { WindowPosition, WindowSize } from '../hooks/window-geometry';

@@ -19,13 +19,13 @@ import type {
 	RefundsListResponse,
 	SettlementsGetResponse,
 	SettlementsListResponse,
+	SubscriptionsCancelResponse,
 	SubscriptionsCreateResponse,
 	SubscriptionsGetResponse,
 	SubscriptionsListResponse,
-	SubscriptionsUpdateResponse,
-	SubscriptionsCancelResponse,
 	SubscriptionsPauseResponse,
 	SubscriptionsResumeResponse,
+	SubscriptionsUpdateResponse,
 } from './endpoints/types';
 import { RazorpayEndpointOutputSchemas } from './endpoints/types';
 
@@ -34,7 +34,8 @@ const API_SECRET_KEY = process.env.RAZORPAY_SECRET_KEY!;
 
 const TEST_PAYOUT_ACCOUNT_NUMBER = process.env.RAZORPAY_TEST_ACCOUNT_NUMBER;
 const TEST_PAYOUT_ID = process.env.RAZORPAY_TEST_PAYOUT_ID;
-const CREATE_PAYOUT_ACCOUNT_NUMBER = process.env.RAZORPAY_CREATE_PAYOUT_ACCOUNT_NUMBER;
+const CREATE_PAYOUT_ACCOUNT_NUMBER =
+	process.env.RAZORPAY_CREATE_PAYOUT_ACCOUNT_NUMBER;
 const CREATE_PAYOUT_FUND_ACCOUNT_ID =
 	process.env.RAZORPAY_CREATE_PAYOUT_FUND_ACCOUNT_ID;
 const CREATE_PAYOUT_AMOUNT = process.env.RAZORPAY_CREATE_PAYOUT_AMOUNT
@@ -44,7 +45,8 @@ const CREATE_PAYOUT_CURRENCY = process.env.RAZORPAY_CREATE_PAYOUT_CURRENCY;
 const CREATE_PAYOUT_MODE = process.env.RAZORPAY_CREATE_PAYOUT_MODE;
 const CREATE_PAYOUT_PURPOSE = process.env.RAZORPAY_CREATE_PAYOUT_PURPOSE;
 
-const TEST_PAYMENT_CAPTURE_AMOUNT = process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT
+const TEST_PAYMENT_CAPTURE_AMOUNT = process.env
+	.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT
 	? Number(process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT)
 	: undefined;
 const TEST_PAYMENT_CAPTURE_CURRENCY =
@@ -59,39 +61,38 @@ const CREATE_REFUND_AMOUNT = process.env.RAZORPAY_CREATE_REFUND_AMOUNT
 
 const TEST_SETTLEMENT_ID = process.env.RAZORPAY_TEST_SETTLEMENT_ID;
 
-const TEST_SUBSCRIPTION_PLAN_ID = process.env.RAZORPAY_TEST_SUBSCRIPTION_PLAN_ID;
+const TEST_SUBSCRIPTION_PLAN_ID =
+	process.env.RAZORPAY_TEST_SUBSCRIPTION_PLAN_ID;
 const TEST_SUBSCRIPTION_ID = process.env.RAZORPAY_TEST_SUBSCRIPTION_ID;
-const CREATE_SUBSCRIPTION_TOTAL_COUNT = process.env.RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT
+const CREATE_SUBSCRIPTION_TOTAL_COUNT = process.env
+	.RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT
 	? Number(process.env.RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT)
 	: undefined;
 
 describe('Razorpay API Type Tests', () => {
+	let API_KEY: string;
 
-    let API_KEY: string;
+	beforeAll(() => {
+		function generateAPIKey() {
+			if (!API_KEY_ID) {
+				throw new Error(
+					`Missing required env vars for payout tests: API_KEY_ID`,
+				);
+			}
 
-    beforeAll(() => {
-        function generateAPIKey() {
-            if (!API_KEY_ID) {
-                throw new Error(
-                    `Missing required env vars for payout tests: API_KEY_ID`,
-                );
-            }
+			if (!API_SECRET_KEY) {
+				throw new Error(
+					`Missing required env vars for payout tests: API_SECRET_KEY`,
+				);
+			}
 
-            if (!API_SECRET_KEY) {
-                throw new Error(
-                    `Missing required env vars for payout tests: API_SECRET_KEY`,
-                );
-            }
+			return API_KEY_ID.concat(':').concat(API_SECRET_KEY);
+		}
 
-            return API_KEY_ID.concat(":").concat(API_SECRET_KEY);
-        }
+		API_KEY = generateAPIKey();
+	});
 
-        API_KEY = generateAPIKey();
-
-    });
-
-
-    describe('payouts', () => {
+	describe('payouts', () => {
 		beforeAll(() => {
 			const requiredEnvVars = [
 				{
@@ -139,72 +140,67 @@ describe('Razorpay API Type Tests', () => {
 			}
 		});
 
-        it('payoutsList returns correct type', async () => {
+		it('payoutsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<PayoutsListResponse>(
+				'payouts',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						account_number: TEST_PAYOUT_ACCOUNT_NUMBER,
+					},
+				},
+				true,
+			);
 
-            const result = await makeRazorpayRequest<PayoutsListResponse>(
-                'payouts',
-                API_KEY,
-                {
-                    method: 'GET',
-                    query: {
-                        account_number: TEST_PAYOUT_ACCOUNT_NUMBER,
-                    },
-                },
-                true
-            );
+			RazorpayEndpointOutputSchemas.payoutsList.parse(result);
+		});
 
-            RazorpayEndpointOutputSchemas.payoutsList.parse(result);
-        });
+		it('payoutsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<PayoutsGetResponse>(
+				`payouts/${TEST_PAYOUT_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
 
-        it('payoutsGet returns correct type', async () => {
+			RazorpayEndpointOutputSchemas.payoutsGet.parse(result);
+		});
 
-            const result = await makeRazorpayRequest<PayoutsGetResponse>(
-                `payouts/${TEST_PAYOUT_ID}`,
-                API_KEY,
-                { method: 'GET' },
-            );
+		it('payoutsCreate returns correct type', async () => {
+			const bodyData: Record<string, unknown> = {
+				account_number: CREATE_PAYOUT_ACCOUNT_NUMBER,
+				fund_account_id: CREATE_PAYOUT_FUND_ACCOUNT_ID,
+				amount: CREATE_PAYOUT_AMOUNT ? Number(CREATE_PAYOUT_AMOUNT) : undefined,
+				currency: CREATE_PAYOUT_CURRENCY,
+				mode: CREATE_PAYOUT_MODE,
+				purpose: CREATE_PAYOUT_PURPOSE,
+				queue_if_low_balance: true,
+				reference_id: 'Acme Transaction ID 12345',
+				narration: 'Acme Corp Fund Transfer',
+				notes: {
+					notes_key_1: 'Tea, Earl Grey, Hot',
+					notes_key_2: 'Tea, Earl Grey… decaf.',
+				},
+			};
 
-            RazorpayEndpointOutputSchemas.payoutsGet.parse(result);
-        });
+			const result = await makeRazorpayRequest<PayoutsCreateResponse>(
+				`payouts`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: bodyData,
+				},
+				true,
+			);
 
-        it('payoutsCreate returns correct type', async () => {
-
-            const bodyData: Record<string, unknown> = {
-                account_number: CREATE_PAYOUT_ACCOUNT_NUMBER,
-                "fund_account_id": CREATE_PAYOUT_FUND_ACCOUNT_ID,
-                "amount": CREATE_PAYOUT_AMOUNT
-                    ? Number(CREATE_PAYOUT_AMOUNT)
-                    : undefined,
-                "currency": CREATE_PAYOUT_CURRENCY,
-                "mode": CREATE_PAYOUT_MODE,
-                "purpose": CREATE_PAYOUT_PURPOSE,
-                "queue_if_low_balance": true,
-                "reference_id": "Acme Transaction ID 12345",
-                "narration": "Acme Corp Fund Transfer",
-                "notes": {
-                    "notes_key_1": "Tea, Earl Grey, Hot",
-                    "notes_key_2": "Tea, Earl Grey… decaf."
-                }
-            };
-
-            const result = await makeRazorpayRequest<PayoutsCreateResponse>(
-                `payouts`,
-                API_KEY,
-                {
-                    method: 'POST',
-                    body: bodyData,
-                },
-                true
-            );
-
-            RazorpayEndpointOutputSchemas.payoutsCreate.parse(result);
-        });
-    });
+			RazorpayEndpointOutputSchemas.payoutsCreate.parse(result);
+		});
+	});
 
 	describe('customers', () => {
 		let createdCustomerId: string | undefined;
 
-        it('customersCreate returns correct type', async () => {
+		it('customersCreate returns correct type', async () => {
 			const result = await makeRazorpayRequest<CustomersCreateResponse>(
 				'customers',
 				API_KEY,
@@ -234,7 +230,7 @@ describe('Razorpay API Type Tests', () => {
 				},
 			);
 
-            RazorpayEndpointOutputSchemas.customersList.parse(result);
+			RazorpayEndpointOutputSchemas.customersList.parse(result);
 		});
 
 		it('customersGet returns correct type', async () => {
@@ -250,7 +246,7 @@ describe('Razorpay API Type Tests', () => {
 				{ method: 'GET' },
 			);
 
-            RazorpayEndpointOutputSchemas.customersGet.parse(result);
+			RazorpayEndpointOutputSchemas.customersGet.parse(result);
 		});
 
 		it('customersUpdate returns correct type', async () => {
@@ -332,7 +328,6 @@ describe('Razorpay API Type Tests', () => {
 	});
 
 	describe('payments', () => {
-
 		beforeAll(() => {
 			const requiredEnvVars = [
 				{
@@ -346,9 +341,8 @@ describe('Razorpay API Type Tests', () => {
 				{
 					key: 'RAZORPAY_TEST_PAYMENT_ID',
 					value: TEST_PAYMENT_ID,
-				}
+				},
 			];
-
 
 			const missingVars = requiredEnvVars
 				.filter(({ value }) => !value)
@@ -374,7 +368,6 @@ describe('Razorpay API Type Tests', () => {
 			);
 
 			RazorpayEndpointOutputSchemas.paymentsList.parse(result);
-
 		});
 
 		it('paymentsGet returns correct type', async () => {
@@ -405,7 +398,6 @@ describe('Razorpay API Type Tests', () => {
 	});
 
 	describe('refunds', () => {
-
 		beforeAll(() => {
 			const requiredEnvVars = [
 				{
@@ -419,9 +411,8 @@ describe('Razorpay API Type Tests', () => {
 				{
 					key: 'RAZORPAY_CREATE_REFUND_AMOUNT',
 					value: CREATE_REFUND_AMOUNT,
-				}
+				},
 			];
-
 
 			const missingVars = requiredEnvVars
 				.filter(({ value }) => !value)
@@ -435,7 +426,6 @@ describe('Razorpay API Type Tests', () => {
 		});
 
 		it('refundsCreate returns correct type', async () => {
-
 			const result = await makeRazorpayRequest<RefundsCreateResponse>(
 				`payments/${TEST_REFUND_PAYMENT_ID}/refund`,
 				API_KEY,
@@ -452,7 +442,6 @@ describe('Razorpay API Type Tests', () => {
 		});
 
 		it('refundsList returns correct type', async () => {
-
 			const result = await makeRazorpayRequest<RefundsListResponse>(
 				`payments/${TEST_REFUND_PAYMENT_ID}/refunds`,
 				API_KEY,
@@ -468,7 +457,6 @@ describe('Razorpay API Type Tests', () => {
 		});
 
 		it('refundsGet returns correct type', async () => {
-
 			const result = await makeRazorpayRequest<RefundsGetResponse>(
 				`payments/${TEST_REFUND_PAYMENT_ID}/refunds/${TEST_REFUND_ID}`,
 				API_KEY,
@@ -480,15 +468,12 @@ describe('Razorpay API Type Tests', () => {
 	});
 
 	describe('settlements', () => {
-
 		beforeAll(() => {
-
 			if (!TEST_SETTLEMENT_ID) {
 				throw new Error(
 					`Missing required env vars for payout tests: TEST_SETTLEMENT_ID`,
 				);
 			}
-
 		});
 
 		it('settlementsList returns correct type', async () => {
@@ -518,9 +503,7 @@ describe('Razorpay API Type Tests', () => {
 	});
 
 	describe('subscriptions', () => {
-
 		beforeAll(() => {
-
 			const requiredEnvVars = [
 				{
 					key: 'RAZORPAY_TEST_SUBSCRIPTION_PLAN_ID',
@@ -624,6 +607,5 @@ describe('Razorpay API Type Tests', () => {
 
 			RazorpayEndpointOutputSchemas.subscriptionsCancel.parse(result);
 		});
-			
 	});
 });

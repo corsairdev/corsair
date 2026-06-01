@@ -1,8 +1,8 @@
 import { CloudflareAPIError } from './api-error';
 import {
+	cloudflareErrorFromApiErrorBody,
 	isCloudflareEnvelope,
 	unwrapCloudflareResponse,
-	cloudflareErrorFromApiErrorBody,
 } from './response';
 
 describe('unwrapCloudflareResponse', () => {

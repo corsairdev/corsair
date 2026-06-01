@@ -1,5 +1,5 @@
-import { OpenSourceVisual, PermissionVisual, SelfHostVisual } from './visuals';
 import { PlusCorner } from '../icons';
+import { OpenSourceVisual, PermissionVisual, SelfHostVisual } from './visuals';
 
 const PILLAR_VISUALS = {
 	permissions: PermissionVisual,

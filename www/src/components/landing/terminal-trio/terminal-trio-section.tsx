@@ -1,7 +1,7 @@
 'use client';
 
-import { useLayoutEffect, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { WindowOrderProvider } from '../hooks/use-window-order';
 import {
 	DESKTOP_HEIGHT,

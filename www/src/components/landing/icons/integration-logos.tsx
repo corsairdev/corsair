@@ -16,13 +16,7 @@ export type IntegrationId =
 	| 'airtable'
 	| 'tavily';
 
-function Logo({
-	children,
-	size = 14,
-}: {
-	children: ReactNode;
-	size?: number;
-}) {
+function Logo({ children, size = 14 }: { children: ReactNode; size?: number }) {
 	return (
 		<span
 			className="inline-flex shrink-0 items-center justify-center overflow-hidden"
@@ -164,7 +158,10 @@ const LOGOS: Record<IntegrationId, (size: number) => ReactNode> = {
 	),
 	airtable: (size) => (
 		<Logo size={size}>
-			<path fill="#FCB400" d="M11.99 0 0 6.5v11L11.99 24 24 17.5V6.5L11.99 0z" />
+			<path
+				fill="#FCB400"
+				d="M11.99 0 0 6.5v11L11.99 24 24 17.5V6.5L11.99 0z"
+			/>
 			<path fill="#18BFFF" d="M11.99 0v11L0 6.5 11.99 0z" />
 			<path fill="#F82B60" d="M0 6.5 11.99 11v13L0 17.5V6.5z" />
 			<path fill="#8B46FF" d="M24 6.5 11.99 11v13L24 17.5V6.5z" />

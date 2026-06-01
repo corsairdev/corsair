@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { TRIO_DEMO_PEOPLE } from '../data/companies-data';
 import {
 	ChatInputShell,
 	ChatScrollArea,
@@ -11,7 +12,6 @@ import {
 	UserBubble,
 } from './chat-ui';
 import { OAuthModalContent } from './corsair-demo-modal';
-import { TRIO_DEMO_PEOPLE } from '../data/companies-data';
 import { DraggableWindowShell } from './draggable-chat-window';
 import { useTrioModal } from './trio-modal-context';
 import { useDemoChatSend, useStreamText } from './use-demo-chat';

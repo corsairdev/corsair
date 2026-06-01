@@ -1539,7 +1539,8 @@ const githubEndpointMeta = {
 	},
 	'repositories.checkStarred': {
 		riskLevel: 'read',
-		description: 'Check whether the authenticated user has starred a repository',
+		description:
+			'Check whether the authenticated user has starred a repository',
 	},
 	'repositories.listStarred': {
 		riskLevel: 'read',

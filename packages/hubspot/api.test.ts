@@ -2,9 +2,8 @@ import 'dotenv/config';
 import { makeHubSpotRequest } from './client';
 import type {
 	CreateCompanyResponse,
-	CreateDealResponse,
 	CreateContactResponse,
-	UpdateContactResponse,
+	CreateDealResponse,
 	CreateTicketResponse,
 	GetCompanyResponse,
 	GetContactResponse,

@@ -60,8 +60,9 @@ describe('Zendesk plugin integration', () => {
 		});
 		expect(createEvents.length).toBeGreaterThan(0);
 
-		const ticketFromDb =
-			await corsair.zendesk.db.tickets.findByEntityId(String(ticketId));
+		const ticketFromDb = await corsair.zendesk.db.tickets.findByEntityId(
+			String(ticketId),
+		);
 		expect(ticketFromDb).not.toBeNull();
 		expect(ticketFromDb?.data.id).toBe(ticketId);
 		expect(ticketFromDb?.data.subject).toBe(createInput.subject);
@@ -122,8 +123,9 @@ describe('Zendesk plugin integration', () => {
 		});
 		expect(createEvents.length).toBeGreaterThan(0);
 
-		const userFromDb =
-			await corsair.zendesk.db.users.findByEntityId(String(userId));
+		const userFromDb = await corsair.zendesk.db.users.findByEntityId(
+			String(userId),
+		);
 		expect(userFromDb).not.toBeNull();
 		expect(userFromDb?.data.id).toBe(userId);
 		expect(userFromDb?.data.name).toBe(createInput.name);
@@ -139,8 +141,9 @@ describe('Zendesk plugin integration', () => {
 		const updated = await corsair.zendesk.api.users.update(updateInput);
 		expect(updated.user.name).toBe(updateInput.name);
 
-		const userFromDbAfterUpdate =
-			await corsair.zendesk.db.users.findByEntityId(String(userId));
+		const userFromDbAfterUpdate = await corsair.zendesk.db.users.findByEntityId(
+			String(userId),
+		);
 		expect(userFromDbAfterUpdate?.data.name).toBe(updateInput.name);
 
 		const listInput = { per_page: 10 };
@@ -182,8 +185,9 @@ describe('Zendesk plugin integration', () => {
 
 		const commentId = listed.comments[0]?.id;
 		if (commentId) {
-			const commentFromDb =
-				await corsair.zendesk.db.comments.findByEntityId(String(commentId));
+			const commentFromDb = await corsair.zendesk.db.comments.findByEntityId(
+				String(commentId),
+			);
 			expect(commentFromDb).not.toBeNull();
 			expect(commentFromDb?.data.id).toBe(commentId);
 		}

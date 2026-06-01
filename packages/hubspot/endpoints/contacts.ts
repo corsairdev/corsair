@@ -79,7 +79,10 @@ export const getMany: HubSpotEndpoints['contactsGetMany'] = async (
 	return result;
 };
 
-export const create: HubSpotEndpoints['contactsCreate'] = async (ctx, input) => {
+export const create: HubSpotEndpoints['contactsCreate'] = async (
+	ctx,
+	input,
+) => {
 	const { ...body } = input;
 	const endpoint = '/crm/v3/objects/contacts';
 	const result = await makeHubSpotRequest<CreateContactResponse>(

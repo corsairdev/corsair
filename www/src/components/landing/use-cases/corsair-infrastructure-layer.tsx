@@ -6,7 +6,11 @@ export function CorsairInfrastructureLayer() {
 		<div className="absolute inset-x-0 bottom-0 z-20 border-t border-[#4a38f533] bg-[linear-gradient(180deg,#1a1638_0%,#12101f_100%)] px-4 py-3 md:px-6 md:py-4">
 			<div className="flex flex-col gap-2.5 md:flex-row md:items-center md:justify-between md:gap-4">
 				<div className="flex items-center gap-2.5">
-					<CorsairLogo size={28} fillColor="#ffffff" backgroundColor="#4a38f5" />
+					<CorsairLogo
+						size={28}
+						fillColor="#ffffff"
+						backgroundColor="#4a38f5"
+					/>
 					<div>
 						<p className="text-[11px] font-medium leading-tight text-white md:text-xs">
 							Corsair integration layer
