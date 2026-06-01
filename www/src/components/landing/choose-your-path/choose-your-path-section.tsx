@@ -62,7 +62,7 @@ const PATH_OPTIONS = [
 ] as const;
 
 const CARD_CLASS =
-	'relative flex w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-5 md:p-6';
+	'relative flex w-full flex-col rounded-sm border border-[#1c1c1c1a] bg-white p-4 sm:p-5 md:p-6';
 
 function PathCard({ option }: { option: (typeof PATH_OPTIONS)[number] }) {
 	const headingId = `choose-your-path-${option.id}-title`;
@@ -111,10 +111,10 @@ export function ChooseYourPathSection() {
 	return (
 		<section
 			id="choose-your-path"
-			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-20 md:py-28 lg:py-32"
+			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-16 sm:py-20 md:py-28 lg:py-32"
 			aria-labelledby="choose-your-path-heading"
 		>
-			<div className="mx-auto max-w-[1440px] px-4 md:px-10">
+			<div className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-10">
 				<div className="mx-auto mb-14 flex max-w-[720px] flex-col items-center gap-6 text-center md:mb-20 md:max-w-[800px] md:gap-8">
 					<p className="font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.02em] text-[#1c1c1c99]">
 						Choose your path
@@ -129,7 +129,7 @@ export function ChooseYourPathSection() {
 					</h2>
 				</div>
 
-				<ul className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
+				<ul className="grid grid-cols-1 gap-6 md:grid-cols-2 md:[&>li:nth-child(3)]:col-span-2 lg:grid-cols-3 lg:gap-8 lg:[&>li:nth-child(3)]:col-span-1">
 					{PATH_OPTIONS.map((option) => (
 						<PathCard key={option.id} option={option} />
 					))}

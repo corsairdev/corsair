@@ -11,7 +11,7 @@ export function DesktopPreview() {
 	return (
 		<div className="relative mx-auto mt-2 w-full max-w-[1280px] text-left md:mt-4">
 			<div
-				className="relative mx-auto w-full max-md:min-h-[560px] max-md:h-[min(72vh,680px)] md:max-h-[740px] md:[aspect-ratio:1280/832]"
+				className="relative mx-auto w-full max-md:min-h-[420px] max-md:h-[min(72vh,640px)] md:max-h-[740px] md:[aspect-ratio:1280/832]"
 			>
 				<PreviewLayoutProvider>
 					<WindowOrderProvider>

@@ -103,7 +103,7 @@ export function OAuthModalContent({
 			subtitle="Corsair hosted auth"
 			onClose={onClose}
 		>
-			<div className="px-6 py-8 sm:px-10 sm:py-10">
+			<div className="px-4 py-6 sm:px-10 sm:py-10">
 				<div className="mb-8 flex flex-col items-center gap-3 text-center">
 					<FaviconLogo
 						domain={integration.iconDomain}
@@ -174,7 +174,7 @@ export function PermissionModalContent({
 			subtitle="Permission required"
 			onClose={onClose}
 		>
-			<div className="px-6 py-7 sm:px-8 sm:py-8">
+			<div className="px-4 py-5 sm:px-8 sm:py-8">
 				<div className="mb-6 flex items-center gap-3">
 					<FaviconLogo
 						domain={integration.iconDomain}

@@ -15,10 +15,10 @@ export function ProblemStatementSection() {
 	return (
 		<section
 			id="problem"
-			className="relative w-full scroll-mt-16 bg-[#f4f4f4] pt-10 pb-20 md:pt-12 md:pb-28 lg:pb-32"
+			className="relative w-full scroll-mt-16 bg-[#f4f4f4] pt-8 pb-16 sm:pt-10 sm:pb-20 md:pt-12 md:pb-28 lg:pb-32"
 			aria-labelledby="problem-heading"
 		>
-			<div className="mx-auto max-w-[1440px] px-4 md:px-10">
+			<div className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-10">
 				<div className="mx-auto flex max-w-[720px] flex-col items-center gap-6 text-center md:max-w-[800px] md:gap-8">
 					<p className="font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.02em] text-[#1c1c1c99]">
 						The problem
@@ -53,13 +53,13 @@ export function ProblemStatementSection() {
 						<PlusCorner />
 					</span>
 
-					<div className="grid grid-cols-1 lg:grid-cols-2">
+					<div className="grid grid-cols-1 md:grid-cols-2">
 						{SUPPLEMENTAL_POINTS.map((point, index) => (
 							<div
 								key={point.lead}
-								className={`px-6 py-8 md:px-10 md:py-10 ${
+								className={`px-5 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 ${
 									index === 0
-										? 'border-b border-[#1c1c1c1a] lg:border-b-0 lg:border-r'
+										? 'border-b border-[#1c1c1c1a] md:border-b-0 md:border-r'
 										: ''
 								}`}
 							>
