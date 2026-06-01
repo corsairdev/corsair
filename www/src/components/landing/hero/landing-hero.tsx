@@ -43,7 +43,7 @@ export function LandingHero() {
 						<span className="transition-transform duration-300 ease-out group-hover:scale-110">
 							⭐
 						</span>
-						Star on Github
+						Star on GitHub
 					</a>
 					<HeroAppCta />
 				</div>

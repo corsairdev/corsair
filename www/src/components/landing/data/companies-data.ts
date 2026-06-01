@@ -47,7 +47,7 @@ export const INTEGRATIONS = [
 	{ id: 'stripe', label: 'Stripe', iconDomain: 'stripe.com' },
 	{ id: 'airtable', label: 'Airtable', iconDomain: 'airtable.com' },
 	{ id: 'linear', label: 'Linear', iconDomain: 'linear.app' },
-	{ id: 'github', label: 'Github', iconDomain: 'github.com' },
+	{ id: 'github', label: 'GitHub', iconDomain: 'github.com' },
 	{ id: 'posthog', label: 'PostHog', iconDomain: 'posthog.com' },
 	{ id: 'resend', label: 'Resend', iconDomain: 'resend.com' },
 	{ id: 'gsheets', label: 'Sheets', iconDomain: 'sheets.google.com' },

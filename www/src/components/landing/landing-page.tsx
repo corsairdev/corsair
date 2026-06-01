@@ -1,11 +1,12 @@
 import { ChooseYourPathSection } from './choose-your-path/choose-your-path-section';
 import { FaqSection } from './faq/faq-section';
+import { SiteFooter } from './footer/site-footer';
 import { LandingHero } from './hero/landing-hero';
 import { SiteMenu } from './menu/site-menu';
 import { ProblemStatementSection } from './problem-statement/problem-statement-section';
 import { SolutionFramingSection } from './solution-framing/solution-framing-section';
-// import { UseCasesSection } from './use-cases/use-cases-section';
 import { TerminalTrioSection } from './terminal-trio/terminal-trio-section';
+
 export function LandingPage() {
 	return (
 		<div
@@ -24,6 +25,7 @@ export function LandingPage() {
 			<ChooseYourPathSection />
 			{/* <UseCasesSection /> */}
 			<FaqSection />
+			<SiteFooter />
 		</div>
 	);
 }
