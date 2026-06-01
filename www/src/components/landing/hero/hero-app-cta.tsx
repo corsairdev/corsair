@@ -2,9 +2,8 @@
 
 import { Copy } from '@phosphor-icons/react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-
-import { CopyFeedbackIcon } from '../copy-feedback-icon';
 import { cn } from '@/lib/utils';
+import { CopyFeedbackIcon } from '../copy-feedback-icon';
 
 const LLMS_PROMPT = 'Set up Corsair. Use docs.corsair.dev/llms.txt';
 const SKILLS_CMD = 'npx skills add corsairdev/corsair';

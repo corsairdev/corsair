@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
+import { TrafficLights } from '../../icons/window-chrome';
 import type { PreviewAlign } from './feature-scene';
 import { WINDOW_SLICE_FRAME } from './feature-scene';
-import { TrafficLights } from '../../icons/window-chrome';
 
 export function MiniWindowChrome({
 	title,

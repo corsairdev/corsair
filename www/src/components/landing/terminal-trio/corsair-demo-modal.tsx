@@ -1,8 +1,8 @@
 'use client';
 
-import { INTEGRATION_BY_ID } from '../data/companies-data';
-import type { IntegrationId } from '../data/companies-data';
 import { FaviconLogo } from '../app-preview/table-ui';
+import type { IntegrationId } from '../data/companies-data';
+import { INTEGRATION_BY_ID } from '../data/companies-data';
 import { TrafficLights } from '../icons/window-chrome';
 
 type IntegrationRef = {
@@ -49,7 +49,14 @@ function ModalFrame({
 						className="flex size-7 shrink-0 items-center justify-center rounded-md text-[#737373] hover:bg-[#f4f4f4]"
 						aria-label="Close"
 					>
-						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+						<svg
+							width="12"
+							height="12"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+						>
 							<path d="M18 6L6 18M6 6l12 12" />
 						</svg>
 					</button>
@@ -65,7 +72,15 @@ function ModalFrame({
 function TriggerKindIcon({ kind }: { kind: TriggerListItem['kind'] }) {
 	if (kind === 'cron') {
 		return (
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" aria-hidden>
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="#666"
+				strokeWidth="2"
+				aria-hidden
+			>
 				<circle cx="12" cy="12" r="9" />
 				<path d="M12 7v5l3 2" strokeLinecap="round" />
 			</svg>
@@ -73,7 +88,15 @@ function TriggerKindIcon({ kind }: { kind: TriggerListItem['kind'] }) {
 	}
 	if (kind === 'webhook') {
 		return (
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" aria-hidden>
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="#666"
+				strokeWidth="2"
+				aria-hidden
+			>
 				<path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
 				<path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
 			</svg>
@@ -193,7 +216,8 @@ export function PermissionModalContent({
 
 				<div className="mb-8 rounded-xl border border-[#1c1c1c12] bg-[#fafafa] px-5 py-4">
 					<p className="mb-1 text-xs text-[#1c1c1c66]">
-						To <span className="font-medium text-[#1c1c1c]">dev@corsair.dev</span>
+						To{' '}
+						<span className="font-medium text-[#1c1c1c]">dev@corsair.dev</span>
 					</p>
 					<p className="mb-3 text-[15px] font-medium text-[#1c1c1c]">
 						Re: Corsair agreement

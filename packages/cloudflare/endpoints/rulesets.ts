@@ -1,7 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCloudflareRequest } from '../client';
 import type { CloudflareEndpoints } from '../index';
-import { deleteRuleset as removeRulesetFromDb, persistRuleset } from '../persist';
+import {
+	persistRuleset,
+	deleteRuleset as removeRulesetFromDb,
+} from '../persist';
 import type { CloudflareEndpointOutputs } from './types';
 
 export const list: CloudflareEndpoints['rulesetsList'] = async (ctx, input) => {

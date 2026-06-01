@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { USE_CASES } from './use-cases-data';
 import type { UseCaseId } from './use-cases-data';
+import { USE_CASES } from './use-cases-data';
 import { UseCasesVisual } from './use-cases-visual';
 
 function PlusCorner() {

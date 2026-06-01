@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { getValidAccessToken } from './client';
 import {
 	Projects,
 	Sections,
@@ -31,7 +32,6 @@ import {
 	AsanaEndpointInputSchemas,
 	AsanaEndpointOutputSchemas,
 } from './endpoints/types';
-import { getValidAccessToken } from './client';
 import { errorHandlers } from './error-handlers';
 import { AsanaSchema } from './schema';
 import { ChallengeWebhooks, TaskWebhooks } from './webhooks';
