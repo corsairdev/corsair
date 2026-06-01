@@ -3,13 +3,14 @@
 import { GithubLogo, TwitterLogo } from '@phosphor-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-const DOCS_URL = 'https://docs.corsair.dev';
-const GITHUB_URL = 'https://github.com/corsairdev/corsair/';
-const APP_URL = 'https://app.corsair.dev';
-const TWITTER_URL = 'https://x.com/corsairdotdev';
-
-// Social Icons imported from @phosphor-icons/react
+import {
+	APP_URL,
+	DOCS_URL,
+	GITHUB_ISSUES_URL,
+	GITHUB_LICENSE_URL,
+	GITHUB_URL,
+	TWITTER_URL,
+} from '@/lib/site-links';
 
 export function SiteFooter() {
 	const currentYear = new Date().getFullYear();
@@ -89,7 +90,7 @@ export function SiteFooter() {
 						<ul className="flex flex-col gap-2 p-0 list-none">
 							<li>
 								<a
-									href={`${GITHUB_URL}/issues`}
+									href={GITHUB_ISSUES_URL}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
@@ -99,7 +100,7 @@ export function SiteFooter() {
 							</li>
 							<li>
 								<a
-									href={`${GITHUB_URL}/blob/main/LICENSE`}
+									href={GITHUB_LICENSE_URL}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
@@ -138,24 +139,10 @@ export function SiteFooter() {
 					</div>
 				</div>
 
-				<div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[#1c1c1c0d] pt-8 sm:flex-row">
-					<p className="text-xs text-[#1c1c1c66]">
+				<div className="mt-12 border-t border-[#1c1c1c0d] pt-8">
+					<p className="text-center text-xs text-[#1c1c1c66] sm:text-left">
 						&copy; {currentYear} Corsair. All rights reserved.
 					</p>
-					<div className="flex gap-4">
-						<Link
-							href="/privacy"
-							className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
-						>
-							Privacy Policy
-						</Link>
-						<Link
-							href="/terms"
-							className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
-						>
-							Terms of Service
-						</Link>
-					</div>
 				</div>
 			</div>
 		</footer>

@@ -3,11 +3,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { APP_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
 import { ArrowRightIcon, PlusCorner } from '../icons';
-
-const DOCS_URL = 'https://docs.corsair.dev';
-const GITHUB_URL = 'https://github.com/corsairdev/corsair/';
-const APP_URL = 'https://app.corsair.dev';
 
 function MenuIcon() {
 	return (
