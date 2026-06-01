@@ -1,0 +1,36 @@
+# Corsair
+
+> The open-source integration layer for AI agents. Manage OAuth, API keys, permissions, webhooks, and tool execution securely via a hosted platform or self-hosted SDK.
+
+## Overview
+
+Corsair acts as a secure intermediary between your AI agents and external APIs. Instead of exposing raw API keys or credentials to LLMs, Corsair handles authentication, scopes permissions, and runs tool actions safely.
+
+### Key Features
+
+- **Multi-Tenant Scoped Credentials**: Isolate API keys, OAuth tokens, and configurations per tenant/organization.
+- **Granular Permissions & Approvals**: Set policies (open, cautious, strict, readonly) and intercept write/destructive actions for manual user approval.
+- **Universal MCP Server**: Serve tool descriptions and execute actions dynamically via the Model Context Protocol (MCP).
+- **Signature-Verified Webhooks**: Standardized, signature-verified webhook endpoints for all integrated plugins.
+- **Studio UI**: A developer dashboard to monitor execution, manage keys, configure permissions, and test tools.
+
+## Documentation Index
+
+### Getting Started
+- [Introduction](/docs/getting-started/introduction): Introduction to Corsair.
+- [Quickstart](/docs/getting-started/quickstart): Set up Corsair in minutes.
+
+### Core Concepts
+- [API Keys](/docs/concepts/api-key): Managing API key integrations.
+- [OAuth](/docs/concepts/oauth): Setting up OAuth credentials and authorization flows.
+- [Webhooks](/docs/guides/webhooks): Configuring and handling webhooks.
+- [Workflows](/docs/guides/workflows): Multi-step agent execution workflows.
+
+### Platform & Architecture
+- [Model Context Protocol (MCP)](/docs/mcp-adapters/overview): Connecting Corsair to Anthropic, OpenAI, or LangChain agents via MCP.
+- [Studio](/docs/studio/overview): Using the Corsair Studio dashboard.
+- [Production Deployments](/docs/production/oauth-process): Configuring production OAuth callbacks.
+
+### Plugins & Integrations
+- [Built-in Plugins](/docs/guides/plugins): List of supported plugins (e.g. GitHub, Slack, Hubspot, Zendesk, Calendly, Bitwarden, Zoom).
+- [Creating Custom Plugins](/docs/guides/create-your-own-plugin): How to scaffold and write a new integration plugin.

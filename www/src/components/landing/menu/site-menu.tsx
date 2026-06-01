@@ -3,14 +3,53 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { APP_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
 import { ArrowRightIcon, PlusCorner } from '../icons';
 
-const DOCS_URL = 'https://docs.corsair.dev';
-const GITHUB_URL = 'https://github.com/corsairdev/corsair/';
-const APP_URL = 'https://app.corsair.dev';
+function MenuIcon() {
+	return (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<line x1="4" y1="12" x2="20" y2="12" />
+			<line x1="4" y1="6" x2="20" y2="6" />
+			<line x1="4" y1="18" x2="20" y2="18" />
+		</svg>
+	);
+}
+
+function CloseIcon() {
+	return (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="2"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+			aria-hidden="true"
+			focusable="false"
+		>
+			<line x1="18" y1="6" x2="6" y2="18" />
+			<line x1="6" y1="6" x2="18" y2="18" />
+		</svg>
+	);
+}
 
 export function SiteMenu() {
 	const [hasScrolled, setHasScrolled] = useState(false);
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	const handleScroll = useCallback(() => {
 		const scrolled = window.scrollY > 8;
@@ -27,7 +66,7 @@ export function SiteMenu() {
 		<header className="sticky top-3 z-50 mx-3 sm:top-4 sm:mx-4 md:mx-10 transition-all duration-300">
 			<div
 				className={`relative mx-auto max-w-[1440px] transition-all duration-300 ${
-					hasScrolled
+					hasScrolled || isMobileMenuOpen
 						? 'bg-[#f4f4f4]/90 backdrop-blur-xl shadow-sm'
 						: 'bg-[#f4f4f4]/40 backdrop-blur-md'
 				}`}
@@ -68,7 +107,8 @@ export function SiteMenu() {
 						</span>
 					</Link>
 
-					<div className="flex shrink-0 items-center gap-1 sm:gap-2">
+					{/* Desktop Menu */}
+					<div className="hidden md:flex shrink-0 items-center gap-1 sm:gap-2">
 						<a
 							href={DOCS_URL}
 							target="_blank"
@@ -83,7 +123,7 @@ export function SiteMenu() {
 							rel="noopener noreferrer"
 							className="px-2 py-2 text-[13px] sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c]"
 						>
-							Github
+							GitHub
 						</a>
 						<div className="ml-1 sm:ml-4 flex items-center">
 							<a
@@ -100,8 +140,56 @@ export function SiteMenu() {
 							</a>
 						</div>
 					</div>
+
+					{/* Mobile Controls */}
+					<div className="flex md:hidden items-center gap-1.5 sm:gap-2">
+						<a
+							href={APP_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="group inline-flex items-center justify-center gap-2 rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] px-3 py-1.5 text-xs font-[family-name:var(--landing-font-sans)] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] no-underline transition-all duration-300 ease-out hover:bg-[#2a2a2a] active:translate-y-0"
+						>
+							Go to app
+						</a>
+						<button
+							onClick={() => setIsMobileMenuOpen((open) => !open)}
+							aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+							aria-expanded={isMobileMenuOpen}
+							className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#1c1c1c]/10 bg-white/50 text-[#1c1c1c] hover:bg-white hover:shadow-[0_2px_8px_rgba(0,0,0,0.04)] backdrop-blur-sm transition-colors"
+						>
+							{isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+						</button>
+					</div>
 				</nav>
 			</div>
+
+			{/* Mobile Dropdown Menu */}
+			{isMobileMenuOpen && (
+				<div className="md:hidden w-full border-t border-[#1c1c1c1a] bg-[#f4f4f4]/95 backdrop-blur-xl px-6 py-6 shadow-lg rounded-b-lg">
+					<div className="flex flex-col gap-3">
+						<a
+							href={DOCS_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-colors hover:bg-white"
+							onClick={() => setIsMobileMenuOpen(false)}
+						>
+							<span>Docs</span>
+							<ArrowRightIcon />
+						</a>
+						<a
+							href={GITHUB_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-colors hover:bg-white"
+							onClick={() => setIsMobileMenuOpen(false)}
+						>
+							<span>GitHub</span>
+							<ArrowRightIcon />
+						</a>
+					</div>
+				</div>
+			)}
 		</header>
 	);
 }
