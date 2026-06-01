@@ -26,7 +26,7 @@ const SOLUTION_PILLARS = [
 ] as const;
 
 const CARD_CLASS =
-	'relative flex min-h-[420px] w-full flex-col border border-[#1c1c1c1a] bg-white p-5 md:min-h-[480px] md:p-6 lg:h-[550px] lg:min-h-0';
+	'relative flex w-full flex-col border border-[#1c1c1c1a] bg-white p-4 sm:min-h-[420px] sm:p-5 md:min-h-[480px] md:p-6 lg:h-[550px] lg:min-h-0';
 
 function SolutionCard({
 	pillar,
@@ -68,10 +68,10 @@ export function SolutionFramingSection() {
 	return (
 		<section
 			id="solution"
-			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-20 md:py-28 lg:py-32"
+			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-16 sm:py-20 md:py-28 lg:py-32"
 			aria-labelledby="solution-heading"
 		>
-			<div className="mx-auto max-w-[1440px] px-4 md:px-10">
+			<div className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-10">
 				<div className="mx-auto flex max-w-[720px] flex-col items-center gap-6 text-center md:max-w-[960px] md:gap-8">
 					<p className="font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.02em] text-[#1c1c1c99]">
 						The solution
@@ -92,7 +92,7 @@ export function SolutionFramingSection() {
 					</h2>
 				</div>
 
-				<ul className="mt-14 grid grid-cols-1 gap-6 md:mt-20 lg:grid-cols-3 lg:gap-8">
+				<ul className="mt-14 grid grid-cols-1 gap-6 md:mt-20 md:grid-cols-2 md:[&>li:nth-child(3)]:col-span-2 lg:grid-cols-3 lg:gap-8 lg:[&>li:nth-child(3)]:col-span-1">
 					{SOLUTION_PILLARS.map((pillar) => (
 						<SolutionCard key={pillar.id} pillar={pillar} />
 					))}

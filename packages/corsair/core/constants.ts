@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'amplitude',
 	'asana',
 	'bitwarden',
+	'bluesky',
 	'box',
 	'cal',
 	'calendly',
@@ -79,6 +80,7 @@ export type AllProviders =
 	| 'amplitude'
 	| 'asana'
 	| 'bitwarden'
+	| 'bluesky'
 	| 'box'
 	| 'cal'
 	| 'calendly'

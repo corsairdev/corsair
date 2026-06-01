@@ -22,6 +22,7 @@
         "tab": "App",
         "pages": [
           "app/home",
+          "app/agent-setup",
           {
             "group": "Get started",
             "pages": [
