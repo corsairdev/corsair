@@ -26,7 +26,7 @@ import {
 	exchangeCodeForTokens,
 	generateDEK,
 } from 'corsair'
-import { getCorsairInstance } from './index'
+import { getCorsairInstance } from './utils/corsair-instance'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
