@@ -28,16 +28,27 @@ export default class ScriptCommand extends BaseCommand {
 			console.error('[#corsair]: Usage: corsair script --code "<js>"');
 			process.exit(1);
 		}
+
+		let fn: (...fnArgs: unknown[]) => Promise<unknown>;
+		try {
+			fn = new AsyncFunction('corsair', code);
+		} catch (error) {
+			this.exitWithScriptError(error);
+		}
+
 		const instance = await getCorsairInstance({ cwd: process.cwd() });
 		const client = resolveClient(instance, tenant);
-		const fn = new AsyncFunction('corsair', code);
 		try {
 			const result = await fn(client);
 			if (result !== undefined) console.log(JSON.stringify(result, null, 2));
 		} catch (error) {
-			const msg = error instanceof Error ? error.message : String(error);
-			console.error(`[#corsair]: ${msg.slice(0, 500)}`);
-			process.exit(1);
+			this.exitWithScriptError(error);
 		}
+	}
+
+	private exitWithScriptError(error: unknown): never {
+		const msg = error instanceof Error ? error.message : String(error);
+		console.error(`[#corsair]: ${msg.slice(0, 500)}`);
+		process.exit(1);
 	}
 }
