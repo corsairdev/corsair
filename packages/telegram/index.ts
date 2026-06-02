@@ -256,20 +256,18 @@ export function telegram<const T extends TelegramPluginOptions>(
 		endpoints: telegramEndpointsNested,
 		webhooks: telegramWebhooksNested,
 		pluginWebhookMatcher: (request) => {
-			try {
-				const body =
-					typeof request.body === 'string'
-						? JSON.parse(request.body)
-						: request.body;
+			const body =
+				typeof request.body === 'string'
+					? JSON.parse(request.body)
+					: request.body;
 
-				if (!body || typeof body !== 'object') {
-					return false;
-				}
-
-				return 'update_id' in body;
-			} catch {
+			if (!body || typeof body !== 'object') {
 				return false;
 			}
+
+			const hasSignature = 'x-telegram-bot-api-secret-token' in request.headers;
+
+			return hasSignature && 'update_id' in body;
 		},
 		errorHandlers: {
 			...errorHandlers,
