@@ -25,6 +25,19 @@ import {
 	SlackEndpointInputSchemas,
 	SlackEndpointOutputSchemas,
 } from './endpoints/types';
+import {
+	conversationsGetTeams,
+	conversationsSearch,
+	conversationsSetTeams,
+	listTeams,
+} from './endpoints/admin';
+
+export const Admin = {
+	listTeams,
+	conversationsSearch,
+	conversationsGetTeams,
+	conversationsSetTeams,
+};
 import { SlackSchema } from './schema';
 import {
 	ChallengeWebhooks,
@@ -115,6 +128,10 @@ export type SlackEndpoints = {
 	starsAdd: SlackEndpoint<'starsAdd'>;
 	starsRemove: SlackEndpoint<'starsRemove'>;
 	starsList: SlackEndpoint<'starsList'>;
+	adminTeamsList: SlackEndpoint<'adminTeamsList'>;
+	adminConversationsSearch: SlackEndpoint<'adminConversationsSearch'>;
+	adminConversationsGetTeams: SlackEndpoint<'adminConversationsGetTeams'>;
+	adminConversationsSetTeams: SlackEndpoint<'adminConversationsSetTeams'>;
 };
 
 const slackEndpointsNested = {
@@ -172,6 +189,12 @@ const slackEndpointsNested = {
 		add: Stars.add,
 		remove: Stars.remove,
 		list: Stars.list,
+	},
+	admin: {
+		listTeams: Admin.listTeams,
+		conversationsSearch: Admin.conversationsSearch,
+		conversationsGetTeams: Admin.conversationsGetTeams,
+		conversationsSetTeams: Admin.conversationsSetTeams,
 	},
 } as const;
 
@@ -339,6 +362,22 @@ export const slackEndpointSchemas = {
 	'stars.list': {
 		input: SlackEndpointInputSchemas.starsList,
 		output: SlackEndpointOutputSchemas.starsList,
+	},
+	'admin.listTeams': {
+		input: SlackEndpointInputSchemas.adminTeamsList,
+		output: SlackEndpointOutputSchemas.adminTeamsList,
+	},
+	'admin.conversationsSearch': {
+		input: SlackEndpointInputSchemas.adminConversationsSearch,
+		output: SlackEndpointOutputSchemas.adminConversationsSearch,
+	},
+	'admin.conversationsGetTeams': {
+		input: SlackEndpointInputSchemas.adminConversationsGetTeams,
+		output: SlackEndpointOutputSchemas.adminConversationsGetTeams,
+	},
+	'admin.conversationsSetTeams': {
+		input: SlackEndpointInputSchemas.adminConversationsSetTeams,
+		output: SlackEndpointOutputSchemas.adminConversationsSetTeams,
 	},
 } as const;
 
@@ -521,6 +560,22 @@ const slackEndpointMeta = {
 	'stars.list': {
 		riskLevel: 'read',
 		description: 'List starred items for the authenticated user',
+	},
+	'admin.listTeams': {
+		riskLevel: 'read',
+		description: 'List all teams on an Enterprise organization',
+	},
+	'admin.conversationsSearch': {
+		riskLevel: 'read',
+		description: 'Search for channels on an Enterprise organization',
+	},
+	'admin.conversationsGetTeams': {
+		riskLevel: 'read',
+		description: 'Get all the workspaces a given channel is connected to',
+	},
+	'admin.conversationsSetTeams': {
+		riskLevel: 'write',
+		description: 'Set the workspaces in an Enterprise grid org that connect to a channel',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof slackEndpointsNested>;
 
@@ -786,6 +841,10 @@ export { createSlackEventMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	AdminTeamsListResponse,
+	AdminConversationsSearchResponse,
+	AdminConversationsGetTeamsResponse,
+	AdminConversationsSetTeamsResponse,
 	ChatDeleteResponse,
 	ChatGetPermalinkResponse,
 	ChatPostMessageResponse,
@@ -829,3 +888,4 @@ export type {
 	UsersProfileGetResponse,
 	UsersProfileSetResponse,
 } from './endpoints/types';
+export * from './endpoints/admin';

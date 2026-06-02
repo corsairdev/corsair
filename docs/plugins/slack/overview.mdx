@@ -7,7 +7,7 @@ Use **Slack** through Corsair: one client, typed API calls, optional local DB sy
 
 **What you get:**
 
-- 41 typed API operations
+- 45 typed API operations
 - 5 database entities synced for fast `.search()` / `.list()` queries
 - 9 incoming webhook event types
 
@@ -145,6 +145,14 @@ See the full list on the [API](/plugins/slack/api) page. Use `pnpm corsair list 
 
 ---
 
+## Admin API
+
+<Warning>
+These Admin methods require an Enterprise Organization level installation.
+</Warning>
+
+---
+
 ## Hooks
 
 Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/slack/webhooks) page for payload types.
@@ -156,6 +164,7 @@ Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, a
 | Topic | Link |
 |-------|------|
 | API | [API](/plugins/slack/api) |
+| Admin | [Admin](/plugins/slack/admin) |
 | Database | [Database](/plugins/slack/database) |
 | Webhooks | [Webhooks](/plugins/slack/webhooks) |
 | Credentials | [Get credentials](/plugins/slack/get-credentials) |
