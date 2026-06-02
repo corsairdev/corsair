@@ -74,9 +74,9 @@ const AirtableWebhookChangeSchema = z
 				fieldId: z.string().optional(),
 			})
 			.optional(),
-		cellValuesByFieldId: z.record(z.unknown()).optional(),
+		cellValuesByFieldId: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Airtable payload items use unknown for table data because schemas differ per base
 const AirtableWebhookPayloadItemSchema = z
@@ -84,9 +84,9 @@ const AirtableWebhookPayloadItemSchema = z
 		timestamp: z.string(),
 		baseTransactionNumber: z.number().optional(),
 		changes: z.array(AirtableWebhookChangeSchema).optional(),
-		changedTablesById: z.record(z.unknown()).optional(),
+		changedTablesById: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AirtableWebhookPayloadsResponseSchema = z.object({
 	cursorForNextPayload: z.number().optional(),

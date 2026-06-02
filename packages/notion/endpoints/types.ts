@@ -70,7 +70,7 @@ const BlockSchema = z
 		has_children: z.boolean().optional(),
 		parent: ParentSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ============================================================================
 // Input Schemas
@@ -116,7 +116,7 @@ const DatabasePagesCreateDatabasePageInputSchema = z.object({
 	// NOTE: Properties are typed as unknown because they are dynamic and depend on the
 	// database schema. Each database can have different property types (title, rich_text,
 	// number, select, multi_select, date, etc.) with different structures.
-	properties: z.record(z.unknown()),
+	properties: z.record(z.string(), z.unknown()),
 });
 
 const DatabasePagesGetDatabasePageInputSchema = z.object({
@@ -139,7 +139,7 @@ const DatabasePagesUpdateDatabasePageInputSchema = z.object({
 	page_id: z.string(),
 	// NOTE: Properties are typed as unknown because they are dynamic and depend on the
 	// database schema. Each property type has a different update structure.
-	properties: z.record(z.unknown()).optional(),
+	properties: z.record(z.string(), z.unknown()).optional(),
 	archived: z.boolean().optional(),
 });
 
@@ -157,7 +157,7 @@ const PagesCreatePageInputSchema = z.object({
 	]),
 	// NOTE: Properties are typed as unknown because they vary by parent type.
 	// Database pages have schema-based properties, while regular pages have title/rich_text.
-	properties: z.record(z.unknown()).optional(),
+	properties: z.record(z.string(), z.unknown()).optional(),
 	// NOTE: Children are blocks that can be of various types (paragraph, heading, etc.).
 	children: z.array(BlockSchema).optional(),
 });
@@ -228,7 +228,7 @@ const ListResponseSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
 		next_cursor: z.string().nullable(),
 		has_more: z.boolean(),
 		type: z.string().optional(),
-		page_or_database: z.record(z.unknown()).optional(),
+		page_or_database: z.record(z.string(), z.unknown()).optional(),
 		request_id: z.string().optional(),
 	});
 
@@ -263,11 +263,11 @@ const PageSchema = z
 		is_locked: z.boolean().optional(),
 		// NOTE: Properties are typed as unknown because they vary by page type.
 		// Database pages have schema-based properties, regular pages have title/rich_text.
-		properties: z.record(z.unknown()),
+		properties: z.record(z.string(), z.unknown()),
 		url: z.string(),
 		public_url: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Database structure
 const DatabaseSchema = z
@@ -298,14 +298,14 @@ const DatabaseSchema = z
 		is_inline: z.boolean(),
 		// NOTE: Properties are typed as unknown because each database has a unique schema
 		// with different property types (title, rich_text, number, select, date, etc.).
-		properties: z.record(z.unknown()),
+		properties: z.record(z.string(), z.unknown()),
 		parent: ParentSchema,
 		url: z.string(),
 		public_url: z.string().nullable().optional(),
 		archived: z.boolean(),
 		in_trash: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // User structure
 const UserSchema = z
@@ -318,7 +318,7 @@ const UserSchema = z
 		// NOTE: Bot users have additional fields like owner, workspace_name, etc.
 		// Using passthrough to allow these dynamic fields.
 	})
-	.passthrough();
+	.loose();
 
 // Response type definitions
 export type BlocksAppendBlockResponse = z.infer<

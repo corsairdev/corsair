@@ -1,9 +1,31 @@
 import 'dotenv/config';
 import { makeRazorpayRequest } from './client';
 import type {
+	CustomersCreateResponse,
+	CustomersGetResponse,
+	CustomersListResponse,
+	CustomersUpdateResponse,
+	OrdersCreateResponse,
+	OrdersGetResponse,
+	OrdersListResponse,
+	PaymentsCaptureResponse,
+	PaymentsGetResponse,
+	PaymentsListResponse,
 	PayoutsCreateResponse,
 	PayoutsGetResponse,
 	PayoutsListResponse,
+	RefundsCreateResponse,
+	RefundsGetResponse,
+	RefundsListResponse,
+	SettlementsGetResponse,
+	SettlementsListResponse,
+	SubscriptionsCancelResponse,
+	SubscriptionsCreateResponse,
+	SubscriptionsGetResponse,
+	SubscriptionsListResponse,
+	SubscriptionsPauseResponse,
+	SubscriptionsResumeResponse,
+	SubscriptionsUpdateResponse,
 } from './endpoints/types';
 import { RazorpayEndpointOutputSchemas } from './endpoints/types';
 
@@ -12,137 +34,578 @@ const API_SECRET_KEY = process.env.RAZORPAY_SECRET_KEY!;
 
 const TEST_PAYOUT_ACCOUNT_NUMBER = process.env.RAZORPAY_TEST_ACCOUNT_NUMBER;
 const TEST_PAYOUT_ID = process.env.RAZORPAY_TEST_PAYOUT_ID;
-const CREATE_PAYOUT_ACCOUNT_NUMBER = process.env.RAZORPAY_CREATE_PAYOUT_ACCOUNT_NUMBER;
+const CREATE_PAYOUT_ACCOUNT_NUMBER =
+	process.env.RAZORPAY_CREATE_PAYOUT_ACCOUNT_NUMBER;
 const CREATE_PAYOUT_FUND_ACCOUNT_ID =
 	process.env.RAZORPAY_CREATE_PAYOUT_FUND_ACCOUNT_ID;
-const CREATE_PAYOUT_AMOUNT = process.env.RAZORPAY_CREATE_PAYOUT_AMOUNT;
+const CREATE_PAYOUT_AMOUNT = process.env.RAZORPAY_CREATE_PAYOUT_AMOUNT
+	? Number(process.env.RAZORPAY_CREATE_PAYOUT_AMOUNT)
+	: undefined;
 const CREATE_PAYOUT_CURRENCY = process.env.RAZORPAY_CREATE_PAYOUT_CURRENCY;
 const CREATE_PAYOUT_MODE = process.env.RAZORPAY_CREATE_PAYOUT_MODE;
 const CREATE_PAYOUT_PURPOSE = process.env.RAZORPAY_CREATE_PAYOUT_PURPOSE;
 
+const TEST_PAYMENT_CAPTURE_AMOUNT = process.env
+	.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT
+	? Number(process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT)
+	: undefined;
+const TEST_PAYMENT_CAPTURE_CURRENCY =
+	process.env.RAZORPAY_TEST_PAYMENT_CAPTURE_CURRENCY;
+const TEST_PAYMENT_ID = process.env.RAZORPAY_TEST_PAYMENT_ID;
+
+const TEST_REFUND_PAYMENT_ID = process.env.RAZORPAY_TEST_REFUND_PAYMENT_ID;
+const TEST_REFUND_ID = process.env.RAZORPAY_TEST_REFUND_ID;
+const CREATE_REFUND_AMOUNT = process.env.RAZORPAY_CREATE_REFUND_AMOUNT
+	? Number(process.env.RAZORPAY_CREATE_REFUND_AMOUNT)
+	: undefined;
+
+const TEST_SETTLEMENT_ID = process.env.RAZORPAY_TEST_SETTLEMENT_ID;
+
+const TEST_SUBSCRIPTION_PLAN_ID =
+	process.env.RAZORPAY_TEST_SUBSCRIPTION_PLAN_ID;
+const TEST_SUBSCRIPTION_ID = process.env.RAZORPAY_TEST_SUBSCRIPTION_ID;
+const CREATE_SUBSCRIPTION_TOTAL_COUNT = process.env
+	.RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT
+	? Number(process.env.RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT)
+	: undefined;
+
 describe('Razorpay API Type Tests', () => {
+	let API_KEY: string;
 
-    function generateAPIKey() {
-        return API_KEY_ID.concat(":").concat(API_SECRET_KEY);
-    }
-
-    const API_KEY = generateAPIKey();
-
-    describe('payouts', () => {
-
-        it('payoutsList returns correct type', async () => {
-
-            if (!TEST_PAYOUT_ACCOUNT_NUMBER) {
+	beforeAll(() => {
+		function generateAPIKey() {
+			if (!API_KEY_ID) {
 				throw new Error(
-					'RAZORPAY_TEST_ACCOUNT_NUMBER is required to run Razorpay payoutList test',
+					`Missing required env vars for payout tests: API_KEY_ID`,
 				);
-            }
+			}
 
-            const result = await makeRazorpayRequest<PayoutsListResponse>(
-                'payouts',
-                API_KEY,
-                {
-                    method: 'GET',
-                    query: {
-                        account_number: TEST_PAYOUT_ACCOUNT_NUMBER,
-                    },
-                },
-                true
-            );
+			if (!API_SECRET_KEY) {
+				throw new Error(
+					`Missing required env vars for payout tests: API_SECRET_KEY`,
+				);
+			}
 
-            RazorpayEndpointOutputSchemas.payoutsList.parse(result);
-        });
+			return API_KEY_ID.concat(':').concat(API_SECRET_KEY);
+		}
 
-        it('payoutsGet returns correct type', async () => {
+		API_KEY = generateAPIKey();
+	});
 
-            if (!TEST_PAYOUT_ACCOUNT_NUMBER) {
-                throw new Error(
-                    'RAZORPAY_TEST_ACCOUNT_NUMBER is required to run Razorpay payout tests',
-                );
-            }
+	describe('payouts', () => {
+		beforeAll(() => {
+			const requiredEnvVars = [
+				{
+					key: 'RAZORPAY_TEST_ACCOUNT_NUMBER',
+					value: TEST_PAYOUT_ACCOUNT_NUMBER,
+				},
+				{
+					key: 'RAZORPAY_TEST_PAYOUT_ID',
+					value: TEST_PAYOUT_ID,
+				},
+				{
+					key: 'RAZORPAY_CREATE_PAYOUT_ACCOUNT_NUMBER',
+					value: CREATE_PAYOUT_ACCOUNT_NUMBER,
+				},
+				{
+					key: 'RAZORPAY_CREATE_PAYOUT_FUND_ACCOUNT_ID',
+					value: CREATE_PAYOUT_FUND_ACCOUNT_ID,
+				},
+				{
+					key: 'RAZORPAY_CREATE_PAYOUT_AMOUNT',
+					value: CREATE_PAYOUT_AMOUNT,
+				},
+				{
+					key: 'RAZORPAY_CREATE_PAYOUT_CURRENCY',
+					value: CREATE_PAYOUT_CURRENCY,
+				},
+				{
+					key: 'RAZORPAY_CREATE_PAYOUT_MODE',
+					value: CREATE_PAYOUT_MODE,
+				},
+				{
+					key: 'RAZORPAY_CREATE_PAYOUT_PURPOSE',
+					value: CREATE_PAYOUT_PURPOSE,
+				},
+			];
 
-            if (!TEST_PAYOUT_ID) {
-                throw new Error(
-                    'TEST_PAYOUT_ID is required to run Razorpay payoutGet test',
-                );
-            }
+			const missingVars = requiredEnvVars
+				.filter(({ value }) => !value)
+				.map(({ key }) => key);
 
-            const result = await makeRazorpayRequest<PayoutsGetResponse>(
-                `payouts/${TEST_PAYOUT_ID}`,
-                API_KEY,
-                { method: 'GET' },
-            );
+			if (missingVars.length > 0) {
+				throw new Error(
+					`Missing required env vars for payout tests: ${missingVars.join(', ')}`,
+				);
+			}
+		});
 
-            RazorpayEndpointOutputSchemas.payoutsGet.parse(result);
-        });
+		it('payoutsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<PayoutsListResponse>(
+				'payouts',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						account_number: TEST_PAYOUT_ACCOUNT_NUMBER,
+					},
+				},
+				true,
+			);
 
-        it('payoutsCreate returns correct type', async () => {
+			RazorpayEndpointOutputSchemas.payoutsList.parse(result);
+		});
 
-            if (!CREATE_PAYOUT_ACCOUNT_NUMBER) {
-                throw new Error(
-                    'RAZORPAY_CREATE_PAYOUT_ACCOUNT_NUMBER is required to run Razorpay payoutsCreate test',
-                );
-            }
+		it('payoutsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<PayoutsGetResponse>(
+				`payouts/${TEST_PAYOUT_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
 
-            if (!CREATE_PAYOUT_FUND_ACCOUNT_ID) {
-                throw new Error(
-                    'RAZORPAY_CREATE_PAYOUT_FUND_ACCOUNT_ID is required to run Razorpay payoutsCreate test',
-                );
-            }
+			RazorpayEndpointOutputSchemas.payoutsGet.parse(result);
+		});
 
-            if (!CREATE_PAYOUT_AMOUNT) {
-                throw new Error(
-                    'RAZORPAY_CREATE_PAYOUT_AMOUNT is required to run Razorpay payoutsCreate test',
-                );
-            }
+		it('payoutsCreate returns correct type', async () => {
+			const bodyData: Record<string, unknown> = {
+				account_number: CREATE_PAYOUT_ACCOUNT_NUMBER,
+				fund_account_id: CREATE_PAYOUT_FUND_ACCOUNT_ID,
+				amount: CREATE_PAYOUT_AMOUNT ? Number(CREATE_PAYOUT_AMOUNT) : undefined,
+				currency: CREATE_PAYOUT_CURRENCY,
+				mode: CREATE_PAYOUT_MODE,
+				purpose: CREATE_PAYOUT_PURPOSE,
+				queue_if_low_balance: true,
+				reference_id: 'Acme Transaction ID 12345',
+				narration: 'Acme Corp Fund Transfer',
+				notes: {
+					notes_key_1: 'Tea, Earl Grey, Hot',
+					notes_key_2: 'Tea, Earl Grey… decaf.',
+				},
+			};
 
-            if (!CREATE_PAYOUT_CURRENCY) {
-                throw new Error(
-                    'RAZORPAY_CREATE_PAYOUT_CURRENCY is required to run Razorpay payoutsCreate test',
-                );
-            }
+			const result = await makeRazorpayRequest<PayoutsCreateResponse>(
+				`payouts`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: bodyData,
+				},
+				true,
+			);
 
-            if (!CREATE_PAYOUT_MODE) {
-                throw new Error(
-                    'RAZORPAY_CREATE_PAYOUT_MODE is required to run Razorpay payoutsCreate test',
-                );
-            }
+			RazorpayEndpointOutputSchemas.payoutsCreate.parse(result);
+		});
+	});
 
-            if (!CREATE_PAYOUT_PURPOSE) {
-                throw new Error(
-                    'RAZORPAY_CREATE_PAYOUT_PURPOSE is required to run Razorpay payoutsCreate test',
-                );
-            }
+	describe('customers', () => {
+		let createdCustomerId: string | undefined;
 
-            const bodyData: Record<string, unknown> = {
-                account_number: CREATE_PAYOUT_ACCOUNT_NUMBER,
-                "fund_account_id": CREATE_PAYOUT_FUND_ACCOUNT_ID,
-                "amount": CREATE_PAYOUT_AMOUNT
-                    ? Number(CREATE_PAYOUT_AMOUNT)
-                    : undefined,
-                "currency": CREATE_PAYOUT_CURRENCY,
-                "mode": CREATE_PAYOUT_MODE,
-                "purpose": CREATE_PAYOUT_PURPOSE,
-                "queue_if_low_balance": true,
-                "reference_id": "Acme Transaction ID 12345",
-                "narration": "Acme Corp Fund Transfer",
-                "notes": {
-                    "notes_key_1": "Tea, Earl Grey, Hot",
-                    "notes_key_2": "Tea, Earl Grey… decaf."
-                }
-            };
+		it('customersCreate returns correct type', async () => {
+			const result = await makeRazorpayRequest<CustomersCreateResponse>(
+				'customers',
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						name: `Corsair Test Customer ${Date.now()}`,
+						email: `corsair-${Date.now()}@example.com`,
+						contact: '9123456789',
+					},
+				},
+			);
 
-            const result = await makeRazorpayRequest<PayoutsCreateResponse>(
-                `payouts`,
-                API_KEY,
-                {
-                    method: 'POST',
-                    body: bodyData,
-                },
-                true
-            );
+			RazorpayEndpointOutputSchemas.customersCreate.parse(result);
+			createdCustomerId = result.id;
+		});
 
-            RazorpayEndpointOutputSchemas.payoutsCreate.parse(result);
-        });
-    });
+		it('customersList returns correct type', async () => {
+			const result = await makeRazorpayRequest<CustomersListResponse>(
+				'customers',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.customersList.parse(result);
+		});
+
+		it('customersGet returns correct type', async () => {
+			if (!createdCustomerId) {
+				throw new Error(
+					'Unable to run customersGet test because no customer ID was created',
+				);
+			}
+
+			const result = await makeRazorpayRequest<CustomersGetResponse>(
+				`customers/${createdCustomerId}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.customersGet.parse(result);
+		});
+
+		it('customersUpdate returns correct type', async () => {
+			if (!createdCustomerId) {
+				throw new Error(
+					'Unable to run customersUpdate test because no customer ID was created',
+				);
+			}
+
+			const result = await makeRazorpayRequest<CustomersUpdateResponse>(
+				`customers/${createdCustomerId}`,
+				API_KEY,
+				{
+					method: 'PUT',
+					body: {
+						name: `Updated Corsair Customer ${Date.now()}`,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.customersUpdate.parse(result);
+		});
+	});
+
+	describe('orders', () => {
+		let createdOrderId: string | undefined;
+
+		it('ordersCreate returns correct type', async () => {
+			const result = await makeRazorpayRequest<OrdersCreateResponse>(
+				'orders',
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						amount: 100,
+						currency: 'INR',
+						receipt: `corsair-order-${Date.now()}`,
+						notes: {
+							order_source: 'corsair-test',
+						},
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.ordersCreate.parse(result);
+			createdOrderId = result.id;
+		});
+
+		it('ordersList returns correct type', async () => {
+			const result = await makeRazorpayRequest<OrdersListResponse>(
+				'orders',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.ordersList.parse(result);
+		});
+
+		it('ordersGet returns correct type', async () => {
+			if (!createdOrderId) {
+				throw new Error(
+					'Unable to run ordersGet test because no order ID was created',
+				);
+			}
+
+			const result = await makeRazorpayRequest<OrdersGetResponse>(
+				`orders/${createdOrderId}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.ordersGet.parse(result);
+		});
+	});
+
+	describe('payments', () => {
+		beforeAll(() => {
+			const requiredEnvVars = [
+				{
+					key: 'RAZORPAY_TEST_PAYMENT_CAPTURE_AMOUNT',
+					value: TEST_PAYMENT_CAPTURE_AMOUNT,
+				},
+				{
+					key: 'RAZORPAY_TEST_PAYMENT_CAPTURE_CURRENCY',
+					value: TEST_PAYMENT_CAPTURE_CURRENCY,
+				},
+				{
+					key: 'RAZORPAY_TEST_PAYMENT_ID',
+					value: TEST_PAYMENT_ID,
+				},
+			];
+
+			const missingVars = requiredEnvVars
+				.filter(({ value }) => !value)
+				.map(({ key }) => key);
+
+			if (missingVars.length > 0) {
+				throw new Error(
+					`Missing required env vars for payout tests: ${missingVars.join(', ')}`,
+				);
+			}
+		});
+
+		it('paymentsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<PaymentsListResponse>(
+				'payments',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.paymentsList.parse(result);
+		});
+
+		it('paymentsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<PaymentsGetResponse>(
+				`payments/${TEST_PAYMENT_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.paymentsGet.parse(result);
+		});
+
+		it('paymentsCapture returns correct type', async () => {
+			const result = await makeRazorpayRequest<PaymentsCaptureResponse>(
+				`payments/${TEST_PAYMENT_ID}/capture`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						amount: TEST_PAYMENT_CAPTURE_AMOUNT,
+						currency: TEST_PAYMENT_CAPTURE_CURRENCY,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.paymentsCapture.parse(result);
+		});
+	});
+
+	describe('refunds', () => {
+		beforeAll(() => {
+			const requiredEnvVars = [
+				{
+					key: 'RAZORPAY_TEST_REFUND_PAYMENT_ID',
+					value: TEST_REFUND_PAYMENT_ID,
+				},
+				{
+					key: 'RAZORPAY_TEST_REFUND_ID',
+					value: TEST_REFUND_ID,
+				},
+				{
+					key: 'RAZORPAY_CREATE_REFUND_AMOUNT',
+					value: CREATE_REFUND_AMOUNT,
+				},
+			];
+
+			const missingVars = requiredEnvVars
+				.filter(({ value }) => !value)
+				.map(({ key }) => key);
+
+			if (missingVars.length > 0) {
+				throw new Error(
+					`Missing required env vars for payout tests: ${missingVars.join(', ')}`,
+				);
+			}
+		});
+
+		it('refundsCreate returns correct type', async () => {
+			const result = await makeRazorpayRequest<RefundsCreateResponse>(
+				`payments/${TEST_REFUND_PAYMENT_ID}/refund`,
+				API_KEY,
+				{
+					method: 'POST',
+					body: {
+						amount: CREATE_REFUND_AMOUNT,
+						speed: 'normal',
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.refundsCreate.parse(result);
+		});
+
+		it('refundsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<RefundsListResponse>(
+				`payments/${TEST_REFUND_PAYMENT_ID}/refunds`,
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.refundsList.parse(result);
+		});
+
+		it('refundsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<RefundsGetResponse>(
+				`payments/${TEST_REFUND_PAYMENT_ID}/refunds/${TEST_REFUND_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.refundsGet.parse(result);
+		});
+	});
+
+	describe('settlements', () => {
+		beforeAll(() => {
+			if (!TEST_SETTLEMENT_ID) {
+				throw new Error(
+					`Missing required env vars for payout tests: TEST_SETTLEMENT_ID`,
+				);
+			}
+		});
+
+		it('settlementsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<SettlementsListResponse>(
+				'settlements',
+				API_KEY,
+				{
+					method: 'GET',
+					query: {
+						count: 10,
+					},
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.settlementsList.parse(result);
+		});
+
+		it('settlementsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<SettlementsGetResponse>(
+				`settlements/${TEST_SETTLEMENT_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.settlementsGet.parse(result);
+		});
+	});
+
+	describe('subscriptions', () => {
+		beforeAll(() => {
+			const requiredEnvVars = [
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_PLAN_ID',
+					value: TEST_SUBSCRIPTION_PLAN_ID,
+				},
+				{
+					key: 'RAZORPAY_TEST_SUBSCRIPTION_ID',
+					value: TEST_SUBSCRIPTION_ID,
+				},
+				{
+					key: 'RAZORPAY_CREATE_SUBSCRIPTION_TOTAL_COUNT',
+					value: CREATE_SUBSCRIPTION_TOTAL_COUNT,
+				},
+			];
+
+			const missingVars = requiredEnvVars
+				.filter(({ value }) => !value)
+				.map(({ key }) => key);
+
+			if (missingVars.length > 0) {
+				throw new Error(
+					`Missing required env vars for subscription tests: ${missingVars.join(', ')}`,
+				);
+			}
+		});
+
+		it('subscriptionsCreate returns correct type', async () => {
+			const body: Record<string, unknown> = {
+				plan_id: TEST_SUBSCRIPTION_PLAN_ID,
+				total_count: CREATE_SUBSCRIPTION_TOTAL_COUNT,
+			};
+
+			const result = await makeRazorpayRequest<SubscriptionsCreateResponse>(
+				'subscriptions',
+				API_KEY,
+				{
+					method: 'POST',
+					body,
+				},
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsCreate.parse(result);
+		});
+
+		it('subscriptionsList returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsListResponse>(
+				'subscriptions',
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsList.parse(result);
+		});
+
+		it('subscriptionsUpdate returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsUpdateResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}`,
+				API_KEY,
+				{ method: 'PATCH' },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsUpdate.parse(result);
+		});
+
+		it('subscriptionsGet returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsGetResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}`,
+				API_KEY,
+				{ method: 'GET' },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsGet.parse(result);
+		});
+
+		it('subscriptionsPause returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsPauseResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}/pause`,
+				API_KEY,
+				{ method: 'POST' },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsPause.parse(result);
+		});
+
+		it('subscriptionsResume returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsResumeResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}/resume`,
+				API_KEY,
+				{ method: 'POST' },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsResume.parse(result);
+		});
+
+		it('subscriptionsCancel returns correct type', async () => {
+			const result = await makeRazorpayRequest<SubscriptionsCancelResponse>(
+				`subscriptions/${TEST_SUBSCRIPTION_ID}/cancel`,
+				API_KEY,
+				{ method: 'POST' },
+			);
+
+			RazorpayEndpointOutputSchemas.subscriptionsCancel.parse(result);
+		});
+	});
 });

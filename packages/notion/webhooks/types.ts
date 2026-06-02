@@ -27,8 +27,8 @@ export const NotionWebhookPayloadSchema = z.object({
 	type: z.string(),
 	authors: z.array(NotionUserReferenceSchema),
 	accessible_by: z.array(NotionUserReferenceSchema),
-	entity: z.object({ id: z.string(), object: z.string() }).passthrough(),
-	data: z.record(z.unknown()),
+	entity: z.object({ id: z.string(), object: z.string() }).loose(),
+	data: z.record(z.string(), z.unknown()),
 });
 
 export const NotionVerificationPayloadSchema = z.object({
@@ -47,7 +47,7 @@ export const PageCreatedEventSchema = NotionWebhookPayloadSchema.extend({
 			page_id: z.string(),
 			database_id: z.string(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 export const PageUpdatedEventSchema = NotionWebhookPayloadSchema.extend({
@@ -57,7 +57,7 @@ export const PageUpdatedEventSchema = NotionWebhookPayloadSchema.extend({
 			page_id: z.string(),
 			database_id: z.string(),
 		})
-		.passthrough(),
+		.loose(),
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -85,7 +85,8 @@ type HubSpotEndpoint<K extends keyof HubSpotEndpointOutputs> = CorsairEndpoint<
 export type HubSpotEndpoints = {
 	contactsGet: HubSpotEndpoint<'contactsGet'>;
 	contactsGetMany: HubSpotEndpoint<'contactsGetMany'>;
-	contactsCreateOrUpdate: HubSpotEndpoint<'contactsCreateOrUpdate'>;
+	contactsCreate: HubSpotEndpoint<'contactsCreate'>;
+	contactsUpdate: HubSpotEndpoint<'contactsUpdate'>;
 	contactsDelete: HubSpotEndpoint<'contactsDelete'>;
 	contactsGetRecentlyCreated: HubSpotEndpoint<'contactsGetRecentlyCreated'>;
 	contactsGetRecentlyUpdated: HubSpotEndpoint<'contactsGetRecentlyUpdated'>;
@@ -153,7 +154,8 @@ const hubspotEndpointsNested = {
 	contacts: {
 		get: ContactsEndpoints.get,
 		getMany: ContactsEndpoints.getMany,
-		createOrUpdate: ContactsEndpoints.createOrUpdate,
+		create: ContactsEndpoints.create,
+		update: ContactsEndpoints.update,
 		delete: ContactsEndpoints.delete,
 		getRecentlyCreated: ContactsEndpoints.getRecentlyCreated,
 		getRecentlyUpdated: ContactsEndpoints.getRecentlyUpdated,
@@ -207,9 +209,13 @@ export const hubspotEndpointSchemas = {
 		input: HubSpotEndpointInputSchemas.contactsGetMany,
 		output: HubSpotEndpointOutputSchemas.contactsGetMany,
 	},
-	'contacts.createOrUpdate': {
-		input: HubSpotEndpointInputSchemas.contactsCreateOrUpdate,
-		output: HubSpotEndpointOutputSchemas.contactsCreateOrUpdate,
+	'contacts.create': {
+		input: HubSpotEndpointInputSchemas.contactsCreate,
+		output: HubSpotEndpointOutputSchemas.contactsCreate,
+	},
+	'contacts.update': {
+		input: HubSpotEndpointInputSchemas.contactsUpdate,
+		output: HubSpotEndpointOutputSchemas.contactsUpdate,
 	},
 	'contacts.delete': {
 		input: HubSpotEndpointInputSchemas.contactsDelete,
@@ -427,9 +433,13 @@ const hubspotEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get multiple contacts',
 	},
-	'contacts.createOrUpdate': {
+	'contacts.create': {
 		riskLevel: 'write',
-		description: 'Create a new contact or update an existing one',
+		description: 'Create a new contact',
+	},
+	'contacts.update': {
+		riskLevel: 'write',
+		description: 'Update an existing contact',
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
@@ -584,6 +594,19 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 	};
 	return {
 		id: 'hubspot',
+		oauthConfig: {
+			providerName: 'HubSpot',
+			authUrl: 'https://app.hubspot.com/oauth/authorize',
+			tokenUrl: 'https://api.hubapi.com/oauth/v1/token',
+			scopes: [
+				'crm.objects.contacts.read',
+				'crm.objects.contacts.write',
+				'crm.objects.companies.read',
+				'crm.objects.companies.write',
+				'crm.objects.deals.read',
+				'crm.objects.deals.write',
+			],
+		},
 		schema: HubSpotSchema,
 		options: options,
 		hooks: options.hooks,
@@ -609,6 +632,8 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 		},
 		errorHandlers: options.errorHandlers || errorHandlers,
 		keyBuilder: async (ctx: HubSpotKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -617,7 +642,9 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:hubspot:webhook_signature]: HubSpot webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -628,7 +655,9 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:hubspot:api_key]: HubSpot API Key is missing',
+						);
 					}
 
 					return res;
@@ -636,14 +665,18 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						return '';
+						throw new Error(
+							'[auth-missing:hubspot:oauth_2]: HubSpot access token is missing',
+						);
 					}
 
 					return res;
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:hubspot:${authType}]: HubSpot key is missing`,
+			);
 		},
 	} satisfies InternalHubSpotPlugin;
 }
@@ -695,9 +728,9 @@ export type {
 export type {
 	AddContactToListResponse,
 	CreateCompanyResponse,
+	CreateContactResponse,
 	CreateDealResponse,
 	CreateEngagementResponse,
-	CreateOrUpdateContactResponse,
 	CreateTicketResponse,
 	GetCompanyResponse,
 	GetContactResponse,
@@ -714,6 +747,7 @@ export type {
 	RemoveContactFromListResponse,
 	SearchCompanyByDomainResponse,
 	UpdateCompanyResponse,
+	UpdateContactResponse,
 	UpdateDealResponse,
 	UpdateTicketResponse,
 } from './endpoints/types';

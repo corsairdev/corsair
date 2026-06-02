@@ -8,11 +8,11 @@ export const DodoPaymentSchema = z
 		status: z.string(),
 		customer_id: z.string().nullable().optional(),
 		subscription_id: z.string().nullable().optional(),
-		billing: z.record(z.any()).nullable().optional(),
+		billing: z.record(z.string(), z.any()).nullable().optional(),
 		payment_link: z.string().nullable().optional(),
 		created_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const DodoRefundSchema = z
 	.object({
@@ -23,7 +23,7 @@ export const DodoRefundSchema = z
 		reason: z.string().nullable().optional(),
 		created_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const DodoCustomerSchema = z
 	.object({
@@ -33,7 +33,7 @@ export const DodoCustomerSchema = z
 		phone_number: z.string().nullable().optional(),
 		created_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const DodoSubscriptionSchema = z
 	.object({
@@ -41,10 +41,10 @@ export const DodoSubscriptionSchema = z
 		customer_id: z.string(),
 		plan_id: z.string().nullable().optional(),
 		status: z.string(),
-		billing_cycle: z.record(z.any()).nullable().optional(),
+		billing_cycle: z.record(z.string(), z.any()).nullable().optional(),
 		created_at: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Database schemas (extend base schemas with createdAt for DB storage)
 export const DodoPayment = DodoPaymentSchema.extend({

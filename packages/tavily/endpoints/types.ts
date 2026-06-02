@@ -124,7 +124,7 @@ export const TavilySearchResponseSchema = z.object({
 	response_time: z.number(),
 	usage: TavilySearchUsageSchema.optional(),
 	request_id: z.string().optional(),
-	auto_parameters: z.record(z.unknown()).optional(),
+	auto_parameters: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type TavilySearchResponse = z.infer<typeof TavilySearchResponseSchema>;

@@ -214,6 +214,8 @@ export function openweathermap<const T extends OpenWeatherMapPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: OpenWeatherMapKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			// Direct key from options takes priority
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -225,7 +227,9 @@ export function openweathermap<const T extends OpenWeatherMapPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:openweathermap:${authType}]: OpenWeatherMap key is missing`,
+			);
 		},
 	} satisfies InternalOpenWeatherMapPlugin;
 }

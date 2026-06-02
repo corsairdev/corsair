@@ -757,13 +757,19 @@ export function calendly<const T extends CalendlyPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CalendlyKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:calendly:webhook_signature]: Calendly webhook signature is missing',
+					);
+				}
 				return res;
 			}
 
@@ -773,11 +779,17 @@ export function calendly<const T extends CalendlyPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:calendly:api_key]: Calendly API Key is missing',
+					);
+				}
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:calendly:${authType}]: Calendly key is missing`,
+			);
 		},
 	} satisfies InternalCalendlyPlugin;
 }

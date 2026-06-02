@@ -19,7 +19,45 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "App",
+        "pages": [
+          "app/home",
+          "app/agent-setup",
+          {
+            "group": "Get started",
+            "pages": [
+              "app/coding-agents",
+              "app/agent-sdks",
+              "app/direct-execution"
+            ]
+          },
+          {
+            "group": "Coding agents",
+            "pages": [
+              "app/coding-agents/cursor",
+              "app/coding-agents/claude-code",
+              "app/coding-agents/codex",
+              "app/coding-agents/antigravity",
+              "app/coding-agents/custom-connector"
+            ]
+          },
+          {
+            "group": "Agent SDKs",
+            "pages": ["app/vercel-ai", "app/openai", "app/claude"]
+          },
+          {
+            "group": "SDK Concepts",
+            "pages": [
+              "app/installation",
+              "app/instances-and-plugins",
+              "app/tenants-and-auth",
+              "app/types-and-errors"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
         "groups": [
           {
             "group": "Get Started",
@@ -44,15 +82,14 @@
           {
             "group": "Coding Agents",
             "pages": [
+              "mcp-adapters/coding-agents",
               "mcp-adapters/claude-code",
               "mcp-adapters/cursor"
             ]
           },
           {
             "group": "Studio",
-            "pages": [
-              "studio/overview"
-            ]
+            "pages": ["studio/overview"]
           },
           {
             "group": "Core Concepts",
@@ -70,16 +107,11 @@
           },
           {
             "group": "Auth Types",
-            "pages": [
-              "concepts/api-key",
-              "concepts/oauth"
-            ]
+            "pages": ["concepts/api-key", "concepts/oauth"]
           },
           {
             "group": "Production",
-            "pages": [
-              "production/oauth-process"
-            ]
+            "pages": ["production/oauth-process"]
           },
           {
             "group": "Workflow Engines",
@@ -97,10 +129,7 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "guides/plugins",
-              "guides/create-your-own-plugin"
-            ]
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
@@ -144,6 +173,14 @@
                 ]
               },
               {
+                "group": "Bitwarden",
+                "pages": [
+                  "plugins/bitwarden/overview",
+                  "plugins/bitwarden/api",
+                  "plugins/bitwarden/database"
+                ]
+              },
+              {
                 "group": "Box",
                 "pages": [
                   "plugins/box/overview",
@@ -171,6 +208,15 @@
                   "plugins/calendly/api",
                   "plugins/calendly/database",
                   "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "Cloudflare",
+                "pages": [
+                  "plugins/cloudflare/overview",
+                  "plugins/cloudflare/get-credentials",
+                  "plugins/cloudflare/api",
+                  "plugins/cloudflare/database"
                 ]
               },
               {
@@ -539,6 +585,15 @@
                 ]
               },
               {
+                "group": "Tally",
+                "pages": [
+                  "plugins/tally/overview",
+                  "plugins/tally/api",
+                  "plugins/tally/database",
+                  "plugins/tally/webhooks"
+                ]
+              },
+              {
                 "group": "Tavily",
                 "pages": [
                   "plugins/tavily/overview",
@@ -617,12 +672,30 @@
                 ]
               },
               {
+                "group": "Xquik",
+                "pages": [
+                  "plugins/xquik/overview",
+                  "plugins/xquik/get-credentials",
+                  "plugins/xquik/api",
+                  "plugins/xquik/database",
+                  "plugins/xquik/webhooks"
+                ]
+              },
+              {
                 "group": "Youtube",
                 "pages": [
                   "plugins/youtube/overview",
                   "plugins/youtube/get-credentials",
                   "plugins/youtube/api",
                   "plugins/youtube/database"
+                ]
+              },
+              {
+                "group": "Zendesk",
+                "pages": [
+                  "plugins/zendesk/overview",
+                  "plugins/zendesk/api",
+                  "plugins/zendesk/database"
                 ]
               },
               {
@@ -644,14 +717,61 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": [
-              "guides/webhooks",
-              "guides/workflows",
-              "guides/dashboard"
-            ]
+            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
           }
         ]
       }
     ]
-  }
+  },
+  "redirects": [
+    { "source": "/", "destination": "/app/home" },
+    { "source": "/app/introduction", "destination": "/app/home" },
+    { "source": "/hosted-sdk/overview", "destination": "/app/home" },
+    { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },
+    {
+      "source": "/hosted-sdk/instances-and-plugins",
+      "destination": "/app/instances-and-plugins"
+    },
+    {
+      "source": "/hosted-sdk/tenants-and-auth",
+      "destination": "/app/tenants-and-auth"
+    },
+    { "source": "/hosted-sdk/mcp-and-run", "destination": "/app/agent-sdks" },
+    {
+      "source": "/hosted-sdk/types-and-errors",
+      "destination": "/app/types-and-errors"
+    },
+    { "source": "/hosted-mcp/overview", "destination": "/app/agent-sdks" },
+    { "source": "/hosted-mcp/vercel-ai", "destination": "/app/vercel-ai" },
+    { "source": "/hosted-mcp/openai", "destination": "/app/openai" },
+    { "source": "/hosted-mcp/claude", "destination": "/app/claude" },
+    {
+      "source": "/hosted-mcp/custom-connector",
+      "destination": "/app/coding-agents/custom-connector"
+    },
+    {
+      "source": "/app/custom-connector",
+      "destination": "/app/coding-agents/custom-connector"
+    },
+    { "source": "/app/mcp/vercel-ai", "destination": "/app/vercel-ai" },
+    { "source": "/app/mcp/openai", "destination": "/app/openai" },
+    { "source": "/app/mcp/claude", "destination": "/app/claude" },
+    {
+      "source": "/app/mcp/custom-connector",
+      "destination": "/app/custom-connector"
+    },
+    { "source": "/app/sdk/installation", "destination": "/app/installation" },
+    {
+      "source": "/app/sdk/instances-and-plugins",
+      "destination": "/app/instances-and-plugins"
+    },
+    {
+      "source": "/app/sdk/tenants-and-auth",
+      "destination": "/app/tenants-and-auth"
+    },
+    {
+      "source": "/app/sdk/types-and-errors",
+      "destination": "/app/types-and-errors"
+    }
+  ]
 }

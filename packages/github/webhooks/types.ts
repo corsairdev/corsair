@@ -1115,7 +1115,7 @@ export type ReleaseCreatedEvent = z.infer<typeof ReleaseCreatedEventSchema>;
 export const ReleaseEditedEventSchema = z.object({
 	action: z.literal('edited'),
 	release: ReleaseSchema,
-	changes: z.record(z.unknown()).optional(),
+	changes: z.record(z.string(), z.unknown()).optional(),
 	repository: RepositorySchema,
 	sender: UserSchema,
 	installation: InstallationSchema.optional(),
@@ -1288,7 +1288,7 @@ export type WorkflowJobWaitingEvent = z.infer<
 >;
 
 export const WorkflowDispatchEventSchema = z.object({
-	inputs: z.record(z.unknown()).nullable(),
+	inputs: z.record(z.string(), z.unknown()).nullable(),
 	ref: z.string(),
 	workflow: z.string(),
 	repository: RepositorySchema,
@@ -1488,7 +1488,7 @@ export type DiscussionCreatedEvent = z.infer<
 export const DiscussionEditedEventSchema = z.object({
 	action: z.literal('edited'),
 	discussion: DiscussionSchema,
-	changes: z.record(z.unknown()).optional(),
+	changes: z.record(z.string(), z.unknown()).optional(),
 	repository: RepositorySchema,
 	sender: UserSchema,
 	installation: InstallationSchema.optional(),
@@ -1668,7 +1668,7 @@ export type DependabotAlertAutoReopenedEvent = z.infer<
 export const MemberAddedEventSchema = z.object({
 	action: z.literal('added'),
 	member: UserSchema.nullable(),
-	changes: z.record(z.unknown()).optional(),
+	changes: z.record(z.string(), z.unknown()).optional(),
 	repository: RepositorySchema,
 	sender: UserSchema,
 	installation: InstallationSchema.optional(),
@@ -1747,7 +1747,7 @@ export type MilestoneOpenedEvent = z.infer<typeof MilestoneOpenedEventSchema>;
 export const MilestoneEditedEventSchema = z.object({
 	action: z.literal('edited'),
 	milestone: MilestoneSchema,
-	changes: z.record(z.unknown()).optional(),
+	changes: z.record(z.string(), z.unknown()).optional(),
 	repository: RepositorySchema,
 	sender: UserSchema,
 	installation: InstallationSchema.optional(),

@@ -11,7 +11,7 @@ const PaymentsCreateInputSchema = z.object({
 	currency: z.string().min(1),
 	customer_id: z.string().optional(),
 	payment_method: z.string().optional(),
-	metadata: z.record(z.any()).optional(),
+	metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const PaymentsGetInputSchema = z.object({
@@ -61,7 +61,7 @@ const PaymentsListResponseSchema = z
 		data: z.array(DodoPaymentSchema),
 		has_more: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RefundsCreateResponseSchema = DodoRefundSchema;
 const CustomersCreateResponseSchema = DodoCustomerSchema;

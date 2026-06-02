@@ -1,0 +1,1292 @@
+---
+title: API
+description: "API reference for Xquik: every `xquik.api.*` operation with input and output types."
+---
+
+Every `xquik.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Media
+
+### download
+
+`media.download`
+
+Download images and videos from one or more tweets
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.media.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tweetId` | `string` | No | — |
+| `tweetIds` | `string[]` | No | — |
+| `tweetInput` | `string` | No | — |
+| `tweetUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cacheHit` | `boolean` | No | — |
+| `galleryUrl` | `string` | No | — |
+| `totalMedia` | `number` | No | — |
+| `totalTweets` | `number` | No | — |
+| `tweetId` | `string` | No | — |
+
+
+
+---
+
+### uploadFromUrl
+
+`media.uploadFromUrl`
+
+Upload public media URLs for use in Xquik tweet creation
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.media.uploadFromUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaId` | `string` | Yes | — |
+| `mediaUrl` | `string` | Yes | — |
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Trends
+
+### get
+
+`trends.get`
+
+Get trending X topics by WOEID region
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.trends.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `woeid` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `trends` | `object[]` | Yes | — |
+| `woeid` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="trends full type">
+
+```ts
+{
+  description?: string,
+  name: string,
+  query?: string,
+  rank?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tweets
+
+### batch
+
+`tweets.batch`
+
+Fetch up to 100 tweets by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.tweets.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_next_page` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `tweets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  author?: {
+    coverPicture?: string,
+    createdAt?: string,
+    description?: string,
+    followers?: number,
+    following?: number,
+    id: string,
+    location?: string,
+    name: string,
+    profilePicture?: string,
+    statusesCount?: number,
+    username: string,
+    verified?: boolean
+  },
+  bookmarkCount?: number,
+  conversationId?: string,
+  createdAt?: string,
+  entities?: {
+  },
+  id: string,
+  inReplyToId?: string,
+  inReplyToUserId?: string,
+  inReplyToUsername?: string,
+  isLimitedReply?: boolean,
+  isNoteTweet?: boolean,
+  isQuoteStatus?: boolean,
+  isReply?: boolean,
+  lang?: string,
+  likeCount?: number,
+  media?: {
+    mediaUrl?: string,
+    type?: animated_gif | photo | video,
+    url?: string
+  }[],
+  quoteCount?: number,
+  replyCount?: number,
+  retweetCount?: number,
+  source?: string,
+  text: string,
+  type?: string,
+  url?: string,
+  viewCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`tweets.create`
+
+Create a tweet or reply from a connected X account
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.tweets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `attachment_url` | `string` | No | — |
+| `community_id` | `string` | No | — |
+| `is_note_tweet` | `boolean` | No | — |
+| `media` | `string[]` | No | — |
+| `reply_to_tweet_id` | `string` | No | — |
+| `text` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success: true,
+  tweetId: string
+} | {
+  charged: boolean,
+  error: x_write_unconfirmed,
+  message?: string,
+  retryable: false,
+  status: pending_confirmation,
+  writeActionId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`tweets.delete`
+
+Delete a tweet from a connected X account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.xquik.api.tweets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tweets.get`
+
+Get a tweet with full text, author, metrics, and media
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.tweets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `author` | `object` | No | — |
+| `tweet` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  followers: number,
+  id: string,
+  profilePicture?: string,
+  username: string,
+  verified: boolean
+}
+```
+</Accordion>
+
+<Accordion title="tweet full type">
+
+```ts
+{
+  bookmarkCount: number,
+  conversationId?: string,
+  createdAt?: string,
+  entities?: {
+  },
+  id: string,
+  isNoteTweet?: boolean,
+  isQuoteStatus?: boolean,
+  isReply?: boolean,
+  likeCount: number,
+  media?: {
+    mediaUrl?: string,
+    type?: animated_gif | photo | video,
+    url?: string
+  }[],
+  quoteCount: number,
+  replyCount: number,
+  retweetCount: number,
+  source?: string,
+  text: string,
+  viewCount: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### like
+
+`tweets.like`
+
+Like a tweet from a connected X account
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.tweets.like({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### retweet
+
+`tweets.retweet`
+
+Retweet a tweet from a connected X account
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.tweets.retweet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### search
+
+`tweets.search`
+
+Search tweets with X query operators and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.tweets.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `anyWords` | `string` | No | — |
+| `cashtags` | `string` | No | — |
+| `conversationId` | `string` | No | — |
+| `exactPhrase` | `string` | No | — |
+| `excludeWords` | `string` | No | — |
+| `fromUser` | `string` | No | — |
+| `hashtags` | `string` | No | — |
+| `inReplyToTweetId` | `string` | No | — |
+| `language` | `string` | No | — |
+| `mediaType` | `gifs \| images \| links \| media \| none \| videos` | No | — |
+| `mentioning` | `string` | No | — |
+| `minFaves` | `number` | No | — |
+| `minQuotes` | `number` | No | — |
+| `minReplies` | `number` | No | — |
+| `minRetweets` | `number` | No | — |
+| `quotes` | `exclude \| include \| only` | No | — |
+| `quotesOfTweetId` | `string` | No | — |
+| `replies` | `exclude \| include \| only` | No | — |
+| `retweets` | `exclude \| include \| only` | No | — |
+| `retweetsOfTweetId` | `string` | No | — |
+| `sinceDate` | `string` | No | — |
+| `toUser` | `string` | No | — |
+| `untilDate` | `string` | No | — |
+| `url` | `string` | No | — |
+| `verifiedOnly` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `q` | `string` | Yes | — |
+| `queryType` | `Latest \| Top` | No | — |
+| `sinceTime` | `string` | No | — |
+| `untilTime` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_next_page` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `tweets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  author?: {
+    coverPicture?: string,
+    createdAt?: string,
+    description?: string,
+    followers?: number,
+    following?: number,
+    id: string,
+    location?: string,
+    name: string,
+    profilePicture?: string,
+    statusesCount?: number,
+    username: string,
+    verified?: boolean
+  },
+  bookmarkCount?: number,
+  conversationId?: string,
+  createdAt?: string,
+  entities?: {
+  },
+  id: string,
+  inReplyToId?: string,
+  inReplyToUserId?: string,
+  inReplyToUsername?: string,
+  isLimitedReply?: boolean,
+  isNoteTweet?: boolean,
+  isQuoteStatus?: boolean,
+  isReply?: boolean,
+  lang?: string,
+  likeCount?: number,
+  media?: {
+    mediaUrl?: string,
+    type?: animated_gif | photo | video,
+    url?: string
+  }[],
+  quoteCount?: number,
+  replyCount?: number,
+  retweetCount?: number,
+  source?: string,
+  text: string,
+  type?: string,
+  url?: string,
+  viewCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlike
+
+`tweets.unlike`
+
+Remove a like from a connected X account
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.tweets.unlike({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Users
+
+### batch
+
+`users.batch`
+
+Look up up to 100 X users by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.users.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_next_page` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  coverPicture?: string,
+  createdAt?: string,
+  description?: string,
+  followers?: number,
+  following?: number,
+  id: string,
+  location?: string,
+  name: string,
+  profilePicture?: string,
+  statusesCount?: number,
+  username: string,
+  verified?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### follow
+
+`users.follow`
+
+Follow an X user from a connected account
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.users.follow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### followers
+
+`users.followers`
+
+List followers of an X user
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.users.followers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_next_page` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  coverPicture?: string,
+  createdAt?: string,
+  description?: string,
+  followers?: number,
+  following?: number,
+  id: string,
+  location?: string,
+  name: string,
+  profilePicture?: string,
+  statusesCount?: number,
+  username: string,
+  verified?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### following
+
+`users.following`
+
+List accounts an X user follows
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.users.following({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_next_page` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  coverPicture?: string,
+  createdAt?: string,
+  description?: string,
+  followers?: number,
+  following?: number,
+  id: string,
+  location?: string,
+  name: string,
+  profilePicture?: string,
+  statusesCount?: number,
+  username: string,
+  verified?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get an X user profile by username or user ID
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coverPicture` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `description` | `string` | No | — |
+| `followers` | `number` | No | — |
+| `following` | `number` | No | — |
+| `id` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `profilePicture` | `string` | No | — |
+| `statusesCount` | `number` | No | — |
+| `username` | `string` | Yes | — |
+| `verified` | `boolean` | No | — |
+
+
+
+---
+
+### search
+
+`users.search`
+
+Search X users by name or username
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.users.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_next_page` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  coverPicture?: string,
+  createdAt?: string,
+  description?: string,
+  followers?: number,
+  following?: number,
+  id: string,
+  location?: string,
+  name: string,
+  profilePicture?: string,
+  statusesCount?: number,
+  username: string,
+  verified?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tweets
+
+`users.tweets`
+
+List recent tweets posted by an X user
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.users.tweets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `anyWords` | `string` | No | — |
+| `cashtags` | `string` | No | — |
+| `conversationId` | `string` | No | — |
+| `exactPhrase` | `string` | No | — |
+| `excludeWords` | `string` | No | — |
+| `fromUser` | `string` | No | — |
+| `hashtags` | `string` | No | — |
+| `inReplyToTweetId` | `string` | No | — |
+| `language` | `string` | No | — |
+| `mediaType` | `gifs \| images \| links \| media \| none \| videos` | No | — |
+| `mentioning` | `string` | No | — |
+| `minFaves` | `number` | No | — |
+| `minQuotes` | `number` | No | — |
+| `minReplies` | `number` | No | — |
+| `minRetweets` | `number` | No | — |
+| `quotes` | `exclude \| include \| only` | No | — |
+| `quotesOfTweetId` | `string` | No | — |
+| `replies` | `exclude \| include \| only` | No | — |
+| `retweets` | `exclude \| include \| only` | No | — |
+| `retweetsOfTweetId` | `string` | No | — |
+| `sinceDate` | `string` | No | — |
+| `toUser` | `string` | No | — |
+| `untilDate` | `string` | No | — |
+| `url` | `string` | No | — |
+| `verifiedOnly` | `boolean` | No | — |
+| `includeParentTweet` | `boolean` | No | — |
+| `includeReplies` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `has_next_page` | `boolean` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `tweets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tweets full type">
+
+```ts
+{
+  author?: {
+    coverPicture?: string,
+    createdAt?: string,
+    description?: string,
+    followers?: number,
+    following?: number,
+    id: string,
+    location?: string,
+    name: string,
+    profilePicture?: string,
+    statusesCount?: number,
+    username: string,
+    verified?: boolean
+  },
+  bookmarkCount?: number,
+  conversationId?: string,
+  createdAt?: string,
+  entities?: {
+  },
+  id: string,
+  inReplyToId?: string,
+  inReplyToUserId?: string,
+  inReplyToUsername?: string,
+  isLimitedReply?: boolean,
+  isNoteTweet?: boolean,
+  isQuoteStatus?: boolean,
+  isReply?: boolean,
+  lang?: string,
+  likeCount?: number,
+  media?: {
+    mediaUrl?: string,
+    type?: animated_gif | photo | video,
+    url?: string
+  }[],
+  quoteCount?: number,
+  replyCount?: number,
+  retweetCount?: number,
+  source?: string,
+  text: string,
+  type?: string,
+  url?: string,
+  viewCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unfollow
+
+`users.unfollow`
+
+Unfollow an X user from a connected account
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.users.unfollow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create an Xquik webhook endpoint subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | Yes | — |
+| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
+| `id` | `string` | Yes | — |
+| `isActive` | `boolean` | Yes | — |
+| `url` | `string` | Yes | — |
+| `secret` | `string` | Yes | — |
+
+
+
+---
+
+### deactivate
+
+`webhooks.deactivate`
+
+Deactivate an Xquik webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.webhooks.deactivate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deliveries
+
+`webhooks.deliveries`
+
+List delivery attempts for an Xquik webhook endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.webhooks.deliveries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deliveries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="deliveries full type">
+
+```ts
+{
+  attempts: number,
+  createdAt: string,
+  deliveredAt?: string,
+  id: string,
+  lastError?: string,
+  lastStatusCode?: number,
+  status: string,
+  streamEventId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List configured Xquik webhook endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  createdAt: string,
+  eventTypes: tweet.new | tweet.quote | tweet.reply | tweet.retweet[],
+  id: string,
+  isActive: boolean,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### test
+
+`webhooks.test`
+
+Send a test delivery to an Xquik webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.webhooks.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string` | No | — |
+| `statusCode` | `number` | Yes | — |
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a Xquik webhook URL, event types, or active state
+
+**Risk:** `write`
+
+```ts
+await corsair.xquik.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | No | — |
+| `id` | `string` | Yes | — |
+| `isActive` | `boolean` | No | — |
+| `url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | Yes | — |
+| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
+| `id` | `string` | Yes | — |
+| `isActive` | `boolean` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+## Write Actions
+
+### get
+
+`writeActions.get`
+
+Check the status of a pending Xquik write action
+
+**Risk:** `read`
+
+```ts
+await corsair.xquik.api.writeActions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `string` | Yes | — |
+| `charged` | `boolean` | Yes | — |
+| `confirmationAttempts` | `number` | No | — |
+| `confirmationCheckedAt` | `string` | No | — |
+| `confirmationSource` | `string` | No | — |
+| `confirmedAt` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `messageId` | `string` | No | — |
+| `retryable` | `boolean` | Yes | — |
+| `sendDispatched` | `boolean` | Yes | — |
+| `sendDispatchedAt` | `string` | No | — |
+| `status` | `failed \| pending_confirmation \| success` | Yes | — |
+| `targetId` | `string` | No | — |
+| `tweetId` | `string` | No | — |
+| `writeActionId` | `string` | Yes | — |
+
+
+
+---
+

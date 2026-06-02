@@ -20,7 +20,7 @@ const SharepointListSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SharepointItemSchema = z
 	.object({
@@ -28,10 +28,10 @@ const SharepointItemSchema = z
 		createdDateTime: z.string().optional(),
 		lastModifiedDateTime: z.string().optional(),
 		webUrl: z.string().optional(),
-		fields: z.record(z.unknown()).optional(),
+		fields: z.record(z.string(), z.unknown()).optional(),
 		'@odata.etag': z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Graph API DriveItem — used for both files and folders
 const SharepointFileSchema = z
@@ -42,11 +42,11 @@ const SharepointFileSchema = z
 		size: z.number().optional(),
 		createdDateTime: z.string().optional(),
 		lastModifiedDateTime: z.string().optional(),
-		file: z.record(z.unknown()).optional(),
-		folder: z.record(z.unknown()).optional(),
-		parentReference: z.record(z.unknown()).optional(),
+		file: z.record(z.string(), z.unknown()).optional(),
+		folder: z.record(z.string(), z.unknown()).optional(),
+		parentReference: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SharepointFolderSchema = SharepointFileSchema;
 
@@ -58,7 +58,7 @@ const SharepointUserSchema = z
 		userPrincipalName: z.string().optional(),
 		jobTitle: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Lists
@@ -132,7 +132,7 @@ const ListFieldSchema = z
 		readOnly: z.boolean().optional(),
 		defaultValue: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ListsListColumnsResponseSchema = z.object({
 	value: z.array(ListFieldSchema).optional(),
@@ -158,13 +158,13 @@ const ListsRenderDataAsStreamInputSchema = z.object({
 
 const ListsRenderDataAsStreamResponseSchema = z
 	.object({
-		Row: z.array(z.record(z.unknown())).optional(),
+		Row: z.array(z.record(z.string(), z.unknown())).optional(),
 		NextHref: z.string().optional(),
 		PrevHref: z.string().optional(),
 		FirstRow: z.number().optional(),
 		LastRow: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Items
@@ -207,14 +207,14 @@ const ItemsGetResponseSchema = SharepointItemSchema;
 
 const ItemsCreateInputSchema = z.object({
 	list_title: z.string(),
-	fields: z.record(z.unknown()),
+	fields: z.record(z.string(), z.unknown()),
 });
 
 const ItemsCreateResponseSchema = SharepointItemSchema;
 
 const ItemsCreateByGuidInputSchema = z.object({
 	list_guid: z.string(),
-	fields: z.record(z.unknown()),
+	fields: z.record(z.string(), z.unknown()),
 });
 
 const ItemsCreateByGuidResponseSchema = SharepointItemSchema;
@@ -222,7 +222,7 @@ const ItemsCreateByGuidResponseSchema = SharepointItemSchema;
 const ItemsCreateInFolderInputSchema = z.object({
 	list_title: z.string(),
 	folder_path: z.string(),
-	fields: z.record(z.unknown()),
+	fields: z.record(z.string(), z.unknown()),
 });
 
 const ItemsCreateInFolderResponseSchema = SharepointItemSchema;
@@ -230,7 +230,7 @@ const ItemsCreateInFolderResponseSchema = SharepointItemSchema;
 const ItemsUpdateInputSchema = z.object({
 	list_title: z.string(),
 	item_id: z.number(),
-	fields: z.record(z.unknown()),
+	fields: z.record(z.string(), z.unknown()),
 	etag: z.string().optional(),
 });
 
@@ -267,9 +267,9 @@ const ItemsGetVersionResponseSchema = z
 	.object({
 		id: z.string().optional(),
 		lastModifiedDateTime: z.string().optional(),
-		fields: z.record(z.unknown()).optional(),
+		fields: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsGetEtagInputSchema = z.object({
 	list_title: z.string(),
@@ -314,7 +314,7 @@ const AttachmentSchema = z
 		FileName: z.string().optional(),
 		ServerRelativeUrl: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsListAttachmentsResponseSchema = z.object({
 	value: z.array(AttachmentSchema).optional(),
@@ -498,7 +498,7 @@ const GraphGroupSchema = z
 		description: z.string().optional(),
 		mail: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const UsersListGroupsInputSchema = z.object({});
 
@@ -549,9 +549,9 @@ const SearchHitSchema = z
 		hitId: z.string().optional(),
 		rank: z.number().optional(),
 		summary: z.string().optional(),
-		resource: z.record(z.unknown()).optional(),
+		resource: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchHitsContainerSchema = z.object({
 	hits: z.array(SearchHitSchema).optional(),
@@ -570,7 +570,7 @@ const SearchQueryResponseSchema = z
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchSuggestInputSchema = z.object({
 	query_text: z.string(),
@@ -581,9 +581,9 @@ const SearchSuggestInputSchema = z.object({
 
 const SearchSuggestResponseSchema = z
 	.object({
-		value: z.array(z.record(z.unknown())).optional(),
+		value: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Content Types
@@ -597,7 +597,7 @@ const ContentTypeSchema = z
 		group: z.string().optional(),
 		hidden: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ContentTypesGetInputSchema = z.object({
 	content_type_id: z.string(),
@@ -666,7 +666,7 @@ const ContentTypesAddFieldLinkResponseSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ContentTypesCreateListFieldInputSchema = z.object({
 	list_title: z.string(),
@@ -737,7 +737,7 @@ const RoleDefinitionSchema = z
 		Name: z.string().optional(),
 		Description: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PermissionsGetRoleDefinitionsInputSchema = z.object({});
 
@@ -757,9 +757,9 @@ const WebInfoSchema = z
 		webUrl: z.string().optional(),
 		createdDateTime: z.string().optional(),
 		lastModifiedDateTime: z.string().optional(),
-		siteCollection: z.record(z.unknown()).optional(),
+		siteCollection: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebGetInfoInputSchema = z.object({});
 
@@ -780,7 +780,7 @@ const WebGetSitePageResponseSchema = z
 		title: z.string().optional(),
 		webUrl: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebCreateSubsiteInputSchema = z.object({
 	title: z.string(),
@@ -812,7 +812,7 @@ const WebGetContextInfoResponseSchema = z
 		SiteFullUrl: z.string().optional(),
 		WebFullUrl: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebGetDriveItemByPathInputSchema = z.object({
 	site_id: z.string(),
@@ -827,10 +827,10 @@ const DriveItemSchema = z
 		webUrl: z.string().optional(),
 		createdDateTime: z.string().optional(),
 		lastModifiedDateTime: z.string().optional(),
-		file: z.record(z.unknown()).optional(),
-		folder: z.record(z.unknown()).optional(),
+		file: z.record(z.string(), z.unknown()).optional(),
+		folder: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebGetDriveItemByPathResponseSchema = DriveItemSchema;
 
@@ -859,7 +859,7 @@ const RecycleBinItemSchema = z
 		Size: z.string().optional(),
 		ItemType: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const RecycleBinListInputSchema = z.object({
 	row_limit: z.number().optional(),
@@ -908,7 +908,7 @@ const DriveGetAnalyticsResponseSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DriveListRecentItemsInputSchema = z.object({
 	site_id: z.string(),
@@ -959,7 +959,7 @@ const DriveCreateSharingLinkResponseSchema = z
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DriveUpdateItemInputSchema = z.object({
 	site_id: z.string(),
@@ -1010,7 +1010,7 @@ const SocialActorSchema = z
 		StatusText: z.string().optional(),
 		Uri: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SocialGetFollowedInputSchema = z.object({
 	types: z.number().optional(),
@@ -1038,7 +1038,7 @@ const WebhookSubscriptionSchema = z
 		notificationUrl: z.string().optional(),
 		resource: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookSubscriptionsGetInputSchema = z.object({
 	list_id: z.string(),

@@ -218,7 +218,7 @@ export type {
 	ListOperationsOptions,
 	PluginDocsIntrospection,
 } from './inspect';
-export { introspectPluginForDocs } from './inspect';
+export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,

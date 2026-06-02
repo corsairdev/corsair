@@ -33,7 +33,7 @@ const ActivityContributorsSchema = z
 		training_frequency: z.number().nullable().optional(),
 		training_volume: z.number().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ReadinessContributorsSchema = z
 	.object({
@@ -46,7 +46,7 @@ const ReadinessContributorsSchema = z
 		resting_heart_rate: z.number().nullable().optional(),
 		sleep_balance: z.number().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SleepContributorsSchema = z
 	.object({
@@ -58,7 +58,7 @@ const SleepContributorsSchema = z
 		timing: z.number().nullable().optional(),
 		total_sleep: z.number().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Output Schemas ───────────────────────────────────────────────────────────
 
@@ -99,7 +99,7 @@ const DailyActivitySchema = z
 		day: z.string(),
 		timestamp: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const DailyReadinessSchema = z
 	.object({
@@ -111,7 +111,7 @@ const DailyReadinessSchema = z
 		temperature_trend_deviation: z.number().nullable().optional(),
 		timestamp: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const DailySleepSchema = z
 	.object({
@@ -121,7 +121,7 @@ const DailySleepSchema = z
 		score: z.number().nullable().optional(),
 		timestamp: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const SummaryGetActivityResponseSchema = z.object({
 	data: z.array(DailyActivitySchema),

@@ -8,7 +8,8 @@ import * as Tickets from './tickets';
 export const ContactsEndpoints = {
 	get: Contacts.get,
 	getMany: Contacts.getMany,
-	createOrUpdate: Contacts.createOrUpdate,
+	create: Contacts.create,
+	update: Contacts.update,
 	delete: Contacts.deleteContact,
 	getRecentlyCreated: Contacts.getRecentlyCreated,
 	getRecentlyUpdated: Contacts.getRecentlyUpdated,

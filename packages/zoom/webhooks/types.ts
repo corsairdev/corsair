@@ -17,7 +17,7 @@ const ZoomMeetingObjectSchema = z
 		duration: z.number().optional(),
 		timezone: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomParticipantObjectSchema = z
 	.object({
@@ -28,7 +28,7 @@ const ZoomParticipantObjectSchema = z
 		leave_time: z.string().optional(),
 		leave_reason: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomWebinarObjectSchema = z
 	.object({
@@ -41,7 +41,7 @@ const ZoomWebinarObjectSchema = z
 		duration: z.number().optional(),
 		timezone: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomRecordingObjectSchema = z
 	.object({
@@ -72,16 +72,16 @@ const ZoomRecordingObjectSchema = z
 						status: z.string().optional(),
 						recording_type: z.string().optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomPayloadBaseSchema = z.object({
 	account_id: z.string().optional(),
 	// Use unknown for the object to allow for any properties
-	object: z.record(z.unknown()),
+	object: z.record(z.string(), z.unknown()),
 });
 
 export const MeetingCreatedPayloadSchema = z.object({
