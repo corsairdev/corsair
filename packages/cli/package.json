@@ -11,7 +11,7 @@
   },
   "exports": {
     ".": {
-      "dev-source": "./index.ts",
+      "dev-source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }

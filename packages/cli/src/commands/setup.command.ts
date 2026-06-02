@@ -15,6 +15,7 @@ export default class SetupCommand extends BaseCommand {
 	getOptions(): CommandOption[] {
 		return [
 			{ short: '-b', long: '--backfill', description: 'Seed data while initializing' },
+			{ short: '-t', long: '--tenant <id>', description: 'Tenant id for multi-tenant setup' },
 			{ short: '-p', long: '--plugin <id>', description: 'Plugin id for credentials' },
 		];
 	}
@@ -25,43 +26,21 @@ export default class SetupCommand extends BaseCommand {
 
 	async action({ options }: CommandActionData) {
 		const cwd = process.cwd();
-		const { backfill } = options;
-		const credentials = this.parseCredentialsFromArgv();
+		const backfill = options.backfill || this.hasLegacyBackfillFlag();
+		const tenantId = options.tenant;
 		const instance = await getCorsairInstance({ cwd });
 
-		await setupCorsair(
-			instance as Parameters<typeof setupCorsair>[0],
-			{ backfill, credentials, caller: 'cli' }
-		);
+		await setupCorsair(instance as Parameters<typeof setupCorsair>[0], {
+			backfill,
+			tenantId,
+			caller: 'cli',
+		});
 	}
 
-	private parseCredentialsFromArgv(): Record<string, Record<string, string>> {
-		const credentials: Record<string, Record<string, string>> = {};
-		let currentPlugin: string | null = null;
-
+	private hasLegacyBackfillFlag(): boolean {
 		const setupIdx = process.argv.indexOf('setup');
 		const rawArgs = setupIdx >= 0 ? process.argv.slice(setupIdx + 1) : [];
-
-		for (let i = 0; i < rawArgs.length; i++) {
-			const arg = rawArgs[i]!;
-
-			if (arg === '--plugin' || arg === '-p') {
-				currentPlugin = rawArgs[++i] ?? null;
-				if (currentPlugin && !credentials[currentPlugin]) credentials[currentPlugin] = {};
-				continue;
-			}
-			if (arg.startsWith('--plugin=') || arg.startsWith('-p=')) {
-				currentPlugin = arg.slice(arg.indexOf('=') + 1);
-				if (!credentials[currentPlugin]) credentials[currentPlugin] = {};
-				continue;
-			}
-			if (arg.startsWith('-')) continue;
-			if (currentPlugin && arg.includes('=')) {
-				const eqIdx = arg.indexOf('=');
-				credentials[currentPlugin]![arg.slice(0, eqIdx)] = arg.slice(eqIdx + 1);
-			}
-		}
-
-		return credentials;
+		return rawArgs.some((arg) => arg === '-backfill');
 	}
+
 }
