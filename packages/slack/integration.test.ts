@@ -263,8 +263,11 @@ describe('Slack plugin integration', () => {
 			});
 
 			expect(searchEvents.length).toBeGreaterThan(0);
-		} catch (error: any) {
-			expect(/not_authed|not_allowed|missing_scope|fatal_error|invalid_auth/.test(error.message)).toBe(true);
+		} catch (error: unknown) {
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			const isAuthError = /not_authed|not_allowed|missing_scope|fatal_error|invalid_auth/.test(errorMessage);
+
+			expect(isAuthError).toBe(true);
 		} finally {
 			testDb.cleanup();
 		}

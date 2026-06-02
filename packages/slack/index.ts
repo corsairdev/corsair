@@ -32,12 +32,6 @@ import {
 	listTeams,
 } from './endpoints/admin';
 
-export const Admin = {
-	listTeams,
-	conversationsSearch,
-	conversationsGetTeams,
-	conversationsSetTeams,
-};
 import { SlackSchema } from './schema';
 import {
 	ChallengeWebhooks,
@@ -81,10 +75,17 @@ import {
 	UserChangeEventSchema,
 } from './webhooks/types';
 
-export type { SlackReactionName } from './endpoints';
-
 import type { PickAuth } from 'corsair/core';
 import { errorHandlers } from './error-handlers';
+
+export const Admin = {
+	listTeams,
+	conversationsSearch,
+	conversationsGetTeams,
+	conversationsSetTeams,
+};
+
+export type { SlackReactionName } from './endpoints';
 
 export type SlackEndpoints = {
 	channelsArchive: SlackEndpoint<'channelsArchive'>;
@@ -888,4 +889,3 @@ export type {
 	UsersProfileGetResponse,
 	UsersProfileSetResponse,
 } from './endpoints/types';
-export * from './endpoints/admin';

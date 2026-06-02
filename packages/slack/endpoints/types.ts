@@ -874,7 +874,7 @@ const AdminConversationsGetTeamsResponseSchema = SlackResponseSchema.extend({
 	team_ids: z.array(z.string()).optional(),
 }).loose();
 
-const AdminConversationsSetTeamsResponseSchema = SlackResponseSchema;
+const AdminConversationsSetTeamsResponseSchema = SlackResponseSchema.extend({}).loose();
 
 export const SlackEndpointOutputSchemas = {
 	channelsArchive: ConversationsArchiveResponseSchema,
