@@ -9,14 +9,14 @@ const ThemeColorsSchema = z
 		question: z.string().optional(),
 		background: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemeFieldsSchema = z
 	.object({
 		alignment: z.enum(['left', 'center']).optional(),
 		font_size: z.enum(['small', 'medium', 'large']).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemeBackgroundSchema = z
 	.object({
@@ -24,7 +24,7 @@ const ThemeBackgroundSchema = z
 		layout: z.enum(['fullscreen', 'repeat', 'no-repeat']).optional(),
 		brightness: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemeScreensSchema = z
 	.object({
@@ -32,7 +32,7 @@ const ThemeScreensSchema = z
 		font_size: z.string().optional(),
 		alignment: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspaceMemberSchema = z
 	.object({
@@ -40,14 +40,14 @@ const WorkspaceMemberSchema = z
 		role: z.string().optional(),
 		email: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspaceFormsInfoSchema = z
 	.object({
 		href: z.string().optional(),
 		count: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ImageResponseSchema = z
 	.object({
@@ -60,7 +60,7 @@ const ImageResponseSchema = z
 		has_alpha: z.boolean().optional(),
 		media_type: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhookConfigSchema = z
 	.object({
@@ -75,7 +75,7 @@ const WebhookConfigSchema = z
 		verify_ssl: z.boolean().optional(),
 		event_types: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormFieldSchema = z
 	.object({
@@ -89,9 +89,9 @@ const FormFieldSchema = z
 				type: z.string().optional(),
 				scale: z.number().optional(),
 				// properties is freeform per field type
-				properties: z.record(z.unknown()).optional(),
+				properties: z.record(z.string(), z.unknown()).optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		properties: z
 			.object({
@@ -108,7 +108,7 @@ const FormFieldSchema = z
 				vertical_alignment: z.boolean().optional(),
 				allow_multiple_selection: z.boolean().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		validations: z
 			.object({
@@ -118,10 +118,10 @@ const FormFieldSchema = z
 				max_length: z.number().optional(),
 				min_length: z.number().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormSettingsSchema = z
 	.object({
@@ -146,10 +146,10 @@ const FormSettingsSchema = z
 		redirect_after_submit_url: z.string().optional(),
 		show_number_of_submissions: z.boolean().optional(),
 		// capabilities and notifications have dynamic sub-structures
-		capabilities: z.record(z.unknown()).optional(),
-		notifications: z.record(z.unknown()).optional(),
+		capabilities: z.record(z.string(), z.unknown()).optional(),
+		notifications: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WelcomeScreenSchema = z
 	.object({
@@ -160,9 +160,9 @@ const WelcomeScreenSchema = z
 				href: z.string().optional(),
 				type: z.string().optional(),
 				scale: z.number().optional(),
-				properties: z.record(z.unknown()).optional(),
+				properties: z.record(z.string(), z.unknown()).optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		properties: z
 			.object({
@@ -170,10 +170,10 @@ const WelcomeScreenSchema = z
 				show_button: z.boolean().optional(),
 				description: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThankyouScreenSchema = z
 	.object({
@@ -184,9 +184,9 @@ const ThankyouScreenSchema = z
 				href: z.string().optional(),
 				type: z.string().optional(),
 				scale: z.number().optional(),
-				properties: z.record(z.unknown()).optional(),
+				properties: z.record(z.string(), z.unknown()).optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		properties: z
 			.object({
@@ -197,10 +197,10 @@ const ThankyouScreenSchema = z
 				description: z.string().optional(),
 				share_icons: z.boolean().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const LogicJumpSchema = z
 	.object({
@@ -209,7 +209,7 @@ const LogicJumpSchema = z
 		// actions have dynamic condition trees per Typeform's logic system
 		actions: z.array(z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const JsonPatchOperationSchema = z
 	.object({
@@ -219,7 +219,7 @@ const JsonPatchOperationSchema = z
 		value: z.unknown().optional(),
 		from: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ResponseAnswerSchema = z
 	.object({
@@ -239,7 +239,7 @@ const ResponseAnswerSchema = z
 				label: z.string().optional(),
 				other: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		choices: z
 			.object({
@@ -248,7 +248,7 @@ const ResponseAnswerSchema = z
 				labels: z.array(z.string()).optional(),
 				other: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		field: z
 			.object({
@@ -256,36 +256,35 @@ const ResponseAnswerSchema = z
 				ref: z.string().optional(),
 				type: z.string().optional(),
 			})
-			.passthrough()
+			.loose()
 			.optional(),
 		// payment details vary and have no fixed schema
-		payment: z.record(z.unknown()).optional(),
+		payment: z.record(z.string(), z.unknown()).optional(),
 		// multi_format (audio/video) has provider-specific structure
-		multi_format: z.record(z.unknown()).optional(),
+		multi_format: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
 // Me
-const MeGetInputSchema = z.object({}).passthrough();
+const MeGetInputSchema = z.object({}).loose();
 
 // Forms
-const FormsListInputSchema = z
-	.object({
-		page: z.number().optional(),
-		search: z.string().optional(),
-		sort_by: z.enum(['created_at', 'last_updated_at']).optional(),
-		order_by: z.enum(['asc', 'desc']).optional(),
-		page_size: z.number().optional(),
-		workspace_id: z.string().optional(),
-	})
+const FormsListInputSchema = z.object({
+	page: z.number().optional(),
+	search: z.string().optional(),
+	sort_by: z.enum(['created_at', 'last_updated_at']).optional(),
+	order_by: z.enum(['asc', 'desc']).optional(),
+	page_size: z.number().optional(),
+	workspace_id: z.string().optional(),
+});
 
 const FormsGetInputSchema = z
 	.object({
 		form_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsCreateInputSchema = z
 	.object({
@@ -293,13 +292,13 @@ const FormsCreateInputSchema = z
 		type: z.string().optional(),
 		fields: z.array(FormFieldSchema).optional(),
 		logic: z.array(LogicJumpSchema).optional(),
-		theme: z.object({ href: z.string() }).passthrough().optional(),
+		theme: z.object({ href: z.string() }).loose().optional(),
 		settings: FormSettingsSchema.optional(),
-		workspace: z.object({ href: z.string() }).passthrough().optional(),
+		workspace: z.object({ href: z.string() }).loose().optional(),
 		welcome_screens: z.array(WelcomeScreenSchema).optional(),
 		thankyou_screens: z.array(ThankyouScreenSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsUpdateInputSchema = z
 	.object({
@@ -308,34 +307,34 @@ const FormsUpdateInputSchema = z
 		type: z.string().optional(),
 		fields: z.array(FormFieldSchema).optional(),
 		logic: z.array(LogicJumpSchema).optional(),
-		theme: z.object({ href: z.string() }).passthrough().optional(),
+		theme: z.object({ href: z.string() }).loose().optional(),
 		hidden: z.array(z.string()).optional(),
 		settings: FormSettingsSchema.optional(),
-		variables: z.record(z.unknown()).optional(),
-		workspace: z.object({ href: z.string() }).passthrough().optional(),
+		variables: z.record(z.string(), z.unknown()).optional(),
+		workspace: z.object({ href: z.string() }).loose().optional(),
 		welcome_screens: z.array(WelcomeScreenSchema).optional(),
 		thankyou_screens: z.array(ThankyouScreenSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsPatchInputSchema = z
 	.object({
 		form_id: z.string(),
 		operations: z.array(JsonPatchOperationSchema),
 	})
-	.passthrough();
+	.loose();
 
 const FormsDeleteInputSchema = z
 	.object({
 		form_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsGetMessagesInputSchema = z
 	.object({
 		form_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsUpdateMessagesInputSchema = z
 	.object({
@@ -346,7 +345,7 @@ const FormsUpdateMessagesInputSchema = z
 		block_shortText_placeholder: z.string().optional(),
 		label_buttonNoAnswer_default: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // Responses
 const ResponsesListInputSchema = z
@@ -365,20 +364,20 @@ const ResponsesListInputSchema = z
 		excluded_response_ids: z.string().optional(),
 		included_response_ids: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ResponsesDeleteInputSchema = z
 	.object({
 		form_id: z.string(),
 		included_response_ids: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const ResponsesGetAllFilesInputSchema = z
 	.object({
 		form_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // Workspaces
 const WorkspacesListInputSchema = z
@@ -387,42 +386,42 @@ const WorkspacesListInputSchema = z
 		search: z.string().optional(),
 		page_size: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesGetInputSchema = z
 	.object({
 		workspace_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesCreateInputSchema = z
 	.object({
 		name: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesCreateForAccountInputSchema = z
 	.object({
 		name: z.string(),
 		account_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesUpdateInputSchema = z
 	.object({
 		workspace_id: z.string(),
 		operations: z.array(JsonPatchOperationSchema),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesDeleteInputSchema = z
 	.object({
 		workspace_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // Images
-const ImagesListInputSchema = z.object({}).passthrough();
+const ImagesListInputSchema = z.object({}).loose();
 
 const ImagesCreateInputSchema = z
 	.object({
@@ -430,34 +429,34 @@ const ImagesCreateInputSchema = z
 		url: z.string().optional(),
 		image: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ImagesDeleteInputSchema = z
 	.object({
 		image_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const ImagesGetBySizeInputSchema = z
 	.object({
 		image_id: z.string(),
 		size: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const ImagesGetBackgroundBySizeInputSchema = z
 	.object({
 		image_id: z.string(),
 		size: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const ImagesGetChoiceImageBySizeInputSchema = z
 	.object({
 		image_id: z.string(),
 		size: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // Themes
 const ThemesListInputSchema = z
@@ -465,13 +464,13 @@ const ThemesListInputSchema = z
 		page: z.number().optional(),
 		page_size: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemesGetInputSchema = z
 	.object({
 		theme_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemesCreateInputSchema = z
 	.object({
@@ -483,7 +482,7 @@ const ThemesCreateInputSchema = z
 		rounded_corners: z.string().optional(),
 		has_transparent_button: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemesUpdateInputSchema = z
 	.object({
@@ -497,7 +496,7 @@ const ThemesUpdateInputSchema = z
 		rounded_corners: z.string().optional(),
 		has_transparent_button: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemesPatchInputSchema = z
 	.object({
@@ -511,27 +510,27 @@ const ThemesPatchInputSchema = z
 		rounded_corners: z.string().optional(),
 		has_transparent_button: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemesDeleteInputSchema = z
 	.object({
 		theme_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // Webhooks Config
 const WebhooksConfigListInputSchema = z
 	.object({
 		form_id: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhooksConfigGetInputSchema = z
 	.object({
 		form_id: z.string(),
 		tag: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhooksConfigCreateOrUpdateInputSchema = z
 	.object({
@@ -543,14 +542,14 @@ const WebhooksConfigCreateOrUpdateInputSchema = z
 		verify_ssl: z.boolean().optional(),
 		event_types: z.array(z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhooksConfigDeleteInputSchema = z
 	.object({
 		form_id: z.string(),
 		tag: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // Videos
 const VideosUploadInputSchema = z
@@ -559,16 +558,16 @@ const VideosUploadInputSchema = z
 		field_id: z.string(),
 		language: z.string(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Output Schemas ─────────────────────────────────────────────────────────────
 
 const MeGetResponseSchema = z
 	.object({
 		// owner_info has no fixed structure in Typeform's schema
-		owner_info: z.record(z.unknown()).optional(),
+		owner_info: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsListResponseSchema = z
 	.object({
@@ -582,22 +581,19 @@ const FormsListResponseSchema = z
 						last_updated_at: z.string().optional(),
 						settings: z
 							.object({ is_public: z.boolean().optional() })
-							.passthrough()
+							.loose()
 							.optional(),
-						theme: z
-							.object({ href: z.string().optional() })
-							.passthrough()
-							.optional(),
+						theme: z.object({ href: z.string().optional() }).loose().optional(),
 						// _links contains href refs whose keys vary by form
-						_links: z.record(z.unknown()).optional(),
+						_links: z.record(z.string(), z.unknown()).optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 		page_count: z.number().optional(),
 		total_items: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsGetResponseSchema = z
 	.object({
@@ -608,28 +604,25 @@ const FormsGetResponseSchema = z
 		last_updated_at: z.string().optional(),
 		fields: z.array(FormFieldSchema).optional(),
 		logic: z.array(LogicJumpSchema).optional(),
-		theme: z.object({ href: z.string().optional() }).passthrough().optional(),
+		theme: z.object({ href: z.string().optional() }).loose().optional(),
 		hidden: z.array(z.string()).optional(),
 		settings: FormSettingsSchema.optional(),
 		// variables have dynamic keys keyed by variable name
-		variables: z.record(z.unknown()).optional(),
-		workspace: z
-			.object({ href: z.string().optional() })
-			.passthrough()
-			.optional(),
+		variables: z.record(z.string(), z.unknown()).optional(),
+		workspace: z.object({ href: z.string().optional() }).loose().optional(),
 		welcome_screens: z.array(WelcomeScreenSchema).optional(),
 		thankyou_screens: z.array(ThankyouScreenSchema).optional(),
 		// _links structure varies and cannot be fully typed statically
-		_links: z.record(z.unknown()).optional(),
+		_links: z.record(z.string(), z.unknown()).optional(),
 		// cui_settings and captcha have no fixed public schema
-		cui_settings: z.record(z.unknown()).optional(),
-		captcha: z.record(z.unknown()).optional(),
-		meta: z.record(z.unknown()).optional(),
-		links: z.record(z.unknown()).optional(),
+		cui_settings: z.record(z.string(), z.unknown()).optional(),
+		captcha: z.record(z.string(), z.unknown()).optional(),
+		meta: z.record(z.string(), z.unknown()).optional(),
+		links: z.record(z.string(), z.unknown()).optional(),
 		language: z.string().optional(),
 		duplicate_prevention: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsCreateResponseSchema = FormsGetResponseSchema;
 
@@ -647,14 +640,14 @@ const FormsGetMessagesResponseSchema = z
 		block: z.string().optional(),
 		label: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const FormsUpdateMessagesResponseSchema = z
 	.object({
 		message: z.string().optional(),
 		success: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ResponsesListResponseSchema = z
 	.object({
@@ -669,7 +662,7 @@ const ResponsesListResponseSchema = z
 						answers: z.array(ResponseAnswerSchema).optional(),
 						calculated: z
 							.object({ score: z.number().optional() })
-							.passthrough()
+							.loose()
 							.optional(),
 						metadata: z
 							.object({
@@ -679,10 +672,10 @@ const ResponsesListResponseSchema = z
 								network_id: z.string().optional(),
 								user_agent: z.string().optional(),
 							})
-							.passthrough()
+							.loose()
 							.optional(),
 						// hidden fields have dynamic string keys set by form creator
-						hidden: z.record(z.string()).optional(),
+						hidden: z.record(z.string(), z.string()).optional(),
 						variables: z
 							.array(
 								z
@@ -692,24 +685,24 @@ const ResponsesListResponseSchema = z
 										text: z.string().optional(),
 										number: z.number().optional(),
 									})
-									.passthrough(),
+									.loose(),
 							)
 							.optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 		page_count: z.number().optional(),
 		total_items: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ResponsesDeleteResponseSchema = z
 	.object({
 		status: z.string().optional(),
 		description: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // GET /responses/files returns a ZIP binary or empty body when no files exist
 const ResponsesGetAllFilesResponseSchema = z.unknown();
@@ -726,13 +719,13 @@ const WorkspaceItemSchema = z
 		default: z.boolean().optional(),
 		account_id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesListResponseSchema = z
 	.object({
 		workspaces: z.array(WorkspaceItemSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WorkspacesGetResponseSchema = WorkspaceItemSchema;
 
@@ -740,17 +733,16 @@ const WorkspacesCreateResponseSchema = z
 	.object({
 		id: z.string().optional(),
 		name: z.string().optional(),
-		self: z.object({ href: z.string().optional() }).passthrough().optional(),
+		self: z.object({ href: z.string().optional() }).loose().optional(),
 		forms: WorkspaceFormsInfoSchema.optional(),
 		shared: z.boolean().optional(),
 		default: z.boolean().optional(),
 		members: z.array(WorkspaceMemberSchema).optional(),
 		account_id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
-const WorkspacesCreateForAccountResponseSchema =
-	WorkspacesCreateResponseSchema;
+const WorkspacesCreateForAccountResponseSchema = WorkspacesCreateResponseSchema;
 
 // Typeform PATCH /workspaces returns 204 No Content (no body)
 const WorkspacesUpdateResponseSchema = z.unknown();
@@ -784,9 +776,9 @@ const ThemeResponseSchema = z
 		background: ThemeBackgroundSchema.optional(),
 		fields: ThemeFieldsSchema.optional(),
 		// screens styling has no fixed public schema
-		screens: z.record(z.unknown()).optional(),
+		screens: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemesListResponseSchema = z
 	.object({
@@ -794,7 +786,7 @@ const ThemesListResponseSchema = z
 		page_count: z.number().optional(),
 		total_items: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ThemesGetResponseSchema = ThemeResponseSchema;
 
@@ -811,7 +803,7 @@ const WebhooksConfigListResponseSchema = z
 	.object({
 		webhooks: z.array(WebhookConfigSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhooksConfigGetResponseSchema = WebhookConfigSchema;
 
@@ -821,7 +813,7 @@ const WebhooksConfigDeleteResponseSchema = z
 	.object({
 		success: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const VideosUploadResponseSchema = z
 	.object({
@@ -829,7 +821,7 @@ const VideosUploadResponseSchema = z
 		upload_url: z.string().optional(),
 		transcode_status: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Type Exports ──────────────────────────────────────────────────────────────
 
@@ -849,29 +841,53 @@ export type FormsPatchResponse = z.infer<typeof FormsPatchResponseSchema>;
 export type FormsDeleteInput = z.infer<typeof FormsDeleteInputSchema>;
 export type FormsDeleteResponse = z.infer<typeof FormsDeleteResponseSchema>;
 export type FormsGetMessagesInput = z.infer<typeof FormsGetMessagesInputSchema>;
-export type FormsGetMessagesResponse = z.infer<typeof FormsGetMessagesResponseSchema>;
-export type FormsUpdateMessagesInput = z.infer<typeof FormsUpdateMessagesInputSchema>;
-export type FormsUpdateMessagesResponse = z.infer<typeof FormsUpdateMessagesResponseSchema>;
+export type FormsGetMessagesResponse = z.infer<
+	typeof FormsGetMessagesResponseSchema
+>;
+export type FormsUpdateMessagesInput = z.infer<
+	typeof FormsUpdateMessagesInputSchema
+>;
+export type FormsUpdateMessagesResponse = z.infer<
+	typeof FormsUpdateMessagesResponseSchema
+>;
 
 export type ResponsesListInput = z.infer<typeof ResponsesListInputSchema>;
 export type ResponsesListResponse = z.infer<typeof ResponsesListResponseSchema>;
 export type ResponsesDeleteInput = z.infer<typeof ResponsesDeleteInputSchema>;
-export type ResponsesDeleteResponse = z.infer<typeof ResponsesDeleteResponseSchema>;
-export type ResponsesGetAllFilesInput = z.infer<typeof ResponsesGetAllFilesInputSchema>;
-export type ResponsesGetAllFilesResponse = z.infer<typeof ResponsesGetAllFilesResponseSchema>;
+export type ResponsesDeleteResponse = z.infer<
+	typeof ResponsesDeleteResponseSchema
+>;
+export type ResponsesGetAllFilesInput = z.infer<
+	typeof ResponsesGetAllFilesInputSchema
+>;
+export type ResponsesGetAllFilesResponse = z.infer<
+	typeof ResponsesGetAllFilesResponseSchema
+>;
 
 export type WorkspacesListInput = z.infer<typeof WorkspacesListInputSchema>;
-export type WorkspacesListResponse = z.infer<typeof WorkspacesListResponseSchema>;
+export type WorkspacesListResponse = z.infer<
+	typeof WorkspacesListResponseSchema
+>;
 export type WorkspacesGetInput = z.infer<typeof WorkspacesGetInputSchema>;
 export type WorkspacesGetResponse = z.infer<typeof WorkspacesGetResponseSchema>;
 export type WorkspacesCreateInput = z.infer<typeof WorkspacesCreateInputSchema>;
-export type WorkspacesCreateResponse = z.infer<typeof WorkspacesCreateResponseSchema>;
-export type WorkspacesCreateForAccountInput = z.infer<typeof WorkspacesCreateForAccountInputSchema>;
-export type WorkspacesCreateForAccountResponse = z.infer<typeof WorkspacesCreateForAccountResponseSchema>;
+export type WorkspacesCreateResponse = z.infer<
+	typeof WorkspacesCreateResponseSchema
+>;
+export type WorkspacesCreateForAccountInput = z.infer<
+	typeof WorkspacesCreateForAccountInputSchema
+>;
+export type WorkspacesCreateForAccountResponse = z.infer<
+	typeof WorkspacesCreateForAccountResponseSchema
+>;
 export type WorkspacesUpdateInput = z.infer<typeof WorkspacesUpdateInputSchema>;
-export type WorkspacesUpdateResponse = z.infer<typeof WorkspacesUpdateResponseSchema>;
+export type WorkspacesUpdateResponse = z.infer<
+	typeof WorkspacesUpdateResponseSchema
+>;
 export type WorkspacesDeleteInput = z.infer<typeof WorkspacesDeleteInputSchema>;
-export type WorkspacesDeleteResponse = z.infer<typeof WorkspacesDeleteResponseSchema>;
+export type WorkspacesDeleteResponse = z.infer<
+	typeof WorkspacesDeleteResponseSchema
+>;
 
 export type ImagesListInput = z.infer<typeof ImagesListInputSchema>;
 export type ImagesListResponse = z.infer<typeof ImagesListResponseSchema>;
@@ -880,11 +896,21 @@ export type ImagesCreateResponse = z.infer<typeof ImagesCreateResponseSchema>;
 export type ImagesDeleteInput = z.infer<typeof ImagesDeleteInputSchema>;
 export type ImagesDeleteResponse = z.infer<typeof ImagesDeleteResponseSchema>;
 export type ImagesGetBySizeInput = z.infer<typeof ImagesGetBySizeInputSchema>;
-export type ImagesGetBySizeResponse = z.infer<typeof ImagesGetBySizeResponseSchema>;
-export type ImagesGetBackgroundBySizeInput = z.infer<typeof ImagesGetBackgroundBySizeInputSchema>;
-export type ImagesGetBackgroundBySizeResponse = z.infer<typeof ImagesGetBackgroundBySizeResponseSchema>;
-export type ImagesGetChoiceImageBySizeInput = z.infer<typeof ImagesGetChoiceImageBySizeInputSchema>;
-export type ImagesGetChoiceImageBySizeResponse = z.infer<typeof ImagesGetChoiceImageBySizeResponseSchema>;
+export type ImagesGetBySizeResponse = z.infer<
+	typeof ImagesGetBySizeResponseSchema
+>;
+export type ImagesGetBackgroundBySizeInput = z.infer<
+	typeof ImagesGetBackgroundBySizeInputSchema
+>;
+export type ImagesGetBackgroundBySizeResponse = z.infer<
+	typeof ImagesGetBackgroundBySizeResponseSchema
+>;
+export type ImagesGetChoiceImageBySizeInput = z.infer<
+	typeof ImagesGetChoiceImageBySizeInputSchema
+>;
+export type ImagesGetChoiceImageBySizeResponse = z.infer<
+	typeof ImagesGetChoiceImageBySizeResponseSchema
+>;
 
 export type ThemesListInput = z.infer<typeof ThemesListInputSchema>;
 export type ThemesListResponse = z.infer<typeof ThemesListResponseSchema>;
@@ -899,14 +925,30 @@ export type ThemesPatchResponse = z.infer<typeof ThemesPatchResponseSchema>;
 export type ThemesDeleteInput = z.infer<typeof ThemesDeleteInputSchema>;
 export type ThemesDeleteResponse = z.infer<typeof ThemesDeleteResponseSchema>;
 
-export type WebhooksConfigListInput = z.infer<typeof WebhooksConfigListInputSchema>;
-export type WebhooksConfigListResponse = z.infer<typeof WebhooksConfigListResponseSchema>;
-export type WebhooksConfigGetInput = z.infer<typeof WebhooksConfigGetInputSchema>;
-export type WebhooksConfigGetResponse = z.infer<typeof WebhooksConfigGetResponseSchema>;
-export type WebhooksConfigCreateOrUpdateInput = z.infer<typeof WebhooksConfigCreateOrUpdateInputSchema>;
-export type WebhooksConfigCreateOrUpdateResponse = z.infer<typeof WebhooksConfigCreateOrUpdateResponseSchema>;
-export type WebhooksConfigDeleteInput = z.infer<typeof WebhooksConfigDeleteInputSchema>;
-export type WebhooksConfigDeleteResponse = z.infer<typeof WebhooksConfigDeleteResponseSchema>;
+export type WebhooksConfigListInput = z.infer<
+	typeof WebhooksConfigListInputSchema
+>;
+export type WebhooksConfigListResponse = z.infer<
+	typeof WebhooksConfigListResponseSchema
+>;
+export type WebhooksConfigGetInput = z.infer<
+	typeof WebhooksConfigGetInputSchema
+>;
+export type WebhooksConfigGetResponse = z.infer<
+	typeof WebhooksConfigGetResponseSchema
+>;
+export type WebhooksConfigCreateOrUpdateInput = z.infer<
+	typeof WebhooksConfigCreateOrUpdateInputSchema
+>;
+export type WebhooksConfigCreateOrUpdateResponse = z.infer<
+	typeof WebhooksConfigCreateOrUpdateResponseSchema
+>;
+export type WebhooksConfigDeleteInput = z.infer<
+	typeof WebhooksConfigDeleteInputSchema
+>;
+export type WebhooksConfigDeleteResponse = z.infer<
+	typeof WebhooksConfigDeleteResponseSchema
+>;
 
 export type VideosUploadInput = z.infer<typeof VideosUploadInputSchema>;
 export type VideosUploadResponse = z.infer<typeof VideosUploadResponseSchema>;

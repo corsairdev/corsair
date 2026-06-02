@@ -1,6 +1,10 @@
-import { z } from 'zod';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import crypto from 'crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 
 // ── Webhook Payload Types ─────────────────────────────────────────────────────
 
@@ -26,7 +30,12 @@ export interface TypeformFormResponseData {
 	};
 	// answers vary per field type and cannot be fully typed statically
 	answers?: Array<Record<string, unknown>>;
-	variables?: Array<{ key?: string; type?: string; text?: string; number?: number }>;
+	variables?: Array<{
+		key?: string;
+		type?: string;
+		text?: string;
+		number?: number;
+	}>;
 	metadata?: {
 		browser?: string;
 		referer?: string;
@@ -60,22 +69,22 @@ export const TypeformFormResponsePayloadSchema = z
 				submitted_at: z.string(),
 				landed_at: z.string(),
 				// hidden fields have dynamic keys; typed as string record
-				hidden: z.record(z.string()).optional(),
+				hidden: z.record(z.string(), z.string()).optional(),
 				calculated: z
 					.object({ score: z.number().optional() })
-					.passthrough()
+					.loose()
 					.optional(),
 				definition: z
 					.object({
 						id: z.string().optional(),
 						title: z.string().optional(),
 						// fields within definition have variable shape per form
-						fields: z.array(z.record(z.unknown())).optional(),
+						fields: z.array(z.record(z.string(), z.unknown())).optional(),
 					})
-					.passthrough()
+					.loose()
 					.optional(),
 				// answers have dynamic shape depending on each field's type
-				answers: z.array(z.record(z.unknown())).optional(),
+				answers: z.array(z.record(z.string(), z.unknown())).optional(),
 				variables: z
 					.array(
 						z
@@ -85,7 +94,7 @@ export const TypeformFormResponsePayloadSchema = z
 								text: z.string().optional(),
 								number: z.number().optional(),
 							})
-							.passthrough(),
+							.loose(),
 					)
 					.optional(),
 				metadata: z
@@ -96,14 +105,15 @@ export const TypeformFormResponsePayloadSchema = z
 						network_id: z.string().optional(),
 						user_agent: z.string().optional(),
 					})
-					.passthrough()
+					.loose()
 					.optional(),
 			})
-			.passthrough(),
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
-export const TypeformFormResponseEventSchema = TypeformFormResponsePayloadSchema;
+export const TypeformFormResponseEventSchema =
+	TypeformFormResponsePayloadSchema;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -112,8 +122,8 @@ export function createTypeformMatch(eventType: string): CorsairWebhookMatcher {
 		// Parse raw body to check event_type before full payload parsing
 		const body =
 			typeof request.body === 'string'
-				// Type assertion needed because JSON.parse returns unknown
-				? (JSON.parse(request.body) as Record<string, unknown>)
+				? // Type assertion needed because JSON.parse returns unknown
+					(JSON.parse(request.body) as Record<string, unknown>)
 				: (request.body as Record<string, unknown>);
 		return body?.event_type === eventType;
 	};
@@ -169,7 +179,7 @@ export function verifyTypeformWebhookSignature(
 	const computeSignature = (body: string) =>
 		crypto.createHmac('sha256', secret).update(body).digest('base64');
 
-	const isValid = candidates.some(body => {
+	const isValid = candidates.some((body) => {
 		const expected = computeSignature(body);
 		try {
 			return crypto.timingSafeEqual(

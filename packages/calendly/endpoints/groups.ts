@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CalendlyEndpoints } from '..';
 import { makeCalendlyRequest } from '../client';
+import type { CalendlyEndpoints } from '../index';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['groupsGet'] = async (ctx, input) => {
@@ -64,7 +64,7 @@ export const list: CalendlyEndpoints['groupsList'] = async (ctx, input) => {
 		CalendlyEndpointOutputs['groupsList']
 	>('groups', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.groups) {
@@ -99,7 +99,7 @@ export const listRelationships: CalendlyEndpoints['groupsListRelationships'] =
 			CalendlyEndpointOutputs['groupsListRelationships']
 		>('group_relationships', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		await logEventFromContext(

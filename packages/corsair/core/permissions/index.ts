@@ -159,10 +159,27 @@ export type EnforcePermissionOptions = {
 	timeoutMs?: number;
 	/** Tenant ID for multi-tenant instances. Stored on the record so executePermission can scope correctly. Defaults to 'default'. */
 	tenantId?: string;
+	/**
+	 * Controls whether the call blocks until the user approves or denies.
+	 * - `'synchronous'`  → polls the DB every 500 ms; returns 'allow' on approval, 'blocked' on denial/timeout.
+	 * - `'asynchronous'` → returns 'blocked' immediately after creating the pending record.
+	 * - A no-arg function → called per-request, return value selects the mode dynamically.
+	 * Defaults to `'asynchronous'`.
+	 */
+	approvalMode?:
+		| 'synchronous'
+		| 'asynchronous'
+		| (() => 'synchronous' | 'asynchronous');
 };
 
 export type EnforcePermissionResult = {
 	result: 'allow' | 'blocked';
+	/** Why the call was blocked. Only present when result === 'blocked'. */
+	reason?: 'denied' | 'policy' | 'timeout' | 'pending';
+	/** Permission record ID. Present when a pending approval record exists. */
+	id?: string;
+	/** Permission token (the value embedded in review URLs). Present when a pending approval record exists. */
+	token?: string;
 	/**
 	 * Called by the endpoint binding layer after the endpoint executes successfully.
 	 * Marks the permission record as 'completed' (single-use approval consumed).
@@ -170,6 +187,52 @@ export type EnforcePermissionResult = {
 	 */
 	onComplete?: () => Promise<void>;
 };
+
+/**
+ * Polls a corsair_permissions row every 500 ms until it reaches a terminal state or the
+ * deadline is exceeded. Used by synchronous approval mode so the MCP tool call blocks
+ * transparently until the user acts in the UI.
+ */
+async function pollUntilResolved(
+	db: CorsairDatabase,
+	permissionId: string,
+	timeoutMs: number,
+): Promise<EnforcePermissionResult> {
+	const deadline = Date.now() + timeoutMs;
+	while (Date.now() < deadline) {
+		const record = await db.db
+			.selectFrom('corsair_permissions')
+			.select(['id', 'status'])
+			.where('id', '=', permissionId)
+			.executeTakeFirst();
+
+		if (!record) return { result: 'blocked', reason: 'pending' };
+
+		if (record.status === 'approved') {
+			return {
+				result: 'allow',
+				onComplete: async () => {
+					await db.db
+						.updateTable('corsair_permissions')
+						.set({ status: 'completed', updated_at: new Date() })
+						.where('id', '=', permissionId)
+						.execute();
+				},
+			};
+		}
+
+		if (record.status === 'denied') {
+			return { result: 'blocked', reason: 'denied' };
+		}
+
+		if (record.status === 'expired' || record.status === 'failed') {
+			return { result: 'blocked', reason: 'timeout' };
+		}
+
+		await new Promise<void>((resolve) => setTimeout(resolve, 500));
+	}
+	return { result: 'blocked', reason: 'timeout' };
+}
 
 /**
  * Evaluates the permission policy and returns whether the action is allowed.
@@ -184,6 +247,8 @@ export type EnforcePermissionResult = {
  *     - otherwise               → creates a new 'pending' record, returns 'blocked'
  *
  * Falls back to deny if no database is configured.
+ * When `approvalMode` is `'synchronous'`, pending records are polled until resolved rather
+ * than returning 'blocked' immediately.
  */
 export async function enforcePermission(
 	opts: EnforcePermissionOptions,
@@ -202,7 +267,7 @@ export async function enforcePermission(
 			`\n  Action: ${description}`,
 			`\n  To allow this, update the permission mode or add an override in your corsair config.`,
 		);
-		return { result: 'blocked' };
+		return { result: 'blocked', reason: 'policy' };
 	}
 
 	const argsJson = JSON.stringify(opts.args);
@@ -253,7 +318,23 @@ export async function enforcePermission(
 			`\n  Permission ID: ${existing.id}`,
 			`\n  Use the token to approve or deny this request.`,
 		);
-		return { result: 'blocked' };
+		const resolvedMode =
+			typeof opts.approvalMode === 'function'
+				? opts.approvalMode()
+				: opts.approvalMode;
+		if (resolvedMode === 'synchronous') {
+			return pollUntilResolved(
+				opts.db,
+				existing.id,
+				opts.timeoutMs ?? 10 * 60 * 1_000,
+			);
+		}
+		return {
+			result: 'blocked',
+			reason: 'pending',
+			id: existing.id,
+			token: existing.token,
+		};
 	}
 
 	// No existing actionable record — create a new pending approval request
@@ -287,5 +368,13 @@ export async function enforcePermission(
 		`\n  Use the token to approve or deny this request.`,
 	);
 
-	return { result: 'blocked' };
+	const resolvedMode =
+		typeof opts.approvalMode === 'function'
+			? opts.approvalMode()
+			: opts.approvalMode;
+	if (resolvedMode === 'synchronous') {
+		return pollUntilResolved(opts.db, id, timeoutMs);
+	}
+
+	return { result: 'blocked', reason: 'pending', id, token };
 }

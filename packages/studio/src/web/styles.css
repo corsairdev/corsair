@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+	--color-bg: oklch(0.15 0.01 260);
+	--color-bg-elevated: oklch(0.19 0.015 260);
+	--color-bg-hover: oklch(0.23 0.02 260);
+	--color-border: oklch(0.28 0.02 260);
+	--color-border-strong: oklch(0.38 0.02 260);
+	--color-text: oklch(0.96 0 0);
+	--color-text-muted: oklch(0.68 0.01 260);
+	--color-text-subtle: oklch(0.52 0.015 260);
+	--color-accent: oklch(0.78 0.16 70);
+	--color-accent-dim: oklch(0.55 0.12 70);
+	--color-ok: oklch(0.78 0.14 150);
+	--color-warn: oklch(0.82 0.15 85);
+	--color-err: oklch(0.68 0.2 25);
+}
+
+html,
+body,
+#root {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+code,
+pre {
+	font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 12.5px;
+}
+
+/* Subtle scrollbars */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-border-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+	background: var(--color-border-strong);
+	border-radius: 5px;
+}
+*::-webkit-scrollbar-track {
+	background: transparent;
+}

@@ -18,4 +18,4 @@ The sandbox editor on corsair.dev points to this project.
 ✅ **Multi-Tenancy** - Built-in tenant isolation  
 ✅ **Automatic Sync** - API responses automatically stored in database
 
-If you want to clone a demo and use it with your database, clone `demo/corsair-plugins`! 
+If you want to clone a demo and use it with your database, clone `demo/testing`! 

@@ -1,6 +1,10 @@
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import crypto from 'crypto';
 import { z } from 'zod';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 
 // ── Base Payload ──────────────────────────────────────────────────────────────
 
@@ -153,7 +157,7 @@ const IntercomWebhookPayloadSchema = z.object({
 	first_sent_at: z.number().optional(),
 	data: z.object({
 		type: z.string().optional(),
-		item: z.record(z.unknown()),
+		item: z.record(z.string(), z.unknown()),
 	}),
 });
 
@@ -242,7 +246,9 @@ export function verifyIntercomWebhookSignature(
 	const body = request.rawBody ?? JSON.stringify(request.payload);
 	const signatureHeader = request.headers['x-hub-signature'];
 	// x-hub-signature can be a string or string[]
-	const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
+	const signature = Array.isArray(signatureHeader)
+		? signatureHeader[0]
+		: signatureHeader;
 
 	if (!signature) {
 		return { valid: false, error: 'Missing x-hub-signature header' };

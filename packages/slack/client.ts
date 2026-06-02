@@ -1,9 +1,13 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
-import { request } from 'corsair/http';
-import { BaseWebhookHandler } from 'corsair/http';
-import { verifySlackSignature } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import {
+	BaseWebhookHandler,
+	request,
+	verifySlackSignature,
+} from 'corsair/http';
 import type { SlackEventMap, SlackEventName } from './webhooks/types';
 
 export class SlackAPIError extends Error {

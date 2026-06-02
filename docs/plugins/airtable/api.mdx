@@ -1,0 +1,438 @@
+---
+title: API
+description: "API reference for Airtable: every `airtable.api.*` operation with input and output types."
+---
+
+Every `airtable.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Bases
+
+### getMany
+
+`bases.getMany`
+
+List all accessible bases
+
+**Risk:** `read`
+
+```ts
+await corsair.airtable.api.bases.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bases` | `object[]` | Yes | — |
+| `offset` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="bases full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  permissionLevel: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSchema
+
+`bases.getSchema`
+
+Get the schema (tables, fields, views) of a base
+
+**Risk:** `read`
+
+```ts
+await corsair.airtable.api.bases.getSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `include` | `visibleFieldIds \| fieldIdsInSynced[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryFieldId: string,
+  description?: string,
+  fields: {
+    id: string,
+    type: string,
+    name: string,
+    description?: string,
+    options?: {
+    }
+  }[],
+  views: {
+    id: string,
+    type: string,
+    name: string,
+    personalForCreator?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### create
+
+`records.create`
+
+Create a record in a table
+
+**Risk:** `write`
+
+```ts
+await corsair.airtable.api.records.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `tableIdOrName` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `typecast` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: string,
+  createdTime: string,
+  fields: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOrUpdate
+
+`records.createOrUpdate`
+
+Create or update a record using upsert
+
+**Risk:** `write`
+
+```ts
+await corsair.airtable.api.records.createOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `tableIdOrName` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `fieldsToMergeOn` | `string[]` | Yes | — |
+| `typecast` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: string,
+  createdTime: string,
+  fields: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Delete a record from a table [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.airtable.api.records.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `tableIdOrName` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`records.get`
+
+Get a single record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.airtable.api.records.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `tableIdOrName` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `returnFieldsByFieldId` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `createdTime` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`records.search`
+
+Search and list records with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.airtable.api.records.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `tableIdOrName` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+| `filterByFormula` | `string` | No | — |
+| `maxRecords` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `sort` | `object[]` | No | — |
+| `view` | `string` | No | — |
+| `cellFormat` | `json \| string` | No | — |
+| `timeZone` | `string` | No | — |
+| `userLocale` | `string` | No | — |
+| `returnFieldsByFieldId` | `boolean` | No | — |
+| `offset` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  field: string,
+  direction?: asc | desc
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+| `offset` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: string,
+  createdTime: string,
+  fields: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update fields on an existing record
+
+**Risk:** `write`
+
+```ts
+await corsair.airtable.api.records.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `tableIdOrName` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `typecast` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: string,
+  createdTime: string,
+  fields: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

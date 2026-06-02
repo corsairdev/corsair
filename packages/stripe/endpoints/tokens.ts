@@ -1,6 +1,6 @@
-import type { StripeEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
 import { makeStripeRequest } from '../client';
+import type { StripeEndpoints } from '../index';
 import type { StripeEndpointOutputs } from './types';
 
 export const create: StripeEndpoints['tokensCreate'] = async (ctx, input) => {
@@ -12,7 +12,6 @@ export const create: StripeEndpoints['tokensCreate'] = async (ctx, input) => {
 			body: { ...input },
 		},
 	);
-
 
 	await logEventFromContext(
 		ctx,

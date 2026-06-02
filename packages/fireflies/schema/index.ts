@@ -1,4 +1,8 @@
-import { FirefliesAskFredThread, FirefliesTranscript, FirefliesUser } from './database';
+import {
+	FirefliesAskFredThread,
+	FirefliesTranscript,
+	FirefliesUser,
+} from './database';
 
 export const FirefliesSchema = {
 	version: '1.0.0',

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ExaEndpoints } from '..';
 import { makeExaRequest } from '../client';
+import type { ExaEndpoints } from '../index';
 import type { ExaEndpointOutputs } from './types';
 
 export const listWebhooks: ExaEndpoints['webhooksApiList'] = async (
@@ -22,7 +22,9 @@ export const listWebhooks: ExaEndpoints['webhooksApiList'] = async (
 				await ctx.db.webhookConfigs.upsertByEntityId(webhook.id, {
 					...webhook,
 					createdAt: new Date(webhook.createdAt),
-					updatedAt: webhook.updatedAt ? new Date(webhook.updatedAt) : undefined,
+					updatedAt: webhook.updatedAt
+						? new Date(webhook.updatedAt)
+						: undefined,
 				});
 			}
 		} catch (error) {
@@ -30,11 +32,6 @@ export const listWebhooks: ExaEndpoints['webhooksApiList'] = async (
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'exa.webhooksApi.list',
-		{},
-		'completed',
-	);
+	await logEventFromContext(ctx, 'exa.webhooksApi.list', {}, 'completed');
 	return result;
 };

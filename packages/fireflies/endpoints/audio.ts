@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FirefliesEndpoints } from '..';
 import { makeFirefliesRequest } from '../client';
+import type { FirefliesEndpoints } from '../index';
 import type { FirefliesEndpointOutputs } from './types';
 
 // AudioUploadInput uses custom_language (not language)
@@ -15,18 +15,21 @@ const UPLOAD_AUDIO_MUTATION = `
 `;
 
 export const upload: FirefliesEndpoints['audioUpload'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['audioUpload']>(
-		UPLOAD_AUDIO_MUTATION,
-		ctx.key,
-		{
-			url: input.url,
-			title: input.title,
-			webhook: input.webhook,
-			custom_language: input.custom_language,
-			client_reference_id: input.client_reference_id,
-		},
-	);
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['audioUpload']
+	>(UPLOAD_AUDIO_MUTATION, ctx.key, {
+		url: input.url,
+		title: input.title,
+		webhook: input.webhook,
+		custom_language: input.custom_language,
+		client_reference_id: input.client_reference_id,
+	});
 
-	await logEventFromContext(ctx, 'fireflies.audio.upload', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.audio.upload',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

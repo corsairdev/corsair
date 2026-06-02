@@ -1,4 +1,4 @@
-import type { AsanaWebhooks } from '..';
+import type { AsanaWebhooks } from '../index';
 
 // ── Asana Webhook Challenge ───────────────────────────────────────────────────
 // Asana sends a POST with X-Hook-Secret header and empty body {} when a webhook
@@ -26,7 +26,7 @@ export const challenge: AsanaWebhooks['challenge'] = {
 			};
 		}
 
-        _ctx.keys.set_webhook_signature(hookSecret);
+		_ctx.keys.set_webhook_signature(hookSecret);
 
 		return {
 			success: true,

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TodoistWebhooks } from '..';
+import type { TodoistWebhooks } from '../index';
 import { createTodoistMatch, verifyTodoistWebhookSignature } from './types';
 
 export const added: TodoistWebhooks['projectAdded'] = {

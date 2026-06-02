@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TrelloEndpoints } from '..';
 import { makeTrelloRequest } from '../client';
+import type { TrelloEndpoints } from '../index';
 import type { TrelloEndpointOutputs } from './types';
 
 export const get: TrelloEndpoints['membersGet'] = async (ctx, input) => {
@@ -24,7 +24,12 @@ export const get: TrelloEndpoints['membersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.members.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.members.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -53,6 +58,11 @@ export const list: TrelloEndpoints['membersList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'trello.members.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'trello.members.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

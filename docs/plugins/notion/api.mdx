@@ -1,0 +1,1759 @@
+---
+title: API
+description: "API reference for Notion: every `notion.api.*` operation with input and output types."
+---
+
+Every `notion.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Blocks
+
+### appendBlock
+
+`blocks.appendBlock`
+
+Append new blocks to a block or page
+
+**Risk:** `write`
+
+```ts
+await corsair.notion.api.blocks.appendBlock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `block_id` | `string` | Yes | — |
+| `children` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="children full type">
+
+```ts
+{
+  object: block,
+  id: string,
+  type: string,
+  created_time?: string,
+  created_by?: {
+    object: user,
+    id: string
+  },
+  last_edited_time?: string,
+  last_edited_by?: {
+    object: user,
+    id: string
+  },
+  archived?: boolean,
+  has_children?: boolean,
+  parent?: {
+    type: workspace,
+    workspace: boolean
+  } | {
+    type: page_id,
+    page_id: string
+  } | {
+    type: database_id,
+    database_id: string
+  } | {
+    type: block_id,
+    block_id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `type` | `string` | No | — |
+| `page_or_database` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  object: block,
+  id: string,
+  type: string,
+  created_time?: string,
+  created_by?: {
+    object: user,
+    id: string
+  },
+  last_edited_time?: string,
+  last_edited_by?: {
+    object: user,
+    id: string
+  },
+  archived?: boolean,
+  has_children?: boolean,
+  parent?: {
+    type: workspace,
+    workspace: boolean
+  } | {
+    type: page_id,
+    page_id: string
+  } | {
+    type: database_id,
+    database_id: string
+  } | {
+    type: block_id,
+    block_id: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="page_or_database full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getManyChildBlocks
+
+`blocks.getManyChildBlocks`
+
+Retrieve child blocks of a block or page
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.blocks.getManyChildBlocks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `block_id` | `string` | Yes | — |
+| `start_cursor` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `type` | `string` | No | — |
+| `page_or_database` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  object: block,
+  id: string,
+  type: string,
+  created_time?: string,
+  created_by?: {
+    object: user,
+    id: string
+  },
+  last_edited_time?: string,
+  last_edited_by?: {
+    object: user,
+    id: string
+  },
+  archived?: boolean,
+  has_children?: boolean,
+  parent?: {
+    type: workspace,
+    workspace: boolean
+  } | {
+    type: page_id,
+    page_id: string
+  } | {
+    type: database_id,
+    database_id: string
+  } | {
+    type: block_id,
+    block_id: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="page_or_database full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Database Pages
+
+### createDatabasePage
+
+`databasePages.createDatabasePage`
+
+Create a new page in a database
+
+**Risk:** `write`
+
+```ts
+await corsair.notion.api.databasePages.createDatabasePage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `string` | Yes | — |
+| `properties` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `page` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_time` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `last_edited_time` | `string` | Yes | — |
+| `last_edited_by` | `object` | No | — |
+| `cover` | `object` | No | — |
+| `icon` | `object` | No | — |
+| `parent` | `object` | Yes | — |
+| `archived` | `boolean` | Yes | — |
+| `in_trash` | `boolean` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `properties` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `public_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="last_edited_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="cover full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  file?: {
+    url: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="icon full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  emoji?: string
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type: workspace,
+  workspace: boolean
+} | {
+  type: page_id,
+  page_id: string
+} | {
+  type: database_id,
+  database_id: string
+} | {
+  type: block_id,
+  block_id: string
+}
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDatabasePage
+
+`databasePages.getDatabasePage`
+
+Get a page from a database
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.databasePages.getDatabasePage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `page` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_time` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `last_edited_time` | `string` | Yes | — |
+| `last_edited_by` | `object` | No | — |
+| `cover` | `object` | No | — |
+| `icon` | `object` | No | — |
+| `parent` | `object` | Yes | — |
+| `archived` | `boolean` | Yes | — |
+| `in_trash` | `boolean` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `properties` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `public_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="last_edited_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="cover full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  file?: {
+    url: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="icon full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  emoji?: string
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type: workspace,
+  workspace: boolean
+} | {
+  type: page_id,
+  page_id: string
+} | {
+  type: database_id,
+  database_id: string
+} | {
+  type: block_id,
+  block_id: string
+}
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getManyDatabasePages
+
+`databasePages.getManyDatabasePages`
+
+List and filter pages in a database
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.databasePages.getManyDatabasePages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `string` | Yes | — |
+| `filter` | `any` | No | — |
+| `sorts` | `any[]` | No | — |
+| `start_cursor` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `type` | `string` | No | — |
+| `page_or_database` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  object: page,
+  id: string,
+  created_time: string,
+  created_by?: {
+    object: user,
+    id: string
+  },
+  last_edited_time: string,
+  last_edited_by?: {
+    object: user,
+    id: string
+  },
+  cover?: {
+    type: string,
+    external?: {
+      url: string
+    },
+    file?: {
+      url: string
+    }
+  } | null,
+  icon?: {
+    type: string,
+    external?: {
+      url: string
+    },
+    emoji?: string
+  } | null,
+  parent: {
+    type: workspace,
+    workspace: boolean
+  } | {
+    type: page_id,
+    page_id: string
+  } | {
+    type: database_id,
+    database_id: string
+  } | {
+    type: block_id,
+    block_id: string
+  },
+  archived: boolean,
+  in_trash?: boolean,
+  is_locked?: boolean,
+  properties: {
+  },
+  url: string,
+  public_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page_or_database full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDatabasePage
+
+`databasePages.updateDatabasePage`
+
+Update properties of a database page
+
+**Risk:** `write`
+
+```ts
+await corsair.notion.api.databasePages.updateDatabasePage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+| `properties` | `object` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `page` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_time` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `last_edited_time` | `string` | Yes | — |
+| `last_edited_by` | `object` | No | — |
+| `cover` | `object` | No | — |
+| `icon` | `object` | No | — |
+| `parent` | `object` | Yes | — |
+| `archived` | `boolean` | Yes | — |
+| `in_trash` | `boolean` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `properties` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `public_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="last_edited_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="cover full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  file?: {
+    url: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="icon full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  emoji?: string
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type: workspace,
+  workspace: boolean
+} | {
+  type: page_id,
+  page_id: string
+} | {
+  type: database_id,
+  database_id: string
+} | {
+  type: block_id,
+  block_id: string
+}
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Databases
+
+### getDatabase
+
+`databases.getDatabase`
+
+Get info about a database
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.databases.getDatabase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `database` | Yes | — |
+| `id` | `string` | Yes | — |
+| `cover` | `object` | No | — |
+| `icon` | `object` | No | — |
+| `created_time` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `last_edited_time` | `string` | Yes | — |
+| `last_edited_by` | `object` | No | — |
+| `title` | `object[]` | Yes | — |
+| `description` | `object[]` | Yes | — |
+| `is_inline` | `boolean` | Yes | — |
+| `properties` | `object` | Yes | — |
+| `parent` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `public_url` | `string` | No | — |
+| `archived` | `boolean` | Yes | — |
+| `in_trash` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="cover full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="icon full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  emoji?: string
+}
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="last_edited_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  type: string,
+  text?: {
+    content: string,
+    link?: {
+      url: string
+    } | null
+  },
+  annotations?: {
+    bold?: boolean,
+    italic?: boolean,
+    strikethrough?: boolean,
+    underline?: boolean,
+    code?: boolean,
+    color?: string
+  },
+  plain_text?: string,
+  href?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+  type: string,
+  text?: {
+    content: string,
+    link?: {
+      url: string
+    } | null
+  },
+  annotations?: {
+    bold?: boolean,
+    italic?: boolean,
+    strikethrough?: boolean,
+    underline?: boolean,
+    code?: boolean,
+    color?: string
+  },
+  plain_text?: string,
+  href?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type: workspace,
+  workspace: boolean
+} | {
+  type: page_id,
+  page_id: string
+} | {
+  type: database_id,
+  database_id: string
+} | {
+  type: block_id,
+  block_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getManyDatabases
+
+`databases.getManyDatabases`
+
+List databases accessible to the integration
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.databases.getManyDatabases({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_cursor` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `type` | `string` | No | — |
+| `page_or_database` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  object: database,
+  id: string,
+  cover?: {
+    type: string,
+    external?: {
+      url: string
+    }
+  } | null,
+  icon?: {
+    type: string,
+    external?: {
+      url: string
+    },
+    emoji?: string
+  } | null,
+  created_time: string,
+  created_by?: {
+    object: user,
+    id: string
+  },
+  last_edited_time: string,
+  last_edited_by?: {
+    object: user,
+    id: string
+  },
+  title: {
+    type: string,
+    text?: {
+      content: string,
+      link?: {
+        url: string
+      } | null
+    },
+    annotations?: {
+      bold?: boolean,
+      italic?: boolean,
+      strikethrough?: boolean,
+      underline?: boolean,
+      code?: boolean,
+      color?: string
+    },
+    plain_text?: string,
+    href?: string | null
+  }[],
+  description: {
+    type: string,
+    text?: {
+      content: string,
+      link?: {
+        url: string
+      } | null
+    },
+    annotations?: {
+      bold?: boolean,
+      italic?: boolean,
+      strikethrough?: boolean,
+      underline?: boolean,
+      code?: boolean,
+      color?: string
+    },
+    plain_text?: string,
+    href?: string | null
+  }[],
+  is_inline: boolean,
+  properties: {
+  },
+  parent: {
+    type: workspace,
+    workspace: boolean
+  } | {
+    type: page_id,
+    page_id: string
+  } | {
+    type: database_id,
+    database_id: string
+  } | {
+    type: block_id,
+    block_id: string
+  },
+  url: string,
+  public_url?: string | null,
+  archived: boolean,
+  in_trash?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="page_or_database full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchDatabase
+
+`databases.searchDatabase`
+
+Search and filter databases
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.databases.searchDatabase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `sort` | `any` | No | — |
+| `filter` | `any` | No | — |
+| `start_cursor` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `type` | `string` | No | — |
+| `page_or_database` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  object: database,
+  id: string,
+  cover?: {
+    type: string,
+    external?: {
+      url: string
+    }
+  } | null,
+  icon?: {
+    type: string,
+    external?: {
+      url: string
+    },
+    emoji?: string
+  } | null,
+  created_time: string,
+  created_by?: {
+    object: user,
+    id: string
+  },
+  last_edited_time: string,
+  last_edited_by?: {
+    object: user,
+    id: string
+  },
+  title: {
+    type: string,
+    text?: {
+      content: string,
+      link?: {
+        url: string
+      } | null
+    },
+    annotations?: {
+      bold?: boolean,
+      italic?: boolean,
+      strikethrough?: boolean,
+      underline?: boolean,
+      code?: boolean,
+      color?: string
+    },
+    plain_text?: string,
+    href?: string | null
+  }[],
+  description: {
+    type: string,
+    text?: {
+      content: string,
+      link?: {
+        url: string
+      } | null
+    },
+    annotations?: {
+      bold?: boolean,
+      italic?: boolean,
+      strikethrough?: boolean,
+      underline?: boolean,
+      code?: boolean,
+      color?: string
+    },
+    plain_text?: string,
+    href?: string | null
+  }[],
+  is_inline: boolean,
+  properties: {
+  },
+  parent: {
+    type: workspace,
+    workspace: boolean
+  } | {
+    type: page_id,
+    page_id: string
+  } | {
+    type: database_id,
+    database_id: string
+  } | {
+    type: block_id,
+    block_id: string
+  },
+  url: string,
+  public_url?: string | null,
+  archived: boolean,
+  in_trash?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="page_or_database full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pages
+
+### archivePage
+
+`pages.archivePage`
+
+Archive (trash) a page [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.notion.api.pages.archivePage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `page` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_time` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `last_edited_time` | `string` | Yes | — |
+| `last_edited_by` | `object` | No | — |
+| `cover` | `object` | No | — |
+| `icon` | `object` | No | — |
+| `parent` | `object` | Yes | — |
+| `archived` | `boolean` | Yes | — |
+| `in_trash` | `boolean` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `properties` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `public_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="last_edited_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="cover full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  file?: {
+    url: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="icon full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  emoji?: string
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type: workspace,
+  workspace: boolean
+} | {
+  type: page_id,
+  page_id: string
+} | {
+  type: database_id,
+  database_id: string
+} | {
+  type: block_id,
+  block_id: string
+}
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPage
+
+`pages.createPage`
+
+Create a new page
+
+**Risk:** `write`
+
+```ts
+await corsair.notion.api.pages.createPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `object` | Yes | — |
+| `properties` | `object` | No | — |
+| `children` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="parent full type">
+
+```ts
+{
+  type: page_id,
+  page_id: string
+} | {
+  type: database_id,
+  database_id: string
+} | {
+  type: workspace,
+  workspace: boolean
+}
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="children full type">
+
+```ts
+{
+  object: block,
+  id: string,
+  type: string,
+  created_time?: string,
+  created_by?: {
+    object: user,
+    id: string
+  },
+  last_edited_time?: string,
+  last_edited_by?: {
+    object: user,
+    id: string
+  },
+  archived?: boolean,
+  has_children?: boolean,
+  parent?: {
+    type: workspace,
+    workspace: boolean
+  } | {
+    type: page_id,
+    page_id: string
+  } | {
+    type: database_id,
+    database_id: string
+  } | {
+    type: block_id,
+    block_id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `page` | Yes | — |
+| `id` | `string` | Yes | — |
+| `created_time` | `string` | Yes | — |
+| `created_by` | `object` | No | — |
+| `last_edited_time` | `string` | Yes | — |
+| `last_edited_by` | `object` | No | — |
+| `cover` | `object` | No | — |
+| `icon` | `object` | No | — |
+| `parent` | `object` | Yes | — |
+| `archived` | `boolean` | Yes | — |
+| `in_trash` | `boolean` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `properties` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `public_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="created_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="last_edited_by full type">
+
+```ts
+{
+  object: user,
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="cover full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  file?: {
+    url: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="icon full type">
+
+```ts
+{
+  type: string,
+  external?: {
+    url: string
+  },
+  emoji?: string
+}
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  type: workspace,
+  workspace: boolean
+} | {
+  type: page_id,
+  page_id: string
+} | {
+  type: database_id,
+  database_id: string
+} | {
+  type: block_id,
+  block_id: string
+}
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchPage
+
+`pages.searchPage`
+
+Search pages and databases by title
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.pages.searchPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `sort` | `any` | No | — |
+| `filter` | `any` | No | — |
+| `start_cursor` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `type` | `string` | No | — |
+| `page_or_database` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+(
+  {
+    object: page,
+    id: string,
+    created_time: string,
+    created_by?: {
+      object: user,
+      id: string
+    },
+    last_edited_time: string,
+    last_edited_by?: {
+      object: user,
+      id: string
+    },
+    cover?: {
+      type: string,
+      external?: {
+        url: string
+      },
+      file?: {
+        url: string
+      }
+    } | null,
+    icon?: {
+      type: string,
+      external?: {
+        url: string
+      },
+      emoji?: string
+    } | null,
+    parent: {
+      type: workspace,
+      workspace: boolean
+    } | {
+      type: page_id,
+      page_id: string
+    } | {
+      type: database_id,
+      database_id: string
+    } | {
+      type: block_id,
+      block_id: string
+    },
+    archived: boolean,
+    in_trash?: boolean,
+    is_locked?: boolean,
+    properties: {
+    },
+    url: string,
+    public_url?: string | null
+  } | {
+    object: database,
+    id: string,
+    cover?: {
+      type: string,
+      external?: {
+        url: string
+      }
+    } | null,
+    icon?: {
+      type: string,
+      external?: {
+        url: string
+      },
+      emoji?: string
+    } | null,
+    created_time: string,
+    created_by?: {
+      object: user,
+      id: string
+    },
+    last_edited_time: string,
+    last_edited_by?: {
+      object: user,
+      id: string
+    },
+    title: {
+      type: string,
+      text?: {
+        content: string,
+        link?: {
+          url: string
+        } | null
+      },
+      annotations?: {
+        bold?: boolean,
+        italic?: boolean,
+        strikethrough?: boolean,
+        underline?: boolean,
+        code?: boolean,
+        color?: string
+      },
+      plain_text?: string,
+      href?: string | null
+    }[],
+    description: {
+      type: string,
+      text?: {
+        content: string,
+        link?: {
+          url: string
+        } | null
+      },
+      annotations?: {
+        bold?: boolean,
+        italic?: boolean,
+        strikethrough?: boolean,
+        underline?: boolean,
+        code?: boolean,
+        color?: string
+      },
+      plain_text?: string,
+      href?: string | null
+    }[],
+    is_inline: boolean,
+    properties: {
+    },
+    parent: {
+      type: workspace,
+      workspace: boolean
+    } | {
+      type: page_id,
+      page_id: string
+    } | {
+      type: database_id,
+      database_id: string
+    } | {
+      type: block_id,
+      block_id: string
+    },
+    url: string,
+    public_url?: string | null,
+    archived: boolean,
+    in_trash?: boolean
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="page_or_database full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getManyUsers
+
+`users.getManyUsers`
+
+List all users in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.users.getManyUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_cursor` | `string` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `next_cursor` | `string` | No | — |
+| `has_more` | `boolean` | Yes | — |
+| `type` | `string` | No | — |
+| `page_or_database` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  object: user,
+  id: string,
+  type: person | bot,
+  name?: string | null,
+  avatar_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page_or_database full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUser
+
+`users.getUser`
+
+Get info about a user
+
+**Risk:** `read`
+
+```ts
+await corsair.notion.api.users.getUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `user` | Yes | — |
+| `id` | `string` | Yes | — |
+| `type` | `person \| bot` | Yes | — |
+| `name` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+
+
+
+---
+

@@ -1,26 +1,26 @@
+import { list as archiveFilesList } from './archivefiles';
+import { list as devicesList } from './devices';
 import {
+	addRegistrant,
 	create,
 	get,
+	getSummary,
 	list,
 	update,
-	addRegistrant,
-	getSummary,
 } from './meetings';
+import { getPastMeeting } from './participants';
 import {
-	getMeeting as recordingsGetMeeting,
 	deleteMeeting,
 	listAll,
+	getMeeting as recordingsGetMeeting,
 } from './recordings';
+import { dailyUsage } from './reports';
 import {
+	listParticipants,
+	addRegistrant as webinarsAddRegistrant,
 	get as webinarsGet,
 	list as webinarsList,
-	addRegistrant as webinarsAddRegistrant,
-	listParticipants,
 } from './webinars';
-import { dailyUsage } from './reports';
-import { getPastMeeting } from './participants';
-import { list as devicesList } from './devices';
-import { list as archiveFilesList } from './archivefiles';
 
 export const Meetings = {
 	create,

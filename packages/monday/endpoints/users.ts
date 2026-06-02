@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { MondayEndpoints } from '..';
 import { makeMondayRequest } from '../client';
+import type { MondayEndpoints } from '../index';
 import type { MondayEndpointOutputs } from './types';
 
 export const list: MondayEndpoints['usersList'] = async (ctx, input) => {
@@ -24,7 +24,12 @@ export const list: MondayEndpoints['usersList'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'monday.users.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'monday.users.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 

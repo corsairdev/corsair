@@ -1,0 +1,89 @@
+---
+title: Vercel AI SDK
+description: Use Corsair MCP tools with streamText and generateText.
+---
+
+You can use the **Vercel AI SDK** with Corsair through the [dashboard](#in-the-dashboard) or [in code](#in-code).
+
+## In the dashboard {#in-the-dashboard}
+
+1. Sign in at [app.corsair.dev](https://app.corsair.dev).
+2. Open **Dashboard** and click **New instance**.
+3. Open your instance and click **Add Plugin** to enable an integration (e.g. GitHub, Slack).
+4. Click **New User** to add a tenant — enter a tenant ID and click **Save**.
+5. Connect the integration for that tenant: click the cell where the tenant row meets the plugin column, then sign in with OAuth or enter credentials.
+6. Click the **tenant name** in the first column to open the side panel.
+7. Copy the **MCP URL** and create an **API key** (**New key** → name → **Create** → copy the secret once).
+
+For SDK apps you can also use a **developer API key** from **API Keys** in the sidebar (scoped to your instance) with `tenant.mcp.createVercelClient()`.
+
+<Tip>
+[Quick Start](https://app.corsair.dev/quick-start) under **SDK → Vercel** copies a full starter if you want a guided demo.
+</Tip>
+
+## In code {#in-code}
+
+### With developer API key (backend)
+
+Uses your developer key + `tenant.mcp.createVercelClient()` — no separate MCP secret file:
+
+```bash
+npm install @corsair-dev/app ai @ai-sdk/mcp @ai-sdk/openai
+```
+
+```typescript
+import { openai } from "@ai-sdk/openai";
+import { createClient } from "@corsair-dev/app";
+import { stepCountIs, streamText } from "ai";
+
+const corsair = createClient({ apiKey: process.env.CORSAIR_DEV_KEY! });
+const mcpClient = await corsair
+  .instance(process.env.CORSAIR_INSTANCE_ID!)
+  .tenant("alice")
+  .mcp.createVercelClient();
+
+const stream = streamText({
+  model: openai("gpt-4.1"),
+  tools: await mcpClient.tools(),
+  stopWhen: stepCountIs(15),
+  prompt: "Star the corsairdev/corsair repo on GitHub",
+});
+
+for await (const text of stream.textStream) {
+  process.stdout.write(text);
+}
+
+await mcpClient.close?.();
+```
+
+### With tenant MCP key
+
+```typescript
+import { createClient, createVercelAiMcpClient } from "@corsair-dev/app";
+
+const key = await corsair
+  .instance(instanceId)
+  .tenant("alice")
+  .mcpKeys.create("vercel-agent");
+
+const mcpClient = await createVercelAiMcpClient({
+  url: key.mcpHttpUrl,
+  apiKey: key.secret,
+});
+
+const tools = await mcpClient.tools();
+```
+
+<Warning>
+Always `await mcpClient.tools()` before passing to `streamText`.
+</Warning>
+
+## Run it
+
+Run your script or pass any prompt to `streamText`.
+
+If you connected GitHub, the Quick Start prompt is:
+
+```
+Use Corsair to star the Corsair repo on GitHub
+```

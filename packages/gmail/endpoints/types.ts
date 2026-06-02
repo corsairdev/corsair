@@ -11,6 +11,15 @@ import type {
 	ThreadListResponse,
 } from '../types';
 
+/** Gmail API `raw` fields expect base64url RFC 2822 — not plain email text. */
+const GMAIL_RAW_MESSAGE_ENCODE_DESCRIPTION =
+	'Base64url-encoded RFC 2822 email — do NOT pass plain email text. Build the MIME message (From, To, Subject, Content-Type headers, blank line, body; lines separated by \\r\\n), then base64url-encode: standard base64, replace + with -, / with _, remove trailing =.';
+
+const GmailRawMessageFieldsSchema = z.object({
+	raw: z.string().optional().describe(GMAIL_RAW_MESSAGE_ENCODE_DESCRIPTION),
+	threadId: z.string().optional(),
+});
+
 const MessagesListInputSchema = z.object({
 	userId: z.string().optional(),
 	q: z.string().optional(),
@@ -29,7 +38,7 @@ const MessagesGetInputSchema = z.object({
 
 const MessagesSendInputSchema = z.object({
 	userId: z.string().optional(),
-	raw: z.string(),
+	raw: z.string().describe(GMAIL_RAW_MESSAGE_ENCODE_DESCRIPTION),
 	threadId: z.string().optional(),
 });
 
@@ -126,27 +135,27 @@ const DraftsGetInputSchema = z.object({
 
 const DraftsCreateInputSchema = z.object({
 	userId: z.string().optional(),
-	draft: z.object({
-		message: z
-			.object({
-				raw: z.string().optional(),
-				threadId: z.string().optional(),
-			})
-			.optional(),
-	}),
+	draft: z
+		.object({
+			message: GmailRawMessageFieldsSchema.optional(),
+		})
+		.optional()
+		.describe(
+			'Draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text.',
+		),
 });
 
 const DraftsUpdateInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
-	draft: z.object({
-		message: z
-			.object({
-				raw: z.string().optional(),
-				threadId: z.string().optional(),
-			})
-			.optional(),
-	}),
+	draft: z
+		.object({
+			message: GmailRawMessageFieldsSchema.optional(),
+		})
+		.optional()
+		.describe(
+			'Updated draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text.',
+		),
 });
 
 const DraftsDeleteInputSchema = z.object({
@@ -157,12 +166,9 @@ const DraftsDeleteInputSchema = z.object({
 const DraftsSendInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string().optional(),
-	message: z
-		.object({
-			raw: z.string().optional(),
-			threadId: z.string().optional(),
-		})
-		.optional(),
+	message: GmailRawMessageFieldsSchema.optional().describe(
+		'Optional message body when sending without a draft id. raw must be base64url-encoded RFC 2822, not plain text.',
+	),
 });
 
 const ThreadsListInputSchema = z.object({
@@ -299,7 +305,12 @@ const MessageSchema = z.object({
 		.optional(),
 	sizeEstimate: z.number().optional(),
 	payload: MessagePartSchema.optional(),
-	raw: z.string().optional(),
+	raw: z
+		.string()
+		.optional()
+		.describe(
+			'Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body.',
+		),
 });
 
 const MessageListResponseSchema = z.object({

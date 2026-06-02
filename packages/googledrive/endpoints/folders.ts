@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleDriveEndpoints } from '..';
 import { makeAuthenticatedGoogleDriveRequest } from '../client';
+import type { GoogleDriveEndpoints } from '../index';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const create: GoogleDriveEndpoints['foldersCreate'] = async (
@@ -124,17 +124,15 @@ export const deleteFolder: GoogleDriveEndpoints['foldersDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAuthenticatedGoogleDriveRequest<GoogleDriveEndpointOutputs['foldersDelete']>(
-		`/files/${input.folderId}`,
-		ctx,
-		{
-			method: 'DELETE',
-			query: {
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-			},
+	await makeAuthenticatedGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['foldersDelete']
+	>(`/files/${input.folderId}`, ctx, {
+		method: 'DELETE',
+		query: {
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
 		},
-	);
+	});
 
 	if (ctx.db.folders) {
 		try {

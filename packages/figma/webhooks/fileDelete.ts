@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FigmaWebhooks } from '..';
+import type { FigmaWebhooks } from '../index';
 import { createFigmaEventMatch, verifyFigmaWebhookPasscode } from './types';
 
 export const fileDelete: FigmaWebhooks['fileDelete'] = {
@@ -27,7 +27,9 @@ export const fileDelete: FigmaWebhooks['fileDelete'] = {
 
 		if (ctx.db.fileMetadata) {
 			try {
-				const existing = await ctx.db.fileMetadata.findByEntityId(event.file_key);
+				const existing = await ctx.db.fileMetadata.findByEntityId(
+					event.file_key,
+				);
 				await ctx.db.fileMetadata.upsertByEntityId(event.file_key, {
 					...(existing?.data ?? {}),
 					id: event.file_key,

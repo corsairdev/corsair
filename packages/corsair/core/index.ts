@@ -3,7 +3,6 @@ import { createCorsairDatabase } from '../db/kysely/database';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
-import { buildInspectMethods } from './inspect';
 import { buildPermissionsNamespace } from './permissions';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
 
@@ -21,6 +20,18 @@ export type CorsairInternalConfig = {
 	approval?: {
 		timeout: string;
 		onTimeout: 'deny' | 'approve';
+		mode?:
+			| 'synchronous'
+			| 'asynchronous'
+			| (() => 'synchronous' | 'asynchronous');
+		/** Called when a permission is blocked in async mode. Return the message surfaced to the LLM. */
+		formatAsyncMessage?: (opts: {
+			token: string;
+			id: string;
+			plugin: string;
+			endpoint: string;
+			args: unknown;
+		}) => string;
 	};
 };
 
@@ -93,17 +104,19 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
 						);
 					}
-					return buildCorsairClient(config.plugins, {
+					const client = buildCorsairClient(config.plugins, {
 						database: resolvedDatabase,
 						tenantId,
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
 						approvalConfig: config.approval,
 					});
+					return Object.assign(client as object, {
+						[CORSAIR_INTERNAL]: internalConfig,
+					}) as unknown as typeof client;
 				},
 				keys: integrationKeys,
 				permissions,
-				...buildInspectMethods(config.plugins),
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
 		);
@@ -128,6 +141,9 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 // Re-exports
 // ─────────────────────────────────────────────────────────────────────────────
 
+export type { EventLoggingContext } from '../plugins/utils/events';
+// Event logging utilities for plugins
+export { logEvent, logEventFromContext } from '../plugins/utils/events';
 export type {
 	AccountFieldNames,
 	AccountKeyManagerFor,
@@ -137,6 +153,7 @@ export type {
 	IntegrationKeyManagerFor,
 	OAuth2IntegrationCredentials,
 	PluginAuthConfig,
+	TokenResponse,
 } from './auth';
 // Auth utilities and types
 export {
@@ -149,6 +166,7 @@ export {
 	encryptConfig,
 	encryptDEK,
 	encryptWithDEK,
+	exchangeCodeForTokens,
 	generateDEK,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
@@ -161,7 +179,12 @@ export type {
 	CorsairTenantWrapper,
 } from './client';
 // Constants
-export type { AllProviders, AuthTypes, BaseProviders, PickAuth } from './constants';
+export type {
+	AllProviders,
+	AuthTypes,
+	BaseProviders,
+	PickAuth,
+} from './constants';
 // Endpoint types
 export type {
 	BindEndpoints,
@@ -183,13 +206,24 @@ export type {
 	RetryStrategy,
 } from './errors';
 // Inspection types
-export type { CorsairInspectMethods, EndpointSchemaResult } from './inspect';
+export type {
+	DocSchemaFieldRow,
+	DocSchemaShape,
+	DocsApiEndpoint,
+	DocsDbEntity,
+	DocsDbFilterField,
+	DocsWebhook,
+	EndpointSchemaResult,
+	IntrospectPluginForDocsResult,
+	ListOperationsOptions,
+	PluginDocsIntrospection,
+} from './inspect';
+export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
 } from './permissions';
-
 // Plugin types
 export type {
 	BeforeHookResult,
@@ -197,12 +231,12 @@ export type {
 	CorsairKeyBuilder,
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
-	OAuthConfig,
 	CorsairPluginContext,
 	EndpointHooks,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 	KeyBuilderContext,
+	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 	PluginEndpointMeta,
@@ -212,13 +246,8 @@ export type {
 	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
-
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
-
-// Event logging utilities for plugins
-export { logEvent, logEventFromContext } from '../plugins/utils/events';
-export type { EventLoggingContext } from '../plugins/utils/events';
 // Webhook types
 export type {
 	BindWebhooks,

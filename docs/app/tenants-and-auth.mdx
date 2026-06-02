@@ -1,0 +1,83 @@
+---
+title: Tenants and auth
+description: Create tenants, connect links, API keys, and OAuth per customer.
+---
+
+A **tenant** maps to a user, team, or workspace. Credentials and MCP keys are isolated per tenant.
+
+```ts
+const inst = corsair.instance(instanceId);
+
+const tenant = await inst.tenants.create("workspace_123"); // your ID
+// or: await inst.tenants.create();  // Corsair generates ID
+
+const { tenants } = await inst.tenants.list();
+const t = inst.tenant("workspace_123");
+```
+
+## API keys
+
+```ts
+await t.plugins.credentials.set("slack", "api_key", "xoxb-...");
+await t.plugins.credentials.clear("slack", "api_key");
+```
+
+Field names autocomplete per plugin (`slack` → `api_key`; `jira` → `api_key`, `cloud_url`, …).
+
+## Connect link
+
+After provisioning an instance, installing plugins, and creating a tenant, mint a self-service connect URL and send it to the user. They open it in a browser to connect OAuth accounts and enter API keys for every installed plugin (or a subset you choose).
+
+```ts
+const { url } = await t.connectLink.create();
+// Send url to the user — e.g. "Connect your accounts: {url}"
+```
+
+Optional parameters:
+
+```ts
+// Short-lived link for specific plugins
+const link = await t.connectLink.create({
+  plugins: ["github", "slack"],
+  ttlMs: 30 * 60 * 1000, // 30 minutes (default is 7 days)
+});
+```
+
+Returns `{ url, token, expiresAt, ttlMs }`. Prefer this after setup instead of sending users to the dashboard.
+
+Use `credentials.set()` when you already have secrets. Use `oauth.authorizeUrl()` when you only need one plugin's OAuth flow.
+
+## OAuth
+
+Set root OAuth credentials on the instance first, then redirect the tenant:
+
+```ts
+await inst.plugins.upsert("github", { authType: "oauth_2" });
+await inst.plugins.credentials.setRoot("github", "client_id", "Iv1...");
+await inst.plugins.credentials.setRoot("github", "client_secret", "...");
+
+const { authorizeUrl } = await t.plugins.oauth.authorizeUrl(
+  "github",
+  "https://myapp.com/integrations/done",
+);
+// Redirect user to authorizeUrl; tokens stored on callback
+```
+
+## Ensure tenant exists
+
+```ts
+async function ensureTenant(workspaceId: string) {
+  const inst = corsair.instance(process.env.CORSAIR_INSTANCE_ID!);
+  try {
+    return await inst.tenant(workspaceId).get();
+  } catch {
+    return inst.tenants.create(workspaceId);
+  }
+}
+```
+
+## Delete
+
+```ts
+await t.delete(); // removes credentials, MCP keys, account data
+```

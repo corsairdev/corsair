@@ -1,16 +1,8 @@
 import z from 'zod';
 
-// Normalizes unix timestamps (number), numeric strings, and ISO date strings to a number.
-// Returns undefined for null/undefined/unparseable values so optional fields stay clean.
-const timestamp = z.preprocess((val) => {
-	if (val === null || val === undefined) return undefined;
-	if (typeof val === 'number' && !isNaN(val)) return val;
-	if (typeof val === 'string') {
-		const ms = new Date(val).getTime();
-		if (!isNaN(ms)) return Math.floor(ms / 1000);
-	}
-	return undefined;
-}, z.number().optional());
+/** Unix timestamps from Intercom REST / webhooks (seconds). Strings are normalized in handlers via `toUnixTimestamp` etc. */
+const optionalUnixSeconds = z.number().optional();
+const nullableUnixSeconds = z.number().nullable().optional();
 
 export const IntercomContact = z.object({
 	id: z.string(),
@@ -21,11 +13,11 @@ export const IntercomContact = z.object({
 	name: z.string().nullable().optional(),
 	phone: z.string().nullable().optional(),
 	role: z.string().optional(),
-	created_at: timestamp,
-	updated_at: timestamp,
-	last_seen_at: timestamp,
-	last_replied_at: timestamp,
-	signed_up_at: timestamp,
+	created_at: optionalUnixSeconds,
+	updated_at: optionalUnixSeconds,
+	last_seen_at: nullableUnixSeconds,
+	last_replied_at: nullableUnixSeconds,
+	signed_up_at: nullableUnixSeconds,
 	unsubscribed_from_emails: z.boolean().optional(),
 	has_hard_bounced: z.boolean().optional(),
 	marked_email_as_spam: z.boolean().optional(),
@@ -51,10 +43,10 @@ export const IntercomContact = z.object({
 export const IntercomConversation = z.object({
 	id: z.string(),
 	type: z.string().optional(),
-	created_at: timestamp,
-	updated_at: timestamp,
-	waiting_since: timestamp,
-	snoozed_until: timestamp,
+	created_at: optionalUnixSeconds,
+	updated_at: optionalUnixSeconds,
+	waiting_since: nullableUnixSeconds,
+	snoozed_until: nullableUnixSeconds,
 	state: z.string().optional(),
 	read: z.boolean().optional(),
 	priority: z.string().optional(),
@@ -71,10 +63,10 @@ export const IntercomCompany = z.object({
 	type: z.string().optional(),
 	company_id: z.string().optional(),
 	name: z.string().optional(),
-	created_at: timestamp,
-	updated_at: timestamp,
-	remote_created_at: timestamp,
-	last_request_at: timestamp,
+	created_at: optionalUnixSeconds,
+	updated_at: optionalUnixSeconds,
+	remote_created_at: nullableUnixSeconds,
+	last_request_at: nullableUnixSeconds,
 	monthly_spend: z.number().optional(),
 	session_count: z.number().optional(),
 	user_count: z.number().optional(),
@@ -98,8 +90,8 @@ export const IntercomArticle = z.object({
 	body: z.string().nullable().optional(),
 	author_id: z.coerce.number().optional(),
 	state: z.string().optional(),
-	created_at: timestamp,
-	updated_at: timestamp,
+	created_at: optionalUnixSeconds,
+	updated_at: optionalUnixSeconds,
 	url: z.string().nullable().optional(),
 	parent_id: z.number().nullable().optional(),
 	parent_type: z.string().nullable().optional(),

@@ -1,8 +1,5 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
-import { BaseWebhookHandler } from 'corsair/http';
-import { verifyHmacSignature } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { BaseWebhookHandler, request, verifyHmacSignature } from 'corsair/http';
 import type {
 	PostHogEventMap,
 	PostHogEventName,

@@ -1,0 +1,4206 @@
+---
+title: API
+description: "API reference for Youtube: every `youtube.api.*` operation with input and output types."
+---
+
+Every `youtube.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Captions
+
+### list
+
+`captions.list`
+
+List caption tracks for a video
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.captions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | The YouTube video ID to list captions for |
+| `part` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `eventId` | `string` | No | — |
+| `visitorId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    videoId?: string,
+    lastUpdated?: string,
+    trackKind?: string,
+    language?: string,
+    name?: string,
+    audioTrackType?: string,
+    isCC?: boolean,
+    isLarge?: boolean,
+    isEasyReader?: boolean,
+    isDraft?: boolean,
+    isAutoSynced?: boolean,
+    status?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### load
+
+`captions.load`
+
+Download a caption track
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.captions.load({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The caption track ID to download |
+| `tfmt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `captions_text` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`captions.update`
+
+Update a caption track
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.captions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The caption track ID to update |
+| `snippet` | `object` | Yes | Updated caption snippet |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  isDraft?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  videoId?: string,
+  lastUpdated?: string,
+  trackKind?: string,
+  language?: string,
+  name?: string,
+  audioTrackType?: string,
+  isCC?: boolean,
+  isLarge?: boolean,
+  isEasyReader?: boolean,
+  isDraft?: boolean,
+  isAutoSynced?: boolean,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channels
+
+### getActivities
+
+`channels.getActivities`
+
+Get a channel's activity feed
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.channels.getActivities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | The channel ID to get activities for |
+| `part` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `publishedAfter` | `string` | No | — |
+| `publishedBefore` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    channelId?: string,
+    title?: string,
+    description?: string,
+    publishedAt?: string,
+    type?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    }
+  },
+  contentDetails?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getIdByHandle
+
+`channels.getIdByHandle`
+
+Get channel ID by handle
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.channels.getIdByHandle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_handle` | `string` | Yes | YouTube channel handle (e.g. @channelname) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `channels` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    customUrl?: string,
+    publishedAt?: string,
+    country?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    }
+  },
+  statistics?: {
+    viewCount?: string,
+    subscriberCount?: string,
+    videoCount?: string,
+    hiddenSubscriberCount?: boolean
+  },
+  contentDetails?: {
+    relatedPlaylists?: {
+      uploads?: string,
+      likes?: string
+    }
+  },
+  brandingSettings?: {
+    channel?: {
+      title?: string,
+      description?: string,
+      keywords?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="channels full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    customUrl?: string,
+    publishedAt?: string,
+    country?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    }
+  },
+  statistics?: {
+    viewCount?: string,
+    subscriberCount?: string,
+    videoCount?: string,
+    hiddenSubscriberCount?: boolean
+  },
+  contentDetails?: {
+    relatedPlaylists?: {
+      uploads?: string,
+      likes?: string
+    }
+  },
+  brandingSettings?: {
+    channel?: {
+      title?: string,
+      description?: string,
+      keywords?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatistics
+
+`channels.getStatistics`
+
+Get channel statistics and details
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.channels.getStatistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `mine` | `boolean` | No | — |
+| `part` | `string` | No | — |
+| `forHandle` | `string` | No | — |
+| `forUsername` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `channels` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    customUrl?: string,
+    publishedAt?: string,
+    country?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    }
+  },
+  statistics?: {
+    viewCount?: string,
+    subscriberCount?: string,
+    videoCount?: string,
+    hiddenSubscriberCount?: boolean
+  },
+  contentDetails?: {
+    relatedPlaylists?: {
+      uploads?: string,
+      likes?: string
+    }
+  },
+  brandingSettings?: {
+    channel?: {
+      title?: string,
+      description?: string,
+      keywords?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="channels full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    customUrl?: string,
+    publishedAt?: string,
+    country?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    }
+  },
+  statistics?: {
+    viewCount?: string,
+    subscriberCount?: string,
+    videoCount?: string,
+    hiddenSubscriberCount?: boolean
+  },
+  contentDetails?: {
+    relatedPlaylists?: {
+      uploads?: string,
+      likes?: string
+    }
+  },
+  brandingSettings?: {
+    channel?: {
+      title?: string,
+      description?: string,
+      keywords?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`channels.update`
+
+Update channel branding settings
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.channels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The channel ID to update |
+| `part` | `string` | No | — |
+| `brandingSettings` | `object` | No | — |
+| `localizations` | `object` | No | — |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="brandingSettings full type">
+
+```ts
+{
+  channel?: {
+    title?: string,
+    description?: string,
+    keywords?: string,
+    country?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="localizations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `statistics` | `object` | No | — |
+| `brandingSettings` | `object` | No | — |
+| `localizations` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  customUrl?: string,
+  publishedAt?: string,
+  country?: string,
+  thumbnails?: {
+    default?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    medium?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    high?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    standard?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    maxres?: {
+      url?: string,
+      width?: number,
+      height?: number
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="statistics full type">
+
+```ts
+{
+  viewCount?: string,
+  subscriberCount?: string,
+  videoCount?: string
+}
+```
+</Accordion>
+
+<Accordion title="brandingSettings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="localizations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channel Sections
+
+### create
+
+`channelSections.create`
+
+Create a new channel section
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.channelSections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snippet` | `object` | Yes | Section snippet |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  type: allPlaylists | completedEvents | liveEvents | multipleChannels | multiplePlaylists | popularUploads | recentUploads | singlePlaylist | subscriptions | upcomingEvents,
+  title?: string,
+  position?: number
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  channels?: string[],
+  playlists?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  position?: number,
+  channelId?: string
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  playlists?: string[],
+  channels?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`channelSections.delete`
+
+Delete a channel section
+
+**Risk:** `destructive`
+
+```ts
+await corsair.youtube.api.channelSections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the channel section to delete |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+| `channel_section_id` | `string` | No | — |
+| `http_status` | `number` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`channelSections.list`
+
+List channel sections
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.channelSections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `part` | `string` | Yes | Comma-separated list of parts (snippet,contentDetails) |
+| `hl` | `string` | No | — |
+| `id` | `string` | No | — |
+| `mine` | `boolean` | No | — |
+| `channelId` | `string` | No | — |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `eventId` | `string` | No | — |
+| `visitorId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    type?: string,
+    title?: string,
+    position?: number,
+    channelId?: string
+  },
+  contentDetails?: {
+    playlists?: string[],
+    channels?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`channelSections.update`
+
+Update a channel section
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.channelSections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the channel section to update |
+| `snippet` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  position?: number
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  playlists?: string[],
+  channels?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  position?: number,
+  channelId?: string
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  playlists?: string[],
+  channels?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### createReply
+
+`comments.createReply`
+
+Post a reply to a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.comments.createReply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentId` | `string` | Yes | The ID of the parent comment thread to reply to |
+| `textOriginal` | `string` | Yes | The reply text |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  videoId?: string,
+  textDisplay?: string,
+  textOriginal?: string,
+  authorDisplayName?: string,
+  authorProfileImageUrl?: string,
+  authorChannelUrl?: string,
+  authorChannelId?: {
+    value?: string
+  },
+  likeCount?: number,
+  publishedAt?: string,
+  updatedAt?: string,
+  parentId?: string,
+  canRate?: boolean,
+  viewerRating?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.youtube.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the comment to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+| `comment_id` | `string` | No | — |
+| `http_status` | `number` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `part` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `textFormat` | `html \| plainText` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    videoId?: string,
+    textDisplay?: string,
+    textOriginal?: string,
+    authorDisplayName?: string,
+    authorProfileImageUrl?: string,
+    authorChannelUrl?: string,
+    authorChannelId?: {
+      value?: string
+    },
+    likeCount?: number,
+    publishedAt?: string,
+    updatedAt?: string,
+    parentId?: string,
+    canRate?: boolean,
+    viewerRating?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markSpam
+
+`comments.markSpam`
+
+Mark a comment as spam
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.comments.markSpam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the comment to mark as spam |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `comment_ids` | `string[]` | No | — |
+| `http_status` | `number` | No | — |
+
+
+
+---
+
+### post
+
+`comments.post`
+
+Post a comment on a video
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.comments.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoId` | `string` | Yes | The ID of the video to comment on |
+| `channelId` | `string` | Yes | The channel ID that owns the video |
+| `textOriginal` | `string` | Yes | The comment text |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  channelId?: string,
+  videoId?: string,
+  totalReplyCount?: number,
+  isPublic?: boolean,
+  topLevelComment?: {
+    id?: string,
+    etag?: string,
+    kind?: string,
+    snippet?: {
+      videoId?: string,
+      textDisplay?: string,
+      textOriginal?: string,
+      authorDisplayName?: string,
+      authorProfileImageUrl?: string,
+      authorChannelUrl?: string,
+      authorChannelId?: {
+        value?: string
+      },
+      likeCount?: number,
+      publishedAt?: string,
+      updatedAt?: string,
+      parentId?: string,
+      canRate?: boolean,
+      viewerRating?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setModerationStatus
+
+`comments.setModerationStatus`
+
+Set moderation status for a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.comments.setModerationStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the comment to moderate |
+| `moderationStatus` | `heldForReview \| published \| rejected` | Yes | The moderation status to set |
+| `banAuthor` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### threadsList
+
+`comments.threadsList`
+
+List comment threads (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.comments.threadsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `part` | `string` | No | — |
+| `order` | `time \| relevance` | No | — |
+| `videoId` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `textFormat` | `html \| plainText` | No | — |
+| `searchTerms` | `string` | No | — |
+| `allThreadsRelatedToChannelId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    channelId?: string,
+    videoId?: string,
+    totalReplyCount?: number,
+    isPublic?: boolean,
+    topLevelComment?: {
+      id?: string,
+      etag?: string,
+      kind?: string,
+      snippet?: {
+        videoId?: string,
+        textDisplay?: string,
+        textOriginal?: string,
+        authorDisplayName?: string,
+        authorProfileImageUrl?: string,
+        authorChannelUrl?: string,
+        authorChannelId?: {
+          value?: string
+        },
+        likeCount?: number,
+        publishedAt?: string,
+        updatedAt?: string,
+        parentId?: string,
+        canRate?: boolean,
+        viewerRating?: string
+      }
+    }
+  },
+  replies?: {
+    comments?: {
+      id?: string,
+      etag?: string,
+      kind?: string,
+      snippet?: {
+        videoId?: string,
+        textDisplay?: string,
+        textOriginal?: string,
+        authorDisplayName?: string,
+        authorProfileImageUrl?: string,
+        authorChannelUrl?: string,
+        authorChannelId?: {
+          value?: string
+        },
+        likeCount?: number,
+        publishedAt?: string,
+        updatedAt?: string,
+        parentId?: string,
+        canRate?: boolean,
+        viewerRating?: string
+      }
+    }[]
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### threadsList2
+
+`comments.threadsList2`
+
+List comment threads
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.comments.threadsList2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `part` | `string` | Yes | Comma-separated list of parts |
+| `order` | `time \| relevance` | No | — |
+| `videoId` | `string` | No | — |
+| `channelId` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `textFormat` | `html \| plainText` | No | — |
+| `searchTerms` | `string` | No | — |
+| `moderationStatus` | `heldForReview \| likelySpam \| published \| rejected` | No | — |
+| `allThreadsRelatedToChannelId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    channelId?: string,
+    videoId?: string,
+    totalReplyCount?: number,
+    isPublic?: boolean,
+    topLevelComment?: {
+      id?: string,
+      etag?: string,
+      kind?: string,
+      snippet?: {
+        videoId?: string,
+        textDisplay?: string,
+        textOriginal?: string,
+        authorDisplayName?: string,
+        authorProfileImageUrl?: string,
+        authorChannelUrl?: string,
+        authorChannelId?: {
+          value?: string
+        },
+        likeCount?: number,
+        publishedAt?: string,
+        updatedAt?: string,
+        parentId?: string,
+        canRate?: boolean,
+        viewerRating?: string
+      }
+    }
+  },
+  replies?: {
+    comments?: {
+      id?: string,
+      etag?: string,
+      kind?: string,
+      snippet?: {
+        videoId?: string,
+        textDisplay?: string,
+        textOriginal?: string,
+        authorDisplayName?: string,
+        authorProfileImageUrl?: string,
+        authorChannelUrl?: string,
+        authorChannelId?: {
+          value?: string
+        },
+        likeCount?: number,
+        publishedAt?: string,
+        updatedAt?: string,
+        parentId?: string,
+        canRate?: boolean,
+        viewerRating?: string
+      }
+    }[]
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Update a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.comments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the comment to update |
+| `textOriginal` | `string` | Yes | The updated comment text |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  videoId?: string,
+  textDisplay?: string,
+  textOriginal?: string,
+  authorDisplayName?: string,
+  authorProfileImageUrl?: string,
+  authorChannelUrl?: string,
+  authorChannelId?: {
+    value?: string
+  },
+  likeCount?: number,
+  publishedAt?: string,
+  updatedAt?: string,
+  parentId?: string,
+  canRate?: boolean,
+  viewerRating?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## I18n
+
+### listLanguages
+
+`i18n.listLanguages`
+
+List supported i18n languages
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.i18n.listLanguages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hl` | `string` | No | — |
+| `part` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    hl?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRegions
+
+`i18n.listRegions`
+
+List supported i18n regions
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.i18n.listRegions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hl` | `string` | No | — |
+| `part` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    gl?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Live Chat
+
+### listMessages
+
+`liveChat.listMessages`
+
+List messages in a live chat
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.liveChat.listMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `liveChatId` | `string` | Yes | The ID of the live chat to list messages for |
+| `hl` | `string` | No | — |
+| `part` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `profileImageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `offlineAt` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `activePollItem` | `any` | No | — |
+| `pollingIntervalMillis` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    type?: string,
+    liveChatId?: string,
+    authorChannelId?: string,
+    publishedAt?: string,
+    hasDisplayContent?: boolean,
+    displayMessage?: string,
+    textMessageDetails?: {
+      messageText?: string
+    }
+  },
+  authorDetails?: {
+    channelId?: string,
+    channelUrl?: string,
+    displayName?: string,
+    profileImageUrl?: string,
+    isVerified?: boolean,
+    isChatOwner?: boolean,
+    isChatModerator?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSuperChatEvents
+
+`liveChat.listSuperChatEvents`
+
+List Super Chat events
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.liveChat.listSuperChatEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hl` | `string` | No | — |
+| `part` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  snippet?: {
+    displayString?: string,
+    amountMicros?: string,
+    currency?: string,
+    channelId?: string,
+    createdAt?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Playlist Images
+
+### list
+
+`playlistImages.list`
+
+List playlist images
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.playlistImages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `part` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `onBehalfOfContentOwner` | `string` | No | — |
+| `onBehalfOfContentOwnerChannel` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  kind?: string,
+  snippet?: {
+    type?: string,
+    width?: number,
+    height?: number,
+    url?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Playlist Items
+
+### add
+
+`playlistItems.add`
+
+Add a video to a playlist
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.playlistItems.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoId` | `string` | Yes | The YouTube video ID to add to the playlist |
+| `playlistId` | `string` | Yes | The ID of the playlist to add the video to |
+| `position` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `status` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  position?: number,
+  channelId?: string,
+  channelTitle?: string,
+  playlistId?: string,
+  publishedAt?: string,
+  thumbnails?: {
+    default?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    medium?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    high?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    standard?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    maxres?: {
+      url?: string,
+      width?: number,
+      height?: number
+    }
+  },
+  resourceId?: {
+    kind?: string,
+    videoId?: string,
+    channelId?: string,
+    playlistId?: string
+  },
+  videoOwnerChannelId?: string,
+  videoOwnerChannelTitle?: string
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  privacyStatus?: string
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  videoId?: string,
+  videoPublishedAt?: string,
+  note?: string,
+  startAt?: string,
+  endAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`playlistItems.delete`
+
+Remove an item from a playlist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.youtube.api.playlistItems.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the playlist item to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+| `playlist_item_id` | `string` | No | — |
+| `http_status` | `number` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`playlistItems.list`
+
+List items in a playlist
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.playlistItems.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `playlistId` | `string` | Yes | The ID of the playlist to list items for |
+| `part` | `string` | No | — |
+| `fields` | `string` | No | — |
+| `videoId` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+| `eventId` | `string` | No | — |
+| `visitorId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    position?: number,
+    channelId?: string,
+    channelTitle?: string,
+    playlistId?: string,
+    publishedAt?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    resourceId?: {
+      kind?: string,
+      videoId?: string,
+      channelId?: string,
+      playlistId?: string
+    },
+    videoOwnerChannelId?: string,
+    videoOwnerChannelTitle?: string
+  },
+  status?: {
+    privacyStatus?: string
+  },
+  contentDetails?: {
+    videoId?: string,
+    videoPublishedAt?: string,
+    note?: string,
+    startAt?: string,
+    endAt?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`playlistItems.update`
+
+Update a playlist item
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.playlistItems.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the playlist item to update |
+| `snippet` | `object` | Yes | Updated snippet |
+| `part` | `string` | No | — |
+| `contentDetails` | `object` | No | — |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  playlistId: string,
+  resourceId?: {
+    kind?: string,
+    videoId?: string,
+    channelId?: string,
+    playlistId?: string
+  },
+  position?: number
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  note?: string,
+  startAt?: string,
+  endAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `status` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  position?: number,
+  channelId?: string,
+  channelTitle?: string,
+  playlistId?: string,
+  publishedAt?: string,
+  thumbnails?: {
+    default?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    medium?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    high?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    standard?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    maxres?: {
+      url?: string,
+      width?: number,
+      height?: number
+    }
+  },
+  resourceId?: {
+    kind?: string,
+    videoId?: string,
+    channelId?: string,
+    playlistId?: string
+  },
+  videoOwnerChannelId?: string,
+  videoOwnerChannelTitle?: string
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  privacyStatus?: string
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  videoId?: string,
+  videoPublishedAt?: string,
+  note?: string,
+  startAt?: string,
+  endAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Playlists
+
+### create
+
+`playlists.create`
+
+Create a new playlist
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.playlists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | Playlist title (max 150 characters) |
+| `description` | `string` | No | — |
+| `privacyStatus` | `public \| private \| unlisted` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `status` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  channelId?: string,
+  channelTitle?: string,
+  publishedAt?: string,
+  thumbnails?: {
+    default?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    medium?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    high?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    standard?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    maxres?: {
+      url?: string,
+      width?: number,
+      height?: number
+    }
+  },
+  localized?: {
+    title?: string,
+    description?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  privacyStatus?: string
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  itemCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`playlists.delete`
+
+Delete a playlist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.youtube.api.playlists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the playlist to delete |
+| `confirmDelete` | `boolean` | Yes | Confirm that you want to delete the playlist |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+| `playlist_id` | `string` | No | — |
+| `http_status` | `number` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`playlists.list`
+
+List the authenticated user's playlists
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.playlists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `part` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    channelId?: string,
+    channelTitle?: string,
+    publishedAt?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    localized?: {
+      title?: string,
+      description?: string
+    }
+  },
+  status?: {
+    privacyStatus?: string
+  },
+  contentDetails?: {
+    itemCount?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`playlists.update`
+
+Update an existing playlist
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.playlists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the playlist to update |
+| `snippet` | `object` | Yes | Updated snippet fields |
+| `part` | `string` | No | — |
+| `status` | `object` | No | — |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  title?: string,
+  description?: string
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  privacyStatus?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `status` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  channelId?: string,
+  channelTitle?: string,
+  publishedAt?: string,
+  thumbnails?: {
+    default?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    medium?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    high?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    standard?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    maxres?: {
+      url?: string,
+      width?: number,
+      height?: number
+    }
+  },
+  localized?: {
+    title?: string,
+    description?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  privacyStatus?: string
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  itemCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### youtube
+
+`search.youtube`
+
+Search YouTube for videos, channels, and playlists
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.search.youtube({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query |
+| `part` | `string` | No | — |
+| `type` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `regionCode` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: {
+    kind?: string,
+    videoId?: string,
+    channelId?: string,
+    playlistId?: string
+  },
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    publishedAt?: string,
+    channelId?: string,
+    title?: string,
+    description?: string,
+    channelTitle?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    liveBroadcastContent?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### list
+
+`subscriptions.list`
+
+List the authenticated user's subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.subscriptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `part` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    publishedAt?: string,
+    title?: string,
+    description?: string,
+    channelId?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    resourceId?: {
+      kind?: string,
+      videoId?: string,
+      channelId?: string,
+      playlistId?: string
+    },
+    channelTitle?: string
+  },
+  contentDetails?: {
+    totalItemCount?: number,
+    newItemCount?: number,
+    activityType?: string
+  },
+  subscriberSnippet?: {
+    title?: string,
+    description?: string,
+    channelId?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribe
+
+`subscriptions.subscribe`
+
+Subscribe to a YouTube channel
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.subscriptions.subscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | The ID of the channel to subscribe to |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `contentDetails` | `object` | No | — |
+| `subscriberSnippet` | `object` | No | — |
+| `already_subscribed` | `boolean` | No | — |
+| `composio_execution_message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  publishedAt?: string,
+  title?: string,
+  description?: string,
+  channelId?: string,
+  thumbnails?: {
+    default?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    medium?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    high?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    standard?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    maxres?: {
+      url?: string,
+      width?: number,
+      height?: number
+    }
+  },
+  resourceId?: {
+    kind?: string,
+    videoId?: string,
+    channelId?: string,
+    playlistId?: string
+  },
+  channelTitle?: string
+}
+```
+</Accordion>
+
+<Accordion title="contentDetails full type">
+
+```ts
+{
+  totalItemCount?: number,
+  newItemCount?: number
+}
+```
+</Accordion>
+
+<Accordion title="subscriberSnippet full type">
+
+```ts
+{
+  title?: string,
+  channelId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscriptions.unsubscribe`
+
+Unsubscribe from a YouTube channel
+
+**Risk:** `destructive`
+
+```ts
+await corsair.youtube.api.subscriptions.unsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | Yes | The ID of the subscription to remove |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unsubscribed` | `boolean` | No | — |
+| `subscription_id` | `string` | No | — |
+| `http_status` | `number` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+## Video Actions
+
+### getRating
+
+`videoActions.getRating`
+
+Get the authenticated user's rating for a video
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.videoActions.getRating({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The YouTube video ID to get the rating for |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  videoId?: string,
+  rating?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAbuseReasons
+
+`videoActions.listAbuseReasons`
+
+List available video abuse report reasons
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.videoActions.listAbuseReasons({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hl` | `string` | No | — |
+| `part` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `eventId` | `string` | No | — |
+| `visitorId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  label?: string,
+  secondaryReasons?: {
+    id?: string,
+    label?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rate
+
+`videoActions.rate`
+
+Rate a video (like, dislike, or remove rating)
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.videoActions.rate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The YouTube video ID to rate |
+| `rating` | `like \| dislike \| none` | Yes | The rating to apply |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rating` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `video_id` | `string` | No | — |
+| `http_status` | `number` | No | — |
+
+
+
+---
+
+### reportAbuse
+
+`videoActions.reportAbuse`
+
+Report a video for abuse
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.videoActions.reportAbuse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoId` | `string` | Yes | The YouTube video ID to report |
+| `reasonId` | `string` | Yes | The ID of the abuse reason |
+| `comments` | `string` | No | — |
+| `language` | `string` | No | — |
+| `secondaryReasonId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `http_status` | `number` | No | — |
+
+
+
+---
+
+### updateThumbnail
+
+`videoActions.updateThumbnail`
+
+Update the thumbnail for a video
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.videoActions.updateThumbnail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoId` | `string` | Yes | The ID of the video to update the thumbnail for |
+| `thumbnailUrl` | `string` | Yes | URL of the new thumbnail image |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `eventId` | `string` | No | — |
+| `visitorId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  url?: string,
+  width?: number,
+  height?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Video Categories
+
+### list
+
+`videoCategories.list`
+
+List video categories
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.videoCategories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hl` | `string` | No | — |
+| `id` | `string` | No | — |
+| `part` | `string` | No | — |
+| `regionCode` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    channelId?: string,
+    title?: string,
+    assignable?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### delete
+
+`videos.delete`
+
+Delete a video
+
+**Risk:** `destructive`
+
+```ts
+await corsair.youtube.api.videos.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `videoId` | `string` | Yes | The ID of the video to delete |
+| `confirmDelete` | `boolean` | Yes | Confirm that you want to delete the video |
+| `onBehalfOfContentOwner` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+| `video_id` | `string` | No | — |
+| `http_status` | `number` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`videos.get`
+
+Get details for a single video
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.videos.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | The YouTube video ID |
+| `part` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    channelId?: string,
+    channelTitle?: string,
+    publishedAt?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    tags?: string[],
+    categoryId?: string,
+    defaultLanguage?: string,
+    liveBroadcastContent?: string
+  },
+  status?: {
+    privacyStatus?: string,
+    uploadStatus?: string,
+    publishAt?: string,
+    license?: string,
+    embeddable?: boolean,
+    publicStatsViewable?: boolean
+  },
+  statistics?: {
+    viewCount?: string,
+    likeCount?: string,
+    dislikeCount?: string,
+    favoriteCount?: string,
+    commentCount?: string
+  },
+  contentDetails?: {
+    duration?: string,
+    dimension?: string,
+    definition?: string,
+    caption?: string,
+    licensedContent?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatch
+
+`videos.getBatch`
+
+Get details for multiple videos in one request
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.videos.getBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string[]` | Yes | Array of YouTube video IDs to retrieve (max 50) |
+| `hl` | `string` | No | — |
+| `parts` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `found_count` | `number` | No | — |
+| `not_found_count` | `number` | No | — |
+| `requested_count` | `number` | No | — |
+| `not_found_video_ids` | `string[]` | No | — |
+| `requested_video_ids` | `string[]` | No | — |
+| `partial_failure` | `boolean` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+| `composio_execution_message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    channelId?: string,
+    channelTitle?: string,
+    publishedAt?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    tags?: string[],
+    categoryId?: string,
+    defaultLanguage?: string,
+    liveBroadcastContent?: string
+  },
+  status?: {
+    privacyStatus?: string,
+    uploadStatus?: string,
+    publishAt?: string,
+    license?: string,
+    embeddable?: boolean,
+    publicStatsViewable?: boolean
+  },
+  statistics?: {
+    viewCount?: string,
+    likeCount?: string,
+    dislikeCount?: string,
+    favoriteCount?: string,
+    commentCount?: string
+  },
+  contentDetails?: {
+    duration?: string,
+    dimension?: string,
+    definition?: string,
+    caption?: string,
+    licensedContent?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`videos.list`
+
+List videos for a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.videos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mine` | `boolean` | No | — |
+| `channelId` | `string` | No | — |
+| `part` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `regionCode` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    channelId?: string,
+    channelTitle?: string,
+    publishedAt?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    tags?: string[],
+    categoryId?: string,
+    defaultLanguage?: string,
+    liveBroadcastContent?: string
+  },
+  status?: {
+    privacyStatus?: string,
+    uploadStatus?: string,
+    publishAt?: string,
+    license?: string,
+    embeddable?: boolean,
+    publicStatsViewable?: boolean
+  },
+  statistics?: {
+    viewCount?: string,
+    likeCount?: string,
+    dislikeCount?: string,
+    favoriteCount?: string,
+    commentCount?: string
+  },
+  contentDetails?: {
+    duration?: string,
+    dimension?: string,
+    definition?: string,
+    caption?: string,
+    licensedContent?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMostPopular
+
+`videos.listMostPopular`
+
+List most popular videos on YouTube
+
+**Risk:** `read`
+
+```ts
+await corsair.youtube.api.videos.listMostPopular({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `part` | `string` | No | — |
+| `chart` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `regionCode` | `string` | No | — |
+| `videoCategoryId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `items` | `object[]` | No | — |
+| `pageInfo` | `object` | No | — |
+| `regionCode` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `prevPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    channelId?: string,
+    channelTitle?: string,
+    publishedAt?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    tags?: string[],
+    categoryId?: string,
+    defaultLanguage?: string,
+    liveBroadcastContent?: string
+  },
+  status?: {
+    privacyStatus?: string,
+    uploadStatus?: string,
+    publishAt?: string,
+    license?: string,
+    embeddable?: boolean,
+    publicStatsViewable?: boolean
+  },
+  statistics?: {
+    viewCount?: string,
+    likeCount?: string,
+    dislikeCount?: string,
+    favoriteCount?: string,
+    commentCount?: string
+  },
+  contentDetails?: {
+    duration?: string,
+    dimension?: string,
+    definition?: string,
+    caption?: string,
+    licensedContent?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  totalResults?: number,
+  resultsPerPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`videos.update`
+
+Update video metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.videos.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | The ID of the video to update |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `categoryId` | `string` | No | — |
+| `privacy_status` | `string` | No | — |
+| `composio_execution_message` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `snippet` | `object` | No | — |
+| `status` | `object` | No | — |
+| `statistics` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="snippet full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  channelId?: string,
+  channelTitle?: string,
+  publishedAt?: string,
+  thumbnails?: {
+    default?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    medium?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    high?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    standard?: {
+      url?: string,
+      width?: number,
+      height?: number
+    },
+    maxres?: {
+      url?: string,
+      width?: number,
+      height?: number
+    }
+  },
+  tags?: string[],
+  categoryId?: string,
+  defaultLanguage?: string,
+  liveBroadcastContent?: string
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  privacyStatus?: string,
+  uploadStatus?: string
+}
+```
+</Accordion>
+
+<Accordion title="statistics full type">
+
+```ts
+{
+  viewCount?: string,
+  likeCount?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`videos.upload`
+
+Upload a new video
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.videos.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | Video title |
+| `categoryId` | `string` | Yes | Video category ID |
+| `description` | `string` | Yes | Video description |
+| `privacyStatus` | `public \| private \| unlisted` | Yes | Privacy status |
+| `tags` | `string[]` | Yes | Video tags |
+| `videoFilePath` | `object` | Yes | Video file reference |
+
+<AccordionGroup>
+<Accordion title="videoFilePath full type">
+
+```ts
+{
+  name?: string,
+  content_type?: string,
+  s3_key?: string,
+  s3_url?: string,
+  storage_type?: string,
+  content_length?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_data` | `any` | No | — |
+
+
+
+---
+
+### uploadMultipart
+
+`videos.uploadMultipart`
+
+Upload a new video using multipart upload
+
+**Risk:** `write`
+
+```ts
+await corsair.youtube.api.videos.uploadMultipart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | Video title |
+| `videoFile` | `object` | Yes | Video file reference |
+| `categoryId` | `string` | Yes | Video category ID |
+| `description` | `string` | Yes | Video description |
+| `privacyStatus` | `public \| private \| unlisted` | Yes | Privacy status |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="videoFile full type">
+
+```ts
+{
+  name?: string,
+  content_type?: string,
+  s3_key?: string,
+  s3_url?: string,
+  storage_type?: string,
+  content_length?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="video full type">
+
+```ts
+{
+  id?: string,
+  etag?: string,
+  kind?: string,
+  snippet?: {
+    title?: string,
+    description?: string,
+    channelId?: string,
+    channelTitle?: string,
+    publishedAt?: string,
+    thumbnails?: {
+      default?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      medium?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      high?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      standard?: {
+        url?: string,
+        width?: number,
+        height?: number
+      },
+      maxres?: {
+        url?: string,
+        width?: number,
+        height?: number
+      }
+    },
+    tags?: string[],
+    categoryId?: string,
+    defaultLanguage?: string,
+    liveBroadcastContent?: string
+  },
+  status?: {
+    privacyStatus?: string,
+    uploadStatus?: string,
+    publishAt?: string,
+    license?: string,
+    embeddable?: boolean,
+    publicStatsViewable?: boolean
+  },
+  statistics?: {
+    viewCount?: string,
+    likeCount?: string,
+    dislikeCount?: string,
+    favoriteCount?: string,
+    commentCount?: string
+  },
+  contentDetails?: {
+    duration?: string,
+    dimension?: string,
+    definition?: string,
+    caption?: string,
+    licensedContent?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

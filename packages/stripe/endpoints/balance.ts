@@ -1,6 +1,6 @@
-import type { StripeEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
 import { makeStripeRequest } from '../client';
+import type { StripeEndpoints } from '../index';
 import type { StripeEndpointOutputs } from './types';
 
 export const get: StripeEndpoints['balanceGet'] = async (ctx, input) => {

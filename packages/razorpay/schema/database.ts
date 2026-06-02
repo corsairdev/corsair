@@ -1,0 +1,201 @@
+import { z } from 'zod';
+
+// Shared notes schema used across all entities.
+// z.unknown() is used for array items because the Razorpay API does not
+// document a fixed element type for array-style notes; elements can be
+// arbitrary values.
+export const RazorpayNotesSchema = z.union([
+	z.record(z.string(), z.string()),
+	z.array(z.unknown()),
+]);
+
+// Base order schema for API responses
+export const RazorpayOrderSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('order'),
+		amount: z.number(),
+		amount_paid: z.number().nullable().optional(),
+		amount_due: z.number().optional(),
+		currency: z.string(),
+		receipt: z.string().nullable().optional(),
+		offer_id: z.string().nullable().optional(),
+		status: z.string(),
+		attempts: z.number().optional(),
+		notes: RazorpayNotesSchema.optional(),
+		created_at: z.number().optional(),
+	})
+	.loose();
+
+// Base payment schema for API responses
+export const RazorpayPaymentSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('payment'),
+		amount: z.number(),
+		currency: z.string(),
+		status: z.string(),
+		order_id: z.string().nullable().optional(),
+		invoice_id: z.string().nullable().optional(),
+		method: z.string().nullable().optional(),
+		captured: z.boolean().optional(),
+		description: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		contact: z.string().nullable().optional(),
+		notes: RazorpayNotesSchema.optional(),
+		created_at: z.number().optional(),
+	})
+	.loose();
+
+// Base payout schema for API responses
+export const RazorpayPayoutStatusDetailsSchema = z
+	.object({
+		description: z.string(),
+		source: z.string(),
+		reason: z.string(),
+	})
+	.loose();
+
+export const RazorpayPayoutSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('payout'),
+		fund_account_id: z.string(),
+		amount: z.number().int().positive().min(100),
+		currency: z.string(),
+		notes: RazorpayNotesSchema.optional(),
+		fees: z.number().optional(),
+		tax: z.number().optional(),
+		status: z.string(),
+		utr: z.string().nullable().optional(),
+		mode: z.string().optional(),
+		purpose: z.string().optional(),
+		reference_id: z.string().nullable().optional(),
+		debit_account_number: z.string().optional(),
+		narration: z.string().nullable().optional(),
+		batch_id: z.string().nullable().optional(),
+		status_details: RazorpayPayoutStatusDetailsSchema.nullable().optional(),
+		created_at: z.number().optional(),
+		fee_type: z.string().optional(),
+	})
+	.loose();
+
+// Base refund schema for API responses
+export const RazorpayRefundSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('refund'),
+		payment_id: z.string(),
+		amount: z.number(),
+		currency: z.string().nullable().optional(),
+		notes: RazorpayNotesSchema.optional(),
+		receipt: z.string().nullable().optional(),
+		speed_processed: z.string().nullable().optional(),
+		speed_requested: z.string().nullable().optional(),
+		status: z.string(),
+		created_at: z.number().optional(),
+	})
+	.loose();
+
+export const RazorpayCustomerSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('customer'),
+		name: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		contact: z.string().nullable().optional(),
+		gstin: z.string().nullable().optional(),
+		notes: RazorpayNotesSchema.optional(),
+		created_at: z.number().optional(),
+	})
+	.loose();
+
+export const RazorpaySettlementSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('settlement'),
+		amount: z.number().nullable().optional(),
+		status: z.enum(['created', 'processed', 'failed']),
+		fees: z.number().nullable().optional(),
+		tax: z.number().nullable().optional(),
+		utr: z.string().nullable().optional(),
+		created_at: z.number().optional(),
+	})
+	.loose();
+export const RazorpaySubscriptionSchema = z
+	.object({
+		id: z.string(),
+		entity: z.literal('subscription'),
+		plan_id: z.string(),
+		customer_id: z.string().nullable().optional(),
+		status: z.string(),
+		current_start: z.number().nullable().optional(),
+		current_end: z.number().nullable().optional(),
+		ended_at: z.number().nullable().optional(),
+		charge_at: z.number().nullable().optional(),
+		offer_id: z.string().nullable().optional(),
+		start_at: z.number().nullable().optional(),
+		end_at: z.number().nullable().optional(),
+		auth_attempts: z.number().optional(),
+		quantity: z.number().optional(),
+		total_count: z.number().optional(),
+		paid_count: z.number().optional(),
+		remaining_count: z.number().optional(),
+		customer_notify: z.boolean().optional(),
+		expire_by: z.number().nullable().optional(),
+		short_url: z.string().nullable().optional(),
+		has_scheduled_changes: z.boolean().optional(),
+		change_scheduled_at: z.number().nullable().optional(),
+		source: z.string().nullable().optional(),
+		notes: RazorpayNotesSchema.optional(),
+		created_at: z.number().optional(),
+	})
+	.loose();
+
+// Database schemas (extend base schemas with createdAt for DB storage)
+export const RazorpayOrder = RazorpayOrderSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const RazorpayPayment = RazorpayPaymentSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const RazorpayPayout = RazorpayPayoutSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const RazorpayRefund = RazorpayRefundSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const RazorpayCustomer = RazorpayCustomerSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const RazorpaySettlement = RazorpaySettlementSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+export const RazorpaySubscription = RazorpaySubscriptionSchema.extend({
+	createdAt: z.coerce.date().nullable().optional(),
+});
+
+// Type exports
+export type RazorpayOrderData = z.infer<typeof RazorpayOrderSchema>;
+export type RazorpayPaymentData = z.infer<typeof RazorpayPaymentSchema>;
+export type RazorpayPayoutData = z.infer<typeof RazorpayPayoutSchema>;
+export type RazorpayRefundData = z.infer<typeof RazorpayRefundSchema>;
+export type RazorpayCustomerData = z.infer<typeof RazorpayCustomerSchema>;
+export type RazorpaySettlementData = z.infer<typeof RazorpaySettlementSchema>;
+export type RazorpaySubscriptionData = z.infer<
+	typeof RazorpaySubscriptionSchema
+>;
+
+export type RazorpayOrder = z.infer<typeof RazorpayOrder>;
+export type RazorpayPayment = z.infer<typeof RazorpayPayment>;
+export type RazorpayPayout = z.infer<typeof RazorpayPayout>;
+export type RazorpayRefund = z.infer<typeof RazorpayRefund>;
+export type RazorpayCustomer = z.infer<typeof RazorpayCustomer>;
+export type RazorpaySettlement = z.infer<typeof RazorpaySettlement>;
+export type RazorpaySubscription = z.infer<typeof RazorpaySubscription>;

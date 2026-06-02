@@ -1,6 +1,6 @@
-import type { TypeformEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
 import { makeTypeformRequest } from '../client';
+import type { TypeformEndpoints } from '../index';
 import type { TypeformEndpointOutputs } from './types';
 
 export const list: TypeformEndpoints['workspacesList'] = async (ctx, input) => {
@@ -151,7 +151,7 @@ export const update: TypeformEndpoints['workspacesUpdate'] = async (
 		TypeformEndpointOutputs['workspacesUpdate']
 	>(`/workspaces/${workspace_id}`, ctx.key, {
 		method: 'PATCH',
-		body: operations
+		body: operations,
 	});
 
 	// PATCH /workspaces returns 204 No Content; re-fetch to sync DB
@@ -165,7 +165,10 @@ export const update: TypeformEndpoints['workspacesUpdate'] = async (
 				await ctx.db.workspaces.upsertByEntityId(id, { ...updated, id });
 			}
 		} catch (error) {
-			console.warn('Failed to re-fetch workspace after update for database sync:', error);
+			console.warn(
+				'Failed to re-fetch workspace after update for database sync:',
+				error,
+			);
 		}
 	}
 

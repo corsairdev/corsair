@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import { verifyHmacSha256Signature } from 'corsair/http';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSha256Signature } from 'corsair/http';
+import { z } from 'zod';
 
 const ZoomMeetingObjectSchema = z
 	.object({
@@ -17,7 +17,7 @@ const ZoomMeetingObjectSchema = z
 		duration: z.number().optional(),
 		timezone: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomParticipantObjectSchema = z
 	.object({
@@ -28,7 +28,7 @@ const ZoomParticipantObjectSchema = z
 		leave_time: z.string().optional(),
 		leave_reason: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomWebinarObjectSchema = z
 	.object({
@@ -41,7 +41,7 @@ const ZoomWebinarObjectSchema = z
 		duration: z.number().optional(),
 		timezone: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomRecordingObjectSchema = z
 	.object({
@@ -72,16 +72,16 @@ const ZoomRecordingObjectSchema = z
 						status: z.string().optional(),
 						recording_type: z.string().optional(),
 					})
-					.passthrough(),
+					.loose(),
 			)
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const ZoomPayloadBaseSchema = z.object({
 	account_id: z.string().optional(),
 	// Use unknown for the object to allow for any properties
-	object: z.record(z.unknown()),
+	object: z.record(z.string(), z.unknown()),
 });
 
 export const MeetingCreatedPayloadSchema = z.object({
@@ -104,7 +104,9 @@ export const MeetingCancelledPayloadSchema = z.object({
 		object: ZoomMeetingObjectSchema,
 	}),
 });
-export type MeetingCancelledEvent = z.infer<typeof MeetingCancelledPayloadSchema>;
+export type MeetingCancelledEvent = z.infer<
+	typeof MeetingCancelledPayloadSchema
+>;
 
 export const MeetingStartedPayloadSchema = z.object({
 	event: z.literal('meeting.started'),
@@ -230,7 +232,13 @@ export function verifyZoomWebhookSignature(
 	}
 
 	// Zoom recommends a 30-second replay window; the utility default of 5 minutes is too wide
-	const isValid = verifyHmacSha256Signature(rawBody, signingSecret, timestamp, signature, 30);
+	const isValid = verifyHmacSha256Signature(
+		rawBody,
+		signingSecret,
+		timestamp,
+		signature,
+		30,
+	);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid signature' };
 	}

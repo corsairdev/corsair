@@ -1,0 +1,149 @@
+---
+title: Overview
+description: "Jira plugin for Corsair"
+---
+
+Use **Jira** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+
+**What you get:**
+
+- 32 typed API operations
+- 6 database entities synced for fast `.search()` / `.list()` queries
+- 3 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/jira
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { jira } from '@corsair-dev/jira';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [jira()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { jira } from '@corsair-dev/jira';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [jira()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/jira/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=jira
+```
+
+Use the key names documented in [Get Credentials](/plugins/jira/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=jira --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+jira()
+```
+
+Store credentials with `pnpm corsair setup --plugin=jira` (see [Get Credentials](/plugins/jira/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+## Webhooks
+
+This plugin registers **3** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/jira/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.jira.db.<entity>.search()` and `.list()`. See [Database](/plugins/jira/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `comments.get`
+
+```ts
+await corsair.jira.api.comments.get({});
+```
+
+
+**Write-style (write):** `comments.add`
+
+```ts
+await corsair.jira.api.comments.add({});
+```
+
+
+See the full list on the [API](/plugins/jira/api) page. Use `pnpm corsair list --plugin=jira` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/jira/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/jira/api) |
+| Database | [Database](/plugins/jira/database) |
+| Webhooks | [Webhooks](/plugins/jira/webhooks) |
+| Credentials | [Get credentials](/plugins/jira/get-credentials) |
+

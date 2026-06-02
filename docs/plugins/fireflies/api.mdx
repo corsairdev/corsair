@@ -1,0 +1,808 @@
+---
+title: API
+description: "API reference for Fireflies: every `fireflies.api.*` operation with input and output types."
+---
+
+Every `fireflies.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Ai App
+
+### getOutputs
+
+`aiApp.getOutputs`
+
+Get the outputs of an AI app for a transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.aiApp.getOutputs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | No | — |
+| `appId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apps` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="apps full type">
+
+```ts
+{
+  outputs?: {
+    transcript_id?: string | null,
+    user_id?: string | null,
+    app_id?: string | null,
+    created_at?: number | null,
+    title?: string | null,
+    prompt?: string | null,
+    response?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ask Fred
+
+### continueThread
+
+`askFred.continueThread`
+
+Continue an existing AskFred conversation thread
+
+**Risk:** `write`
+
+```ts
+await corsair.fireflies.api.askFred.continueThread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `continueAskFredThread` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="continueAskFredThread full type">
+
+```ts
+{
+  message: {
+    id: string,
+    thread_id: string,
+    query: string,
+    answer: string,
+    suggested_queries?: string[] | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  cost?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createThread
+
+`askFred.createThread`
+
+Create a new AskFred conversation thread
+
+**Risk:** `write`
+
+```ts
+await corsair.fireflies.api.askFred.createThread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | No | — |
+| `query` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createAskFredThread` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="createAskFredThread full type">
+
+```ts
+{
+  message: {
+    id: string,
+    thread_id: string,
+    query: string,
+    answer: string,
+    suggested_queries?: string[] | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  },
+  cost?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteThread
+
+`askFred.deleteThread`
+
+Delete an AskFred conversation thread [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fireflies.api.askFred.deleteThread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleteAskFredThread` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="deleteAskFredThread full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  transcript_id?: string | null,
+  user_id: string,
+  created_at: string,
+  messages?: {
+    id: string,
+    thread_id: string,
+    query: string,
+    answer: string,
+    suggested_queries?: string[] | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getThread
+
+`askFred.getThread`
+
+Get a single AskFred conversation thread by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.askFred.getThread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `askfred_thread` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="askfred_thread full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  transcript_id?: string | null,
+  user_id: string,
+  created_at: string,
+  messages?: {
+    id: string,
+    thread_id: string,
+    query: string,
+    answer: string,
+    suggested_queries?: string[] | null,
+    status?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getThreads
+
+`askFred.getThreads`
+
+Get all AskFred conversation threads for a transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.askFred.getThreads({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `askfred_threads` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="askfred_threads full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  transcript_id?: string | null,
+  user_id: string,
+  created_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio
+
+### upload
+
+`audio.upload`
+
+Upload an audio file for transcription
+
+**Risk:** `write`
+
+```ts
+await corsair.fireflies.api.audio.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `webhook` | `string` | No | — |
+| `custom_language` | `string` | No | — |
+| `client_reference_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uploadAudio` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="uploadAudio full type">
+
+```ts
+{
+  success: boolean,
+  title: string,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transcripts
+
+### get
+
+`transcripts.get`
+
+Get a single transcript by ID with full details
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.transcripts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  date?: date | null,
+  duration?: number | null,
+  host_email?: string | null,
+  organizer_email?: string | null,
+  calendar_id?: string | null,
+  transcript_url?: string | null,
+  meeting_link?: string | null,
+  video_url?: string | null,
+  audio_url?: string | null,
+  privacy?: string | null,
+  sentences?: {
+    index?: number | null,
+    speaker_id?: number | null,
+    speaker_name?: string | null,
+    raw_text?: string | null,
+    text?: string | null,
+    start_time?: number | null,
+    end_time?: number | null,
+    ai_filters?: {
+      task?: string | null,
+      pricing?: string | null,
+      metric?: string | null,
+      question?: string | null,
+      date_and_time?: string | null
+    } | null
+  }[] | null,
+  summary?: {
+    keywords?: string[] | null,
+    action_items?: string | null,
+    outline?: string | null,
+    shorthand_bullet?: string | null,
+    overview?: string | null,
+    bullet_gist?: string | null,
+    gist?: string | null,
+    short_summary?: string | null,
+    notes?: string | null,
+    short_overview?: string | null,
+    meeting_type?: string | null
+  } | null,
+  speakers?: {
+    id?: string | null,
+    name?: string | null
+  }[] | null,
+  meeting_attendees?: {
+    displayName?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    name?: string | null,
+    location?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAnalytics
+
+`transcripts.getAnalytics`
+
+Get analytics data for a transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.transcripts.getAnalytics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  id: string,
+  analytics?: {
+    sentiments?: {
+      negative_pct?: number | null,
+      neutral_pct?: number | null,
+      positive_pct?: number | null
+    } | null,
+    categories?: {
+      questions?: number | null,
+      date_times?: number | null,
+      metrics?: number | null,
+      tasks?: number | null
+    } | null,
+    speakers?: {
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAudioUrl
+
+`transcripts.getAudioUrl`
+
+Get the audio URL for a transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.transcripts.getAudioUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  id: string,
+  audio_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSummary
+
+`transcripts.getSummary`
+
+Get the AI-generated summary for a transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.transcripts.getSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  id: string,
+  summary?: {
+    keywords?: string[] | null,
+    action_items?: string | null,
+    outline?: string | null,
+    shorthand_bullet?: string | null,
+    overview?: string | null,
+    bullet_gist?: string | null,
+    gist?: string | null,
+    short_summary?: string | null,
+    notes?: string | null,
+    short_overview?: string | null,
+    meeting_type?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVideoUrl
+
+`transcripts.getVideoUrl`
+
+Get the video URL for a transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.transcripts.getVideoUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  id: string,
+  video_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transcripts.list`
+
+List transcripts with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.transcripts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `fromDate` | `string` | No | — |
+| `toDate` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `host_email` | `string` | No | — |
+| `participant_email` | `string` | No | — |
+| `mine` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcripts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transcripts full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  date?: date | null,
+  duration?: number | null,
+  host_email?: string | null,
+  organizer_email?: string | null,
+  calendar_id?: string | null,
+  transcript_url?: string | null,
+  meeting_link?: string | null,
+  video_url?: string | null,
+  audio_url?: string | null,
+  privacy?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getCurrent
+
+`users.getCurrent`
+
+Get the current authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.users.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  user_id: string,
+  email?: string | null,
+  name?: string | null,
+  num_transcripts?: number | null,
+  minutes_consumed?: number | null,
+  is_admin?: boolean | null,
+  integrations?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List all users in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.fireflies.api.users.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id: string,
+  email?: string | null,
+  name?: string | null,
+  num_transcripts?: number | null,
+  minutes_consumed?: number | null,
+  is_admin?: boolean | null,
+  integrations?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

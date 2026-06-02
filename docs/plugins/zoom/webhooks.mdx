@@ -1,0 +1,775 @@
+---
+title: Webhooks
+description: "Zoom incoming webhooks: event paths, payloads, and response data."
+---
+
+The Zoom plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/zoom/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `meetings`
+  - `cancelled` (`meetings.cancelled`)
+  - `created` (`meetings.created`)
+  - `ended` (`meetings.ended`)
+  - `participantJoined` (`meetings.participantJoined`)
+  - `participantLeft` (`meetings.participantLeft`)
+  - `started` (`meetings.started`)
+- `recordings`
+  - `completed` (`recordings.completed`)
+- `webinars`
+  - `started` (`webinars.started`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Meetings
+
+### Cancelled
+
+`meetings.cancelled`
+
+A meeting has been cancelled or deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `meeting.deleted` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: string,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    duration?: number,
+    timezone?: string
+  },
+  operator?: string,
+  operator_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: meeting.deleted,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: string,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      duration?: number,
+      timezone?: string
+    },
+    operator?: string,
+    operator_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            cancelled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`meetings.created`
+
+A meeting has been created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `meeting.created` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: string,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    duration?: number,
+    timezone?: string
+  },
+  operator?: string,
+  operator_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: meeting.created,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: string,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      duration?: number,
+      timezone?: string
+    },
+    operator?: string,
+    operator_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Ended
+
+`meetings.ended`
+
+A meeting has ended
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `meeting.ended` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: string,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    duration?: number,
+    timezone?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: meeting.ended,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: string,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      duration?: number,
+      timezone?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            ended: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Participant Joined
+
+`meetings.participantJoined`
+
+A participant joined a meeting
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `meeting.participant_joined` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: string,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    duration?: number,
+    timezone?: string,
+    participant?: {
+      user_id?: string,
+      user_name?: string,
+      id?: string,
+      join_time?: string,
+      leave_time?: string,
+      leave_reason?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: meeting.participant_joined,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: string,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      duration?: number,
+      timezone?: string,
+      participant?: {
+        user_id?: string,
+        user_name?: string,
+        id?: string,
+        join_time?: string,
+        leave_time?: string,
+        leave_reason?: string
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            participantJoined: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Participant Left
+
+`meetings.participantLeft`
+
+A participant left a meeting
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `meeting.participant_left` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: string,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    duration?: number,
+    timezone?: string,
+    participant?: {
+      user_id?: string,
+      user_name?: string,
+      id?: string,
+      join_time?: string,
+      leave_time?: string,
+      leave_reason?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: meeting.participant_left,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: string,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      duration?: number,
+      timezone?: string,
+      participant?: {
+        user_id?: string,
+        user_name?: string,
+        id?: string,
+        join_time?: string,
+        leave_time?: string,
+        leave_reason?: string
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            participantLeft: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Started
+
+`meetings.started`
+
+A meeting has started
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `meeting.started` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: string,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    duration?: number,
+    timezone?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: meeting.started,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: string,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      duration?: number,
+      timezone?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Recordings
+
+### Completed
+
+`recordings.completed`
+
+A cloud recording has completed processing
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `recording.completed` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: number,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    timezone?: string,
+    duration?: number,
+    total_size?: number,
+    recording_count?: number,
+    share_url?: string,
+    password?: string,
+    recording_files?: {
+      id?: string,
+      meeting_id?: string,
+      recording_start?: string,
+      recording_end?: string,
+      file_type?: string,
+      file_size?: number,
+      play_url?: string,
+      download_url?: string,
+      status?: string,
+      recording_type?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: recording.completed,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: number,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      timezone?: string,
+      duration?: number,
+      total_size?: number,
+      recording_count?: number,
+      share_url?: string,
+      password?: string,
+      recording_files?: {
+        id?: string,
+        meeting_id?: string,
+        recording_start?: string,
+        recording_end?: string,
+        file_type?: string,
+        file_size?: number,
+        play_url?: string,
+        download_url?: string,
+        status?: string,
+        recording_type?: string
+      }[]
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        recordings: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Webinars
+
+### Started
+
+`webinars.started`
+
+A webinar has started
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `webinar.started` | Yes | — |
+| `event_ts` | `number` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  account_id?: string,
+  object: {
+    uuid?: string,
+    id?: string,
+    host_id?: string,
+    topic?: string,
+    type?: number,
+    start_time?: string,
+    duration?: number,
+    timezone?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: webinar.started,
+  event_ts?: number,
+  payload: {
+    account_id?: string,
+    object: {
+      uuid?: string,
+      id?: string,
+      host_id?: string,
+      topic?: string,
+      type?: number,
+      start_time?: string,
+      duration?: number,
+      timezone?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoom({
+    webhookHooks: {
+        webinars: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

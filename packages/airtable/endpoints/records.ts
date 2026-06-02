@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AirtableEndpoints } from '..';
 import { makeAirtableRequest } from '../client';
+import type { AirtableEndpoints } from '../index';
 import type { AirtableEndpointOutputs } from './types';
 
 export const create: AirtableEndpoints['recordsCreate'] = async (

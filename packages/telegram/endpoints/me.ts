@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TelegramEndpoints } from '..';
 import { makeTelegramRequest } from '../client';
+import type { TelegramEndpoints } from '../index';
 import type { TelegramEndpointOutputs } from './types';
 
 export const getMe: TelegramEndpoints['getMe'] = async (ctx) => {
@@ -12,11 +12,6 @@ export const getMe: TelegramEndpoints['getMe'] = async (ctx) => {
 		},
 	);
 
-	await logEventFromContext(
-		ctx,
-		'telegram.me.getMe',
-		{},
-		'completed',
-	);
+	await logEventFromContext(ctx, 'telegram.me.getMe', {}, 'completed');
 	return result;
 };

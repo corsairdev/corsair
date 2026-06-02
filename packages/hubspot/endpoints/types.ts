@@ -18,7 +18,7 @@ const ContactsGetManyInputSchema = z.object({
 	archived: z.boolean().optional(),
 });
 
-const ContactsCreateOrUpdateInputSchema = z.object({
+const ContactsCreateInputSchema = z.object({
 	properties: z.record(z.string(), z.string()).optional(),
 	associations: z
 		.array(
@@ -33,6 +33,11 @@ const ContactsCreateOrUpdateInputSchema = z.object({
 			}),
 		)
 		.optional(),
+});
+
+const ContactsUpdateInputSchema = z.object({
+	contactId: z.string(),
+	properties: z.record(z.string(), z.string()).optional(),
 });
 
 const ContactsDeleteInputSchema = z.object({
@@ -79,6 +84,13 @@ const FilterGroupSchema = z.object({
 	filters: z.array(FilterSchema),
 });
 
+const SearchSortDirection = z.enum(['ASCENDING', 'DESCENDING']);
+
+const SearchSortSchema = z.object({
+	propertyName: z.string(),
+	direction: SearchSortDirection,
+});
+
 const AssociationRecords = z.object({
 	id: z.string(),
 	type: z.string().optional(),
@@ -97,7 +109,7 @@ const ContactsSearchInputSchema = z.object({
 	query: z.string().optional(),
 	limit: z.number().optional(),
 	after: z.string().optional(),
-	sorts: z.array(z.string()).optional(),
+	sorts: z.array(SearchSortSchema).optional(),
 	properties: z.array(z.string()).optional(),
 	filterGroups: z.array(FilterGroupSchema).optional(),
 });
@@ -223,7 +235,7 @@ const DealsSearchInputSchema = z.object({
 	query: z.string().optional(),
 	limit: z.number().optional(),
 	after: z.string().optional(),
-	sorts: z.array(z.string()).optional(),
+	sorts: z.array(SearchSortSchema).optional(),
 	properties: z.array(z.string()).optional(),
 	filterGroups: z.array(FilterGroupSchema).optional(),
 });
@@ -296,7 +308,7 @@ const EngagementsCreateInputSchema = z.object({
 		})
 		.optional(),
 	// keeping metadata as any for now
-	metadata: z.record(z.any()).optional(),
+	metadata: z.record(z.string(), z.any()).optional(),
 });
 
 const EngagementsDeleteInputSchema = z.object({
@@ -318,7 +330,8 @@ const ContactListsRemoveContactInputSchema = z.object({
 export const HubSpotEndpointInputSchemas = {
 	contactsGet: ContactsGetInputSchema,
 	contactsGetMany: ContactsGetManyInputSchema,
-	contactsCreateOrUpdate: ContactsCreateOrUpdateInputSchema,
+	contactsCreate: ContactsCreateInputSchema,
+	contactsUpdate: ContactsUpdateInputSchema,
 	contactsDelete: ContactsDeleteInputSchema,
 	contactsGetRecentlyCreated: ContactsGetRecentlyCreatedInputSchema,
 	contactsGetRecentlyUpdated: ContactsGetRecentlyUpdatedInputSchema,
@@ -367,7 +380,7 @@ const ContactResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const CompanyResponseSchema = z
 	.object({
@@ -378,7 +391,7 @@ const CompanyResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const DealResponseSchema = z
 	.object({
@@ -389,7 +402,7 @@ const DealResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TicketResponseSchema = z
 	.object({
@@ -400,7 +413,7 @@ const TicketResponseSchema = z
 		archived: z.boolean().optional(),
 		associations: AssociationsSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const EngagementResponseSchema = z
 	.object({
@@ -421,9 +434,9 @@ const EngagementResponseSchema = z
 			.optional(),
 		associations: AssociationsSchema.optional(),
 		// keeping metadata as any for now
-		metadata: z.record(z.any()).optional(),
+		metadata: z.record(z.string(), z.any()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const PagingResponseSchema = z.object({
 	next: z
@@ -440,44 +453,49 @@ const PagingResponseSchema = z.object({
 
 const GetManyContactsResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(ContactResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyCompaniesResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(CompanyResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyDealsResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(DealResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyTicketsResponseSchema = z
 	.object({
 		results: z.array(TicketResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const GetManyEngagementsResponseSchema = z
 	.object({
 		results: z.array(EngagementResponseSchema).optional(),
 		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const SearchCompanyByDomainResponseSchema = z
 	.object({
+		total: z.number().optional(),
 		results: z.array(CompanyResponseSchema).optional(),
+		paging: PagingResponseSchema.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const AddContactToListResponseSchema = z.object({
 	updated: z.array(z.number()).optional(),
@@ -489,7 +507,8 @@ const AddContactToListResponseSchema = z.object({
 export const HubSpotEndpointOutputSchemas = {
 	contactsGet: ContactResponseSchema,
 	contactsGetMany: GetManyContactsResponseSchema,
-	contactsCreateOrUpdate: ContactResponseSchema,
+	contactsCreate: ContactResponseSchema,
+	contactsUpdate: ContactResponseSchema,
 	contactsDelete: z.void(),
 	contactsGetRecentlyCreated: GetManyContactsResponseSchema,
 	contactsGetRecentlyUpdated: GetManyContactsResponseSchema,
@@ -535,8 +554,11 @@ export type GetContactResponse = z.infer<
 export type GetManyContactsResponse = z.infer<
 	typeof HubSpotEndpointOutputSchemas.contactsGetMany
 >;
-export type CreateOrUpdateContactResponse = z.infer<
-	typeof HubSpotEndpointOutputSchemas.contactsCreateOrUpdate
+export type CreateContactResponse = z.infer<
+	typeof HubSpotEndpointOutputSchemas.contactsCreate
+>;
+export type UpdateContactResponse = z.infer<
+	typeof HubSpotEndpointOutputSchemas.contactsUpdate
 >;
 export type GetCompanyResponse = z.infer<
 	typeof HubSpotEndpointOutputSchemas.companiesGet

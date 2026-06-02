@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { LinearBoundEndpoints, LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
+import type { LinearBoundEndpoints, LinearEndpoints } from '../index';
 import type {
 	IssueCreateResponse,
 	IssueDeleteResponse,

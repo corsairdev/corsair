@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import crypto from 'crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
+import crypto from 'crypto';
+import { z } from 'zod';
 
 export const FirefliesWebhookPayloadSchema = z.object({
 	meetingId: z.string(),
@@ -14,16 +14,18 @@ export interface FirefliesWebhookPayload {
 	eventType: string;
 }
 
-export const TranscriptionCompletePayloadSchema = FirefliesWebhookPayloadSchema.extend({
-	eventType: z.literal('Transcription'),
-});
+export const TranscriptionCompletePayloadSchema =
+	FirefliesWebhookPayloadSchema.extend({
+		eventType: z.literal('Transcription'),
+	});
 export interface TranscriptionCompleteEvent extends FirefliesWebhookPayload {
 	eventType: 'Transcription';
 }
 
-export const TranscriptProcessingPayloadSchema = FirefliesWebhookPayloadSchema.extend({
-	eventType: z.literal('TranscriptProcessing'),
-});
+export const TranscriptProcessingPayloadSchema =
+	FirefliesWebhookPayloadSchema.extend({
+		eventType: z.literal('TranscriptProcessing'),
+	});
 export interface TranscriptProcessingEvent extends FirefliesWebhookPayload {
 	eventType: 'TranscriptProcessing';
 }
@@ -42,9 +44,11 @@ export interface InMeetingEvent extends FirefliesWebhookPayload {
 	eventType: 'InMeeting';
 }
 
-export const MeetingDeletedPayloadSchema = FirefliesWebhookPayloadSchema.extend({
-	eventType: z.literal('MeetingDeleted'),
-});
+export const MeetingDeletedPayloadSchema = FirefliesWebhookPayloadSchema.extend(
+	{
+		eventType: z.literal('MeetingDeleted'),
+	},
+);
 export interface MeetingDeletedEvent extends FirefliesWebhookPayload {
 	eventType: 'MeetingDeleted';
 }
@@ -89,12 +93,17 @@ export function verifyFirefliesWebhookSignature(
 	if (!signatureHeader) {
 		return { valid: false, error: 'Missing x-fireflies-signature header' };
 	}
-	const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
+	const signature = Array.isArray(signatureHeader)
+		? signatureHeader[0]
+		: signatureHeader;
 	if (!signature) {
 		return { valid: false, error: 'Empty signature header' };
 	}
 	const body = request.rawBody ?? JSON.stringify(request.payload);
-	const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex');
+	const expectedSignature = crypto
+		.createHmac('sha256', secret)
+		.update(body)
+		.digest('hex');
 	try {
 		const isValid = crypto.timingSafeEqual(
 			Buffer.from(signature),

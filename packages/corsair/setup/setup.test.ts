@@ -1,6 +1,7 @@
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
+import type { CorsairPlugin } from '../core';
 import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
@@ -211,7 +212,7 @@ describe('setupCorsair', () => {
 		sqlite.close();
 	});
 
-	it('throws for multi-tenant instances', async () => {
+	it('creates account rows for an explicit tenant on multi-tenant instances', async () => {
 		const corsair = createCorsair({
 			kek: 'test-kek-32-chars-long-padding-x',
 			plugins: [slack()],
@@ -219,6 +220,36 @@ describe('setupCorsair', () => {
 			multiTenancy: true,
 		});
 
-		await expect(setupCorsair(corsair as any)).rejects.toThrow('multi-tenancy');
+		await setupCorsair(corsair, { tenantId: 'acme' });
+
+		const accounts = await testDb.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.execute();
+
+		expect(accounts).toHaveLength(1);
+		expect(accounts[0]?.tenant_id).toBe('acme');
+	});
+
+	it('rejects tenant-scoped writes to integration-level credentials', async () => {
+		const oauthPlugin = {
+			id: 'test-oauth',
+			options: { authType: 'oauth_2' },
+		} satisfies CorsairPlugin;
+		const corsair = createCorsair({
+			kek: 'test-kek-32-chars-long-padding-x',
+			plugins: [oauthPlugin],
+			database: testDb.db,
+			multiTenancy: true,
+		});
+
+		await expect(
+			setupCorsair(corsair, {
+				tenantId: 'acme',
+				credentials: {
+					'test-oauth': { client_id: 'client-id' },
+				},
+			}),
+		).rejects.toThrow('integration-level credential shared across all tenants');
 	});
 });

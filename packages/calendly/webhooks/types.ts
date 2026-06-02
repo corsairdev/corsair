@@ -1,6 +1,10 @@
-import { z } from 'zod';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import crypto from 'crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 
 // ── Shared sub-schemas ────────────────────────────────────────────────────────
 
@@ -16,11 +20,11 @@ const CalendlyInviteePayloadSchema = z.object({
 	cancel_url: z.string().optional(),
 	reschedule_url: z.string().optional(),
 	// Tracking metadata shape varies by source (UTM params, custom fields, etc.)
-	tracking: z.record(z.unknown()).optional(),
+	tracking: z.record(z.string(), z.unknown()).optional(),
 	// Each Q&A entry structure differs by question type (text, radio, checkbox, etc.)
-	questions_and_answers: z.array(z.record(z.unknown())).optional(),
+	questions_and_answers: z.array(z.record(z.string(), z.unknown())).optional(),
 	// Payment details vary by processor and plan; no stable schema in Calendly's public API
-	payment: z.record(z.unknown()).nullable().optional(),
+	payment: z.record(z.string(), z.unknown()).nullable().optional(),
 	no_show: z.object({ uri: z.string() }).nullable().optional(),
 	rescheduled: z.boolean().optional(),
 	old_invitee: z.string().nullable().optional(),
@@ -35,7 +39,13 @@ const CalendlyEventPayloadSchema = z.object({
 	start_time: z.string(),
 	end_time: z.string(),
 	event_type: z.string(),
-	location: z.object({ type: z.string(), location: z.string().optional(), join_url: z.string().optional() }).optional(),
+	location: z
+		.object({
+			type: z.string(),
+			location: z.string().optional(),
+			join_url: z.string().optional(),
+		})
+		.optional(),
 	invitees_counter: z
 		.object({
 			total: z.number(),
@@ -46,16 +56,16 @@ const CalendlyEventPayloadSchema = z.object({
 	created_at: z.string().optional(),
 	updated_at: z.string().optional(),
 	// Membership entries include plan-specific fields (host type, role, etc.) not in the public schema
-	event_memberships: z.array(z.record(z.unknown())).optional(),
+	event_memberships: z.array(z.record(z.string(), z.unknown())).optional(),
 	// Guest entries vary; additional fields may appear without documentation
-	event_guests: z.array(z.record(z.unknown())).optional(),
+	event_guests: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
 const CalendlyWebhookBaseSchema = z.object({
 	event: z.string(),
 	time: z.string(),
 	// Base payload is open-ended; event-specific schemas narrow this via .extend()
-	payload: z.record(z.unknown()),
+	payload: z.record(z.string(), z.unknown()),
 });
 
 // ── Event-specific payload schemas ────────────────────────────────────────────
@@ -68,7 +78,7 @@ export const InviteeCreatedPayloadSchema = CalendlyWebhookBaseSchema.extend({
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
 		// Reconfirmation object shape is undocumented in Calendly's public API
-		reconfirmation: z.record(z.unknown()).nullable().optional(),
+		reconfirmation: z.record(z.string(), z.unknown()).nullable().optional(),
 		scheduling_method: z.string().nullable().optional(),
 		text_reminder_number: z.string().nullable().optional(),
 	}),
@@ -84,7 +94,7 @@ export const InviteeCanceledPayloadSchema = CalendlyWebhookBaseSchema.extend({
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
 		// Reconfirmation object shape is undocumented in Calendly's public API
-		reconfirmation: z.record(z.unknown()).nullable().optional(),
+		reconfirmation: z.record(z.string(), z.unknown()).nullable().optional(),
 		scheduling_method: z.string().nullable().optional(),
 		text_reminder_number: z.string().nullable().optional(),
 		cancellation: z
@@ -98,7 +108,9 @@ export const InviteeCanceledPayloadSchema = CalendlyWebhookBaseSchema.extend({
 	}),
 });
 
-export type InviteeCanceledPayload = z.infer<typeof InviteeCanceledPayloadSchema>;
+export type InviteeCanceledPayload = z.infer<
+	typeof InviteeCanceledPayloadSchema
+>;
 
 export const InviteeNoShowCreatedPayloadSchema =
 	CalendlyWebhookBaseSchema.extend({
@@ -122,11 +134,13 @@ export const RoutingFormSubmissionCreatedPayloadSchema =
 			uri: z.string(),
 			routing_form: z.string(),
 			// Each Q&A entry differs by question type; no fixed schema in Calendly's docs
-			questions_and_answers: z.array(z.record(z.unknown())).optional(),
+			questions_and_answers: z
+				.array(z.record(z.string(), z.unknown()))
+				.optional(),
 			// UTM/source tracking fields vary by integration and campaign
-			tracking: z.record(z.unknown()).optional(),
+			tracking: z.record(z.string(), z.unknown()).optional(),
 			// Routing result structure depends on the form's routing rules configuration
-			result: z.record(z.unknown()).optional(),
+			result: z.record(z.string(), z.unknown()).optional(),
 			created_at: z.string().optional(),
 			updated_at: z.string().optional(),
 		}),
@@ -224,14 +238,15 @@ export function verifyCalendlyWebhookSignature(
 
 		const rawBody = request.rawBody;
 		if (!rawBody) {
-			return { valid: false, error: 'Missing raw body for signature verification' };
+			return {
+				valid: false,
+				error: 'Missing raw body for signature verification',
+			};
 		}
 
 		const headers = request.headers;
 		// Calendly-Webhook-Signature header value
-		const signatureHeader = Array.isArray(
-			headers['calendly-webhook-signature'],
-		)
+		const signatureHeader = Array.isArray(headers['calendly-webhook-signature'])
 			? headers['calendly-webhook-signature'][0]
 			: headers['calendly-webhook-signature'];
 
@@ -265,7 +280,10 @@ export function verifyCalendlyWebhookSignature(
 		// Reject requests whose timestamp is more than 5 minutes old to prevent replay attacks.
 		// Calendly embeds the Unix timestamp (seconds) in the signature header so we can validate freshness.
 		const timestampMs = parseInt(timestamp, 10) * 1000;
-		if (isNaN(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) {
+		if (
+			isNaN(timestampMs) ||
+			Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000
+		) {
 			return { valid: false, error: 'Webhook timestamp is too old or invalid' };
 		}
 
@@ -289,8 +307,7 @@ export function verifyCalendlyWebhookSignature(
 		}
 
 		return { valid: true };
-	}
-	catch (error) {
+	} catch (error) {
 		console.error('Signature verification failed (internal):', error);
 		return { valid: false, error: 'Signature verification failed' };
 	}

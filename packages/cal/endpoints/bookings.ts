@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CalEndpoints } from '..';
 import { makeCalRequest } from '../client';
+import type { CalEndpoints } from '../index';
 import type { CalEndpointOutputs } from './types';
 
 export const list: CalEndpoints['bookingsList'] = async (ctx, input) => {

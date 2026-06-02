@@ -1,6 +1,6 @@
 import { getAnswer } from './answer';
 import { getContents } from './contents';
-import { listEvents, getEvent } from './events';
+import { getEvent, listEvents } from './events';
 import { createImport, deleteImport, listImports } from './imports';
 import { createMonitor } from './monitors';
 import { findSimilar, search } from './search';

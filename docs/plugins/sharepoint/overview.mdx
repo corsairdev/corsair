@@ -1,0 +1,149 @@
+---
+title: Overview
+description: "Sharepoint plugin for Corsair"
+---
+
+Use **Sharepoint** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+
+**What you get:**
+
+- 86 typed API operations
+- 6 database entities synced for fast `.search()` / `.list()` queries
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/sharepoint
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { sharepoint } from '@corsair-dev/sharepoint';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [sharepoint()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { sharepoint } from '@corsair-dev/sharepoint';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [sharepoint()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/sharepoint/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=sharepoint
+```
+
+Use the key names documented in [Get Credentials](/plugins/sharepoint/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=sharepoint --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="OAuth 2.0 (Default)">
+
+```ts corsair.ts
+sharepoint()
+```
+
+Store credentials with `pnpm corsair setup --plugin=sharepoint` (see [Get Credentials](/plugins/sharepoint/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+## Webhooks
+
+This plugin registers **1** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/sharepoint/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.sharepoint.db.<entity>.search()` and `.list()`. See [Database](/plugins/sharepoint/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `contentTypes.get`
+
+```ts
+await corsair.sharepoint.api.contentTypes.get({});
+```
+
+
+**Write-style (write):** `contentTypes.addFieldLink`
+
+```ts
+await corsair.sharepoint.api.contentTypes.addFieldLink({});
+```
+
+
+See the full list on the [API](/plugins/sharepoint/api) page. Use `pnpm corsair list --plugin=sharepoint` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/sharepoint/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/sharepoint/api) |
+| Database | [Database](/plugins/sharepoint/database) |
+| Webhooks | [Webhooks](/plugins/sharepoint/webhooks) |
+| Credentials | [Get credentials](/plugins/sharepoint/get-credentials) |
+

@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class GoogleSheetsAPIError extends Error {
@@ -40,9 +39,12 @@ async function refreshAccessToken(
 		);
 	}
 
-	const json = await response.json() as { access_token: string; expires_in: number }
+	const json = (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+	};
 
-	return json
+	return json;
 }
 
 export async function getValidAccessToken({
@@ -63,7 +65,12 @@ export async function getValidAccessToken({
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
-	if (!forceRefresh && accessToken && expiresAt && Number(expiresAt) > now + bufferSeconds) {
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
 		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
 	}
 
@@ -124,6 +131,32 @@ function isUnauthorizedError(error: unknown): boolean {
 		'status' in error &&
 		(error as { status: number }).status === 401
 	);
+}
+
+const GOOGLE_DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
+
+async function makeDriveRequest(
+	endpoint: string,
+	token: string,
+	options: RequestInit = {},
+): Promise<Response> {
+	return fetch(`${GOOGLE_DRIVE_API_BASE}${endpoint}`, {
+		...options,
+		headers: { ...options.headers, Authorization: `Bearer ${token}` },
+	});
+}
+
+export async function makeAuthenticatedDriveRequest(
+	endpoint: string,
+	ctx: { key: string; _refreshAuth?: () => Promise<string> },
+	options: RequestInit = {},
+): Promise<Response> {
+	const response = await makeDriveRequest(endpoint, ctx.key, options);
+	if (response.status === 401 && ctx._refreshAuth) {
+		const freshToken = await ctx._refreshAuth();
+		return makeDriveRequest(endpoint, freshToken, options);
+	}
+	return response;
 }
 
 export async function makeAuthenticatedSheetsRequest<T>(

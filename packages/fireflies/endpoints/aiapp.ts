@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FirefliesEndpoints } from '..';
 import { makeFirefliesRequest } from '../client';
+import type { FirefliesEndpoints } from '../index';
 import type { FirefliesEndpointOutputs } from './types';
 
 // apps(app_id, transcript_id, skip, limit) returns Apps { outputs: AppOutput[] }
@@ -14,18 +14,24 @@ const AI_APP_OUTPUTS_QUERY = `
   }
 `;
 
-export const getOutputs: FirefliesEndpoints['aiAppGetOutputs'] = async (ctx, input) => {
-	const response = await makeFirefliesRequest<FirefliesEndpointOutputs['aiAppGetOutputs']>(
-		AI_APP_OUTPUTS_QUERY,
-		ctx.key,
-		{
-			transcript_id: input.transcriptId,
-			app_id: input.appId,
-			limit: input.limit,
-			skip: input.skip,
-		},
-	);
+export const getOutputs: FirefliesEndpoints['aiAppGetOutputs'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeFirefliesRequest<
+		FirefliesEndpointOutputs['aiAppGetOutputs']
+	>(AI_APP_OUTPUTS_QUERY, ctx.key, {
+		transcript_id: input.transcriptId,
+		app_id: input.appId,
+		limit: input.limit,
+		skip: input.skip,
+	});
 
-	await logEventFromContext(ctx, 'fireflies.aiApp.getOutputs', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fireflies.aiApp.getOutputs',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

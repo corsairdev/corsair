@@ -1,5 +1,3 @@
-
-export const TweetWebhooks = {
-};
+export const TweetWebhooks = {};
 
 export * from './types';

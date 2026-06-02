@@ -47,20 +47,77 @@ interface IntegrationDef {
 // ── Name helpers ──────────────────────────────────────────────────────────────
 
 const VERBS = new Set([
-	'GET', 'LIST', 'CREATE', 'UPDATE', 'DELETE', 'POST', 'SET', 'FETCH',
-	'RETRIEVE', 'VALIDATE', 'CHECK', 'SEND', 'SEARCH', 'FIND', 'ADD',
-	'REMOVE', 'BULK', 'BATCH', 'RESOLVE', 'GENERATE', 'IMPORT', 'EXPORT',
-	'UPLOAD', 'DOWNLOAD', 'SYNC', 'INVITE', 'REVOKE', 'CANCEL', 'CONFIRM',
-	'SUBMIT', 'PUBLISH', 'ARCHIVE', 'RESTORE', 'CLONE', 'COPY', 'MOVE',
-	'RENAME', 'SHARE', 'TAG', 'LINK', 'UNLINK', 'MERGE', 'SPLIT',
-	'ENABLE', 'DISABLE', 'ACTIVATE', 'DEACTIVATE', 'ASSIGN', 'UNASSIGN',
-	'TRACK', 'VERIFY', 'COMPLETE', 'START', 'STOP', 'PAUSE', 'RESUME',
-	'REFRESH', 'RESET', 'REBUILD', 'REPROCESS', 'TRIGGER', 'RUN',
+	'GET',
+	'LIST',
+	'CREATE',
+	'UPDATE',
+	'DELETE',
+	'POST',
+	'SET',
+	'FETCH',
+	'RETRIEVE',
+	'VALIDATE',
+	'CHECK',
+	'SEND',
+	'SEARCH',
+	'FIND',
+	'ADD',
+	'REMOVE',
+	'BULK',
+	'BATCH',
+	'RESOLVE',
+	'GENERATE',
+	'IMPORT',
+	'EXPORT',
+	'UPLOAD',
+	'DOWNLOAD',
+	'SYNC',
+	'INVITE',
+	'REVOKE',
+	'CANCEL',
+	'CONFIRM',
+	'SUBMIT',
+	'PUBLISH',
+	'ARCHIVE',
+	'RESTORE',
+	'CLONE',
+	'COPY',
+	'MOVE',
+	'RENAME',
+	'SHARE',
+	'TAG',
+	'LINK',
+	'UNLINK',
+	'MERGE',
+	'SPLIT',
+	'ENABLE',
+	'DISABLE',
+	'ACTIVATE',
+	'DEACTIVATE',
+	'ASSIGN',
+	'UNASSIGN',
+	'TRACK',
+	'VERIFY',
+	'COMPLETE',
+	'START',
+	'STOP',
+	'PAUSE',
+	'RESUME',
+	'REFRESH',
+	'RESET',
+	'REBUILD',
+	'REPROCESS',
+	'TRIGGER',
+	'RUN',
 ]);
 
 function stripPluginPrefix(slug: string, integrationSlug: string): string {
 	// normalise both: upper-case, replace hyphens/leading-underscores with _
-	const norm = (s: string) => s.toUpperCase().replace(/^_+/, '').replace(/[^A-Z0-9]/g, '_');
+	const norm = (s: string) =>
+		s
+			.toUpperCase()
+			.replace(/^_+/, '')
+			.replace(/[^A-Z0-9]/g, '_');
 	const prefix = norm(integrationSlug) + '_';
 	const normSlug = norm(slug);
 	if (normSlug.startsWith(prefix)) return normSlug.slice(prefix.length);
@@ -80,16 +137,24 @@ function groupFromStripped(stripped: string): string {
 function endpointKey(slug: string, integrationSlug: string): string {
 	const stripped = stripPluginPrefix(slug, integrationSlug);
 	const parts = stripped.split('_').filter(Boolean);
-	return parts.map((p, i) =>
-		i === 0 ? p.toLowerCase() : p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()
-	).join('');
+	return parts
+		.map((p, i) =>
+			i === 0
+				? p.toLowerCase()
+				: p.charAt(0).toUpperCase() + p.slice(1).toLowerCase(),
+		)
+		.join('');
 }
 
 function toPascalCase(s: string): string {
-	return s.split(/[\s_-]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
+	return s
+		.split(/[\s_-]+/)
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+		.join('');
 }
 function toCamelCase(s: string): string {
-	const p = toPascalCase(s); return p.charAt(0).toLowerCase() + p.slice(1);
+	const p = toPascalCase(s);
+	return p.charAt(0).toLowerCase() + p.slice(1);
 }
 
 // ── Auth helpers ──────────────────────────────────────────────────────────────
@@ -98,14 +163,19 @@ function pickAuthType(schemes: AuthScheme[]): string {
 	if (!schemes?.length) return 'api_key';
 	switch (schemes[0].mode) {
 		case 'API_KEY':
-		case 'BEARER_TOKEN': return 'api_key';
+		case 'BEARER_TOKEN':
+			return 'api_key';
 		case 'OAUTH2':
 		case 'DCR_OAUTH':
-		case 'S2S_OAUTH2': return 'oauth2';
+		case 'S2S_OAUTH2':
+			return 'oauth2';
 		case 'BASIC':
-		case 'BASIC_WITH_JWT': return 'basic';
-		case 'NO_AUTH': return 'no_auth';
-		default: return 'api_key';
+		case 'BASIC_WITH_JWT':
+			return 'basic';
+		case 'NO_AUTH':
+			return 'no_auth';
+		default:
+			return 'api_key';
 	}
 }
 
@@ -116,60 +186,79 @@ function riskLevel(op: Operation): 'read' | 'write' | 'destructive' {
 	if (
 		tags.includes('destructiveHint') ||
 		/delete|remove|purge|destroy/.test(lower)
-	) return 'destructive';
+	)
+		return 'destructive';
 	return 'write';
 }
 
 function isWebhookOp(op: Operation): boolean {
-	const tags = (op.tags ?? []).map(t => t.toLowerCase());
+	const tags = (op.tags ?? []).map((t) => t.toLowerCase());
 	return (
 		op.slug.toUpperCase().includes('WEBHOOK') ||
 		op.slug.toUpperCase().includes('TRIGGER') ||
-		tags.some(t => t.includes('webhook') || t === 'trigger')
+		tags.some((t) => t.includes('webhook') || t === 'trigger')
 	);
 }
 
 // ── Zod schema code generation ────────────────────────────────────────────────
 
 function requiredFields(param: ParameterDef): string[] {
-	if (Array.isArray(param.requiredFields)) return param.requiredFields as string[];
+	if (Array.isArray(param.requiredFields))
+		return param.requiredFields as string[];
 	return [];
 }
 
-function zodType(param: ParameterDef, depth: number, isRequired: boolean): string {
+function zodType(
+	param: ParameterDef,
+	depth: number,
+	isRequired: boolean,
+): string {
 	const indent = '\t'.repeat(depth);
 	const innerIndent = '\t'.repeat(depth + 1);
 
 	let core: string;
 
 	if (param.enum && param.type === 'string') {
-		const vals = param.enum.map(v => `'${v}'`).join(', ');
+		const vals = param.enum.map((v) => `'${v}'`).join(', ');
 		core = `z.enum([${vals}])`;
 	} else {
 		switch (param.type) {
-			case 'string': core = 'z.string()'; break;
-			case 'boolean': core = 'z.boolean()'; break;
-			case 'integer': core = 'z.number().int()'; break;
-			case 'number': core = 'z.number()'; break;
+			case 'string':
+				core = 'z.string()';
+				break;
+			case 'boolean':
+				core = 'z.boolean()';
+				break;
+			case 'integer':
+				core = 'z.number().int()';
+				break;
+			case 'number':
+				core = 'z.number()';
+				break;
 			case 'array': {
-				const itemZ = param.items ? zodType(param.items, 0, true) : 'z.unknown()';
+				const itemZ = param.items
+					? zodType(param.items, 0, true)
+					: 'z.unknown()';
 				core = `z.array(${itemZ})`;
 				break;
 			}
 			case 'object': {
 				if (param.properties && Object.keys(param.properties).length > 0) {
 					const reqF = requiredFields(param);
-					const props = Object.entries(param.properties).map(([k, v]) => {
-						const fieldRequired = reqF.includes(k) || v.required !== false;
-						return `${innerIndent}${k}: ${zodType(v, depth + 1, fieldRequired)},`;
-					}).join('\n');
+					const props = Object.entries(param.properties)
+						.map(([k, v]) => {
+							const fieldRequired = reqF.includes(k) || v.required !== false;
+							return `${innerIndent}${k}: ${zodType(v, depth + 1, fieldRequired)},`;
+						})
+						.join('\n');
 					core = `z.object({\n${props}\n${indent}}).catchall(z.unknown())`;
 				} else {
 					core = 'z.record(z.unknown())';
 				}
 				break;
 			}
-			default: core = 'z.unknown()';
+			default:
+				core = 'z.unknown()';
 		}
 	}
 
@@ -179,9 +268,9 @@ function zodType(param: ParameterDef, depth: number, isRequired: boolean): strin
 function inputSchema(op: Operation): string {
 	const params = Object.entries(op.input_parameters ?? {});
 	if (params.length === 0) return 'z.object({}).optional()';
-	const fields = params.map(([k, v]) =>
-		`\t${k}: ${zodType(v, 1, v.required !== false)},`
-	).join('\n');
+	const fields = params
+		.map(([k, v]) => `\t${k}: ${zodType(v, 1, v.required !== false)},`)
+		.join('\n');
 	return `z.object({\n${fields}\n})`;
 }
 
@@ -190,21 +279,29 @@ function outputSchema(op: Operation): string {
 	const data = params.data;
 
 	// Most scraped ops wrap the real response in `data` — use its properties
-	if (data?.type === 'object' && data.properties && Object.keys(data.properties).length > 0) {
+	if (
+		data?.type === 'object' &&
+		data.properties &&
+		Object.keys(data.properties).length > 0
+	) {
 		const reqF = requiredFields(data);
-		const fields = Object.entries(data.properties).map(([k, v]) => {
-			const fieldRequired = reqF.includes(k) || v.required !== false;
-			return `\t${k}: ${zodType(v, 1, fieldRequired)},`;
-		}).join('\n');
+		const fields = Object.entries(data.properties)
+			.map(([k, v]) => {
+				const fieldRequired = reqF.includes(k) || v.required !== false;
+				return `\t${k}: ${zodType(v, 1, fieldRequired)},`;
+			})
+			.join('\n');
 		return `z.object({\n${fields}\n}).passthrough()`;
 	}
 
 	// Fallback: use raw params minus the envelope fields
-	const relevant = Object.entries(params).filter(([k]) => k !== 'error' && k !== 'successful');
+	const relevant = Object.entries(params).filter(
+		([k]) => k !== 'error' && k !== 'successful',
+	);
 	if (relevant.length === 0) return 'z.object({}).passthrough()';
-	const fields = relevant.map(([k, v]) =>
-		`\t${k}: ${zodType(v, 1, v.required !== false)},`
-	).join('\n');
+	const fields = relevant
+		.map(([k, v]) => `\t${k}: ${zodType(v, 1, v.required !== false)},`)
+		.join('\n');
 	return `z.object({\n${fields}\n}).passthrough()`;
 }
 
@@ -223,10 +320,14 @@ function buildEndpointsTypes(
 
 		lines.push(`// ${op.name}`);
 		lines.push(`const ${keyPascal}InputSchema = ${inputSchema(op)};`);
-		lines.push(`export type ${keyPascal}Input = z.infer<typeof ${keyPascal}InputSchema>;`);
+		lines.push(
+			`export type ${keyPascal}Input = z.infer<typeof ${keyPascal}InputSchema>;`,
+		);
 		lines.push('');
 		lines.push(`const ${keyPascal}ResponseSchema = ${outputSchema(op)};`);
-		lines.push(`export type ${keyPascal}Response = z.infer<typeof ${keyPascal}ResponseSchema>;`);
+		lines.push(
+			`export type ${keyPascal}Response = z.infer<typeof ${keyPascal}ResponseSchema>;`,
+		);
 		lines.push('');
 	}
 
@@ -240,7 +341,9 @@ function buildEndpointsTypes(
 	lines.push('} as const;', '');
 
 	lines.push(`export type ${pascal}EndpointInputs = {`);
-	lines.push(`\t[K in keyof typeof ${pascal}EndpointInputSchemas]: z.infer<(typeof ${pascal}EndpointInputSchemas)[K]>;`);
+	lines.push(
+		`\t[K in keyof typeof ${pascal}EndpointInputSchemas]: z.infer<(typeof ${pascal}EndpointInputSchemas)[K]>;`,
+	);
 	lines.push('};', '');
 
 	// Output schemas map
@@ -253,7 +356,9 @@ function buildEndpointsTypes(
 	lines.push('} as const;', '');
 
 	lines.push(`export type ${pascal}EndpointOutputs = {`);
-	lines.push(`\t[K in keyof typeof ${pascal}EndpointOutputSchemas]: z.infer<(typeof ${pascal}EndpointOutputSchemas)[K]>;`);
+	lines.push(
+		`\t[K in keyof typeof ${pascal}EndpointOutputSchemas]: z.infer<(typeof ${pascal}EndpointOutputSchemas)[K]>;`,
+	);
 	lines.push('};', '');
 
 	// Named type exports
@@ -287,24 +392,38 @@ function buildGroupEndpointFile(
 
 		lines.push(`// ${op.name}`);
 		if (op.description) lines.push(`// ${desc}`);
-		lines.push(`export const ${key}: ${pascal}Endpoints['${key}'] = async (ctx, input) => {`);
-		lines.push(`\t// TODO: Verify the HTTP method, endpoint path, and how auth/params are passed.`);
+		lines.push(
+			`export const ${key}: ${pascal}Endpoints['${key}'] = async (ctx, input) => {`,
+		);
+		lines.push(
+			`\t// TODO: Verify the HTTP method, endpoint path, and how auth/params are passed.`,
+		);
 		lines.push(`\t// Docs hint: search for "${op.name} ${pascal} API"`);
 
 		const isRead = riskLevel(op) === 'read';
 		const method = isRead ? 'GET' : 'POST';
-		lines.push(`\tconst response = await make${pascal}Request<${pascal}EndpointOutputs['${key}']>(`);
-		lines.push(`\t\t'TODO_PATH', // e.g. '${groupName}s' or 'v1/${groupName}s'`);
+		lines.push(
+			`\tconst response = await make${pascal}Request<${pascal}EndpointOutputs['${key}']>(`,
+		);
+		lines.push(
+			`\t\t'TODO_PATH', // e.g. '${groupName}s' or 'v1/${groupName}s'`,
+		);
 		lines.push(`\t\tctx.key,`);
 
 		if (isRead) {
-			lines.push(`\t\t{ method: 'GET', query: input as Record<string, string | number | boolean | undefined> },`);
+			lines.push(
+				`\t\t{ method: 'GET', query: input as Record<string, string | number | boolean | undefined> },`,
+			);
 		} else {
-			lines.push(`\t\t{ method: '${method}', body: input as Record<string, unknown> },`);
+			lines.push(
+				`\t\t{ method: '${method}', body: input as Record<string, unknown> },`,
+			);
 		}
 
 		lines.push(`\t);`);
-		lines.push(`\tawait logEventFromContext(ctx, '${lower}.${groupName}.${key}', input ?? {}, 'completed');`);
+		lines.push(
+			`\tawait logEventFromContext(ctx, '${lower}.${groupName}.${key}', input ?? {}, 'completed');`,
+		);
 		lines.push(`\treturn response;`);
 		lines.push(`};`, '');
 	}
@@ -320,7 +439,7 @@ function buildEndpointsIndex(
 
 	for (const [group, ops] of groupedOps) {
 		const groupPascal = toPascalCase(group);
-		const keys = ops.map(op => endpointKey(op.slug, integrationSlug));
+		const keys = ops.map((op) => endpointKey(op.slug, integrationSlug));
 		lines.push(`import { ${keys.join(', ')} } from './${group}';`);
 		lines.push(`export const ${groupPascal} = { ${keys.join(', ')} };`);
 		lines.push('');
@@ -404,7 +523,7 @@ function buildIndexTs(
 	integrationSlug: string,
 	description: string,
 ): string {
-	const groupPascals = [...groupedOps.keys()].map(g => toPascalCase(g));
+	const groupPascals = [...groupedOps.keys()].map((g) => toPascalCase(g));
 	const groupImports = groupPascals.join(', ');
 
 	// Build endpoint types map
@@ -415,8 +534,8 @@ function buildIndexTs(
 		}
 	}
 
-	const endpointsTypeLines = allOps.map(({ key }) =>
-		`\t${key}: ${pascal}Endpoint<'${key}'>;`
+	const endpointsTypeLines = allOps.map(
+		({ key }) => `\t${key}: ${pascal}Endpoint<'${key}'>;`,
 	);
 
 	// Build nested endpoints structure
@@ -432,14 +551,16 @@ function buildIndexTs(
 	}
 
 	// Build endpoint schemas
-	const schemaLines = allOps.map(({ key, group }) =>
-		`\t'${group}.${key}': {\n\t\tinput: ${pascal}EndpointInputSchemas.${key},\n\t\toutput: ${pascal}EndpointOutputSchemas.${key},\n\t},`
+	const schemaLines = allOps.map(
+		({ key, group }) =>
+			`\t'${group}.${key}': {\n\t\tinput: ${pascal}EndpointInputSchemas.${key},\n\t\toutput: ${pascal}EndpointOutputSchemas.${key},\n\t},`,
 	);
 
 	// Build endpoint meta
 	const metaLines = allOps.map(({ key, group, op }) => {
 		const risk = riskLevel(op);
-		const irreversible = risk === 'destructive' ? '\n\t\t\tirreversible: true,' : '';
+		const irreversible =
+			risk === 'destructive' ? '\n\t\t\tirreversible: true,' : '';
 		return `\t'${group}.${key}': {\n\t\t\triskLevel: '${risk}',${irreversible}\n\t\t\tdescription: '${op.name.replace(/'/g, "\\'")}',\n\t\t},`;
 	});
 
@@ -652,7 +773,8 @@ function buildAgentMd(
 ): string {
 	const authScheme = def.auth_schemes?.[0];
 	const keyFieldName = authScheme?.required_fields?.[0]?.name ?? 'api_key';
-	const keyDisplayName = authScheme?.required_fields?.[0]?.displayName ?? 'API Key';
+	const keyDisplayName =
+		authScheme?.required_fields?.[0]?.displayName ?? 'API Key';
 	const authMode = authScheme?.mode ?? 'API_KEY';
 
 	const allOps: Array<{ key: string; group: string; op: Operation }> = [];
@@ -662,21 +784,25 @@ function buildAgentMd(
 		}
 	}
 
-	const opTable = allOps.map(({ key, group, op }) => {
-		const risk = riskLevel(op);
-		return `| \`${group}.${key}\` | ${op.name} | \`${risk}\` | ${op.description?.split('.')[0] ?? ''} |`;
-	}).join('\n');
+	const opTable = allOps
+		.map(({ key, group, op }) => {
+			const risk = riskLevel(op);
+			return `| \`${group}.${key}\` | ${op.name} | \`${risk}\` | ${op.description?.split('.')[0] ?? ''} |`;
+		})
+		.join('\n');
 
-	const endpointTodos = allOps.map(({ key, group, op }) => {
-		const isRead = riskLevel(op) === 'read';
-		return `### \`${group}.${key}\` — ${op.name}
+	const endpointTodos = allOps
+		.map(({ key, group, op }) => {
+			const isRead = riskLevel(op) === 'read';
+			return `### \`${group}.${key}\` — ${op.name}
 - **Description:** ${op.description?.split('\n')[0] ?? op.name}
 - **File:** \`endpoints/${group}.ts\`
 - [ ] Set the correct HTTP method (\`GET\`/\`POST\`/\`PUT\`/\`DELETE\`/\`PATCH\`)
 - [ ] Set the correct endpoint path (e.g., \`/v1/${group}s\` or \`/${group}/${key}\`)
 - [ ] Confirm params go in \`query\` (GET) or \`body\` (POST/PUT) — currently defaulted to **${isRead ? 'query' : 'body'}**
 - [ ] Verify the input schema in \`endpoints/types.ts\` matches actual API docs`;
-	}).join('\n\n');
+		})
+		.join('\n\n');
 
 	return `# ${def.name} Plugin — Agent Completion Guide
 
@@ -740,20 +866,24 @@ ${endpointTodos}
 
 ## Step 4 — Webhooks
 
-${allOps.length > 0 && def.operations?.some(isWebhookOp) ? `
+${
+	allOps.length > 0 && def.operations?.some(isWebhookOp)
+		? `
 This integration has webhook-related operations. Check the docs for:
 - [ ] The webhook signature header name and HMAC algorithm
 - [ ] Update \`verify${pascal}WebhookSignature\` in \`webhooks/types.ts\`
 - [ ] Update \`pluginWebhookMatcher\` in \`index.ts\` to check the correct header
 - [ ] Add event-specific schemas to \`webhooks/types.ts\`
 - [ ] Implement webhook handlers in \`webhooks/\`
-` : `
+`
+		: `
 This integration does not have documented webhook triggers in the scraped spec.
 
 Check the docs to confirm:
 - [ ] Does ${def.name} support webhooks? If yes, add them following the Resend plugin as a reference (\`packages/resend/webhooks/\`).
 - [ ] If no webhooks, the empty \`webhooksNested\` in \`index.ts\` is correct.
-`}
+`
+}
 
 ---
 
@@ -803,7 +933,13 @@ export const corsair = createCorsair({
 function generatePluginFromJson(input: string) {
 	// Accept either a file path or a slug name
 	let jsonPath: string;
-	const scraperOutputDir = join(import.meta.dirname, '..', '..', 'scraper', 'output');
+	const scraperOutputDir = join(
+		import.meta.dirname,
+		'..',
+		'..',
+		'scraper',
+		'output',
+	);
 
 	if (input.endsWith('.json')) {
 		jsonPath = resolve(input);
@@ -815,7 +951,9 @@ function generatePluginFromJson(input: string) {
 		];
 		const found = candidates.find(existsSync);
 		if (!found) {
-			console.error(`Could not find JSON file for "${input}". Tried:\n  ${candidates.join('\n  ')}`);
+			console.error(
+				`Could not find JSON file for "${input}". Tried:\n  ${candidates.join('\n  ')}`,
+			);
 			process.exit(1);
 		}
 		jsonPath = found;
@@ -829,7 +967,10 @@ function generatePluginFromJson(input: string) {
 	const def: IntegrationDef = JSON.parse(readFileSync(jsonPath, 'utf-8'));
 
 	// Normalise the plugin name: strip leading underscores/numbers, lowercase
-	const lowerName = def.slug.replace(/^[^a-z]+/i, '').replace(/[^a-z0-9]/gi, '').toLowerCase();
+	const lowerName = def.slug
+		.replace(/^[^a-z]+/i, '')
+		.replace(/[^a-z0-9]/gi, '')
+		.toLowerCase();
 	const pascalName = toPascalCase(lowerName);
 	const camelName = toCamelCase(lowerName);
 	const authType = pickAuthType(def.auth_schemes ?? []);
@@ -839,12 +980,14 @@ function generatePluginFromJson(input: string) {
 	const pluginDir = join(packagesDir, lowerName);
 
 	if (existsSync(pluginDir)) {
-		console.error(`Plugin "${lowerName}" already exists at packages/${lowerName}`);
+		console.error(
+			`Plugin "${lowerName}" already exists at packages/${lowerName}`,
+		);
 		process.exit(1);
 	}
 
-	const allOps = (def.operations ?? []).filter(op => !op.is_deprecated);
-	const apiOps = allOps.filter(op => !isWebhookOp(op));
+	const allOps = (def.operations ?? []).filter((op) => !op.is_deprecated);
+	const apiOps = allOps.filter((op) => !isWebhookOp(op));
 
 	if (apiOps.length === 0) {
 		console.warn(`Warning: no API operations found in ${jsonPath}`);
@@ -895,25 +1038,41 @@ function generatePluginFromJson(input: string) {
 		license: 'Apache-2.0',
 		files: ['dist'],
 	};
-	writeFileSync(join(pluginDir, 'package.json'), JSON.stringify(packageJson, null, 2) + '\n');
+	writeFileSync(
+		join(pluginDir, 'package.json'),
+		JSON.stringify(packageJson, null, 2) + '\n',
+	);
 
 	// ── tsconfig.json ──
 	const tsconfig = {
 		extends: '../../tsconfig.base.json',
 		compilerOptions: {
-			lib: ['esnext'], types: ['node'], module: 'ESNext',
-			moduleResolution: 'Bundler', outDir: './dist', rootDir: './',
-			composite: true, incremental: true, emitDeclarationOnly: true,
-			declaration: true, declarationMap: true, skipLibCheck: true,
+			lib: ['esnext'],
+			types: ['node'],
+			module: 'ESNext',
+			moduleResolution: 'Bundler',
+			outDir: './dist',
+			rootDir: './',
+			composite: true,
+			incremental: true,
+			emitDeclarationOnly: true,
+			declaration: true,
+			declarationMap: true,
+			skipLibCheck: true,
 		},
 		include: ['./**/*'],
 		exclude: ['dist', 'node_modules'],
 		references: [],
 	};
-	writeFileSync(join(pluginDir, 'tsconfig.json'), JSON.stringify(tsconfig, null, 2) + '\n');
+	writeFileSync(
+		join(pluginDir, 'tsconfig.json'),
+		JSON.stringify(tsconfig, null, 2) + '\n',
+	);
 
 	// ── tsup.config.ts ──
-	writeFileSync(join(pluginDir, 'tsup.config.ts'), `import { defineConfig } from 'tsup';
+	writeFileSync(
+		join(pluginDir, 'tsup.config.ts'),
+		`import { defineConfig } from 'tsup';
 
 export default defineConfig({
 \tclean: false,
@@ -928,13 +1087,19 @@ export default defineConfig({
 \texternal: ['corsair', 'zod'],
 \tentry: ['index.ts'],
 });
-`);
+`,
+	);
 
 	// ── client.ts ──
-	writeFileSync(join(pluginDir, 'client.ts'), buildClientTs(pascalName, lowerName));
+	writeFileSync(
+		join(pluginDir, 'client.ts'),
+		buildClientTs(pascalName, lowerName),
+	);
 
 	// ── error-handlers.ts ──
-	writeFileSync(join(pluginDir, 'error-handlers.ts'), `import { ApiError } from 'corsair/http';
+	writeFileSync(
+		join(pluginDir, 'error-handlers.ts'),
+		`import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
 
 export const errorHandlers = {
@@ -965,10 +1130,13 @@ export const errorHandlers = {
 \t\thandler: async () => ({ maxRetries: 0 }),
 \t},
 } satisfies CorsairErrorHandler;
-`);
+`,
+	);
 
 	// ── schema/database.ts + schema/index.ts ──
-	writeFileSync(join(pluginDir, 'schema', 'database.ts'), `import { z } from 'zod';
+	writeFileSync(
+		join(pluginDir, 'schema', 'database.ts'),
+		`import { z } from 'zod';
 
 // TODO: Define database entity schemas here if you want Corsair to persist data.
 // Example:
@@ -977,12 +1145,16 @@ export const errorHandlers = {
 // \tcreated_at: z.coerce.date().nullable().optional(),
 // });
 // export type ${pascalName}Item = z.infer<typeof ${pascalName}Item>;
-`);
-	writeFileSync(join(pluginDir, 'schema', 'index.ts'), `export const ${pascalName}Schema = {
+`,
+	);
+	writeFileSync(
+		join(pluginDir, 'schema', 'index.ts'),
+		`export const ${pascalName}Schema = {
 \tversion: '1.0.0',
 \tentities: {},
 } as const;
-`);
+`,
+	);
 
 	// ── endpoints/types.ts ──
 	writeFileSync(
@@ -999,10 +1171,16 @@ export const errorHandlers = {
 	}
 
 	// ── endpoints/index.ts ──
-	writeFileSync(join(pluginDir, 'endpoints', 'index.ts'), buildEndpointsIndex(groupedOps, def.slug));
+	writeFileSync(
+		join(pluginDir, 'endpoints', 'index.ts'),
+		buildEndpointsIndex(groupedOps, def.slug),
+	);
 
 	// ── webhooks/types.ts ──
-	writeFileSync(join(pluginDir, 'webhooks', 'types.ts'), buildWebhooksTypes(pascalName, lowerName));
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'types.ts'),
+		buildWebhooksTypes(pascalName, lowerName),
+	);
 
 	// ── webhooks/index.ts ──
 	writeFileSync(join(pluginDir, 'webhooks', 'index.ts'), buildWebhooksIndex());
@@ -1010,7 +1188,15 @@ export const errorHandlers = {
 	// ── index.ts ──
 	writeFileSync(
 		join(pluginDir, 'index.ts'),
-		buildIndexTs(pascalName, camelName, lowerName, authType, groupedOps, def.slug, def.description ?? ''),
+		buildIndexTs(
+			pascalName,
+			camelName,
+			lowerName,
+			authType,
+			groupedOps,
+			def.slug,
+			def.description ?? '',
+		),
 	);
 
 	// ── AGENT.md ──
@@ -1024,25 +1210,36 @@ export const errorHandlers = {
 	if (existsSync(constantsPath)) {
 		const content = readFileSync(constantsPath, 'utf-8');
 		if (!content.includes(`'${lowerName}'`)) {
-			const bpMatch = content.match(/export const BaseProviders = \[([\s\S]*?)\] as const;/);
+			const bpMatch = content.match(
+				/export const BaseProviders = \[([\s\S]*?)\] as const;/,
+			);
 			if (bpMatch?.[1]) {
 				const providers = bpMatch[1]
-					.split('\n').map(l => l.trim()).filter(l => l.startsWith("'"))
-					.map(l => l.replace(/['",]/g, '').trim());
+					.split('\n')
+					.map((l) => l.trim())
+					.filter((l) => l.startsWith("'"))
+					.map((l) => l.replace(/['",]/g, '').trim());
 				providers.push(lowerName);
 				providers.sort();
-				const newArray = providers.map(p => `\t'${p}',`).join('\n');
+				const newArray = providers.map((p) => `\t'${p}',`).join('\n');
 				let updated = content.replace(
 					/export const BaseProviders = \[[\s\S]*?\] as const;/,
 					`export const BaseProviders = [\n${newArray}\n] as const;`,
 				);
-				const apMatch = content.match(/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/);
+				const apMatch = content.match(
+					/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/,
+				);
 				if (apMatch) {
-					const inType = apMatch[0].match(/'[^']+'/g)?.map(m => m.replace(/'/g, '')) || [];
+					const inType =
+						apMatch[0].match(/'[^']+'/g)?.map((m) => m.replace(/'/g, '')) || [];
 					if (!inType.includes(lowerName)) {
-						inType.push(lowerName); inType.sort();
-						const newType = `export type AllProviders =\n\t| ${inType.map(p => `'${p}'`).join('\n\t| ')}\n\t| (string & {});`;
-						updated = updated.replace(/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/, newType);
+						inType.push(lowerName);
+						inType.sort();
+						const newType = `export type AllProviders =\n\t| ${inType.map((p) => `'${p}'`).join('\n\t| ')}\n\t| (string & {});`;
+						updated = updated.replace(
+							/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/,
+							newType,
+						);
 					}
 				}
 				writeFileSync(constantsPath, updated);
@@ -1054,7 +1251,9 @@ export const errorHandlers = {
 	const opCount = apiOps.length;
 	const groupCount = groupedOps.size;
 	console.log(`\nPlugin generated: packages/${lowerName}/`);
-	console.log(`  ${opCount} operations across ${groupCount} group${groupCount !== 1 ? 's' : ''}: ${[...groupedOps.keys()].join(', ')}`);
+	console.log(
+		`  ${opCount} operations across ${groupCount} group${groupCount !== 1 ? 's' : ''}: ${[...groupedOps.keys()].join(', ')}`,
+	);
 	console.log(`  Auth type: ${authType}`);
 	console.log(`\nNext steps:`);
 	console.log(`  1. Read packages/${lowerName}/AGENT.md for full instructions`);
@@ -1071,7 +1270,9 @@ if (!input) {
 	console.error('');
 	console.error('Examples:');
 	console.error('  pnpm generate:plugin-from-json abstract');
-	console.error('  pnpm generate:plugin-from-json ../scraper/output/abstract.json');
+	console.error(
+		'  pnpm generate:plugin-from-json ../scraper/output/abstract.json',
+	);
 	process.exit(1);
 }
 

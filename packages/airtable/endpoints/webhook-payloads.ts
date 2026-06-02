@@ -1,5 +1,5 @@
-import type { AirtableContext } from '..';
 import { makeAirtableRequest } from '../client';
+import type { AirtableContext } from '../index';
 import type { AirtableWebhookPayloadsResponse } from '../webhooks/types';
 import { AirtableWebhookPayloadsResponseSchema } from '../webhooks/types';
 

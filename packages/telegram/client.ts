@@ -1,8 +1,9 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import { ApiError } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class TelegramAPIError extends Error {
 	constructor(
@@ -31,7 +32,9 @@ const TELEGRAM_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 const hasFileValues = (body: Record<string, unknown>): boolean => {
-	return Object.values(body).some((v) => v instanceof File || v instanceof Blob);
+	return Object.values(body).some(
+		(v) => v instanceof File || v instanceof Blob,
+	);
 };
 
 export async function makeTelegramRequest<T>(
@@ -52,7 +55,8 @@ export async function makeTelegramRequest<T>(
 	}
 
 	const { method = 'POST', body, query } = options;
-	const isWriteMethod = method === 'POST' || method === 'PUT' || method === 'PATCH';
+	const isWriteMethod =
+		method === 'POST' || method === 'PUT' || method === 'PATCH';
 	const isFileUpload = isWriteMethod && body != null && hasFileValues(body);
 
 	const baseUrl = `${TELEGRAM_API_BASE}/bot${botToken}`;
@@ -71,7 +75,7 @@ export async function makeTelegramRequest<T>(
 		url: endpoint,
 		...(isFileUpload
 			? // FormData API requires `any` because file entries can be File, Blob, or string - no common typed alternative
-			  { formData: body as Record<string, any> }
+				{ formData: body as Record<string, any> }
 			: {
 					body: isWriteMethod ? body : undefined,
 					mediaType: 'application/json; charset=utf-8',
@@ -101,7 +105,11 @@ export async function makeTelegramRequest<T>(
 			};
 			const errorCode = errorResponse.error_code?.toString() || 'Unknown error';
 			const description = errorResponse.description || 'Unknown error';
-			throw new TelegramAPIError(description, errorCode, errorResponse.parameters);
+			throw new TelegramAPIError(
+				description,
+				errorCode,
+				errorResponse.parameters,
+			);
 		}
 
 		// Telegram API wraps successful payloads in a `result` field; T represents the unwrapped value
@@ -126,8 +134,13 @@ export async function makeTelegramRequest<T>(
 				  }
 				| undefined;
 
-			if (errorBody && typeof errorBody === 'object' && 'description' in errorBody) {
-				const errorCode = errorBody.error_code?.toString() || error.status?.toString();
+			if (
+				errorBody &&
+				typeof errorBody === 'object' &&
+				'description' in errorBody
+			) {
+				const errorCode =
+					errorBody.error_code?.toString() || error.status?.toString();
 				throw new TelegramAPIError(
 					errorBody.description || error.message,
 					errorCode,

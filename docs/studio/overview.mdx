@@ -1,0 +1,132 @@
+---
+title: Corsair Studio
+description: A local dashboard for inspecting and configuring your Corsair instance.
+---
+
+<Note>
+Corsair Studio is super early stage. Expect rough edges, and [open an issue](https://github.com/corsairdev/corsair/issues/new) for anything you'd like to see.
+</Note>
+
+Corsair Studio is a local web dashboard that lets you browse the plugins wired into your project, inspect operations and their schemas, poke at the data Corsair has stored, manage credentials and permissions, and run ad-hoc scripts against your live `corsair` instance — all without writing any code.
+
+It runs entirely on your machine, reads from the same `corsair.ts` your app does, and auto-reloads when you change that file.
+
+## What's in it
+
+- **Plugins** — every plugin registered on your instance, with credential status per tenant and a one-click setup flow for the ones that need it.
+- **Operations** — a searchable list of every `api` / `db` / `webhook` operation, with the generated JSON schema for each one.
+- **Data** — browse the tables Corsair persists (`corsair_integrations`, `corsair_accounts`, `corsair_entities`, `corsair_events`) so you can see what's been synced.
+- **Permissions** — view and toggle endpoint permission guards without editing code.
+- **Script** — a REPL-style editor where `corsair` is already in scope. Useful for trying an operation before you wire it into your app.
+
+## Install
+
+Studio ships as a separate package on top of the CLI. Install both as dev dependencies in your project:
+
+<CodeGroup>
+```bash npm
+npm install --save-dev @corsair-dev/cli @corsair-dev/studio
+```
+```bash yarn
+yarn add --dev @corsair-dev/cli @corsair-dev/studio
+```
+```bash pnpm
+pnpm add -D @corsair-dev/cli @corsair-dev/studio
+```
+```bash bun
+bun add -d @corsair-dev/cli @corsair-dev/studio
+```
+</CodeGroup>
+
+## Run it
+
+From your project root:
+
+<CodeGroup>
+```bash npm
+npx corsair ui
+```
+```bash yarn
+yarn corsair ui
+```
+```bash pnpm
+pnpm corsair ui
+```
+```bash bun
+bunx corsair ui
+```
+</CodeGroup>
+
+Studio starts on [http://127.0.0.1:4317](http://127.0.0.1:4317) and opens a browser tab automatically. Stop it with `Ctrl+C`.
+
+### Options
+
+- `--port=4318` — listen on a different port
+- `--no-open` — don't auto-open the browser
+
+## Requirements
+
+Studio needs to find and load your `corsair` instance. That means:
+
+<Steps>
+
+<Step>
+
+### A `corsair.ts` in a known location
+
+The CLI looks for your config file at one of these paths relative to the project root:
+
+```
+corsair.ts
+src/corsair.ts
+lib/corsair.ts
+server/corsair.ts
+src/server/corsair.ts
+app/corsair.ts
+corsair/index.ts
+```
+
+(`.tsx`, `.js`, and `.jsx` variants of each are also supported.)
+
+</Step>
+
+<Step>
+
+### An exported `corsair` instance
+
+The file must export the instance created by `createCorsair(...)` as a named export called `corsair`:
+
+```ts corsair.ts
+import 'dotenv/config';
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+
+const db = new Database('corsair.db');
+
+export const corsair = createCorsair({
+    plugins: [slack()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+If Studio can't find or load this file, it'll tell you which paths it checked and what went wrong.
+
+</Step>
+
+</Steps>
+
+## Live reload
+
+Studio watches your `corsair.ts` and reloads the instance in the background whenever it changes. The UI refreshes itself automatically, so adding a plugin or tweaking a config shows up without a restart.
+
+## Roadmap
+
+Studio is the newest part of Corsair and there's a lot we want to build. The biggest one on the list:
+
+<Card title="Chat with your Corsair" icon="message">
+A built-in chat panel that talks to the Corsair MCP server, so you can prompt your integrations from Studio itself and get the agent experience without wiring anything up.
+</Card>
+
+Have something else you want to see? [Open an issue](https://github.com/corsairdev/corsair/issues/new) — Studio is moving fast and early feedback shapes what ships next.

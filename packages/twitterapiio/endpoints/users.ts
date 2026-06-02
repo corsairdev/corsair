@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TwitterApiIOEndpoints } from '..';
 import { makeTwitterApiIORequest } from '../client';
+import type { TwitterApiIOEndpoints } from '../index';
 import type { TwitterApiIOEndpointOutputs } from './types';
 
 export const getByUsername: TwitterApiIOEndpoints['usersGetByUsername'] =
@@ -234,7 +234,10 @@ export const unfollow: TwitterApiIOEndpoints['usersUnfollow'] = async (
 	return response;
 };
 
-export const login: TwitterApiIOEndpoints['usersLogin'] = async (ctx, input) => {
+export const login: TwitterApiIOEndpoints['usersLogin'] = async (
+	ctx,
+	input,
+) => {
 	const { userName, email, password, totpSecret, proxy } = input;
 	const response = await makeTwitterApiIORequest<
 		TwitterApiIOEndpointOutputs['usersLogin']

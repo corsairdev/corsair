@@ -10,7 +10,7 @@ const MondayGroupSchema = z
 		position: z.string().optional(),
 		archived: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MondayColumnSchema = z
 	.object({
@@ -20,7 +20,7 @@ const MondayColumnSchema = z
 		settings_str: z.string().optional(),
 		description: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MondayColumnValueSchema = z
 	.object({
@@ -30,7 +30,7 @@ const MondayColumnValueSchema = z
 		value: z.string().nullable().optional(),
 		type: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MondayBoardSchema = z
 	.object({
@@ -41,12 +41,12 @@ const MondayBoardSchema = z
 		state: z.string().optional(),
 		workspace_id: z.union([z.string(), z.number()]).nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MondayBoardDetailSchema = MondayBoardSchema.extend({
 	groups: z.array(MondayGroupSchema).optional(),
 	columns: z.array(MondayColumnSchema).optional(),
-}).passthrough();
+}).loose();
 
 const MondayItemSchema = z
 	.object({
@@ -61,14 +61,14 @@ const MondayItemSchema = z
 			.optional(),
 		column_values: z.array(MondayColumnValueSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MondayItemsPageSchema = z
 	.object({
 		cursor: z.string().nullable().optional(),
 		items: z.array(MondayItemSchema),
 	})
-	.passthrough();
+	.loose();
 
 const MondayUpdateSchema = z
 	.object({
@@ -86,7 +86,7 @@ const MondayUpdateSchema = z
 			.array(z.object({ id: z.string(), body: z.string().optional() }))
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MondayUserSchema = z
 	.object({
@@ -98,7 +98,7 @@ const MondayUserSchema = z
 		is_admin: z.boolean().optional(),
 		is_guest: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const MondayWorkspaceSchema = z
 	.object({
@@ -107,7 +107,7 @@ const MondayWorkspaceSchema = z
 		kind: z.string().optional(),
 		description: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ────────────────────────────────────────────────────────────
 
@@ -259,9 +259,7 @@ const UpdatesDeleteInputSchema = z.object({
 const UsersListInputSchema = z.object({
 	limit: z.number().optional(),
 	page: z.number().optional(),
-	kind: z
-		.enum(['all', 'non_guests', 'guests', 'non_pending'])
-		.optional(),
+	kind: z.enum(['all', 'non_guests', 'guests', 'non_pending']).optional(),
 });
 
 const UsersGetInputSchema = z.object({
@@ -306,173 +304,165 @@ const WebhooksDeleteInputSchema = z.object({
 
 const BoardsListResponseSchema = z
 	.object({ boards: z.array(MondayBoardSchema) })
-	.passthrough();
+	.loose();
 
 const BoardsGetResponseSchema = z
 	.object({ boards: z.array(MondayBoardDetailSchema) })
-	.passthrough();
+	.loose();
 
 const BoardsCreateResponseSchema = z
 	.object({
 		create_board: z
 			.object({ id: z.string(), name: z.string().optional() })
-			.passthrough(),
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 const BoardsUpdateResponseSchema = z
 	.object({
-		update_board: z.object({ id: z.string() }).passthrough(),
+		update_board: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const BoardsArchiveResponseSchema = z
 	.object({
-		archive_board: z.object({ id: z.string() }).passthrough(),
+		archive_board: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const BoardsDeleteResponseSchema = z
 	.object({
-		delete_board: z.object({ id: z.string() }).passthrough(),
+		delete_board: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const BoardsDuplicateResponseSchema = z
 	.object({
 		duplicate_board: z
-			.object({ board: z.object({ id: z.string() }).passthrough() })
-			.passthrough(),
+			.object({ board: z.object({ id: z.string() }).loose() })
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsListResponseSchema = z
 	.object({
-		boards: z.array(
-			z.object({ items_page: MondayItemsPageSchema }).passthrough(),
-		),
+		boards: z.array(z.object({ items_page: MondayItemsPageSchema }).loose()),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsGetResponseSchema = z
 	.object({ items: z.array(MondayItemSchema) })
-	.passthrough();
+	.loose();
 
 const ItemsCreateResponseSchema = z
 	.object({
 		create_item: z
 			.object({ id: z.string(), name: z.string().optional() })
-			.passthrough(),
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsUpdateResponseSchema = z
 	.object({
-		change_column_value: z.object({ id: z.string() }).passthrough(),
+		change_column_value: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsMoveResponseSchema = z
 	.object({
-		move_item_to_group: z.object({ id: z.string() }).passthrough(),
+		move_item_to_group: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsArchiveResponseSchema = z
 	.object({
-		archive_item: z.object({ id: z.string() }).passthrough(),
+		archive_item: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const ItemsDeleteResponseSchema = z
 	.object({
-		delete_item: z.object({ id: z.string() }).passthrough(),
+		delete_item: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const GroupsListResponseSchema = z
 	.object({
-		boards: z.array(
-			z.object({ groups: z.array(MondayGroupSchema) }).passthrough(),
-		),
+		boards: z.array(z.object({ groups: z.array(MondayGroupSchema) }).loose()),
 	})
-	.passthrough();
+	.loose();
 
 const GroupsCreateResponseSchema = z
 	.object({
 		create_group: z
 			.object({ id: z.string(), title: z.string().optional() })
-			.passthrough(),
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 const GroupsUpdateResponseSchema = z
 	.object({
-		update_group: z.object({ id: z.string() }).passthrough(),
+		update_group: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const GroupsDeleteResponseSchema = z
 	.object({
-		delete_group: z.object({ id: z.string() }).passthrough(),
+		delete_group: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const ColumnsListResponseSchema = z
 	.object({
-		boards: z.array(
-			z.object({ columns: z.array(MondayColumnSchema) }).passthrough(),
-		),
+		boards: z.array(z.object({ columns: z.array(MondayColumnSchema) }).loose()),
 	})
-	.passthrough();
+	.loose();
 
 const ColumnsCreateResponseSchema = z
 	.object({
 		create_column: z
 			.object({ id: z.string(), title: z.string().optional() })
-			.passthrough(),
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 const ColumnsChangeValueResponseSchema = z
 	.object({
-		change_column_value: z.object({ id: z.string() }).passthrough(),
+		change_column_value: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const UpdatesListResponseSchema = z
 	.object({
-		items: z.array(
-			z.object({ updates: z.array(MondayUpdateSchema) }).passthrough(),
-		),
+		items: z.array(z.object({ updates: z.array(MondayUpdateSchema) }).loose()),
 	})
-	.passthrough();
+	.loose();
 
 const UpdatesCreateResponseSchema = z
 	.object({
 		create_update: z
 			.object({ id: z.string(), body: z.string().optional() })
-			.passthrough(),
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 const UpdatesDeleteResponseSchema = z
 	.object({
-		delete_update: z.object({ id: z.string() }).passthrough(),
+		delete_update: z.object({ id: z.string() }).loose(),
 	})
-	.passthrough();
+	.loose();
 
 const UsersListResponseSchema = z
 	.object({ users: z.array(MondayUserSchema) })
-	.passthrough();
+	.loose();
 
 const UsersGetResponseSchema = z
 	.object({ users: z.array(MondayUserSchema) })
-	.passthrough();
+	.loose();
 
 const WorkspacesListResponseSchema = z
 	.object({ workspaces: z.array(MondayWorkspaceSchema) })
-	.passthrough();
+	.loose();
 
 const MondayWebhookObjectSchema = z
 	.object({
@@ -480,23 +470,25 @@ const MondayWebhookObjectSchema = z
 		board_id: z.string().optional(),
 		event: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const WebhooksListResponseSchema = z
 	.object({ webhooks: z.array(MondayWebhookObjectSchema) })
-	.passthrough();
+	.loose();
 
 const WebhooksCreateResponseSchema = z
 	.object({
 		create_webhook: MondayWebhookObjectSchema,
 	})
-	.passthrough();
+	.loose();
 
 const WebhooksDeleteResponseSchema = z
 	.object({
-		delete_webhook: z.object({ id: z.string(), board_id: z.string().optional() }).passthrough(),
+		delete_webhook: z
+			.object({ id: z.string(), board_id: z.string().optional() })
+			.loose(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Endpoint I/O Maps ────────────────────────────────────────────────────────
 

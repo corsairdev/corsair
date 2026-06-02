@@ -1,9 +1,9 @@
 import { cardCreated } from './cardCreated';
 import { cardUpdated } from './cardUpdated';
-import { memberAddedToCard } from './memberAddedToCard';
+import { commentCreated } from './commentCreated';
 import { listCreated } from './listCreated';
 import { listUpdated } from './listUpdated';
-import { commentCreated } from './commentCreated';
+import { memberAddedToCard } from './memberAddedToCard';
 
 export const CardWebhooks = {
 	cardCreated,

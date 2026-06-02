@@ -1,0 +1,1476 @@
+---
+title: API
+description: "API reference for Trello: every `trello.api.*` operation with input and output types."
+---
+
+Every `trello.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Boards
+
+### create
+
+`boards.create`
+
+Create a new board
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.boards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `desc` | `string` | No | — |
+| `idOrganization` | `string` | No | — |
+| `idBoardSource` | `string` | No | — |
+| `keepFromSource` | `string` | No | — |
+| `powerUps` | `string` | No | — |
+| `prefs_permissionLevel` | `org \| private \| public` | No | — |
+| `prefs_voting` | `string` | No | — |
+| `prefs_comments` | `string` | No | — |
+| `prefs_invitations` | `string` | No | — |
+| `prefs_selfJoin` | `boolean` | No | — |
+| `prefs_cardCovers` | `boolean` | No | — |
+| `prefs_background` | `string` | No | — |
+| `prefs_cardAging` | `pirate \| regular` | No | — |
+| `defaultLabels` | `boolean` | No | — |
+| `defaultLists` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `descData` | `any` | No | — |
+| `closed` | `boolean` | No | — |
+| `idOrganization` | `string` | No | — |
+| `idEnterprise` | `string` | No | — |
+| `pinned` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `shortUrl` | `string` | No | — |
+| `prefs` | `object` | No | — |
+| `labelNames` | `object` | No | — |
+| `starred` | `boolean` | No | — |
+| `memberships` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="prefs full type">
+
+```ts
+{
+  permissionLevel?: string,
+  hideVotes?: boolean,
+  voting?: string,
+  comments?: string,
+  invitations?: string,
+  selfJoin?: boolean,
+  cardCovers?: boolean,
+  isTemplate?: boolean,
+  cardAging?: string,
+  calendarFeedEnabled?: boolean,
+  background?: string | null,
+  backgroundImage?: string | null,
+  backgroundTile?: boolean,
+  backgroundBrightness?: string,
+  canBePublic?: boolean,
+  canBeOrg?: boolean,
+  canBePrivate?: boolean,
+  canInvite?: string | boolean
+}
+```
+</Accordion>
+
+<Accordion title="labelNames full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`boards.delete`
+
+Delete a board [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.trello.api.boards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_value` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`boards.get`
+
+Get a board by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.boards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `descData` | `any` | No | — |
+| `closed` | `boolean` | No | — |
+| `idOrganization` | `string` | No | — |
+| `idEnterprise` | `string` | No | — |
+| `pinned` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `shortUrl` | `string` | No | — |
+| `prefs` | `object` | No | — |
+| `labelNames` | `object` | No | — |
+| `starred` | `boolean` | No | — |
+| `memberships` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="prefs full type">
+
+```ts
+{
+  permissionLevel?: string,
+  hideVotes?: boolean,
+  voting?: string,
+  comments?: string,
+  invitations?: string,
+  selfJoin?: boolean,
+  cardCovers?: boolean,
+  isTemplate?: boolean,
+  cardAging?: string,
+  calendarFeedEnabled?: boolean,
+  background?: string | null,
+  backgroundImage?: string | null,
+  backgroundTile?: boolean,
+  backgroundBrightness?: string,
+  canBePublic?: boolean,
+  canBeOrg?: boolean,
+  canBePrivate?: boolean,
+  canInvite?: string | boolean
+}
+```
+</Accordion>
+
+<Accordion title="labelNames full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`boards.list`
+
+List boards for a member
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.boards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memberId` | `string` | No | — |
+| `filter` | `all \| closed \| members \| open \| organization \| public \| starred` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  desc?: string,
+  descData?: any | null,
+  closed?: boolean,
+  idOrganization?: string | null,
+  idEnterprise?: string | null,
+  pinned?: boolean,
+  url?: string,
+  shortUrl?: string,
+  prefs?: {
+    permissionLevel?: string,
+    hideVotes?: boolean,
+    voting?: string,
+    comments?: string,
+    invitations?: string,
+    selfJoin?: boolean,
+    cardCovers?: boolean,
+    isTemplate?: boolean,
+    cardAging?: string,
+    calendarFeedEnabled?: boolean,
+    background?: string | null,
+    backgroundImage?: string | null,
+    backgroundTile?: boolean,
+    backgroundBrightness?: string,
+    canBePublic?: boolean,
+    canBeOrg?: boolean,
+    canBePrivate?: boolean,
+    canInvite?: string | boolean
+  },
+  labelNames?: {
+  },
+  starred?: boolean,
+  memberships?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`boards.update`
+
+Update a board
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.boards.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `idOrganization` | `string` | No | — |
+| `prefs_permissionLevel` | `org \| private \| public` | No | — |
+| `prefs_selfJoin` | `boolean` | No | — |
+| `prefs_cardCovers` | `boolean` | No | — |
+| `prefs_cardAging` | `pirate \| regular` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `descData` | `any` | No | — |
+| `closed` | `boolean` | No | — |
+| `idOrganization` | `string` | No | — |
+| `idEnterprise` | `string` | No | — |
+| `pinned` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `shortUrl` | `string` | No | — |
+| `prefs` | `object` | No | — |
+| `labelNames` | `object` | No | — |
+| `starred` | `boolean` | No | — |
+| `memberships` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="prefs full type">
+
+```ts
+{
+  permissionLevel?: string,
+  hideVotes?: boolean,
+  voting?: string,
+  comments?: string,
+  invitations?: string,
+  selfJoin?: boolean,
+  cardCovers?: boolean,
+  isTemplate?: boolean,
+  cardAging?: string,
+  calendarFeedEnabled?: boolean,
+  background?: string | null,
+  backgroundImage?: string | null,
+  backgroundTile?: boolean,
+  backgroundBrightness?: string,
+  canBePublic?: boolean,
+  canBeOrg?: boolean,
+  canBePrivate?: boolean,
+  canInvite?: string | boolean
+}
+```
+</Accordion>
+
+<Accordion title="labelNames full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cards
+
+### create
+
+`cards.create`
+
+Create a new card
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.cards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `idList` | `string` | Yes | — |
+| `desc` | `string` | No | — |
+| `pos` | `number \| top \| bottom` | No | — |
+| `due` | `string` | No | — |
+| `start` | `string` | No | — |
+| `dueComplete` | `boolean` | No | — |
+| `idMembers` | `string[]` | No | — |
+| `idLabels` | `string[]` | No | — |
+| `idCardSource` | `string` | No | — |
+| `keepFromSource` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `badges` | `object` | No | — |
+| `checkItemStates` | `any[]` | No | — |
+| `closed` | `boolean` | No | — |
+| `dateLastActivity` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `descData` | `any` | No | — |
+| `due` | `string` | No | — |
+| `dueComplete` | `boolean` | No | — |
+| `dueReminder` | `number` | No | — |
+| `email` | `string` | No | — |
+| `idBoard` | `string` | No | — |
+| `idChecklists` | `string[]` | No | — |
+| `idLabels` | `string[]` | No | — |
+| `idList` | `string` | No | — |
+| `idMembers` | `string[]` | No | — |
+| `idMembersVoted` | `string[]` | No | — |
+| `idShort` | `number` | No | — |
+| `idAttachmentCover` | `string` | No | — |
+| `labels` | `object[]` | No | — |
+| `manualCoverAttachment` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `shortLink` | `string` | No | — |
+| `shortUrl` | `string` | No | — |
+| `start` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `cover` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="badges full type">
+
+```ts
+{
+  votes?: number,
+  viewingMemberVoted?: boolean,
+  subscribed?: boolean,
+  fogbugz?: string,
+  checkItems?: number,
+  checkItemsChecked?: number,
+  comments?: number,
+  attachments?: number,
+  description?: boolean,
+  due?: string | null,
+  dueComplete?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: string,
+  idBoard?: string,
+  name?: string,
+  color?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`cards.delete`
+
+Delete a card [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.trello.api.cards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_value` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`cards.get`
+
+Get a card by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.cards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `badges` | `object` | No | — |
+| `checkItemStates` | `any[]` | No | — |
+| `closed` | `boolean` | No | — |
+| `dateLastActivity` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `descData` | `any` | No | — |
+| `due` | `string` | No | — |
+| `dueComplete` | `boolean` | No | — |
+| `dueReminder` | `number` | No | — |
+| `email` | `string` | No | — |
+| `idBoard` | `string` | No | — |
+| `idChecklists` | `string[]` | No | — |
+| `idLabels` | `string[]` | No | — |
+| `idList` | `string` | No | — |
+| `idMembers` | `string[]` | No | — |
+| `idMembersVoted` | `string[]` | No | — |
+| `idShort` | `number` | No | — |
+| `idAttachmentCover` | `string` | No | — |
+| `labels` | `object[]` | No | — |
+| `manualCoverAttachment` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `shortLink` | `string` | No | — |
+| `shortUrl` | `string` | No | — |
+| `start` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `cover` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="badges full type">
+
+```ts
+{
+  votes?: number,
+  viewingMemberVoted?: boolean,
+  subscribed?: boolean,
+  fogbugz?: string,
+  checkItems?: number,
+  checkItemsChecked?: number,
+  comments?: number,
+  attachments?: number,
+  description?: boolean,
+  due?: string | null,
+  dueComplete?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: string,
+  idBoard?: string,
+  name?: string,
+  color?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`cards.list`
+
+List cards in a list
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.cards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `filter` | `all \| closed \| none \| open \| visible` | No | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `before` | `string` | No | — |
+| `since` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  badges?: {
+    votes?: number,
+    viewingMemberVoted?: boolean,
+    subscribed?: boolean,
+    fogbugz?: string,
+    checkItems?: number,
+    checkItemsChecked?: number,
+    comments?: number,
+    attachments?: number,
+    description?: boolean,
+    due?: string | null,
+    dueComplete?: boolean
+  },
+  checkItemStates?: any[] | null,
+  closed?: boolean,
+  dateLastActivity?: string,
+  desc?: string,
+  descData?: any | null,
+  due?: string | null,
+  dueComplete?: boolean,
+  dueReminder?: number | null,
+  email?: string | null,
+  idBoard?: string,
+  idChecklists?: string[],
+  idLabels?: string[],
+  idList?: string,
+  idMembers?: string[],
+  idMembersVoted?: string[],
+  idShort?: number,
+  idAttachmentCover?: string | null,
+  labels?: {
+    id: string,
+    idBoard?: string,
+    name?: string,
+    color?: string | null
+  }[],
+  manualCoverAttachment?: boolean,
+  name?: string,
+  pos?: number,
+  shortLink?: string,
+  shortUrl?: string,
+  start?: string | null,
+  subscribed?: boolean,
+  url?: string,
+  cover?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### move
+
+`cards.move`
+
+Move a card to a different list or board
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.cards.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+| `idList` | `string` | Yes | — |
+| `idBoard` | `string` | No | — |
+| `pos` | `number \| top \| bottom` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `badges` | `object` | No | — |
+| `checkItemStates` | `any[]` | No | — |
+| `closed` | `boolean` | No | — |
+| `dateLastActivity` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `descData` | `any` | No | — |
+| `due` | `string` | No | — |
+| `dueComplete` | `boolean` | No | — |
+| `dueReminder` | `number` | No | — |
+| `email` | `string` | No | — |
+| `idBoard` | `string` | No | — |
+| `idChecklists` | `string[]` | No | — |
+| `idLabels` | `string[]` | No | — |
+| `idList` | `string` | No | — |
+| `idMembers` | `string[]` | No | — |
+| `idMembersVoted` | `string[]` | No | — |
+| `idShort` | `number` | No | — |
+| `idAttachmentCover` | `string` | No | — |
+| `labels` | `object[]` | No | — |
+| `manualCoverAttachment` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `shortLink` | `string` | No | — |
+| `shortUrl` | `string` | No | — |
+| `start` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `cover` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="badges full type">
+
+```ts
+{
+  votes?: number,
+  viewingMemberVoted?: boolean,
+  subscribed?: boolean,
+  fogbugz?: string,
+  checkItems?: number,
+  checkItemsChecked?: number,
+  comments?: number,
+  attachments?: number,
+  description?: boolean,
+  due?: string | null,
+  dueComplete?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: string,
+  idBoard?: string,
+  name?: string,
+  color?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`cards.update`
+
+Update a card
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.cards.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cardId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `idMembers` | `string[]` | No | — |
+| `idAttachmentCover` | `string` | No | — |
+| `idList` | `string` | No | — |
+| `idLabels` | `string[]` | No | — |
+| `idBoard` | `string` | No | — |
+| `pos` | `number \| top \| bottom` | No | — |
+| `due` | `string` | No | — |
+| `start` | `string` | No | — |
+| `dueComplete` | `boolean` | No | — |
+| `subscribed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `badges` | `object` | No | — |
+| `checkItemStates` | `any[]` | No | — |
+| `closed` | `boolean` | No | — |
+| `dateLastActivity` | `string` | No | — |
+| `desc` | `string` | No | — |
+| `descData` | `any` | No | — |
+| `due` | `string` | No | — |
+| `dueComplete` | `boolean` | No | — |
+| `dueReminder` | `number` | No | — |
+| `email` | `string` | No | — |
+| `idBoard` | `string` | No | — |
+| `idChecklists` | `string[]` | No | — |
+| `idLabels` | `string[]` | No | — |
+| `idList` | `string` | No | — |
+| `idMembers` | `string[]` | No | — |
+| `idMembersVoted` | `string[]` | No | — |
+| `idShort` | `number` | No | — |
+| `idAttachmentCover` | `string` | No | — |
+| `labels` | `object[]` | No | — |
+| `manualCoverAttachment` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `shortLink` | `string` | No | — |
+| `shortUrl` | `string` | No | — |
+| `start` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `url` | `string` | No | — |
+| `cover` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="badges full type">
+
+```ts
+{
+  votes?: number,
+  viewingMemberVoted?: boolean,
+  subscribed?: boolean,
+  fogbugz?: string,
+  checkItems?: number,
+  checkItemsChecked?: number,
+  comments?: number,
+  attachments?: number,
+  description?: boolean,
+  due?: string | null,
+  dueComplete?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: string,
+  idBoard?: string,
+  name?: string,
+  color?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Checklists
+
+### create
+
+`checklists.create`
+
+Create a checklist on a card
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.checklists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idCard` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `pos` | `number \| top \| bottom` | No | — |
+| `idChecklistSource` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `idBoard` | `string` | No | — |
+| `idCard` | `string` | No | — |
+| `name` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `checkItems` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="checkItems full type">
+
+```ts
+{
+  id: string,
+  idChecklist?: string,
+  name?: string,
+  nameData?: any | null,
+  pos?: number,
+  state?: incomplete | complete,
+  due?: string | null,
+  dueReminder?: any | null,
+  idMember?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`checklists.delete`
+
+Delete a checklist [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.trello.api.checklists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checklistId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_value` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`checklists.get`
+
+Get a checklist by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.checklists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checklistId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `checkItems` | `string` | No | — |
+| `checkItem_fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `idBoard` | `string` | No | — |
+| `idCard` | `string` | No | — |
+| `name` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `checkItems` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="checkItems full type">
+
+```ts
+{
+  id: string,
+  idChecklist?: string,
+  name?: string,
+  nameData?: any | null,
+  pos?: number,
+  state?: incomplete | complete,
+  due?: string | null,
+  dueReminder?: any | null,
+  idMember?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Labels
+
+### create
+
+`labels.create`
+
+Create a label on a board
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.labels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `idBoard` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `idBoard` | `string` | No | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a label [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.trello.api.labels.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_value` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`labels.list`
+
+List labels on a board
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.labels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  idBoard?: string,
+  name?: string,
+  color?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`labels.update`
+
+Update a label
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.labels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `idBoard` | `string` | No | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+---
+
+## Lists
+
+### archive
+
+`lists.archive`
+
+Archive (close) a list
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.lists.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `idBoard` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `softLimit` | `any` | No | — |
+
+
+
+---
+
+### create
+
+`lists.create`
+
+Create a new list on a board
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `idBoard` | `string` | Yes | — |
+| `idListSource` | `string` | No | — |
+| `pos` | `number \| top \| bottom` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `idBoard` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `softLimit` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Get a list by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `idBoard` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `softLimit` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List all lists on a board
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.lists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | — |
+| `filter` | `all \| closed \| none \| open` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  closed?: boolean,
+  idBoard?: string,
+  pos?: number,
+  subscribed?: boolean,
+  softLimit?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`lists.update`
+
+Update a list
+
+**Risk:** `write`
+
+```ts
+await corsair.trello.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `idBoard` | `string` | No | — |
+| `pos` | `number \| top \| bottom` | No | — |
+| `subscribed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `idBoard` | `string` | No | — |
+| `pos` | `number` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `softLimit` | `any` | No | — |
+
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Get a member by ID or username
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memberId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `activityBlocked` | `boolean` | No | — |
+| `avatarHash` | `string` | No | — |
+| `avatarUrl` | `string` | No | — |
+| `bio` | `string` | No | — |
+| `confirmed` | `boolean` | No | — |
+| `email` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `idEnterprise` | `string` | No | — |
+| `idMemberReferrer` | `string` | No | — |
+| `idOrganizations` | `string[]` | No | — |
+| `initials` | `string` | No | — |
+| `memberType` | `string` | No | — |
+| `nonPublic` | `any` | No | — |
+| `nonPublicAvailable` | `boolean` | No | — |
+| `products` | `number[]` | No | — |
+| `url` | `string` | No | — |
+| `username` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+List members of a board
+
+**Risk:** `read`
+
+```ts
+await corsair.trello.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardId` | `string` | Yes | — |
+| `filter` | `admins \| all \| none \| normal \| owners` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  activityBlocked?: boolean,
+  avatarHash?: string | null,
+  avatarUrl?: string | null,
+  bio?: string,
+  confirmed?: boolean,
+  email?: string | null,
+  fullName?: string,
+  idEnterprise?: string | null,
+  idMemberReferrer?: string | null,
+  idOrganizations?: string[],
+  initials?: string,
+  memberType?: string,
+  nonPublic?: any,
+  nonPublicAvailable?: boolean,
+  products?: number[],
+  url?: string,
+  username?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

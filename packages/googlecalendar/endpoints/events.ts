@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleCalendarEndpoints } from '..';
 import { makeAuthenticatedCalendarRequest } from '../client';
+import type { GoogleCalendarEndpoints } from '../index';
 import type { GoogleCalendarEndpointOutputs } from './types';
 
 export const create: GoogleCalendarEndpoints['eventsCreate'] = async (
@@ -155,17 +155,15 @@ export const deleteEvent: GoogleCalendarEndpoints['eventsDelete'] = async (
 	input,
 ) => {
 	const calendarId = input.calendarId || 'primary';
-	await makeAuthenticatedCalendarRequest<GoogleCalendarEndpointOutputs['eventsDelete']>(
-		`/calendars/${calendarId}/events/${input.id}`,
-		ctx,
-		{
-			method: 'DELETE',
-			query: {
-				sendUpdates: input.sendUpdates,
-				sendNotifications: input.sendNotifications,
-			},
+	await makeAuthenticatedCalendarRequest<
+		GoogleCalendarEndpointOutputs['eventsDelete']
+	>(`/calendars/${calendarId}/events/${input.id}`, ctx, {
+		method: 'DELETE',
+		query: {
+			sendUpdates: input.sendUpdates,
+			sendNotifications: input.sendNotifications,
 		},
-	);
+	});
 
 	if (ctx.db.events) {
 		try {

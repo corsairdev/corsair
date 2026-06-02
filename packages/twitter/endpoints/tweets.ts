@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TwitterEndpoints } from '..';
 import { makeTwitterRequest } from '../client';
+import type { TwitterEndpoints } from '../index';
 import type { TwitterEndpointOutputs } from './types';
 
 export const create: TwitterEndpoints['tweetsCreate'] = async (ctx, input) => {

@@ -1,0 +1,883 @@
+---
+title: Webhooks
+description: "Discord incoming webhooks: event paths, payloads, and response data."
+---
+
+The Discord plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/discord/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `interactions`
+  - `applicationCommand` (`interactions.applicationCommand`)
+  - `messageComponent` (`interactions.messageComponent`)
+  - `modalSubmit` (`interactions.modalSubmit`)
+  - `ping` (`interactions.ping`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Interactions
+
+### Application Command
+
+`interactions.applicationCommand`
+
+A user invoked a slash command or context-menu action
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `application_id` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `version` | `1` | Yes | — |
+| `guild_id` | `string` | No | — |
+| `channel_id` | `string` | No | — |
+| `member` | `object` | No | — |
+| `user` | `object` | No | — |
+| `locale` | `string` | No | — |
+| `guild_locale` | `string` | No | — |
+| `app_permissions` | `string` | No | — |
+| `type` | `2` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  nick?: string | null,
+  roles: string[],
+  joined_at: string,
+  permissions: string,
+  deaf: boolean,
+  mute: boolean
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: number,
+  options?: {
+    name: string,
+    type: number,
+    value?: string | number | boolean,
+    focused?: boolean,
+    options?: lazy
+  }[],
+  guild_id?: string,
+  target_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  application_id: string,
+  token: string,
+  version: 1,
+  guild_id?: string,
+  channel_id?: string,
+  member?: {
+    user?: {
+      id: string,
+      username: string,
+      discriminator: string,
+      global_name?: string | null,
+      avatar?: string | null,
+      bot?: boolean,
+      system?: boolean,
+      email?: string | null,
+      verified?: boolean,
+      locale?: string,
+      premium_type?: number,
+      public_flags?: number,
+      flags?: number
+    },
+    nick?: string | null,
+    roles: string[],
+    joined_at: string,
+    permissions: string,
+    deaf: boolean,
+    mute: boolean
+  },
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  locale?: string,
+  guild_locale?: string,
+  app_permissions?: string,
+  type: 2,
+  data: {
+    id: string,
+    name: string,
+    type: number,
+    options?: {
+      name: string,
+      type: number,
+      value?: string | number | boolean,
+      focused?: boolean,
+      options?: lazy
+    }[],
+    guild_id?: string,
+    target_id?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discord({
+    webhookHooks: {
+        interactions: {
+            applicationCommand: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Message Component
+
+`interactions.messageComponent`
+
+A user clicked a button or selected a menu option
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `application_id` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `version` | `1` | Yes | — |
+| `guild_id` | `string` | No | — |
+| `channel_id` | `string` | No | — |
+| `member` | `object` | No | — |
+| `user` | `object` | No | — |
+| `locale` | `string` | No | — |
+| `guild_locale` | `string` | No | — |
+| `app_permissions` | `string` | No | — |
+| `type` | `3` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  nick?: string | null,
+  roles: string[],
+  joined_at: string,
+  permissions: string,
+  deaf: boolean,
+  mute: boolean
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  custom_id: string,
+  component_type: number,
+  values?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  id: string,
+  channel_id: string,
+  content: string,
+  author: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  timestamp: string,
+  edited_timestamp?: string | null,
+  tts: boolean,
+  mention_everyone: boolean,
+  mentions: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  }[],
+  attachments: any[],
+  embeds: {
+    title?: string,
+    description?: string,
+    url?: string,
+    color?: number,
+    fields?: {
+      name: string,
+      value: string,
+      inline?: boolean
+    }[],
+    footer?: {
+      text: string,
+      icon_url?: string
+    },
+    image?: {
+      url: string
+    },
+    thumbnail?: {
+      url: string
+    },
+    author?: {
+      name: string,
+      url?: string,
+      icon_url?: string
+    },
+    timestamp?: string
+  }[],
+  pinned: boolean,
+  type: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  application_id: string,
+  token: string,
+  version: 1,
+  guild_id?: string,
+  channel_id?: string,
+  member?: {
+    user?: {
+      id: string,
+      username: string,
+      discriminator: string,
+      global_name?: string | null,
+      avatar?: string | null,
+      bot?: boolean,
+      system?: boolean,
+      email?: string | null,
+      verified?: boolean,
+      locale?: string,
+      premium_type?: number,
+      public_flags?: number,
+      flags?: number
+    },
+    nick?: string | null,
+    roles: string[],
+    joined_at: string,
+    permissions: string,
+    deaf: boolean,
+    mute: boolean
+  },
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  locale?: string,
+  guild_locale?: string,
+  app_permissions?: string,
+  type: 3,
+  data: {
+    custom_id: string,
+    component_type: number,
+    values?: string[]
+  },
+  message: {
+    id: string,
+    channel_id: string,
+    content: string,
+    author: {
+      id: string,
+      username: string,
+      discriminator: string,
+      global_name?: string | null,
+      avatar?: string | null,
+      bot?: boolean,
+      system?: boolean,
+      email?: string | null,
+      verified?: boolean,
+      locale?: string,
+      premium_type?: number,
+      public_flags?: number,
+      flags?: number
+    },
+    timestamp: string,
+    edited_timestamp?: string | null,
+    tts: boolean,
+    mention_everyone: boolean,
+    mentions: {
+      id: string,
+      username: string,
+      discriminator: string,
+      global_name?: string | null,
+      avatar?: string | null,
+      bot?: boolean,
+      system?: boolean,
+      email?: string | null,
+      verified?: boolean,
+      locale?: string,
+      premium_type?: number,
+      public_flags?: number,
+      flags?: number
+    }[],
+    attachments: any[],
+    embeds: {
+      title?: string,
+      description?: string,
+      url?: string,
+      color?: number,
+      fields?: {
+        name: string,
+        value: string,
+        inline?: boolean
+      }[],
+      footer?: {
+        text: string,
+        icon_url?: string
+      },
+      image?: {
+        url: string
+      },
+      thumbnail?: {
+        url: string
+      },
+      author?: {
+        name: string,
+        url?: string,
+        icon_url?: string
+      },
+      timestamp?: string
+    }[],
+    pinned: boolean,
+    type: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discord({
+    webhookHooks: {
+        interactions: {
+            messageComponent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Modal Submit
+
+`interactions.modalSubmit`
+
+A user submitted a modal dialog
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `application_id` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `version` | `1` | Yes | — |
+| `guild_id` | `string` | No | — |
+| `channel_id` | `string` | No | — |
+| `member` | `object` | No | — |
+| `user` | `object` | No | — |
+| `locale` | `string` | No | — |
+| `guild_locale` | `string` | No | — |
+| `app_permissions` | `string` | No | — |
+| `type` | `5` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  nick?: string | null,
+  roles: string[],
+  joined_at: string,
+  permissions: string,
+  deaf: boolean,
+  mute: boolean
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  custom_id: string,
+  components: {
+    type: number,
+    components: {
+      type: number,
+      custom_id: string,
+      value: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  application_id: string,
+  token: string,
+  version: 1,
+  guild_id?: string,
+  channel_id?: string,
+  member?: {
+    user?: {
+      id: string,
+      username: string,
+      discriminator: string,
+      global_name?: string | null,
+      avatar?: string | null,
+      bot?: boolean,
+      system?: boolean,
+      email?: string | null,
+      verified?: boolean,
+      locale?: string,
+      premium_type?: number,
+      public_flags?: number,
+      flags?: number
+    },
+    nick?: string | null,
+    roles: string[],
+    joined_at: string,
+    permissions: string,
+    deaf: boolean,
+    mute: boolean
+  },
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  locale?: string,
+  guild_locale?: string,
+  app_permissions?: string,
+  type: 5,
+  data: {
+    custom_id: string,
+    components: {
+      type: number,
+      components: {
+        type: number,
+        custom_id: string,
+        value: string
+      }[]
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discord({
+    webhookHooks: {
+        interactions: {
+            modalSubmit: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Ping
+
+`interactions.ping`
+
+Discord sends a PING to verify the endpoint is live
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `application_id` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+| `version` | `1` | Yes | — |
+| `guild_id` | `string` | No | — |
+| `channel_id` | `string` | No | — |
+| `member` | `object` | No | — |
+| `user` | `object` | No | — |
+| `locale` | `string` | No | — |
+| `guild_locale` | `string` | No | — |
+| `app_permissions` | `string` | No | — |
+| `type` | `1` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  nick?: string | null,
+  roles: string[],
+  joined_at: string,
+  permissions: string,
+  deaf: boolean,
+  mute: boolean
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  discriminator: string,
+  global_name?: string | null,
+  avatar?: string | null,
+  bot?: boolean,
+  system?: boolean,
+  email?: string | null,
+  verified?: boolean,
+  locale?: string,
+  premium_type?: number,
+  public_flags?: number,
+  flags?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  application_id: string,
+  token: string,
+  version: 1,
+  guild_id?: string,
+  channel_id?: string,
+  member?: {
+    user?: {
+      id: string,
+      username: string,
+      discriminator: string,
+      global_name?: string | null,
+      avatar?: string | null,
+      bot?: boolean,
+      system?: boolean,
+      email?: string | null,
+      verified?: boolean,
+      locale?: string,
+      premium_type?: number,
+      public_flags?: number,
+      flags?: number
+    },
+    nick?: string | null,
+    roles: string[],
+    joined_at: string,
+    permissions: string,
+    deaf: boolean,
+    mute: boolean
+  },
+  user?: {
+    id: string,
+    username: string,
+    discriminator: string,
+    global_name?: string | null,
+    avatar?: string | null,
+    bot?: boolean,
+    system?: boolean,
+    email?: string | null,
+    verified?: boolean,
+    locale?: string,
+    premium_type?: number,
+    public_flags?: number,
+    flags?: number
+  },
+  locale?: string,
+  guild_locale?: string,
+  app_permissions?: string,
+  type: 1
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+discord({
+    webhookHooks: {
+        interactions: {
+            ping: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

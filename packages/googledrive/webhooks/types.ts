@@ -1,8 +1,5 @@
+import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
-import type {
-	CorsairWebhookMatcher,
-	RawWebhookRequest,
-} from 'corsair/core';
 import type { Change, File } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -11,7 +8,7 @@ import type { Change, File } from '../types';
 
 export const PubSubMessageSchema = z.object({
 	data: z.string().optional(),
-	attributes: z.record(z.string()).optional(),
+	attributes: z.record(z.string(), z.string()).optional(),
 	messageId: z.string().optional(),
 	publishTime: z.string().optional(),
 });

@@ -1,0 +1,1093 @@
+---
+title: Webhooks
+description: "Linear incoming webhooks: event paths, payloads, and response data."
+---
+
+The Linear plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/linear/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `comments`
+  - `create` (`comments.create`)
+  - `remove` (`comments.remove`)
+  - `update` (`comments.update`)
+- `issues`
+  - `create` (`issues.create`)
+  - `remove` (`issues.remove`)
+  - `update` (`issues.update`)
+- `projects`
+  - `create` (`projects.create`)
+  - `remove` (`projects.remove`)
+  - `update` (`projects.update`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Comments
+
+### Create
+
+`comments.create`
+
+A comment was added to an issue
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `create` | Yes | — |
+| `type` | `Comment` | Yes | — |
+| `data` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  body: string,
+  editedAt?: string,
+  createdAt: string,
+  updatedAt: string,
+  issueId: string,
+  userId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: create,
+  type: Comment,
+  data: {
+    id: string,
+    body: string,
+    editedAt?: string,
+    createdAt: string,
+    updatedAt: string,
+    issueId: string,
+    userId: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        comments: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Remove
+
+`comments.remove`
+
+A comment was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `remove` | Yes | — |
+| `type` | `Comment` | Yes | — |
+| `data` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  body: string,
+  editedAt?: string,
+  createdAt: string,
+  updatedAt: string,
+  issueId: string,
+  userId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: remove,
+  type: Comment,
+  data: {
+    id: string,
+    body: string,
+    editedAt?: string,
+    createdAt: string,
+    updatedAt: string,
+    issueId: string,
+    userId: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        comments: {
+            remove: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`comments.update`
+
+A comment was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `update` | Yes | — |
+| `type` | `Comment` | Yes | — |
+| `data` | `object` | Yes | — |
+| `updatedFrom` | `object` | No | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  body: string,
+  editedAt?: string,
+  createdAt: string,
+  updatedAt: string,
+  issueId: string,
+  userId: string
+}
+```
+</Accordion>
+
+<Accordion title="updatedFrom full type">
+
+```ts
+{
+  id?: string,
+  body?: string,
+  editedAt?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  issueId?: string,
+  userId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: update,
+  type: Comment,
+  data: {
+    id: string,
+    body: string,
+    editedAt?: string,
+    createdAt: string,
+    updatedAt: string,
+    issueId: string,
+    userId: string
+  },
+  updatedFrom?: {
+    id?: string,
+    body?: string,
+    editedAt?: string,
+    createdAt?: string,
+    updatedAt?: string,
+    issueId?: string,
+    userId?: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        comments: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Issues
+
+### Create
+
+`issues.create`
+
+A new issue was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `create` | Yes | — |
+| `type` | `Issue` | Yes | — |
+| `data` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  identifier: string,
+  title: string,
+  description?: string,
+  priority: 0 | 1 | 2 | 3 | 4,
+  estimate?: number,
+  sortOrder: number,
+  startedAt?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  autoArchivedAt?: string,
+  autoClosedAt?: string,
+  dueDate?: string,
+  trashed?: boolean,
+  snoozedUntilAt?: string,
+  previousIdentifiers: string[],
+  createdAt: string,
+  updatedAt: string,
+  branchName: string,
+  customerTicketCount: number,
+  stateId: string,
+  teamId: string,
+  creatorId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: create,
+  type: Issue,
+  data: {
+    id: string,
+    identifier: string,
+    title: string,
+    description?: string,
+    priority: 0 | 1 | 2 | 3 | 4,
+    estimate?: number,
+    sortOrder: number,
+    startedAt?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    autoArchivedAt?: string,
+    autoClosedAt?: string,
+    dueDate?: string,
+    trashed?: boolean,
+    snoozedUntilAt?: string,
+    previousIdentifiers: string[],
+    createdAt: string,
+    updatedAt: string,
+    branchName: string,
+    customerTicketCount: number,
+    stateId: string,
+    teamId: string,
+    creatorId: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Remove
+
+`issues.remove`
+
+An issue was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `remove` | Yes | — |
+| `type` | `Issue` | Yes | — |
+| `data` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  identifier: string,
+  title: string,
+  description?: string,
+  priority: 0 | 1 | 2 | 3 | 4,
+  estimate?: number,
+  sortOrder: number,
+  startedAt?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  autoArchivedAt?: string,
+  autoClosedAt?: string,
+  dueDate?: string,
+  trashed?: boolean,
+  snoozedUntilAt?: string,
+  previousIdentifiers: string[],
+  createdAt: string,
+  updatedAt: string,
+  branchName: string,
+  customerTicketCount: number,
+  stateId: string,
+  teamId: string,
+  creatorId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: remove,
+  type: Issue,
+  data: {
+    id: string,
+    identifier: string,
+    title: string,
+    description?: string,
+    priority: 0 | 1 | 2 | 3 | 4,
+    estimate?: number,
+    sortOrder: number,
+    startedAt?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    autoArchivedAt?: string,
+    autoClosedAt?: string,
+    dueDate?: string,
+    trashed?: boolean,
+    snoozedUntilAt?: string,
+    previousIdentifiers: string[],
+    createdAt: string,
+    updatedAt: string,
+    branchName: string,
+    customerTicketCount: number,
+    stateId: string,
+    teamId: string,
+    creatorId: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            remove: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`issues.update`
+
+An issue was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `update` | Yes | — |
+| `type` | `Issue` | Yes | — |
+| `data` | `object` | Yes | — |
+| `updatedFrom` | `object` | No | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  identifier: string,
+  title: string,
+  description?: string,
+  priority: 0 | 1 | 2 | 3 | 4,
+  estimate?: number,
+  sortOrder: number,
+  startedAt?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  autoArchivedAt?: string,
+  autoClosedAt?: string,
+  dueDate?: string,
+  trashed?: boolean,
+  snoozedUntilAt?: string,
+  previousIdentifiers: string[],
+  createdAt: string,
+  updatedAt: string,
+  branchName: string,
+  customerTicketCount: number,
+  stateId: string,
+  teamId: string,
+  creatorId: string
+}
+```
+</Accordion>
+
+<Accordion title="updatedFrom full type">
+
+```ts
+{
+  id?: string,
+  identifier?: string,
+  title?: string,
+  description?: string,
+  priority?: 0 | 1 | 2 | 3 | 4,
+  estimate?: number,
+  sortOrder?: number,
+  startedAt?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  autoArchivedAt?: string,
+  autoClosedAt?: string,
+  dueDate?: string,
+  trashed?: boolean,
+  snoozedUntilAt?: string,
+  previousIdentifiers?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  branchName?: string,
+  customerTicketCount?: number,
+  stateId?: string,
+  teamId?: string,
+  creatorId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: update,
+  type: Issue,
+  data: {
+    id: string,
+    identifier: string,
+    title: string,
+    description?: string,
+    priority: 0 | 1 | 2 | 3 | 4,
+    estimate?: number,
+    sortOrder: number,
+    startedAt?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    autoArchivedAt?: string,
+    autoClosedAt?: string,
+    dueDate?: string,
+    trashed?: boolean,
+    snoozedUntilAt?: string,
+    previousIdentifiers: string[],
+    createdAt: string,
+    updatedAt: string,
+    branchName: string,
+    customerTicketCount: number,
+    stateId: string,
+    teamId: string,
+    creatorId: string
+  },
+  updatedFrom?: {
+    id?: string,
+    identifier?: string,
+    title?: string,
+    description?: string,
+    priority?: 0 | 1 | 2 | 3 | 4,
+    estimate?: number,
+    sortOrder?: number,
+    startedAt?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    autoArchivedAt?: string,
+    autoClosedAt?: string,
+    dueDate?: string,
+    trashed?: boolean,
+    snoozedUntilAt?: string,
+    previousIdentifiers?: string[],
+    createdAt?: string,
+    updatedAt?: string,
+    branchName?: string,
+    customerTicketCount?: number,
+    stateId?: string,
+    teamId?: string,
+    creatorId?: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        issues: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Projects
+
+### Create
+
+`projects.create`
+
+A new project was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `create` | Yes | — |
+| `type` | `Project` | Yes | — |
+| `data` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  icon?: string,
+  color?: string,
+  priority: 0 | 1 | 2 | 3 | 4,
+  sortOrder: number,
+  state: planned | started | paused | completed | canceled,
+  progress: number,
+  url: string,
+  startDate?: string,
+  targetDate?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  startedAt?: string,
+  completedScopeHistory: number[],
+  inProgressScopeHistory: number[],
+  scope: number,
+  createdAt: string,
+  updatedAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: create,
+  type: Project,
+  data: {
+    id: string,
+    name: string,
+    description?: string,
+    icon?: string,
+    color?: string,
+    priority: 0 | 1 | 2 | 3 | 4,
+    sortOrder: number,
+    state: planned | started | paused | completed | canceled,
+    progress: number,
+    url: string,
+    startDate?: string,
+    targetDate?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    startedAt?: string,
+    completedScopeHistory: number[],
+    inProgressScopeHistory: number[],
+    scope: number,
+    createdAt: string,
+    updatedAt: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        projects: {
+            create: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Remove
+
+`projects.remove`
+
+A project was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `remove` | Yes | — |
+| `type` | `Project` | Yes | — |
+| `data` | `object` | Yes | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  icon?: string,
+  color?: string,
+  priority: 0 | 1 | 2 | 3 | 4,
+  sortOrder: number,
+  state: planned | started | paused | completed | canceled,
+  progress: number,
+  url: string,
+  startDate?: string,
+  targetDate?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  startedAt?: string,
+  completedScopeHistory: number[],
+  inProgressScopeHistory: number[],
+  scope: number,
+  createdAt: string,
+  updatedAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: remove,
+  type: Project,
+  data: {
+    id: string,
+    name: string,
+    description?: string,
+    icon?: string,
+    color?: string,
+    priority: 0 | 1 | 2 | 3 | 4,
+    sortOrder: number,
+    state: planned | started | paused | completed | canceled,
+    progress: number,
+    url: string,
+    startDate?: string,
+    targetDate?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    startedAt?: string,
+    completedScopeHistory: number[],
+    inProgressScopeHistory: number[],
+    scope: number,
+    createdAt: string,
+    updatedAt: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        projects: {
+            remove: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Update
+
+`projects.update`
+
+A project was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `update` | Yes | — |
+| `type` | `Project` | Yes | — |
+| `data` | `object` | Yes | — |
+| `updatedFrom` | `object` | No | — |
+| `url` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `organizationId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  icon?: string,
+  color?: string,
+  priority: 0 | 1 | 2 | 3 | 4,
+  sortOrder: number,
+  state: planned | started | paused | completed | canceled,
+  progress: number,
+  url: string,
+  startDate?: string,
+  targetDate?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  startedAt?: string,
+  completedScopeHistory: number[],
+  inProgressScopeHistory: number[],
+  scope: number,
+  createdAt: string,
+  updatedAt: string
+}
+```
+</Accordion>
+
+<Accordion title="updatedFrom full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  icon?: string,
+  color?: string,
+  priority?: 0 | 1 | 2 | 3 | 4,
+  sortOrder?: number,
+  state?: planned | started | paused | completed | canceled,
+  progress?: number,
+  url?: string,
+  startDate?: string,
+  targetDate?: string,
+  completedAt?: string,
+  canceledAt?: string,
+  startedAt?: string,
+  completedScopeHistory?: number[],
+  inProgressScopeHistory?: number[],
+  scope?: number,
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  action: update,
+  type: Project,
+  data: {
+    id: string,
+    name: string,
+    description?: string,
+    icon?: string,
+    color?: string,
+    priority: 0 | 1 | 2 | 3 | 4,
+    sortOrder: number,
+    state: planned | started | paused | completed | canceled,
+    progress: number,
+    url: string,
+    startDate?: string,
+    targetDate?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    startedAt?: string,
+    completedScopeHistory: number[],
+    inProgressScopeHistory: number[],
+    scope: number,
+    createdAt: string,
+    updatedAt: string
+  },
+  updatedFrom?: {
+    id?: string,
+    name?: string,
+    description?: string,
+    icon?: string,
+    color?: string,
+    priority?: 0 | 1 | 2 | 3 | 4,
+    sortOrder?: number,
+    state?: planned | started | paused | completed | canceled,
+    progress?: number,
+    url?: string,
+    startDate?: string,
+    targetDate?: string,
+    completedAt?: string,
+    canceledAt?: string,
+    startedAt?: string,
+    completedScopeHistory?: number[],
+    inProgressScopeHistory?: number[],
+    scope?: number,
+    createdAt?: string,
+    updatedAt?: string
+  },
+  url: string,
+  createdAt: string,
+  organizationId: string,
+  webhookId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+linear({
+    webhookHooks: {
+        projects: {
+            update: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

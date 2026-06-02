@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.50",
+  "version": "0.1.70",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,6 +36,16 @@
       "dev-source": "./http.ts",
       "types": "./dist/http.d.ts",
       "default": "./dist/http.js"
+    },
+    "./oauth": {
+      "dev-source": "./oauth.ts",
+      "types": "./dist/oauth.d.ts",
+      "default": "./dist/oauth.js"
+    },
+    "./tests": {
+      "dev-source": "./tests.ts",
+      "types": "./dist/tests.d.ts",
+      "default": "./dist/tests.js"
     }
   },
   "scripts": {
@@ -43,15 +53,16 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:api": "jest --testPathPattern=api\\.test\\.ts",
-    "build": "NODE_OPTIONS=--max-old-space-size=8192 tsup",
+    "build": "tsup",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "ind": "tsx index.ts"
   },
   "dependencies": {
     "kysely": "^0.28.5",
+    "kysely-postgres-js": "^3.0.0",
     "uuid": "^13.0.0",
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
@@ -60,9 +71,10 @@
     "@types/pg": "^8.15.6",
     "better-sqlite3": "^12.0.0",
     "dotenv": "^17.2.3",
-    "js-yaml": "^4.1.0",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "js-yaml": "^4.1.0",
+    "postgres": "^3.4.7",
+    "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "tsup": "^8.0.1",
     "tsx": "^4.20.6",

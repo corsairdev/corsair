@@ -1,10 +1,13 @@
-import fs, { existsSync } from 'node:fs';
+import fs, { existsSync, realpathSync } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 // @ts-expect-error
 import babelPresetReact from '@babel/preset-react';
 // @ts-expect-error
 import babelPresetTypeScript from '@babel/preset-typescript';
 import { loadConfig } from 'c12';
+import type { AnyCorsairInstance } from 'corsair';
+import { getSchema, listOperations } from 'corsair';
 import type { JitiOptions } from 'jiti';
 import { getTsconfigInfo } from './get-tsconfig-info';
 
@@ -325,7 +328,10 @@ export async function getCorsairInstance({
 					// c12 returns empty config (no throw) when a file doesn't exist,
 					// so any exception here means the file was found but failed to load.
 					const msg =
-						typeof e === 'object' && e && 'message' in e && typeof e.message === 'string'
+						typeof e === 'object' &&
+						e &&
+						'message' in e &&
+						typeof e.message === 'string'
 							? e.message
 							: String(e);
 					if (
@@ -338,9 +344,13 @@ export async function getCorsairInstance({
 								`Native module error in ${possiblePath}: ${msg}\n\nThis is likely because a native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version. Try running:\n  npm rebuild\nor reinstall your dependencies:\n  rm -rf node_modules && npm install`,
 							);
 						}
-						console.error(`[#corsair]: Error loading ${possiblePath}: Native module binding not found.`);
+						console.error(
+							`[#corsair]: Error loading ${possiblePath}: Native module binding not found.`,
+						);
 						console.log('');
-						console.log('[#corsair]: A native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version.');
+						console.log(
+							'[#corsair]: A native Node.js addon (e.g. better-sqlite3) needs to be rebuilt for your current Node.js version.',
+						);
 						console.log('[#corsair]: Try running:');
 						console.log('  npm rebuild');
 						console.log('[#corsair]: Or reinstall your dependencies:');
@@ -404,7 +414,7 @@ export async function getCorsairInstance({
 // Arg parsing
 // ─────────────────────────────────────────────────────────────────────────────
 
-const RESERVED_FLAGS = new Set(['backfill', 'help', 'h']);
+const RESERVED_FLAGS = new Set(['backfill', 'help', 'h', 'tenant']);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Instance helpers
@@ -421,13 +431,22 @@ function resolveClient(
 	const obj = instance as Record<string, unknown>;
 	if ('withTenant' in obj && typeof obj.withTenant === 'function') {
 		if (!tenant) {
-			console.error('[#corsair]: This is a multi-tenant instance. Pass --tenant=<id>.');
+			console.error(
+				'[#corsair]: This is a multi-tenant instance. Pass --tenant=<id>.',
+			);
 			process.exit(1);
 		}
 		return obj.withTenant(tenant) as Record<string, unknown>;
 	}
 	return obj;
 }
+
+/**
+ * Set to true to re-enable the `corsair run` command.
+ * Disabled by default — prefer `corsair script` to avoid dumping full API
+ * responses into the agent's context window.
+ */
+const SHOW_RUN = false;
 
 /**
  * Navigates a dot-notation path on the corsair client and returns the function.
@@ -464,8 +483,14 @@ function parseListArgs(args: string[]): {
 		if (arg.startsWith('--') && eqIdx !== -1) {
 			const key = arg.slice(2, eqIdx);
 			const value = arg.slice(eqIdx + 1);
-			if (key === 'plugin') { plugin = value; continue; }
-			if (key === 'type' && (value === 'api' || value === 'webhooks' || value === 'db')) {
+			if (key === 'plugin') {
+				plugin = value;
+				continue;
+			}
+			if (
+				key === 'type' &&
+				(value === 'api' || value === 'webhooks' || value === 'db')
+			) {
 				type = value;
 				continue;
 			}
@@ -480,48 +505,110 @@ function parseAuthArgs(args: string[]): {
 	tenantId?: string;
 	code?: string;
 	credentials?: boolean;
+	webhook?: boolean;
+	listen?: boolean;
+	collect?: boolean;
+	sessionId?: string;
 } {
 	let pluginId: string | undefined;
 	let tenantId: string | undefined;
 	let code: string | undefined;
 	let credentials = false;
+	let webhook = false;
+	let listen = false;
+	let collect = false;
+	let sessionId: string | undefined;
 
 	for (const arg of args) {
-		if (arg === '--credentials') { credentials = true; continue; }
+		if (arg === '--credentials') {
+			credentials = true;
+			continue;
+		}
+		if (arg === '--webhook') {
+			webhook = true;
+			continue;
+		}
+		if (arg === '--listen') {
+			listen = true;
+			continue;
+		}
+		if (arg === '--collect') {
+			collect = true;
+			continue;
+		}
 
 		const eqIdx = arg.indexOf('=');
 		if (arg.startsWith('--') && eqIdx !== -1) {
 			const key = arg.slice(2, eqIdx);
 			const value = arg.slice(eqIdx + 1);
-			if (key === 'plugin') { pluginId = value; continue; }
-			if (key === 'tenant') { tenantId = value; continue; }
-			if (key === 'code') { code = value; continue; }
+			if (key === 'plugin') {
+				pluginId = value;
+				continue;
+			}
+			if (key === 'tenant') {
+				tenantId = value;
+				continue;
+			}
+			if (key === 'code') {
+				code = value;
+				continue;
+			}
+			if (key === 'session') {
+				sessionId = value;
+				continue;
+			}
 		}
 	}
 
-	return { pluginId, tenantId, code, credentials };
+	return {
+		pluginId,
+		tenantId,
+		code,
+		credentials,
+		webhook,
+		listen,
+		collect,
+		sessionId,
+	};
 }
 
 function parseSetupArgs(args: string[]): {
 	backfill: boolean;
+	tenantId?: string;
 	credentials: Record<string, Record<string, string>>;
 } {
 	let backfill = false;
+	let tenantId: string | undefined;
 	const credentials: Record<string, Record<string, string>> = {};
 	let currentPlugin: string | null = null;
 
-	for (const arg of args) {
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i]!;
 		if (arg === '--backfill' || arg === '-backfill') {
 			backfill = true;
 			currentPlugin = null;
 			continue;
 		}
 
+		if (arg === '--tenant' && args[i + 1]) {
+			tenantId = args[++i];
+			currentPlugin = null;
+			continue;
+		}
+
+		if (arg.startsWith('--tenant=')) {
+			tenantId = arg.slice('--tenant='.length);
+			currentPlugin = null;
+			continue;
+		}
+
+		if (arg.startsWith('--plugin=')) {
+			currentPlugin = arg.slice('--plugin='.length);
+			if (!credentials[currentPlugin]) credentials[currentPlugin] = {};
+			continue;
+		}
+
 		if (arg.startsWith('--')) {
-			const name = arg.slice(2);
-			if (RESERVED_FLAGS.has(name)) continue;
-			currentPlugin = name;
-			credentials[currentPlugin] = {};
 			continue;
 		}
 
@@ -533,7 +620,7 @@ function parseSetupArgs(args: string[]): {
 		}
 	}
 
-	return { backfill, credentials };
+	return { backfill, tenantId, credentials };
 }
 
 function parseRunArgs(args: string[]): {
@@ -564,6 +651,37 @@ function parseRunArgs(args: string[]): {
 	return { path: endpointPath, input, tenant };
 }
 
+function parseUiArgs(args: string[]): { port?: number; open?: boolean } {
+	let port: number | undefined;
+	let open: boolean | undefined;
+
+	for (let i = 0; i < args.length; i++) {
+		const arg = args[i]!;
+		if (arg === '--no-open') {
+			open = false;
+			continue;
+		}
+		if (arg === '--open') {
+			open = true;
+			continue;
+		}
+		if (arg === '--port' && args[i + 1]) {
+			const next = args[++i];
+			if (next) {
+				const parsed = Number.parseInt(next, 10);
+				if (Number.isFinite(parsed)) port = parsed;
+			}
+			continue;
+		}
+		if (arg.startsWith('--port=')) {
+			const parsed = Number.parseInt(arg.slice('--port='.length), 10);
+			if (Number.isFinite(parsed)) port = parsed;
+		}
+	}
+
+	return { port, open };
+}
+
 function parseScriptArgs(args: string[]): {
 	code: string | undefined;
 	tenant: string | undefined;
@@ -592,38 +710,29 @@ function parseScriptArgs(args: string[]): {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function printHelp() {
-	console.log('[#corsair]: Corsair CLI\n');
-	console.log('Commands:');
-	console.log('  corsair setup                                   Initialize your Corsair instance');
-	console.log('  corsair setup -backfill                         Initialize and backfill initial data');
-	console.log('  corsair setup --<plugin> <field>=VALUE ...      Set credentials for a plugin');
-	console.log('');
-	console.log('  corsair auth --plugin=<id>                      Start OAuth flow (outputs auth URL as JSON)');
-	console.log('  corsair auth --plugin=<id> --code=<code>        Exchange OAuth code for tokens');
-	console.log('  corsair auth --plugin=<id> --credentials        Show current credential status');
-	console.log('');
-	console.log('  corsair list                                     List all API endpoint paths across all plugins');
-	console.log('  corsair list --plugin=<id>                      List paths for a specific plugin');
-	console.log('  corsair list --type=api|webhooks|db             Filter by operation type (default: api)');
-	console.log('  corsair list --plugin=<id> --type=<type>        Combine plugin + type filters');
-	console.log('');
-	console.log('  corsair schema <path>                           Show schema for an endpoint, webhook, or DB entity');
-	console.log('  corsair schema slack.api.messages.post          Example: API endpoint schema');
-	console.log('  corsair schema slack.webhooks.messages.message  Example: webhook schema');
-	console.log('  corsair schema slack.db.messages.search         Example: DB search schema');
-	console.log('');
-	console.log('  corsair run <path> [input-json]                 Call an API endpoint and print the result');
-	console.log('  corsair run slack.api.channels.list             Example: no input needed');
-	console.log('  corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'');
-	console.log('  corsair run <path> [input-json] --tenant=<id>   Multi-tenant variant');
-	console.log('');
-	console.log('  corsair script --code "<js>"                    Run a sandboxed script with corsair injected');
-	console.log('  corsair script --code "<js>" --tenant=<id>      Multi-tenant variant');
-	console.log('  # corsair is pre-injected; use return to output a value:');
-	console.log('  # --code "const r = await corsair.slack.api.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
-	console.log('');
-	console.log('  corsair watch-renew                             Renew Google webhook watch (Gmail/Drive/Calendar)');
-	console.log('  corsair help                                    Show this help message\n');
+	const lines = [
+		'Corsair CLI',
+		'',
+		'pnpm corsair setup [--tenant=<id>]                  Init (add -backfill to seed data)',
+		'pnpm corsair setup [--tenant=<id>] --plugin=<id> <field>=VALUE  Set plugin credentials',
+		'pnpm corsair auth --plugin=<id>                 Start OAuth flow',
+		'pnpm corsair auth --plugin=<id> --code=<code>   Exchange OAuth code for tokens',
+		'pnpm corsair auth --plugin=<id> --credentials   Show credential status',
+		'pnpm corsair auth --plugin=<id> --webhook       Set up webhook subscription',
+		'  `pnpm corsair list --type=webhooks` to see webhook plugins',
+		'pnpm corsair list [--plugin=<id>] [--type=api|webhooks|db]  List endpoint paths (tip: pipe to grep to filter)',
+		'pnpm corsair schema <path>                      Show schema for an endpoint/webhook/DB entity',
+		'pnpm corsair ui [--port=4317] [--no-open]       Open the Corsair Studio dashboard (requires @corsair-dev/studio)',
+		'pnpm corsair script --code "<js>" [--tenant=<id>]',
+		'  corsair is injected; use return to output a value.',
+		'  IMPORTANT: Always filter results inline — you are the consumer of the return value, so returning full list responses wastes tokens.',
+		'  Bad:  return await corsair.slack.api.users.list({})',
+		"  Good: return (await corsair.slack.api.users.list({})).members.find(u => u.name === 'bob')?.id",
+		...(SHOW_RUN
+			? ['  run <path> [input-json] [--tenant=<id>]  Call an endpoint directly']
+			: []),
+	];
+	console.log(lines.join('\n'));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -635,72 +744,124 @@ async function main() {
 	const args = process.argv.slice(2);
 	const command = args[0];
 
-	if (command === 'help' || command === '--help' || command === '-h') {
-		printHelp();
-		return;
-	}
-
 	if (command === 'setup') {
-		const { backfill, credentials } = parseSetupArgs(args.slice(1));
+		const { backfill, tenantId, credentials } = parseSetupArgs(args.slice(1));
 		const { setupCorsair } = await import('corsair/setup');
 		const instance = await getCorsairInstance({ cwd });
 		await setupCorsair(instance as Parameters<typeof setupCorsair>[0], {
 			backfill,
-			credentials,
+			tenantId,
+			// credentials,
 			caller: 'cli',
 		});
 		return;
 	}
 
 	if (command === 'auth') {
-		const { runAuth } = await import('./auth');
 		const authArgs = parseAuthArgs(args.slice(1));
+
+		if (authArgs.webhook) {
+			const pluginId = authArgs.pluginId;
+			if (!pluginId) {
+				console.error('[#corsair]: --webhook requires --plugin=<id>.');
+				process.exit(1);
+			}
+			if (pluginId === 'outlook') {
+				const { runOutlookSubscribe } = await import('./subscribe-microsoft');
+				await runOutlookSubscribe({ cwd });
+			} else if (pluginId === 'sharepoint') {
+				const { runSharepointSubscribe } = await import(
+					'./subscribe-microsoft'
+				);
+				await runSharepointSubscribe({ cwd });
+			} else if (pluginId === 'teams') {
+				const { runTeamsSubscribe } = await import('./subscribe-microsoft');
+				await runTeamsSubscribe({ cwd });
+			} else if (pluginId === 'onedrive') {
+				const { runOnedriveSubscribe } = await import('./subscribe-microsoft');
+				await runOnedriveSubscribe({ cwd });
+			} else if (
+				['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(
+					pluginId,
+				)
+			) {
+				const { runGoogleSubscribe } = await import('./subscribe-google');
+				await runGoogleSubscribe({ cwd, pluginId });
+			} else {
+				console.error(
+					`[#corsair]: Webhook subscription not supported for plugin '${pluginId}'.`,
+				);
+				console.error(
+					'[#corsair]: Supported: outlook, sharepoint, teams, onedrive, gmail, googledrive, googlecalendar, googlesheets',
+				);
+				process.exit(1);
+			}
+			return;
+		}
+
+		const { runAuth } = await import('./auth');
 		await runAuth({ cwd, ...authArgs });
 		return;
 	}
 
 	if (command === 'watch-renew') {
-		const { runWatchRenew } = await import('./watch-renew');
-		await runWatchRenew({ cwd });
+		const { runGoogleSubscribe } = await import('./subscribe-google');
+		await runGoogleSubscribe({ cwd });
+		return;
+	}
+
+	if (command === 'sharepoint-subscribe') {
+		const { runSharepointSubscribe } = await import('./subscribe-microsoft');
+		await runSharepointSubscribe({ cwd });
+		return;
+	}
+
+	if (command === 'subscribe') {
+		const pluginArg = args.slice(1).find((a) => a.startsWith('--plugin='));
+		const pluginId = pluginArg
+			? pluginArg.slice('--plugin='.length)
+			: undefined;
+		if (pluginId === 'outlook') {
+			const { runOutlookSubscribe } = await import('./subscribe-microsoft');
+			await runOutlookSubscribe({ cwd });
+			return;
+		}
+		console.error(
+			`[#corsair]: Unknown plugin for subscribe: '${pluginId ?? '(none)'}'. Supported: outlook`,
+		);
+		process.exit(1);
+	}
+
+	if (command === 'teams-subscribe') {
+		const { runTeamsSubscribe } = await import('./subscribe-microsoft');
+		await runTeamsSubscribe({ cwd });
 		return;
 	}
 
 	if (command === 'list') {
 		const { plugin, type } = parseListArgs(args.slice(1));
 		const instance = await getCorsairInstance({ cwd });
-		const corsair = instance as Record<string, unknown>;
-		if (typeof corsair.list_operations !== 'function') {
-			console.error('[#corsair]: list_operations not available on this Corsair instance.');
-			process.exit(1);
-		}
-		const result = corsair.list_operations({ plugin, type }) as unknown;
-		if (typeof result === 'string') {
-			console.log(result);
-		} else if (Array.isArray(result)) {
-			for (const path of result) {
-				console.log(path);
-			}
+		const result = listOperations(instance as AnyCorsairInstance, {
+			plugin,
+			type,
+		});
+		if (type === 'db') {
+			console.log(
+				'[#corsair]: NOTE: Every DB query listed here has both .search() and .list() methods available.',
+			);
 			console.log('');
-			console.log('Run `pnpm corsair schema <path>` to get the schema for any of the above.');
-		} else if (result && typeof result === 'object') {
-			const grouped = result as Record<string, string[]>;
-			for (const [pluginId, paths] of Object.entries(grouped)) {
-				console.log(`${pluginId}:`);
-				for (const path of paths) {
-					console.log(`  ${path}`);
-				}
-			}
-			console.log('');
-			console.log('Run `pnpm corsair schema <path>` to get the schema for any of the above.');
 		}
+		console.log(result);
 		return;
 	}
 
-	if (command === 'run') {
+	if (SHOW_RUN && command === 'run') {
 		const { path: endpointPath, input, tenant } = parseRunArgs(args.slice(1));
 		if (!endpointPath) {
 			console.error('[#corsair]: Usage: corsair run <path> [input-json]');
-			console.error('[#corsair]: Example: corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'');
+			console.error(
+				'[#corsair]: Example: corsair run slack.api.messages.post \'{"channel":"C123","text":"hi"}\'',
+			);
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
@@ -708,7 +869,9 @@ async function main() {
 		const fn = navigateToEndpoint(client, endpointPath);
 		if (!fn) {
 			console.error(`[#corsair]: Could not find endpoint "${endpointPath}".`);
-			console.error('[#corsair]: Run `pnpm corsair list` to see available paths.');
+			console.error(
+				'[#corsair]: Run `pnpm corsair list` to see available paths.',
+			);
 			process.exit(1);
 		}
 		let parsedInput: unknown = {};
@@ -716,7 +879,9 @@ async function main() {
 			try {
 				parsedInput = JSON.parse(input);
 			} catch {
-				console.error('[#corsair]: Invalid JSON input. Make sure to quote the JSON string.');
+				console.error(
+					'[#corsair]: Invalid JSON input. Make sure to quote the JSON string.',
+				);
 				process.exit(1);
 			}
 		}
@@ -735,14 +900,17 @@ async function main() {
 		const { code, tenant } = parseScriptArgs(args.slice(1));
 		if (!code) {
 			console.error('[#corsair]: Usage: corsair script --code "<js>"');
-			console.error('[#corsair]: Example: corsair script --code "const r = await corsair.slack.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"');
+			console.error(
+				'[#corsair]: Example: corsair script --code "const r = await corsair.slack.channels.list(); return r.channels.find(c => c.name === \'general\')?.id"',
+			);
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
 		const client = resolveClient(instance, tenant);
 		// Run the script body as an async function with `corsair` injected
 		// eslint-disable-next-line @typescript-eslint/no-implied-eval
-		const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
+		const AsyncFunction = Object.getPrototypeOf(async function () {})
+			.constructor as new (
 			...args: string[]
 		) => (...fnArgs: unknown[]) => Promise<unknown>;
 		const fn = new AsyncFunction('corsair', code);
@@ -759,59 +927,100 @@ async function main() {
 		return;
 	}
 
+	if (command === 'ui' || command === 'studio') {
+		const { port, open } = parseUiArgs(args.slice(1));
+		type StartStudio = (opts: {
+			cwd: string;
+			port?: number;
+			open?: boolean;
+		}) => Promise<unknown>;
+		// Resolve @corsair-dev/studio from the USER's project cwd, not the CLI's
+		// own location. In pnpm workspaces the CLI lives in an isolated
+		// node_modules/.pnpm store that can't see peer packages unless they're
+		// declared as deps of the CLI itself. Using createRequire(cwd) + import()
+		// of a file:// URL sidesteps that and matches where the user installed it.
+		let startStudio: StartStudio;
+		try {
+			const { createRequire } = await import('node:module');
+			const { pathToFileURL } = await import('node:url');
+			const req = createRequire(path.join(cwd, 'package.json'));
+			const resolvedPath = req.resolve('@corsair-dev/studio/server');
+			const mod = (await import(pathToFileURL(resolvedPath).href)) as {
+				start?: StartStudio;
+				startStudio?: StartStudio;
+			};
+			const candidate = mod.start ?? mod.startStudio;
+			if (!candidate) {
+				throw new Error('@corsair-dev/studio/server did not export `start`.');
+			}
+			startStudio = candidate;
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			if (
+				msg.includes('Cannot find package') ||
+				msg.includes('Cannot find module') ||
+				msg.includes('ERR_MODULE_NOT_FOUND') ||
+				msg.includes('MODULE_NOT_FOUND')
+			) {
+				console.error('[#corsair]: Corsair Studio is not installed.');
+				console.error('[#corsair]: Install it with:');
+				console.error('');
+				console.error('  pnpm add -D @corsair-dev/studio');
+				console.error('');
+				process.exit(1);
+			}
+			throw err;
+		}
+		await startStudio({ cwd, port, open });
+		// startStudio resolves once the server is listening; keep the process
+		// alive until the user stops it (Ctrl+C) so the HTTP server stays up.
+		await new Promise<void>((resolve) => {
+			const shutdown = () => resolve();
+			process.once('SIGINT', shutdown);
+			process.once('SIGTERM', shutdown);
+		});
+		return;
+	}
+
 	if (command === 'schema') {
 		const schemaPath = args[1];
 		if (!schemaPath) {
 			console.error('[#corsair]: Usage: corsair schema <path>');
-			console.error('[#corsair]: Example: corsair schema slack.api.messages.post');
+			console.error(
+				'[#corsair]: Example: corsair schema slack.api.messages.post',
+			);
 			process.exit(1);
 		}
 		const instance = await getCorsairInstance({ cwd });
-		const corsair = instance as Record<string, unknown>;
-		if (typeof corsair.get_schema !== 'function') {
-			console.error('[#corsair]: get_schema not available on this Corsair instance.');
-			process.exit(1);
-		}
-		const result = corsair.get_schema(schemaPath) as string;
+		const result = getSchema(instance as AnyCorsairInstance, schemaPath);
 		console.log(result);
 		return;
 	}
 
-	// Default behavior: print help + inspect corsair instance
 	printHelp();
-	console.log('');
-	console.log(`[#corsair]: Looking for Corsair instance in ${cwd}...\n`);
+}
 
+// Run if this file is executed directly (not imported as a module).
+// We resolve symlinks on both sides because the CLI is typically invoked via
+// a `node_modules/.bin/corsair` symlink — argv[1] is the symlink, while
+// import.meta.url is the realpath'd target.
+function detectIsMainModule(): boolean {
+	const argv1 = process.argv[1];
+	if (!argv1) return false;
 	try {
-		const instance = await getCorsairInstance({ cwd });
-		console.log('[#corsair]: ✅ Successfully loaded Corsair instance!');
-		if (instance && typeof instance === 'object' && 'withTenant' in instance) {
-			console.log(
-				'[#corsair]: Multi-tenant setup detected (has withTenant method)',
-			);
-		} else {
-			console.log('[#corsair]: Single-tenant setup detected (direct client)');
-		}
-		if (instance && typeof instance === 'object') {
-			console.log(
-				`[#corsair]: Instance keys: ${Object.keys(instance).join(', ')}`,
-			);
-		}
-	} catch (error) {
-		console.error('[#corsair]: Error:', error);
-		process.exit(1);
+		const argvResolved = realpathSync(argv1);
+		const selfResolved = realpathSync(fileURLToPath(import.meta.url));
+		return argvResolved === selfResolved;
+	} catch {
+		return import.meta.url === `file://${argv1.replace(/\\/g, '/')}`;
 	}
 }
 
-// Run if this file is executed directly
-// Check if we're running as a script (not imported as a module)
-const isMainModule =
-	import.meta.url === `file://${process.argv[1]?.replace(/\\/g, '/')}` ||
-	process.argv[1]?.includes('index.ts') ||
-	process.argv[1]?.includes('index.js') ||
-	import.meta.url.endsWith('/index.ts') ||
-	import.meta.url.endsWith('/index.js');
-
-if (isMainModule) {
-	main();
+if (detectIsMainModule()) {
+	main()
+		.then(() => process.exit(0))
+		.catch((e) => {
+			console.error(e);
+			process.exit(1);
+		});
 }

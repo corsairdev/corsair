@@ -1,14 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SlackBoundEndpoints, SlackEndpoints } from '..';
 import { makeSlackRequest } from '../client';
+import type { SlackBoundEndpoints, SlackEndpoints } from '../index';
 import type { SlackEndpointOutputs } from './types';
-
-export const random: SlackEndpoints['channelsRandom'] = async (ctx, input) => {
-	console.log('random channel', ctx.key);
-	return {
-		done: true,
-	};
-};
 
 export const archive: SlackEndpoints['channelsArchive'] = async (
 	ctx,

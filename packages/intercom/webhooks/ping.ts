@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { IntercomWebhooks } from '..';
+import type { IntercomWebhooks } from '../index';
 import { createIntercomMatch } from './types';
 
 // Handles the ping event Intercom sends when a webhook URL is first registered.
@@ -9,9 +9,14 @@ export const ping: IntercomWebhooks['ping'] = {
 	match: createIntercomMatch('ping'),
 
 	handler: async (ctx, request) => {
-		const event = request.payload
+		const event = request.payload;
 
-		await logEventFromContext(ctx, 'intercom.webhook.ping', { app_id: event.app_id }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'intercom.webhook.ping',
+			{ app_id: event.app_id },
+			'completed',
+		);
 
 		return {
 			success: true,

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 const IssuesListInputSchema = z.object({
-	owner: z.string().optional(),
-	repo: z.string().optional(),
+	owner: z.string(),
+	repo: z.string(),
 	milestone: z.string().optional(),
 	state: z.enum(['open', 'closed', 'all']).optional(),
 	assignee: z.string().optional(),
@@ -171,6 +171,29 @@ const RepositoriesGetContentInputSchema = z.object({
 	ref: z.string().optional(),
 });
 
+/** PUT /user/starred/{owner}/{repo} — see GitHub REST "Star a repository for the authenticated user" */
+const RepositoriesStarInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+});
+
+const RepositoriesUnstarInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+});
+
+const RepositoriesCheckStarredInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+});
+
+const RepositoriesListStarredInputSchema = z.object({
+	sort: z.enum(['created', 'updated']).optional(),
+	direction: z.enum(['asc', 'desc']).optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
 const ReleasesListInputSchema = z.object({
 	owner: z.string(),
 	repo: z.string(),
@@ -253,6 +276,65 @@ const WorkflowsListRunsInputSchema = z.object({
 	headSha: z.string().optional(),
 });
 
+const CommentsListInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	sort: z.enum(['created', 'updated']).optional(),
+	direction: z.enum(['asc', 'desc']).optional(),
+	since: z.string().optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const CommentsListForIssueInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	issueNumber: z.number(),
+	since: z.string().optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const CommentsGetInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	commentId: z.number(),
+});
+
+const CommentsUpdateInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	commentId: z.number(),
+	body: z.string(),
+});
+
+const CommentsDeleteInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	commentId: z.number(),
+});
+
+const DiscussionsListInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const DiscussionsGetInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	discussionNumber: z.number(),
+});
+
+const ForksListInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	sort: z.enum(['newest', 'oldest', 'stargazers', 'watchers']).optional(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
 export const GithubEndpointInputSchemas = {
 	issuesList: IssuesListInputSchema,
 	issuesGet: IssuesGetInputSchema,
@@ -268,6 +350,10 @@ export const GithubEndpointInputSchemas = {
 	repositoriesListBranches: RepositoriesListBranchesInputSchema,
 	repositoriesListCommits: RepositoriesListCommitsInputSchema,
 	repositoriesGetContent: RepositoriesGetContentInputSchema,
+	repositoriesStar: RepositoriesStarInputSchema,
+	repositoriesUnstar: RepositoriesUnstarInputSchema,
+	repositoriesCheckStarred: RepositoriesCheckStarredInputSchema,
+	repositoriesListStarred: RepositoriesListStarredInputSchema,
 	releasesList: ReleasesListInputSchema,
 	releasesGet: ReleasesGetInputSchema,
 	releasesCreate: ReleasesCreateInputSchema,
@@ -275,6 +361,14 @@ export const GithubEndpointInputSchemas = {
 	workflowsList: WorkflowsListInputSchema,
 	workflowsGet: WorkflowsGetInputSchema,
 	workflowsListRuns: WorkflowsListRunsInputSchema,
+	discussionsList: DiscussionsListInputSchema,
+	discussionsGet: DiscussionsGetInputSchema,
+	forksList: ForksListInputSchema,
+	commentsList: CommentsListInputSchema,
+	commentsListForIssue: CommentsListForIssueInputSchema,
+	commentsGet: CommentsGetInputSchema,
+	commentsUpdate: CommentsUpdateInputSchema,
+	commentsDelete: CommentsDeleteInputSchema,
 } as const;
 
 export type GithubEndpointInputs = {
@@ -522,7 +616,7 @@ const WorkflowRunSchema = z.object({
 	displayTitle: z.string().optional(),
 });
 
-const IssueCommentCreateResponseSchema = z.object({
+const CommentCreateResponseSchema = z.object({
 	id: z.number(),
 	nodeId: z.string().optional(),
 	url: z.string().optional(),
@@ -671,12 +765,55 @@ const RepositoryContentGetResponseSchema = z.union([
 	),
 ]);
 
+const CommentSchema = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	url: z.string().optional(),
+	htmlUrl: z.string().optional(),
+	issueUrl: z.string().optional(),
+	body: z.string().optional(),
+	authorAssociation: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+});
+
+const DiscussionCategorySchema = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	repositoryId: z.number().optional(),
+	emoji: z.string().optional(),
+	name: z.string(),
+	description: z.string().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	slug: z.string().optional(),
+	isAnswerable: z.boolean().optional(),
+});
+
+const DiscussionEndpointSchema = z.object({
+	id: z.number(),
+	nodeId: z.string().optional(),
+	number: z.number(),
+	title: z.string(),
+	body: z.string().nullable().optional(),
+	htmlUrl: z.string().optional(),
+	repositoryUrl: z.string().optional(),
+	state: z.string().optional(),
+	locked: z.boolean().optional(),
+	comments: z.number().optional(),
+	authorAssociation: z.string().optional(),
+	category: DiscussionCategorySchema.optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	answerChosenAt: z.coerce.date().nullable().optional(),
+});
+
 export const GithubEndpointOutputSchemas = {
 	issuesList: z.array(IssueSchema),
 	issuesGet: IssueSchema,
 	issuesCreate: IssueSchema,
 	issuesUpdate: IssueSchema,
-	issuesCreateComment: IssueCommentCreateResponseSchema,
+	issuesCreateComment: CommentCreateResponseSchema,
 	pullRequestsList: z.array(PullRequestSchema),
 	pullRequestsGet: PullRequestSchema,
 	pullRequestsListReviews: z.array(PullRequestReviewSchema),
@@ -686,6 +823,10 @@ export const GithubEndpointOutputSchemas = {
 	repositoriesListBranches: RepositoryBranchesListResponseSchema,
 	repositoriesListCommits: RepositoryCommitsListResponseSchema,
 	repositoriesGetContent: RepositoryContentGetResponseSchema,
+	repositoriesStar: z.boolean(),
+	repositoriesUnstar: z.boolean(),
+	repositoriesCheckStarred: z.object({ starred: z.boolean() }),
+	repositoriesListStarred: z.array(RepositorySchema),
 	releasesList: z.array(ReleaseSchema),
 	releasesGet: ReleaseSchema,
 	releasesCreate: ReleaseSchema,
@@ -696,7 +837,7 @@ export const GithubEndpointOutputSchemas = {
 			total_count: z.number().optional(),
 			workflows: z.array(WorkflowSchema).optional(),
 		})
-		.passthrough(),
+		.loose(),
 	workflowsGet: WorkflowSchema,
 	workflowsListRuns: z
 		.object({
@@ -705,7 +846,15 @@ export const GithubEndpointOutputSchemas = {
 			workflowRuns: z.array(WorkflowRunSchema).optional(),
 			workflow_runs: z.array(WorkflowRunSchema).optional(),
 		})
-		.passthrough(),
+		.loose(),
+	discussionsList: z.array(DiscussionEndpointSchema),
+	discussionsGet: DiscussionEndpointSchema,
+	forksList: z.array(RepositorySchema),
+	commentsList: z.array(CommentSchema),
+	commentsListForIssue: z.array(CommentSchema),
+	commentsGet: CommentSchema,
+	commentsUpdate: CommentSchema,
+	commentsDelete: z.void(),
 } as const;
 
 export type GithubEndpointOutputs = {
@@ -726,7 +875,7 @@ export type IssueCreateResponse = z.infer<
 export type IssueUpdateResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.issuesUpdate
 >;
-export type IssueCommentCreateResponse = z.infer<
+export type CommentCreateResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.issuesCreateComment
 >;
 
@@ -780,4 +929,24 @@ export type WorkflowGetResponse = z.infer<
 >;
 export type WorkflowRunsListResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.workflowsListRuns
+>;
+
+export type DiscussionsListResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.discussionsList
+>;
+export type DiscussionGetResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.discussionsGet
+>;
+export type ForksListResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.forksList
+>;
+
+export type CommentsListResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.commentsList
+>;
+export type CommentGetResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.commentsGet
+>;
+export type CommentUpdateResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.commentsUpdate
 >;

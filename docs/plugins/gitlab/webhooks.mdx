@@ -1,0 +1,684 @@
+---
+title: Webhooks
+description: "Gitlab incoming webhooks: event paths, payloads, and response data."
+---
+
+The Gitlab plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/gitlab/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `issue` (`issue`)
+- `mergeRequest` (`mergeRequest`)
+- `note` (`note`)
+- `pipeline` (`pipeline`)
+- `push` (`push`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Issue
+
+### Issue
+
+`issue`
+
+An issue event from GitLab (open, update, close)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_kind` | `issue` | Yes | — |
+| `event_type` | `string` | No | — |
+| `user` | `object` | No | — |
+| `project` | `object` | No | — |
+| `object_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  username?: string,
+  avatar_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  web_url?: string,
+  path_with_namespace?: string
+}
+```
+</Accordion>
+
+<Accordion title="object_attributes full type">
+
+```ts
+{
+  id?: number,
+  iid?: number,
+  title?: string,
+  state?: string,
+  action?: string,
+  url?: string,
+  description?: string | null,
+  confidential?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  object_kind: issue,
+  event_type?: string,
+  user?: {
+    id?: number,
+    name?: string,
+    username?: string,
+    avatar_url?: string
+  },
+  project?: {
+    id?: number,
+    name?: string,
+    web_url?: string,
+    path_with_namespace?: string
+  },
+  object_attributes?: {
+    id?: number,
+    iid?: number,
+    title?: string,
+    state?: string,
+    action?: string,
+    url?: string,
+    description?: string | null,
+    confidential?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+gitlab({
+    webhookHooks: {
+        issue: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Merge Request
+
+### Merge Request
+
+`mergeRequest`
+
+A merge request event from GitLab (open, update, merge, close)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_kind` | `merge_request` | Yes | — |
+| `event_type` | `string` | No | — |
+| `user` | `object` | No | — |
+| `project` | `object` | No | — |
+| `object_attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  username?: string,
+  avatar_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  web_url?: string,
+  path_with_namespace?: string
+}
+```
+</Accordion>
+
+<Accordion title="object_attributes full type">
+
+```ts
+{
+  id?: number,
+  iid?: number,
+  title?: string,
+  state?: string,
+  source_branch?: string,
+  target_branch?: string,
+  action?: string,
+  url?: string,
+  description?: string | null,
+  merge_status?: string,
+  draft?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  object_kind: merge_request,
+  event_type?: string,
+  user?: {
+    id?: number,
+    name?: string,
+    username?: string,
+    avatar_url?: string
+  },
+  project?: {
+    id?: number,
+    name?: string,
+    web_url?: string,
+    path_with_namespace?: string
+  },
+  object_attributes?: {
+    id?: number,
+    iid?: number,
+    title?: string,
+    state?: string,
+    source_branch?: string,
+    target_branch?: string,
+    action?: string,
+    url?: string,
+    description?: string | null,
+    merge_status?: string,
+    draft?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+gitlab({
+    webhookHooks: {
+        mergeRequest: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Note
+
+### Note
+
+`note`
+
+A comment event from GitLab (new comments on issues, MRs, commits)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_kind` | `note` | Yes | — |
+| `event_type` | `string` | No | — |
+| `user` | `object` | No | — |
+| `project` | `object` | No | — |
+| `object_attributes` | `object` | No | — |
+| `issue` | `object` | No | — |
+| `merge_request` | `object` | No | — |
+| `commit` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  username?: string,
+  avatar_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  web_url?: string,
+  path_with_namespace?: string
+}
+```
+</Accordion>
+
+<Accordion title="object_attributes full type">
+
+```ts
+{
+  id?: number,
+  note?: string,
+  noteable_type?: string,
+  noteable_id?: number,
+  url?: string,
+  action?: string
+}
+```
+</Accordion>
+
+<Accordion title="issue full type">
+
+```ts
+{
+  id?: number,
+  iid?: number,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="merge_request full type">
+
+```ts
+{
+  id?: number,
+  iid?: number,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="commit full type">
+
+```ts
+{
+  id?: string,
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  object_kind: note,
+  event_type?: string,
+  user?: {
+    id?: number,
+    name?: string,
+    username?: string,
+    avatar_url?: string
+  },
+  project?: {
+    id?: number,
+    name?: string,
+    web_url?: string,
+    path_with_namespace?: string
+  },
+  object_attributes?: {
+    id?: number,
+    note?: string,
+    noteable_type?: string,
+    noteable_id?: number,
+    url?: string,
+    action?: string
+  },
+  issue?: {
+    id?: number,
+    iid?: number,
+    title?: string
+  },
+  merge_request?: {
+    id?: number,
+    iid?: number,
+    title?: string
+  },
+  commit?: {
+    id?: string,
+    message?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+gitlab({
+    webhookHooks: {
+        note: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Pipeline
+
+### Pipeline
+
+`pipeline`
+
+A pipeline event from GitLab (status change)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_kind` | `pipeline` | Yes | — |
+| `object_attributes` | `object` | No | — |
+| `user` | `object` | No | — |
+| `project` | `object` | No | — |
+| `builds` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="object_attributes full type">
+
+```ts
+{
+  id?: number,
+  iid?: number,
+  ref?: string,
+  status?: string,
+  source?: string,
+  created_at?: string,
+  finished_at?: string | null,
+  duration?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  username?: string,
+  avatar_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  web_url?: string,
+  path_with_namespace?: string
+}
+```
+</Accordion>
+
+<Accordion title="builds full type">
+
+```ts
+{
+  id?: number,
+  stage?: string,
+  name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  object_kind: pipeline,
+  object_attributes?: {
+    id?: number,
+    iid?: number,
+    ref?: string,
+    status?: string,
+    source?: string,
+    created_at?: string,
+    finished_at?: string | null,
+    duration?: number | null
+  },
+  user?: {
+    id?: number,
+    name?: string,
+    username?: string,
+    avatar_url?: string
+  },
+  project?: {
+    id?: number,
+    name?: string,
+    web_url?: string,
+    path_with_namespace?: string
+  },
+  builds?: {
+    id?: number,
+    stage?: string,
+    name?: string,
+    status?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+gitlab({
+    webhookHooks: {
+        pipeline: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Push
+
+### Push
+
+`push`
+
+A push event from GitLab (git push to repository)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_kind` | `push` | Yes | — |
+| `event_name` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `ref` | `string` | No | — |
+| `checkout_sha` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `user_name` | `string` | No | — |
+| `user_username` | `string` | No | — |
+| `user_avatar` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `project` | `object` | No | — |
+| `commits` | `object[]` | No | — |
+| `total_commits_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  web_url?: string,
+  path_with_namespace?: string,
+  default_branch?: string
+}
+```
+</Accordion>
+
+<Accordion title="commits full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  title?: string,
+  timestamp?: string,
+  url?: string,
+  author?: {
+    name?: string,
+    email?: string
+  },
+  added?: string[],
+  modified?: string[],
+  removed?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  object_kind: push,
+  event_name?: string,
+  before?: string,
+  after?: string,
+  ref?: string,
+  checkout_sha?: string | null,
+  user_id?: number,
+  user_name?: string,
+  user_username?: string,
+  user_avatar?: string,
+  project_id?: number,
+  project?: {
+    id?: number,
+    name?: string,
+    web_url?: string,
+    path_with_namespace?: string,
+    default_branch?: string
+  },
+  commits?: {
+    id: string,
+    message?: string,
+    title?: string,
+    timestamp?: string,
+    url?: string,
+    author?: {
+      name?: string,
+      email?: string
+    },
+    added?: string[],
+    modified?: string[],
+    removed?: string[]
+  }[],
+  total_commits_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+gitlab({
+    webhookHooks: {
+        push: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

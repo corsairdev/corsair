@@ -1,0 +1,4 @@
+# Stops pnpm from walking up into the parent monorepo's workspace. This app is
+# a standalone project that only shares the repo; it has its own lockfile and
+# node_modules.
+packages: []

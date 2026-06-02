@@ -1,7 +1,9 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { setupCorsair } from 'corsair';
+import type { AnyCorsairInstance } from 'corsair';
+import { listOperations, setupCorsair } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
+import { formatGetSchemaResponse } from './schema-format.js';
 
 export type CorsairToolDef = {
 	name: string;
@@ -13,7 +15,13 @@ export type CorsairToolDef = {
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
-	const { corsair, permissions, basePermissionUrl } = options;
+	const {
+		corsair,
+		permissions,
+		basePermissionUrl,
+		setup,
+		tenantId: defaultTenantId,
+	} = options;
 
 	const defs: CorsairToolDef[] = [
 		{
@@ -31,12 +39,12 @@ export function buildCorsairToolDefs(
 					.describe("Operation type: 'api' (default), 'webhooks', or 'db'"),
 			},
 			handler: async ({ plugin, type }) => {
-				const result = corsair.list_operations({
+				const result = listOperations(corsair as AnyCorsairInstance, {
 					plugin: plugin as string | undefined,
 					type: type as 'api' | 'webhooks' | 'db' | undefined,
 				});
 				return {
-					content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+					content: [{ type: 'text', text: result }],
 				};
 			},
 		},
@@ -52,9 +60,12 @@ export function buildCorsairToolDefs(
 					),
 			},
 			handler: async ({ path }) => {
-				const result = corsair.get_schema(path as string);
+				const result = formatGetSchemaResponse(
+					corsair as AnyCorsairInstance,
+					path as string,
+				);
 				return {
-					content: [{ type: 'text', text: result as string }],
+					content: [{ type: 'text', text: result }],
 				};
 			},
 		},
@@ -79,7 +90,12 @@ export function buildCorsairToolDefs(
 						corsair,
 					);
 					return {
-						content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+						content: [
+							{
+								type: 'text',
+								text: JSON.stringify(result ?? null, null, 2),
+							},
+						],
 					};
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);
@@ -100,21 +116,30 @@ export function buildCorsairToolDefs(
 				}
 			},
 		},
-		{
+	];
+
+	if (setup == null || setup === true) {
+		defs.push({
 			name: 'corsair_setup',
 			description:
-				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up.',
-			shape: {},
-			handler: async () => {
+				'Helps the user configure Corsair. Call this to see if any keys or tokens need to be set up. It will also provide the instructions to set them up. For multi-tenant Corsair instances, pass tenantId to set up a specific tenant.',
+			shape: {
+				tenantId: z
+					.string()
+					.optional()
+					.describe(
+						"Tenant ID to configure for multi-tenant Corsair instances. Defaults to the server's configured tenantId, then 'default'.",
+					),
+			},
+			handler: async ({ tenantId }) => {
 				try {
-					if (Object.keys(corsair).includes('withTenant')) {
-						throw new Error(
-							'Cannot setup Corsair if it multiTenancy is enabled.',
-						);
-					}
-
+					const setupTenantId =
+						typeof tenantId === 'string' && tenantId.length > 0
+							? tenantId
+							: defaultTenantId;
 					const text = await setupCorsair(
 						corsair as Parameters<typeof setupCorsair>[0],
+						setupTenantId ? { tenantId: setupTenantId } : undefined,
 					);
 					return {
 						content: [
@@ -129,8 +154,8 @@ export function buildCorsairToolDefs(
 					};
 				}
 			},
-		},
-	];
+		});
+	}
 
 	if (permissions && basePermissionUrl) {
 		defs.push({
@@ -144,7 +169,7 @@ export function buildCorsairToolDefs(
 						'Full endpoint path from the PERMISSION_REQUIRED message, e.g. "slack.messages.post"',
 					),
 				args: z
-					.record(z.unknown())
+					.record(z.string(), z.unknown())
 					.describe(
 						'The arguments object from the PERMISSION_REQUIRED message',
 					),

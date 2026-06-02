@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AsanaBoundEndpoints, AsanaWebhooks } from '..';
+import type { AsanaBoundEndpoints, AsanaWebhooks } from '../index';
 import { createAsanaEventMatch, verifyAsanaWebhookSignature } from './types';
 
 export const taskEvent: AsanaWebhooks['taskEvent'] = {
@@ -43,9 +43,12 @@ export const taskEvent: AsanaWebhooks['taskEvent'] = {
 					try {
 						// Fetch full task data via bound endpoint (handles auth automatically)
 						await endpoints.tasks.get({ task_gid: event.resource.gid });
-						
 					} catch (error) {
-						console.warn('asana webhook: failed to fetch/upsert task', event.resource.gid, error);
+						console.warn(
+							'asana webhook: failed to fetch/upsert task',
+							event.resource.gid,
+							error,
+						);
 					}
 				}
 			}

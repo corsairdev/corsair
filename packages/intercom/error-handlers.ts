@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -75,7 +75,10 @@ export const errorHandlers = {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
-			return errorMessage.includes('not_found') || errorMessage.includes('resource_not_found');
+			return (
+				errorMessage.includes('not_found') ||
+				errorMessage.includes('resource_not_found')
+			);
 		},
 		handler: async (error, context) => {
 			console.warn(

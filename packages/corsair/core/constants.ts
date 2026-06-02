@@ -16,19 +16,27 @@ export const BaseProviders = [
 	'airtable',
 	'amplitude',
 	'asana',
+	'bitwarden',
+	'bluesky',
 	'box',
 	'cal',
 	'calendly',
+	'cloudflare',
+	'cursor',
 	'discord',
+	'dodopayments',
 	'dropbox',
 	'exa',
 	'figma',
+	'firecrawl',
 	'fireflies',
 	'github',
+	'gitlab',
 	'gmail',
 	'googlecalendar',
 	'googledrive',
 	'googlesheets',
+	'grafana',
 	'hackernews',
 	'hubspot',
 	'intercom',
@@ -36,14 +44,22 @@ export const BaseProviders = [
 	'linear',
 	'monday',
 	'notion',
+	'onedrive',
+	'openweathermap',
 	'oura',
+	'outlook',
 	'pagerduty',
 	'posthog',
+	'razorpay',
+	'reddit',
 	'resend',
 	'sentry',
+	'sharepoint',
 	'slack',
 	'spotify',
+	'strava',
 	'stripe',
+	'tally',
 	'tavily',
 	'teams',
 	'telegram',
@@ -52,6 +68,10 @@ export const BaseProviders = [
 	'twitter',
 	'twitterapiio',
 	'typeform',
+	'vapi',
+	'xquik',
+	'youtube',
+	'zendesk',
 	'zoom',
 ] as const;
 
@@ -59,19 +79,27 @@ export type AllProviders =
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
+	| 'bitwarden'
+	| 'bluesky'
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'cloudflare'
+	| 'cursor'
 	| 'discord'
+	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
 	| 'figma'
+	| 'firecrawl'
 	| 'fireflies'
 	| 'github'
+	| 'gitlab'
 	| 'gmail'
 	| 'googlecalendar'
 	| 'googledrive'
 	| 'googlesheets'
+	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
 	| 'intercom'
@@ -79,14 +107,22 @@ export type AllProviders =
 	| 'linear'
 	| 'monday'
 	| 'notion'
+	| 'onedrive'
+	| 'openweathermap'
 	| 'oura'
+	| 'outlook'
 	| 'pagerduty'
 	| 'posthog'
+	| 'razorpay'
+	| 'reddit'
 	| 'resend'
 	| 'sentry'
+	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
+	| 'strava'
 	| 'stripe'
+	| 'tally'
 	| 'tavily'
 	| 'teams'
 	| 'telegram'
@@ -95,6 +131,10 @@ export type AllProviders =
 	| 'twitter'
 	| 'twitterapiio'
 	| 'typeform'
+	| 'vapi'
+	| 'xquik'
+	| 'youtube'
+	| 'zendesk'
 	| 'zoom'
 	| (string & {});
 

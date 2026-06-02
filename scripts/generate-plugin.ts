@@ -45,7 +45,9 @@ function generatePlugin(pluginName: string) {
 	const pluginDir = join(packagesDir, lowerName);
 
 	if (existsSync(pluginDir)) {
-		console.error(`Plugin "${lowerName}" already exists at packages/${lowerName}`);
+		console.error(
+			`Plugin "${lowerName}" already exists at packages/${lowerName}`,
+		);
 		process.exit(1);
 	}
 
@@ -76,13 +78,13 @@ function generatePlugin(pluginName: string) {
 		},
 		peerDependencies: {
 			corsair: '>=0.1.0',
-			zod: '^3.0.0',
+			zod: '^4.1.13',
 		},
 		devDependencies: {
 			corsair: 'workspace:*',
 			tsup: '^8.0.1',
 			typescript: 'catalog:',
-			zod: '^3.25.76',
+			zod: '^4.1.13',
 		},
 		keywords: ['corsair', lowerName, 'plugin'],
 		author: '',
@@ -158,6 +160,7 @@ export default defineConfig({
 \tPluginPermissionsConfig,
 \tRequiredPluginEndpointMeta,
 \tRequiredPluginEndpointSchemas,
+\tRequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
 import type { ${pascalName}EndpointInputs, ${pascalName}EndpointOutputs } from './endpoints/types';
@@ -166,6 +169,7 @@ import type {
 \t${pascalName}WebhookOutputs,
 \tExampleEvent,
 } from './webhooks/types';
+import { ExampleEventSchema } from './webhooks/types';
 import { Example } from './endpoints';
 import { ${pascalName}Schema } from './schema';
 import { ExampleWebhooks } from './webhooks';
@@ -192,11 +196,14 @@ export type ${pascalName}BoundEndpoints = BindEndpoints<typeof ${camelName}Endpo
 
 type ${pascalName}Endpoint<
 \tK extends keyof ${pascalName}EndpointOutputs,
-\tInput,
-> = CorsairEndpoint<${pascalName}Context, Input, ${pascalName}EndpointOutputs[K]>;
+> = CorsairEndpoint<
+\t${pascalName}Context,
+\t${pascalName}EndpointInputs[K],
+\t${pascalName}EndpointOutputs[K]
+>;
 
 export type ${pascalName}Endpoints = {
-\texampleGet: ${pascalName}Endpoint<'exampleGet', { id: string }>;
+\texampleGet: ${pascalName}Endpoint<'exampleGet'>;
 };
 
 type ${pascalName}Webhook<
@@ -227,7 +234,15 @@ export const ${camelName}EndpointSchemas = {
 \t\tinput: ${pascalName}EndpointInputSchemas.exampleGet,
 \t\toutput: ${pascalName}EndpointOutputSchemas.exampleGet,
 \t},
-} as const;
+} as const satisfies RequiredPluginEndpointSchemas<typeof ${camelName}EndpointsNested>;
+
+const ${camelName}WebhookSchemas = {
+\t'example.example': {
+\t\tdescription: 'An example webhook event',
+\t\tpayload: ExampleEventSchema,
+\t\tresponse: ExampleEventSchema,
+\t},
+} as const satisfies RequiredPluginWebhookSchemas<typeof ${camelName}WebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -236,7 +251,7 @@ const ${camelName}EndpointMeta = {
 \t\triskLevel: 'read',
 \t\tdescription: 'Get an example resource by ID',
 \t},
-} as const;
+} as const satisfies RequiredPluginEndpointMeta<typeof ${camelName}EndpointsNested>;
 
 export const ${camelName}AuthConfig = {
 \tapi_key: {
@@ -275,6 +290,7 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 \t\twebhooks: ${camelName}WebhooksNested,
 \t\tendpointMeta: ${camelName}EndpointMeta,
 \t\tendpointSchemas: ${camelName}EndpointSchemas,
+\t\twebhookSchemas: ${camelName}WebhookSchemas,
 \t\tpluginWebhookMatcher: (request) => {
 \t\t\tconst headers = request.headers;
 \t\t\t// TODO: Update to match your webhook signature headers
@@ -499,36 +515,53 @@ export * from './types';
 	writeFileSync(
 		join(pluginDir, 'webhooks', 'types.ts'),
 		`import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 
-export interface ${pascalName}WebhookPayload {
-\ttype: string;
-\tcreated_at: string;
-\tdata: Record<string, unknown>;
-}
+export const ${pascalName}WebhookPayloadSchema = z.object({
+\ttype: z.string(),
+\tcreated_at: z.string(),
+\tdata: z.record(z.string(), z.unknown()),
+});
 
-export interface ExampleEvent extends ${pascalName}WebhookPayload {
-\ttype: 'example';
-\tdata: {
-\t\tid: string;
-\t\t[key: string]: unknown;
-\t};
-}
+export type ${pascalName}WebhookPayload = z.infer<
+\ttypeof ${pascalName}WebhookPayloadSchema
+>;
+
+export const ExampleEventSchema = ${pascalName}WebhookPayloadSchema.extend({
+\ttype: z.literal('example'),
+\tdata: z
+\t\t.object({
+\t\t\tid: z.string(),
+\t\t})
+\t\t.loose(),
+});
+
+export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
 
 export type ${pascalName}WebhookOutputs = {
 \texample: ExampleEvent;
 };
 
-function parseBody(body: unknown): Record<string, unknown> {
+function parseBody(body: unknown): Record<string, unknown> | null {
 \tif (typeof body === 'string') {
-\t\treturn JSON.parse(body) as Record<string, unknown>;
+\t\ttry {
+\t\t\tconst parsed = JSON.parse(body);
+\t\t\treturn parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+\t\t\t\t? (parsed as Record<string, unknown>)
+\t\t\t\t: null;
+\t\t} catch {
+\t\t\treturn null;
+\t\t}
 \t}
-\treturn (body ?? {}) as Record<string, unknown>;
+\treturn body !== null && typeof body === 'object' && !Array.isArray(body)
+\t\t? (body as Record<string, unknown>)
+\t\t: null;
 }
 
 export function create${pascalName}Match(eventType: string): CorsairWebhookMatcher {
 \treturn (request: RawWebhookRequest) => {
 \t\tconst parsedBody = parseBody(request.body);
-\t\treturn typeof parsedBody.type === 'string' && parsedBody.type === eventType;
+\t\treturn parsedBody !== null && parsedBody.type === eventType;
 \t};
 }
 

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '..';
 import { makeAuthenticatedGoogleDriveRequest } from '../client';
+import type { GoogleDriveBoundEndpoints, GoogleDriveEndpoints } from '../index';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
@@ -185,17 +185,15 @@ export const deleteFile: GoogleDriveEndpoints['filesDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAuthenticatedGoogleDriveRequest<GoogleDriveEndpointOutputs['filesDelete']>(
-		`/files/${input.fileId}`,
-		ctx,
-		{
-			method: 'DELETE',
-			query: {
-				supportsAllDrives: input.supportsAllDrives,
-				supportsTeamDrives: input.supportsTeamDrives,
-			},
+	await makeAuthenticatedGoogleDriveRequest<
+		GoogleDriveEndpointOutputs['filesDelete']
+	>(`/files/${input.fileId}`, ctx, {
+		method: 'DELETE',
+		query: {
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
 		},
-	);
+	});
 
 	if (ctx.db.files) {
 		try {

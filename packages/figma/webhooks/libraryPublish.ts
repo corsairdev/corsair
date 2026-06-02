@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FigmaWebhooks } from '..';
+import type { FigmaWebhooks } from '../index';
 import { createFigmaEventMatch, verifyFigmaWebhookPasscode } from './types';
 
 export const libraryPublish: FigmaWebhooks['libraryPublish'] = {
@@ -33,7 +33,10 @@ export const libraryPublish: FigmaWebhooks['libraryPublish'] = {
 					last_modified: event.timestamp,
 				});
 			} catch (error) {
-				console.warn('Failed to save library publish event to database:', error);
+				console.warn(
+					'Failed to save library publish event to database:',
+					error,
+				);
 			}
 		}
 

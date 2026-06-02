@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DropboxEndpoints } from '..';
-import { makeDropboxRequest } from '../client';
+import { makeAuthenticatedDropboxRequest } from '../client';
+import type { DropboxEndpoints } from '../index';
 import type { DropboxEndpointOutputs } from './types';
 
 export const query: DropboxEndpoints['searchQuery'] = async (ctx, input) => {
-	const result = await makeDropboxRequest<
+	const result = await makeAuthenticatedDropboxRequest<
 		DropboxEndpointOutputs['searchQuery']
-	>('files/search_v2', ctx.key, {
+	>('files/search_v2', ctx, {
 		method: 'POST',
 		body: {
 			query: input.query,
@@ -27,8 +27,12 @@ export const query: DropboxEndpoints['searchQuery'] = async (ctx, input) => {
 				if (meta['.tag'] === 'file') {
 					await ctx.db.files.upsertByEntityId(meta.id, {
 						...meta,
-						client_modified: meta.client_modified ? new Date(meta.client_modified) : null,
-						server_modified: meta.server_modified ? new Date(meta.server_modified) : null,
+						client_modified: meta.client_modified
+							? new Date(meta.client_modified)
+							: null,
+						server_modified: meta.server_modified
+							? new Date(meta.server_modified)
+							: null,
 					});
 				} else if (meta['.tag'] === 'folder' && ctx.db.folders) {
 					await ctx.db.folders.upsertByEntityId(meta.id, {

@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -83,9 +83,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.warn(
-				`[EXA:${context.operation}] Bad request: ${error.message}`,
-			);
+			console.warn(`[EXA:${context.operation}] Bad request: ${error.message}`);
 
 			return {
 				maxRetries: 0,

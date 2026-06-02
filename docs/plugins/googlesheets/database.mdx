@@ -1,0 +1,91 @@
+---
+title: Database
+description: "Google sheets local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Google sheets plugin syncs data locally. Use `corsair.googlesheets.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Rows
+
+Path: `googlesheets.db.rows.search`
+
+```ts
+const rows = await corsair.googlesheets.db.rows.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `rowId` | `string` | equals, contains, startsWith, endsWith, in |
+| `spreadsheetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `sheetName` | `string` | equals, contains, startsWith, endsWith, in |
+| `range` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sheets
+
+Path: `googlesheets.db.sheets.search`
+
+```ts
+const rows = await corsair.googlesheets.db.sheets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `sheetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `spreadsheetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `index` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Spreadsheets
+
+Path: `googlesheets.db.spreadsheets.search`
+
+```ts
+const rows = await corsair.googlesheets.db.spreadsheets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `spreadsheetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `spreadsheetUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

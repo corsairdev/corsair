@@ -9,7 +9,7 @@ const BoxUserMiniSchema = z
 		name: z.string().optional(),
 		login: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BoxItemMiniSchema = z
 	.object({
@@ -19,7 +19,7 @@ const BoxItemMiniSchema = z
 		etag: z.string().nullable().optional(),
 		name: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BoxSharedLinkSchema = z
 	.object({
@@ -41,14 +41,14 @@ const BoxSharedLinkSchema = z
 		download_count: z.number().optional(),
 		preview_count: z.number().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BoxPathCollectionSchema = z
 	.object({
 		total_count: z.number().optional(),
 		entries: z.array(BoxItemMiniSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BoxFileSchema = z
 	.object({
@@ -76,7 +76,7 @@ const BoxFileSchema = z
 		extension: z.string().optional(),
 		is_package: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BoxFolderSchema = z
 	.object({
@@ -105,11 +105,11 @@ const BoxFolderSchema = z
 			.object({
 				total_count: z.number().optional(),
 				// unknown: item_collection.entries contains mixed file/folder/web_link objects with no fixed schema
-			entries: z.array(z.record(z.unknown())).optional(),
+				entries: z.array(z.record(z.string(), z.unknown())).optional(),
 			})
 			.optional(),
 	})
-	.passthrough();
+	.loose();
 
 const BoxSearchResultEntrySchema = z
 	.object({
@@ -117,7 +117,7 @@ const BoxSearchResultEntrySchema = z
 		id: z.string(),
 		name: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 

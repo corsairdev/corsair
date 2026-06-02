@@ -1,0 +1,174 @@
+---
+title: OAuth 2.0 Authentication
+description: Connect user accounts with OAuth 2.0 flows in Corsair plugins.
+---
+
+OAuth 2.0 lets users authorize your application to act on their behalf. Corsair handles the entire flow — generating authorization URLs, processing callbacks, storing tokens encrypted, and refreshing them automatically when they expire.
+
+## How it works
+
+1. You register an OAuth app with the service and get a `client_id` and `client_secret`
+2. Corsair generates an authorization URL for the user to visit
+3. After the user approves, the service redirects back with an authorization code
+4. Corsair exchanges the code for access and refresh tokens and stores them encrypted
+5. On every API call, Corsair checks token expiry and refreshes automatically
+
+```ts corsair.ts
+import { createCorsair } from "corsair";
+import { gmail } from "@corsair-dev/gmail";
+
+export const corsair = createCorsair({
+    plugins: [gmail({ authType: "oauth_2" })],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+---
+
+## Solo setup
+
+Solo mode connects a single account to your application. Use this for scripts, internal tools, or apps that only ever connect one account.
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    plugins: [gmail({ authType: "oauth_2" })],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+Store your OAuth app credentials, then start the flow:
+
+```bash
+pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
+pnpm corsair auth --plugin=gmail
+```
+
+The CLI prints an authorization URL. Open it in a browser, approve, and tokens are stored automatically.
+
+After that, all API calls use your connected account:
+
+```ts usage.ts
+const messages = await corsair.gmail.api.messages.list({ maxResults: 10 });
+```
+
+Tokens are refreshed automatically when they expire — no intervention needed.
+
+---
+
+## Multi-tenant setup
+
+In multi-tenant mode, each user connects their own account. You need an OAuth callback route in your application that Corsair processes.
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [gmail({ authType: "oauth_2" })],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+### 1. Store your OAuth app credentials
+
+Store your client credentials once — these are shared across all tenants:
+
+```bash
+pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
+```
+
+### 2. Generate the authorization URL
+
+When a user wants to connect their account, redirect them to the authorization URL:
+
+```ts app/api/connect/route.ts
+import { generateOAuthUrl } from "corsair/oauth";
+import { corsair } from "@/server/corsair";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+
+const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
+
+export async function GET(request: NextRequest) {
+    const tenantId = getUserIdFromSession(request); // your auth logic
+    const plugin = new URL(request.url).searchParams.get("plugin")!;
+
+    const { url, state } = await generateOAuthUrl(corsair, plugin, {
+        tenantId,
+        redirectUri: REDIRECT_URI,
+    });
+
+    const response = NextResponse.redirect(url);
+    response.cookies.set("oauth_state", state, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 10,
+    });
+    return response;
+}
+```
+
+### 3. Handle the callback
+
+After the user approves, the service redirects to your callback URL. Process it with Corsair:
+
+```ts app/api/auth/route.ts
+import { processOAuthCallback } from "corsair/oauth";
+import { corsair } from "@/server/corsair";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+
+const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
+
+export async function GET(request: NextRequest) {
+    const { searchParams } = new URL(request.url);
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
+
+    if (!code || !state) {
+        const response = new NextResponse("Missing code or state.", { status: 400 });
+        response.cookies.delete("oauth_state");
+        return response;
+    }
+
+    const storedState = request.cookies.get("oauth_state")?.value;
+    if (!storedState || storedState !== state) {
+        const response = new NextResponse("Invalid state.", { status: 400 });
+        response.cookies.delete("oauth_state");
+        return response;
+    }
+
+    try {
+        const result = await processOAuthCallback(corsair, { code, state, redirectUri: REDIRECT_URI });
+        const response = NextResponse.redirect("/dashboard?connected=" + result.plugin);
+        response.cookies.delete("oauth_state");
+        return response;
+    } catch {
+        const response = new NextResponse("OAuth failed.", { status: 500 });
+        response.cookies.delete("oauth_state");
+        return response;
+    }
+}
+```
+
+Corsair extracts the `tenantId` from the HMAC-signed state, exchanges the code for tokens, and stores them encrypted for that tenant.
+
+<Info>
+See [Production: OAuth Process](/production/oauth-process) for a full implementation with security best practices — authenticated routes, cookie hardening, CSRF protection, and HTML escaping.
+</Info>
+
+### 4. Make API calls per tenant
+
+```ts usage.ts
+const tenant = corsair.withTenant("user_abc123");
+
+// Uses user_abc123's connected account
+const messages = await tenant.gmail.api.messages.list({ maxResults: 10 });
+```
+
+---
+
+## Automatic token refresh
+
+OAuth access tokens expire (typically after 1 hour). Corsair checks token expiry before every API call and refreshes automatically using the stored refresh token. Your code never needs to handle token expiry.
+
+See [Authentication](/concepts/auth#automatic-token-refresh) for more details.

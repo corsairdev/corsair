@@ -1,8 +1,12 @@
-import { get as itemsGet, getWithId as itemsGetWithId, getMaxId as itemsGetMaxId } from './items';
-import { getTop, getBest, getNew, getAsk, getShow, getJobs } from './stories';
-import { get as usersGet, getByUsername as usersGetByUsername } from './users';
-import { posts, getLatest, getFrontpage, getTodays } from './search';
+import {
+	get as itemsGet,
+	getMaxId as itemsGetMaxId,
+	getWithId as itemsGetWithId,
+} from './items';
+import { getFrontpage, getLatest, getTodays, posts } from './search';
+import { getAsk, getBest, getJobs, getNew, getShow, getTop } from './stories';
 import { get as updatesGet } from './updates';
+import { get as usersGet, getByUsername as usersGetByUsername } from './users';
 
 export const Items = {
 	get: itemsGet,

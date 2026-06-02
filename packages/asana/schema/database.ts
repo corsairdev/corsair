@@ -71,7 +71,7 @@ export const AsanaTask = z.object({
 	permalink_url: z.string().optional(),
 	approval_status: z.string().optional(),
 	// any/unknown for custom_fields since they vary per workspace
-	custom_fields: z.array(z.record(z.unknown())).optional(),
+	custom_fields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
 export const AsanaProject = z.object({
@@ -98,7 +98,7 @@ export const AsanaProject = z.object({
 	privacy_setting: z.string().optional(),
 	icon: z.string().nullable().optional(),
 	// any/unknown for custom_fields since they vary per workspace
-	custom_fields: z.array(z.record(z.unknown())).optional(),
+	custom_fields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
 export const AsanaSection = z.object({
@@ -115,7 +115,7 @@ export const AsanaUser = z.object({
 	name: z.string().optional(),
 	email: z.string().optional(),
 	resource_type: z.string().optional(),
-	photo: z.record(z.string()).nullable().optional(),
+	photo: z.record(z.string(), z.string()).nullable().optional(),
 	workspaces: z.array(WorkspaceCompactSchema).optional(),
 });
 
@@ -155,7 +155,10 @@ export const AsanaStory = z.object({
 	num_likes: z.number().optional(),
 	is_edited: z.boolean().optional(),
 	is_pinned: z.boolean().optional(),
-	target: z.object({ gid: z.string(), name: z.string().optional() }).nullable().optional(),
+	target: z
+		.object({ gid: z.string(), name: z.string().optional() })
+		.nullable()
+		.optional(),
 });
 
 export type AsanaTask = z.infer<typeof AsanaTask>;

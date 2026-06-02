@@ -1,10 +1,10 @@
-import { createHmac, timingSafeEqual } from 'crypto';
-import { z } from 'zod';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { createHmac, timingSafeEqual } from 'crypto';
+import { z } from 'zod';
 
 // ── Shared Sub-schemas ────────────────────────────────────────────────────────
 
@@ -106,9 +106,15 @@ export const WebsetSearchCompletedEventSchema = z.object({
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export type SearchAlertEvent = z.infer<typeof ExaSearchAlertPayloadSchema>;
-export type ContentIndexedEvent = z.infer<typeof ExaContentIndexedPayloadSchema>;
-export type WebsetItemsFoundEvent = z.infer<typeof ExaWebsetItemsFoundPayloadSchema>;
-export type WebsetSearchCompletedEvent = z.infer<typeof ExaWebsetSearchCompletedPayloadSchema>;
+export type ContentIndexedEvent = z.infer<
+	typeof ExaContentIndexedPayloadSchema
+>;
+export type WebsetItemsFoundEvent = z.infer<
+	typeof ExaWebsetItemsFoundPayloadSchema
+>;
+export type WebsetSearchCompletedEvent = z.infer<
+	typeof ExaWebsetSearchCompletedPayloadSchema
+>;
 
 export type ExaWebhookOutputs = {
 	searchAlert: SearchAlertEvent;
@@ -146,7 +152,10 @@ export function verifyExaWebhookSignature(
 
 	const rawBody = request.rawBody;
 	if (!rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
 
 	const headers = request.headers;

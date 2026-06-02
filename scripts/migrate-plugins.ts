@@ -33,14 +33,8 @@ const IMPORT_REPLACEMENTS: [RegExp, string][] = [
 ];
 
 const SATISFIES_REPLACEMENTS: [RegExp, string][] = [
-	[
-		/\} satisfies RequiredPluginEndpointSchemas<[^>]+>;/g,
-		'} as const;',
-	],
-	[
-		/\} satisfies RequiredPluginWebhookSchemas<[^>]+>;/g,
-		'} as const;',
-	],
+	[/\} satisfies RequiredPluginEndpointSchemas<[^>]+>;/g, '} as const;'],
+	[/\} satisfies RequiredPluginWebhookSchemas<[^>]+>;/g, '} as const;'],
 ];
 
 function rewriteImports(content: string): string {
@@ -85,7 +79,13 @@ function copyAndRewrite(srcDir: string, destDir: string): void {
 	}
 }
 
-const EXTRA_DEPS: Record<string, { dependencies?: Record<string, string>; devDependencies?: Record<string, string> }> = {
+const EXTRA_DEPS: Record<
+	string,
+	{
+		dependencies?: Record<string, string>;
+		devDependencies?: Record<string, string>;
+	}
+> = {
 	posthog: {
 		dependencies: { uuid: '^11.1.0' },
 		devDependencies: { '@types/uuid': '^10.0.0' },
@@ -187,7 +187,10 @@ for (const plugin of PLUGINS) {
 	const srcDir = path.join(PLUGINS_DIR, plugin);
 
 	fs.mkdirSync(destDir, { recursive: true });
-	fs.writeFileSync(path.join(destDir, 'package.json'), createPackageJson(plugin));
+	fs.writeFileSync(
+		path.join(destDir, 'package.json'),
+		createPackageJson(plugin),
+	);
 	fs.writeFileSync(path.join(destDir, 'tsconfig.json'), TSCONFIG);
 	fs.writeFileSync(path.join(destDir, 'tsup.config.ts'), TSUP_CONFIG);
 

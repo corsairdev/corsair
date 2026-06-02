@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { FigmaEndpoints } from '..';
 import { makeFigmaRequest } from '../client';
+import type { FigmaEndpoints } from '../index';
 import type { FigmaEndpointOutputs } from './types';
 
 export const get: FigmaEndpoints['paymentsGet'] = async (ctx, input) => {
@@ -10,6 +10,11 @@ export const get: FigmaEndpoints['paymentsGet'] = async (ctx, input) => {
 		{ method: 'GET', query: { ...input } },
 	);
 
-	await logEventFromContext(ctx, 'figma.payments.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'figma.payments.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

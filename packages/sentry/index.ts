@@ -7,13 +7,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import type { SentryEndpointInputs, SentryEndpointOutputs } from './endpoints';
 import {
 	Events,
@@ -505,6 +503,8 @@ export function sentry<const T extends SentryPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: SentryKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -513,7 +513,9 @@ export function sentry<const T extends SentryPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:sentry:webhook_signature]: Sentry webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -527,13 +529,17 @@ export function sentry<const T extends SentryPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:sentry:api_key]: Sentry API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:sentry:${authType}]: Sentry key is missing`,
+			);
 		},
 	} satisfies InternalSentryPlugin;
 }

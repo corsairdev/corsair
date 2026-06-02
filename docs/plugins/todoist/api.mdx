@@ -1,0 +1,1482 @@
+---
+title: API
+description: "API reference for Todoist: every `todoist.api.*` operation with input and output types."
+---
+
+Every `todoist.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### create
+
+`comments.create`
+
+Create a Todoist comment
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.comments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+| `task_id` | `string` | No | — |
+| `project_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `task_id` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `posted_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a Todoist comment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.todoist.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`comments.get`
+
+Get a Todoist comment by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.comments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `task_id` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `posted_at` | `string` | No | — |
+
+
+
+---
+
+### getMany
+
+`comments.getMany`
+
+List Todoist comments for a task or project
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.comments.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | No | — |
+| `project_id` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  task_id?: string,
+  project_id?: string,
+  content: string,
+  posted_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`comments.update`
+
+Update a Todoist comment
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.comments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `task_id` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `posted_at` | `string` | No | — |
+
+
+
+---
+
+## Labels
+
+### create
+
+`labels.create`
+
+Create a Todoist label
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.labels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a Todoist label
+
+**Risk:** `destructive`
+
+```ts
+await corsair.todoist.api.labels.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`labels.get`
+
+Get a Todoist label by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.labels.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+
+
+
+---
+
+### getMany
+
+`labels.getMany`
+
+List Todoist labels
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.labels.getMany({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  color?: string,
+  order?: number,
+  favorite?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`labels.update`
+
+Update a Todoist label
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.labels.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+
+
+
+---
+
+## Projects
+
+### archive
+
+`projects.archive`
+
+Archive a Todoist project
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.projects.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a Todoist project
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `favorite` | `boolean` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+| `comment_count` | `number` | No | — |
+| `is_shared` | `boolean` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `is_favorite` | `boolean` | No | — |
+| `view_style` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a Todoist project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.todoist.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a Todoist project by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+| `comment_count` | `number` | No | — |
+| `is_shared` | `boolean` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `is_favorite` | `boolean` | No | — |
+| `view_style` | `string` | No | — |
+
+
+
+---
+
+### getCollaborators
+
+`projects.getCollaborators`
+
+List collaborators for a Todoist project
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.projects.getCollaborators({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMany
+
+`projects.getMany`
+
+List Todoist projects
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.projects.getMany({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  color?: string,
+  parent_id?: string,
+  order?: number,
+  favorite?: boolean,
+  comment_count?: number,
+  is_shared?: boolean,
+  is_archived?: boolean,
+  is_favorite?: boolean,
+  view_style?: string
+}[] | {
+  projects?: {
+    id: string,
+    name: string,
+    color?: string,
+    parent_id?: string,
+    order?: number,
+    favorite?: boolean,
+    comment_count?: number,
+    is_shared?: boolean,
+    is_archived?: boolean,
+    is_favorite?: boolean,
+    view_style?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`projects.unarchive`
+
+Unarchive a Todoist project
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.projects.unarchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a Todoist project
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `favorite` | `boolean` | No | — |
+| `order` | `number` | No | — |
+| `parent_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `favorite` | `boolean` | No | — |
+| `comment_count` | `number` | No | — |
+| `is_shared` | `boolean` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `is_favorite` | `boolean` | No | — |
+| `view_style` | `string` | No | — |
+
+
+
+---
+
+## Reminders
+
+### create
+
+`reminders.create`
+
+Create a Todoist reminder
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.reminders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `due_datetime` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `due_string` | `string` | No | — |
+| `relative_duration` | `number` | No | — |
+| `notification_type` | `string` | No | — |
+| `notify_uid` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `task_id` | `string` | No | — |
+| `notify_uid` | `string` | No | — |
+| `due` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="due full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`reminders.delete`
+
+Delete a Todoist reminder
+
+**Risk:** `destructive`
+
+```ts
+await corsair.todoist.api.reminders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getMany
+
+`reminders.getMany`
+
+List Todoist reminders
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.reminders.getMany({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  task_id?: string,
+  notify_uid?: string,
+  due?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`reminders.update`
+
+Update a Todoist reminder
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.reminders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `task_id` | `string` | No | — |
+| `due_datetime` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `due_string` | `string` | No | — |
+| `relative_duration` | `number` | No | — |
+| `notification_type` | `string` | No | — |
+| `notify_uid` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `task_id` | `string` | No | — |
+| `notify_uid` | `string` | No | — |
+| `due` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="due full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sections
+
+### create
+
+`sections.create`
+
+Create a Todoist section
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.sections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `order` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`sections.delete`
+
+Delete a Todoist section
+
+**Risk:** `destructive`
+
+```ts
+await corsair.todoist.api.sections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`sections.get`
+
+Get a Todoist section by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.sections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `order` | `number` | No | — |
+
+
+
+---
+
+### getMany
+
+`sections.getMany`
+
+List Todoist sections for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.sections.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  project_id: string,
+  name: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`sections.update`
+
+Update a Todoist section
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.sections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `order` | `number` | No | — |
+| `project_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `order` | `number` | No | — |
+
+
+
+---
+
+## Tasks
+
+### close
+
+`tasks.close`
+
+Close a Todoist task
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.tasks.close({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`tasks.create`
+
+Create a Todoist task
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `labels` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `due_datetime` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `due_string` | `string` | No | — |
+| `assignee_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `labels` | `string[]` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `due` | `object` | No | — |
+| `url` | `string` | No | — |
+| `comment_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `creator_id` | `string` | No | — |
+| `assignee_id` | `string` | No | — |
+| `assigner_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="due full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a Todoist task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.todoist.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a Todoist task by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `labels` | `string[]` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `due` | `object` | No | — |
+| `url` | `string` | No | — |
+| `comment_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `creator_id` | `string` | No | — |
+| `assignee_id` | `string` | No | — |
+| `assigner_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="due full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMany
+
+`tasks.getMany`
+
+List Todoist tasks with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.todoist.api.tasks.getMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `label` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  project_id?: string | null,
+  section_id?: string | null,
+  content: string,
+  description?: string,
+  is_completed?: boolean,
+  labels?: string[],
+  parent_id?: string | null,
+  order?: number,
+  priority?: number,
+  due?: {
+  } | null,
+  url?: string,
+  comment_count?: number,
+  created_at?: string,
+  creator_id?: string,
+  assignee_id?: string,
+  assigner_id?: string
+}[] | {
+  tasks?: {
+    id: string,
+    project_id?: string | null,
+    section_id?: string | null,
+    content: string,
+    description?: string,
+    is_completed?: boolean,
+    labels?: string[],
+    parent_id?: string | null,
+    order?: number,
+    priority?: number,
+    due?: {
+    } | null,
+    url?: string,
+    comment_count?: number,
+    created_at?: string,
+    creator_id?: string,
+    assignee_id?: string,
+    assigner_id?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### move
+
+`tasks.move`
+
+Move a Todoist task between project or section
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.tasks.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `labels` | `string[]` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `due` | `object` | No | — |
+| `url` | `string` | No | — |
+| `comment_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `creator_id` | `string` | No | — |
+| `assignee_id` | `string` | No | — |
+| `assigner_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="due full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### quickAdd
+
+`tasks.quickAdd`
+
+Quick add a Todoist task using natural language
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.tasks.quickAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `reminder` | `string` | No | — |
+| `note` | `string` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `labels` | `string[]` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `due` | `object` | No | — |
+| `url` | `string` | No | — |
+| `comment_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `creator_id` | `string` | No | — |
+| `assignee_id` | `string` | No | — |
+| `assigner_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="due full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reopen
+
+`tasks.reopen`
+
+Reopen a completed Todoist task
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.tasks.reopen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a Todoist task
+
+**Risk:** `write`
+
+```ts
+await corsair.todoist.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `description` | `string` | No | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `labels` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `due_datetime` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `due_string` | `string` | No | — |
+| `assignee_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `project_id` | `string` | No | — |
+| `section_id` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `labels` | `string[]` | No | — |
+| `parent_id` | `string` | No | — |
+| `order` | `number` | No | — |
+| `priority` | `number` | No | — |
+| `due` | `object` | No | — |
+| `url` | `string` | No | — |
+| `comment_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `creator_id` | `string` | No | — |
+| `assignee_id` | `string` | No | — |
+| `assigner_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="due full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

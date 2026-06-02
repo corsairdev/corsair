@@ -1,0 +1,207 @@
+---
+title: Webhooks
+description: "Figma incoming webhooks: event paths, payloads, and response data."
+---
+
+The Figma plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/figma/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `files`
+  - `fileComment` (`files.fileComment`)
+  - `fileDelete` (`files.fileDelete`)
+  - `fileUpdate` (`files.fileUpdate`)
+  - `fileVersionUpdate` (`files.fileVersionUpdate`)
+- `library`
+  - `libraryPublish` (`library.libraryPublish`)
+- `ping`
+  - `ping` (`ping.ping`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Files
+
+### File Comment
+
+`files.fileComment`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+figma({
+    webhookHooks: {
+        files: {
+            fileComment: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### File Delete
+
+`files.fileDelete`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+figma({
+    webhookHooks: {
+        files: {
+            fileDelete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### File Update
+
+`files.fileUpdate`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+figma({
+    webhookHooks: {
+        files: {
+            fileUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### File Version Update
+
+`files.fileVersionUpdate`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+figma({
+    webhookHooks: {
+        files: {
+            fileVersionUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Library
+
+### Library Publish
+
+`library.libraryPublish`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+figma({
+    webhookHooks: {
+        library: {
+            libraryPublish: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Ping
+
+### Ping
+
+`ping.ping`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+figma({
+    webhookHooks: {
+        ping: {
+            ping: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,4 +1,4 @@
-import type { CalWebhooks } from '..';
+import type { CalWebhooks } from '../index';
 import { createCalMatch, verifyCalWebhookSignature } from './types';
 
 export const ping: CalWebhooks['ping'] = {

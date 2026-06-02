@@ -1,4 +1,4 @@
-import type { CalBoundEndpoints } from '@corsair-dev/cal'
+import type { CalBoundEndpoints } from '@corsair-dev/cal';
 import {
 	actionsHtml,
 	buildActionDescriptors,
@@ -6,8 +6,8 @@ import {
 	formatTimestamp,
 	parseArgs,
 	statusBannerHtml,
-} from '../../shared';
-import type { PermissionActionCallback, PermissionLike } from '../../types';
+} from '../../shared.js';
+import type { PermissionActionCallback, PermissionLike } from '../../types.js';
 
 type Args = Parameters<CalBoundEndpoints['bookings']['create']>[0];
 

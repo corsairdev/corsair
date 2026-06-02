@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { BoxBoundEndpoints, BoxEndpoints } from '..';
 import { makeBoxRequest, makeBoxUploadRequest } from '../client';
+import type { BoxBoundEndpoints, BoxEndpoints } from '../index';
 import type { BoxEndpointOutputs } from './types';
 
 export const get: BoxEndpoints['filesGet'] = async (ctx, input) => {
@@ -33,7 +33,7 @@ export const copy: BoxEndpoints['filesCopy'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: body
+			body: body,
 		},
 	);
 
@@ -115,12 +115,7 @@ export const search: BoxEndpoints['filesSearch'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'box.files.search',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'box.files.search', { ...input }, 'completed');
 	return result;
 };
 

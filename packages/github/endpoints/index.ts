@@ -1,3 +1,6 @@
+import * as Comments from './comments';
+import * as Discussions from './discussions';
+import * as Forks from './forks';
 import * as Issues from './issues';
 import * as PullRequests from './pull-requests';
 import * as Releases from './releases';
@@ -25,6 +28,10 @@ export const RepositoriesEndpoints = {
 	listBranches: Repositories.listBranches,
 	listCommits: Repositories.listCommits,
 	getContent: Repositories.getContent,
+	star: Repositories.star,
+	unstar: Repositories.unstar,
+	checkStarred: Repositories.checkStarred,
+	listStarred: Repositories.listStarred,
 };
 
 export const ReleasesEndpoints = {
@@ -38,6 +45,23 @@ export const WorkflowsEndpoints = {
 	list: Workflows.list,
 	get: Workflows.get,
 	listRuns: Workflows.listRuns,
+};
+
+export const DiscussionsEndpoints = {
+	list: Discussions.list,
+	get: Discussions.get,
+};
+
+export const ForksEndpoints = {
+	list: Forks.list,
+};
+
+export const CommentsEndpoints = {
+	list: Comments.list,
+	listForIssue: Comments.listForIssue,
+	get: Comments.get,
+	update: Comments.update,
+	delete: Comments.deleteComment,
 };
 
 export * from './types';

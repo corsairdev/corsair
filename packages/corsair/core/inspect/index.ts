@@ -1,13 +1,130 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairPluginSchema } from '../../db/orm';
 import { BaseProviders } from '../constants';
-import type { CorsairPlugin, EndpointMetaEntry } from '../plugins';
+import type {
+	CorsairPlugin,
+	EndpointMetaEntry,
+	EndpointRiskLevel,
+} from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Zod → TypeScript-style type string converters
 // ─────────────────────────────────────────────────────────────────────────────
 
 const INDENT = '  ';
+
+type ZodDef = Record<string, unknown>;
+
+function getZodDef(schema: ZodTypeAny): ZodDef {
+	const zodSchema = schema as unknown as { _def?: ZodDef; def?: ZodDef };
+	return zodSchema._def ?? zodSchema.def ?? {};
+}
+
+function getZodTypeName(def: ZodDef): string | undefined {
+	const typeName = def.typeName as string | undefined;
+	if (typeName) return typeName;
+	const type = def.type as string | undefined;
+	if (!type) return undefined;
+	return `Zod${type
+		.split('_')
+		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+		.join('')}`;
+}
+
+function getZodInner(def: ZodDef): ZodTypeAny | undefined {
+	return (def.innerType ?? def.schema ?? def.out ?? def.in) as
+		| ZodTypeAny
+		| undefined;
+}
+
+/** Input-side schema for pipes/effects — used when rendering TypeScript-like types. */
+function getZodSchemaForTypeDisplay(
+	def: ZodDef,
+	typeName: string | undefined,
+): ZodTypeAny | undefined {
+	switch (typeName) {
+		case 'ZodPipe':
+			return (def.in ?? def.innerType) as ZodTypeAny | undefined;
+		case 'ZodEffects':
+			return (def.schema ?? def.innerType) as ZodTypeAny | undefined;
+		case 'ZodTransform':
+			return (def.schema ?? def.innerType ?? def.in) as ZodTypeAny | undefined;
+		default:
+			return getZodInner(def);
+	}
+}
+
+function getZodArrayItem(def: ZodDef): ZodTypeAny | undefined {
+	const type = def.type;
+	return (def.element ?? (typeof type === 'string' ? undefined : type)) as
+		| ZodTypeAny
+		| undefined;
+}
+
+function getZodShape(
+	schema: ZodTypeAny,
+	def: ZodDef,
+): Record<string, ZodTypeAny> {
+	const shape = def.shape ?? (schema as unknown as { shape?: unknown }).shape;
+	return (typeof shape === 'function' ? shape() : shape) as Record<
+		string,
+		ZodTypeAny
+	>;
+}
+
+function getZodOptions(def: ZodDef): unknown[] {
+	if (Array.isArray(def.options)) return def.options;
+	if (Array.isArray(def.values)) return def.values;
+	if (
+		def.entries !== null &&
+		typeof def.entries === 'object' &&
+		!Array.isArray(def.entries)
+	) {
+		return Object.values(def.entries);
+	}
+	return [];
+}
+
+function getZodDescription(
+	schema: ZodTypeAny,
+	def: ZodDef,
+): string | undefined {
+	return (
+		(schema as unknown as { description?: string }).description ??
+		(def.description as string | undefined)
+	);
+}
+
+/** Walks optional/nullable/effect wrappers outward→inward to find `.describe()` text. */
+function collectZodDescription(schema: ZodTypeAny): string | undefined {
+	let current: ZodTypeAny | undefined = schema;
+	while (current) {
+		const def = getZodDef(current);
+		const description = getZodDescription(current, def);
+		if (description) return description;
+		const typeName = getZodTypeName(def);
+		if (
+			isOptionalish(typeName) ||
+			typeName === 'ZodPipe' ||
+			typeName === 'ZodEffects' ||
+			typeName === 'ZodTransform'
+		) {
+			current = getZodSchemaForTypeDisplay(def, typeName);
+			continue;
+		}
+		break;
+	}
+	return undefined;
+}
+
+function isOptionalish(typeName: string | undefined): boolean {
+	return (
+		typeName === 'ZodOptional' ||
+		typeName === 'ZodNullable' ||
+		typeName === 'ZodDefault' ||
+		typeName === 'ZodCatch'
+	);
+}
 
 /**
  * Produces a compact single-line TypeScript-like type string.
@@ -17,8 +134,8 @@ const INDENT = '  ';
  * Enums render as pipe-separated values: full | none
  */
 function zodToInlineType(schema: ZodTypeAny): string {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 
 	switch (typeName) {
 		case 'ZodString':
@@ -27,41 +144,65 @@ function zodToInlineType(schema: ZodTypeAny): string {
 			return 'number';
 		case 'ZodBoolean':
 			return 'boolean';
+		case 'ZodDate':
+			return 'Date';
 		case 'ZodNull':
 			return 'null';
 		case 'ZodUnknown':
 		case 'ZodAny':
 			return 'any';
 		case 'ZodLiteral':
-			return String(def.value);
+			return String(def.value ?? getZodOptions(def)[0] ?? 'unknown');
 		case 'ZodEnum':
-			return (def.values as unknown[]).map((v) => String(v)).join(' | ');
-		case 'ZodOptional':
-			return zodToInlineType(def.innerType as ZodTypeAny);
-		case 'ZodNullable':
-			return `${zodToInlineType(def.innerType as ZodTypeAny)} | null`;
-		case 'ZodArray':
-			return `${zodToInlineType(def.type as ZodTypeAny)}[]`;
+			return getZodOptions(def)
+				.map((v) => String(v))
+				.join(' | ');
+		case 'ZodOptional': {
+			const inner = getZodInner(def);
+			return inner ? zodToInlineType(inner) : 'unknown';
+		}
+		case 'ZodNullable': {
+			const inner = getZodInner(def);
+			return `${inner ? zodToInlineType(inner) : 'unknown'} | null`;
+		}
+		case 'ZodDefault':
+		case 'ZodCatch': {
+			const inner = getZodInner(def);
+			return inner ? zodToInlineType(inner) : 'unknown';
+		}
+		case 'ZodArray': {
+			const itemType = getZodArrayItem(def);
+			if (!itemType) return 'unknown[]';
+			const itemDef = getZodDef(itemType);
+			const isUnion = getZodTypeName(itemDef) === 'ZodUnion';
+			const inner = zodToInlineType(itemType);
+			return `${isUnion ? `(${inner})` : inner}[]`;
+		}
 		case 'ZodRecord':
 			return '{}';
 		case 'ZodObject': {
-			const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+			const shape = getZodShape(schema, def);
 			const entries = Object.entries(shape);
 			if (entries.length === 0) return '{}';
 			const fields = entries.map(([key, val]) => {
-				const ft = (val as { _def: Record<string, unknown> })._def
-					.typeName as string | undefined;
+				const ft = getZodTypeName(getZodDef(val));
 				const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
 				return `${optional ? key + '?' : key}: ${zodToInlineType(val)}`;
 			});
 			return `{ ${fields.join(', ')} }`;
 		}
 		case 'ZodUnion':
-			return (def.options as ZodTypeAny[]).map(zodToInlineType).join(' | ');
+			return getZodOptions(def)
+				.map((option) => zodToInlineType(option as ZodTypeAny))
+				.join(' | ');
 		case 'ZodIntersection':
 			return `${zodToInlineType(def.left as ZodTypeAny)} & ${zodToInlineType(def.right as ZodTypeAny)}`;
-		case 'ZodEffects':
-			return zodToInlineType(def.schema as ZodTypeAny);
+		case 'ZodPipe':
+		case 'ZodTransform':
+		case 'ZodEffects': {
+			const inner = getZodSchemaForTypeDisplay(def, typeName);
+			return inner ? zodToInlineType(inner) : 'unknown';
+		}
 		default:
 			return (typeName ?? 'unknown').replace('Zod', '').toLowerCase();
 	}
@@ -73,20 +214,16 @@ function zodToInlineType(schema: ZodTypeAny): string {
  * Direct object-valued fields are expanded recursively; everything else is inlined.
  */
 function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 
-	if (typeName === 'ZodOptional' || typeName === 'ZodEffects') {
-		return zodToExpandedType(
-			(typeName === 'ZodOptional'
-				? def.innerType
-				: def.schema) as ZodTypeAny,
-			depth,
-		);
+	if (isOptionalish(typeName)) {
+		const inner = getZodInner(def);
+		return inner ? zodToExpandedType(inner, depth) : 'unknown';
 	}
 	if (typeName !== 'ZodObject') return zodToInlineType(schema);
 
-	const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+	const shape = getZodShape(schema, def);
 	const entries = Object.entries(shape);
 	if (entries.length === 0) return '{}';
 
@@ -95,27 +232,206 @@ function zodToExpandedType(schema: ZodTypeAny, depth: number): string {
 	const lines: string[] = [];
 
 	for (const [key, val] of entries) {
-		const valDef = (val as { _def: Record<string, unknown> })._def;
-		const ft = valDef.typeName as string | undefined;
+		const valDef = getZodDef(val);
+		const ft = getZodTypeName(valDef);
 		const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
 		const k = optional ? `${key}?` : key;
 
 		// Unwrap optional/nullable to check whether the inner type is an object worth expanding
 		const innerVal =
 			ft === 'ZodOptional' || ft === 'ZodNullable'
-				? (valDef.innerType as ZodTypeAny)
+				? (getZodInner(valDef) ?? val)
 				: val;
-		const innerTypeName = (innerVal as { _def: Record<string, unknown> })?._def
-			?.typeName as string | undefined;
+		const innerDef = getZodDef(innerVal);
+		const innerTypeName = getZodTypeName(innerDef);
+		const description = collectZodDescription(val);
+		const comment = description ? `  // ${description}` : '';
 
 		if (innerTypeName === 'ZodObject') {
-			lines.push(`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}`);
+			lines.push(
+				`${pad}${k}: ${zodToExpandedType(innerVal, depth + 1)}${comment}`,
+			);
 		} else {
-			lines.push(`${pad}${k}: ${zodToInlineType(val)}`);
+			lines.push(`${pad}${k}: ${zodToInlineType(val)}${comment}`);
 		}
 	}
 
 	return `{\n${lines.join('\n')}\n${closePad}}`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Structured Form Schema (JSON-serializable, for UI form generation)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type FormFieldSchema =
+	| { kind: 'string'; optional: boolean; description?: string; enum?: string[] }
+	| { kind: 'number'; optional: boolean; description?: string }
+	| { kind: 'boolean'; optional: boolean; description?: string }
+	| {
+			kind: 'literal';
+			optional: boolean;
+			description?: string;
+			value: string | number | boolean;
+	  }
+	| {
+			kind: 'object';
+			optional: boolean;
+			description?: string;
+			fields: Record<string, FormFieldSchema>;
+	  }
+	| {
+			kind: 'array';
+			optional: boolean;
+			description?: string;
+			items: FormFieldSchema;
+	  }
+	| { kind: 'unknown'; optional: boolean; description?: string };
+
+function zodToFormSchema(schema: ZodTypeAny): FormFieldSchema {
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
+	const description = getZodDescription(schema, def);
+
+	switch (typeName) {
+		case 'ZodString':
+			return { kind: 'string', optional: false, description };
+		case 'ZodNumber':
+			return { kind: 'number', optional: false, description };
+		case 'ZodBoolean':
+			return { kind: 'boolean', optional: false, description };
+		case 'ZodLiteral': {
+			const raw = def.value ?? getZodOptions(def)[0];
+			const val: string | number | boolean =
+				typeof raw === 'string' ||
+				typeof raw === 'number' ||
+				typeof raw === 'boolean'
+					? raw
+					: String(raw ?? '');
+			return {
+				kind: 'literal',
+				optional: false,
+				description,
+				value: val,
+			};
+		}
+		case 'ZodEnum': {
+			const values = getZodOptions(def).map((v) => String(v));
+			return { kind: 'string', optional: false, description, enum: values };
+		}
+		case 'ZodOptional': {
+			const inner = getZodInner(def);
+			const base = inner
+				? zodToFormSchema(inner)
+				: { kind: 'unknown' as const, optional: false };
+			return {
+				...base,
+				optional: true,
+				description: description ?? base.description,
+			};
+		}
+		case 'ZodNullable': {
+			const inner = getZodInner(def);
+			const base = inner
+				? zodToFormSchema(inner)
+				: { kind: 'unknown' as const, optional: false };
+			return {
+				...base,
+				optional: true,
+				description: description ?? base.description,
+			};
+		}
+		case 'ZodDefault':
+		case 'ZodCatch': {
+			const inner = getZodInner(def);
+			return inner
+				? { ...zodToFormSchema(inner), description }
+				: { kind: 'unknown', optional: false, description };
+		}
+		case 'ZodArray': {
+			const itemType = getZodArrayItem(def);
+			return {
+				kind: 'array',
+				optional: false,
+				description,
+				items: itemType
+					? zodToFormSchema(itemType)
+					: { kind: 'unknown', optional: false },
+			};
+		}
+		case 'ZodObject': {
+			const shape = getZodShape(schema, def);
+			const fields: Record<string, FormFieldSchema> = {};
+			for (const [key, val] of Object.entries(shape)) {
+				fields[key] = zodToFormSchema(val);
+			}
+			return { kind: 'object', optional: false, description, fields };
+		}
+		case 'ZodRecord':
+			return { kind: 'unknown', optional: false, description };
+		case 'ZodUnion': {
+			// For unions, try to pick the first object or fall back to unknown
+			const options = getZodOptions(def);
+			for (const opt of options) {
+				const optDef = getZodDef(opt as ZodTypeAny);
+				if (getZodTypeName(optDef) === 'ZodObject') {
+					return { ...zodToFormSchema(opt as ZodTypeAny), description };
+				}
+			}
+			return { kind: 'unknown', optional: false, description };
+		}
+		case 'ZodIntersection':
+		case 'ZodPipe':
+		case 'ZodTransform':
+		case 'ZodEffects': {
+			const inner = getZodInner(def);
+			return inner
+				? { ...zodToFormSchema(inner), description }
+				: { kind: 'unknown', optional: false, description };
+		}
+		default:
+			return { kind: 'unknown', optional: false, description };
+	}
+}
+
+export function getStructuredSchema(
+	plugins: readonly CorsairPlugin[],
+	path: string,
+): {
+	input: FormFieldSchema | null;
+	output: FormFieldSchema | null;
+	description?: string;
+} | null {
+	const normalised = path.toLowerCase();
+	const dotIndex = normalised.indexOf('.');
+	if (dotIndex === -1) return null;
+
+	const pluginId = normalised.slice(0, dotIndex);
+	const remainder = normalised.slice(dotIndex + 1);
+	const plugin = plugins.find((p) => p.id === pluginId);
+	if (!plugin) return null;
+
+	// Only API endpoints have structured input schemas
+	let endpointPath = remainder;
+	if (endpointPath.startsWith('api.')) {
+		endpointPath = endpointPath.slice(4);
+	}
+
+	const meta = findEndpointCaseInsensitive(
+		plugin.endpointMeta as Record<string, EndpointMetaEntry> | undefined,
+		endpointPath,
+	);
+	const schemas = findEndpointCaseInsensitive(
+		plugin.endpointSchemas,
+		endpointPath,
+	);
+
+	if (!meta && !schemas) return null;
+
+	return {
+		input: schemas?.input ? zodToFormSchema(schemas.input) : null,
+		output: schemas?.output ? zodToFormSchema(schemas.output) : null,
+		description: meta?.description,
+	};
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -130,20 +446,20 @@ const DATE_OPERATORS = ['equals', 'before', 'after', 'between'];
 type DbFieldType = 'string' | 'number' | 'boolean' | 'date';
 
 /**
- * Unwraps Optional/Nullable/Default/Effects wrappers to find the primitive leaf type.
+ * Unwraps Optional/Nullable/Default wrappers to find the primitive leaf type.
  * Returns null for complex types (objects, arrays, unions) that are not directly filterable.
  */
 function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 	switch (typeName) {
 		case 'ZodOptional':
 		case 'ZodNullable':
 		case 'ZodDefault':
-			return getSchemaLeafType(def.innerType as ZodTypeAny);
-		case 'ZodEffects':
-			// Covers z.coerce.date() and other transforms
-			return getSchemaLeafType(def.schema as ZodTypeAny);
+		case 'ZodCatch': {
+			const inner = getZodInner(def);
+			return inner ? getSchemaLeafType(inner) : null;
+		}
 		case 'ZodString':
 			return 'string';
 		case 'ZodNumber':
@@ -165,22 +481,16 @@ function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
 function buildFilterableFields(
 	schema: ZodTypeAny,
 ): Record<string, { type: DbFieldType; operators: string[] }> {
-	const def = (schema as { _def: Record<string, unknown> })._def;
-	const typeName = def.typeName as string | undefined;
+	const def = getZodDef(schema);
+	const typeName = getZodTypeName(def);
 
-	if (
-		typeName === 'ZodOptional' ||
-		typeName === 'ZodNullable' ||
-		typeName === 'ZodDefault'
-	) {
-		return buildFilterableFields(def.innerType as ZodTypeAny);
-	}
-	if (typeName === 'ZodEffects') {
-		return buildFilterableFields(def.schema as ZodTypeAny);
+	if (isOptionalish(typeName)) {
+		const inner = getZodInner(def);
+		return inner ? buildFilterableFields(inner) : {};
 	}
 	if (typeName !== 'ZodObject') return {};
 
-	const shape = (def.shape as () => Record<string, ZodTypeAny>)();
+	const shape = getZodShape(schema, def);
 	const result: Record<string, { type: DbFieldType; operators: string[] }> = {};
 	for (const [key, fieldSchema] of Object.entries(shape)) {
 		const leafType = getSchemaLeafType(fieldSchema);
@@ -240,63 +550,6 @@ export type ListOperationsOptions = {
 	 * - 'db' — lists searchable database entity paths (one .search per entity type)
 	 */
 	type?: 'api' | 'webhooks' | 'db';
-};
-
-export type CorsairInspectMethods = {
-	/**
-	 * Lists available operations (API endpoints, webhooks, or database entities) for the configured plugins.
-	 *
-	 * - No options → all API endpoint paths across every plugin, keyed by plugin ID
-	 * - `{ type: 'webhooks' }` → all webhook paths across every plugin, keyed by plugin ID
-	 * - `{ type: 'db' }` → all searchable DB entity paths across every plugin, keyed by plugin ID
-	 * - `{ plugin: 'slack' }` → Slack API endpoint paths as a flat array
-	 * - `{ plugin: 'slack', type: 'webhooks' }` → Slack webhook paths as a flat array
-	 * - `{ plugin: 'slack', type: 'db' }` → Slack DB entity search paths as a flat array
-	 * - If the plugin is known but not configured, returns a plain string message.
-	 * - If the plugin string is completely unrecognised, returns all API endpoints (same as no options).
-	 *
-	 * API paths use the format `plugin.api.group.method` (e.g. `slack.api.messages.post`).
-	 * Webhook paths use the format `plugin.webhooks.group.event` (e.g. `slack.webhooks.messages.message`).
-	 * DB paths use the format `plugin.db.entityType.search` (e.g. `slack.db.messages.search`).
-	 * All paths can be passed directly to `get_schema()`.
-	 *
-	 * @example
-	 * corsair.list_operations()
-	 * // { slack: ['slack.api.channels.list', 'slack.api.messages.post', ...], ... }
-	 *
-	 * corsair.list_operations({ plugin: 'slack' })
-	 * // ['slack.api.channels.list', 'slack.api.messages.post', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'slack', type: 'webhooks' })
-	 * // ['slack.webhooks.messages.message', 'slack.webhooks.channels.created', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'slack', type: 'db' })
-	 * // ['slack.db.messages.search', 'slack.db.channels.search', 'slack.db.users.search', ...]
-	 *
-	 * corsair.list_operations({ plugin: 'unknown' })
-	 * // "unknown isn't configured in the Corsair instance."
-	 */
-	list_operations(
-		options?: ListOperationsOptions,
-	): Record<string, string[]> | string[] | string;
-	/**
-	 * Returns a plain-text TypeScript-style type declaration for a specific operation path.
-	 * The path format determines which kind of schema is returned:
-	 * - API path (`plugin.api.group.method`) → description, risk level, input/output types
-	 * - Webhook path (`plugin.webhooks.group.event`) → description, payload/response types, usage snippet
-	 * - DB path (`plugin.db.entityType.search`) → description, filterable fields with operators
-	 *
-	 * Casing is ignored — the path is lowercased before lookup.
-	 * If the path is not found, returns a list of available paths for self-correction.
-	 *
-	 * @example
-	 * corsair.get_schema('slack.api.messages.post')
-	 * // "Post a message to a channel  [write]\n\ninput {\n  channel: string\n  text?: string\n  ..."
-	 *
-	 * corsair.get_schema('slack.api.invalid')
-	 * // "Path not found. Available operations:\n  slack: slack.api.channels.list, ..."
-	 */
-	get_schema(path: string): string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -395,16 +648,14 @@ function resolveWebhookPathOriginalCase(
 
 /**
  * Builds a ready-to-copy code snippet showing how to configure a specific webhook.
- * The response.data type (if available) is embedded as an inline comment inside the after hook.
+ * Response shape is documented separately (e.g. generated webhooks MDX); the after hook is left empty.
  *
- * @param pluginId         Plugin ID (e.g. 'slack')
- * @param pathParts        Original-cased path segments (e.g. ['messages', 'message'])
- * @param responseTypeStr  Inline type string for response.data, or null if no schema registered
+ * @param pluginId   Plugin ID (e.g. 'slack')
+ * @param pathParts  Original-cased path segments (e.g. ['messages', 'message'])
  */
 function buildWebhookUsageExample(
 	pluginId: string,
 	pathParts: string[],
-	responseTypeStr: string | null,
 ): string {
 	const lines: string[] = [];
 
@@ -426,11 +677,6 @@ function buildWebhookUsageExample(
 	lines.push(`${hookIndent}},`);
 
 	lines.push(`${hookIndent}after(ctx, response) {`);
-	lines.push(
-		responseTypeStr !== null
-			? `${bodyIndent}// response.data: ${responseTypeStr}`
-			: `${bodyIndent}// response.data: unknown (register webhookSchemas to see the type)`,
-	);
 	lines.push(`${hookIndent}},`);
 
 	// Close nested key blocks (innermost first)
@@ -460,7 +706,7 @@ const KNOWN_PLUGIN_IDS = new Set<string>(BaseProviders);
 // Core Functions
 // ─────────────────────────────────────────────────────────────────────────────
 
-function listOperations(
+export function listOperations(
 	plugins: readonly CorsairPlugin[],
 	options?: ListOperationsOptions,
 ): Record<string, string[]> | string[] | string {
@@ -545,13 +791,38 @@ function findEndpointCaseInsensitive<T>(
 	return undefined;
 }
 
+/**
+ * `list_operations` paths look like `spotify.api.player.addToQueue`. Strip the plugin id and
+ * optional `api.` prefix. Preserves camelCase on the remainder for docs (`player.addToQueue`).
+ * Lookup keys for `endpointMeta` / `endpointSchemas` remain case-insensitive.
+ */
+function apiEndpointShortPathAndLookupKey(
+	fullPath: string,
+	pluginId: string,
+): { shortPath: string; lookupKey: string } {
+	const lower = fullPath.toLowerCase();
+	const pid = pluginId.toLowerCase();
+	if (!lower.startsWith(`${pid}.`)) {
+		const remainder = lower.slice(pluginId.length + 1);
+		let ep = remainder.startsWith('.') ? remainder.slice(1) : remainder;
+		if (ep.startsWith('api.')) {
+			ep = ep.slice(4);
+		}
+		return { shortPath: ep, lookupKey: ep };
+	}
+	let rest = fullPath.slice(pluginId.length + 1);
+	if (rest.toLowerCase().startsWith('api.')) {
+		rest = rest.slice(4);
+	}
+	return { shortPath: rest, lookupKey: rest.toLowerCase() };
+}
+
 function formatAvailablePaths(
 	paths: Record<string, string[]> | string[] | string,
 	label: string,
 ): string {
 	if (typeof paths === 'string') return paths;
-	if (Array.isArray(paths))
-		return `${label}:\n  ${paths.join(', ')}`;
+	if (Array.isArray(paths)) return `${label}:\n  ${paths.join(', ')}`;
 	return (
 		`${label}:\n` +
 		Object.entries(paths)
@@ -560,7 +831,10 @@ function formatAvailablePaths(
 	);
 }
 
-function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
+export function getSchema(
+	plugins: readonly CorsairPlugin[],
+	path: string,
+): string {
 	// Normalise casing so the agent can call with any capitalisation
 	const normalised = path.toLowerCase();
 	const dotIndex = normalised.indexOf('.');
@@ -635,14 +909,14 @@ function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 						if (schemas?.description) parts.push(schemas.description);
 						if (schemas?.payload) {
 							parts.push(
-								`payload ${zodToExpandedType(schemas.payload, 0)}`,
+								`payload ${formatDocSchemaShape(zodToDocSchemaShape(schemas.payload))}`,
 							);
 						}
 						if (responseTypeStr) {
 							parts.push(`response: ${responseTypeStr}`);
 						}
 						parts.push(
-							`usage:\n${buildWebhookUsageExample(pluginId, originalPathParts, responseTypeStr)}`,
+							`usage:\n${buildWebhookUsageExample(pluginId, originalPathParts)}`,
 						);
 						return parts.join('\n\n');
 					}
@@ -683,10 +957,14 @@ function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 				if (header) parts.push(header);
 
 				if (schemas?.input) {
-					parts.push(`input ${zodToExpandedType(schemas.input, 0)}`);
+					parts.push(
+						`input ${formatDocSchemaShape(zodToDocSchemaShape(schemas.input))}`,
+					);
 				}
 				if (schemas?.output) {
-					parts.push(`output ${zodToExpandedType(schemas.output, 0)}`);
+					parts.push(
+						`output ${formatDocSchemaShape(zodToDocSchemaShape(schemas.output))}`,
+					);
 				}
 				return parts.join('\n\n');
 			}
@@ -701,22 +979,291 @@ function getSchema(plugins: readonly CorsairPlugin[], path: string): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Factory — binds inspect methods to a fixed plugin list
+// Docs-only introspection (structured I/O for documentation generators)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Creates the list_operations / get_schema functions bound to a specific plugin list.
- * Used by both single-tenant and multi-tenant client builders.
+ * One row in an input/output table — typically a top-level Zod object property.
+ * Nested shapes are collapsed into {@link DocSchemaFieldRow.type} via `zodToInlineType`
+ * so tables stay scannable.
  */
-export function buildInspectMethods(
+export type DocSchemaFieldRow = {
+	key: string;
+	optional: boolean;
+	/** TypeScript-like type string (nested objects stay on one line) */
+	type: string;
+	description?: string;
+};
+
+/**
+ * Either an object broken out as field rows, or a single inline type (arrays, unions, etc.).
+ */
+export type DocSchemaShape =
+	| { kind: 'object'; fields: DocSchemaFieldRow[] }
+	| { kind: 'inline'; type: string };
+
+export type DocsApiEndpoint = {
+	path: string;
+	/** Dot path after `plugin.api.` (e.g. `messages.post`) */
+	shortPath: string;
+	description?: string;
+	riskLevel?: EndpointRiskLevel;
+	irreversible?: boolean;
+	input: DocSchemaShape;
+	output: DocSchemaShape;
+};
+
+export type DocsWebhook = {
+	path: string;
+	description?: string;
+	payload: DocSchemaShape;
+	responseType?: string;
+	/** Ready-to-paste `webhookHooks` snippet (same idea as `get_schema` text output) */
+	usageExample: string;
+};
+
+export type DocsDbFilterField = {
+	field: string;
+	type: 'string' | 'number' | 'boolean' | 'date';
+	operators: readonly string[];
+};
+
+export type DocsDbEntity = {
+	path: string;
+	entityName: string;
+	/** Always includes the synthetic `entity_id` row first, then entity filter fields */
+	filters: DocsDbFilterField[];
+};
+
+export type PluginDocsIntrospection = {
+	pluginId: string;
+	api: DocsApiEndpoint[];
+	webhooks: DocsWebhook[];
+	db: DocsDbEntity[];
+};
+
+export type IntrospectPluginForDocsResult =
+	| { ok: true; data: PluginDocsIntrospection }
+	| { ok: false; error: string };
+
+function unwrapZodForDocs(schema: ZodTypeAny): ZodTypeAny {
+	let current = schema;
+	for (;;) {
+		const def = getZodDef(current);
+		const typeName = getZodTypeName(def);
+		if (isOptionalish(typeName)) {
+			const inner = getZodInner(def);
+			if (!inner) return current;
+			current = inner;
+			continue;
+		}
+		return current;
+	}
+}
+
+function zodToDocSchemaShape(schema: ZodTypeAny | undefined): DocSchemaShape {
+	if (schema === undefined) {
+		return { kind: 'inline', type: 'unknown' };
+	}
+	const base = unwrapZodForDocs(schema);
+	const def = getZodDef(base);
+	const typeName = getZodTypeName(def);
+	if (typeName === 'ZodObject') {
+		const shape = getZodShape(base, def);
+		const fields: DocSchemaFieldRow[] = [];
+		for (const [key, val] of Object.entries(shape)) {
+			const valDef = getZodDef(val);
+			const ft = getZodTypeName(valDef);
+			const optional = ft === 'ZodOptional' || ft === 'ZodNullable';
+			const inner = unwrapZodForDocs(val);
+			const description = collectZodDescription(val);
+			fields.push({
+				key,
+				optional,
+				type: zodToInlineType(inner),
+				...(description !== undefined ? { description } : {}),
+			});
+		}
+		return { kind: 'object', fields };
+	}
+	return { kind: 'inline', type: zodToInlineType(base) };
+}
+
+/**
+ * Renders a {@link DocSchemaShape} as a TypeScript-like block with `// description`
+ * comments on each field row. Used by `getSchema`, catalog builders, and hosted MCP.
+ */
+export function formatDocSchemaShape(
+	shape: DocSchemaShape | undefined,
+	depth = 0,
+): string {
+	if (shape === undefined) return '{}';
+	if (shape.kind === 'inline') return shape.type;
+	if (shape.kind === 'object') {
+		if (shape.fields.length === 0) return '{}';
+		const pad = INDENT.repeat(depth + 1);
+		const closePad = INDENT.repeat(depth);
+		const lines = shape.fields.map((field) => {
+			const key = field.optional ? `${field.key}?` : field.key;
+			const comment = field.description ? `  // ${field.description}` : '';
+			return `${pad}${key}: ${field.type}${comment}`;
+		});
+		return `{\n${lines.join('\n')}\n${closePad}}`;
+	}
+	return 'unknown';
+}
+
+/**
+ * Returns structured API, webhook, and DB operation metadata for a single plugin.
+ * Intended for **documentation generators** inside the Corsair repo (or tooling that depends
+ * on `corsair` as a library). It does not shell out to the CLI and does not require a
+ * `corsair.ts` file — pass the same `plugins` array you pass to `createCorsair`.
+ *
+ * Input/output shapes favour **small tables**: top-level object keys become rows; nested
+ * objects are rendered as compact inline types so pages do not overwhelm readers.
+ */
+export function introspectPluginForDocs(
 	plugins: readonly CorsairPlugin[],
-): CorsairInspectMethods {
+	pluginId: string,
+): IntrospectPluginForDocsResult {
+	const apiListResult = listOperations(plugins, {
+		plugin: pluginId,
+		type: 'api',
+	});
+	if (typeof apiListResult === 'string') {
+		return { ok: false, error: apiListResult };
+	}
+	if (!Array.isArray(apiListResult)) {
+		return {
+			ok: false,
+			error:
+				'list_operations did not return a path array — pass a configured plugin id.',
+		};
+	}
+
+	const plugin = plugins.find((p) => p.id === pluginId);
+	if (!plugin) {
+		return {
+			ok: false,
+			error: `Plugin "${pluginId}" is not configured on this instance.`,
+		};
+	}
+
+	const api: DocsApiEndpoint[] = [];
+	for (const path of apiListResult) {
+		const { shortPath, lookupKey } = apiEndpointShortPathAndLookupKey(
+			path,
+			pluginId,
+		);
+
+		const meta = findEndpointCaseInsensitive(
+			plugin.endpointMeta as Record<string, EndpointMetaEntry> | undefined,
+			lookupKey,
+		);
+		const schemas = findEndpointCaseInsensitive(
+			plugin.endpointSchemas,
+			lookupKey,
+		);
+		if (!meta && !schemas) continue;
+
+		api.push({
+			path,
+			shortPath,
+			description: meta?.description,
+			riskLevel: meta?.riskLevel,
+			irreversible: meta?.irreversible,
+			input: zodToDocSchemaShape(schemas?.input),
+			output: zodToDocSchemaShape(schemas?.output),
+		});
+	}
+	api.sort((a, b) => a.path.localeCompare(b.path));
+
+	const webhooks: DocsWebhook[] = [];
+	const whListResult = listOperations(plugins, {
+		plugin: pluginId,
+		type: 'webhooks',
+	});
+	if (Array.isArray(whListResult) && plugin.webhooks) {
+		for (const path of whListResult) {
+			const normalised = path.toLowerCase();
+			const remainder = normalised.slice(pluginId.length + 1);
+			const rest = remainder.startsWith('.') ? remainder.slice(1) : remainder;
+			if (!rest.startsWith('webhooks.')) continue;
+			const webhookPathNormalised = rest.slice(9);
+			const originalPathParts = resolveWebhookPathOriginalCase(
+				plugin.webhooks as Record<string, unknown>,
+				webhookPathNormalised.split('.'),
+			);
+			if (originalPathParts === null) continue;
+			const originalPath = originalPathParts.join('.');
+			const ws = findEndpointCaseInsensitive(
+				plugin.webhookSchemas,
+				originalPath.toLowerCase(),
+			);
+			const responseTypeStr = ws?.response
+				? zodToInlineType(ws.response)
+				: undefined;
+			webhooks.push({
+				path,
+				description: ws?.description,
+				payload: zodToDocSchemaShape(ws?.payload),
+				responseType: responseTypeStr,
+				usageExample: buildWebhookUsageExample(pluginId, originalPathParts),
+			});
+		}
+	}
+	webhooks.sort((a, b) => a.path.localeCompare(b.path));
+
+	const db: DocsDbEntity[] = [];
+	const dbListResult = listOperations(plugins, {
+		plugin: pluginId,
+		type: 'db',
+	});
+	const entities = (
+		plugin.schema as CorsairPluginSchema<Record<string, ZodTypeAny>> | undefined
+	)?.entities;
+
+	if (Array.isArray(dbListResult) && entities) {
+		for (const path of dbListResult) {
+			const normalised = path.toLowerCase();
+			const remainder = normalised.slice(pluginId.length + 1);
+			const rest = remainder.startsWith('.') ? remainder.slice(1) : remainder;
+			if (!rest.startsWith('db.')) continue;
+			const dbPath = rest.slice(3);
+			const lastDot = dbPath.lastIndexOf('.');
+			if (lastDot === -1) continue;
+			const entityNameLower = dbPath.slice(0, lastDot);
+			const method = dbPath.slice(lastDot + 1);
+			if (method !== 'search') continue;
+			const entry = findEntityCaseInsensitive(entities, entityNameLower);
+			if (!entry) continue;
+			const [entityName, entitySchema] = entry;
+			const ff = buildFilterableFields(entitySchema);
+			const entityFilters: DocsDbFilterField[] = Object.entries(ff).map(
+				([field, info]) => ({
+					field,
+					type: info.type,
+					operators: info.operators,
+				}),
+			);
+			db.push({
+				path,
+				entityName,
+				filters: [
+					{
+						field: 'entity_id',
+						type: 'string',
+						operators: STRING_OPERATORS,
+					},
+					...entityFilters,
+				],
+			});
+		}
+	}
+	db.sort((a, b) => a.path.localeCompare(b.path));
+
 	return {
-		list_operations(options?: ListOperationsOptions) {
-			return listOperations(plugins, options);
-		},
-		get_schema(path: string): string {
-			return getSchema(plugins, path);
-		},
+		ok: true,
+		data: { pluginId, api, webhooks, db },
 	};
 }

@@ -1,0 +1,3425 @@
+---
+title: API
+description: "API reference for Slack: every `slack.api.*` operation with input and output types."
+---
+
+Every `slack.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Channels
+
+### archive
+
+`channels.archive`
+
+Archive a Slack channel [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slack.api.channels.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### close
+
+`channels.close`
+
+Close a direct message or multi-party DM
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.close({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `no_op` | `boolean` | No | — |
+| `already_closed` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`channels.create`
+
+Create a new Slack channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_private` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`channels.get`
+
+Get info about a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.channels.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `include_locale` | `boolean` | No | — |
+| `include_num_members` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistory
+
+`channels.getHistory`
+
+Fetch message history for a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.channels.getHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `latest` | `string` | No | — |
+| `oldest` | `string` | No | — |
+| `inclusive` | `boolean` | No | — |
+| `include_all_metadata` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `messages` | `object[]` | No | — |
+| `has_more` | `boolean` | No | — |
+| `pin_count` | `number` | No | — |
+| `channel_actions_count` | `number` | No | — |
+| `channel_actions_ts` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  text?: string,
+  ts?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  icons?: {
+    emoji?: string,
+    image_36?: string,
+    image_48?: string,
+    image_72?: string
+  },
+  blocks?: {
+    type: string
+  }[],
+  attachments?: {
+  }[],
+  thread_ts?: string,
+  parent_user_id?: string,
+  reply_count?: number,
+  reply_users_count?: number,
+  latest_reply?: string,
+  reply_users?: string[],
+  is_locked?: boolean,
+  subscribed?: boolean,
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[],
+  edited?: {
+    user: string,
+    ts: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMembers
+
+`channels.getMembers`
+
+List members of a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.channels.getMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `members` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReplies
+
+`channels.getReplies`
+
+Fetch replies for a thread
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.channels.getReplies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+| `latest` | `string` | No | — |
+| `oldest` | `string` | No | — |
+| `inclusive` | `boolean` | No | — |
+| `include_all_metadata` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `messages` | `object[]` | No | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  text?: string,
+  ts?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  icons?: {
+    emoji?: string,
+    image_36?: string,
+    image_48?: string,
+    image_72?: string
+  },
+  blocks?: {
+    type: string
+  }[],
+  attachments?: {
+  }[],
+  thread_ts?: string,
+  parent_user_id?: string,
+  reply_count?: number,
+  reply_users_count?: number,
+  latest_reply?: string,
+  reply_users?: string[],
+  is_locked?: boolean,
+  subscribed?: boolean,
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[],
+  edited?: {
+    user: string,
+    ts: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invite
+
+`channels.invite`
+
+Invite users to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.invite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `users` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### join
+
+`channels.join`
+
+Join a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.join({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+| `warning` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kick
+
+`channels.kick`
+
+Remove a user from a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.kick({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### leave
+
+`channels.leave`
+
+Leave a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.leave({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `not_in_channel` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`channels.list`
+
+List all channels in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.channels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exclude_archived` | `boolean` | No | — |
+| `types` | `string` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### open
+
+`channels.open`
+
+Open a direct message or multi-party DM
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.open({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `users` | `string` | No | — |
+| `prevent_creation` | `boolean` | No | — |
+| `return_im` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+| `no_op` | `boolean` | No | — |
+| `already_open` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`channels.rename`
+
+Rename a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setPurpose
+
+`channels.setPurpose`
+
+Set the purpose of a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.setPurpose({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `purpose` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+| `purpose` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setTopic
+
+`channels.setTopic`
+
+Set the topic of a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.setTopic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `topic` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `object` | No | — |
+| `topic` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unarchive
+
+`channels.unarchive`
+
+Unarchive a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.channels.unarchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### get
+
+`files.get`
+
+Get info about a file
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `file` | `object` | No | — |
+| `comments` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  created?: number,
+  timestamp?: number,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  pretty_type?: string,
+  user?: string,
+  user_team?: string,
+  editable?: boolean,
+  size?: number,
+  mode?: string,
+  is_external?: boolean,
+  external_type?: string,
+  is_public?: boolean,
+  public_url_shared?: boolean,
+  display_as_bot?: boolean,
+  username?: string,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  channels?: string[],
+  groups?: string[],
+  ims?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="comments full type">
+
+```ts
+{
+  id: string,
+  timestamp: number,
+  user: string,
+  comment: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  count: number,
+  total: number,
+  page: number,
+  pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List files in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `user` | `string` | No | — |
+| `types` | `string` | No | — |
+| `ts_from` | `string` | No | — |
+| `ts_to` | `string` | No | — |
+| `show_files_hidden_by_limit` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `files` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  id: string,
+  created?: number,
+  timestamp?: number,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  pretty_type?: string,
+  user?: string,
+  user_team?: string,
+  editable?: boolean,
+  size?: number,
+  mode?: string,
+  is_external?: boolean,
+  external_type?: string,
+  is_public?: boolean,
+  public_url_shared?: boolean,
+  display_as_bot?: boolean,
+  username?: string,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  channels?: string[],
+  groups?: string[],
+  ims?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  count: number,
+  total: number,
+  page: number,
+  pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file to Slack
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `string` | No | — |
+| `content` | `string` | No | — |
+| `file` | `any` | No | — |
+| `filename` | `string` | No | — |
+| `filetype` | `string` | No | — |
+| `initial_comment` | `string` | No | — |
+| `thread_ts` | `string` | No | — |
+| `title` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `file` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  created?: number,
+  timestamp?: number,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  pretty_type?: string,
+  user?: string,
+  user_team?: string,
+  editable?: boolean,
+  size?: number,
+  mode?: string,
+  is_external?: boolean,
+  external_type?: string,
+  is_public?: boolean,
+  public_url_shared?: boolean,
+  display_as_bot?: boolean,
+  username?: string,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  channels?: string[],
+  groups?: string[],
+  ims?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Delete a message [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.slack.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+| `as_user` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `string` | No | — |
+| `ts` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPermalink
+
+`messages.getPermalink`
+
+Get a permalink for a message
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.messages.getPermalink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `message_ts` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `string` | No | — |
+| `permalink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### post
+
+`messages.post`
+
+Post a message to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.messages.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `thread_ts` | `string` | No | — |
+| `reply_broadcast` | `boolean` | No | — |
+| `parse` | `full \| none` | No | — |
+| `link_names` | `boolean` | No | — |
+| `unfurl_links` | `boolean` | No | — |
+| `unfurl_media` | `boolean` | No | — |
+| `mrkdwn` | `boolean` | No | — |
+| `as_user` | `boolean` | No | — |
+| `icon_emoji` | `string` | No | — |
+| `icon_url` | `string` | No | — |
+| `username` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  event_type: string,
+  event_payload: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `string` | No | — |
+| `ts` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  text?: string,
+  ts?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  icons?: {
+    emoji?: string,
+    image_36?: string,
+    image_48?: string,
+    image_72?: string
+  },
+  blocks?: {
+    type: string
+  }[],
+  attachments?: {
+  }[],
+  thread_ts?: string,
+  parent_user_id?: string,
+  reply_count?: number,
+  reply_users_count?: number,
+  latest_reply?: string,
+  reply_users?: string[],
+  is_locked?: boolean,
+  subscribed?: boolean,
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[],
+  edited?: {
+    user: string,
+    ts: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`messages.search`
+
+Search messages in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.messages.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `sort` | `score \| timestamp` | No | — |
+| `sort_dir` | `asc \| desc` | No | — |
+| `highlight` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `query` | `string` | No | — |
+| `messages` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  total?: number,
+  pagination?: {
+    total_count?: number,
+    page?: number,
+    per_page?: number,
+    page_count?: number,
+    first?: number,
+    last?: number
+  },
+  paging?: {
+    count: number,
+    total: number,
+    page: number,
+    pages: number
+  },
+  matches?: {
+    type?: string,
+    subtype?: string,
+    text?: string,
+    ts?: string,
+    user?: string,
+    bot_id?: string,
+    app_id?: string,
+    team?: string,
+    username?: string,
+    icons?: {
+      emoji?: string,
+      image_36?: string,
+      image_48?: string,
+      image_72?: string
+    },
+    blocks?: {
+      type: string
+    }[],
+    attachments?: {
+    }[],
+    thread_ts?: string,
+    parent_user_id?: string,
+    reply_count?: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    is_locked?: boolean,
+    subscribed?: boolean,
+    reactions?: {
+      name: string,
+      count: number,
+      users: string[]
+    }[],
+    edited?: {
+      user: string,
+      ts: string
+    },
+    channel?: {
+      id: string,
+      name?: string
+    },
+    permalink?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Update an existing message
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.messages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `ts` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `blocks` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `parse` | `full \| none` | No | — |
+| `link_names` | `boolean` | No | — |
+| `as_user` | `boolean` | No | — |
+| `file_ids` | `string[]` | No | — |
+| `reply_broadcast` | `boolean` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="blocks full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  event_type: string,
+  event_payload: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channel` | `string` | No | — |
+| `ts` | `string` | No | — |
+| `text` | `string` | No | — |
+| `message` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  text?: string,
+  ts?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  icons?: {
+    emoji?: string,
+    image_36?: string,
+    image_48?: string,
+    image_72?: string
+  },
+  blocks?: {
+    type: string
+  }[],
+  attachments?: {
+  }[],
+  thread_ts?: string,
+  parent_user_id?: string,
+  reply_count?: number,
+  reply_users_count?: number,
+  latest_reply?: string,
+  reply_users?: string[],
+  is_locked?: boolean,
+  subscribed?: boolean,
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[],
+  edited?: {
+    user: string,
+    ts: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reactions
+
+### add
+
+`reactions.add`
+
+Add a reaction emoji to a message
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.reactions.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`reactions.get`
+
+Get reactions for a message
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.reactions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `file` | `string` | No | — |
+| `file_comment` | `string` | No | — |
+| `full` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `type` | `string` | No | — |
+| `channel` | `string` | No | — |
+| `message` | `object` | No | — |
+| `file` | `object` | No | — |
+| `comment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="message full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  text?: string,
+  ts?: string,
+  user?: string,
+  bot_id?: string,
+  app_id?: string,
+  team?: string,
+  username?: string,
+  icons?: {
+    emoji?: string,
+    image_36?: string,
+    image_48?: string,
+    image_72?: string
+  },
+  blocks?: {
+    type: string
+  }[],
+  attachments?: {
+  }[],
+  thread_ts?: string,
+  parent_user_id?: string,
+  reply_count?: number,
+  reply_users_count?: number,
+  latest_reply?: string,
+  reply_users?: string[],
+  is_locked?: boolean,
+  subscribed?: boolean,
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[],
+  edited?: {
+    user: string,
+    ts: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+{
+  id: string,
+  created?: number,
+  timestamp?: number,
+  name?: string,
+  title?: string,
+  mimetype?: string,
+  filetype?: string,
+  pretty_type?: string,
+  user?: string,
+  user_team?: string,
+  editable?: boolean,
+  size?: number,
+  mode?: string,
+  is_external?: boolean,
+  external_type?: string,
+  is_public?: boolean,
+  public_url_shared?: boolean,
+  display_as_bot?: boolean,
+  username?: string,
+  url_private?: string,
+  url_private_download?: string,
+  permalink?: string,
+  permalink_public?: string,
+  channels?: string[],
+  groups?: string[],
+  ims?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="comment full type">
+
+```ts
+{
+  id: string,
+  comment: string,
+  reactions?: {
+    name: string,
+    count: number,
+    users: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`reactions.remove`
+
+Remove a reaction emoji from a message
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.reactions.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `channel` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `file` | `string` | No | — |
+| `file_comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stars
+
+### add
+
+`stars.add`
+
+Star an item
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.stars.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `file` | `string` | No | — |
+| `file_comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stars.list`
+
+List starred items for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.stars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `items` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  type: string,
+  channel?: string,
+  message?: {
+    type?: string,
+    subtype?: string,
+    text?: string,
+    ts?: string,
+    user?: string,
+    bot_id?: string,
+    app_id?: string,
+    team?: string,
+    username?: string,
+    icons?: {
+      emoji?: string,
+      image_36?: string,
+      image_48?: string,
+      image_72?: string
+    },
+    blocks?: {
+      type: string
+    }[],
+    attachments?: {
+    }[],
+    thread_ts?: string,
+    parent_user_id?: string,
+    reply_count?: number,
+    reply_users_count?: number,
+    latest_reply?: string,
+    reply_users?: string[],
+    is_locked?: boolean,
+    subscribed?: boolean,
+    reactions?: {
+      name: string,
+      count: number,
+      users: string[]
+    }[],
+    edited?: {
+      user: string,
+      ts: string
+    }
+  },
+  file?: {
+    id: string,
+    created?: number,
+    timestamp?: number,
+    name?: string,
+    title?: string,
+    mimetype?: string,
+    filetype?: string,
+    pretty_type?: string,
+    user?: string,
+    user_team?: string,
+    editable?: boolean,
+    size?: number,
+    mode?: string,
+    is_external?: boolean,
+    external_type?: string,
+    is_public?: boolean,
+    public_url_shared?: boolean,
+    display_as_bot?: boolean,
+    username?: string,
+    url_private?: string,
+    url_private_download?: string,
+    permalink?: string,
+    permalink_public?: string,
+    channels?: string[],
+    groups?: string[],
+    ims?: string[]
+  },
+  comment?: {
+    id: string,
+    comment: string
+  },
+  date_create?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  count: number,
+  total: number,
+  page: number,
+  pages: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`stars.remove`
+
+Unstar an item
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.stars.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `file` | `string` | No | — |
+| `file_comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User Groups
+
+### create
+
+`userGroups.create`
+
+Create a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.userGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `channels` | `string` | No | — |
+| `description` | `string` | No | — |
+| `handle` | `string` | No | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  is_usergroup?: boolean,
+  is_subteam?: boolean,
+  name?: string,
+  description?: string,
+  handle?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_update?: number,
+  date_delete?: number,
+  auto_type?: string | null,
+  auto_provision?: boolean,
+  enterprise_subteam_id?: string,
+  created_by?: string,
+  updated_by?: string,
+  deleted_by?: string | null,
+  prefs?: {
+    channels?: string[],
+    groups?: string[]
+  },
+  users?: string[],
+  user_count?: number,
+  channel_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disable
+
+`userGroups.disable`
+
+Disable a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.userGroups.disable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userGroup` | `string` | Yes | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  is_usergroup?: boolean,
+  is_subteam?: boolean,
+  name?: string,
+  description?: string,
+  handle?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_update?: number,
+  date_delete?: number,
+  auto_type?: string | null,
+  auto_provision?: boolean,
+  enterprise_subteam_id?: string,
+  created_by?: string,
+  updated_by?: string,
+  deleted_by?: string | null,
+  prefs?: {
+    channels?: string[],
+    groups?: string[]
+  },
+  users?: string[],
+  user_count?: number,
+  channel_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`userGroups.enable`
+
+Enable a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.userGroups.enable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userGroup` | `string` | Yes | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  is_usergroup?: boolean,
+  is_subteam?: boolean,
+  name?: string,
+  description?: string,
+  handle?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_update?: number,
+  date_delete?: number,
+  auto_type?: string | null,
+  auto_provision?: boolean,
+  enterprise_subteam_id?: string,
+  created_by?: string,
+  updated_by?: string,
+  deleted_by?: string | null,
+  prefs?: {
+    channels?: string[],
+    groups?: string[]
+  },
+  users?: string[],
+  user_count?: number,
+  channel_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`userGroups.list`
+
+List user groups in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.userGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_count` | `boolean` | No | — |
+| `include_disabled` | `boolean` | No | — |
+| `include_users` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `userGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="userGroups full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  is_usergroup?: boolean,
+  is_subteam?: boolean,
+  name?: string,
+  description?: string,
+  handle?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_update?: number,
+  date_delete?: number,
+  auto_type?: string | null,
+  auto_provision?: boolean,
+  enterprise_subteam_id?: string,
+  created_by?: string,
+  updated_by?: string,
+  deleted_by?: string | null,
+  prefs?: {
+    channels?: string[],
+    groups?: string[]
+  },
+  users?: string[],
+  user_count?: number,
+  channel_count?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`userGroups.update`
+
+Update a user group
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.userGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userGroup` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `channels` | `string` | No | — |
+| `description` | `string` | No | — |
+| `handle` | `string` | No | — |
+| `include_count` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `usergroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="usergroup full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  is_usergroup?: boolean,
+  is_subteam?: boolean,
+  name?: string,
+  description?: string,
+  handle?: string,
+  is_external?: boolean,
+  date_create?: number,
+  date_update?: number,
+  date_delete?: number,
+  auto_type?: string | null,
+  auto_provision?: boolean,
+  enterprise_subteam_id?: string,
+  created_by?: string,
+  updated_by?: string,
+  deleted_by?: string | null,
+  prefs?: {
+    channels?: string[],
+    groups?: string[]
+  },
+  users?: string[],
+  user_count?: number,
+  channel_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get info about a user
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `include_locale` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  deleted?: boolean,
+  color?: string,
+  real_name?: string,
+  tz?: string,
+  tz_label?: string,
+  tz_offset?: number,
+  profile?: {
+    avatar_hash?: string,
+    status_text?: string,
+    status_emoji?: string,
+    status_expiration?: number,
+    real_name?: string,
+    display_name?: string,
+    real_name_normalized?: string,
+    display_name_normalized?: string,
+    email?: string,
+    image_24?: string,
+    image_32?: string,
+    image_48?: string,
+    image_72?: string,
+    image_192?: string,
+    image_512?: string,
+    team?: string,
+    title?: string,
+    phone?: string,
+    skype?: string,
+    first_name?: string,
+    last_name?: string
+  },
+  is_admin?: boolean,
+  is_owner?: boolean,
+  is_primary_owner?: boolean,
+  is_restricted?: boolean,
+  is_ultra_restricted?: boolean,
+  is_bot?: boolean,
+  is_app_user?: boolean,
+  updated?: number,
+  is_email_confirmed?: boolean,
+  who_can_share_contact_card?: string,
+  locale?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPresence
+
+`users.getPresence`
+
+Get the presence status of a user
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.users.getPresence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `presence` | `string` | No | — |
+| `online` | `boolean` | No | — |
+| `auto_away` | `boolean` | No | — |
+| `manual_away` | `boolean` | No | — |
+| `connection_count` | `number` | No | — |
+| `last_activity` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfile
+
+`users.getProfile`
+
+Get a user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.users.getProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `include_labels` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `profile` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="profile full type">
+
+```ts
+{
+  avatar_hash?: string,
+  status_text?: string,
+  status_emoji?: string,
+  status_expiration?: number,
+  real_name?: string,
+  display_name?: string,
+  real_name_normalized?: string,
+  display_name_normalized?: string,
+  email?: string,
+  image_24?: string,
+  image_32?: string,
+  image_48?: string,
+  image_72?: string,
+  image_192?: string,
+  image_512?: string,
+  team?: string,
+  title?: string,
+  phone?: string,
+  skype?: string,
+  first_name?: string,
+  last_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List all users in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_locale` | `boolean` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `members` | `object[]` | No | — |
+| `cache_ts` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="members full type">
+
+```ts
+{
+  id: string,
+  team_id?: string,
+  name?: string,
+  deleted?: boolean,
+  color?: string,
+  real_name?: string,
+  tz?: string,
+  tz_label?: string,
+  tz_offset?: number,
+  profile?: {
+    avatar_hash?: string,
+    status_text?: string,
+    status_emoji?: string,
+    status_expiration?: number,
+    real_name?: string,
+    display_name?: string,
+    real_name_normalized?: string,
+    display_name_normalized?: string,
+    email?: string,
+    image_24?: string,
+    image_32?: string,
+    image_48?: string,
+    image_72?: string,
+    image_192?: string,
+    image_512?: string,
+    team?: string,
+    title?: string,
+    phone?: string,
+    skype?: string,
+    first_name?: string,
+    last_name?: string
+  },
+  is_admin?: boolean,
+  is_owner?: boolean,
+  is_primary_owner?: boolean,
+  is_restricted?: boolean,
+  is_ultra_restricted?: boolean,
+  is_bot?: boolean,
+  is_app_user?: boolean,
+  updated?: number,
+  is_email_confirmed?: boolean,
+  who_can_share_contact_card?: string,
+  locale?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateProfile
+
+`users.updateProfile`
+
+Update the authenticated user's profile
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.users.updateProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object` | No | — |
+| `user` | `string` | No | — |
+| `name` | `string` | No | — |
+| `value` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `profile` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="profile full type">
+
+```ts
+{
+  avatar_hash?: string,
+  status_text?: string,
+  status_emoji?: string,
+  status_expiration?: number,
+  real_name?: string,
+  display_name?: string,
+  real_name_normalized?: string,
+  display_name_normalized?: string,
+  email?: string,
+  image_24?: string,
+  image_32?: string,
+  image_48?: string,
+  image_72?: string,
+  image_192?: string,
+  image_512?: string,
+  team?: string,
+  title?: string,
+  phone?: string,
+  skype?: string,
+  first_name?: string,
+  last_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

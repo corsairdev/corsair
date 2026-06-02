@@ -1,0 +1,195 @@
+---
+title: Database
+description: "Intercom local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Intercom plugin syncs data locally. Use `corsair.intercom.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Admins
+
+Path: `intercom.db.admins.search`
+
+```ts
+const rows = await corsair.intercom.db.admins.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `away_mode_enabled` | `boolean` | equals |
+| `away_mode_reassign` | `boolean` | equals |
+| `has_inbox_seat` | `boolean` | equals |
+| `avatar` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Articles
+
+Path: `intercom.db.articles.search`
+
+```ts
+const rows = await corsair.intercom.db.articles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `author_id` | `number` | equals, gt, gte, lt, lte, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_id` | `number` | equals, gt, gte, lt, lte, in |
+| `parent_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `default_locale` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Companies
+
+Path: `intercom.db.companies.search`
+
+```ts
+const rows = await corsair.intercom.db.companies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `company_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `remote_created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `last_request_at` | `number` | equals, gt, gte, lt, lte, in |
+| `monthly_spend` | `number` | equals, gt, gte, lt, lte, in |
+| `session_count` | `number` | equals, gt, gte, lt, lte, in |
+| `user_count` | `number` | equals, gt, gte, lt, lte, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `intercom.db.contacts.search`
+
+```ts
+const rows = await corsair.intercom.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `external_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `last_seen_at` | `number` | equals, gt, gte, lt, lte, in |
+| `last_replied_at` | `number` | equals, gt, gte, lt, lte, in |
+| `signed_up_at` | `number` | equals, gt, gte, lt, lte, in |
+| `unsubscribed_from_emails` | `boolean` | equals |
+| `has_hard_bounced` | `boolean` | equals |
+| `marked_email_as_spam` | `boolean` | equals |
+| `browser` | `string` | equals, contains, startsWith, endsWith, in |
+| `browser_language` | `string` | equals, contains, startsWith, endsWith, in |
+| `os` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner_id` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Conversations
+
+Path: `intercom.db.conversations.search`
+
+```ts
+const rows = await corsair.intercom.db.conversations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `waiting_since` | `number` | equals, gt, gte, lt, lte, in |
+| `snoozed_until` | `number` | equals, gt, gte, lt, lte, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `read` | `boolean` | equals |
+| `priority` | `string` | equals, contains, startsWith, endsWith, in |
+| `admin_assignee_id` | `number` | equals, gt, gte, lt, lte, in |
+| `team_assignee_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

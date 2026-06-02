@@ -1,0 +1,28 @@
+---
+title: Coding agents
+description: Connect Cursor, Claude Code, Codex, Antigravity, or any MCP client to Corsair's hosted MCP server.
+---
+
+Coding agents use Corsair's **hosted HTTP MCP** endpoint. Each tenant gets a URL and bearer token; the agent discovers integrations as tools (`corsair_setup`, `list_operations`, `get_schema`, `run_script`).
+
+<CardGroup cols={2}>
+  <Card title="Cursor" icon="mouse-pointer" href="/app/coding-agents/cursor">
+    `.cursor/mcp.json` with `url` and `headers`
+  </Card>
+  <Card title="Claude Code" icon="terminal" href="/app/coding-agents/claude-code">
+    `.mcp.json` or `claude mcp add --transport http`
+  </Card>
+  <Card title="Codex" icon="code" href="/app/coding-agents/codex">
+    `~/.codex/config.toml` or `codex mcp add --url`
+  </Card>
+  <Card title="Antigravity" icon="sparkles" href="/app/coding-agents/antigravity">
+    `~/.gemini/antigravity/mcp_config.json` with `serverUrl`
+  </Card>
+  <Card title="Custom connector" icon="plug" href="/app/coding-agents/custom-connector">
+    Any HTTP MCP client — URL + bearer token
+  </Card>
+</CardGroup>
+
+<Info>
+These guides use **Corsair App** (hosted at `api.corsair.dev`). For a local Corsair instance with stdio MCP, see the [SDK tab](/mcp-adapters/coding-agents) instead.
+</Info>

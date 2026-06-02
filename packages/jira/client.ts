@@ -1,6 +1,8 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class JiraAPIError extends Error {
@@ -101,7 +103,9 @@ export async function uploadJiraAttachment<T>(
 			);
 		}
 		buffer = Buffer.from(await fetched.arrayBuffer());
-		mimeType ??= fetched.headers.get('content-type')?.split(';')[0] ?? 'application/octet-stream';
+		mimeType ??=
+			fetched.headers.get('content-type')?.split(';')[0] ??
+			'application/octet-stream';
 	} else {
 		buffer = Buffer.from(file.content!, 'base64');
 		mimeType ??= 'application/octet-stream';
@@ -111,20 +115,26 @@ export async function uploadJiraAttachment<T>(
 	const blob = new Blob([new Uint8Array(buffer)], { type: mimeType });
 	formData.append('file', blob, file.name);
 
-	const response = await fetch(`${cloudUrl}/rest/api/3/issue/${issueIdOrKey}/attachments`, {
-		method: 'POST',
-		headers: {
-			Authorization: `Basic ${Buffer.from(apiKey).toString('base64')}`,
-			'X-Atlassian-Token': 'no-check',
-			Accept: 'application/json',
-			// Content-Type is intentionally omitted — fetch sets it with the multipart boundary
+	const response = await fetch(
+		`${cloudUrl}/rest/api/3/issue/${issueIdOrKey}/attachments`,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Basic ${Buffer.from(apiKey).toString('base64')}`,
+				'X-Atlassian-Token': 'no-check',
+				Accept: 'application/json',
+				// Content-Type is intentionally omitted — fetch sets it with the multipart boundary
+			},
+			body: formData,
 		},
-		body: formData,
-	});
+	);
 
 	if (!response.ok) {
 		const text = await response.text();
-		throw new JiraAPIError(`Failed to upload attachment: ${response.status} ${text}`, String(response.status));
+		throw new JiraAPIError(
+			`Failed to upload attachment: ${response.status} ${text}`,
+			String(response.status),
+		);
 	}
 	// response.json() returns Promise<any> from the Fetch API; cast to Promise<T> here
 	// because the caller is responsible for validating the shape via JiraEndpointOutputSchemas.

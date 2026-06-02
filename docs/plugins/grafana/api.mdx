@@ -1,0 +1,579 @@
+---
+title: API
+description: "API reference for Grafana: every `grafana.api.*` operation with input and output types."
+---
+
+Every `grafana.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Dashboards
+
+### queryPublic
+
+`dashboards.queryPublic`
+
+Query a panel on a public Grafana dashboard
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.dashboards.queryPublic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_token` | `string` | Yes | — |
+| `panel_id` | `number` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `intervalMs` | `number` | No | — |
+| `maxDataPoints` | `number` | No | — |
+| `base_url_override` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status_code: number,
+  message?: string,
+  results?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Health
+
+### get
+
+`health.get`
+
+Check Grafana server health and database connectivity
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.health.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  version?: string,
+  commit?: string,
+  database?: string,
+  enterpriseCommit?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jwks
+
+### retrieve
+
+`jwks.retrieve`
+
+Retrieve JWKS public keys for token verification
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.jwks.retrieve({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  keys?: {
+    Key?: any,
+    Use?: string,
+    KeyID?: string,
+    Algorithm?: string,
+    Certificates?: string[],
+    CertificatesURL?: string,
+    CertificateThumbprintSHA1?: number[],
+    CertificateThumbprintSHA256?: number[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Logs
+
+### createOtlp
+
+`logs.createOtlp`
+
+Send OTLP v1 logs to Grafana Loki for ingestion
+
+**Risk:** `write`
+
+```ts
+await corsair.grafana.api.logs.createOtlp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceLogs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resourceLogs full type">
+
+```ts
+{
+  resource?: {
+    attributes?: {
+      key?: string,
+      value?: {
+        stringValue?: string,
+        intValue?: number,
+        boolValue?: boolean,
+        doubleValue?: number,
+        bytesValue?: string,
+        arrayValue?: {
+          values?: any[]
+        },
+        kvlistValue?: {
+          values?: any[]
+        }
+      }
+    }[],
+    droppedAttributesCount?: number
+  },
+  scopeLogs?: {
+    scope?: {
+      name?: string,
+      version?: string,
+      attributes?: {
+        key?: string,
+        value?: {
+          stringValue?: string,
+          intValue?: number,
+          boolValue?: boolean,
+          doubleValue?: number,
+          bytesValue?: string,
+          arrayValue?: {
+            values?: any[]
+          },
+          kvlistValue?: {
+            values?: any[]
+          }
+        }
+      }[]
+    },
+    logRecords?: {
+      timeUnixNano?: string,
+      severityNumber?: number,
+      severityText?: string,
+      body?: {
+        stringValue?: string,
+        intValue?: number,
+        boolValue?: boolean,
+        doubleValue?: number,
+        bytesValue?: string,
+        arrayValue?: {
+          values?: any[]
+        },
+        kvlistValue?: {
+          values?: any[]
+        }
+      },
+      attributes?: {
+        key?: string,
+        value?: {
+          stringValue?: string,
+          intValue?: number,
+          boolValue?: boolean,
+          doubleValue?: number,
+          bytesValue?: string,
+          arrayValue?: {
+            values?: any[]
+          },
+          kvlistValue?: {
+            values?: any[]
+          }
+        }
+      }[],
+      flags?: number,
+      traceId?: string,
+      spanId?: string,
+      droppedAttributesCount?: number
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  success: boolean,
+  status_code: number,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ring
+
+### getDistributorHaTracker
+
+`ring.getDistributorHaTracker`
+
+Get distributor HA tracker ring status
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.ring.getDistributorHaTracker({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  html_content: string,
+  status_code: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getIndexGateway
+
+`ring.getIndexGateway`
+
+Get index gateway hash ring status
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.ring.getIndexGateway({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  content: string,
+  content_type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOverridesExporter
+
+`ring.getOverridesExporter`
+
+Get overrides-exporter hash ring status
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.ring.getOverridesExporter({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  html_content: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRuler
+
+`ring.getRuler`
+
+Get ruler ring status from Grafana Mimir
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.ring.getRuler({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  content: string,
+  content_type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Saml
+
+### postAcs
+
+`saml.postAcs`
+
+Process a SAML Assertion Consumer Service authentication response
+
+**Risk:** `write`
+
+```ts
+await corsair.grafana.api.saml.postAcs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `saml_response` | `string` | Yes | — |
+| `relay_state` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status_code: number,
+  message: string,
+  location?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status
+
+### get
+
+`status.get`
+
+Check Grafana Enterprise license availability
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.status.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  license_available: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Store Gateway
+
+### getTenants
+
+`storeGateway.getTenants`
+
+List tenants with blocks in the store-gateway storage
+
+**Risk:** `read`
+
+```ts
+await corsair.grafana.api.storeGateway.getTenants({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `error` | `string` | No | — |
+| `successful` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  content: string,
+  content_type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

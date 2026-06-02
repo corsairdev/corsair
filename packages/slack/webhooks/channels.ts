@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SlackWebhooks } from '..';
+import type { SlackWebhooks } from '../index';
 import { createSlackEventMatch, verifySlackWebhookSignature } from './types';
 
 export const created: SlackWebhooks['channelCreated'] = {

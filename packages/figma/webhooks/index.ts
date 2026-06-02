@@ -1,6 +1,6 @@
 import { fileComment } from './fileComment';
-import { fileUpdate } from './fileUpdate';
 import { fileDelete } from './fileDelete';
+import { fileUpdate } from './fileUpdate';
 import { fileVersionUpdate } from './fileVersionUpdate';
 import { libraryPublish } from './libraryPublish';
 import { ping } from './ping';

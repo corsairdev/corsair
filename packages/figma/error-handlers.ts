@@ -1,5 +1,5 @@
-import { FigmaAPIError } from './client';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { FigmaAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {

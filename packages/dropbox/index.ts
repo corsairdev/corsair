@@ -7,15 +7,16 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
-	PluginAuthConfig,
+	PickAuth,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
+import { getValidAccessToken } from './client';
 import { Files, Folders, Search } from './endpoints';
-import type { DropboxEndpointInputs, DropboxEndpointOutputs } from './endpoints/types';
+import type {
+	DropboxEndpointInputs,
+	DropboxEndpointOutputs,
+} from './endpoints/types';
 import {
 	DropboxEndpointInputSchemas,
 	DropboxEndpointOutputSchemas,
@@ -66,7 +67,10 @@ const dropboxEndpointsNested = {
 } as const;
 
 export type DropboxWebhooks = {
-	fileSystemChanged: DropboxWebhook<'fileSystemChanged', DropboxFileSystemChangedEvent>;
+	fileSystemChanged: DropboxWebhook<
+		'fileSystemChanged',
+		DropboxFileSystemChangedEvent
+	>;
 };
 
 const dropboxWebhooksNested = {
@@ -128,24 +132,34 @@ export const dropboxEndpointSchemas = {
 
 const dropboxWebhookSchemas = {
 	'filesystem.changed': {
-		description: 'A file or folder was added, modified, deleted, or a share link was created',
+		description:
+			'A file or folder was added, modified, deleted, or a share link was created',
 		payload: DropboxFileSystemChangedEventSchema,
 		response: DropboxFileSystemChangedEventSchema,
 	},
 } as const;
 
-const defaultAuthType = 'api_key' as const;
+const defaultAuthType = 'oauth_2' as const;
 
 const dropboxEndpointMeta = {
-	'files.copy': { riskLevel: 'write', description: 'Copy a file to a new location' },
+	'files.copy': {
+		riskLevel: 'write',
+		description: 'Copy a file to a new location',
+	},
 	'files.delete': {
 		riskLevel: 'destructive',
 		description: 'Delete a file [DESTRUCTIVE]',
 	},
 	'files.download': { riskLevel: 'read', description: 'Download a file' },
-	'files.move': { riskLevel: 'write', description: 'Move a file to a new location' },
+	'files.move': {
+		riskLevel: 'write',
+		description: 'Move a file to a new location',
+	},
 	'files.upload': { riskLevel: 'write', description: 'Upload a file' },
-	'folders.copy': { riskLevel: 'write', description: 'Copy a folder to a new location' },
+	'folders.copy': {
+		riskLevel: 'write',
+		description: 'Copy a folder to a new location',
+	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.delete': {
 		riskLevel: 'destructive',
@@ -169,14 +183,8 @@ const dropboxEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof dropboxEndpointsNested>;
 
-export const dropboxAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
 export type DropboxPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalDropboxPlugin['hooks'];
@@ -197,7 +205,9 @@ export type DropboxContext = CorsairPluginContext<
 
 export type DropboxKeyBuilderContext = KeyBuilderContext<DropboxPluginOptions>;
 
-export type DropboxBoundEndpoints = BindEndpoints<typeof dropboxEndpointsNested>;
+export type DropboxBoundEndpoints = BindEndpoints<
+	typeof dropboxEndpointsNested
+>;
 
 type DropboxEndpoint<K extends keyof DropboxEndpointOutputs> = CorsairEndpoint<
 	DropboxContext,
@@ -237,6 +247,21 @@ export function dropbox<const T extends DropboxPluginOptions>(
 		id: 'dropbox',
 		schema: DropboxSchema,
 		options: options,
+		// https://developers.dropbox.com/oauth-guide — authorize & token endpoints.
+		// `token_access_type=offline` is required for Dropbox to return a refresh
+		// token (this is the Dropbox-specific equivalent of Google's `access_type=offline`).
+		oauthConfig: {
+			providerName: 'Dropbox',
+			authUrl: 'https://www.dropbox.com/oauth2/authorize',
+			tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
+			scopes: [
+				'files.metadata.read',
+				'files.metadata.write',
+				'files.content.read',
+				'files.content.write',
+			],
+			authParams: { token_access_type: 'offline' },
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: dropboxEndpointsNested,
@@ -253,31 +278,95 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: DropboxKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
+			const authType = ctx.authType;
 
+			// Webhook signing uses the Dropbox app secret (= OAuth client_secret).
+			// See https://www.dropbox.com/developers/reference/webhooks
 			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				if (!res) {
-					return '';
+				if (options.webhookSecret) return options.webhookSecret;
+				const creds = await ctx.keys.get_integration_credentials();
+				if (!creds.client_secret) {
+					throw new Error(
+						'[auth-missing:dropbox:client_secret]: Dropbox client secret is missing',
+					);
 				}
-				return res;
+				return creds.client_secret;
 			}
 
-			if (source === 'endpoint' && options.key) {
+			if (options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					return '';
+			if (ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new Error(
+						'[auth-missing:dropbox:refresh_token]: Dropbox refresh token is missing',
+					);
 				}
-				return res;
+
+				const creds = await ctx.keys.get_integration_credentials();
+				if (!creds.client_id || !creds.client_secret) {
+					throw new Error(
+						'[auth-missing:dropbox:client_credentials]: Dropbox client credentials are missing',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
+				try {
+					result = await getValidAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientId: creds.client_id,
+						clientSecret: creds.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:dropbox] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						await Promise.all([
+							ctx.keys.set_access_token(result.accessToken),
+							ctx.keys.set_expires_at(String(result.expiresAt)),
+						]);
+					} catch (error) {
+						throw new Error(
+							`[corsair:dropbox] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				// Expose a force-refresh function on the context so endpoints can
+				// retry on 401 without waiting for `expires_at` to lapse.
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientId: creds.client_id!,
+						clientSecret: creds.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					return freshResult.accessToken;
+				};
+
+				return result.accessToken;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:dropbox:${authType}]: Dropbox key is missing`,
+			);
 		},
 	} satisfies InternalDropboxPlugin;
 }

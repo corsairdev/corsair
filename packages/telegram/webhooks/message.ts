@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TelegramWebhooks } from '..';
+import type { TelegramWebhooks } from '../index';
 import { createTelegramMatch, verifyTelegramWebhookSignature } from './types';
 
 export const message: TelegramWebhooks['message'] = {

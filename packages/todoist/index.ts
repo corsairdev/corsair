@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,12 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
 	Comments,
 	Labels,
@@ -465,6 +465,8 @@ export function todoist<const T extends TodoistPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TodoistKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			// Webhook signature verification - check direct option first
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
@@ -475,7 +477,9 @@ export function todoist<const T extends TodoistPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:todoist:webhook_signature]: Todoist webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -489,13 +493,17 @@ export function todoist<const T extends TodoistPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:todoist:api_key]: Todoist API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:todoist:${authType}]: Todoist key is missing`,
+			);
 		},
 	} satisfies InternalTodoistPlugin;
 }

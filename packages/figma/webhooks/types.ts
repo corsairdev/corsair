@@ -1,10 +1,10 @@
-import { z } from 'zod';
-import crypto from 'crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import crypto from 'crypto';
+import { z } from 'zod';
 
 // unknown: body may be a raw JSON string or an already-parsed object depending on the request source
 function parseBody(body: unknown): unknown {
@@ -78,7 +78,9 @@ export type FigmaWebhookOutputs = {
 	ping: FigmaPingEvent;
 };
 
-export function createFigmaEventMatch(eventType: string): CorsairWebhookMatcher {
+export function createFigmaEventMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		// type assertion: parsed body shape is unknown at runtime; narrowed to Record to access event_type
 		const parsedBody = parseBody(request.body) as Record<string, unknown>;
@@ -186,6 +188,7 @@ export const FigmaPingPayloadSchema = z.object({
 export const FigmaFileCommentEventSchema = FigmaFileCommentPayloadSchema;
 export const FigmaFileUpdateEventSchema = FigmaFileUpdatePayloadSchema;
 export const FigmaFileDeleteEventSchema = FigmaFileDeletePayloadSchema;
-export const FigmaFileVersionUpdateEventSchema = FigmaFileVersionUpdatePayloadSchema;
+export const FigmaFileVersionUpdateEventSchema =
+	FigmaFileVersionUpdatePayloadSchema;
 export const FigmaLibraryPublishEventSchema = FigmaLibraryPublishPayloadSchema;
 export const FigmaPingEventSchema = FigmaPingPayloadSchema;

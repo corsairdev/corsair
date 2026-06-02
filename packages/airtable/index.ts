@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,11 +8,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import { Bases, Records, Webhooks } from './endpoints';
 import type {
 	AirtableEndpointInputs,
@@ -214,6 +214,13 @@ export function airtable<const T extends AirtablePluginOptions>(
 	};
 	return {
 		id: 'airtable',
+		oauthConfig: {
+			providerName: 'Airtable',
+			authUrl: 'https://airtable.com/oauth2/v1/authorize',
+			tokenUrl: 'https://airtable.com/oauth2/v1/token',
+			scopes: ['data.records:read', 'data.records:write', 'schema.bases:read'],
+			tokenAuthMethod: 'basic' as const,
+		},
 		schema: AirtableSchema,
 		options: options,
 		hooks: options.hooks,
@@ -233,6 +240,8 @@ export function airtable<const T extends AirtablePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AirtableKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -241,7 +250,9 @@ export function airtable<const T extends AirtablePluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:airtable:webhook_signature]: Airtable webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -255,13 +266,17 @@ export function airtable<const T extends AirtablePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:airtable:api_key]: Airtable API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:airtable:${authType}]: Airtable key is missing`,
+			);
 		},
 	} satisfies InternalAirtablePlugin;
 }

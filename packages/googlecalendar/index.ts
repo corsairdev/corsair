@@ -6,13 +6,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleCalendarEndpointInputs,
@@ -226,6 +224,8 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 		endpointSchemas: googlecalendarEndpointSchemas,
 		webhookSchemas: googlecalendarWebhookSchemas,
 		keyBuilder: async (ctx: GoogleCalendarKeyBuilderContext) => {
+			const authType = ctx.authType;
+
 			if (options.key) {
 				return options.key;
 			}
@@ -239,7 +239,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 
 				if (!refreshToken) {
 					throw new Error(
-						'[corsair:googlecalendar] No refresh token. Cannot get access token.',
+						'[auth-missing:googlecalendar:refresh_token]: Google Calendar refresh token is missing',
 					);
 				}
 
@@ -291,7 +291,9 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				}
 			}
 
-			return '';
+			throw new Error(
+				`[auth-missing:googlecalendar:${authType}]: Google Calendar key is missing`,
+			);
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

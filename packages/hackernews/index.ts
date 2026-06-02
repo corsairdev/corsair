@@ -1,21 +1,27 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
-import type { HackerNewsEndpointInputs, HackerNewsEndpointOutputs } from './endpoints/types';
-import { HackerNewsEndpointInputSchemas, HackerNewsEndpointOutputSchemas } from './endpoints/types';
 import { Items, Search, Stories, Updates, Users } from './endpoints';
-import { HackerNewsSchema } from './schema';
+import type {
+	HackerNewsEndpointInputs,
+	HackerNewsEndpointOutputs,
+} from './endpoints/types';
+import {
+	HackerNewsEndpointInputSchemas,
+	HackerNewsEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { HackerNewsSchema } from './schema';
 
 export type HackerNewsPluginOptions = {
 	// HackerNews is a public API (NO_AUTH) — api_key auth type is kept for framework compatibility
@@ -38,7 +44,8 @@ export type HackerNewsContext = CorsairPluginContext<
 	HackerNewsPluginOptions
 >;
 
-export type HackerNewsKeyBuilderContext = KeyBuilderContext<HackerNewsPluginOptions>;
+export type HackerNewsKeyBuilderContext =
+	KeyBuilderContext<HackerNewsPluginOptions>;
 
 type HackerNewsEndpoint<
 	K extends keyof HackerNewsEndpointOutputs,
@@ -46,25 +53,75 @@ type HackerNewsEndpoint<
 > = CorsairEndpoint<HackerNewsContext, Input, HackerNewsEndpointOutputs[K]>;
 
 export type HackerNewsEndpoints = {
-	itemsGet: HackerNewsEndpoint<'itemsGet', HackerNewsEndpointInputs['itemsGet']>;
-	itemsGetWithId: HackerNewsEndpoint<'itemsGetWithId', HackerNewsEndpointInputs['itemsGetWithId']>;
-	itemsGetMaxId: HackerNewsEndpoint<'itemsGetMaxId', HackerNewsEndpointInputs['itemsGetMaxId']>;
-	storiesGetTop: HackerNewsEndpoint<'storiesGetTop', HackerNewsEndpointInputs['storiesGetTop']>;
-	storiesGetBest: HackerNewsEndpoint<'storiesGetBest', HackerNewsEndpointInputs['storiesGetBest']>;
-	storiesGetNew: HackerNewsEndpoint<'storiesGetNew', HackerNewsEndpointInputs['storiesGetNew']>;
-	storiesGetAsk: HackerNewsEndpoint<'storiesGetAsk', HackerNewsEndpointInputs['storiesGetAsk']>;
-	storiesGetShow: HackerNewsEndpoint<'storiesGetShow', HackerNewsEndpointInputs['storiesGetShow']>;
-	storiesGetJobs: HackerNewsEndpoint<'storiesGetJobs', HackerNewsEndpointInputs['storiesGetJobs']>;
-	usersGet: HackerNewsEndpoint<'usersGet', HackerNewsEndpointInputs['usersGet']>;
-	usersGetByUsername: HackerNewsEndpoint<'usersGetByUsername', HackerNewsEndpointInputs['usersGetByUsername']>;
-	searchPosts: HackerNewsEndpoint<'searchPosts', HackerNewsEndpointInputs['searchPosts']>;
-	searchGetLatest: HackerNewsEndpoint<'searchGetLatest', HackerNewsEndpointInputs['searchGetLatest']>;
-	searchGetFrontpage: HackerNewsEndpoint<'searchGetFrontpage', HackerNewsEndpointInputs['searchGetFrontpage']>;
-	searchGetTodays: HackerNewsEndpoint<'searchGetTodays', HackerNewsEndpointInputs['searchGetTodays']>;
-	updatesGet: HackerNewsEndpoint<'updatesGet', HackerNewsEndpointInputs['updatesGet']>;
+	itemsGet: HackerNewsEndpoint<
+		'itemsGet',
+		HackerNewsEndpointInputs['itemsGet']
+	>;
+	itemsGetWithId: HackerNewsEndpoint<
+		'itemsGetWithId',
+		HackerNewsEndpointInputs['itemsGetWithId']
+	>;
+	itemsGetMaxId: HackerNewsEndpoint<
+		'itemsGetMaxId',
+		HackerNewsEndpointInputs['itemsGetMaxId']
+	>;
+	storiesGetTop: HackerNewsEndpoint<
+		'storiesGetTop',
+		HackerNewsEndpointInputs['storiesGetTop']
+	>;
+	storiesGetBest: HackerNewsEndpoint<
+		'storiesGetBest',
+		HackerNewsEndpointInputs['storiesGetBest']
+	>;
+	storiesGetNew: HackerNewsEndpoint<
+		'storiesGetNew',
+		HackerNewsEndpointInputs['storiesGetNew']
+	>;
+	storiesGetAsk: HackerNewsEndpoint<
+		'storiesGetAsk',
+		HackerNewsEndpointInputs['storiesGetAsk']
+	>;
+	storiesGetShow: HackerNewsEndpoint<
+		'storiesGetShow',
+		HackerNewsEndpointInputs['storiesGetShow']
+	>;
+	storiesGetJobs: HackerNewsEndpoint<
+		'storiesGetJobs',
+		HackerNewsEndpointInputs['storiesGetJobs']
+	>;
+	usersGet: HackerNewsEndpoint<
+		'usersGet',
+		HackerNewsEndpointInputs['usersGet']
+	>;
+	usersGetByUsername: HackerNewsEndpoint<
+		'usersGetByUsername',
+		HackerNewsEndpointInputs['usersGetByUsername']
+	>;
+	searchPosts: HackerNewsEndpoint<
+		'searchPosts',
+		HackerNewsEndpointInputs['searchPosts']
+	>;
+	searchGetLatest: HackerNewsEndpoint<
+		'searchGetLatest',
+		HackerNewsEndpointInputs['searchGetLatest']
+	>;
+	searchGetFrontpage: HackerNewsEndpoint<
+		'searchGetFrontpage',
+		HackerNewsEndpointInputs['searchGetFrontpage']
+	>;
+	searchGetTodays: HackerNewsEndpoint<
+		'searchGetTodays',
+		HackerNewsEndpointInputs['searchGetTodays']
+	>;
+	updatesGet: HackerNewsEndpoint<
+		'updatesGet',
+		HackerNewsEndpointInputs['updatesGet']
+	>;
 };
 
-export type HackerNewsBoundEndpoints = BindEndpoints<typeof hackerNewsEndpointsNested>;
+export type HackerNewsBoundEndpoints = BindEndpoints<
+	typeof hackerNewsEndpointsNested
+>;
 
 const hackerNewsEndpointsNested = {
 	items: {
@@ -168,22 +225,67 @@ export const hackerNewsEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const hackerNewsEndpointMeta = {
-	'items.get': { riskLevel: 'read', description: 'Get a HackerNews item by numeric ID' },
-	'items.getWithId': { riskLevel: 'read', description: 'Get a HackerNews item with nested comments' },
-	'items.getMaxId': { riskLevel: 'read', description: 'Get the current maximum item ID' },
-	'stories.getTop': { riskLevel: 'read', description: 'Get top HackerNews story IDs' },
-	'stories.getBest': { riskLevel: 'read', description: 'Get best HackerNews story IDs' },
-	'stories.getNew': { riskLevel: 'read', description: 'Get newest HackerNews story IDs' },
+	'items.get': {
+		riskLevel: 'read',
+		description: 'Get a HackerNews item by numeric ID',
+	},
+	'items.getWithId': {
+		riskLevel: 'read',
+		description: 'Get a HackerNews item with nested comments',
+	},
+	'items.getMaxId': {
+		riskLevel: 'read',
+		description: 'Get the current maximum item ID',
+	},
+	'stories.getTop': {
+		riskLevel: 'read',
+		description: 'Get top HackerNews story IDs',
+	},
+	'stories.getBest': {
+		riskLevel: 'read',
+		description: 'Get best HackerNews story IDs',
+	},
+	'stories.getNew': {
+		riskLevel: 'read',
+		description: 'Get newest HackerNews story IDs',
+	},
 	'stories.getAsk': { riskLevel: 'read', description: 'Get Ask HN story IDs' },
-	'stories.getShow': { riskLevel: 'read', description: 'Get Show HN story IDs' },
-	'stories.getJobs': { riskLevel: 'read', description: 'Get HackerNews job story IDs' },
-	'users.get': { riskLevel: 'read', description: 'Get a HackerNews user profile via Algolia' },
-	'users.getByUsername': { riskLevel: 'read', description: 'Get a HackerNews user profile via Firebase' },
-	'search.posts': { riskLevel: 'read', description: 'Full-text search HackerNews posts' },
-	'search.getLatest': { riskLevel: 'read', description: 'Get latest HackerNews posts' },
-	'search.getFrontpage': { riskLevel: 'read', description: 'Get current HackerNews frontpage posts' },
-	'search.getTodays': { riskLevel: 'read', description: "Get today's HackerNews posts" },
-	'updates.get': { riskLevel: 'read', description: 'Get recently changed HackerNews items and profiles' },
+	'stories.getShow': {
+		riskLevel: 'read',
+		description: 'Get Show HN story IDs',
+	},
+	'stories.getJobs': {
+		riskLevel: 'read',
+		description: 'Get HackerNews job story IDs',
+	},
+	'users.get': {
+		riskLevel: 'read',
+		description: 'Get a HackerNews user profile via Algolia',
+	},
+	'users.getByUsername': {
+		riskLevel: 'read',
+		description: 'Get a HackerNews user profile via Firebase',
+	},
+	'search.posts': {
+		riskLevel: 'read',
+		description: 'Full-text search HackerNews posts',
+	},
+	'search.getLatest': {
+		riskLevel: 'read',
+		description: 'Get latest HackerNews posts',
+	},
+	'search.getFrontpage': {
+		riskLevel: 'read',
+		description: 'Get current HackerNews frontpage posts',
+	},
+	'search.getTodays': {
+		riskLevel: 'read',
+		description: "Get today's HackerNews posts",
+	},
+	'updates.get': {
+		riskLevel: 'read',
+		description: 'Get recently changed HackerNews items and profiles',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof hackerNewsEndpointsNested>;
 
 export const hackerNewsAuthConfig = {
@@ -192,23 +294,26 @@ export const hackerNewsAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseHackerNewsPlugin<T extends HackerNewsPluginOptions> = CorsairPlugin<
-	'hackernews',
-	typeof HackerNewsSchema,
-	typeof hackerNewsEndpointsNested,
-	typeof hackerNewsWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseHackerNewsPlugin<T extends HackerNewsPluginOptions> =
+	CorsairPlugin<
+		'hackernews',
+		typeof HackerNewsSchema,
+		typeof hackerNewsEndpointsNested,
+		typeof hackerNewsWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalHackerNewsPlugin = BaseHackerNewsPlugin<HackerNewsPluginOptions>;
+export type InternalHackerNewsPlugin =
+	BaseHackerNewsPlugin<HackerNewsPluginOptions>;
 
 export type ExternalHackerNewsPlugin<T extends HackerNewsPluginOptions> =
 	BaseHackerNewsPlugin<T>;
 
 export function hackernews<const T extends HackerNewsPluginOptions>(
 	// {} as HackerNewsPluginOptions & T: default empty options; safe because all fields are optional
-	incomingOptions: HackerNewsPluginOptions & T = {} as HackerNewsPluginOptions & T,
+	incomingOptions: HackerNewsPluginOptions & T = {} as HackerNewsPluginOptions &
+		T,
 ): ExternalHackerNewsPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -245,24 +350,24 @@ export function hackernews<const T extends HackerNewsPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	HackerNewsEndpointInputs,
-	HackerNewsEndpointOutputs,
+	GetAskStoriesResponse,
+	GetBestStoriesResponse,
+	GetFrontpageResponse,
 	GetItemResponse,
 	GetItemWithIdResponse,
-	GetMaxItemIdResponse,
-	GetTopStoriesResponse,
-	GetBestStoriesResponse,
-	GetNewStoriesResponse,
-	GetAskStoriesResponse,
-	GetShowStoriesResponse,
 	GetJobStoriesResponse,
-	GetUserResponse,
-	GetUserByUsernameResponse,
-	SearchPostsResponse,
 	GetLatestPostsResponse,
-	GetFrontpageResponse,
+	GetMaxItemIdResponse,
+	GetNewStoriesResponse,
+	GetShowStoriesResponse,
 	GetTodaysPostsResponse,
+	GetTopStoriesResponse,
 	GetUpdatesResponse,
+	GetUserByUsernameResponse,
+	GetUserResponse,
+	HackerNewsEndpointInputs,
+	HackerNewsEndpointOutputs,
+	SearchPostsResponse,
 } from './endpoints/types';
 
 export type { HackerNewsWebhookOutputs } from './webhooks/types';

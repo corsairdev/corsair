@@ -68,7 +68,22 @@ export function bindEndpointsRecursively({
 	/** Required for 'require_approval' to persist the approval record to the DB. */
 	database?: CorsairDatabase;
 	/** Approval timeout config from createCorsair({ approval: ... }). */
-	approvalConfig?: { timeout: string; onTimeout: 'deny' | 'approve' };
+	approvalConfig?: {
+		timeout: string;
+		onTimeout: 'deny' | 'approve';
+		mode?:
+			| 'synchronous'
+			| 'asynchronous'
+			| (() => 'synchronous' | 'asynchronous');
+		/** Called when a permission is blocked in async mode. Return the message to throw to the LLM. */
+		formatAsyncMessage?: (opts: {
+			token: string;
+			id: string;
+			plugin: string;
+			endpoint: string;
+			args: unknown;
+		}) => string;
+	};
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
 }): void {
@@ -87,7 +102,13 @@ export function bindEndpointsRecursively({
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				if (permissionsConfig) {
 					const meta = endpointMeta?.[operationPath];
-					const { result: permResult, onComplete } = await enforcePermission({
+					const {
+						result: permResult,
+						reason: permReason,
+						onComplete,
+						token: permToken,
+						id: permId,
+					} = await enforcePermission({
 						pluginId,
 						endpointPath: operationPath,
 						args,
@@ -101,8 +122,33 @@ export function bindEndpointsRecursively({
 							? parseDurationMs(approvalConfig.timeout)
 							: undefined,
 						tenantId,
+						approvalMode: approvalConfig?.mode,
 					});
-					if (permResult === 'blocked') return null;
+					if (permResult === 'blocked') {
+						let msg: string;
+						if (permReason === 'denied') {
+							msg = `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`;
+						} else if (permReason === 'policy') {
+							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
+						} else if (permReason === 'timeout') {
+							msg = `Action '${operationPath}' timed out waiting for approval.`;
+						} else if (
+							approvalConfig?.formatAsyncMessage &&
+							permToken &&
+							permId
+						) {
+							msg = approvalConfig.formatAsyncMessage({
+								token: permToken,
+								id: permId,
+								plugin: pluginId,
+								endpoint: operationPath,
+								args,
+							});
+						} else {
+							msg = `Action '${operationPath}' requires user approval before it can run.`;
+						}
+						throw new Error(msg);
+					}
 					onPermissionComplete = onComplete;
 				}
 

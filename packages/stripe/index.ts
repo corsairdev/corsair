@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,13 +8,12 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
+import { getValidStripeAccessToken } from './client';
 import {
 	Balance,
 	Charges,
@@ -24,11 +24,15 @@ import {
 	Sources,
 	Tokens,
 } from './endpoints';
+import type {
+	StripeEndpointInputs,
+	StripeEndpointOutputs,
+} from './endpoints/types';
 import {
 	StripeEndpointInputSchemas,
 	StripeEndpointOutputSchemas,
 } from './endpoints/types';
-import type { StripeEndpointInputs, StripeEndpointOutputs } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { StripeSchema } from './schema';
 import {
 	ChargeWebhooks,
@@ -64,10 +68,9 @@ import {
 	StripePaymentIntentSucceededEventSchema,
 	StripePingEventSchema,
 } from './webhooks/types';
-import { errorHandlers } from './error-handlers';
 
 export type StripePluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalStripePlugin['hooks'];
@@ -131,8 +134,14 @@ export type StripeWebhooks = {
 	customerCreated: StripeWebhook<'customerCreated', StripeCustomerCreatedEvent>;
 	customerDeleted: StripeWebhook<'customerDeleted', StripeCustomerDeletedEvent>;
 	customerUpdated: StripeWebhook<'customerUpdated', StripeCustomerUpdatedEvent>;
-	paymentIntentSucceeded: StripeWebhook<'paymentIntentSucceeded', StripePaymentIntentSucceededEvent>;
-	paymentIntentFailed: StripeWebhook<'paymentIntentFailed', StripePaymentIntentFailedEvent>;
+	paymentIntentSucceeded: StripeWebhook<
+		'paymentIntentSucceeded',
+		StripePaymentIntentSucceededEvent
+	>;
+	paymentIntentFailed: StripeWebhook<
+		'paymentIntentFailed',
+		StripePaymentIntentFailedEvent
+	>;
 	couponCreated: StripeWebhook<'couponCreated', StripeCouponCreatedEvent>;
 	couponDeleted: StripeWebhook<'couponDeleted', StripeCouponDeletedEvent>;
 	ping: StripeWebhook<'ping', StripePingEvent>;
@@ -142,19 +151,45 @@ export type StripeBoundWebhooks = BindWebhooks<StripeWebhooks>;
 
 const stripeEndpointsNested = {
 	balance: { get: Balance.get },
-	charges: { create: Charges.create, get: Charges.get, list: Charges.list, update: Charges.update },
+	charges: {
+		create: Charges.create,
+		get: Charges.get,
+		list: Charges.list,
+		update: Charges.update,
+	},
 	coupons: { create: Coupons.create, list: Coupons.list },
-	customers: { create: Customers.create, delete: Customers.delete, get: Customers.get, list: Customers.list },
-	paymentIntents: { create: PaymentIntents.create, get: PaymentIntents.get, list: PaymentIntents.list, update: PaymentIntents.update },
+	customers: {
+		create: Customers.create,
+		delete: Customers.delete,
+		get: Customers.get,
+		list: Customers.list,
+	},
+	paymentIntents: {
+		create: PaymentIntents.create,
+		get: PaymentIntents.get,
+		list: PaymentIntents.list,
+		update: PaymentIntents.update,
+	},
 	prices: { create: Prices.create, list: Prices.list },
 	sources: { create: Sources.create, get: Sources.get },
 	tokens: { create: Tokens.create },
 } as const;
 
 const stripeWebhooksNested = {
-	charge: { succeeded: ChargeWebhooks.succeeded, failed: ChargeWebhooks.failed, refunded: ChargeWebhooks.refunded },
-	customer: { created: CustomerWebhooks.created, deleted: CustomerWebhooks.deleted, updated: CustomerWebhooks.updated },
-	paymentIntent: { succeeded: PaymentIntentWebhooks.succeeded, failed: PaymentIntentWebhooks.failed },
+	charge: {
+		succeeded: ChargeWebhooks.succeeded,
+		failed: ChargeWebhooks.failed,
+		refunded: ChargeWebhooks.refunded,
+	},
+	customer: {
+		created: CustomerWebhooks.created,
+		deleted: CustomerWebhooks.deleted,
+		updated: CustomerWebhooks.updated,
+	},
+	paymentIntent: {
+		succeeded: PaymentIntentWebhooks.succeeded,
+		failed: PaymentIntentWebhooks.failed,
+	},
 	coupon: { created: CouponWebhooks.created, deleted: CouponWebhooks.deleted },
 	ping: { ping: PingWebhooks.ping },
 } as const;
@@ -417,6 +452,14 @@ export function stripe<const T extends StripePluginOptions>(
 		id: 'stripe',
 		schema: StripeSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Stripe',
+			authUrl: 'https://marketplace.stripe.com/oauth/v2/authorize',
+			tokenUrl: 'https://api.stripe.com/v1/oauth/token',
+			scopes: ['stripe_apps'],
+			tokenAuthMethod: 'basic',
+			requiresRegisteredRedirect: true,
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: stripeEndpointsNested,
@@ -432,6 +475,8 @@ export function stripe<const T extends StripePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: StripeKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -440,7 +485,9 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:stripe:webhook_signature]: Stripe webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -454,13 +501,84 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:stripe:api_key]: Stripe API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new Error(
+						'[auth-missing:stripe:refresh_token]: Stripe refresh token is missing',
+					);
+				}
+
+				const creds = await ctx.keys.get_integration_credentials();
+
+				if (!creds.client_secret) {
+					throw new Error(
+						'[auth-missing:stripe:client_secret]: Stripe client secret is missing',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidStripeAccessToken>>;
+				try {
+					result = await getValidStripeAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientSecret: creds.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:stripe] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						// Stripe reissues the refresh token on every exchange — persist both
+						await ctx.keys.set_access_token(result.accessToken);
+						await ctx.keys.set_refresh_token(result.refreshToken);
+						await ctx.keys.set_expires_at(String(result.expiresAt));
+					} catch (error) {
+						throw new Error(
+							`[corsair:stripe] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				// Expose force-refresh so endpoints can retry on 401 (e.g. revoked token)
+				// without waiting for the 1-hour expiry window to lapse.
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidStripeAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientSecret: creds.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_refresh_token(freshResult.refreshToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					return freshResult.accessToken;
+				};
+
+				return result.accessToken;
+			}
+
+			throw new Error(
+				`[auth-missing:stripe:${authType}]: Stripe key is missing`,
+			);
 		},
 	} satisfies InternalStripePlugin;
 }
@@ -470,18 +588,18 @@ export function stripe<const T extends StripePluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	StripeWebhookOutputs,
-	StripeChargeSucceededEvent,
 	StripeChargeFailedEvent,
 	StripeChargeRefundedEvent,
+	StripeChargeSucceededEvent,
+	StripeCouponCreatedEvent,
+	StripeCouponDeletedEvent,
 	StripeCustomerCreatedEvent,
 	StripeCustomerDeletedEvent,
 	StripeCustomerUpdatedEvent,
-	StripePaymentIntentSucceededEvent,
 	StripePaymentIntentFailedEvent,
-	StripeCouponCreatedEvent,
-	StripeCouponDeletedEvent,
+	StripePaymentIntentSucceededEvent,
 	StripePingEvent,
+	StripeWebhookOutputs,
 } from './webhooks/types';
 
 export { createStripeEventMatch } from './webhooks/types';
@@ -491,8 +609,6 @@ export { createStripeEventMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	StripeEndpointInputs,
-	StripeEndpointOutputs,
 	BalanceGetInput,
 	BalanceGetResponse,
 	ChargesCreateInput,
@@ -531,6 +647,8 @@ export type {
 	SourcesCreateResponse,
 	SourcesGetInput,
 	SourcesGetResponse,
+	StripeEndpointInputs,
+	StripeEndpointOutputs,
 	TokensCreateInput,
 	TokensCreateResponse,
 } from './endpoints/types';

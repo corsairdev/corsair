@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ZoomWebhooks } from '..';
+import type { ZoomWebhooks } from '../index';
 import { createZoomEventMatch, verifyZoomWebhookSignature } from './types';
 
 export const created: ZoomWebhooks['meetingCreated'] = {
@@ -76,7 +76,9 @@ export const cancelled: ZoomWebhooks['meetingCancelled'] = {
 		const meeting = event.payload.object;
 		if (ctx.db.meetings && meeting.id) {
 			try {
-				const existing = await ctx.db.meetings.findByEntityId(String(meeting.id));
+				const existing = await ctx.db.meetings.findByEntityId(
+					String(meeting.id),
+				);
 				if (existing) {
 					const entity = await ctx.db.meetings.upsertByEntityId(
 						String(meeting.id),

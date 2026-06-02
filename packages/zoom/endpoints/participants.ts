@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ZoomEndpoints } from '..';
 import { makeZoomRequest } from '../client';
+import type { ZoomEndpoints } from '../index';
 import type { ZoomEndpointOutputs } from './types';
 
 export const getPastMeeting: ZoomEndpoints['participantsGetPastMeeting'] =
@@ -10,7 +10,7 @@ export const getPastMeeting: ZoomEndpoints['participantsGetPastMeeting'] =
 			ZoomEndpointOutputs['participantsGetPastMeeting']
 		>(`past_meetings/${meetingId}/participants`, ctx.key, {
 			method: 'GET',
-			query
+			query,
 		});
 
 		if (result.participants && ctx.db.participants) {

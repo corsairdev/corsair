@@ -1,0 +1,286 @@
+---
+title: Webhooks
+description: "Fireflies incoming webhooks: event paths, payloads, and response data."
+---
+
+The Fireflies plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/fireflies/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `meetings`
+  - `inMeeting` (`meetings.inMeeting`)
+  - `meetingDeleted` (`meetings.meetingDeleted`)
+  - `newMeeting` (`meetings.newMeeting`)
+- `transcriptions`
+  - `transcriptionComplete` (`transcriptions.transcriptionComplete`)
+  - `transcriptProcessing` (`transcriptions.transcriptProcessing`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Meetings
+
+### In Meeting
+
+`meetings.inMeeting`
+
+Fireflies bot has joined a meeting
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `clientReferenceId` | `string` | No | — |
+| `eventType` | `InMeeting` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  meetingId: string,
+  clientReferenceId?: string | null,
+  eventType: InMeeting
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fireflies({
+    webhookHooks: {
+        meetings: {
+            inMeeting: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Meeting Deleted
+
+`meetings.meetingDeleted`
+
+A meeting has been deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `clientReferenceId` | `string` | No | — |
+| `eventType` | `MeetingDeleted` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  meetingId: string,
+  clientReferenceId?: string | null,
+  eventType: MeetingDeleted
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fireflies({
+    webhookHooks: {
+        meetings: {
+            meetingDeleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### New Meeting
+
+`meetings.newMeeting`
+
+A new meeting has been detected
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `clientReferenceId` | `string` | No | — |
+| `eventType` | `NewMeeting` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  meetingId: string,
+  clientReferenceId?: string | null,
+  eventType: NewMeeting
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fireflies({
+    webhookHooks: {
+        meetings: {
+            newMeeting: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Transcriptions
+
+### Transcription Complete
+
+`transcriptions.transcriptionComplete`
+
+Transcription is complete and available
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `clientReferenceId` | `string` | No | — |
+| `eventType` | `Transcription` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  meetingId: string,
+  clientReferenceId?: string | null,
+  eventType: Transcription
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fireflies({
+    webhookHooks: {
+        transcriptions: {
+            transcriptionComplete: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Transcript Processing
+
+`transcriptions.transcriptProcessing`
+
+Transcript is being processed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `clientReferenceId` | `string` | No | — |
+| `eventType` | `TranscriptProcessing` | Yes | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  meetingId: string,
+  clientReferenceId?: string | null,
+  eventType: TranscriptProcessing
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fireflies({
+    webhookHooks: {
+        transcriptions: {
+            transcriptProcessing: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

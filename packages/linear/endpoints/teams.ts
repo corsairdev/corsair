@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { LinearEndpoints } from '..';
 import { makeLinearRequest } from '../client';
+import type { LinearEndpoints } from '../index';
 import type { TeamGetResponse, TeamsListResponse } from './types';
 
 const TEAMS_LIST_QUERY = `

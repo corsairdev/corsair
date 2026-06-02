@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,13 +8,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import {
 	Annotations,
 	Charts,
@@ -428,12 +427,18 @@ export function amplitude<const T extends AmplitudePluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AmplitudeKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:amplitude:webhook_signature]: Amplitude webhook signature is missing',
+					);
+				}
 				return res;
 			}
 			if (source === 'endpoint' && options.key) {
@@ -441,10 +446,16 @@ export function amplitude<const T extends AmplitudePluginOptions>(
 			}
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) return '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:amplitude:api_key]: Amplitude API Key is missing',
+					);
+				}
 				return res;
 			}
-			return '';
+			throw new Error(
+				`[auth-missing:amplitude:${authType}]: Amplitude key is missing`,
+			);
 		},
 	} satisfies InternalAmplitudePlugin;
 }

@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class StripeAPIError extends Error {
@@ -13,6 +12,92 @@ export class StripeAPIError extends Error {
 }
 
 const STRIPE_API_BASE = 'https://api.stripe.com/v1';
+const STRIPE_TOKEN_URL = 'https://api.stripe.com/v1/oauth/token';
+
+async function refreshStripeAccessToken(
+	clientSecret: string,
+	refreshToken: string,
+): Promise<{ accessToken: string; refreshToken: string; expiresIn: number }> {
+	// Stripe Apps OAuth uses HTTP Basic Auth with the secret key as username, empty password
+	const credentials = Buffer.from(`${clientSecret}:`).toString('base64');
+
+	const response = await fetch(STRIPE_TOKEN_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Authorization: `Basic ${credentials}`,
+		},
+		body: new URLSearchParams({
+			grant_type: 'refresh_token',
+			refresh_token: refreshToken,
+		}),
+	});
+
+	if (!response.ok) {
+		const error = await response.text();
+		throw new StripeAPIError(`Failed to refresh access token: ${error}`);
+	}
+
+	const json = (await response.json()) as {
+		access_token: string;
+		refresh_token: string;
+		expires_in: number;
+	};
+	return {
+		accessToken: json.access_token,
+		refreshToken: json.refresh_token,
+		expiresIn: json.expires_in,
+	};
+}
+
+/**
+ * Returns the stored access token if it has more than 5 minutes left.
+ * Stripe Apps OAuth access tokens expire after 1 hour; refresh tokens are
+ * reissued on every refresh (resetting the 1-year clock).
+ */
+export async function getValidStripeAccessToken({
+	accessToken,
+	expiresAt,
+	clientSecret,
+	refreshToken,
+	forceRefresh = false,
+}: {
+	clientSecret: string;
+	accessToken?: string | null;
+	expiresAt?: string | null;
+	refreshToken: string;
+	forceRefresh?: boolean;
+}): Promise<{
+	accessToken: string;
+	refreshToken: string;
+	expiresAt: number;
+	refreshed: boolean;
+}> {
+	const now = Math.floor(Date.now() / 1000);
+	const bufferSeconds = 5 * 60;
+
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
+		return {
+			accessToken,
+			refreshToken,
+			expiresAt: Number(expiresAt),
+			refreshed: false,
+		};
+	}
+
+	const tokenData = await refreshStripeAccessToken(clientSecret, refreshToken);
+	return {
+		accessToken: tokenData.accessToken,
+		refreshToken: tokenData.refreshToken,
+		expiresAt: now + tokenData.expiresIn,
+		refreshed: true,
+	};
+}
 
 /**
  * Recursively encodes an object as application/x-www-form-urlencoded.
@@ -88,7 +173,9 @@ export async function makeStripeRequest<T>(
 		if (error instanceof Error) {
 			// Surface the real Stripe error message and code from the response body
 			// Type assertion: ApiError exposes no typed body property; asserting to access Stripe's error envelope fields
-			const apiErr = error as { body?: { error?: { message?: string; code?: string } } };
+			const apiErr = error as {
+				body?: { error?: { message?: string; code?: string } };
+			};
 			const stripeMsg = apiErr.body?.error?.message;
 			const stripeCode = apiErr.body?.error?.code;
 			throw new StripeAPIError(stripeMsg ?? error.message, stripeCode);

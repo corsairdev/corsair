@@ -1,9 +1,10 @@
-import { ApiError } from 'corsair/http';
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
-import { BaseWebhookHandler } from 'corsair/http';
-import { verifyHmacSignature } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import {
+	ApiError,
+	BaseWebhookHandler,
+	request,
+	verifyHmacSignature,
+} from 'corsair/http';
 import type {
 	LinearEventMap,
 	LinearEventName,
@@ -13,11 +14,100 @@ import type {
 export class LinearAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly code?: string | number,
 	) {
 		super(message);
 		this.name = 'LinearAPIError';
 	}
+}
+
+const LINEAR_TOKEN_URL = 'https://api.linear.app/oauth/token';
+
+async function refreshLinearAccessToken(
+	clientId: string,
+	clientSecret: string,
+	refreshToken: string,
+) {
+	const response = await fetch(LINEAR_TOKEN_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			client_id: clientId,
+			client_secret: clientSecret,
+			refresh_token: refreshToken,
+			grant_type: 'refresh_token',
+		}),
+	});
+
+	if (!response.ok) {
+		const error = await response.text();
+		throw new LinearAPIError(
+			`Failed to refresh access token: ${error}`,
+			response.status,
+		);
+	}
+
+	const json = (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+		token_type: string;
+		scope: string;
+		refresh_token: string;
+	};
+
+	return json;
+}
+
+export async function getValidLinearAccessToken({
+	accessToken,
+	expiresAt,
+	clientId,
+	clientSecret,
+	refreshToken,
+	forceRefresh = false,
+}: {
+	clientId: string;
+	clientSecret: string;
+	accessToken?: string | null;
+	expiresAt?: string | null;
+	refreshToken: string;
+	forceRefresh?: boolean;
+}): Promise<{
+	accessToken: string;
+	refreshToken: string;
+	expiresAt: number;
+	refreshed: boolean;
+}> {
+	const now = Math.floor(Date.now() / 1000);
+	const bufferSeconds = 5 * 60;
+
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
+		return {
+			accessToken,
+			refreshToken,
+			expiresAt: Number(expiresAt),
+			refreshed: false,
+		};
+	}
+
+	const tokenData = await refreshLinearAccessToken(
+		clientId,
+		clientSecret,
+		refreshToken,
+	);
+	return {
+		accessToken: tokenData.access_token,
+		refreshToken: tokenData.refresh_token,
+		expiresAt: now + tokenData.expires_in,
+		refreshed: true,
+	};
 }
 
 const LINEAR_API_BASE = 'https://api.linear.app/graphql';

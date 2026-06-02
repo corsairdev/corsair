@@ -1,15 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
-import type { TrelloWebhooks } from '..';
+import type { TrelloWebhooks } from '../index';
 import { createTrelloActionMatch, verifyTrelloWebhookSignature } from './types';
 
 export const cardUpdated: TrelloWebhooks['cardUpdated'] = {
 	match: createTrelloActionMatch('updateCard'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyTrelloWebhookSignature(
-			request,
-			ctx.key,
-		);
+		const verification = verifyTrelloWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,

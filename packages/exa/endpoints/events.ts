@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ExaEndpoints } from '..';
 import { makeExaRequest } from '../client';
+import type { ExaEndpoints } from '../index';
 import type { ExaEndpointOutputs } from './types';
 
 export const listEvents: ExaEndpoints['eventsList'] = async (ctx, input) => {
@@ -10,7 +10,10 @@ export const listEvents: ExaEndpoints['eventsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: queryParams as Record<string, string | number | boolean | undefined>,
+			query: queryParams as Record<
+				string,
+				string | number | boolean | undefined
+			>,
 		},
 	);
 
@@ -29,12 +32,7 @@ export const listEvents: ExaEndpoints['eventsList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'exa.events.list',
-		{ websetId },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'exa.events.list', { websetId }, 'completed');
 	return result;
 };
 

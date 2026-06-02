@@ -7,12 +7,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
+import { getValidLinearAccessToken } from './client';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
 import {
@@ -48,7 +47,7 @@ import {
 } from './webhooks/types';
 
 export type LinearPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalLinearPlugin['hooks'];
@@ -383,6 +382,13 @@ export function linear<const T extends LinearPluginOptions>(
 	};
 	return {
 		id: 'linear',
+		oauthConfig: {
+			providerName: 'Linear',
+			authUrl: 'https://linear.app/oauth/authorize',
+			tokenUrl: 'https://api.linear.app/oauth/token',
+			scopes: ['read', 'write'],
+			authParams: { prompt: 'consent' },
+		},
 		schema: LinearSchema,
 		options: options,
 		hooks: options.hooks,
@@ -402,6 +408,8 @@ export function linear<const T extends LinearPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: LinearKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -410,7 +418,9 @@ export function linear<const T extends LinearPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:linear:webhook_signature]: Linear webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -424,13 +434,85 @@ export function linear<const T extends LinearPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:linear:api_key]: Linear API Key is missing',
+					);
 				}
 
 				return res;
 			}
 
-			return '';
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new Error(
+						'[auth-missing:linear:refresh_token]: Linear refresh token is missing',
+					);
+				}
+
+				const credentials = await ctx.keys.get_integration_credentials();
+
+				if (!credentials.client_id || !credentials.client_secret) {
+					throw new Error(
+						'[auth-missing:linear:client_credentials]: Linear client credentials are missing',
+					);
+				}
+
+				let result: Awaited<ReturnType<typeof getValidLinearAccessToken>>;
+				try {
+					result = await getValidLinearAccessToken({
+						accessToken,
+						expiresAt,
+						refreshToken,
+						clientId: credentials.client_id,
+						clientSecret: credentials.client_secret,
+					});
+				} catch (error) {
+					throw new Error(
+						`[corsair:linear] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
+
+				if (result.refreshed) {
+					try {
+						await ctx.keys.set_access_token(result.accessToken);
+						await ctx.keys.set_expires_at(String(result.expiresAt));
+						await ctx.keys.set_refresh_token(result.refreshToken);
+					} catch (error) {
+						throw new Error(
+							`[corsair:linear] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				}
+
+				// Expose a force-refresh function on the context so endpoints can
+				// retry on 401 without waiting for `expires_at` to lapse.
+				(ctx as Record<string, unknown>)._refreshAuth = async () => {
+					const freshResult = await getValidLinearAccessToken({
+						accessToken: null,
+						expiresAt: null,
+						refreshToken,
+						clientId: credentials.client_id!,
+						clientSecret: credentials.client_secret!,
+						forceRefresh: true,
+					});
+					await ctx.keys.set_access_token(freshResult.accessToken);
+					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					await ctx.keys.set_refresh_token(freshResult.refreshToken);
+					return freshResult.accessToken;
+				};
+
+				return `Bearer ${result.accessToken}`;
+			}
+
+			throw new Error(
+				`[auth-missing:linear:${authType}]: Linear key is missing`,
+			);
 		},
 	} satisfies InternalLinearPlugin;
 }

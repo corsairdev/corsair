@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { GmailWebhooks } from '..';
 import { makeGmailRequest } from '../client';
+import type { GmailWebhooks } from '../index';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
 import { createGmailWebhookMatcher, decodePubSubMessage } from './types';
 

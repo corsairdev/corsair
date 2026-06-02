@@ -7,13 +7,11 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { PickAuth } from 'corsair/core';
 import {
 	Answer,
 	Contents,
@@ -24,11 +22,11 @@ import {
 	WebhooksApi,
 	Websets,
 } from './endpoints';
+import type { ExaEndpointInputs, ExaEndpointOutputs } from './endpoints/types';
 import {
 	ExaEndpointInputSchemas,
 	ExaEndpointOutputSchemas,
 } from './endpoints/types';
-import type { ExaEndpointInputs, ExaEndpointOutputs } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ExaSchema } from './schema';
 import { ContentWebhooks, SearchWebhooks, WebsetWebhooks } from './webhooks';
@@ -163,7 +161,10 @@ export type ExaWebhooks = {
 	searchAlert: ExaWebhook<'searchAlert', SearchAlertEvent>;
 	contentIndexed: ExaWebhook<'contentIndexed', ContentIndexedEvent>;
 	websetItemsFound: ExaWebhook<'websetItemsFound', WebsetItemsFoundEvent>;
-	websetSearchCompleted: ExaWebhook<'websetSearchCompleted', WebsetSearchCompletedEvent>;
+	websetSearchCompleted: ExaWebhook<
+		'websetSearchCompleted',
+		WebsetSearchCompletedEvent
+	>;
 };
 
 const exaWebhooksNested = {
@@ -215,15 +216,18 @@ const exaEndpointMeta = {
 	},
 	'contents.get': {
 		riskLevel: 'read',
-		description: 'Retrieve full text, highlights, or summaries from URLs or document IDs',
+		description:
+			'Retrieve full text, highlights, or summaries from URLs or document IDs',
 	},
 	'answer.get': {
 		riskLevel: 'read',
-		description: 'Generate a direct, citation-backed answer to a natural language question',
+		description:
+			'Generate a direct, citation-backed answer to a natural language question',
 	},
 	'websets.create': {
 		riskLevel: 'write',
-		description: 'Create a new webset with search, import, and enrichment setup',
+		description:
+			'Create a new webset with search, import, and enrichment setup',
 	},
 	'websets.get': {
 		riskLevel: 'read',
@@ -277,10 +281,11 @@ type ExaEndpoint<K extends keyof ExaEndpointOutputs> = CorsairEndpoint<
 	ExaEndpointOutputs[K]
 >;
 
-type ExaWebhook<
-	K extends keyof ExaWebhookOutputs,
+type ExaWebhook<K extends keyof ExaWebhookOutputs, TEvent> = CorsairWebhook<
+	ExaContext,
 	TEvent,
-> = CorsairWebhook<ExaContext, TEvent, ExaWebhookOutputs[K]>;
+	ExaWebhookOutputs[K]
+>;
 
 export type ExaBoundWebhooks = BindWebhooks<ExaWebhooks>;
 
@@ -294,7 +299,10 @@ export type ExaPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof exaEndpointsNested>;
 };
 
-export type ExaContext = CorsairPluginContext<typeof ExaSchema, ExaPluginOptions>;
+export type ExaContext = CorsairPluginContext<
+	typeof ExaSchema,
+	ExaPluginOptions
+>;
 
 export type ExaKeyBuilderContext = KeyBuilderContext<ExaPluginOptions>;
 
@@ -338,6 +346,8 @@ export function exa<const T extends ExaPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ExaKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -346,7 +356,9 @@ export function exa<const T extends ExaPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:exa:webhook_signature]: Exa webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -360,13 +372,13 @@ export function exa<const T extends ExaPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					return '';
+					throw new Error('[auth-missing:exa:api_key]: Exa API Key is missing');
 				}
 
 				return res;
 			}
 
-			return '';
+			throw new Error(`[auth-missing:exa:${authType}]: Exa key is missing`);
 		},
 	} satisfies InternalExaPlugin;
 }
@@ -410,10 +422,10 @@ export type {
 	SearchInput,
 	SearchResponse,
 	SearchResult,
-	Webset,
 	WebhookApi,
 	WebhooksApiListInput,
 	WebhooksApiListResponse,
+	Webset,
 	WebsetEvent,
 	WebsetImport,
 	WebsetMonitor,

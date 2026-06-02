@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ZoomEndpoints } from '..';
 import { makeZoomRequest } from '../client';
+import type { ZoomEndpoints } from '../index';
 import type { ZoomEndpointOutputs } from './types';
 
 export const getMeeting: ZoomEndpoints['recordingsGetMeeting'] = async (
@@ -76,14 +76,12 @@ export const listAll: ZoomEndpoints['recordingsListAll'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeZoomRequest<ZoomEndpointOutputs['recordingsListAll']>(
-		'users/me/recordings',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input
-		},
-	);
+	const result = await makeZoomRequest<
+		ZoomEndpointOutputs['recordingsListAll']
+	>('users/me/recordings', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
 	if (result.meetings && ctx.db.recordings) {
 		try {

@@ -1,6 +1,8 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import type { RateLimitConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class AsanaAPIError extends Error {
@@ -14,6 +16,7 @@ export class AsanaAPIError extends Error {
 }
 
 const ASANA_API_BASE = 'https://app.asana.com/api/1.0';
+const ASANA_TOKEN_URL = 'https://app.asana.com/-/oauth_token';
 
 const ASANA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -24,6 +27,80 @@ const ASANA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 		retryAfter: 'Retry-After',
 	},
 };
+
+async function refreshAccessToken(
+	clientId: string,
+	clientSecret: string,
+	refreshToken: string,
+) {
+	const response = await fetch(ASANA_TOKEN_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			grant_type: 'refresh_token',
+			client_id: clientId,
+			client_secret: clientSecret,
+			refresh_token: refreshToken,
+		}),
+	});
+
+	if (!response.ok) {
+		const error = await response.text();
+		throw new AsanaAPIError(
+			`Failed to refresh access token: ${error}`,
+			String(response.status),
+		);
+	}
+
+	const json = (await response.json()) as {
+		access_token: string;
+		expires_in: number;
+		token_type: string;
+	};
+	return json;
+}
+
+export async function getValidAccessToken({
+	accessToken,
+	expiresAt,
+	clientId,
+	clientSecret,
+	refreshToken,
+	forceRefresh = false,
+}: {
+	clientId: string;
+	clientSecret: string;
+	accessToken?: string | null;
+	expiresAt?: string | null;
+	refreshToken: string;
+	forceRefresh?: boolean;
+}): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
+	const now = Math.floor(Date.now() / 1000);
+	const bufferSeconds = 5 * 60;
+
+	if (
+		!forceRefresh &&
+		accessToken &&
+		expiresAt &&
+		Number(expiresAt) > now + bufferSeconds
+	) {
+		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
+	}
+
+	const tokenData = await refreshAccessToken(
+		clientId,
+		clientSecret,
+		refreshToken,
+	);
+
+	return {
+		accessToken: tokenData.access_token,
+		expiresAt: now + tokenData.expires_in,
+		refreshed: true,
+	};
+}
 
 export async function makeAsanaRequest<T>(
 	endpoint: string,

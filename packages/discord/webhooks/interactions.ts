@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DiscordWebhooks } from '..';
+import type { DiscordWebhooks } from '../index';
 import {
 	createDiscordInteractionMatch,
 	DiscordInteractionType,

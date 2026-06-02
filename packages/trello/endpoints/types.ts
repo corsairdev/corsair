@@ -9,7 +9,7 @@ const TrelloLabelSchema = z
 		name: z.string().optional(),
 		color: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloBadgesSchema = z
 	.object({
@@ -25,7 +25,7 @@ const TrelloBadgesSchema = z
 		due: z.string().nullable().optional(),
 		dueComplete: z.boolean().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloBoardPrefsSchema = z
 	.object({
@@ -48,7 +48,7 @@ const TrelloBoardPrefsSchema = z
 		canBePrivate: z.boolean().optional(),
 		canInvite: z.union([z.string(), z.boolean()]).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloBoardSchema = z
 	.object({
@@ -64,12 +64,12 @@ const TrelloBoardSchema = z
 		url: z.string().optional(),
 		shortUrl: z.string().optional(),
 		prefs: TrelloBoardPrefsSchema.optional(),
-		labelNames: z.record(z.string()).optional(),
+		labelNames: z.record(z.string(), z.string()).optional(),
 		starred: z.boolean().optional(),
 		// Membership entries have dynamic role/deactivated fields not needed by any endpoint
 		memberships: z.array(z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloListSchema = z
 	.object({
@@ -82,7 +82,7 @@ const TrelloListSchema = z
 		// Trello documents this as a nullable integer but returns mixed types (number | object) in practice
 		softLimit: z.unknown().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloCardSchema = z
 	.object({
@@ -119,7 +119,7 @@ const TrelloCardSchema = z
 		// Cover object has many optional, version-specific attachment/color fields not needed by callers
 		cover: z.unknown().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloMemberSchema = z
 	.object({
@@ -143,7 +143,7 @@ const TrelloMemberSchema = z
 		url: z.string().optional(),
 		username: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloCheckItemSchema = z
 	.object({
@@ -159,7 +159,7 @@ const TrelloCheckItemSchema = z
 		dueReminder: z.unknown().nullable().optional(),
 		idMember: z.string().nullable().optional(),
 	})
-	.passthrough();
+	.loose();
 
 const TrelloChecklistSchema = z
 	.object({
@@ -170,7 +170,7 @@ const TrelloChecklistSchema = z
 		pos: z.number().optional(),
 		checkItems: z.array(TrelloCheckItemSchema).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // ── Input Schemas ─────────────────────────────────────────────────────────────
 
@@ -182,7 +182,15 @@ const BoardsGetInputSchema = z.object({
 const BoardsListInputSchema = z.object({
 	memberId: z.string().optional(),
 	filter: z
-		.enum(['all', 'closed', 'members', 'open', 'organization', 'public', 'starred'])
+		.enum([
+			'all',
+			'closed',
+			'members',
+			'open',
+			'organization',
+			'public',
+			'starred',
+		])
 		.optional(),
 	fields: z.string().optional(),
 });
@@ -388,7 +396,7 @@ const MembersGetResponseSchema = TrelloMemberSchema;
 const MembersListResponseSchema = z.array(
 	TrelloMemberSchema.extend({
 		memberType: z.string().optional(),
-	}).passthrough(),
+	}).loose(),
 );
 
 const LabelsListResponseSchema = z.array(TrelloLabelSchema);
@@ -523,5 +531,7 @@ export type LabelsCreateResponse = TrelloEndpointOutputs['labelsCreate'];
 export type LabelsUpdateResponse = TrelloEndpointOutputs['labelsUpdate'];
 export type LabelsDeleteResponse = TrelloEndpointOutputs['labelsDelete'];
 export type ChecklistsGetResponse = TrelloEndpointOutputs['checklistsGet'];
-export type ChecklistsCreateResponse = TrelloEndpointOutputs['checklistsCreate'];
-export type ChecklistsDeleteResponse = TrelloEndpointOutputs['checklistsDelete'];
+export type ChecklistsCreateResponse =
+	TrelloEndpointOutputs['checklistsCreate'];
+export type ChecklistsDeleteResponse =
+	TrelloEndpointOutputs['checklistsDelete'];

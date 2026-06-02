@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { SpotifyEndpoints } from '..';
 import { makeAuthenticatedSpotifyRequest } from '../client';
+import type { SpotifyEndpoints } from '../index';
 import type { SpotifyEndpointOutputs } from './types';
 
 export const get: SpotifyEndpoints['albumsGet'] = async (ctx, input) => {
@@ -9,14 +9,12 @@ export const get: SpotifyEndpoints['albumsGet'] = async (ctx, input) => {
 		query.market = input.market;
 	}
 
-	const result = await makeAuthenticatedSpotifyRequest<SpotifyEndpointOutputs['albumsGet']>(
-		`albums/${input.id}`,
-		ctx,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	const result = await makeAuthenticatedSpotifyRequest<
+		SpotifyEndpointOutputs['albumsGet']
+	>(`albums/${input.id}`, ctx, {
+		method: 'GET',
+		query,
+	});
 
 	if (result && ctx.db.albums) {
 		try {

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { BoxWebhooks } from '..';
+import type { BoxWebhooks } from '../index';
 import { createBoxMatch, verifyBoxWebhookSignature } from './types';
 
 const verifyOrFail = (

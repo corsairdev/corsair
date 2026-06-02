@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,12 +8,10 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes, PickAuth } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import {
 	Albums,
@@ -52,7 +51,7 @@ import { ExampleEventSchema } from './webhooks/types';
  * - webhookSecret: Optional webhook secret for signature verification
  */
 export type SpotifyPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'api_key'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalSpotifyPlugin['hooks'];
@@ -528,6 +527,8 @@ export function spotify<const T extends SpotifyPluginOptions>(
 		 * }
 		 */
 		keyBuilder: async (ctx: SpotifyKeyBuilderContext, source) => {
+			const authType = ctx.authType;
+
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -536,7 +537,9 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				const res = await ctx.keys.get_webhook_signature();
 
 				if (!res) {
-					return '';
+					throw new Error(
+						'[auth-missing:spotify:webhook_signature]: Spotify webhook signature is missing',
+					);
 				}
 
 				return res;
@@ -546,60 +549,70 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				return options.key;
 			}
 
-		if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-			const accessToken = await ctx.keys.get_access_token();
-			const refreshToken = await ctx.keys.get_refresh_token();
-
-			if (!refreshToken) {
-				throw new Error(
-					'[corsair:spotify] No refresh token. Cannot get access token.',
-				);
-			}
-
-			const res = await ctx.keys.get_integration_credentials();
-
-			if (!res.client_id || !res.client_secret) {
-				throw new Error(
-					'[corsair:spotify] No client id or client secret',
-				);
-			}
-
-			try {
-				const key = await getValidAccessToken({
-					accessToken,
-					refreshToken,
-					clientId: res.client_id,
-					clientSecret: res.client_secret,
-				});
-
-				if (!key) {
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const res = await ctx.keys.get_api_key();
+				if (!res) {
 					throw new Error(
-						'[corsair:spotify] Access token cannot be created.',
+						'[auth-missing:spotify:api_key]: Spotify API Key is missing',
+					);
+				}
+				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const accessToken = await ctx.keys.get_access_token();
+				const refreshToken = await ctx.keys.get_refresh_token();
+
+				if (!refreshToken) {
+					throw new Error(
+						'[auth-missing:spotify:refresh_token]: Spotify refresh token is missing',
 					);
 				}
 
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshToken = await getValidAccessToken({
-						accessToken: null,
+				const res = await ctx.keys.get_integration_credentials();
+
+				if (!res.client_id || !res.client_secret) {
+					throw new Error('[corsair:spotify] No client id or client secret');
+				}
+
+				try {
+					const key = await getValidAccessToken({
+						accessToken,
 						refreshToken,
-						clientId: res.client_id!,
-						clientSecret: res.client_secret!,
+						clientId: res.client_id,
+						clientSecret: res.client_secret,
 					});
-					if (freshToken) {
-						await ctx.keys.set_access_token(freshToken);
+
+					if (!key) {
+						throw new Error(
+							'[corsair:spotify] Access token cannot be created.',
+						);
 					}
-					return freshToken || '';
-				};
 
-				return key;
-			} catch (error) {
-				throw new Error(
-					`[corsair:spotify] Failed to get access token: ${error instanceof Error ? error.message : String(error)}`,
-				);
+					(ctx as Record<string, unknown>)._refreshAuth = async () => {
+						const freshToken = await getValidAccessToken({
+							accessToken: null,
+							refreshToken,
+							clientId: res.client_id!,
+							clientSecret: res.client_secret!,
+						});
+						if (freshToken) {
+							await ctx.keys.set_access_token(freshToken);
+						}
+						return freshToken || '';
+					};
+
+					return key;
+				} catch (error) {
+					throw new Error(
+						`[corsair:spotify] Failed to get access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				}
 			}
-		}
 
-			return '';
+			throw new Error(
+				`[auth-missing:spotify:${authType}]: Spotify key is missing`,
+			);
 		},
 	} satisfies InternalSpotifyPlugin;
 }

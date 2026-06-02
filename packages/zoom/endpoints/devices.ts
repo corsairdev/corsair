@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ZoomEndpoints } from '..';
 import { makeZoomRequest } from '../client';
+import type { ZoomEndpoints } from '../index';
 import type { ZoomEndpointOutputs } from './types';
 
 export const list: ZoomEndpoints['devicesList'] = async (ctx, input) => {
@@ -9,7 +9,7 @@ export const list: ZoomEndpoints['devicesList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			query: input
+			query: input,
 		},
 	);
 

@@ -1,0 +1,589 @@
+---
+title: Webhooks
+description: "Cal.com incoming webhooks: event paths, payloads, and response data."
+---
+
+The Cal.com plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/cal/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `bookings`
+  - `bookingCancelled` (`bookings.bookingCancelled`)
+  - `bookingCreated` (`bookings.bookingCreated`)
+  - `bookingRescheduled` (`bookings.bookingRescheduled`)
+  - `meetingEnded` (`bookings.meetingEnded`)
+- `system`
+  - `ping` (`system.ping`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Bookings
+
+### Booking Cancelled
+
+`bookings.bookingCancelled`
+
+A booking was cancelled
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `triggerEvent` | `BOOKING_CANCELLED` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  bookingId?: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status?: string,
+  startTime?: string,
+  endTime?: string,
+  length?: number,
+  eventTypeId?: number,
+  meetingUrl?: string | null,
+  location?: string | null,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone?: string,
+    language?: {
+    },
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  metadata?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  triggerEvent: BOOKING_CANCELLED,
+  createdAt: string,
+  payload: {
+    bookingId?: number,
+    uid: string,
+    title?: string,
+    description?: string | null,
+    status?: string,
+    startTime?: string,
+    endTime?: string,
+    length?: number,
+    eventTypeId?: number,
+    meetingUrl?: string | null,
+    location?: string | null,
+    cancellationReason?: string | null,
+    reschedulingReason?: string | null,
+    rescheduledFromUid?: string | null,
+    attendees?: {
+      name: string,
+      email: string,
+      timeZone?: string,
+      language?: {
+      },
+      absent?: boolean
+    }[],
+    hosts?: {
+      id: number,
+      name: string,
+      email?: string,
+      username?: string,
+      timeZone?: string
+    }[],
+    metadata?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cal({
+    webhookHooks: {
+        bookings: {
+            bookingCancelled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Booking Created
+
+`bookings.bookingCreated`
+
+A new booking was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `triggerEvent` | `BOOKING_CREATED` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  bookingId?: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status?: string,
+  startTime?: string,
+  endTime?: string,
+  length?: number,
+  eventTypeId?: number,
+  meetingUrl?: string | null,
+  location?: string | null,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone?: string,
+    language?: {
+    },
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  metadata?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  triggerEvent: BOOKING_CREATED,
+  createdAt: string,
+  payload: {
+    bookingId?: number,
+    uid: string,
+    title?: string,
+    description?: string | null,
+    status?: string,
+    startTime?: string,
+    endTime?: string,
+    length?: number,
+    eventTypeId?: number,
+    meetingUrl?: string | null,
+    location?: string | null,
+    cancellationReason?: string | null,
+    reschedulingReason?: string | null,
+    rescheduledFromUid?: string | null,
+    attendees?: {
+      name: string,
+      email: string,
+      timeZone?: string,
+      language?: {
+      },
+      absent?: boolean
+    }[],
+    hosts?: {
+      id: number,
+      name: string,
+      email?: string,
+      username?: string,
+      timeZone?: string
+    }[],
+    metadata?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cal({
+    webhookHooks: {
+        bookings: {
+            bookingCreated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Booking Rescheduled
+
+`bookings.bookingRescheduled`
+
+A booking was rescheduled
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `triggerEvent` | `BOOKING_RESCHEDULED` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  bookingId?: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status?: string,
+  startTime?: string,
+  endTime?: string,
+  length?: number,
+  eventTypeId?: number,
+  meetingUrl?: string | null,
+  location?: string | null,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone?: string,
+    language?: {
+    },
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  metadata?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  triggerEvent: BOOKING_RESCHEDULED,
+  createdAt: string,
+  payload: {
+    bookingId?: number,
+    uid: string,
+    title?: string,
+    description?: string | null,
+    status?: string,
+    startTime?: string,
+    endTime?: string,
+    length?: number,
+    eventTypeId?: number,
+    meetingUrl?: string | null,
+    location?: string | null,
+    cancellationReason?: string | null,
+    reschedulingReason?: string | null,
+    rescheduledFromUid?: string | null,
+    attendees?: {
+      name: string,
+      email: string,
+      timeZone?: string,
+      language?: {
+      },
+      absent?: boolean
+    }[],
+    hosts?: {
+      id: number,
+      name: string,
+      email?: string,
+      username?: string,
+      timeZone?: string
+    }[],
+    metadata?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cal({
+    webhookHooks: {
+        bookings: {
+            bookingRescheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Meeting Ended
+
+`bookings.meetingEnded`
+
+A meeting ended
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `triggerEvent` | `MEETING_ENDED` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  bookingId?: number,
+  uid: string,
+  title?: string,
+  description?: string | null,
+  status?: string,
+  startTime?: string,
+  endTime?: string,
+  length?: number,
+  eventTypeId?: number,
+  meetingUrl?: string | null,
+  location?: string | null,
+  cancellationReason?: string | null,
+  reschedulingReason?: string | null,
+  rescheduledFromUid?: string | null,
+  attendees?: {
+    name: string,
+    email: string,
+    timeZone?: string,
+    language?: {
+    },
+    absent?: boolean
+  }[],
+  hosts?: {
+    id: number,
+    name: string,
+    email?: string,
+    username?: string,
+    timeZone?: string
+  }[],
+  metadata?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  triggerEvent: MEETING_ENDED,
+  createdAt: string,
+  payload: {
+    bookingId?: number,
+    uid: string,
+    title?: string,
+    description?: string | null,
+    status?: string,
+    startTime?: string,
+    endTime?: string,
+    length?: number,
+    eventTypeId?: number,
+    meetingUrl?: string | null,
+    location?: string | null,
+    cancellationReason?: string | null,
+    reschedulingReason?: string | null,
+    rescheduledFromUid?: string | null,
+    attendees?: {
+      name: string,
+      email: string,
+      timeZone?: string,
+      language?: {
+      },
+      absent?: boolean
+    }[],
+    hosts?: {
+      id: number,
+      name: string,
+      email?: string,
+      username?: string,
+      timeZone?: string
+    }[],
+    metadata?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cal({
+    webhookHooks: {
+        bookings: {
+            meetingEnded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## System
+
+### Ping
+
+`system.ping`
+
+Ping test to verify webhook endpoint
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `triggerEvent` | `PING` | Yes | — |
+| `createdAt` | `string` | No | — |
+| `payload` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  triggerEvent: PING,
+  createdAt?: string,
+  payload?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+cal({
+    webhookHooks: {
+        system: {
+            ping: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -12,7 +12,6 @@ import {
 	leave,
 	list,
 	open,
-	random,
 	rename,
 	setPurpose,
 	setTopic,
@@ -52,7 +51,6 @@ import {
 } from './users';
 
 export const Channels = {
-	random,
 	archive,
 	close,
 	create,

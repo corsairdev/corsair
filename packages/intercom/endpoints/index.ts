@@ -1,9 +1,9 @@
-import * as ContactsFns from './contacts';
-import * as ConversationsFns from './conversations';
-import * as CompaniesFns from './companies';
+import * as AdminsFns from './admins';
 import * as ArticlesFns from './articles';
 import * as CollectionsFns from './collections';
-import * as AdminsFns from './admins';
+import * as CompaniesFns from './companies';
+import * as ContactsFns from './contacts';
+import * as ConversationsFns from './conversations';
 import * as HelpCentersFns from './helpCenters';
 
 export const Contacts = {

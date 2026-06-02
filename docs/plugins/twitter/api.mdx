@@ -1,0 +1,102 @@
+---
+title: API
+description: "API reference for Twitter: every `twitter.api.*` operation with input and output types."
+---
+
+Every `twitter.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Tweets
+
+### create
+
+`tweets.create`
+
+Post a new tweet
+
+**Risk:** `write`
+
+```ts
+await corsair.twitter.api.tweets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | Tweet text content (max 280 weighted characters) |
+| `quoteTweetId` | `string` | No | — |
+| `mediaIds` | `string[]` | No | — |
+| `replySettings` | `following \| mentionedUsers \| subscribers` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createReply
+
+`tweets.createReply`
+
+Post a reply to an existing tweet
+
+**Risk:** `write`
+
+```ts
+await corsair.twitter.api.tweets.createReply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | Reply text content (max 280 weighted characters) |
+| `inReplyToTweetId` | `string` | Yes | ID of the tweet to reply to |
+| `excludeReplyUserIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

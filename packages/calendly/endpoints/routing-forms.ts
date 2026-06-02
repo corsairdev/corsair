@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CalendlyEndpoints } from '..';
 import { makeCalendlyRequest } from '../client';
+import type { CalendlyEndpoints } from '../index';
 import type { CalendlyEndpointOutputs } from './types';
 
 export const get: CalendlyEndpoints['routingFormsGet'] = async (ctx, input) => {
@@ -67,7 +67,7 @@ export const list: CalendlyEndpoints['routingFormsList'] = async (
 		CalendlyEndpointOutputs['routingFormsList']
 	>('routing_forms', ctx.key, {
 		method: 'GET',
-		query: input
+		query: input,
 	});
 
 	if (result.collection && ctx.db.routingForms) {
@@ -102,7 +102,7 @@ export const getSampleWebhookData: CalendlyEndpoints['routingFormsGetSampleWebho
 			CalendlyEndpointOutputs['routingFormsGetSampleWebhookData']
 		>('sample_webhook_data', ctx.key, {
 			method: 'GET',
-			query: input
+			query: input,
 		});
 
 		await logEventFromContext(

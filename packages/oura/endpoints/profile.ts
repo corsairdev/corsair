@@ -1,6 +1,6 @@
-import type { OuraEndpoints } from '..';
 import { logEventFromContext } from 'corsair/core';
 import { makeOuraRequest } from '../client';
+import type { OuraEndpoints } from '../index';
 import type { OuraEndpointOutputs } from './types';
 
 export const get: OuraEndpoints['profileGet'] = async (ctx, _input) => {

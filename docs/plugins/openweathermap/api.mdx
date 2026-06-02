@@ -1,0 +1,419 @@
+---
+title: API
+description: "API reference for Open Weather Map: every `openweathermap.api.*` operation with input and output types."
+---
+
+Every `openweathermap.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## History
+
+### timeMachine
+
+`history.timeMachine`
+
+Get historical weather data for a specific timestamp (available from 1979-01-01)
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.history.timeMachine({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of the location |
+| `lon` | `number` | Yes | Longitude of the location |
+| `dt` | `number` | Yes | Unix timestamp (UTC) for the requested historical date |
+| `units` | `standard \| metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `timezone` | `string` | Yes | — |
+| `timezone_offset` | `number` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  dt: number,
+  sunrise: number,
+  sunset: number,
+  temp: number,
+  feels_like: number,
+  pressure: number,
+  humidity: number,
+  dew_point: number,
+  uvi?: number,
+  clouds: number,
+  visibility?: number,
+  wind_speed: number,
+  wind_deg: number,
+  wind_gust?: number,
+  weather: {
+    id: number,
+    main: string,
+    description: string,
+    icon: string
+  }[],
+  rain?: {
+    1h: number
+  },
+  snow?: {
+    1h: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Summary
+
+### daySummary
+
+`summary.daySummary`
+
+Get aggregated weather summary for a specific date (temperature, wind, precipitation)
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.summary.daySummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of the location |
+| `lon` | `number` | Yes | Longitude of the location |
+| `date` | `string` | Yes | Date in YYYY-MM-DD format |
+| `units` | `standard \| metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+| `tz` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `tz` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `units` | `string` | Yes | — |
+| `cloud_cover` | `object` | Yes | — |
+| `humidity` | `object` | Yes | — |
+| `precipitation` | `object` | Yes | — |
+| `temperature` | `object` | Yes | — |
+| `pressure` | `object` | Yes | — |
+| `wind` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cloud_cover full type">
+
+```ts
+{
+  afternoon: number
+}
+```
+</Accordion>
+
+<Accordion title="humidity full type">
+
+```ts
+{
+  afternoon: number
+}
+```
+</Accordion>
+
+<Accordion title="precipitation full type">
+
+```ts
+{
+  total: number
+}
+```
+</Accordion>
+
+<Accordion title="temperature full type">
+
+```ts
+{
+  min: number,
+  max: number,
+  afternoon: number,
+  night: number,
+  evening: number,
+  morning: number
+}
+```
+</Accordion>
+
+<Accordion title="pressure full type">
+
+```ts
+{
+  afternoon: number
+}
+```
+</Accordion>
+
+<Accordion title="wind full type">
+
+```ts
+{
+  max: {
+    speed: number,
+    direction: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### overview
+
+`summary.overview`
+
+Get a human-readable weather overview text for a location and date
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.summary.overview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of the location |
+| `lon` | `number` | Yes | Longitude of the location |
+| `date` | `string` | No | — |
+| `units` | `standard \| metric \| imperial` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `tz` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `units` | `string` | Yes | — |
+| `weather_overview` | `string` | Yes | — |
+
+
+
+---
+
+## Weather
+
+### oneCall
+
+`weather.oneCall`
+
+Get current weather, minutely/hourly/daily forecasts, and weather alerts for a location
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.weather.oneCall({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of the location |
+| `lon` | `number` | Yes | Longitude of the location |
+| `exclude` | `current \| minutely \| hourly \| daily \| alerts[]` | No | — |
+| `units` | `standard \| metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `timezone` | `string` | Yes | — |
+| `timezone_offset` | `number` | Yes | — |
+| `current` | `object` | No | — |
+| `minutely` | `object[]` | No | — |
+| `hourly` | `object[]` | No | — |
+| `daily` | `object[]` | No | — |
+| `alerts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="current full type">
+
+```ts
+{
+  dt: number,
+  sunrise?: number,
+  sunset?: number,
+  temp: number,
+  feels_like: number,
+  pressure: number,
+  humidity: number,
+  dew_point: number,
+  uvi: number,
+  clouds: number,
+  visibility?: number,
+  wind_speed: number,
+  wind_deg: number,
+  wind_gust?: number,
+  weather: {
+    id: number,
+    main: string,
+    description: string,
+    icon: string
+  }[],
+  rain?: {
+    1h: number
+  },
+  snow?: {
+    1h: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="minutely full type">
+
+```ts
+{
+  dt: number,
+  precipitation: number
+}[]
+```
+</Accordion>
+
+<Accordion title="hourly full type">
+
+```ts
+{
+  dt: number,
+  temp: number,
+  feels_like: number,
+  pressure: number,
+  humidity: number,
+  dew_point: number,
+  uvi: number,
+  clouds: number,
+  visibility?: number,
+  wind_speed: number,
+  wind_deg: number,
+  wind_gust?: number,
+  weather: {
+    id: number,
+    main: string,
+    description: string,
+    icon: string
+  }[],
+  pop: number,
+  rain?: {
+    1h: number
+  },
+  snow?: {
+    1h: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="daily full type">
+
+```ts
+{
+  dt: number,
+  sunrise: number,
+  sunset: number,
+  moonrise: number,
+  moonset: number,
+  moon_phase: number,
+  summary?: string,
+  temp: {
+    day: number,
+    min: number,
+    max: number,
+    night: number,
+    eve: number,
+    morn: number
+  },
+  feels_like: {
+    day: number,
+    night: number,
+    eve: number,
+    morn: number
+  },
+  pressure: number,
+  humidity: number,
+  dew_point: number,
+  wind_speed: number,
+  wind_deg: number,
+  wind_gust?: number,
+  weather: {
+    id: number,
+    main: string,
+    description: string,
+    icon: string
+  }[],
+  clouds: number,
+  pop: number,
+  rain?: number,
+  snow?: number,
+  uvi: number
+}[]
+```
+</Accordion>
+
+<Accordion title="alerts full type">
+
+```ts
+{
+  sender_name: string,
+  event: string,
+  start: number,
+  end: number,
+  description: string,
+  tags: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

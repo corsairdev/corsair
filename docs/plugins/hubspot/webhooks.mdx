@@ -1,0 +1,690 @@
+---
+title: Webhooks
+description: "Hubspot incoming webhooks: event paths, payloads, and response data."
+---
+
+The Hubspot plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/hubspot/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `companyCreated` (`companyCreated`)
+- `companyDeleted` (`companyDeleted`)
+- `companyUpdated` (`companyUpdated`)
+- `contactCreated` (`contactCreated`)
+- `contactDeleted` (`contactDeleted`)
+- `contactUpdated` (`contactUpdated`)
+- `dealCreated` (`dealCreated`)
+- `dealDeleted` (`dealDeleted`)
+- `dealUpdated` (`dealUpdated`)
+- `ticketCreated` (`ticketCreated`)
+- `ticketDeleted` (`ticketDeleted`)
+- `ticketUpdated` (`ticketUpdated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Company Created
+
+### Company Created
+
+`companyCreated`
+
+A new company was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `company.creation` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        companyCreated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Company Deleted
+
+### Company Deleted
+
+`companyDeleted`
+
+A company was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `company.deletion` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        companyDeleted: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Company Updated
+
+### Company Updated
+
+`companyUpdated`
+
+A company property was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `company.propertyChange` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | Yes | — |
+| `propertyValue` | `string` | Yes | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        companyUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Contact Created
+
+### Contact Created
+
+`contactCreated`
+
+A new contact was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `contact.creation` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        contactCreated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Contact Deleted
+
+### Contact Deleted
+
+`contactDeleted`
+
+A contact was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `contact.deletion` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        contactDeleted: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Contact Updated
+
+### Contact Updated
+
+`contactUpdated`
+
+A contact property was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `contact.propertyChange` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | Yes | — |
+| `propertyValue` | `string` | Yes | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        contactUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Deal Created
+
+### Deal Created
+
+`dealCreated`
+
+A new deal was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `deal.creation` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        dealCreated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Deal Deleted
+
+### Deal Deleted
+
+`dealDeleted`
+
+A deal was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `deal.deletion` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        dealDeleted: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Deal Updated
+
+### Deal Updated
+
+`dealUpdated`
+
+A deal property was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `deal.propertyChange` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | Yes | — |
+| `propertyValue` | `string` | Yes | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        dealUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Ticket Created
+
+### Ticket Created
+
+`ticketCreated`
+
+A new support ticket was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `ticket.creation` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        ticketCreated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Ticket Deleted
+
+### Ticket Deleted
+
+`ticketDeleted`
+
+A support ticket was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `ticket.deletion` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `propertyValue` | `string` | No | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        ticketDeleted: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Ticket Updated
+
+### Ticket Updated
+
+`ticketUpdated`
+
+A support ticket property was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `number` | Yes | — |
+| `portalId` | `number` | Yes | — |
+| `occurredAt` | `number` | Yes | — |
+| `subscriptionType` | `ticket.propertyChange` | Yes | — |
+| `attemptNumber` | `number` | Yes | — |
+| `objectId` | `number` | Yes | — |
+| `propertyName` | `string` | Yes | — |
+| `propertyValue` | `string` | Yes | — |
+| `changeSource` | `string` | No | — |
+| `eventId` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+hubspot({
+    webhookHooks: {
+        ticketUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,44 +1,44 @@
 import {
-	list as boardsList,
-	get as boardsGet,
-	create as boardsCreate,
-	update as boardsUpdate,
 	archive as boardsArchive,
+	create as boardsCreate,
 	deleteboard as boardsDelete,
 	duplicate as boardsDuplicate,
+	get as boardsGet,
+	list as boardsList,
+	update as boardsUpdate,
 } from './boards';
 import {
-	list as itemsList,
-	get as itemsGet,
-	create as itemsCreate,
-	update as itemsUpdate,
-	move as itemsMove,
-	archive as itemsArchive,
-	deleteitem as itemsDelete,
-} from './items';
-import {
-	list as groupsList,
-	create as groupsCreate,
-	update as groupsUpdate,
-	deletegroup as groupsDelete,
-} from './groups';
-import {
-	list as columnsList,
-	create as columnsCreate,
 	changeValue as columnsChangeValue,
+	create as columnsCreate,
+	list as columnsList,
 } from './columns';
 import {
-	list as updatesList,
+	create as groupsCreate,
+	deletegroup as groupsDelete,
+	list as groupsList,
+	update as groupsUpdate,
+} from './groups';
+import {
+	archive as itemsArchive,
+	create as itemsCreate,
+	deleteitem as itemsDelete,
+	get as itemsGet,
+	list as itemsList,
+	move as itemsMove,
+	update as itemsUpdate,
+} from './items';
+import {
 	create as updatesCreate,
 	deleteupdate as updatesDelete,
+	list as updatesList,
 } from './updates';
-import { list as usersList, get as usersGet } from './users';
-import { list as workspacesList } from './workspaces';
+import { get as usersGet, list as usersList } from './users';
 import {
-	list as webhooksList,
 	create as webhooksCreate,
 	deletewebhook as webhooksDelete,
+	list as webhooksList,
 } from './webhooks';
+import { list as workspacesList } from './workspaces';
 
 export const Boards = {
 	list: boardsList,

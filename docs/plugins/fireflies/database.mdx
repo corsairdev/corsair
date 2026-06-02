@@ -1,0 +1,103 @@
+---
+title: Database
+description: "Fireflies local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Fireflies plugin syncs data locally. Use `corsair.fireflies.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Ask Fred Threads
+
+Path: `fireflies.db.askFredThreads.search`
+
+```ts
+const rows = await corsair.fireflies.db.askFredThreads.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `transcript_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Transcripts
+
+Path: `fireflies.db.transcripts.search`
+
+```ts
+const rows = await corsair.fireflies.db.transcripts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `date` | equals, before, after, between |
+| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `host_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `organizer_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `calendar_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `transcript_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `meeting_link` | `string` | equals, contains, startsWith, endsWith, in |
+| `video_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `audio_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `privacy` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `fireflies.db.users.search`
+
+```ts
+const rows = await corsair.fireflies.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `num_transcripts` | `number` | equals, gt, gte, lt, lte, in |
+| `minutes_consumed` | `number` | equals, gt, gte, lt, lte, in |
+| `is_admin` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

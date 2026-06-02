@@ -1,0 +1,426 @@
+---
+title: API
+description: "API reference for Dodo Payments: every `dodopayments.api.*` operation with input and output types."
+---
+
+Every `dodopayments.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a Dodo customer
+
+**Risk:** `write`
+
+```ts
+await corsair.dodopayments.api.customers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `phone_number` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Fetch a Dodo customer by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dodopayments.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Payments
+
+### create
+
+`payments.create`
+
+Create a Dodo payment
+
+**Risk:** `write`
+
+```ts
+await corsair.dodopayments.api.payments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `payment_method` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `subscription_id` | `string` | No | — |
+| `billing` | `object` | No | — |
+| `payment_link` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`payments.get`
+
+Fetch a Dodo payment by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dodopayments.api.payments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `customer_id` | `string` | No | — |
+| `subscription_id` | `string` | No | — |
+| `billing` | `object` | No | — |
+| `payment_link` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payments.list`
+
+List Dodo payments
+
+**Risk:** `read`
+
+```ts
+await corsair.dodopayments.api.payments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  amount: number,
+  currency: string,
+  status: string,
+  customer_id?: string | null,
+  subscription_id?: string | null,
+  billing?: {
+  } | null,
+  payment_link?: string | null,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Refunds
+
+### create
+
+`refunds.create`
+
+Create a refund for a Dodo payment
+
+**Risk:** `write`
+
+```ts
+await corsair.dodopayments.api.refunds.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment_id` | `string` | Yes | — |
+| `amount` | `number` | No | — |
+| `reason` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `payment_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `reason` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Subscriptions
+
+### cancel
+
+`subscriptions.cancel`
+
+Cancel a Dodo subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.dodopayments.api.subscriptions.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string` | Yes | — |
+| `plan_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `billing_cycle` | `object` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing_cycle full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`subscriptions.create`
+
+Create a Dodo subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.dodopayments.api.subscriptions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `string` | Yes | — |
+| `plan_id` | `string` | Yes | — |
+| `quantity` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string` | Yes | — |
+| `plan_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `billing_cycle` | `object` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing_cycle full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscriptions.get`
+
+Fetch a Dodo subscription by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dodopayments.api.subscriptions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string` | Yes | — |
+| `plan_id` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `billing_cycle` | `object` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing_cycle full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
