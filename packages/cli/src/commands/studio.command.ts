@@ -1,6 +1,6 @@
 import path from 'node:path'
 import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '@/index.types'
+import type { CommandActionData, CommandOption } from '../index.types'
 
 type StartStudio = (opts: {
 	cwd: string;

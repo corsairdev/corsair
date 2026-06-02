@@ -1,8 +1,8 @@
 import type { AnyCorsairInstance } from 'corsair'
 import { listOperations } from 'corsair'
 import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '@/index.types'
-import { getCorsairInstance } from '@/utils/corsair-instance'
+import type { CommandActionData, CommandOption } from '../index.types'
+import { getCorsairInstance } from '../utils/corsair-instance'
 
 export default class ListCommand extends BaseCommand {
 	getName(): string {

@@ -1,7 +1,7 @@
 import { setupCorsair } from 'corsair'
 import BaseCommand from './base.command'
-import type { CommandActionData, CommandArgument, CommandOption } from '@/index.types'
-import { getCorsairInstance } from '@/utils/corsair-instance'
+import type { CommandActionData, CommandArgument, CommandOption } from '../index.types'
+import { getCorsairInstance } from '../utils/corsair-instance'
 
 export default class SetupCommand extends BaseCommand {
 	getName(): string {

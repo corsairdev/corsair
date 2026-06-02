@@ -10,22 +10,22 @@ import * as path from 'node:path'
 import * as querystring from 'node:querystring'
 import type {
 	AuthTypes,
-	CorsairDatabase,
 	CorsairInternalConfig,
 	CorsairPlugin,
 	OAuthConfig,
 	PluginAuthConfig,
 	TokenResponse,
-} from 'corsair'
+} from 'corsair/core'
 import {
 	CORSAIR_INTERNAL,
 	createAccountKeyManager,
-	createCorsairOrm,
 	createIntegrationKeyManager,
 	encryptDEK,
 	exchangeCodeForTokens,
 	generateDEK,
-} from 'corsair'
+} from 'corsair/core'
+import type { CorsairDatabase } from 'corsair/db'
+import { createCorsairOrm } from 'corsair/orm'
 import { getCorsairInstance } from './utils/corsair-instance'
 
 // ─────────────────────────────────────────────────────────────────────────────

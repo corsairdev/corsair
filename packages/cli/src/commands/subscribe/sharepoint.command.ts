@@ -1,6 +1,6 @@
 import BaseCommand from '../base.command'
-import type { CommandActionData } from '@/index.types'
-import { runSharepointSubscribe } from '@/lib/microsoft/sharepoint'
+import type { CommandActionData } from '../../index.types'
+import { runSharepointSubscribe } from '../../lib/microsoft/sharepoint'
 
 export default class SharepointCommand extends BaseCommand {
 	getName(): string {

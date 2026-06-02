@@ -1,8 +1,12 @@
-import { type Command, Option } from 'commander'
-import type { CommandActionData, CommandArgument, CommandOption } from '@/index.types'
+import type { Command } from 'commander';
+import { Option } from 'commander';
+import type {
+	CommandActionData,
+	CommandArgument,
+	CommandOption,
+} from '../index.types';
 
 export default abstract class BaseCommand {
-
 	abstract getName(): string;
 
 	abstract getDescription(): string;
@@ -26,7 +30,7 @@ export default abstract class BaseCommand {
 	}
 
 	getSubCommands(): BaseCommand[] {
-		return []
+		return [];
 	}
 
 	readonly prepare = (program: Command): void => {
@@ -39,36 +43,34 @@ export default abstract class BaseCommand {
 			command.usage(usage);
 		}
 
-		this
-			.getAliases()
-			.forEach((alias) => command.alias(alias));
+		this.getAliases().forEach((alias) => command.alias(alias));
 
 		this.getOptions().forEach((option) => {
 			const newOption: Option = new Option(
 				`${option.short}, ${option.long}`,
-				option.description
-			).default(option.defaultValue)
+				option.description,
+			).default(option.defaultValue);
 
 			option.choices &&
-			option.choices.length > 0 &&
-			newOption.choices(option.choices)
+				option.choices.length > 0 &&
+				newOption.choices(option.choices);
 
-			command.addOption(newOption)
-		})
+			command.addOption(newOption);
+		});
 		this.getArguments().forEach((argument) =>
-			command.argument(argument.name, argument.description)
-		)
+			command.argument(argument.name, argument.description),
+		);
 
 		command.action(async (...data) => {
-			const argsCount = this.getArguments().length
+			const argsCount = this.getArguments().length;
 
-			const commandOptions = data[argsCount]
-			const args: string[] = data.slice(0, argsCount)
-			await this.action({ args, options: commandOptions })
+			const commandOptions = data[argsCount];
+			const args: string[] = data.slice(0, argsCount);
+			await this.action({ args, options: commandOptions });
 		});
 
 		this.getSubCommands().forEach((subCommand) => {
-			subCommand.prepare(command)
-		})
+			subCommand.prepare(command);
+		});
 	};
 }

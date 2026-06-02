@@ -6,7 +6,7 @@ import babelPresetReact from '@babel/preset-react'
 import babelPresetTypeScript from '@babel/preset-typescript'
 import { loadConfig } from 'c12'
 import type { JitiOptions } from 'jiti'
-import { getTsconfigInfo } from '@/get-tsconfig-info'
+import { getTsconfigInfo } from '../get-tsconfig-info'
 
 const POSSIBLE_PATHS = [
 	'corsair.ts',

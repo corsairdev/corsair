@@ -1,6 +1,6 @@
 import BaseCommand from '../base.command'
-import type { CommandActionData } from '@/index.types'
-import { runOutlookSubscribe } from '@/lib/microsoft/subscribe-microsoft'
+import type { CommandActionData } from '../../index.types'
+import { runOutlookSubscribe } from '../../lib/microsoft/subscribe-microsoft'
 
 export default class OutlookCommand extends BaseCommand {
   getName(): string {

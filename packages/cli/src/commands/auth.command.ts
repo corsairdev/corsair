@@ -1,6 +1,6 @@
 import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '@/index.types'
-import { runWebhookSubscription } from '@/utils/subscription'
+import type { CommandActionData, CommandOption } from '../index.types'
+import { runWebhookSubscription } from '../utils/subscription'
 
 export default class AuthCommand extends BaseCommand {
 	getName(): string {

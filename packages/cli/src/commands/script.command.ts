@@ -1,6 +1,6 @@
 import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '@/index.types'
-import { getCorsairInstance, resolveClient } from '@/utils/corsair-instance'
+import type { CommandActionData, CommandOption } from '../index.types'
+import { getCorsairInstance, resolveClient } from '../utils/corsair-instance'
 
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
 	...args: string[]

@@ -1,8 +1,8 @@
 import type { AnyCorsairInstance } from 'corsair'
 import { getSchema } from 'corsair'
 import BaseCommand from './base.command'
-import type { CommandActionData, CommandArgument } from '@/index.types'
-import { getCorsairInstance } from '@/utils/corsair-instance'
+import type { CommandActionData, CommandArgument } from '../index.types'
+import { getCorsairInstance } from '../utils/corsair-instance'
 
 export default class SchemaCommand extends BaseCommand {
 	getName(): string {
