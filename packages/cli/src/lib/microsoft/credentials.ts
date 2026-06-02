@@ -1,9 +1,6 @@
-import * as p from '@clack/prompts';
-import type { CorsairInternalConfig } from 'corsair/core';
-import {
-	createAccountKeyManager,
-	createIntegrationKeyManager,
-} from 'corsair/core';
+import * as p from '@clack/prompts'
+import type { CorsairInternalConfig } from 'corsair/core'
+import { createAccountKeyManager, createIntegrationKeyManager, } from 'corsair/core'
 
 const MICROSOFT_TOKEN_URL =
 	'https://login.microsoftonline.com/common/oauth2/v2.0/token';

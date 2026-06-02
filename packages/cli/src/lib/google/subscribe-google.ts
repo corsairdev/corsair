@@ -1,0 +1,1 @@
+export { runGoogleSubscribe } from './index';
