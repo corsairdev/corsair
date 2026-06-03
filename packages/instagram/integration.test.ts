@@ -350,114 +350,114 @@ describe(
 
             testDb.cleanup();
         });
-        // it('Post Instagram Image', async () => {
+        it('Post Instagram Image', async () => {
             
-        //     const { corsair, testDb } =
-        //         await createInstagramClient();
+            const { corsair, testDb } =
+                await createInstagramClient();
 
-        //     console.time('instagram-post');
-        //     const result = await corsair.instagram.api.image.post({
-        //         ig_id: '17841434848107311',
-        //         image_url: 'https://scontent.cdninstagram.com/v/t51.82787-15/708468999_18082194101161604_3462304361651356345_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=vpz-N-HLOwEQ7kNvwFw_1Jg&_nc_oc=AdrB7aF-cnmrbaQnhlU1PTS4i5-X4iDBGjuWcu-MieRuAuu8s22Dx3OQkF8QufgtAg0Z2XX_AlkuXFo9J3br5RSS&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=xlfqVKrJ4lLVycs84MBUrQ&oh=00_Af_KZgFi7fihqoGJIltdB4OjAbnJ6oHHSWZ0fS8rg3GnlQ&oe=6A236717',
-        //         caption: 'Tesing From Corsair',
-        //         alt_text: 'Hiii'
-        //     });
+            console.time('instagram-post');
+            const result = await corsair.instagram.api.image.post({
+                ig_id: '17841434848107311',
+                image_url: 'https://scontent.cdninstagram.com/v/t51.82787-15/708468999_18082194101161604_3462304361651356345_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=vpz-N-HLOwEQ7kNvwFw_1Jg&_nc_oc=AdrB7aF-cnmrbaQnhlU1PTS4i5-X4iDBGjuWcu-MieRuAuu8s22Dx3OQkF8QufgtAg0Z2XX_AlkuXFo9J3br5RSS&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=xlfqVKrJ4lLVycs84MBUrQ&oh=00_Af_KZgFi7fihqoGJIltdB4OjAbnJ6oHHSWZ0fS8rg3GnlQ&oe=6A236717',
+                caption: 'Tesing From Corsair',
+                alt_text: 'Hiii'
+            });
 
-        //     console.timeEnd('instagram-post');
+            console.timeEnd('instagram-post');
 
-        //     testDb.cleanup();
-        // }, 60000);
+            testDb.cleanup();
+        }, 60000);
 
-        // it('Post Instagram Reel', async () => {
+        it('Post Instagram Reel', async () => {
             
-        //     const { corsair, testDb } =
-        //         await createInstagramClient();
+            const { corsair, testDb } =
+                await createInstagramClient();
 
-        //     console.time('instagram-post');
-        //     const result = await corsair.instagram.api.reel.post({
-        //         ig_id: '17841434848107311',
-        //         video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780329988/ILWIS_Software_Installation_Demo_iebgx7.mp4',
-        //         media_type: 'REELS',
-        //         caption: 'From Corsair',
-        //         audio_name: 'Original Audio'
-        //     });
+            console.time('instagram-post');
+            const result = await corsair.instagram.api.reel.post({
+                ig_id: '17841434848107311',
+                video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780329988/ILWIS_Software_Installation_Demo_iebgx7.mp4',
+                media_type: 'REELS',
+                caption: 'From Corsair',
+                audio_name: 'Original Audio'
+            });
 
-        //     console.timeEnd('instagram-post');
+            console.timeEnd('instagram-post');
 
-        //     testDb.cleanup();
-        // }, 1200000);
+            testDb.cleanup();
+        }, 1200000);
 
-        // it('Post Instagram Image Story', async () => {
+        it('Post Instagram Image Story', async () => {
             
-        //     const { corsair, testDb } =
-        //         await createInstagramClient();
+            const { corsair, testDb } =
+                await createInstagramClient();
 
-        //     console.time('instagram-post');
-        //     const result = await corsair.instagram.api.image.story({
-        //         ig_id: '17841434848107311',
-        //         image_url: 'https://scontent.cdninstagram.com/v/t51.82787-15/708468999_18082194101161604_3462304361651356345_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=vpz-N-HLOwEQ7kNvwFw_1Jg&_nc_oc=AdrB7aF-cnmrbaQnhlU1PTS4i5-X4iDBGjuWcu-MieRuAuu8s22Dx3OQkF8QufgtAg0Z2XX_AlkuXFo9J3br5RSS&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=xlfqVKrJ4lLVycs84MBUrQ&oh=00_Af_KZgFi7fihqoGJIltdB4OjAbnJ6oHHSWZ0fS8rg3GnlQ&oe=6A236717',
-        //         media_type: 'STORIES',
-        //     });
+            console.time('instagram-post');
+            const result = await corsair.instagram.api.image.story({
+                ig_id: '17841434848107311',
+                image_url: 'https://scontent.cdninstagram.com/v/t51.82787-15/708468999_18082194101161604_3462304361651356345_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=vpz-N-HLOwEQ7kNvwFw_1Jg&_nc_oc=AdrB7aF-cnmrbaQnhlU1PTS4i5-X4iDBGjuWcu-MieRuAuu8s22Dx3OQkF8QufgtAg0Z2XX_AlkuXFo9J3br5RSS&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=xlfqVKrJ4lLVycs84MBUrQ&oh=00_Af_KZgFi7fihqoGJIltdB4OjAbnJ6oHHSWZ0fS8rg3GnlQ&oe=6A236717',
+                media_type: 'STORIES',
+            });
 
-        //     console.timeEnd('instagram-post');
+            console.timeEnd('instagram-post');
 
-        //     testDb.cleanup();
-        // }, 1200000);
-        // it('Post Instagram Video Story', async () => {
+            testDb.cleanup();
+        }, 1200000);
+        it('Post Instagram Video Story', async () => {
             
-        //     const { corsair, testDb } =
-        //         await createInstagramClient();
+            const { corsair, testDb } =
+                await createInstagramClient();
 
-        //     console.time('instagram-post');
-        //     const result = await corsair.instagram.api.video.story({
-        //         ig_id: '17841434848107311',
-        //         video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
-        //         media_type: 'STORIES',
-        //     });
+            console.time('instagram-post');
+            const result = await corsair.instagram.api.video.story({
+                ig_id: '17841434848107311',
+                video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
+                media_type: 'STORIES',
+            });
 
-        //     console.timeEnd('instagram-post');
+            console.timeEnd('instagram-post');
 
-        //     console.log(result);
+            console.log(result);
 
-        //     testDb.cleanup();
-        // }, 1200000);
+            testDb.cleanup();
+        }, 1200000);
 
-        // it('Post Instagram CAROUSEL', async () => {
+        it('Post Instagram CAROUSEL', async () => {
             
-        //     const { corsair, testDb } =
-        //         await createInstagramClient();
+            const { corsair, testDb } =
+                await createInstagramClient();
 
-        //     console.time('instagram-post');
-        //     const result = await corsair.instagram.api.carousel.post({
-        //         ig_id: '17841434848107311',
-        //         media_type: 'CAROUSEL',
-        //         children: ['18083769020161604', '18083768705161604'], // image or video container-id was allowed
-        //         caption: 'Hello! From Corsair'
-        //     });
+            console.time('instagram-post');
+            const result = await corsair.instagram.api.carousel.post({
+                ig_id: '17841434848107311',
+                media_type: 'CAROUSEL',
+                children: ['18083769020161604', '18083768705161604'], // image or video container-id was allowed
+                caption: 'Hello! From Corsair'
+            });
 
-        //     console.timeEnd('instagram-post');
+            console.timeEnd('instagram-post');
 
-        //     testDb.cleanup();
-        // }, 1200000);
+            testDb.cleanup();
+        }, 1200000);
 
-        // it('Create Instagram Video Container', async () => {
+        it('Create Instagram Video Container', async () => {
             
-        //     const { corsair, testDb } =
-        //         await createInstagramClient();
+            const { corsair, testDb } =
+                await createInstagramClient();
 
-        //     console.time('instagram-post');
-        //     const result = await corsair.instagram.api.video.createCarouselContainer({
-        //         ig_id: '17841434848107311',
-        //         video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
-        //         media_type: 'VIDEO',
-        //         is_carousel_item: true,
-        //         caption: 'Hello! From Corsair'
-        //     });
+            console.time('instagram-post');
+            const result = await corsair.instagram.api.video.createCarouselContainer({
+                ig_id: '17841434848107311',
+                video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
+                media_type: 'VIDEO',
+                is_carousel_item: true,
+                caption: 'Hello! From Corsair'
+            });
 
-        //     console.timeEnd('instagram-post');
+            console.timeEnd('instagram-post');
 
-        //     testDb.cleanup();
-        // }, 1200000);
+            testDb.cleanup();
+        }, 1200000);
 
         it('Get Instagram Media Insights', async () => {
             
@@ -470,9 +470,6 @@ describe(
                 type: 'REELS'
             });
 
-            // if(result.data) {
-            //     console.log(result);
-            // }
 
             console.timeEnd('instagram-post');
 

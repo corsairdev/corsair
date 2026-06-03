@@ -4,7 +4,6 @@ import {
     InstagramUser,
     InstagramMedia,
     // InstagramComment,
-    FacebookPageSchema,
     InstagramConversation,
     InstagramMessage,
     FacebookUser,

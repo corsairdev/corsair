@@ -25,8 +25,6 @@ export const story: InstagramEndpoints['CreateVideoStoryContainer'] = async (ctx
 
             response => {
 
-                console.log(response);
-
                 if (response.status_code === 'ERROR') {
                     throw new Error('Failed to process story');
                 }
