@@ -25,7 +25,6 @@ function PathCta({ optionId }: { optionId: keyof typeof PATH_CTAS }) {
 			href={cta.href}
 			target="_blank"
 			rel="noopener noreferrer"
-			data-cursor="btn"
 			className={LANDING_CTA_BOX_CLASS}
 		>
 			{cta.label}

@@ -6,8 +6,6 @@ import { LandingHero } from './hero/landing-hero';
 import { SiteMenu } from './menu/site-menu';
 import { ProblemStatementSection } from './problem-statement/problem-statement-section';
 import { SolutionFramingSection } from './solution-framing/solution-framing-section';
-import { CustomCursor } from './custom-cursor'; 
-
 export function LandingPage() {
 	return (
 		<div
@@ -18,7 +16,6 @@ export function LandingPage() {
 				backgroundSize: '12px 12px',
 			}}
 		>
-			<CustomCursor />
 			<SiteMenu />
 			<LandingHero />
 			<TerminalTrioSection />

@@ -75,7 +75,6 @@ export function HeroAppCta() {
 				href="https://app.corsair.dev"
 				target="_blank"
 				rel="noopener noreferrer"
-				data-cursor="btn"
 				className="inline-flex flex-1 touch-manipulation items-center justify-center gap-2 px-6 py-3 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white no-underline sm:flex-none"
 			>
 				Go to app
@@ -86,7 +85,6 @@ export function HeroAppCta() {
 
 			<button
 				type="button"
-				data-cursor="btn"
 				className="inline-flex shrink-0 touch-manipulation items-center justify-center border-l border-white/15 px-3 py-3 text-white/70 transition-colors duration-300 ease-out hover:bg-white/10 hover:text-white active:bg-white/15"
 				aria-label="Copy for agents"
 				aria-haspopup="menu"
@@ -114,7 +112,6 @@ export function HeroAppCta() {
 								key={option.id}
 								type="button"
 								role="menuitem"
-								data-cursor="btn"
 								className={cn(
 									'flex w-full touch-manipulation flex-col gap-1 rounded-md px-3 py-3 text-left transition-colors active:bg-[#1c1c1c]/[0.08] sm:py-2.5 sm:hover:bg-[#1c1c1c]/[0.04]',
 								)}
