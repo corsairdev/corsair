@@ -3,7 +3,8 @@ import type { CommandActionData, CommandOption } from '../index.types'
 import TeamsCommand from './subscribe/teams.command'
 import SharepointCommand from './subscribe/sharepoint.command'
 import OutlookCommand from './subscribe/outlook.command'
-import { runOutlookSubscribe } from '../lib/microsoft/subscribe-microsoft'
+import OnedriveCommand from './subscribe/onedrive.command'
+import { runOutlookSubscribe, runOnedriveSubscribe } from '../lib/microsoft/subscribe-microsoft'
 
 export default class SubscribeCommand extends BaseCommand {
 	getName(): string {
@@ -29,6 +30,7 @@ export default class SubscribeCommand extends BaseCommand {
 			new SharepointCommand(),
 			new TeamsCommand(),
 			new OutlookCommand(),
+			new OnedriveCommand(),
 		];
 	}
 
@@ -37,7 +39,7 @@ export default class SubscribeCommand extends BaseCommand {
 			console.error(
 				"Usage: corsair subscribe --plugin=<id> or corsair subscribe <plugin>",
 			);
-			console.error('[#corsair]: Supported: outlook');
+			console.error('[#corsair]: Supported: outlook, sharepoint, teams, onedrive');
 			process.exit(1);
 		}
 
@@ -46,8 +48,13 @@ export default class SubscribeCommand extends BaseCommand {
 			return;
 		}
 
+		if (options.plugin === 'onedrive') {
+			await runOnedriveSubscribe({ cwd: process.cwd() });
+			return;
+		}
+
 		console.error(
-			`[#corsair]: Unknown plugin for subscribe: '${options.plugin}'. Supported: outlook`,
+			`[#corsair]: Unknown plugin for subscribe: '${options.plugin}'. Supported: outlook, sharepoint, teams, onedrive`,
 		);
 		process.exit(1);
 	}
