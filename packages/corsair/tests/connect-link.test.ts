@@ -139,12 +139,10 @@ describe('connect-link generation in endpoint binding', () => {
     }
   })
 
-  it('generates connect link when keyBuilder throws account-not-found error', async () => {
+  it('propagates non-AuthMissingError from keyBuilder even with connectConfig', async () => {
     const boundFn = createBoundEndpoint({
       keyBuilder: async () => {
-        throw new Error(
-          'Account not found for tenant "tenant-1" and integration "gmail"'
-        )
+        throw new Error('Account not found for tenant "tenant-1"')
       },
       connectConfig: {
         baseUrl: 'https://myapp.com/connect',
@@ -158,13 +156,7 @@ describe('connect-link generation in endpoint binding', () => {
       },
     })
 
-    try {
-      await boundFn()
-      fail('Expected error to be thrown')
-    } catch (err: any) {
-      expect(err.message).toContain('[auth-missing:gmail]')
-      expect(err.message).toContain('https://myapp.com/connect')
-    }
+    await expect(boundFn()).rejects.toThrow('Account not found')
   })
 
   it('uses custom onAuthMissing callback', async () => {

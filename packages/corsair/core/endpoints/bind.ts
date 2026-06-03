@@ -1,3 +1,4 @@
+import type { OAuthConfig } from '../plugins'
 import type { CorsairDatabase } from '../../db/kysely/database'
 import type { CorsairErrorHandler } from '../errors'
 import { handleCorsairError } from '../errors/handler'
@@ -98,7 +99,7 @@ export function bindEndpointsRecursively({
       connectUrl: string
       state: string
     }) => string
-    oauthConfig?: any
+    oauthConfig?: OAuthConfig
     kek?: string | undefined
     tenantId?: string
   }
@@ -248,11 +249,7 @@ export function bindEndpointsRecursively({
           if (
             connectConfig?.oauthConfig &&
             connectConfig.kek &&
-            (err instanceof AuthMissingError ||
-              (err instanceof Error &&
-                /Account not found|No DEK found|\[auth-missing:/.test(
-                  err.message
-                )))
+            err instanceof AuthMissingError
           ) {
             const state = signState(
               encodeOAuthState(

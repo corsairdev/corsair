@@ -24,6 +24,7 @@ import type {
   CorsairKeyBuilderBase,
   CorsairPlugin,
   EndpointMetaEntry,
+  OAuthConfig,
   PermissionMode,
   PermissionPolicy,
 } from '../plugins'
@@ -509,7 +510,7 @@ export function buildCorsairClient<
       connectConfig: connectConfig
         ? {
             ...connectConfig,
-            oauthConfig: (plugin as { oauthConfig?: any }).oauthConfig,
+            oauthConfig: (plugin as { oauthConfig?: OAuthConfig }).oauthConfig,
             kek,
             tenantId: effectiveTenantId,
           }
