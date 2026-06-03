@@ -37,7 +37,9 @@ export function CopyFeedbackIcon({
 					'absolute inset-0 m-auto transition-[transform,opacity] duration-200 ease-in motion-reduce:transition-none',
 					iconClassName,
 					copyClassName,
-					copied ? 'scale-[0.45] opacity-0 -rotate-[14deg]' : 'scale-100 opacity-100 rotate-0',
+					copied
+						? 'scale-[0.45] opacity-0 -rotate-[14deg]'
+						: 'scale-100 opacity-100 rotate-0',
 				)}
 			/>
 			<Check

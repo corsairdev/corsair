@@ -237,4 +237,39 @@ describe('Slack plugin integration', () => {
 
 		testDb.cleanup();
 	});
+
+	it('admin endpoints interact with API and DB', async () => {
+		const setup = await createSlackClient();
+		if (!setup) {
+			return;
+		}
+
+		const { corsair, testDb, channel } = setup;
+
+		try {
+			await corsair.slack.api.admin.listTeams({});
+			
+			await corsair.slack.api.admin.conversationsSearch({
+				query: 'test',
+			});
+
+			await corsair.slack.api.admin.conversationsGetTeams({
+				channel_id: channel,
+			});
+
+			const orm = createCorsairOrm(testDb.database);
+			const searchEvents = await orm.events.findMany({
+				where: { event_type: 'slack.admin.conversationsSearch' },
+			});
+
+			expect(searchEvents.length).toBeGreaterThan(0);
+		} catch (error: unknown) {
+			const errorMessage = error instanceof Error ? error.message : String(error);
+			const isAuthError = /not_authed|not_allowed|missing_scope|fatal_error|invalid_auth/.test(errorMessage);
+
+			expect(isAuthError).toBe(true);
+		} finally {
+			testDb.cleanup();
+		}
+	});
 });

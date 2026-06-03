@@ -7,6 +7,6 @@
     "declarationMap": true,
     "outDir": "./dist"
   },
-  "include": ["./**/*"],
+  "include": ["src/**/*.ts", "package.json", "yaml.d.ts"],
   "exclude": ["dist", "node_modules", "sandbox/**/*"]
 }

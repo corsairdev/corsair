@@ -273,6 +273,7 @@ export function telegram<const T extends TelegramPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		authConfig: telegramAuthConfig,
 		keyBuilder: async (ctx: TelegramKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

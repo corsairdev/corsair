@@ -114,3 +114,4 @@ export const Users = {
 
 export type { SlackReactionName } from './reactions';
 export * from './types';
+export * from './admin';

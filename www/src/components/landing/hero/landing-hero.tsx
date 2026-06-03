@@ -12,8 +12,8 @@ export function LandingHero() {
 				aria-hidden
 			/>
 			<HeroBackground />
-			<div className="relative z-[1] mx-auto grid max-w-[1440px] grid-cols-1 justify-items-center gap-6 px-4 pt-16 text-center sm:gap-8 sm:pt-20 md:px-10 md:pt-24">
-				<div className="flex w-full max-w-[360px] flex-col items-center gap-5 md:max-w-[720px]">
+			<div className="relative z-[1] mx-auto grid max-w-[1440px] grid-cols-1 justify-items-center gap-6 px-4 pt-12 text-center sm:gap-8 sm:px-6 sm:pt-20 md:px-10 md:pt-24">
+				<div className="flex w-full flex-col items-center gap-4 sm:max-w-[360px] sm:gap-5 md:max-w-[720px]">
 					{/* High-Fidelity Typography Headline */}
 					<h1 className="animate-hero-fade-up delay-[100ms] w-full text-[clamp(2.25rem,6vw,4.5rem)] font-light leading-[1.05] tracking-tight text-[#1c1c1c]">
 						<span className="font-[family-name:var(--landing-font-serif)] italic text-transparent bg-clip-text bg-gradient-to-br from-[#1c1c1c] to-[#555]">
@@ -43,7 +43,7 @@ export function LandingHero() {
 						<span className="transition-transform duration-300 ease-out group-hover:scale-110">
 							⭐
 						</span>
-						Star on Github
+						Star on GitHub
 					</a>
 					<HeroAppCta />
 				</div>
