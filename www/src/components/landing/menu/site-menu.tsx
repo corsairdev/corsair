@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
-import { APP_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
+import { APP_URL, DOCS_URL, GITHUB_URL, DISCORD_URL } from '@/lib/site-links';
 import { ArrowRightIcon, PlusCorner } from '../icons';
+import { GithubLogo, DiscordLogo } from '@phosphor-icons/react';
 
 function MenuIcon() {
 	return (
@@ -107,21 +108,36 @@ export function SiteMenu() {
 
 					{/* Desktop Menu */}
 					<div className="hidden md:flex shrink-0 items-center gap-1 sm:gap-2">
+						<div className="group relative flex min-w-[88px] cursor-pointer items-center justify-center px-2 py-2 text-[13px] font-medium text-[#1c1c1c]/60 transition-colors sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)]">
+							<span className="transition-all duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-95 group-hover:opacity-0">GitHub</span>
+							<div className="absolute flex pointer-events-none items-center gap-5 translate-y-1 scale-95 opacity-0 transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
+								<a
+									href={GITHUB_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
+									aria-label="GitHub"
+								>
+									<GithubLogo size={20} weight="fill" />
+								</a>
+								<a
+									href={DISCORD_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
+									aria-label="Discord"
+								>
+									<DiscordLogo size={20} weight="fill" />
+								</a>
+							</div>
+						</div>
 						<a
 							href={DOCS_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="px-2 py-2 text-[13px] sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c]"
+							className="px-2 py-2 text-[13px] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c] sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)]"
 						>
 							Docs
-						</a>
-						<a
-							href={GITHUB_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="px-2 py-2 text-[13px] sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c]"
-						>
-							GitHub
 						</a>
 						<div className="ml-1 sm:ml-4 flex items-center">
 							<a
@@ -175,16 +191,29 @@ export function SiteMenu() {
 							<span>Docs</span>
 							<ArrowRightIcon />
 						</a>
-						<a
-							href={GITHUB_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-colors hover:bg-white"
-							onClick={() => setIsMobileMenuOpen(false)}
-						>
-							<span>GitHub</span>
-							<ArrowRightIcon />
-						</a>
+						<div className="flex items-center rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-2 py-2 shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm">
+							<a
+								href={GITHUB_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-medium text-[#1c1c1c] transition-colors hover:bg-white"
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
+								<GithubLogo size={20} weight="fill" />
+								<span>GitHub</span>
+							</a>
+							<div className="mx-1 h-5 w-px bg-[#1c1c1c]/10" />
+							<a
+								href={DISCORD_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-medium text-[#1c1c1c] transition-colors hover:bg-white"
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
+								<DiscordLogo size={20} weight="fill" />
+								<span>Discord</span>
+							</a>
+						</div>
 					</div>
 				</div>
 			)}
