@@ -242,9 +242,6 @@ export function bindEndpointsRecursively({
         let key: string | undefined
         try {
           key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined
-          if (!key && connectConfig?.oauthConfig && connectConfig.kek) {
-            throw new AuthMissingError(pluginId)
-          }
         } catch (err) {
           if (
             connectConfig?.oauthConfig &&
@@ -269,6 +266,26 @@ export function bindEndpointsRecursively({
             throw new Error(msg)
           }
           throw err
+        }
+
+        if (!key && connectConfig?.oauthConfig && connectConfig.kek) {
+          const state = signState(
+            encodeOAuthState(
+              pluginId,
+              connectConfig.tenantId ?? tenantId ?? 'default'
+            ),
+            connectConfig.kek
+          )
+          const connectUrl = `${connectConfig.baseUrl}?plugin=${encodeURIComponent(pluginId)}&state=${encodeURIComponent(state)}`
+          throw new Error(
+            connectConfig.onAuthMissing
+              ? connectConfig.onAuthMissing({
+                  plugin: pluginId,
+                  connectUrl,
+                  state,
+                })
+              : `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`
+          )
         }
 
         if (!endpointHooks?.before && !endpointHooks?.after) {
