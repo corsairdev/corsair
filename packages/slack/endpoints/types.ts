@@ -323,6 +323,36 @@ const StarsListInputSchema = z.object({
 	count: z.number().optional(),
 });
 
+const AdminTeamsListInputSchema = z.object({
+	limit: z.number().optional(),
+	cursor: z.string().optional(),
+});
+
+const AdminConversationsSearchInputSchema = z.object({
+	team_ids: z.array(z.string()).optional(),
+	connected_team_ids: z.array(z.string()).optional(),
+	query: z.string().optional(),
+	limit: z.number().optional(),
+	cursor: z.string().optional(),
+	search_channel_types: z.array(z.string()).optional(),
+	sort: z.string().optional(),
+	sort_dir: z.string().optional(),
+	total_count_only: z.boolean().optional(),
+});
+
+const AdminConversationsGetTeamsInputSchema = z.object({
+	channel_id: z.string(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
+});
+
+const AdminConversationsSetTeamsInputSchema = z.object({
+	channel_id: z.string(),
+	team_id: z.string().optional(),
+	target_team_ids: z.array(z.string()).optional(),
+	org_channel: z.boolean().optional(),
+});
+
 export const SlackEndpointInputSchemas = {
 	channelsArchive: ChannelsArchiveInputSchema,
 	channelsClose: ChannelsCloseInputSchema,
@@ -365,6 +395,10 @@ export const SlackEndpointInputSchemas = {
 	starsAdd: StarsAddInputSchema,
 	starsRemove: StarsRemoveInputSchema,
 	starsList: StarsListInputSchema,
+	adminTeamsList: AdminTeamsListInputSchema,
+	adminConversationsSearch: AdminConversationsSearchInputSchema,
+	adminConversationsGetTeams: AdminConversationsGetTeamsInputSchema,
+	adminConversationsSetTeams: AdminConversationsSetTeamsInputSchema,
 } as const;
 
 export type SlackEndpointInputs = {
@@ -814,6 +848,34 @@ const StarsListResponseSchema = SlackResponseSchema.extend({
 	paging: PagingSchema.optional(),
 }).loose();
 
+const AdminTeamsListResponseSchema = SlackResponseSchema.extend({
+	teams: z.array(z.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		discoverability: z.string().optional(),
+		primary_owner: z.object({
+			user_id: z.string().optional(),
+			email: z.string().optional(),
+		}).optional(),
+		team_url: z.string().optional(),
+	})).optional(),
+}).loose();
+
+const AdminConversationsSearchResponseSchema = SlackResponseSchema.extend({
+	conversations: z.array(z.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+	})).optional(),
+	next_cursor: z.string().optional(),
+	total_count: z.number().optional(),
+}).loose();
+
+const AdminConversationsGetTeamsResponseSchema = SlackResponseSchema.extend({
+	team_ids: z.array(z.string()).optional(),
+}).loose();
+
+const AdminConversationsSetTeamsResponseSchema = SlackResponseSchema.extend({}).loose();
+
 export const SlackEndpointOutputSchemas = {
 	channelsArchive: ConversationsArchiveResponseSchema,
 	channelsClose: ConversationsCloseResponseSchema,
@@ -856,6 +918,10 @@ export const SlackEndpointOutputSchemas = {
 	starsAdd: StarsAddResponseSchema,
 	starsRemove: StarsRemoveResponseSchema,
 	starsList: StarsListResponseSchema,
+	adminTeamsList: AdminTeamsListResponseSchema,
+	adminConversationsSearch: AdminConversationsSearchResponseSchema,
+	adminConversationsGetTeams: AdminConversationsGetTeamsResponseSchema,
+	adminConversationsSetTeams: AdminConversationsSetTeamsResponseSchema,
 } as const;
 
 export type SlackEndpointOutputs = {
@@ -986,4 +1052,16 @@ export type StarsRemoveResponse = z.infer<
 >;
 export type StarsListResponse = z.infer<
 	typeof SlackEndpointOutputSchemas.starsList
+>;
+export type AdminTeamsListResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.adminTeamsList
+>;
+export type AdminConversationsSearchResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.adminConversationsSearch
+>;
+export type AdminConversationsGetTeamsResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.adminConversationsGetTeams
+>;
+export type AdminConversationsSetTeamsResponse = z.infer<
+	typeof SlackEndpointOutputSchemas.adminConversationsSetTeams
 >;
