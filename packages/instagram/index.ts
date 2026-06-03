@@ -4,11 +4,20 @@ import type {
     PluginAuthConfig,
     PickAuth,
     CorsairPluginContext,
+    CorsairEndpoint,
+    PluginPermissionsConfig,
+    BindEndpoints
 } from 'corsair/core';
 
 import {
     getValidFacebookAccessToken,
 } from './client';
+
+import type { InstagramEndpointInputs, InstagramEndpointOutputs } from "./endpoints/types"
+
+import { InstagramEndpointInputSchemas, InstagramEndpointOutputSchemas } from "./endpoints/types"
+
+import { ProfileEndpoints, MediaEndpoints, ImageEndpoints, PublishEndpoints, ReelEndpoints, VideoEndponts, CarouselEndpoints } from "./endpoints/index";
 
 import {
     InstagramSchema
@@ -18,16 +27,83 @@ import type {
     InstagramCredentials
 } from "./schema"
 
+
 export const instagramAuthConfig = {
     oauth_2: {
         integration: [] as const,
     },
 } as const satisfies PluginAuthConfig;
 
+type InstagramEndpoint<K extends keyof InstagramEndpointOutputs> = CorsairEndpoint<
+	InstagramContext,
+	InstagramEndpointInputs[K],
+	InstagramEndpointOutputs[K]
+>;
+
+export type InstagramEndpoints = {
+    GetFacebookUser: InstagramEndpoint<'GetFacebookUser'>
+    GetFacebookPages: InstagramEndpoint<'GetFacebookPages'>
+    GetInstagramUser: InstagramEndpoint<'GetInstagramUser'>
+    GetInstagramMediaList: InstagramEndpoint<'GetInstagramMediaList'>
+    GetInstagramMedia: InstagramEndpoint<'GetInstagramMedia'>
+    CreateImageContainer: InstagramEndpoint<'CreateImageContainer'>
+    CreateReelContainer: InstagramEndpoint<'CreateReelContainer'>
+    PublishInstagramMedia: InstagramEndpoint<'PublishInstagramMedia'>
+    GetMediaContainerStatus: InstagramEndpoint<'GetMediaContainerStatus'>
+    CreateImageStoryContainer: InstagramEndpoint<'CreateImageStoryContainer'>
+    CreateVideoStoryContainer: InstagramEndpoint<'CreateVideoStoryContainer'>
+    CreateCarouselContainer: InstagramEndpoint<'CreateCarouselContainer'>
+    CreateVideoContainer: InstagramEndpoint<'CreateVideoContainer'>
+    GetMediaInsights: InstagramEndpoint<'GetMediaInsights'>
+    GetAccountInsights: InstagramEndpoint<'GetAccountInsights'>
+}
+
+export const InstagramEndpointsNested = {
+    profile: {
+        GetFacebookUser: ProfileEndpoints.GetFacebookUser,
+        GetFacebookPages: ProfileEndpoints.GetFacebookPages,
+        GetInstagramUser: ProfileEndpoints.GetInstagramUser,
+        insights: ProfileEndpoints.insights,
+    },
+
+    media: {
+        list: MediaEndpoints.list,
+        get: MediaEndpoints.get,
+        status: MediaEndpoints.status,
+        insights: MediaEndpoints.insights
+    },
+
+    image: {
+        post: ImageEndpoints.post,
+        story: ImageEndpoints.story,
+    },
+
+    reel: {
+        post: ReelEndpoints.post,
+    },
+
+    video: {
+        story: VideoEndponts.story,
+        createCarouselContainer: VideoEndponts.createCarouselContainer,
+    },
+
+    carousel: {
+        post: CarouselEndpoints.post,
+    },
+
+    publish: {
+        publish_media: PublishEndpoints.publish,
+    }
+
+} as const;
+
+export type InstagramBoundEndpoints = BindEndpoints<typeof InstagramEndpointsNested>
+
 export type InstagramPluginOptions = {
     authType?: PickAuth<'oauth_2'>;
     key?: string;
     credentials?: InstagramCredentials
+    permissions?: PluginPermissionsConfig<typeof InstagramEndpointsNested>
 };
 
 export type InstagramContext = CorsairPluginContext<
@@ -48,7 +124,7 @@ const defaultAuthType = 'oauth_2' as const;
 export type BaseInstagramPlugin<T extends InstagramPluginOptions> = CorsairPlugin<
     'instagram',
     typeof InstagramSchema,
-    {},
+    typeof InstagramEndpointsNested,
     {},
     T,
     typeof defaultAuthType,
@@ -98,7 +174,7 @@ export function instagram<const T extends InstagramPluginOptions>(
                 ]
             },
 
-            endpoints: {},
+            endpoints: InstagramEndpointsNested,
 
             webhooks: {},
 

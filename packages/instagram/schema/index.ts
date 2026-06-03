@@ -3,10 +3,12 @@ import { z } from "zod";
 import { 
     InstagramUser,
     InstagramMedia,
-    InstagramComment,
+    // InstagramComment,
     FacebookPageSchema,
     InstagramConversation,
-    InstagramMessage
+    InstagramMessage,
+    FacebookUser,
+    FacebookPages
 } from "./database";
 
 
@@ -21,11 +23,11 @@ export type InstagramCredentials = z.infer<typeof InstagramCredentials>;
 export const InstagramSchema = {
     version: '1.0.0',
     entities: {
+        facebook: FacebookUser,
         users: InstagramUser,
-        media: InstagramMedia,
-        comments: InstagramComment,
-        pages: FacebookPageSchema,
         conversations: InstagramConversation,
-        messages: InstagramMessage
+        messages: InstagramMessage,
+        pages: FacebookPages,
+        media: InstagramMedia
     }
 } as const;
