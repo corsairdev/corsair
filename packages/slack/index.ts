@@ -7,6 +7,7 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
@@ -22,16 +23,16 @@ import {
 	Users,
 } from './endpoints';
 import {
-	SlackEndpointInputSchemas,
-	SlackEndpointOutputSchemas,
-} from './endpoints/types';
-import {
 	conversationsGetTeams,
 	conversationsSearch,
 	conversationsSetTeams,
 	listTeams,
 } from './endpoints/admin';
-
+import {
+	SlackEndpointInputSchemas,
+	SlackEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { SlackSchema } from './schema';
 import {
 	ChallengeWebhooks,
@@ -74,9 +75,6 @@ import {
 	TeamJoinEventSchema,
 	UserChangeEventSchema,
 } from './webhooks/types';
-
-import type { PickAuth } from 'corsair/core';
-import { errorHandlers } from './error-handlers';
 
 export const Admin = {
 	listTeams,
@@ -576,7 +574,8 @@ const slackEndpointMeta = {
 	},
 	'admin.conversationsSetTeams': {
 		riskLevel: 'write',
-		description: 'Set the workspaces in an Enterprise grid org that connect to a channel',
+		description:
+			'Set the workspaces in an Enterprise grid org that connect to a channel',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof slackEndpointsNested>;
 
@@ -842,10 +841,10 @@ export { createSlackEventMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	AdminTeamsListResponse,
-	AdminConversationsSearchResponse,
 	AdminConversationsGetTeamsResponse,
+	AdminConversationsSearchResponse,
 	AdminConversationsSetTeamsResponse,
+	AdminTeamsListResponse,
 	ChatDeleteResponse,
 	ChatGetPermalinkResponse,
 	ChatPostMessageResponse,

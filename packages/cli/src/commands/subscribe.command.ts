@@ -1,9 +1,9 @@
-import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '../index.types'
-import TeamsCommand from './subscribe/teams.command'
-import SharepointCommand from './subscribe/sharepoint.command'
-import OutlookCommand from './subscribe/outlook.command'
-import { runOutlookSubscribe } from '../lib/microsoft/subscribe-microsoft'
+import type { CommandActionData, CommandOption } from '../index.types';
+import { runOutlookSubscribe } from '../lib/microsoft/subscribe-microsoft';
+import BaseCommand from './base.command';
+import OutlookCommand from './subscribe/outlook.command';
+import SharepointCommand from './subscribe/sharepoint.command';
+import TeamsCommand from './subscribe/teams.command';
 
 export default class SubscribeCommand extends BaseCommand {
 	getName(): string {
@@ -25,17 +25,13 @@ export default class SubscribeCommand extends BaseCommand {
 	}
 
 	getSubCommands(): BaseCommand[] {
-		return [
-			new SharepointCommand(),
-			new TeamsCommand(),
-			new OutlookCommand(),
-		];
+		return [new SharepointCommand(), new TeamsCommand(), new OutlookCommand()];
 	}
 
 	async action({ options }: CommandActionData) {
 		if (!options.plugin) {
 			console.error(
-				"Usage: corsair subscribe --plugin=<id> or corsair subscribe <plugin>",
+				'Usage: corsair subscribe --plugin=<id> or corsair subscribe <plugin>',
 			);
 			console.error('[#corsair]: Supported: outlook');
 			process.exit(1);

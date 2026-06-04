@@ -1,12 +1,12 @@
-import fs, { existsSync } from 'node:fs'
-import path from 'node:path'
+import fs, { existsSync } from 'node:fs';
+import path from 'node:path';
 // @ts-expect-error
-import babelPresetReact from '@babel/preset-react'
+import babelPresetReact from '@babel/preset-react';
 // @ts-expect-error
-import babelPresetTypeScript from '@babel/preset-typescript'
-import { loadConfig } from 'c12'
-import type { JitiOptions } from 'jiti'
-import { getTsconfigInfo } from '../get-tsconfig-info'
+import babelPresetTypeScript from '@babel/preset-typescript';
+import { loadConfig } from 'c12';
+import type { JitiOptions } from 'jiti';
+import { getTsconfigInfo } from '../get-tsconfig-info';
 
 const POSSIBLE_PATHS = [
 	'corsair.ts',
@@ -72,7 +72,10 @@ function getPathAliasesRecursive(
 	const resolvedBaseUrl = path.resolve(configDir, baseUrl);
 	const aliases: Record<string, string> = {};
 
-	for (const [alias, aliasPaths] of Object.entries(paths) as [string, string[]][]) {
+	for (const [alias, aliasPaths] of Object.entries(paths) as [
+		string,
+		string[],
+	][]) {
 		for (const aliasPath of aliasPaths) {
 			const aliasKey = alias.endsWith('*') ? alias.slice(0, -1) : alias;
 			const aliasValue = aliasPath.endsWith('*')
@@ -121,7 +124,11 @@ function fail(message: string, shouldThrowOnError: boolean): never {
 
 function parseLoadError(error: unknown): string {
 	const msg = error instanceof Error ? error.message : String(error);
-	if (msg.includes('This module cannot be imported from a Client Component module')) {
+	if (
+		msg.includes(
+			'This module cannot be imported from a Client Component module',
+		)
+	) {
 		return "Please remove import 'server-only' from your corsair.ts file temporarily.";
 	}
 	if (
@@ -157,7 +164,10 @@ export async function getCorsairInstance({
 
 	for (const candidatePath of candidatePaths) {
 		try {
-			const { config } = await loadConfig<{ corsair?: unknown; default?: unknown }>({
+			const { config } = await loadConfig<{
+				corsair?: unknown;
+				default?: unknown;
+			}>({
 				configFile: candidatePath,
 				dotenv: true,
 				jitiOptions: jitiOptions(cwd),
@@ -176,7 +186,10 @@ export async function getCorsairInstance({
 				);
 			}
 		} catch (error) {
-			fail(`Error loading ${candidatePath}: ${parseLoadError(error)}`, shouldThrowOnError);
+			fail(
+				`Error loading ${candidatePath}: ${parseLoadError(error)}`,
+				shouldThrowOnError,
+			);
 		}
 	}
 
@@ -186,11 +199,16 @@ export async function getCorsairInstance({
 	);
 }
 
-export function resolveClient(instance: unknown, tenant?: string): Record<string, unknown> {
+export function resolveClient(
+	instance: unknown,
+	tenant?: string,
+): Record<string, unknown> {
 	const obj = instance as Record<string, unknown>;
 	if ('withTenant' in obj && typeof obj.withTenant === 'function') {
 		if (!tenant) {
-			console.error('[#corsair]: This is a multi-tenant instance. Pass --tenant=<id>.');
+			console.error(
+				'[#corsair]: This is a multi-tenant instance. Pass --tenant=<id>.',
+			);
 			process.exit(1);
 		}
 		return obj.withTenant(tenant) as Record<string, unknown>;

@@ -1,8 +1,8 @@
-import type { AnyCorsairInstance } from 'corsair'
-import { listOperations } from 'corsair'
-import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '../index.types'
-import { getCorsairInstance } from '../utils/corsair-instance'
+import type { AnyCorsairInstance } from 'corsair';
+import { listOperations } from 'corsair';
+import type { CommandActionData, CommandOption } from '../index.types';
+import { getCorsairInstance } from '../utils/corsair-instance';
+import BaseCommand from './base.command';
 
 export default class ListCommand extends BaseCommand {
 	getName(): string {
@@ -15,15 +15,26 @@ export default class ListCommand extends BaseCommand {
 
 	getOptions(): CommandOption[] {
 		return [
-			{ short: '-p', long: '--plugin <id>', description: 'Filter by plugin id' },
-			{ short: '-t', long: '--type <api|webhooks|db>', description: 'Filter by operation type' },
+			{
+				short: '-p',
+				long: '--plugin <id>',
+				description: 'Filter by plugin id',
+			},
+			{
+				short: '-t',
+				long: '--type <api|webhooks|db>',
+				description: 'Filter by operation type',
+			},
 		];
 	}
 
 	async action({ options }: CommandActionData) {
-		const { plugin, type } = options
+		const { plugin, type } = options;
 		const instance = await getCorsairInstance({ cwd: process.cwd() });
-		const result = listOperations(instance as AnyCorsairInstance, { plugin, type });
+		const result = listOperations(instance as AnyCorsairInstance, {
+			plugin,
+			type,
+		});
 		if (type === 'db') {
 			console.log(
 				'[#corsair]: NOTE: Every DB query listed here has both .search() and .list() methods available.\n',

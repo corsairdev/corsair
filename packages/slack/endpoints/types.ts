@@ -849,23 +849,33 @@ const StarsListResponseSchema = SlackResponseSchema.extend({
 }).loose();
 
 const AdminTeamsListResponseSchema = SlackResponseSchema.extend({
-	teams: z.array(z.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-		discoverability: z.string().optional(),
-		primary_owner: z.object({
-			user_id: z.string().optional(),
-			email: z.string().optional(),
-		}).optional(),
-		team_url: z.string().optional(),
-	})).optional(),
+	teams: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				discoverability: z.string().optional(),
+				primary_owner: z
+					.object({
+						user_id: z.string().optional(),
+						email: z.string().optional(),
+					})
+					.optional(),
+				team_url: z.string().optional(),
+			}),
+		)
+		.optional(),
 }).loose();
 
 const AdminConversationsSearchResponseSchema = SlackResponseSchema.extend({
-	conversations: z.array(z.object({
-		id: z.string().optional(),
-		name: z.string().optional(),
-	})).optional(),
+	conversations: z
+		.array(
+			z.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+			}),
+		)
+		.optional(),
 	next_cursor: z.string().optional(),
 	total_count: z.number().optional(),
 }).loose();
@@ -874,7 +884,9 @@ const AdminConversationsGetTeamsResponseSchema = SlackResponseSchema.extend({
 	team_ids: z.array(z.string()).optional(),
 }).loose();
 
-const AdminConversationsSetTeamsResponseSchema = SlackResponseSchema.extend({}).loose();
+const AdminConversationsSetTeamsResponseSchema = SlackResponseSchema.extend(
+	{},
+).loose();
 
 export const SlackEndpointOutputSchemas = {
 	channelsArchive: ConversationsArchiveResponseSchema,

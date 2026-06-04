@@ -1,6 +1,6 @@
-import path from 'node:path'
-import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '../index.types'
+import path from 'node:path';
+import type { CommandActionData, CommandOption } from '../index.types';
+import BaseCommand from './base.command';
 
 type StartStudio = (opts: {
 	cwd: string;
@@ -23,9 +23,17 @@ export default class StudioCommand extends BaseCommand {
 
 	getOptions(): CommandOption[] {
 		return [
-			{ short: '-p', long: '--port <number>', description: 'Port to start Studio on' },
+			{
+				short: '-p',
+				long: '--port <number>',
+				description: 'Port to start Studio on',
+			},
 			{ short: '-o', long: '--open', description: 'Open browser on launch' },
-			{ short: '-O', long: '--no-open', description: 'Do not open browser on launch' },
+			{
+				short: '-O',
+				long: '--no-open',
+				description: 'Do not open browser on launch',
+			},
 		];
 	}
 
@@ -57,7 +65,9 @@ export default class StudioCommand extends BaseCommand {
 				msg.includes('MODULE_NOT_FOUND')
 			) {
 				console.error('[#corsair]: Corsair Studio is not installed.');
-				console.error('[#corsair]: Install it with: pnpm add -D @corsair-dev/studio');
+				console.error(
+					'[#corsair]: Install it with: pnpm add -D @corsair-dev/studio',
+				);
 				process.exit(1);
 			}
 			throw error;

@@ -112,6 +112,6 @@ export const Users = {
 	updateProfile,
 };
 
+export * from './admin';
 export type { SlackReactionName } from './reactions';
 export * from './types';
-export * from './admin';

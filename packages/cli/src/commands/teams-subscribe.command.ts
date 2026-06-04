@@ -1,4 +1,4 @@
-import TeamsCommand from './subscribe/teams.command'
+import TeamsCommand from './subscribe/teams.command';
 
 export default class TeamsSubscribeCommand extends TeamsCommand {
 	getName(): string {

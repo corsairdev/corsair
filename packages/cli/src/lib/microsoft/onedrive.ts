@@ -1,8 +1,12 @@
-import * as p from '@clack/prompts'
-import { loadInternalConfig } from '../../utils/load-config'
-import { promptClientState, promptTenantId, promptWebhookUrl, } from '../../utils/prompts'
-import { resolveAccessToken, saveWebhookSignature } from './credentials'
-import { createGraphSubscription } from './graph'
+import * as p from '@clack/prompts';
+import { loadInternalConfig } from '../../utils/load-config';
+import {
+	promptClientState,
+	promptTenantId,
+	promptWebhookUrl,
+} from '../../utils/prompts';
+import { resolveAccessToken, saveWebhookSignature } from './credentials';
+import { createGraphSubscription } from './graph';
 
 // Microsoft Graph max subscription lifetime for drive resources (minutes)
 const ONEDRIVE_MAX_EXPIRY_MINUTES = 4230;

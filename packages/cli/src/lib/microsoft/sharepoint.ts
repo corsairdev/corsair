@@ -1,8 +1,12 @@
-import * as p from '@clack/prompts'
-import { loadInternalConfig } from '../../utils/load-config'
-import { promptClientState, promptTenantId, promptWebhookUrl, } from '../../utils/prompts'
-import { resolveAccessToken, saveWebhookSignature } from './credentials'
-import { GRAPH_API_BASE } from './graph'
+import * as p from '@clack/prompts';
+import { loadInternalConfig } from '../../utils/load-config';
+import {
+	promptClientState,
+	promptTenantId,
+	promptWebhookUrl,
+} from '../../utils/prompts';
+import { resolveAccessToken, saveWebhookSignature } from './credentials';
+import { GRAPH_API_BASE } from './graph';
 
 const SHAREPOINT_MAX_EXPIRY_DAYS = 180;
 

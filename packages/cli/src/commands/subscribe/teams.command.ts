@@ -1,5 +1,5 @@
-import BaseCommand from '../base.command'
-import type { CommandActionData } from '../../index.types'
+import type { CommandActionData } from '../../index.types';
+import BaseCommand from '../base.command';
 
 export default class TeamsCommand extends BaseCommand {
 	getName(): string {
@@ -11,7 +11,9 @@ export default class TeamsCommand extends BaseCommand {
 	}
 
 	async action({}: CommandActionData) {
-		const { runTeamsSubscribe } = await import('../../lib/microsoft/subscribe-microsoft');
+		const { runTeamsSubscribe } = await import(
+			'../../lib/microsoft/subscribe-microsoft'
+		);
 		await runTeamsSubscribe({ cwd: process.cwd() });
 	}
 }

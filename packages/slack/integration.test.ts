@@ -248,7 +248,7 @@ describe('Slack plugin integration', () => {
 
 		try {
 			await corsair.slack.api.admin.listTeams({});
-			
+
 			await corsair.slack.api.admin.conversationsSearch({
 				query: 'test',
 			});
@@ -264,8 +264,12 @@ describe('Slack plugin integration', () => {
 
 			expect(searchEvents.length).toBeGreaterThan(0);
 		} catch (error: unknown) {
-			const errorMessage = error instanceof Error ? error.message : String(error);
-			const isAuthError = /not_authed|not_allowed|missing_scope|fatal_error|invalid_auth/.test(errorMessage);
+			const errorMessage =
+				error instanceof Error ? error.message : String(error);
+			const isAuthError =
+				/not_authed|not_allowed|missing_scope|fatal_error|invalid_auth/.test(
+					errorMessage,
+				);
 
 			expect(isAuthError).toBe(true);
 		} finally {

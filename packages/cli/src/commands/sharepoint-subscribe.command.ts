@@ -1,4 +1,4 @@
-import SharepointCommand from './subscribe/sharepoint.command'
+import SharepointCommand from './subscribe/sharepoint.command';
 
 export default class SharepointSubscribeCommand extends SharepointCommand {
 	getName(): string {

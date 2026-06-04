@@ -1,4 +1,7 @@
-export async function runWebhookSubscription(cwd: string, pluginId: string): Promise<void> {
+export async function runWebhookSubscription(
+	cwd: string,
+	pluginId: string,
+): Promise<void> {
 	const microsoftPluginRunner: Record<string, string> = {
 		outlook: 'runOutlookSubscribe',
 		sharepoint: 'runSharepointSubscribe',
@@ -15,12 +18,20 @@ export async function runWebhookSubscription(cwd: string, pluginId: string): Pro
 		}
 	}
 
-	if (['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(pluginId)) {
-		const { runGoogleSubscribe } = await import('../lib/google/subscribe-google');
+	if (
+		['gmail', 'googledrive', 'googlecalendar', 'googlesheets'].includes(
+			pluginId,
+		)
+	) {
+		const { runGoogleSubscribe } = await import(
+			'../lib/google/subscribe-google'
+		);
 		await runGoogleSubscribe({ cwd, pluginId });
 		return;
 	}
 
-	console.error(`[#corsair]: Webhook subscription not supported for plugin '${pluginId}'.`);
+	console.error(
+		`[#corsair]: Webhook subscription not supported for plugin '${pluginId}'.`,
+	);
 	process.exit(1);
 }

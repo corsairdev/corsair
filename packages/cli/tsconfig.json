@@ -26,5 +26,5 @@
     "verbose": false
   },
   "include": ["src/**/*.ts", "package.json", "yaml.d.ts"],
-  "exclude": ["dist", "node_modules"],
+  "exclude": ["dist", "node_modules"]
 }
