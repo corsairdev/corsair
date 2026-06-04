@@ -33,10 +33,16 @@ export default abstract class BaseCommand {
 		return [];
 	}
 
+	/** When true, unknown flags (e.g. `--slack`) are passed through to the action. */
+	protected allowUnknownOptions(): boolean {
+		return false;
+	}
+
 	readonly prepare = (program: Command): void => {
 		const command = program
 			.command(this.getName())
-			.description(this.getDescription());
+			.description(this.getDescription())
+			.allowUnknownOption(this.allowUnknownOptions());
 
 		const usage = this.getUsage();
 		if (usage) {
