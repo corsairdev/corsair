@@ -2,16 +2,17 @@ import { realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import { version } from '../package.json';
-import AuthCommand from './commands/auth.command';
 import type BaseCommand from './commands/base.command';
+import AuthCommand from './commands/auth.command';
 import ListCommand from './commands/list.command';
 import SchemaCommand from './commands/schema.command';
 import ScriptCommand from './commands/script.command';
 import SetupCommand from './commands/setup.command';
-import SharepointSubscribeCommand from './commands/sharepoint-subscribe.command';
 import StudioCommand from './commands/studio.command';
 import SubscribeCommand from './commands/subscribe.command';
+import SharepointSubscribeCommand from './commands/sharepoint-subscribe.command';
 import TeamsSubscribeCommand from './commands/teams-subscribe.command';
+import OnedriveSubscribeCommand from './commands/onedrive-subscribe.command';
 import WatchRenewCommand from './commands/watch-renew.command';
 import {
 	findCorsairConfigPath,
@@ -31,6 +32,7 @@ function createProgram(): Command {
 		new SubscribeCommand(),
 		new SharepointSubscribeCommand(),
 		new TeamsSubscribeCommand(),
+		new OnedriveSubscribeCommand(),
 		new ListCommand(),
 		new SchemaCommand(),
 		new ScriptCommand(),
