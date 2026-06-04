@@ -1,4 +1,5 @@
-export { createCorsair } from './core';
+export type { ResolveConnectLinkResult } from './core';
+export { AuthMissingError, createCorsair, resolveConnectLink } from './core';
 export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,
