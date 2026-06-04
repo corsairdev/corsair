@@ -4,11 +4,11 @@
  * connect link the agent can present to the user.
  */
 export class AuthMissingError extends Error {
-  pluginId: string
+	pluginId: string;
 
-  constructor(pluginId: string, message?: string) {
-    super(message ?? `[auth-missing:${pluginId}]`)
-    this.name = 'AuthMissingError'
-    this.pluginId = pluginId
-  }
+	constructor(pluginId: string, message?: string) {
+		super(message ?? `[auth-missing:${pluginId}]`);
+		this.name = 'AuthMissingError';
+		this.pluginId = pluginId;
+	}
 }

@@ -1,17 +1,17 @@
-import type { OAuthConfig } from '../plugins'
-import type { CorsairDatabase } from '../../db/kysely/database'
-import type { CorsairErrorHandler } from '../errors'
-import { handleCorsairError } from '../errors/handler'
-import { enforcePermission, parseDurationMs } from '../permissions'
+import type { CorsairDatabase } from '../../db/kysely/database';
+import { AuthMissingError } from '../auth/errors/auth-missing';
+import { encodeOAuthState, signState } from '../auth/state';
+import type { CorsairErrorHandler } from '../errors';
+import { handleCorsairError } from '../errors/handler';
+import { enforcePermission, parseDurationMs } from '../permissions';
 import type {
-  CorsairKeyBuilderBase,
-  EndpointHooks,
-  EndpointMetaEntry,
-  PermissionMode,
-  PermissionPolicy,
-} from '../plugins'
-import { AuthMissingError } from '../auth/errors/auth-missing'
-import { encodeOAuthState, signState } from '../auth/state'
+	CorsairKeyBuilderBase,
+	EndpointHooks,
+	EndpointMetaEntry,
+	OAuthConfig,
+	PermissionMode,
+	PermissionPolicy,
+} from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -23,7 +23,7 @@ import { encodeOAuthState, signState } from '../auth/state'
  * @returns True if the value is a function
  */
 export function isEndpoint(value: unknown): value is Function {
-  return typeof value === 'function'
+	return typeof value === 'function';
 }
 
 /**
@@ -39,304 +39,304 @@ export function isEndpoint(value: unknown): value is Function {
  * @param keyBuilder - Optional async callback to generate a key from the plugin context
  */
 export function bindEndpointsRecursively({
-  endpoints,
-  hooks,
-  ctx,
-  tree,
-  pluginId,
-  errorHandlers,
-  currentPath = [],
-  keyBuilder,
-  permissionsConfig,
-  endpointMeta,
-  database,
-  approvalConfig,
-  tenantId,
-  connectConfig,
+	endpoints,
+	hooks,
+	ctx,
+	tree,
+	pluginId,
+	errorHandlers,
+	currentPath = [],
+	keyBuilder,
+	permissionsConfig,
+	endpointMeta,
+	database,
+	approvalConfig,
+	tenantId,
+	connectConfig,
 }: {
-  endpoints: Record<string, unknown>
-  hooks: Record<string, unknown> | undefined
-  ctx: Record<string, unknown>
-  tree: Record<string, unknown>
-  pluginId: string
-  errorHandlers: CorsairErrorHandler
-  currentPath: string[]
-  keyBuilder?: CorsairKeyBuilderBase
-  /** Permission mode + per-endpoint overrides from plugin options. When set, every call is gated. */
-  permissionsConfig?: {
-    mode: PermissionMode
-    overrides?: Record<string, PermissionPolicy>
-  }
-  /** Risk level metadata per dot-notation endpoint path. Defaults riskLevel to 'write' when missing. */
-  endpointMeta?: Record<string, EndpointMetaEntry>
-  /** Required for 'require_approval' to persist the approval record to the DB. */
-  database?: CorsairDatabase
-  /** Approval timeout config from createCorsair({ approval: ... }). */
-  approvalConfig?: {
-    timeout: string
-    onTimeout: 'deny' | 'approve'
-    mode?:
-      | 'synchronous'
-      | 'asynchronous'
-      | (() => 'synchronous' | 'asynchronous')
-    /** Called when a permission is blocked in async mode. Return the message to throw to the LLM. */
-    formatAsyncMessage?: (opts: {
-      token: string
-      id: string
-      plugin: string
-      endpoint: string
-      args: unknown
-    }) => string
-  }
-  /** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
-  tenantId?: string
-  /** Connect link config for generating OAuth connect URLs when auth is missing. */
-  connectConfig?: {
-    baseUrl: string
-    redirectUri: string
-    onAuthMissing?: (opts: {
-      plugin: string
-      connectUrl: string
-      state: string
-    }) => string
-    oauthConfig?: OAuthConfig
-    kek?: string | undefined
-    tenantId?: string
-  }
+	endpoints: Record<string, unknown>;
+	hooks: Record<string, unknown> | undefined;
+	ctx: Record<string, unknown>;
+	tree: Record<string, unknown>;
+	pluginId: string;
+	errorHandlers: CorsairErrorHandler;
+	currentPath: string[];
+	keyBuilder?: CorsairKeyBuilderBase;
+	/** Permission mode + per-endpoint overrides from plugin options. When set, every call is gated. */
+	permissionsConfig?: {
+		mode: PermissionMode;
+		overrides?: Record<string, PermissionPolicy>;
+	};
+	/** Risk level metadata per dot-notation endpoint path. Defaults riskLevel to 'write' when missing. */
+	endpointMeta?: Record<string, EndpointMetaEntry>;
+	/** Required for 'require_approval' to persist the approval record to the DB. */
+	database?: CorsairDatabase;
+	/** Approval timeout config from createCorsair({ approval: ... }). */
+	approvalConfig?: {
+		timeout: string;
+		onTimeout: 'deny' | 'approve';
+		mode?:
+			| 'synchronous'
+			| 'asynchronous'
+			| (() => 'synchronous' | 'asynchronous');
+		/** Called when a permission is blocked in async mode. Return the message to throw to the LLM. */
+		formatAsyncMessage?: (opts: {
+			token: string;
+			id: string;
+			plugin: string;
+			endpoint: string;
+			args: unknown;
+		}) => string;
+	};
+	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
+	tenantId?: string;
+	/** Connect link config for generating OAuth connect URLs when auth is missing. */
+	connectConfig?: {
+		baseUrl: string;
+		redirectUri: string;
+		onAuthMissing?: (opts: {
+			plugin: string;
+			connectUrl: string;
+			state: string;
+		}) => string;
+		oauthConfig?: OAuthConfig;
+		kek?: string | undefined;
+		tenantId?: string;
+	};
 }): void {
-  for (const [key, value] of Object.entries(endpoints)) {
-    // we have to retype this now because it's nested webhooks
-    const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined
+	for (const [key, value] of Object.entries(endpoints)) {
+		// we have to retype this now because it's nested webhooks
+		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
 
-    if (isEndpoint(value)) {
-      // it's an endpoint function - bind it with context and hooks
-      const endpointHooks = nodeHooks as EndpointHooks | undefined
+		if (isEndpoint(value)) {
+			// it's an endpoint function - bind it with context and hooks
+			const endpointHooks = nodeHooks as EndpointHooks | undefined;
 
-      const operationPath = [...currentPath, key].join('.')
+			const operationPath = [...currentPath, key].join('.');
 
-      const boundFn = async (args: unknown = {}) => {
-        // ── Permission guard ────────────────────────────────────────────────────────────────
-        let onPermissionComplete: (() => Promise<void>) | undefined
-        if (permissionsConfig) {
-          const meta = endpointMeta?.[operationPath]
-          const {
-            result: permResult,
-            reason: permReason,
-            onComplete,
-            token: permToken,
-            id: permId,
-          } = await enforcePermission({
-            pluginId,
-            endpointPath: operationPath,
-            args,
-            mode: permissionsConfig.mode,
-            override: permissionsConfig.overrides?.[operationPath],
-            // Default to 'write' when no meta declared — conservative fallback
-            riskLevel: meta?.riskLevel ?? 'write',
-            meta,
-            db: database,
-            timeoutMs: approvalConfig
-              ? parseDurationMs(approvalConfig.timeout)
-              : undefined,
-            tenantId,
-            approvalMode: approvalConfig?.mode,
-          })
-          if (permResult === 'blocked') {
-            let msg: string
-            if (permReason === 'denied') {
-              msg = `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`
-            } else if (permReason === 'policy') {
-              msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`
-            } else if (permReason === 'timeout') {
-              msg = `Action '${operationPath}' timed out waiting for approval.`
-            } else if (
-              approvalConfig?.formatAsyncMessage &&
-              permToken &&
-              permId
-            ) {
-              msg = approvalConfig.formatAsyncMessage({
-                token: permToken,
-                id: permId,
-                plugin: pluginId,
-                endpoint: operationPath,
-                args,
-              })
-            } else {
-              msg = `Action '${operationPath}' requires user approval before it can run.`
-            }
-            throw new Error(msg)
-          }
-          onPermissionComplete = onComplete
-        }
+			const boundFn = async (args: unknown = {}) => {
+				// ── Permission guard ────────────────────────────────────────────────────────────────
+				let onPermissionComplete: (() => Promise<void>) | undefined;
+				if (permissionsConfig) {
+					const meta = endpointMeta?.[operationPath];
+					const {
+						result: permResult,
+						reason: permReason,
+						onComplete,
+						token: permToken,
+						id: permId,
+					} = await enforcePermission({
+						pluginId,
+						endpointPath: operationPath,
+						args,
+						mode: permissionsConfig.mode,
+						override: permissionsConfig.overrides?.[operationPath],
+						// Default to 'write' when no meta declared — conservative fallback
+						riskLevel: meta?.riskLevel ?? 'write',
+						meta,
+						db: database,
+						timeoutMs: approvalConfig
+							? parseDurationMs(approvalConfig.timeout)
+							: undefined,
+						tenantId,
+						approvalMode: approvalConfig?.mode,
+					});
+					if (permResult === 'blocked') {
+						let msg: string;
+						if (permReason === 'denied') {
+							msg = `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`;
+						} else if (permReason === 'policy') {
+							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
+						} else if (permReason === 'timeout') {
+							msg = `Action '${operationPath}' timed out waiting for approval.`;
+						} else if (
+							approvalConfig?.formatAsyncMessage &&
+							permToken &&
+							permId
+						) {
+							msg = approvalConfig.formatAsyncMessage({
+								token: permToken,
+								id: permId,
+								plugin: pluginId,
+								endpoint: operationPath,
+								args,
+							});
+						} else {
+							msg = `Action '${operationPath}' requires user approval before it can run.`;
+						}
+						throw new Error(msg);
+					}
+					onPermissionComplete = onComplete;
+				}
 
-        const call = async (
-          attemptNumber: number,
-          callCtx: Record<string, unknown>,
-          callArgs: unknown
-        ) => {
-          try {
-            return await value(callCtx, callArgs)
-          } catch (error) {
-            if (error instanceof Error) {
-              const retryStrategy = await handleCorsairError(
-                error,
-                pluginId,
-                operationPath,
-                typeof callArgs === 'object' && callArgs !== null
-                  ? (callArgs as Record<string, unknown>)
-                  : { args: callArgs },
-                errorHandlers
-              )
+				const call = async (
+					attemptNumber: number,
+					callCtx: Record<string, unknown>,
+					callArgs: unknown,
+				) => {
+					try {
+						return await value(callCtx, callArgs);
+					} catch (error) {
+						if (error instanceof Error) {
+							const retryStrategy = await handleCorsairError(
+								error,
+								pluginId,
+								operationPath,
+								typeof callArgs === 'object' && callArgs !== null
+									? (callArgs as Record<string, unknown>)
+									: { args: callArgs },
+								errorHandlers,
+							);
 
-              if (attemptNumber < (retryStrategy.maxRetries || 0)) {
-                const newAttempt = attemptNumber + 1
+							if (attemptNumber < (retryStrategy.maxRetries || 0)) {
+								const newAttempt = attemptNumber + 1;
 
-                console.log(
-                  `Retrying (${newAttempt} / ${retryStrategy.maxRetries})...`
-                )
+								console.log(
+									`Retrying (${newAttempt} / ${retryStrategy.maxRetries})...`,
+								);
 
-                let delayMs: number
-                if (retryStrategy.headersRetryAfterMs) {
-                  delayMs = retryStrategy.headersRetryAfterMs
-                } else {
-                  switch (retryStrategy.retryStrategy) {
-                    case 'exponential_backoff':
-                      delayMs = Math.pow(2, newAttempt - 1) * 1000
-                      break
-                    case 'exponential_backoff_jitter':
-                      const baseDelay = Math.pow(2, newAttempt - 1) * 1000
-                      const jitter = (Math.random() - 0.5) * 1000
-                      delayMs = Math.max(0, baseDelay + jitter)
-                      break
-                    case 'linear_1s':
-                      delayMs = 1000
-                      break
-                    case 'linear_2s':
-                      delayMs = 2000
-                      break
-                    case 'linear_3s':
-                      delayMs = 3000
-                      break
-                    case 'linear_4s':
-                      delayMs = 4000
-                      break
-                    default:
-                      delayMs = 1000
-                      break
-                  }
-                }
+								let delayMs: number;
+								if (retryStrategy.headersRetryAfterMs) {
+									delayMs = retryStrategy.headersRetryAfterMs;
+								} else {
+									switch (retryStrategy.retryStrategy) {
+										case 'exponential_backoff':
+											delayMs = Math.pow(2, newAttempt - 1) * 1000;
+											break;
+										case 'exponential_backoff_jitter':
+											const baseDelay = Math.pow(2, newAttempt - 1) * 1000;
+											const jitter = (Math.random() - 0.5) * 1000;
+											delayMs = Math.max(0, baseDelay + jitter);
+											break;
+										case 'linear_1s':
+											delayMs = 1000;
+											break;
+										case 'linear_2s':
+											delayMs = 2000;
+											break;
+										case 'linear_3s':
+											delayMs = 3000;
+											break;
+										case 'linear_4s':
+											delayMs = 4000;
+											break;
+										default:
+											delayMs = 1000;
+											break;
+									}
+								}
 
-                await new Promise(resolve => setTimeout(resolve, delayMs))
-                await call(newAttempt, callCtx, callArgs)
+								await new Promise((resolve) => setTimeout(resolve, delayMs));
+								await call(newAttempt, callCtx, callArgs);
 
-                console.log(
-                  `[corsair:${pluginId}:${operationPath}] Retry strategy:`,
-                  retryStrategy
-                )
-              }
-            }
-            throw error
-          }
-        }
+								console.log(
+									`[corsair:${pluginId}:${operationPath}] Retry strategy:`,
+									retryStrategy,
+								);
+							}
+						}
+						throw error;
+					}
+				};
 
-        let key: string | undefined
-        try {
-          key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined
-        } catch (err) {
-          if (
-            connectConfig?.oauthConfig &&
-            connectConfig.kek &&
-            err instanceof AuthMissingError
-          ) {
-            const state = signState(
-              encodeOAuthState(
-                pluginId,
-                connectConfig.tenantId ?? tenantId ?? 'default'
-              ),
-              connectConfig.kek
-            )
-            const connectUrl = `${connectConfig.baseUrl}?plugin=${encodeURIComponent(pluginId)}&state=${encodeURIComponent(state)}`
-            const msg = connectConfig.onAuthMissing
-              ? connectConfig.onAuthMissing({
-                  plugin: pluginId,
-                  connectUrl,
-                  state,
-                })
-              : `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`
-            throw new Error(msg)
-          }
-          throw err
-        }
+				let key: string | undefined;
+				try {
+					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
+				} catch (err) {
+					if (
+						connectConfig?.oauthConfig &&
+						connectConfig.kek &&
+						err instanceof AuthMissingError
+					) {
+						const state = signState(
+							encodeOAuthState(
+								pluginId,
+								connectConfig.tenantId ?? tenantId ?? 'default',
+							),
+							connectConfig.kek,
+						);
+						const connectUrl = `${connectConfig.baseUrl}?plugin=${encodeURIComponent(pluginId)}&state=${encodeURIComponent(state)}`;
+						const msg = connectConfig.onAuthMissing
+							? connectConfig.onAuthMissing({
+									plugin: pluginId,
+									connectUrl,
+									state,
+								})
+							: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
+						throw new Error(msg);
+					}
+					throw err;
+				}
 
-        if (!key && connectConfig?.oauthConfig && connectConfig.kek) {
-          const state = signState(
-            encodeOAuthState(
-              pluginId,
-              connectConfig.tenantId ?? tenantId ?? 'default'
-            ),
-            connectConfig.kek
-          )
-          const connectUrl = `${connectConfig.baseUrl}?plugin=${encodeURIComponent(pluginId)}&state=${encodeURIComponent(state)}`
-          throw new Error(
-            connectConfig.onAuthMissing
-              ? connectConfig.onAuthMissing({
-                  plugin: pluginId,
-                  connectUrl,
-                  state,
-                })
-              : `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`
-          )
-        }
+				if (!key && connectConfig?.oauthConfig && connectConfig.kek) {
+					const state = signState(
+						encodeOAuthState(
+							pluginId,
+							connectConfig.tenantId ?? tenantId ?? 'default',
+						),
+						connectConfig.kek,
+					);
+					const connectUrl = `${connectConfig.baseUrl}?plugin=${encodeURIComponent(pluginId)}&state=${encodeURIComponent(state)}`;
+					throw new Error(
+						connectConfig.onAuthMissing
+							? connectConfig.onAuthMissing({
+									plugin: pluginId,
+									connectUrl,
+									state,
+								})
+							: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`,
+					);
+				}
 
-        if (!endpointHooks?.before && !endpointHooks?.after) {
-          const res = await call(0, { ...ctx, key }, args)
-          await onPermissionComplete?.()
-          return res
-        }
+				if (!endpointHooks?.before && !endpointHooks?.after) {
+					const res = await call(0, { ...ctx, key }, args);
+					await onPermissionComplete?.();
+					return res;
+				}
 
-        const ctxWithKey = { ...ctx, key }
-        const beforeResult = endpointHooks.before
-          ? await endpointHooks.before(ctxWithKey, args)
-          : {
-              ctx: ctxWithKey,
-              args,
-              continue: true as const,
-              passToAfter: undefined,
-            }
-        if (beforeResult.continue === false) return
-        const res = await call(0, beforeResult.ctx, beforeResult.args)
-        await endpointHooks.after?.(
-          beforeResult.ctx,
-          res,
-          beforeResult.passToAfter
-        )
-        await onPermissionComplete?.()
-        return res
-      }
+				const ctxWithKey = { ...ctx, key };
+				const beforeResult = endpointHooks.before
+					? await endpointHooks.before(ctxWithKey, args)
+					: {
+							ctx: ctxWithKey,
+							args,
+							continue: true as const,
+							passToAfter: undefined,
+						};
+				if (beforeResult.continue === false) return;
+				const res = await call(0, beforeResult.ctx, beforeResult.args);
+				await endpointHooks.after?.(
+					beforeResult.ctx,
+					res,
+					beforeResult.passToAfter,
+				);
+				await onPermissionComplete?.();
+				return res;
+			};
 
-      tree[key] = boundFn
-    } else if (value && typeof value === 'object') {
-      // it's a nested object - recurse into it
-      const nestedTree: Record<string, unknown> = {}
+			tree[key] = boundFn;
+		} else if (value && typeof value === 'object') {
+			// it's a nested object - recurse into it
+			const nestedTree: Record<string, unknown> = {};
 
-      bindEndpointsRecursively({
-        endpoints: value as Record<string, unknown>,
-        hooks: nodeHooks as Record<string, unknown> | undefined,
-        ctx,
-        tree: nestedTree,
-        pluginId,
-        errorHandlers,
-        currentPath: [...currentPath, key],
-        keyBuilder,
-        permissionsConfig,
-        endpointMeta,
-        database,
-        approvalConfig,
-        tenantId,
-        connectConfig,
-      })
+			bindEndpointsRecursively({
+				endpoints: value as Record<string, unknown>,
+				hooks: nodeHooks as Record<string, unknown> | undefined,
+				ctx,
+				tree: nestedTree,
+				pluginId,
+				errorHandlers,
+				currentPath: [...currentPath, key],
+				keyBuilder,
+				permissionsConfig,
+				endpointMeta,
+				database,
+				approvalConfig,
+				tenantId,
+				connectConfig,
+			});
 
-      tree[key] = nestedTree
-    }
-  }
+			tree[key] = nestedTree;
+		}
+	}
 }

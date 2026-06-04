@@ -1,33 +1,33 @@
-import * as querystring from 'node:querystring'
-import type { CorsairInternalConfig, CorsairPlugin, OAuthConfig } from '..'
-import { CORSAIR_INTERNAL, createIntegrationKeyManager } from '..'
-import { verifyAndDecodeState } from '../auth/state'
+import * as querystring from 'node:querystring';
+import type { CorsairInternalConfig, CorsairPlugin, OAuthConfig } from '..';
+import { CORSAIR_INTERNAL, createIntegrationKeyManager } from '..';
+import { verifyAndDecodeState } from '../auth/state';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
 function getInternal(corsair: unknown): CorsairInternalConfig {
-  const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-    | CorsairInternalConfig
-    | undefined
-  if (!internal) throw new Error('Invalid corsair instance')
-  return internal
+	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
+		| CorsairInternalConfig
+		| undefined;
+	if (!internal) throw new Error('Invalid corsair instance');
+	return internal;
 }
 
 function findPlugin(
-  internal: CorsairInternalConfig,
-  pluginId: string
+	internal: CorsairInternalConfig,
+	pluginId: string,
 ): CorsairPlugin {
-  const plugin = internal.plugins.find(p => p.id === pluginId)
-  if (!plugin) throw new Error(`Plugin '${pluginId}' not found`)
-  return plugin
+	const plugin = internal.plugins.find((p) => p.id === pluginId);
+	if (!plugin) throw new Error(`Plugin '${pluginId}' not found`);
+	return plugin;
 }
 
 function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
-  const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig
-  if (!cfg) throw new Error(`Plugin '${plugin.id}' has no oauthConfig`)
-  return cfg
+	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
+	if (!cfg) throw new Error(`Plugin '${plugin.id}' has no oauthConfig`);
+	return cfg;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -35,17 +35,17 @@ function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type ResolveConnectLinkResult = {
-  /** Plugin ID extracted from the signed state. */
-  plugin: string
-  /** Tenant ID extracted from the signed state. */
-  tenantId: string
-  /** Human-readable provider name from the plugin's oauthConfig. */
-  providerName: string
-  /** The full OAuth authorization URL. Redirect the user here to start the OAuth flow. */
-  oauthUrl: string
-  /** The signed state parameter (pass to processOAuthCallback after redirect). */
-  state: string
-}
+	/** Plugin ID extracted from the signed state. */
+	plugin: string;
+	/** Tenant ID extracted from the signed state. */
+	tenantId: string;
+	/** Human-readable provider name from the plugin's oauthConfig. */
+	providerName: string;
+	/** The full OAuth authorization URL. Redirect the user here to start the OAuth flow. */
+	oauthUrl: string;
+	/** The signed state parameter (pass to processOAuthCallback after redirect). */
+	state: string;
+};
 
 /**
  * Resolves a connect link request on the consumer's `/connect` page.
@@ -70,57 +70,57 @@ export type ResolveConnectLinkResult = {
  * ```
  */
 export async function resolveConnectLink(
-  corsair: unknown,
-  state: string
+	corsair: unknown,
+	state: string,
 ): Promise<ResolveConnectLinkResult> {
-  const internal = getInternal(corsair)
+	const internal = getInternal(corsair);
 
-  if (!internal.database) {
-    throw new Error('No database configured on corsair instance')
-  }
+	if (!internal.database) {
+		throw new Error('No database configured on corsair instance');
+	}
 
-  const redirectUri = internal.connect?.redirectUri
-  if (!redirectUri) {
-    throw new Error(
-      'No redirectUri configured. Set connect.redirectUri in createCorsair().'
-    )
-  }
+	const redirectUri = internal.connect?.redirectUri;
+	if (!redirectUri) {
+		throw new Error(
+			'No redirectUri configured. Set connect.redirectUri in createCorsair().',
+		);
+	}
 
-  const decoded = verifyAndDecodeState(state, internal.kek)
-  if (!decoded) throw new Error('Invalid or tampered state parameter')
+	const decoded = verifyAndDecodeState(state, internal.kek);
+	if (!decoded) throw new Error('Invalid or tampered state parameter');
 
-  const { plugin: pluginId, tenantId } = decoded
-  const plugin = findPlugin(internal, pluginId)
-  const oauthCfg = getOAuthConfig(plugin)
+	const { plugin: pluginId, tenantId } = decoded;
+	const plugin = findPlugin(internal, pluginId);
+	const oauthCfg = getOAuthConfig(plugin);
 
-  const integrationKm = createIntegrationKeyManager({
-    authType: 'oauth_2',
-    integrationName: pluginId,
-    kek: internal.kek,
-    database: internal.database,
-  })
+	const integrationKm = createIntegrationKeyManager({
+		authType: 'oauth_2',
+		integrationName: pluginId,
+		kek: internal.kek,
+		database: internal.database,
+	});
 
-  const clientId = await integrationKm.get_client_id()
-  if (!clientId) {
-    throw new Error(`client_id not configured for '${pluginId}'`)
-  }
+	const clientId = await integrationKm.get_client_id();
+	if (!clientId) {
+		throw new Error(`client_id not configured for '${pluginId}'`);
+	}
 
-  const params: Record<string, string> = {
-    ...oauthCfg.authParams,
-    client_id: clientId,
-    redirect_uri: redirectUri,
-    response_type: 'code',
-    scope: oauthCfg.scopes.join(' '),
-    state,
-  }
+	const params: Record<string, string> = {
+		...oauthCfg.authParams,
+		client_id: clientId,
+		redirect_uri: redirectUri,
+		response_type: 'code',
+		scope: oauthCfg.scopes.join(' '),
+		state,
+	};
 
-  const oauthUrl = `${oauthCfg.authUrl}?${querystring.stringify(params)}`
+	const oauthUrl = `${oauthCfg.authUrl}?${querystring.stringify(params)}`;
 
-  return {
-    plugin: pluginId,
-    tenantId,
-    providerName: oauthCfg.providerName,
-    oauthUrl,
-    state,
-  }
+	return {
+		plugin: pluginId,
+		tenantId,
+		providerName: oauthCfg.providerName,
+		oauthUrl,
+		state,
+	};
 }
