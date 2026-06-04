@@ -43,7 +43,11 @@
           },
           {
             "group": "Agent SDKs",
-            "pages": ["app/vercel-ai", "app/openai", "app/claude"]
+            "pages": [
+              "app/vercel-ai",
+              "app/openai",
+              "app/claude"
+            ]
           },
           {
             "group": "SDK Concepts",
@@ -89,7 +93,9 @@
           },
           {
             "group": "Studio",
-            "pages": ["studio/overview"]
+            "pages": [
+              "studio/overview"
+            ]
           },
           {
             "group": "Core Concepts",
@@ -107,11 +113,16 @@
           },
           {
             "group": "Auth Types",
-            "pages": ["concepts/api-key", "concepts/oauth"]
+            "pages": [
+              "concepts/api-key",
+              "concepts/oauth"
+            ]
           },
           {
             "group": "Production",
-            "pages": ["production/oauth-process"]
+            "pages": [
+              "production/oauth-process"
+            ]
           },
           {
             "group": "Workflow Engines",
@@ -129,7 +140,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -178,6 +192,14 @@
                   "plugins/bitwarden/overview",
                   "plugins/bitwarden/api",
                   "plugins/bitwarden/database"
+                ]
+              },
+              {
+                "group": "Bluesky",
+                "pages": [
+                  "plugins/bluesky/overview",
+                  "plugins/bluesky/api",
+                  "plugins/bluesky/database"
                 ]
               },
               {
@@ -633,6 +655,15 @@
                 ]
               },
               {
+                "group": "Twilio",
+                "pages": [
+                  "plugins/twilio/overview",
+                  "plugins/twilio/api",
+                  "plugins/twilio/database",
+                  "plugins/twilio/webhooks"
+                ]
+              },
+              {
                 "group": "Twitter",
                 "pages": [
                   "plugins/twitter/overview",
@@ -717,17 +748,33 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
+            "pages": [
+              "guides/webhooks",
+              "guides/workflows",
+              "guides/dashboard"
+            ]
           }
         ]
       }
     ]
   },
   "redirects": [
-    { "source": "/", "destination": "/app/home" },
-    { "source": "/app/introduction", "destination": "/app/home" },
-    { "source": "/hosted-sdk/overview", "destination": "/app/home" },
-    { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },
+    {
+      "source": "/",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/app/introduction",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/overview",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/quickstart",
+      "destination": "/app/installation"
+    },
     {
       "source": "/hosted-sdk/instances-and-plugins",
       "destination": "/app/instances-and-plugins"
@@ -736,15 +783,30 @@
       "source": "/hosted-sdk/tenants-and-auth",
       "destination": "/app/tenants-and-auth"
     },
-    { "source": "/hosted-sdk/mcp-and-run", "destination": "/app/agent-sdks" },
+    {
+      "source": "/hosted-sdk/mcp-and-run",
+      "destination": "/app/agent-sdks"
+    },
     {
       "source": "/hosted-sdk/types-and-errors",
       "destination": "/app/types-and-errors"
     },
-    { "source": "/hosted-mcp/overview", "destination": "/app/agent-sdks" },
-    { "source": "/hosted-mcp/vercel-ai", "destination": "/app/vercel-ai" },
-    { "source": "/hosted-mcp/openai", "destination": "/app/openai" },
-    { "source": "/hosted-mcp/claude", "destination": "/app/claude" },
+    {
+      "source": "/hosted-mcp/overview",
+      "destination": "/app/agent-sdks"
+    },
+    {
+      "source": "/hosted-mcp/vercel-ai",
+      "destination": "/app/vercel-ai"
+    },
+    {
+      "source": "/hosted-mcp/openai",
+      "destination": "/app/openai"
+    },
+    {
+      "source": "/hosted-mcp/claude",
+      "destination": "/app/claude"
+    },
     {
       "source": "/hosted-mcp/custom-connector",
       "destination": "/app/coding-agents/custom-connector"
@@ -753,14 +815,26 @@
       "source": "/app/custom-connector",
       "destination": "/app/coding-agents/custom-connector"
     },
-    { "source": "/app/mcp/vercel-ai", "destination": "/app/vercel-ai" },
-    { "source": "/app/mcp/openai", "destination": "/app/openai" },
-    { "source": "/app/mcp/claude", "destination": "/app/claude" },
+    {
+      "source": "/app/mcp/vercel-ai",
+      "destination": "/app/vercel-ai"
+    },
+    {
+      "source": "/app/mcp/openai",
+      "destination": "/app/openai"
+    },
+    {
+      "source": "/app/mcp/claude",
+      "destination": "/app/claude"
+    },
     {
       "source": "/app/mcp/custom-connector",
       "destination": "/app/custom-connector"
     },
-    { "source": "/app/sdk/installation", "destination": "/app/installation" },
+    {
+      "source": "/app/sdk/installation",
+      "destination": "/app/installation"
+    },
     {
       "source": "/app/sdk/instances-and-plugins",
       "destination": "/app/instances-and-plugins"
