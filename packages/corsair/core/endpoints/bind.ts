@@ -48,7 +48,6 @@ function buildConnectError(
 		connectConfig.kek!,
 	);
 	const url = new URL(connectConfig.baseUrl);
-	url.searchParams.set('plugin', pluginId);
 	url.searchParams.set('state', state);
 	const connectUrl = url.toString();
 	const msg = connectConfig.onAuthMissing
