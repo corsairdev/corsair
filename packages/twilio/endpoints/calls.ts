@@ -4,7 +4,11 @@ import type { TwilioEndpoints } from '../index';
 import type { TwilioEndpointOutputs } from './types';
 
 export const create: TwilioEndpoints['callsCreate'] = async (ctx, input) => {
-	const accountSid = ctx.options.accountSid ?? ctx.key.split(':')[0] ?? '';
+	const accountSid =
+		ctx.options.accountSid ??
+		(await ctx.keys.get_accountSid()) ??
+		ctx.key.split(':')[0] ??
+		'';
 	const authToken = ctx.key.includes(':') ? ctx.key.split(':')[1]! : ctx.key;
 
 	const response = await makeTwilioRequest<
@@ -44,7 +48,11 @@ export const create: TwilioEndpoints['callsCreate'] = async (ctx, input) => {
 };
 
 export const get: TwilioEndpoints['callsGet'] = async (ctx, input) => {
-	const accountSid = ctx.options.accountSid ?? ctx.key.split(':')[0] ?? '';
+	const accountSid =
+		ctx.options.accountSid ??
+		(await ctx.keys.get_accountSid()) ??
+		ctx.key.split(':')[0] ??
+		'';
 	const authToken = ctx.key.includes(':') ? ctx.key.split(':')[1]! : ctx.key;
 
 	const response = await makeTwilioRequest<TwilioEndpointOutputs['callsGet']>(
@@ -59,7 +67,11 @@ export const get: TwilioEndpoints['callsGet'] = async (ctx, input) => {
 };
 
 export const list: TwilioEndpoints['callsList'] = async (ctx, input) => {
-	const accountSid = ctx.options.accountSid ?? ctx.key.split(':')[0] ?? '';
+	const accountSid =
+		ctx.options.accountSid ??
+		(await ctx.keys.get_accountSid()) ??
+		ctx.key.split(':')[0] ??
+		'';
 	const authToken = ctx.key.includes(':') ? ctx.key.split(':')[1]! : ctx.key;
 
 	const response = await makeTwilioRequest<TwilioEndpointOutputs['callsList']>(

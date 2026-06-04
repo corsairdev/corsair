@@ -42,7 +42,7 @@ import {
 
 export const twilioAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['accountSid'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -71,10 +71,15 @@ export type TwilioPluginOptions = {
 
 export type TwilioContext = CorsairPluginContext<
 	typeof TwilioSchema,
-	TwilioPluginOptions
+	TwilioPluginOptions,
+	undefined,
+	typeof twilioAuthConfig
 >;
 
-export type TwilioKeyBuilderContext = KeyBuilderContext<TwilioPluginOptions>;
+export type TwilioKeyBuilderContext = KeyBuilderContext<
+	TwilioPluginOptions,
+	typeof twilioAuthConfig
+>;
 
 // ── Endpoint Types ────────────────────────────────────────────────────────────
 
@@ -227,7 +232,8 @@ export type BaseTwilioPlugin<T extends TwilioPluginOptions> = CorsairPlugin<
 	typeof twilioEndpointsNested,
 	typeof twilioWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof twilioAuthConfig
 >;
 
 export type InternalTwilioPlugin = BaseTwilioPlugin<TwilioPluginOptions>;
@@ -253,6 +259,7 @@ export function twilio<const T extends TwilioPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: twilioEndpointsNested,
 		webhooks: twilioWebhooksNested,
+		authConfig: twilioAuthConfig,
 		endpointMeta: twilioEndpointMeta,
 		endpointSchemas: twilioEndpointSchemas,
 		webhookSchemas: twilioWebhookSchemas,
