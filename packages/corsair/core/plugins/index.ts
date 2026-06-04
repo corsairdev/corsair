@@ -688,4 +688,19 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 			args: unknown;
 		}) => string;
 	};
+	/**
+	 * Connect link configuration for non-authenticated users.
+	 * When a plugin endpoint is called but the user hasn't authenticated,
+	 * Corsair generates a connect link the agent can present to the user.
+	 * Only applies to plugins with an `oauthConfig`.
+	 */
+	connect?: {
+		baseUrl: string;
+		redirectUri: string;
+		onAuthMissing?: (opts: {
+			plugin: string;
+			connectUrl: string;
+			state: string;
+		}) => string;
+	};
 };

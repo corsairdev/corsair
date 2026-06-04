@@ -1,4 +1,6 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
+import { AuthMissingError } from '../auth/errors/auth-missing';
+import { encodeOAuthState, signState } from '../auth/state';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import { enforcePermission, parseDurationMs } from '../permissions';
@@ -6,6 +8,7 @@ import type {
 	CorsairKeyBuilderBase,
 	EndpointHooks,
 	EndpointMetaEntry,
+	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
@@ -21,6 +24,36 @@ import type {
  */
 export function isEndpoint(value: unknown): value is Function {
 	return typeof value === 'function';
+}
+
+function buildConnectError(
+	pluginId: string,
+	connectConfig: {
+		baseUrl: string;
+		onAuthMissing?: (opts: {
+			plugin: string;
+			connectUrl: string;
+			state: string;
+		}) => string;
+		kek?: string;
+		tenantId?: string;
+	},
+	fallbackTenantId: string | undefined,
+): Error {
+	const state = signState(
+		encodeOAuthState(
+			pluginId,
+			connectConfig.tenantId ?? fallbackTenantId ?? 'default',
+		),
+		connectConfig.kek!,
+	);
+	const url = new URL(connectConfig.baseUrl);
+	url.searchParams.set('state', state);
+	const connectUrl = url.toString();
+	const msg = connectConfig.onAuthMissing
+		? connectConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
+		: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
+	return new Error(msg);
 }
 
 /**
@@ -49,6 +82,7 @@ export function bindEndpointsRecursively({
 	database,
 	approvalConfig,
 	tenantId,
+	connectConfig,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -86,6 +120,19 @@ export function bindEndpointsRecursively({
 	};
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
+	/** Connect link config for generating OAuth connect URLs when auth is missing. */
+	connectConfig?: {
+		baseUrl: string;
+		redirectUri: string;
+		onAuthMissing?: (opts: {
+			plugin: string;
+			connectUrl: string;
+			state: string;
+		}) => string;
+		oauthConfig?: OAuthConfig;
+		kek?: string | undefined;
+		tenantId?: string;
+	};
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -222,7 +269,28 @@ export function bindEndpointsRecursively({
 					}
 				};
 
-				const key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
+				let key: string | undefined;
+				try {
+					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
+				} catch (err) {
+					if (
+						connectConfig?.oauthConfig &&
+						connectConfig.kek &&
+						err instanceof AuthMissingError
+					) {
+						throw buildConnectError(pluginId, connectConfig, tenantId);
+					}
+					throw err;
+				}
+
+				if (
+					!key &&
+					keyBuilder &&
+					connectConfig?.oauthConfig &&
+					connectConfig.kek
+				) {
+					throw buildConnectError(pluginId, connectConfig, tenantId);
+				}
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, args);
@@ -269,6 +337,7 @@ export function bindEndpointsRecursively({
 				database,
 				approvalConfig,
 				tenantId,
+				connectConfig,
 			});
 
 			tree[key] = nestedTree;

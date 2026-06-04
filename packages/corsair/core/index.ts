@@ -33,6 +33,15 @@ export type CorsairInternalConfig = {
 			args: unknown;
 		}) => string;
 	};
+	connect?: {
+		baseUrl: string;
+		redirectUri: string;
+		onAuthMissing?: (opts: {
+			plugin: string;
+			connectUrl: string;
+			state: string;
+		}) => string;
+	};
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -91,6 +100,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		kek: config.kek,
 		multiTenancy: !!config.multiTenancy,
 		approval: config.approval,
+		connect: config.connect,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
@@ -110,6 +120,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
 						approvalConfig: config.approval,
+						connectConfig: config.connect,
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,
@@ -128,6 +139,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		kek: config.kek,
 		rootErrorHandlers: config.errorHandlers,
 		approvalConfig: config.approval,
+		connectConfig: config.connect,
 	});
 
 	return Object.assign({}, client, {
@@ -157,6 +169,7 @@ export type {
 } from './auth';
 // Auth utilities and types
 export {
+	AuthMissingError,
 	BASE_AUTH_FIELDS,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -178,6 +191,9 @@ export type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
 } from './client';
+// Connect link utilities
+export type { ResolveConnectLinkResult } from './connect';
+export { resolveConnectLink } from './connect';
 // Constants
 export type {
 	AllProviders,

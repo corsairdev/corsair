@@ -9,9 +9,8 @@ export {
 	generateDEK,
 	reEncryptConfig,
 } from './encryption';
-
 // Auth error utilities
-export { createMissingConfigProxy } from './errors';
+export { AuthMissingError, createMissingConfigProxy } from './errors';
 export type { TokenResponse } from './exchange';
 // Token exchange utility
 export { exchangeCodeForTokens } from './exchange';
