@@ -268,7 +268,12 @@ export function bindEndpointsRecursively({
 					throw err;
 				}
 
-				if (!key && connectConfig?.oauthConfig && connectConfig.kek) {
+				if (
+					!key &&
+					keyBuilder &&
+					connectConfig?.oauthConfig &&
+					connectConfig.kek
+				) {
 					const state = signState(
 						encodeOAuthState(
 							pluginId,
@@ -287,6 +292,7 @@ export function bindEndpointsRecursively({
 							: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`,
 					);
 				}
+
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, args);
