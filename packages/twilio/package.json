@@ -15,17 +15,23 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
     "corsair": "workspace:*",
+    "ts-jest": "^29.4.9",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
     "zod": "^4.1.13"
+  },
+  "dependencies": {
+    "jest": "^29.7.0"
   },
   "keywords": [
     "corsair",

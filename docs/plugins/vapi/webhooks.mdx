@@ -89,30 +89,6 @@ Sent when the active workflow node changes
 
 ```ts
 {
-  message: {
-    type: workflow.node.started,
-    call: {
-      id: string,
-      orgId?: string,
-      type?: string,
-      status?: string,
-      endedReason?: string | null,
-      assistantId?: string | null,
-      phoneNumberId?: string | null,
-      startedAt?: string | null,
-      endedAt?: string | null,
-      cost?: number,
-      messages?: {
-      }[],
-      artifact?: {
-      },
-      analysis?: {
-      }
-    },
-    node?: {
-    },
-    timestamp?: string
-  }
 }
 ```
 </Accordion>
@@ -193,32 +169,10 @@ Sent to fetch assistant configuration for an incoming call
 
 ```ts
 {
-  message: {
-    type: assistant-request,
-    call: {
-      id: string,
-      orgId?: string,
-      type?: string,
-      status?: string,
-      endedReason?: string | null,
-      assistantId?: string | null,
-      phoneNumberId?: string | null,
-      startedAt?: string | null,
-      endedAt?: string | null,
-      cost?: number,
-      messages?: {
-      }[],
-      artifact?: {
-      },
-      analysis?: {
-      }
-    },
-    phoneNumber?: {
-    },
-    customer?: {
-    },
-    timestamp?: string
-  }
+  assistant?: {
+  },
+  assistantId?: string,
+  error?: string
 }
 ```
 </Accordion>
@@ -302,37 +256,6 @@ Sent at the end of a call with transcript, summary, and analysis
 
 ```ts
 {
-  message: {
-    type: end-of-call-report,
-    call: {
-      id: string,
-      orgId?: string,
-      type?: string,
-      status?: string,
-      endedReason?: string | null,
-      assistantId?: string | null,
-      phoneNumberId?: string | null,
-      startedAt?: string | null,
-      endedAt?: string | null,
-      cost?: number,
-      messages?: {
-      }[],
-      artifact?: {
-      },
-      analysis?: {
-      }
-    },
-    endedReason?: string,
-    transcript?: string,
-    summary?: string,
-    messages?: {
-    }[],
-    analysis?: {
-    },
-    artifact?: {
-    },
-    timestamp?: string
-  }
 }
 ```
 </Accordion>
@@ -408,29 +331,6 @@ Sent when the call status changes
 
 ```ts
 {
-  message: {
-    type: status-update,
-    call: {
-      id: string,
-      orgId?: string,
-      type?: string,
-      status?: string,
-      endedReason?: string | null,
-      assistantId?: string | null,
-      phoneNumberId?: string | null,
-      startedAt?: string | null,
-      endedAt?: string | null,
-      cost?: number,
-      messages?: {
-      }[],
-      artifact?: {
-      },
-      analysis?: {
-      }
-    },
-    status: string,
-    timestamp?: string
-  }
 }
 ```
 </Accordion>
@@ -515,38 +415,10 @@ Triggered when the assistant makes tool calls during a call
 
 ```ts
 {
-  message: {
-    type: tool-calls,
-    call: {
-      id: string,
-      orgId?: string,
-      type?: string,
-      status?: string,
-      endedReason?: string | null,
-      assistantId?: string | null,
-      phoneNumberId?: string | null,
-      startedAt?: string | null,
-      endedAt?: string | null,
-      cost?: number,
-      messages?: {
-      }[],
-      artifact?: {
-      },
-      analysis?: {
-      }
-    },
-    toolCallList: {
-      id: string,
-      type: function,
-      function: {
-        name: string,
-        arguments: string
-      }
-    }[],
-    toolWithToolCallList?: {
-    }[],
-    timestamp?: string
-  }
+  results: {
+    toolCallId: string,
+    result: string
+  }[]
 }
 ```
 </Accordion>
@@ -621,28 +493,9 @@ Triggered when processing a transfer destination request
 
 ```ts
 {
-  message: {
-    type: transfer-destination-request,
-    call: {
-      id: string,
-      orgId?: string,
-      type?: string,
-      status?: string,
-      endedReason?: string | null,
-      assistantId?: string | null,
-      phoneNumberId?: string | null,
-      startedAt?: string | null,
-      endedAt?: string | null,
-      cost?: number,
-      messages?: {
-      }[],
-      artifact?: {
-      },
-      analysis?: {
-      }
-    },
-    timestamp?: string
-  }
+  destination?: {
+  },
+  error?: string
 }
 ```
 </Accordion>

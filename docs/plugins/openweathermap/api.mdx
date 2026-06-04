@@ -30,8 +30,8 @@ await corsair.openweathermap.api.history.timeMachine({});
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
 | `dt` | `number` | Yes | Unix timestamp (UTC) for the requested historical date |
-| `units` | `standard \| metric \| imperial` | No | — |
-| `lang` | `string` | No | — |
+| `units` | `standard \| metric \| imperial` | No | Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit) |
+| `lang` | `string` | No | Language code for weather descriptions |
 
 
 
@@ -106,9 +106,9 @@ await corsair.openweathermap.api.summary.daySummary({});
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
 | `date` | `string` | Yes | Date in YYYY-MM-DD format |
-| `units` | `standard \| metric \| imperial` | No | — |
-| `lang` | `string` | No | — |
-| `tz` | `string` | No | — |
+| `units` | `standard \| metric \| imperial` | No | Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit) |
+| `lang` | `string` | No | Language code for weather descriptions |
+| `tz` | `string` | No | Timezone offset in ±XX:XX format (e.g. +05:30) |
 
 
 
@@ -214,8 +214,8 @@ await corsair.openweathermap.api.summary.overview({});
 |------|------|----------|-------------|
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
-| `date` | `string` | No | — |
-| `units` | `standard \| metric \| imperial` | No | — |
+| `date` | `string` | No | Date in YYYY-MM-DD format (defaults to today) |
+| `units` | `standard \| metric \| imperial` | No | Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit) |
 
 
 
@@ -254,9 +254,9 @@ await corsair.openweathermap.api.weather.oneCall({});
 |------|------|----------|-------------|
 | `lat` | `number` | Yes | Latitude of the location |
 | `lon` | `number` | Yes | Longitude of the location |
-| `exclude` | `current \| minutely \| hourly \| daily \| alerts[]` | No | — |
-| `units` | `standard \| metric \| imperial` | No | — |
-| `lang` | `string` | No | — |
+| `exclude` | `current \| minutely \| hourly \| daily \| alerts[]` | No | Parts to exclude from the response: current, minutely, hourly, daily, alerts |
+| `units` | `standard \| metric \| imperial` | No | Units: standard (Kelvin), metric (Celsius), imperial (Fahrenheit) |
+| `lang` | `string` | No | Language code for weather descriptions |
 
 
 

@@ -90,7 +90,7 @@ await corsair.youtube.api.captions.load({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The caption track ID to download |
-| `tfmt` | `string` | No | — |
+| `tfmt` | `string` | No | Caption format (srt, vtt, etc.) |
 
 
 
@@ -193,8 +193,8 @@ await corsair.youtube.api.channels.getActivities({});
 | `part` | `string` | No | — |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
-| `publishedAfter` | `string` | No | — |
-| `publishedBefore` | `string` | No | — |
+| `publishedAfter` | `string` | No | RFC 3339 datetime - only return activities after this time |
+| `publishedBefore` | `string` | No | RFC 3339 datetime - only return activities before this time |
 
 
 
@@ -464,10 +464,10 @@ await corsair.youtube.api.channels.getStatistics({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `mine` | `boolean` | No | — |
+| `id` | `string` | No | Channel ID(s), comma-separated |
+| `mine` | `boolean` | No | Get statistics for the authenticated user's channel |
 | `part` | `string` | No | — |
-| `forHandle` | `string` | No | — |
+| `forHandle` | `string` | No | Channel handle (e.g. @channelname) |
 | `forUsername` | `string` | No | — |
 
 
@@ -897,7 +897,7 @@ await corsair.youtube.api.channelSections.list({});
 |------|------|----------|-------------|
 | `part` | `string` | Yes | Comma-separated list of parts (snippet,contentDetails) |
 | `hl` | `string` | No | — |
-| `id` | `string` | No | — |
+| `id` | `string` | No | Section ID(s), comma-separated |
 | `mine` | `boolean` | No | — |
 | `channelId` | `string` | No | — |
 | `onBehalfOfContentOwner` | `string` | No | — |
@@ -1134,9 +1134,9 @@ await corsair.youtube.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
+| `id` | `string` | No | Comment ID(s), comma-separated |
 | `part` | `string` | No | — |
-| `parentId` | `string` | No | — |
+| `parentId` | `string` | No | Parent comment thread ID to list replies for |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
 | `textFormat` | `html \| plainText` | No | — |
@@ -1318,7 +1318,7 @@ await corsair.youtube.api.comments.setModerationStatus({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The ID of the comment to moderate |
 | `moderationStatus` | `heldForReview \| published \| rejected` | Yes | The moderation status to set |
-| `banAuthor` | `boolean` | No | — |
+| `banAuthor` | `boolean` | No | Ban the author from the channel |
 
 
 
@@ -1646,7 +1646,7 @@ await corsair.youtube.api.i18n.listLanguages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `hl` | `string` | No | — |
+| `hl` | `string` | No | Language to use for the response |
 | `part` | `string` | No | — |
 
 
@@ -1902,7 +1902,7 @@ await corsair.youtube.api.playlistImages.list({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `part` | `string` | No | — |
-| `parent` | `string` | No | — |
+| `parent` | `string` | No | The parent playlist ID |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
 | `onBehalfOfContentOwner` | `string` | No | — |
@@ -1972,7 +1972,7 @@ await corsair.youtube.api.playlistItems.add({});
 |------|------|----------|-------------|
 | `videoId` | `string` | Yes | The YouTube video ID to add to the playlist |
 | `playlistId` | `string` | Yes | The ID of the playlist to add the video to |
-| `position` | `number` | No | — |
+| `position` | `number` | No | Zero-based position to insert the video |
 
 
 
@@ -2117,7 +2117,7 @@ await corsair.youtube.api.playlistItems.list({});
 | `playlistId` | `string` | Yes | The ID of the playlist to list items for |
 | `part` | `string` | No | — |
 | `fields` | `string` | No | — |
-| `videoId` | `string` | No | — |
+| `videoId` | `string` | No | Filter by video ID |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
 | `onBehalfOfContentOwner` | `string` | No | — |
@@ -2379,8 +2379,8 @@ await corsair.youtube.api.playlists.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `title` | `string` | Yes | Playlist title (max 150 characters) |
-| `description` | `string` | No | — |
-| `privacyStatus` | `public \| private \| unlisted` | No | — |
+| `description` | `string` | No | Playlist description |
+| `privacyStatus` | `public \| private \| unlisted` | No | Privacy status of the playlist |
 
 
 
@@ -2514,9 +2514,9 @@ await corsair.youtube.api.playlists.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `part` | `string` | No | — |
-| `pageToken` | `string` | No | — |
-| `maxResults` | `number` | No | — |
+| `part` | `string` | No | Comma-separated list of resource parts (snippet,status,contentDetails) |
+| `pageToken` | `string` | No | Token for the next page of results |
+| `maxResults` | `number` | No | Maximum number of results to return (1-50) |
 
 
 
@@ -2620,7 +2620,7 @@ await corsair.youtube.api.playlists.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The ID of the playlist to update |
 | `snippet` | `object` | Yes | Updated snippet fields |
-| `part` | `string` | No | — |
+| `part` | `string` | No | Comma-separated list of parts to update |
 | `status` | `object` | No | — |
 | `onBehalfOfContentOwner` | `string` | No | — |
 
@@ -2746,7 +2746,7 @@ await corsair.youtube.api.search.youtube({});
 |------|------|----------|-------------|
 | `q` | `string` | Yes | Search query |
 | `part` | `string` | No | — |
-| `type` | `string` | No | — |
+| `type` | `string` | No | Resource type to search (video, channel, playlist) |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
 
@@ -3171,7 +3171,7 @@ await corsair.youtube.api.videoActions.listAbuseReasons({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `hl` | `string` | No | — |
+| `hl` | `string` | No | Language for the response |
 | `part` | `string` | No | — |
 
 
@@ -3258,7 +3258,7 @@ await corsair.youtube.api.videoActions.reportAbuse({});
 |------|------|----------|-------------|
 | `videoId` | `string` | Yes | The YouTube video ID to report |
 | `reasonId` | `string` | Yes | The ID of the abuse reason |
-| `comments` | `string` | No | — |
+| `comments` | `string` | No | Additional comments about the abuse |
 | `language` | `string` | No | — |
 | `secondaryReasonId` | `string` | No | — |
 
@@ -3343,7 +3343,7 @@ await corsair.youtube.api.videoCategories.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `hl` | `string` | No | — |
-| `id` | `string` | No | — |
+| `id` | `string` | No | Category ID(s), comma-separated |
 | `part` | `string` | No | — |
 | `regionCode` | `string` | No | — |
 
@@ -3446,7 +3446,7 @@ await corsair.youtube.api.videos.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `video_id` | `string` | Yes | The YouTube video ID |
-| `part` | `string` | No | — |
+| `part` | `string` | No | Comma-separated list of resource parts |
 
 
 
@@ -3565,8 +3565,8 @@ await corsair.youtube.api.videos.getBatch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string[]` | Yes | Array of YouTube video IDs to retrieve (max 50) |
-| `hl` | `string` | No | — |
-| `parts` | `string[]` | No | — |
+| `hl` | `string` | No | Language for localized metadata |
+| `parts` | `string[]` | No | Resource parts to include |
 
 
 
@@ -3691,8 +3691,8 @@ await corsair.youtube.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `mine` | `boolean` | No | — |
-| `channelId` | `string` | No | — |
+| `mine` | `boolean` | No | List videos for the authenticated user |
+| `channelId` | `string` | No | Filter by channel ID |
 | `part` | `string` | No | — |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
@@ -3815,7 +3815,7 @@ await corsair.youtube.api.videos.listMostPopular({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `part` | `string` | No | — |
-| `chart` | `string` | No | — |
+| `chart` | `string` | No | Chart to use (mostPopular) |
 | `pageToken` | `string` | No | — |
 | `maxResults` | `number` | No | — |
 | `regionCode` | `string` | No | — |
@@ -3939,11 +3939,11 @@ await corsair.youtube.api.videos.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `video_id` | `string` | Yes | The ID of the video to update |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `tags` | `string[]` | No | — |
-| `categoryId` | `string` | No | — |
-| `privacy_status` | `string` | No | — |
+| `title` | `string` | No | Updated video title |
+| `description` | `string` | No | Updated video description |
+| `tags` | `string[]` | No | Updated video tags |
+| `categoryId` | `string` | No | Updated category ID |
+| `privacy_status` | `string` | No | Updated privacy status (public, private, unlisted) |
 | `composio_execution_message` | `string` | No | — |
 
 
@@ -4101,7 +4101,7 @@ await corsair.youtube.api.videos.uploadMultipart({});
 | `categoryId` | `string` | Yes | Video category ID |
 | `description` | `string` | Yes | Video description |
 | `privacyStatus` | `public \| private \| unlisted` | Yes | Privacy status |
-| `tags` | `string[]` | No | — |
+| `tags` | `string[]` | No | Video tags |
 
 <AccordionGroup>
 <Accordion title="videoFile full type">

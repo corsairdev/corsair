@@ -28,9 +28,9 @@ await corsair.twitter.api.tweets.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `text` | `string` | Yes | Tweet text content (max 280 weighted characters) |
-| `quoteTweetId` | `string` | No | — |
-| `mediaIds` | `string[]` | No | — |
-| `replySettings` | `following \| mentionedUsers \| subscribers` | No | — |
+| `quoteTweetId` | `string` | No | ID of the tweet to quote |
+| `mediaIds` | `string[]` | No | Up to 4 media IDs to attach |
+| `replySettings` | `following \| mentionedUsers \| subscribers` | No | Restricts who can reply to this tweet |
 
 
 
@@ -74,7 +74,7 @@ await corsair.twitter.api.tweets.createReply({});
 |------|------|----------|-------------|
 | `text` | `string` | Yes | Reply text content (max 280 weighted characters) |
 | `inReplyToTweetId` | `string` | Yes | ID of the tweet to reply to |
-| `excludeReplyUserIds` | `string[]` | No | — |
+| `excludeReplyUserIds` | `string[]` | No | User IDs to exclude from @mentioning in the reply |
 
 
 

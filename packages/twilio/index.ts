@@ -271,13 +271,22 @@ export function twilio<const T extends TwilioPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TwilioKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
 			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (options.webhookSecret) {
+					return options.webhookSecret;
+				}
+				if (options.key) {
+					return options.key;
+				}
+				const webhookSig = await ctx.keys.get_webhook_signature();
+				if (webhookSig) {
+					return webhookSig;
+				}
+				if (ctx.authType === 'api_key') {
+					const apiKey = await ctx.keys.get_api_key();
+					return apiKey ?? '';
+				}
+				return '';
 			}
 
 			if (source === 'endpoint' && options.key) {
