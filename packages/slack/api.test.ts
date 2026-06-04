@@ -1,6 +1,10 @@
 import 'dotenv/config';
 import { makeSlackRequest } from './client';
 import type {
+	AdminConversationsGetTeamsResponse,
+	AdminConversationsSearchResponse,
+	AdminConversationsSetTeamsResponse,
+	AdminTeamsListResponse,
 	ChatDeleteResponse,
 	ChatGetPermalinkResponse,
 	ChatPostMessageResponse,
@@ -25,10 +29,6 @@ import type {
 	UsersInfoResponse,
 	UsersListResponse,
 	UsersProfileGetResponse,
-	AdminTeamsListResponse,
-	AdminConversationsSearchResponse,
-	AdminConversationsGetTeamsResponse,
-	AdminConversationsSetTeamsResponse,
 } from './endpoints/types';
 import { SlackEndpointOutputSchemas } from './endpoints/types';
 
@@ -873,22 +873,27 @@ describe('Slack API Type Tests', () => {
 		});
 
 		it('adminConversationsGetTeams returns correct type', async () => {
-			const response = await makeSlackRequest<AdminConversationsGetTeamsResponse>(
-				'admin.conversations.getTeams',
-				TEST_TOKEN,
-				{ method: 'GET', query: { channel_id: testChannelId, limit: 10 } },
-			);
+			const response =
+				await makeSlackRequest<AdminConversationsGetTeamsResponse>(
+					'admin.conversations.getTeams',
+					TEST_TOKEN,
+					{ method: 'GET', query: { channel_id: testChannelId, limit: 10 } },
+				);
 			const result = response;
 
 			SlackEndpointOutputSchemas.adminConversationsGetTeams.parse(result);
 		});
 
 		it('adminConversationsSetTeams returns correct type', async () => {
-			const response = await makeSlackRequest<AdminConversationsSetTeamsResponse>(
-				'admin.conversations.setTeams',
-				TEST_TOKEN,
-				{ method: 'POST', body: { channel_id: testChannelId, org_channel: true } },
-			);
+			const response =
+				await makeSlackRequest<AdminConversationsSetTeamsResponse>(
+					'admin.conversations.setTeams',
+					TEST_TOKEN,
+					{
+						method: 'POST',
+						body: { channel_id: testChannelId, org_channel: true },
+					},
+				);
 			const result = response;
 
 			SlackEndpointOutputSchemas.adminConversationsSetTeams.parse(result);

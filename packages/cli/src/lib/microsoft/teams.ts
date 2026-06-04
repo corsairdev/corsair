@@ -1,8 +1,12 @@
-import * as p from '@clack/prompts'
-import { loadInternalConfig } from '../../utils/load-config'
-import { promptClientState, promptTenantId, promptWebhookUrl, } from '../../utils/prompts'
-import { resolveAccessToken, saveWebhookSignature } from './credentials'
-import { createGraphSubscription, GRAPH_API_BASE } from './graph'
+import * as p from '@clack/prompts';
+import { loadInternalConfig } from '../../utils/load-config';
+import {
+	promptClientState,
+	promptTenantId,
+	promptWebhookUrl,
+} from '../../utils/prompts';
+import { resolveAccessToken, saveWebhookSignature } from './credentials';
+import { createGraphSubscription, GRAPH_API_BASE } from './graph';
 
 async function fetchJoinedTeams(
 	accessToken: string,
