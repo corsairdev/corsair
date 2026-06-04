@@ -248,6 +248,7 @@ async function ensureIntegration(
 	const encryptedDek = await encryptDEK(dek, kek);
 	const row = await orm.integrations.create({
 		name: pluginId,
+		config: {},
 		dek: encryptedDek,
 	});
 	return { id: row.id };
@@ -271,6 +272,7 @@ async function ensureAccount(
 	await orm.accounts.create({
 		tenant_id: tenantId,
 		integration_id: integrationId,
+		config: {},
 		dek: encryptedDek,
 	});
 }
