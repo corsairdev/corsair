@@ -194,8 +194,7 @@ export type CorsairIntegrationInsert = {
 	created_at?: Date;
 	updated_at?: Date;
 	name: string;
-	/** Omit to use the database default (`{}`). */
-	config?: Record<string, unknown>;
+	config: Record<string, unknown>;
 	dek?: string;
 };
 
@@ -205,8 +204,7 @@ export type CorsairAccountInsert = {
 	updated_at?: Date;
 	tenant_id: string;
 	integration_id: string;
-	/** Omit to use the database default (`{}`). */
-	config?: Record<string, unknown>;
+	config: Record<string, unknown>;
 	dek?: string;
 };
 

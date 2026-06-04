@@ -75,6 +75,7 @@ async function ensureAccount(
 	await orm.accounts.create({
 		tenant_id: tenantId,
 		integration_id: integration.id,
+		config: {},
 		dek: encryptedDek,
 	});
 }
