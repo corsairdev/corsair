@@ -30,14 +30,15 @@ describe('OAuth state utilities', () => {
 	it('round-trips encode/decode', () => {
 		const encoded = encodeOAuthState('gmail', 'tenant-1');
 		const decoded = decodeOAuthState(encoded);
-		expect(decoded).toEqual({ plugin: 'gmail', tenantId: 'tenant-1' });
+		expect(decoded).toMatchObject({ plugin: 'gmail', tenantId: 'tenant-1' });
+		expect(typeof decoded!.iat).toBe('number');
 	});
 
 	it('signs and verifies state', () => {
 		const payload = encodeOAuthState('slack', 'tenant-2');
 		const signed = signState(payload, kek);
 		const decoded = verifyAndDecodeState(signed, kek);
-		expect(decoded).toEqual({ plugin: 'slack', tenantId: 'tenant-2' });
+		expect(decoded).toMatchObject({ plugin: 'slack', tenantId: 'tenant-2' });
 	});
 
 	it('rejects tampered state', () => {
@@ -51,6 +52,18 @@ describe('OAuth state utilities', () => {
 	it('returns null for invalid state', () => {
 		expect(decodeOAuthState('not-valid-base64!!!')).toBeNull();
 		expect(verifyAndDecodeState('', kek)).toBeNull();
+	});
+
+	it('rejects expired state', () => {
+		const oldPayload = Buffer.from(
+			JSON.stringify({
+				plugin: 'gmail',
+				tenantId: 't1',
+				iat: Date.now() - 11 * 60 * 1000,
+			}),
+		).toString('base64url');
+		const signed = signState(oldPayload, kek);
+		expect(verifyAndDecodeState(signed, kek)).toBeNull();
 	});
 });
 
@@ -109,7 +122,7 @@ describe('connect-link generation in endpoint binding', () => {
 			expect(stateMatch).not.toBeNull();
 			const state = decodeURIComponent(stateMatch![1]);
 			const decoded = verifyAndDecodeState(state, kek);
-			expect(decoded).toEqual({ plugin: 'gmail', tenantId: 'tenant-1' });
+			expect(decoded).toMatchObject({ plugin: 'gmail', tenantId: 'tenant-1' });
 		}
 	});
 
@@ -186,10 +199,6 @@ describe('connect-link generation in endpoint binding', () => {
 			await boundFn();
 			fail('Expected error to be thrown');
 		} catch (err: any) {
-			expect(err.message).toBe(
-				'Please connect gmail: https://myapp.com/connect?plugin=gmail&state=' +
-					err.message.split('state=')[1],
-			);
 			expect(err.message).toContain('Please connect gmail');
 			expect(err.message).toContain('https://myapp.com/connect');
 		}

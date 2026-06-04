@@ -26,6 +26,37 @@ export function isEndpoint(value: unknown): value is Function {
 	return typeof value === 'function';
 }
 
+function buildConnectError(
+	pluginId: string,
+	connectConfig: {
+		baseUrl: string;
+		onAuthMissing?: (opts: {
+			plugin: string;
+			connectUrl: string;
+			state: string;
+		}) => string;
+		kek?: string;
+		tenantId?: string;
+	},
+	fallbackTenantId: string | undefined,
+): Error {
+	const state = signState(
+		encodeOAuthState(
+			pluginId,
+			connectConfig.tenantId ?? fallbackTenantId ?? 'default',
+		),
+		connectConfig.kek!,
+	);
+	const url = new URL(connectConfig.baseUrl);
+	url.searchParams.set('plugin', pluginId);
+	url.searchParams.set('state', state);
+	const connectUrl = url.toString();
+	const msg = connectConfig.onAuthMissing
+		? connectConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
+		: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
+	return new Error(msg);
+}
+
 /**
  * Recursively binds endpoints in a tree structure with context and hooks.
  * Handles both flat (key -> fn) and nested (key -> { key -> fn }) structures.
@@ -248,22 +279,7 @@ export function bindEndpointsRecursively({
 						connectConfig.kek &&
 						err instanceof AuthMissingError
 					) {
-						const state = signState(
-							encodeOAuthState(
-								pluginId,
-								connectConfig.tenantId ?? tenantId ?? 'default',
-							),
-							connectConfig.kek,
-						);
-						const connectUrl = `${connectConfig.baseUrl}?plugin=${encodeURIComponent(pluginId)}&state=${encodeURIComponent(state)}`;
-						const msg = connectConfig.onAuthMissing
-							? connectConfig.onAuthMissing({
-									plugin: pluginId,
-									connectUrl,
-									state,
-								})
-							: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
-						throw new Error(msg);
+						throw buildConnectError(pluginId, connectConfig, tenantId);
 					}
 					throw err;
 				}
@@ -274,25 +290,8 @@ export function bindEndpointsRecursively({
 					connectConfig?.oauthConfig &&
 					connectConfig.kek
 				) {
-					const state = signState(
-						encodeOAuthState(
-							pluginId,
-							connectConfig.tenantId ?? tenantId ?? 'default',
-						),
-						connectConfig.kek,
-					);
-					const connectUrl = `${connectConfig.baseUrl}?plugin=${encodeURIComponent(pluginId)}&state=${encodeURIComponent(state)}`;
-					throw new Error(
-						connectConfig.onAuthMissing
-							? connectConfig.onAuthMissing({
-									plugin: pluginId,
-									connectUrl,
-									state,
-								})
-							: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`,
-					);
+					throw buildConnectError(pluginId, connectConfig, tenantId);
 				}
-
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, args);

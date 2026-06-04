@@ -8,6 +8,7 @@ export class AuthMissingError extends Error {
 
 	constructor(pluginId: string, message?: string) {
 		super(message ?? `[auth-missing:${pluginId}]`);
+		Object.setPrototypeOf(this, new.target.prototype);
 		this.name = 'AuthMissingError';
 		this.pluginId = pluginId;
 	}

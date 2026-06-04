@@ -6,17 +6,19 @@ import * as crypto from 'node:crypto';
 // without creating circular dependencies.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type OAuthState = { plugin: string; tenantId: string };
+export type OAuthState = { plugin: string; tenantId: string; iat: number };
 
 export function encodeOAuthState(plugin: string, tenantId: string): string {
-	return Buffer.from(JSON.stringify({ plugin, tenantId })).toString(
-		'base64url',
-	);
+	return Buffer.from(
+		JSON.stringify({ plugin, tenantId, iat: Date.now() }),
+	).toString('base64url');
 }
 
-export function decodeOAuthState(state: string): OAuthState | null {
+export function decodeOAuthState(
+	state: string,
+	{ maxAgeMs }: { maxAgeMs?: number } = {},
+): OAuthState | null {
 	try {
-		// Accepts both raw payload (for tests/utilities) and signed `payload.sig` format
 		const payload = state.includes('.') ? state.split('.')[0] : state;
 		const decoded = JSON.parse(
 			Buffer.from(payload!, 'base64url').toString('utf-8'),
@@ -29,7 +31,15 @@ export function decodeOAuthState(state: string): OAuthState | null {
 			typeof (decoded as OAuthState).plugin === 'string' &&
 			typeof (decoded as OAuthState).tenantId === 'string'
 		) {
-			return decoded as OAuthState;
+			const result = decoded as OAuthState;
+			if (
+				maxAgeMs !== undefined &&
+				typeof result.iat === 'number' &&
+				Date.now() - result.iat > maxAgeMs
+			) {
+				return null;
+			}
+			return result;
 		}
 		return null;
 	} catch {
@@ -44,6 +54,8 @@ export function signState(payload: string, kek: string): string {
 		.digest('base64url');
 	return `${payload}.${sig}`;
 }
+
+const DEFAULT_STATE_TTL_MS = 10 * 60 * 1000;
 
 export function verifyAndDecodeState(
 	signed: string,
@@ -65,5 +77,5 @@ export function verifyAndDecodeState(
 	) {
 		return null;
 	}
-	return decodeOAuthState(payload);
+	return decodeOAuthState(payload, { maxAgeMs: DEFAULT_STATE_TTL_MS });
 }
