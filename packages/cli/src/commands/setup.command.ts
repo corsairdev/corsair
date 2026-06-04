@@ -4,10 +4,19 @@ import type {
 	CommandArgument,
 	CommandOption,
 } from '../index.types';
+import {
+	getSetupRawArgs,
+	parseSetupCredentials,
+} from '../lib/setup-credentials';
+import { extractInternalConfig } from '../utils/corsair';
 import { getCorsairInstance } from '../utils/corsair-instance';
 import BaseCommand from './base.command';
 
 export default class SetupCommand extends BaseCommand {
+	protected allowUnknownOptions(): boolean {
+		return true;
+	}
+
 	getName(): string {
 		return 'setup';
 	}
@@ -50,10 +59,16 @@ export default class SetupCommand extends BaseCommand {
 		const backfill = options.backfill || this.hasLegacyBackfillFlag();
 		const tenantId = options.tenant;
 		const instance = await getCorsairInstance({ cwd });
+		const internal = await extractInternalConfig(cwd);
+		const credentials = parseSetupCredentials(
+			getSetupRawArgs(),
+			internal.plugins.map((p) => p.id),
+		);
 
 		await setupCorsair(instance as Parameters<typeof setupCorsair>[0], {
 			backfill,
 			tenantId,
+			credentials,
 			caller: 'cli',
 		});
 	}
