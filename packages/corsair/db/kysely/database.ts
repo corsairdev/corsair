@@ -86,8 +86,22 @@ function bindIfFunction(val: unknown, thisArg: object): unknown {
  * (`'' + x`) yields `Date.toString()` which Postgres rejects. We coerce Date
  * to ISO string only — every other value passes through untouched.
  */
+function isEmptyPlainObject(value: unknown): boolean {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		!Array.isArray(value) &&
+		!Buffer.isBuffer(value) &&
+		Object.getPrototypeOf(value) === Object.prototype &&
+		Object.keys(value).length === 0
+	);
+}
+
 function serializeParam(value: unknown): unknown {
 	if (value instanceof Date) return value.toISOString();
+	// postgres.js unsafe() treats parameters as strings unless typed; empty {}
+	// objects hit byteLength and throw. A JSON text literal is valid for jsonb.
+	if (isEmptyPlainObject(value)) return '{}';
 	return value;
 }
 

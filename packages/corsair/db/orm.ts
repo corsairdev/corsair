@@ -63,6 +63,25 @@ function parseJsonLike(value: unknown): unknown {
 	return value;
 }
 
+function isEmptyPlainObject(value: unknown): boolean {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		!Array.isArray(value) &&
+		Object.getPrototypeOf(value) === Object.prototype &&
+		Object.keys(value).length === 0
+	);
+}
+
+/** Omit `config: {}` so Postgres uses the column default (see serializeParam). */
+function omitEmptyConfig<T extends Record<string, unknown>>(values: T): T {
+	if (!('config' in values) || !isEmptyPlainObject(values.config)) {
+		return values;
+	}
+	const { config: _empty, ...rest } = values;
+	return rest as T;
+}
+
 function assertDatabaseConfigured(
 	database: CorsairDatabase | undefined,
 ): asserts database is CorsairDatabase {
@@ -80,8 +99,9 @@ function assertDatabaseConfigured(
 /**
  * Input type for creating a new row (without auto-generated fields).
  */
-type CreateInput<T> = Omit<T, 'id' | 'created_at' | 'updated_at'> & {
+type CreateInput<T> = Omit<T, 'id' | 'created_at' | 'updated_at' | 'config'> & {
 	id?: string;
+	config?: T extends { config: infer C } ? C : never;
 };
 
 /**
@@ -389,12 +409,12 @@ function createBaseTableClient<
 		create: async (data: CreateInput<RowType>) => {
 			assertDatabaseConfigured(database);
 			const now = new Date();
-			const insert = {
+			const insert = omitEmptyConfig({
 				id: data.id ?? generateUUID(),
 				created_at: now,
 				updated_at: now,
 				...data,
-			} as InsertRow;
+			}) as InsertRow;
 			const row = await insertIntoTable()
 				.values(insert)
 				.returningAll()
