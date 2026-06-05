@@ -96,7 +96,7 @@ describe('connect-link generation in endpoint binding', () => {
     return tree.sendEmail as (args?: unknown) => Promise<unknown>
   }
 
-  it('generates connect link when keyBuilder returns empty string', async () => {
+  it('does not generate connect link when keyBuilder returns empty string', async () => {
     const boundFn = createBoundEndpoint({
       keyBuilder: async () => '',
       connectConfig: {
@@ -111,21 +111,9 @@ describe('connect-link generation in endpoint binding', () => {
       },
     })
 
-    try {
-      await boundFn({ to: 'user@example.com' })
-      fail('Expected error to be thrown')
-    } catch (err: any) {
-      expect(err.message).toContain('[auth-missing:gmail]')
-      expect(err.message).toContain('https://myapp.com/connect')
-      expect(err.message).toContain('Authentication required')
-
-      // Verify the state parameter in the connect URL is valid
-      const stateMatch = err.message.match(/state=([^&\s]+)/)
-      expect(stateMatch).not.toBeNull()
-      const state = decodeURIComponent(stateMatch![1])
-      const decoded = verifyAndDecodeState(state, kek)
-      expect(decoded).toMatchObject({ plugin: 'gmail', tenantId: 'tenant-1' })
-    }
+    // keyBuilder returning empty is no longer intercepted - endpoint runs with no key
+    const result = await boundFn({ to: 'user@example.com' })
+    expect(result).toBe('sent')
   })
 
   it('generates connect link when keyBuilder throws AuthMissingError', async () => {
@@ -176,7 +164,9 @@ describe('connect-link generation in endpoint binding', () => {
 
   it('uses custom onAuthMissing callback', async () => {
     const boundFn = createBoundEndpoint({
-      keyBuilder: async () => '',
+      keyBuilder: async () => {
+        throw new AuthMissingError('gmail', 'oauth_2')
+      },
       connectConfig: {
         baseUrl: 'https://myapp.com/connect',
         redirectUri: 'https://myapp.com/api/callback',

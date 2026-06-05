@@ -284,14 +284,6 @@ export function bindEndpointsRecursively({
 					throw err;
 				}
 
-				if (
-					!key &&
-					keyBuilder &&
-					connectConfig?.oauthConfig &&
-					connectConfig.kek
-				) {
-					throw buildConnectError(pluginId, connectConfig, tenantId);
-				}
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, args);
