@@ -767,9 +767,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:slack:api_key]: Slack API Key is missing',
-					);
+					throw new AuthMissingError('slack', 'api_key');
 				}
 
 				return res;
@@ -777,13 +775,13 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new AuthMissingError('slack');
+					throw new AuthMissingError('slack', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new AuthMissingError('slack');
+			throw new AuthMissingError('slack', 'oauth_2');
 		},
 	} satisfies InternalSlackPlugin;
 }

@@ -722,12 +722,12 @@ export function youtube<const T extends YoutubePluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new AuthMissingError('youtube');
+					throw new AuthMissingError('youtube', 'oauth_2');
 				}
 				return res;
 			}
 
-			throw new AuthMissingError('youtube');
+			throw new AuthMissingError('youtube', 'oauth_2');
 		},
 	} satisfies InternalYoutubePlugin;
 }

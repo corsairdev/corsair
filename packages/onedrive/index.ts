@@ -833,7 +833,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('onedrive');
+					throw new AuthMissingError('onedrive', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -901,7 +901,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('onedrive');
+			throw new AuthMissingError('onedrive', 'oauth_2');
 		},
 	} satisfies InternalOnedrivePlugin;
 }

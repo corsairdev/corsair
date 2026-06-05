@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Bookings } from './endpoints';
 import type { CalEndpointInputs, CalEndpointOutputs } from './endpoints/types';
 import {
@@ -294,13 +295,13 @@ export function cal<const T extends CalPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error('[auth-missing:cal:api_key]: Cal API Key is missing');
+					throw new AuthMissingError('cal', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:cal:${authType}]: Cal key is missing`);
+			throw new AuthMissingError('cal', 'api_key');
 		},
 	} satisfies InternalCalPlugin;
 }

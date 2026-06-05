@@ -441,7 +441,7 @@ export function gmail<const T extends GmailPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('gmail');
+					throw new AuthMissingError('gmail', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -497,7 +497,7 @@ export function gmail<const T extends GmailPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('gmail');
+			throw new AuthMissingError('gmail', 'oauth_2');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

@@ -553,9 +553,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:spotify:api_key]: Spotify API Key is missing',
-					);
+					throw new AuthMissingError('spotify', 'api_key');
 				}
 				return res;
 			}
@@ -565,7 +563,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				const refreshToken = await ctx.keys.get_refresh_token();
 
 				if (!refreshToken) {
-					throw new AuthMissingError('spotify');
+					throw new AuthMissingError('spotify', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -609,7 +607,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				}
 			}
 
-			throw new AuthMissingError('spotify');
+			throw new AuthMissingError('spotify', 'oauth_2');
 		},
 	} satisfies InternalSpotifyPlugin;
 }

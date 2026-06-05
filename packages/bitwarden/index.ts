@@ -262,7 +262,7 @@ export function bitwarden<const T extends BitwardenPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('bitwarden');
+			throw new AuthMissingError('bitwarden', 'oauth_2');
 		},
 	} satisfies InternalBitwardenPlugin;
 }

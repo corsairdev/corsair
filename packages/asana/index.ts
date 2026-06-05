@@ -1020,9 +1020,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:asana:api_key]: Asana API Key is missing',
-					);
+					throw new AuthMissingError('asana', 'api_key');
 				}
 				return res;
 			}
@@ -1035,7 +1033,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('asana');
+					throw new AuthMissingError('asana', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -1092,7 +1090,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('asana');
+			throw new AuthMissingError('asana', 'oauth_2');
 		},
 	} satisfies InternalAsanaPlugin;
 }

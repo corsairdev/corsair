@@ -553,12 +553,12 @@ export function typeform<const T extends TypeformPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new AuthMissingError('typeform');
+					throw new AuthMissingError('typeform', 'oauth_2');
 				}
 				return res;
 			}
 
-			throw new AuthMissingError('typeform');
+			throw new AuthMissingError('typeform', 'oauth_2');
 		},
 	} satisfies InternalTypeformPlugin;
 }

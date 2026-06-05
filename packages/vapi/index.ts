@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { z } from 'zod';
 import type { VapiEndpointInputs, VapiEndpointOutputs } from './endpoints';
 import {
@@ -616,14 +617,12 @@ export function vapi<const T extends VapiPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:vapi:api_key]: Vapi API Key is missing',
-					);
+					throw new AuthMissingError('vapi', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(`[auth-missing:vapi:${authType}]: Vapi key is missing`);
+			throw new AuthMissingError('vapi', 'api_key');
 		},
 	} satisfies InternalVapiPlugin;
 }

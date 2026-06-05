@@ -375,9 +375,7 @@ export function notion<const T extends NotionPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:notion:api_key]: Notion API Key is missing',
-					);
+					throw new AuthMissingError('notion', 'api_key');
 				}
 
 				return res;
@@ -387,13 +385,13 @@ export function notion<const T extends NotionPluginOptions>(
 				const accessToken = await ctx.keys.get_access_token();
 
 				if (!accessToken) {
-					throw new AuthMissingError('notion');
+					throw new AuthMissingError('notion', 'oauth_2');
 				}
 
 				return accessToken;
 			}
 
-			throw new AuthMissingError('notion');
+			throw new AuthMissingError('notion', 'oauth_2');
 		},
 	} satisfies InternalNotionPlugin;
 }

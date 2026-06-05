@@ -574,12 +574,12 @@ export function box<const T extends BoxPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new AuthMissingError('box');
+					throw new AuthMissingError('box', 'oauth_2');
 				}
 				return res;
 			}
 
-			throw new AuthMissingError('box');
+			throw new AuthMissingError('box', 'oauth_2');
 		},
 	} satisfies InternalBoxPlugin;
 }

@@ -435,9 +435,7 @@ export function linear<const T extends LinearPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:linear:api_key]: Linear API Key is missing',
-					);
+					throw new AuthMissingError('linear', 'api_key');
 				}
 
 				return res;
@@ -451,7 +449,7 @@ export function linear<const T extends LinearPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('linear');
+					throw new AuthMissingError('linear', 'oauth_2');
 				}
 
 				const credentials = await ctx.keys.get_integration_credentials();
@@ -509,7 +507,7 @@ export function linear<const T extends LinearPluginOptions>(
 				return `Bearer ${result.accessToken}`;
 			}
 
-			throw new AuthMissingError('linear');
+			throw new AuthMissingError('linear', 'oauth_2');
 		},
 	} satisfies InternalLinearPlugin;
 }

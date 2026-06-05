@@ -301,7 +301,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('googlesheets');
+					throw new AuthMissingError('googlesheets', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -350,7 +350,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				}
 			}
 
-			throw new AuthMissingError('googlesheets');
+			throw new AuthMissingError('googlesheets', 'oauth_2');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as RangeUpdatedEvent;

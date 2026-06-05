@@ -446,13 +446,13 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new AuthMissingError('zoom');
+					throw new AuthMissingError('zoom', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new AuthMissingError('zoom');
+			throw new AuthMissingError('zoom', 'oauth_2');
 		},
 	} satisfies InternalZoomPlugin;
 }

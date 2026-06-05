@@ -485,7 +485,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('teams');
+					throw new AuthMissingError('teams', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -510,7 +510,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('teams');
+			throw new AuthMissingError('teams', 'oauth_2');
 		},
 	} satisfies InternalTeamsPlugin;
 }

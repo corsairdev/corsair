@@ -502,9 +502,7 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:stripe:api_key]: Stripe API Key is missing',
-					);
+					throw new AuthMissingError('stripe', 'api_key');
 				}
 
 				return res;
@@ -518,7 +516,7 @@ export function stripe<const T extends StripePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('stripe');
+					throw new AuthMissingError('stripe', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -575,7 +573,7 @@ export function stripe<const T extends StripePluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('stripe');
+			throw new AuthMissingError('stripe', 'oauth_2');
 		},
 	} satisfies InternalStripePlugin;
 }

@@ -642,7 +642,7 @@ export function outlook<const T extends OutlookPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('outlook');
+					throw new AuthMissingError('outlook', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -668,7 +668,7 @@ export function outlook<const T extends OutlookPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('outlook');
+			throw new AuthMissingError('outlook', 'oauth_2');
 		},
 	} satisfies InternalOutlookPlugin;
 }

@@ -276,7 +276,8 @@ export function bindEndpointsRecursively({
 					if (
 						connectConfig?.oauthConfig &&
 						connectConfig.kek &&
-						err instanceof AuthMissingError
+						err instanceof AuthMissingError &&
+							err.authType === 'oauth_2'
 					) {
 						throw buildConnectError(pluginId, connectConfig, tenantId);
 					}

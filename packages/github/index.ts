@@ -1705,9 +1705,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						throw new Error(
-							'[auth-missing:github:api_key]: GitHub API Key is missing',
-						);
+						throw new AuthMissingError('github', 'api_key');
 					}
 
 					return res;
@@ -1715,14 +1713,14 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						throw new AuthMissingError('github');
+						throw new AuthMissingError('github', 'oauth_2');
 					}
 
 					return res;
 				}
 			}
 
-			throw new AuthMissingError('github');
+			throw new AuthMissingError('github', 'oauth_2');
 		},
 	} satisfies InternalGithubPlugin;
 }

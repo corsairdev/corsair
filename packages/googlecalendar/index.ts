@@ -239,7 +239,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('googlecalendar');
+					throw new AuthMissingError('googlecalendar', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -290,7 +290,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				}
 			}
 
-			throw new AuthMissingError('googlecalendar');
+			throw new AuthMissingError('googlecalendar', 'oauth_2');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

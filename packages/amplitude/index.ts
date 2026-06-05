@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Annotations,
 	Charts,
@@ -447,15 +448,11 @@ export function amplitude<const T extends AmplitudePluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:amplitude:api_key]: Amplitude API Key is missing',
-					);
+					throw new AuthMissingError('amplitude', 'api_key');
 				}
 				return res;
 			}
-			throw new Error(
-				`[auth-missing:amplitude:${authType}]: Amplitude key is missing`,
-			);
+			throw new AuthMissingError('amplitude', 'api_key');
 		},
 	} satisfies InternalAmplitudePlugin;
 }

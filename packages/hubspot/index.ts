@@ -656,9 +656,7 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						throw new Error(
-							'[auth-missing:hubspot:api_key]: HubSpot API Key is missing',
-						);
+						throw new AuthMissingError('hubspot', 'api_key');
 					}
 
 					return res;
@@ -666,14 +664,14 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						throw new AuthMissingError('hubspot');
+						throw new AuthMissingError('hubspot', 'oauth_2');
 					}
 
 					return res;
 				}
 			}
 
-			throw new AuthMissingError('hubspot');
+			throw new AuthMissingError('hubspot', 'oauth_2');
 		},
 	} satisfies InternalHubSpotPlugin;
 }

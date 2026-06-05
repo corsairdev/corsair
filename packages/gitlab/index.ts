@@ -835,7 +835,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('gitlab');
+					throw new AuthMissingError('gitlab', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -907,7 +907,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('gitlab');
+			throw new AuthMissingError('gitlab', 'oauth_2');
 		},
 	} satisfies InternalGitlabPlugin;
 }

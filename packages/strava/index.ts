@@ -434,13 +434,13 @@ export function strava<const T extends StravaPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new AuthMissingError('strava');
+					throw new AuthMissingError('strava', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new AuthMissingError('strava');
+			throw new AuthMissingError('strava', 'oauth_2');
 		},
 	} satisfies InternalStravaPlugin;
 }

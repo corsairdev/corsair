@@ -1384,7 +1384,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('sharepoint');
+					throw new AuthMissingError('sharepoint', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -1447,7 +1447,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('sharepoint');
+			throw new AuthMissingError('sharepoint', 'oauth_2');
 		},
 	} satisfies InternalSharepointPlugin;
 }

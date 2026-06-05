@@ -395,7 +395,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('googledrive');
+					throw new AuthMissingError('googledrive', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -444,7 +444,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				}
 			}
 
-			throw new AuthMissingError('googledrive');
+			throw new AuthMissingError('googledrive', 'oauth_2');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

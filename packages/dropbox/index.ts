@@ -306,7 +306,7 @@ export function dropbox<const T extends DropboxPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new AuthMissingError('dropbox');
+					throw new AuthMissingError('dropbox', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -363,7 +363,7 @@ export function dropbox<const T extends DropboxPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new AuthMissingError('dropbox');
+			throw new AuthMissingError('dropbox', 'oauth_2');
 		},
 	} satisfies InternalDropboxPlugin;
 }

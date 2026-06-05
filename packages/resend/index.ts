@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Domains, Emails } from './endpoints';
 import type {
 	ResendEndpointInputs,
@@ -338,17 +339,13 @@ export function resend<const T extends ResendPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:resend:api_key]: Resend API Key is missing',
-					);
+					throw new AuthMissingError('resend', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:resend:${authType}]: Resend key is missing`,
-			);
+			throw new AuthMissingError('resend', 'api_key');
 		},
 	} satisfies InternalResendPlugin;
 }
