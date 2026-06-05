@@ -73,6 +73,7 @@ export const BaseProviders = [
 	'youtube',
 	'zendesk',
 	'zoom',
+	'instagram',
 ] as const;
 
 export type AllProviders =
@@ -136,6 +137,7 @@ export type AllProviders =
 	| 'youtube'
 	| 'zendesk'
 	| 'zoom'
+	| 'instagram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';

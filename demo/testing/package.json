@@ -44,6 +44,7 @@
     "@corsair-dev/teams": "workspace:*",
     "@corsair-dev/vapi": "workspace:*",
     "@corsair-dev/xquik": "workspace:*",
+    "@corsair-dev/instagram": "workspace:*",
     "@tanstack/react-query": "^5.62.14",
     "@trpc/client": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
