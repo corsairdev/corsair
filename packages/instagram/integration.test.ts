@@ -24,7 +24,7 @@ import {
 import { instagram } from './index';
 
 describe(
-    'Instagram Auth Integration',
+    'Instagram Integration Test',
     () => {
 
         async function createInstagramClient() {
