@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({path: "../.env"});
 
 import { github } from '@corsair-dev/github';
 import { gmail } from '@corsair-dev/gmail';
@@ -10,7 +11,8 @@ import { hubspot } from '@corsair-dev/hubspot';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { vapi } from '@corsair-dev/vapi';
-import { xquik } from '@corsair-dev/xquik';
+import { xquik } from '@corsair-dev/xquik'
+import { instagram } from '@corsair-dev/instagram';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
@@ -36,5 +38,6 @@ export const corsair = createCorsair({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
+		instagram()
 	],
 });

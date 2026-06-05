@@ -1,9 +1,10 @@
 import { z } from "zod";
 
+import { CommentsOutputSchema } from "../endpoints/types"
+
 import { 
     InstagramUser,
     InstagramMedia,
-    // InstagramComment,
     InstagramConversation,
     InstagramMessage,
     FacebookUser,
@@ -27,6 +28,7 @@ export const InstagramSchema = {
         conversations: InstagramConversation,
         messages: InstagramMessage,
         pages: FacebookPages,
-        media: InstagramMedia
+        media: InstagramMedia,
+        comments: CommentsOutputSchema
     }
 } as const;

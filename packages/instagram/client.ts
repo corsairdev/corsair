@@ -180,7 +180,7 @@ export async function makeAuthenticatedInstagramRequest<T>(
     try {
         return await makeInstagramRequest<T>(endpoint, ctx.key, options);
     } catch (error) {
-        console.log(error);
+
         if (isUnauthorizedError(error) && ctx._refreshAuth) {
             const freshToken = await ctx._refreshAuth();
             return await makeInstagramRequest<T>(endpoint, freshToken, options);

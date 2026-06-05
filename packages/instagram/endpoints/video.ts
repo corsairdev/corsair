@@ -2,7 +2,6 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints, InstagramBoundEndpoints } from "../index"
 import type { InstagramEndpointOutputs } from "./types"
-import { poll } from './polling';
 
 export const story: InstagramEndpoints['CreateVideoStoryContainer'] = async (ctx, input) => {
 
@@ -15,32 +14,6 @@ export const story: InstagramEndpoints['CreateVideoStoryContainer'] = async (ctx
                 user_tags: input.user_tags?.length ? JSON.stringify(input.user_tags) : undefined,
             }
         });
-
-    if (result.id) {
-        const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-        const mediauploadResult = await poll(
-            () => endpoints.media.status({
-                container_id: result.id,
-            }),
-
-            response => {
-
-                if (response.status_code === 'ERROR') {
-                    throw new Error('Failed to process story');
-                }
-
-                return (response.status_code === 'FINISHED');
-            },
-
-            5000,
-            1200000
-        );
-
-        await endpoints.publish.publish_media({
-            ig_id: input.ig_id,
-            creation_id: result.id
-        });
-    }
 
     await logEventFromContext(
         ctx,
@@ -69,30 +42,6 @@ export const createCarouselContainer: InstagramEndpoints['CreateVideoContainer']
                 product_tags: input.product_tags?.length ? JSON.stringify(input.product_tags) : undefined
             }
         });
-
-    if (result.id) {
-
-        const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-
-        await poll(
-            () => endpoints.media.status({
-                container_id: result.id
-            }),
-
-            response => {
-
-                console.log(response);
-
-                if (response.status_code === 'ERROR') {
-                    throw new Error('Failed to process story');
-                }
-
-                return (response.status_code === 'FINISHED');
-            },
-            5000,
-            1200000
-        )
-    }
 
     await logEventFromContext(
         ctx,

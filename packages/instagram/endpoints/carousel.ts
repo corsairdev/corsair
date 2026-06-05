@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints, InstagramBoundEndpoints } from "../index"
 import type { InstagramEndpointOutputs } from "./types"
-import { poll } from './polling';
+
 
 export const post: InstagramEndpoints['CreateCarouselContainer'] = async (ctx, input) => {
 
@@ -19,35 +19,6 @@ export const post: InstagramEndpoints['CreateCarouselContainer'] = async (ctx, i
             children: JSON.stringify(input.children)
         }
     });
-
-    if(result.id) {
-
-        const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-
-        await poll(
-            () => endpoints.media.status({
-                container_id: result.id,
-            }),
-
-            response => {
-                if(response.status_code === 'ERROR') {
-                    throw new Error('Failed to process with carousel');
-                }
-
-                return (
-                    response.status_code === 'FINISHED'
-                );
-            },
-
-            5000,
-            120000
-        );
-
-        await endpoints.publish.publish_media({
-            ig_id: input.ig_id,
-            creation_id: result.id
-        });
-    }
 
     await logEventFromContext(
         ctx,

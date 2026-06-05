@@ -2,7 +2,6 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints, InstagramBoundEndpoints } from "../index"
 import type { InstagramEndpointOutputs } from "./types"
-import { poll } from './polling';
 
 export const post: InstagramEndpoints['CreateImageContainer'] = async (ctx, input) => {
 
@@ -23,40 +22,6 @@ export const post: InstagramEndpoints['CreateImageContainer'] = async (ctx, inpu
                     : undefined,
             }
         });
-
-    if (result.id) {
-       
-        // console.log(result.id);
-        const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-
-        await poll(
-            () => endpoints.media.status({
-                container_id: result.id
-            }),
-
-            response => {
-                if (response.status_code === 'ERROR') {
-                    throw new Error(
-                        'Instagram processing failed'
-                    );
-                }
-
-                return (
-                    response.status_code ===
-                    'FINISHED'
-                );
-            },
-            5000,
-            120000
-        )
-
-        
-        await endpoints.publish.publish_media({
-            ig_id: input.ig_id,
-            creation_id: result.id
-        });
-    }
-    
 
     await logEventFromContext(
         ctx,
@@ -79,31 +44,6 @@ export const story: InstagramEndpoints['CreateImageStoryContainer'] = async (ctx
             user_tags: input.user_tags?.length ? JSON.stringify(input.user_tags) : undefined,
         }
     });
-
-    if(result.id) {
-        const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-        await poll(
-            () => endpoints.media.status({ 
-                container_id: result.id,
-             }),
-
-             response => {
-                if(response.status_code === 'ERROR') {
-                    throw new Error('Failed to process story');
-                }
-
-                return (response.status_code === 'FINISHED');
-             },
-
-             5000,
-             1200000
-        )
-
-        await endpoints.publish.publish_media({
-            ig_id: input.ig_id,
-            creation_id: result.id
-        });
-    }
 
     await logEventFromContext(
         ctx,

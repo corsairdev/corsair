@@ -2,7 +2,6 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints, InstagramBoundEndpoints } from "../index"
 import type { InstagramEndpointOutputs } from "./types"
-import { poll } from './polling';
 
 export const post: InstagramEndpoints['CreateReelContainer'] = async (ctx, input) => {
 
@@ -24,36 +23,6 @@ export const post: InstagramEndpoints['CreateReelContainer'] = async (ctx, input
             }
         });
 
-    if (result.id) {
-        // console.log(result.id);
-        const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-
-        const mediaStatus = await poll(
-            () =>
-                endpoints.media.status({
-                    container_id: result.id
-                }),
-            response => {
-                if (response.status_code === 'ERROR') {
-                    throw new Error(
-                        'Instagram processing failed'
-                    );
-                }
-
-                return (
-                    response.status_code ===
-                    'FINISHED'
-                );
-            },
-            5000,
-            120000
-        );
-
-        await endpoints.publish.publish_media({
-            ig_id: input.ig_id,
-            creation_id: result.id
-        });
-    }
 
     await logEventFromContext(
         ctx,

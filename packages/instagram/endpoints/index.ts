@@ -5,6 +5,9 @@ import * as Reel from "./reel";
 import * as Publish from "./publish_content"
 import * as Video from "./video";
 import * as Carousel from "./carousel"
+import * as Conversations from "./conversations"
+import * as Messages from "./messages"
+import * as Comments from "./comments"
 
 export const ProfileEndpoints = {
     GetFacebookUser: Profile.facebookProfile,
@@ -40,4 +43,23 @@ export const VideoEndponts = {
 
 export const CarouselEndpoints = {
     post: Carousel.post,
+}
+
+export const ConversationsEndpoints = {
+    list: Conversations.list,
+    get: Conversations.get
+}
+
+export const MessagesEndpoints = {
+    get: Messages.get,
+    send: Messages.send,
+}
+
+export const CommentsEndpoints = {
+    list: Comments.list,
+    reply: Comments.reply,
+    send: Comments.send,
+    get: Comments.get,
+    update: Comments.update,
+    remove: Comments.remove,
 }
