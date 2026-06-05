@@ -12,6 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { z } from 'zod';
 import type {
 	HubSpotEndpointInputs,
@@ -665,18 +666,14 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						throw new Error(
-							'[auth-missing:hubspot:oauth_2]: HubSpot access token is missing',
-						);
+						throw new AuthMissingError('hubspot');
 					}
 
 					return res;
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:hubspot:${authType}]: HubSpot key is missing`,
-			);
+			throw new AuthMissingError('hubspot');
 		},
 	} satisfies InternalHubSpotPlugin;
 }

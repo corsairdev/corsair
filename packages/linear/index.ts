@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidLinearAccessToken } from './client';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
@@ -450,9 +451,7 @@ export function linear<const T extends LinearPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:linear:refresh_token]: Linear refresh token is missing',
-					);
+					throw new AuthMissingError('linear');
 				}
 
 				const credentials = await ctx.keys.get_integration_credentials();
@@ -510,9 +509,7 @@ export function linear<const T extends LinearPluginOptions>(
 				return `Bearer ${result.accessToken}`;
 			}
 
-			throw new Error(
-				`[auth-missing:linear:${authType}]: Linear key is missing`,
-			);
+			throw new AuthMissingError('linear');
 		},
 	} satisfies InternalLinearPlugin;
 }

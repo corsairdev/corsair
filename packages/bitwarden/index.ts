@@ -10,6 +10,7 @@ import type {
 	PickAuth,
 	PluginPermissionsConfig,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidBitwardenAccessToken } from './client';
 import { Collections, Members, Organizations } from './endpoints';
 import type {
@@ -261,9 +262,7 @@ export function bitwarden<const T extends BitwardenPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:bitwarden:${authType}]: Bitwarden key is missing`,
-			);
+			throw new AuthMissingError('bitwarden');
 		},
 	} satisfies InternalBitwardenPlugin;
 }

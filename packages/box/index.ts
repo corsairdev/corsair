@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Files, Folders } from './endpoints';
 import type { BoxEndpointInputs, BoxEndpointOutputs } from './endpoints/types';
 import {
@@ -573,14 +574,12 @@ export function box<const T extends BoxPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:box:oauth_2]: Box access token is missing',
-					);
+					throw new AuthMissingError('box');
 				}
 				return res;
 			}
 
-			throw new Error(`[auth-missing:box:${authType}]: Box key is missing`);
+			throw new AuthMissingError('box');
 		},
 	} satisfies InternalBoxPlugin;
 }

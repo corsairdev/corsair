@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Blocks, DatabasePages, Databases, Pages, Users } from './endpoints';
 import type {
 	NotionEndpointInputs,
@@ -386,17 +387,13 @@ export function notion<const T extends NotionPluginOptions>(
 				const accessToken = await ctx.keys.get_access_token();
 
 				if (!accessToken) {
-					throw new Error(
-						'[auth-missing:notion:oauth_2]: Notion access token is missing',
-					);
+					throw new AuthMissingError('notion');
 				}
 
 				return accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:notion:${authType}]: Notion key is missing`,
-			);
+			throw new AuthMissingError('notion');
 		},
 	} satisfies InternalNotionPlugin;
 }

@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import { Files, Folders, Search } from './endpoints';
 import type {
@@ -305,9 +306,7 @@ export function dropbox<const T extends DropboxPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:dropbox:refresh_token]: Dropbox refresh token is missing',
-					);
+					throw new AuthMissingError('dropbox');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -364,9 +363,7 @@ export function dropbox<const T extends DropboxPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:dropbox:${authType}]: Dropbox key is missing`,
-			);
+			throw new AuthMissingError('dropbox');
 		},
 	} satisfies InternalDropboxPlugin;
 }

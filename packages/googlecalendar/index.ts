@@ -11,6 +11,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleCalendarEndpointInputs,
@@ -238,9 +239,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:googlecalendar:refresh_token]: Google Calendar refresh token is missing',
-					);
+					throw new AuthMissingError('googlecalendar');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -291,9 +290,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:googlecalendar:${authType}]: Google Calendar key is missing`,
-			);
+			throw new AuthMissingError('googlecalendar');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
