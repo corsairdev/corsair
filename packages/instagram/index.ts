@@ -461,11 +461,13 @@ export function instagram<const T extends InstagramPluginOptions>(
                 scopes: [
                     'pages_show_list',
                     'pages_manage_metadata',
+                    'pages_messaging',
+                    'pages_read_engagement',
                     'instagram_basic',
                     'instagram_manage_comments',
                     'instagram_manage_messages',
                     'instagram_content_publish',
-                    'pages_read_engagement'
+                    'instagram_manage_insights',
                 ]
             },
 
