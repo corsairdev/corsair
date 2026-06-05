@@ -451,8 +451,6 @@ export function xquik<const T extends XquikPluginOptions>(
 			}
 
 			throw new AuthMissingError('xquik', 'api_key');
-			throw new AuthMissingError('xquik', 'api_key');
-			throw new AuthMissingError('xquik', 'api_key');
 		},
 		options,
 		pluginWebhookMatcher: hasXquikSignature,
