@@ -11,6 +11,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleDriveEndpointInputs,
@@ -394,9 +395,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:googledrive:refresh_token]: Google Drive refresh token is missing',
-					);
+					throw new AuthMissingError('googledrive');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -445,9 +444,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:googledrive:${authType}]: Google Drive key is missing`,
-			);
+			throw new AuthMissingError('googledrive');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

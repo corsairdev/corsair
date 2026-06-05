@@ -16,6 +16,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import { Calendars, Contacts, Events, Folders, Messages } from './endpoints';
 import type {
@@ -641,7 +642,7 @@ export function outlook<const T extends OutlookPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error('No refresh token. Cannot get access token.');
+					throw new AuthMissingError('outlook');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -667,9 +668,7 @@ export function outlook<const T extends OutlookPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:outlook:${authType}]: Outlook key is missing`,
-			);
+			throw new AuthMissingError('outlook');
 		},
 	} satisfies InternalOutlookPlugin;
 }

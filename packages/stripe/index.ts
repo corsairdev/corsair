@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidStripeAccessToken } from './client';
 import {
 	Balance,
@@ -517,9 +518,7 @@ export function stripe<const T extends StripePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:stripe:refresh_token]: Stripe refresh token is missing',
-					);
+					throw new AuthMissingError('stripe');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -576,9 +575,7 @@ export function stripe<const T extends StripePluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:stripe:${authType}]: Stripe key is missing`,
-			);
+			throw new AuthMissingError('stripe');
 		},
 	} satisfies InternalStripePlugin;
 }

@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	CaptionsEndpoints,
 	ChannelsEndpoints,
@@ -721,16 +722,12 @@ export function youtube<const T extends YoutubePluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:youtube:oauth_2]: Youtube access token is missing',
-					);
+					throw new AuthMissingError('youtube');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:youtube:${authType}]: Youtube key is missing`,
-			);
+			throw new AuthMissingError('youtube');
 		},
 	} satisfies InternalYoutubePlugin;
 }

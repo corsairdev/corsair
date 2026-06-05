@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import {
 	Projects,
@@ -1034,9 +1035,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:asana:refresh_token]: Asana refresh token is missing',
-					);
+					throw new AuthMissingError('asana');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -1093,7 +1092,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(`[auth-missing:asana:${authType}]: Asana key is missing`);
+			throw new AuthMissingError('asana');
 		},
 	} satisfies InternalAsanaPlugin;
 }
