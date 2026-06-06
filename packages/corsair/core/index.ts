@@ -3,6 +3,8 @@ import { createCorsairDatabase } from '../db/kysely/database';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import type { CorsairManageNamespace } from './management';
+import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
 
@@ -104,6 +106,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
+	const manage = buildManagementNamespace(internalConfig);
 
 	if (config.multiTenancy) {
 		return Object.assign(
@@ -128,6 +131,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 				},
 				keys: integrationKeys,
 				permissions,
+				manage,
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
 		);
@@ -145,6 +149,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	return Object.assign({}, client, {
 		keys: integrationKeys,
 		permissions,
+		manage,
 		[CORSAIR_INTERNAL]: internalConfig,
 	}) as CorsairSingleTenantClient<Plugins>;
 }
