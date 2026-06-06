@@ -1,5 +1,8 @@
 import type { CorsairInternalConfig } from '..';
+import { CORSAIR_INTERNAL } from '..';
 import {
+	completeOAuthCallback,
+	createConnectLink,
 	createTenant,
 	getConnectionStatus,
 	getPermission,
@@ -9,13 +12,19 @@ import {
 	listPlugins,
 	listTenants,
 	ok,
+	resolveConnect,
 } from './operations';
 import type {
 	ConnectionStatus,
+	ConnectLink,
+	CreateConnectLinkInput,
 	CreateTenantInput,
 	ManagementOk,
+	OAuthCallbackInput,
+	OAuthCallbackResult,
 	PermissionRecord,
 	PluginInfo,
+	ResolvedConnectLink,
 	Tenant,
 } from './types';
 
@@ -43,11 +52,21 @@ export type CorsairManageNamespace = {
 		get: (id: string) => Promise<PermissionRecord>;
 		getByToken: (token: string) => Promise<PermissionRecord>;
 	};
+	connect: {
+		createLink: (input: CreateConnectLinkInput) => Promise<ConnectLink>;
+		resolve: (state: string) => Promise<ResolvedConnectLink>;
+		oauthCallback: (input: OAuthCallbackInput) => Promise<OAuthCallbackResult>;
+	};
 };
 
 export function buildManagementNamespace(
 	internal: CorsairInternalConfig,
 ): CorsairManageNamespace {
+	// Underlying oauth utilities read the internal config via the CORSAIR_INTERNAL
+	// symbol on the corsair instance. A symbol-bearing shim is enough — the
+	// utilities only look at that one key.
+	const corsairShim: unknown = { [CORSAIR_INTERNAL]: internal };
+
 	return {
 		ok,
 		tenants: {
@@ -66,6 +85,12 @@ export function buildManagementNamespace(
 			get: (id) => getPermission(internal, id),
 			getByToken: (token) => getPermissionByToken(internal, token),
 		},
+		connect: {
+			createLink: (input) => createConnectLink(internal, input),
+			resolve: (state) => resolveConnect(corsairShim, state),
+			oauthCallback: (input) =>
+				completeOAuthCallback(corsairShim, internal, input),
+		},
 	};
 }
 
@@ -79,10 +104,15 @@ export { managementHandler } from './handler';
 export type { ManagementHandlerOptions } from './handler';
 export type {
 	ConnectionStatus,
+	ConnectLink,
+	CreateConnectLinkInput,
 	CreateTenantInput,
 	ManagementOk,
+	OAuthCallbackInput,
+	OAuthCallbackResult,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
+	ResolvedConnectLink,
 	Tenant,
 } from './types';

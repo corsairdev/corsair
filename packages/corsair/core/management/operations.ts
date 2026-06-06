@@ -1,16 +1,23 @@
 import type { CorsairInternalConfig } from '..';
 import { createIntegrationKeyManager } from '../auth/key-manager';
+import { encodeOAuthState, signState } from '../auth/state';
 import { BASE_AUTH_FIELDS } from '../auth/types';
 import type { AuthTypes } from '../constants';
+import { resolveConnectLink } from '../connect';
 import type { CorsairPlugin, OAuthConfig } from '../plugins';
-import { badRequest, notFound } from './errors';
+import { badRequest, ManagementApiError, notFound } from './errors';
 import type {
 	ConnectionStatus,
+	ConnectLink,
+	CreateConnectLinkInput,
 	CreateTenantInput,
 	ManagementOk,
+	OAuthCallbackInput,
+	OAuthCallbackResult,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
+	ResolvedConnectLink,
 	Tenant,
 } from './types';
 
@@ -281,6 +288,171 @@ export async function getPermission(
 		.executeTakeFirst();
 	if (!record) throw notFound(`Permission '${id}' not found`);
 	return record;
+}
+
+// ── connect / OAuth ────────────────────────────────────────────────────────
+
+function assertOAuthConfigured(plugin: CorsairPlugin): void {
+	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
+	if (!cfg) {
+		throw badRequest(`Plugin '${plugin.id}' has no oauthConfig`);
+	}
+}
+
+function requireConnectConfig(
+	internal: CorsairInternalConfig,
+): NonNullable<CorsairInternalConfig['connect']> {
+	if (!internal.connect) {
+		throw new ManagementApiError(
+			500,
+			'connect_not_configured',
+			'createCorsair was not given a connect config. Set { connect: { baseUrl, redirectUri } } to enable /connect routes.',
+		);
+	}
+	return internal.connect;
+}
+
+export async function createConnectLink(
+	internal: CorsairInternalConfig,
+	input: CreateConnectLinkInput,
+): Promise<ConnectLink> {
+	const pluginId = input?.plugin?.trim();
+	if (!pluginId) {
+		throw badRequest('Plugin id is required', { missingFields: ['plugin'] });
+	}
+	const tenantId = input.tenantId?.trim() || 'default';
+
+	const plugin = findPlugin(internal, pluginId);
+	assertOAuthConfigured(plugin);
+	const connect = requireConnectConfig(internal);
+
+	if (!internal.database || !internal.kek) {
+		throw new ManagementApiError(
+			500,
+			'database_not_configured',
+			'A database and kek are required to issue connect links.',
+		);
+	}
+
+	// Surface unset client creds as data, matching /plugins behavior.
+	const cred = await getIntegrationCredState(plugin, internal);
+	if (!cred.configured) {
+		throw new ManagementApiError(
+			400,
+			'missing_credentials',
+			`Plugin '${pluginId}' is missing OAuth client credentials`,
+			{ missingFields: cred.missingFields },
+		);
+	}
+
+	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
+	let url: URL;
+	try {
+		url = new URL(connect.baseUrl);
+	} catch {
+		throw new ManagementApiError(
+			500,
+			'connect_misconfigured',
+			'connect.baseUrl is not a valid URL. Set a full URL including protocol (e.g. https://app.example.com/connect).',
+		);
+	}
+	url.searchParams.set('state', state);
+
+	return { connectUrl: url.toString(), state };
+}
+
+export async function resolveConnect(
+	// `unknown` matches the underlying `resolveConnectLink` signature — the
+	// existing OAuth utilities read the CORSAIR_INTERNAL symbol and never
+	// touch the public client shape. See managementHandler for the same
+	// rationale.
+	corsair: unknown,
+	state: string,
+): Promise<ResolvedConnectLink> {
+	const trimmed = state?.trim();
+	if (!trimmed) {
+		throw badRequest('state is required', { missingFields: ['state'] });
+	}
+	try {
+		return await resolveConnectLink(corsair, trimmed);
+	} catch (err) {
+		// `resolveConnectLink` throws plain Errors today. Until the OAuth utils
+		// expose structured error codes, we string-match known causes and map
+		// them to clean 4xx responses. Unknown causes surface as a generic
+		// "resolve_failed" 500 — never the raw upstream message, which could
+		// include details we don't want echoed to clients.
+		const message = err instanceof Error ? err.message : String(err);
+		if (/invalid|tampered/i.test(message)) {
+			throw badRequest('Invalid or expired state');
+		}
+		if (/client_id not configured/i.test(message)) {
+			throw new ManagementApiError(
+				400,
+				'missing_credentials',
+				`OAuth client_id is not configured for this plugin`,
+				{ missingFields: ['client_id'] },
+			);
+		}
+		throw new ManagementApiError(
+			500,
+			'resolve_failed',
+			'Could not resolve connect link. Check server logs for details.',
+		);
+	}
+}
+
+export async function completeOAuthCallback(
+	// `unknown` matches the underlying `processOAuthCallback` signature — see
+	// resolveConnect / managementHandler for the same rationale.
+	corsair: unknown,
+	internal: CorsairInternalConfig,
+	input: OAuthCallbackInput,
+): Promise<OAuthCallbackResult> {
+	const code = input?.code?.trim();
+	const state = input?.state?.trim();
+	const missing: string[] = [];
+	if (!code) missing.push('code');
+	if (!state) missing.push('state');
+	if (missing.length) {
+		throw badRequest('Missing required fields', { missingFields: missing });
+	}
+
+	const connect = requireConnectConfig(internal);
+
+	// Lazy import to avoid a management → oauth → core import cycle at module
+	// load. By call time the oauth module is fully resolved.
+	const { processOAuthCallback } = await import('../../oauth');
+
+	try {
+		return await processOAuthCallback(corsair, {
+			code: code!,
+			state: state!,
+			redirectUri: connect.redirectUri,
+		});
+	} catch (err) {
+		// Same brittle string-match strategy as resolveConnect. `processOAuthCallback`
+		// wraps the OAuth provider's raw error response inside its thrown Error,
+		// so the message may carry provider-specific details we don't want to
+		// echo. Unknown causes surface as a generic 502 — provider responses
+		// stay on the server.
+		const message = err instanceof Error ? err.message : String(err);
+		if (/invalid|tampered/i.test(message)) {
+			throw badRequest('Invalid or expired state');
+		}
+		if (/credentials not configured/i.test(message)) {
+			throw new ManagementApiError(
+				400,
+				'missing_credentials',
+				'OAuth client credentials are not configured for this plugin',
+				{ missingFields: ['client_id', 'client_secret'] },
+			);
+		}
+		throw new ManagementApiError(
+			502,
+			'oauth_callback_failed',
+			'OAuth callback did not complete. Check server logs for details.',
+		);
+	}
 }
 
 export async function getPermissionByToken(

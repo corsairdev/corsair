@@ -1,8 +1,11 @@
 import type {
 	ConnectionStatus,
+	ConnectLink,
 	ManagementOk,
+	OAuthCallbackResult,
 	PermissionRecord,
 	PluginInfo,
+	ResolvedConnectLink,
 	Tenant,
 } from '../core/management/types';
 import type {
@@ -94,6 +97,13 @@ export function createCorsairClient(
 			// access logs would capture it.
 			getByToken: (token) =>
 				postJson<PermissionRecord>('/permissions/lookup-by-token', { token }),
+		},
+		connect: {
+			createLink: (input) => postJson<ConnectLink>('/connect/links', input),
+			resolve: (state) =>
+				getJson<ResolvedConnectLink>('/connect/resolve', { state }),
+			oauthCallback: (input) =>
+				postJson<OAuthCallbackResult>('/connect/oauth/callback', input),
 		},
 	};
 }
