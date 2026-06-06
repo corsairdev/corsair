@@ -3,7 +3,7 @@ import { createIntegrationKeyManager } from '../auth/key-manager';
 import { encodeOAuthState, signState } from '../auth/state';
 import { BASE_AUTH_FIELDS } from '../auth/types';
 import type { AuthTypes } from '../constants';
-import { resolveConnectLink } from '../connect';
+import { ConnectError, resolveConnectLink } from '../connect';
 import type { CorsairPlugin, OAuthConfig } from '../plugins';
 import { badRequest, ManagementApiError, notFound } from './errors';
 import type {
@@ -367,32 +367,39 @@ export async function resolveConnect(
 	// touch the public client shape. See managementHandler for the same
 	// rationale.
 	corsair: unknown,
+	internal: CorsairInternalConfig,
 	state: string,
 ): Promise<ResolvedConnectLink> {
 	const trimmed = state?.trim();
 	if (!trimmed) {
 		throw badRequest('state is required', { missingFields: ['state'] });
 	}
+	// Guard up front so a missing connect block returns the same
+	// `connect_not_configured` code as the other connect routes, rather than
+	// falling through to a generic resolve_failed when resolveConnectLink
+	// throws on a missing redirectUri.
+	requireConnectConfig(internal);
 	try {
 		return await resolveConnectLink(corsair, trimmed);
 	} catch (err) {
-		// `resolveConnectLink` throws plain Errors today. Until the OAuth utils
-		// expose structured error codes, we string-match known causes and map
-		// them to clean 4xx responses. Unknown causes surface as a generic
-		// "resolve_failed" 500 — never the raw upstream message, which could
-		// include details we don't want echoed to clients.
-		const message = err instanceof Error ? err.message : String(err);
-		if (/invalid|tampered/i.test(message)) {
-			throw badRequest('Invalid or expired state');
+		if (err instanceof ConnectError) {
+			switch (err.code) {
+				case 'invalid_state':
+					throw badRequest('Invalid or expired state');
+				case 'client_id_not_configured':
+					throw new ManagementApiError(
+						400,
+						'missing_credentials',
+						'OAuth client_id is not configured for this plugin',
+						{ missingFields: ['client_id'] },
+					);
+				case 'no_redirect_uri':
+					// Already guarded above via requireConnectConfig; fall through.
+					break;
+			}
 		}
-		if (/client_id not configured/i.test(message)) {
-			throw new ManagementApiError(
-				400,
-				'missing_credentials',
-				`OAuth client_id is not configured for this plugin`,
-				{ missingFields: ['client_id'] },
-			);
-		}
+		// Unknown causes surface as a generic resolve_failed — never the raw
+		// upstream message, which could include details we don't want echoed.
 		throw new ManagementApiError(
 			500,
 			'resolve_failed',
@@ -420,8 +427,10 @@ export async function completeOAuthCallback(
 	const connect = requireConnectConfig(internal);
 
 	// Lazy import to avoid a management → oauth → core import cycle at module
-	// load. By call time the oauth module is fully resolved.
+	// load. By call time the oauth module is fully resolved. The type-only
+	// import below is erased and contributes no cycle.
 	const { processOAuthCallback } = await import('../../oauth');
+	type OAuthCallbackErrorShape = import('../../oauth').OAuthCallbackError;
 
 	try {
 		return await processOAuthCallback(corsair, {
@@ -430,23 +439,26 @@ export async function completeOAuthCallback(
 			redirectUri: connect.redirectUri,
 		});
 	} catch (err) {
-		// Same brittle string-match strategy as resolveConnect. `processOAuthCallback`
-		// wraps the OAuth provider's raw error response inside its thrown Error,
-		// so the message may carry provider-specific details we don't want to
-		// echo. Unknown causes surface as a generic 502 — provider responses
-		// stay on the server.
-		const message = err instanceof Error ? err.message : String(err);
-		if (/invalid|tampered/i.test(message)) {
-			throw badRequest('Invalid or expired state');
+		// Class identity check via `name` so we don't have to import the class
+		// value statically and reintroduce the cycle.
+		if (err instanceof Error && err.name === 'OAuthCallbackError') {
+			const oauthErr = err as OAuthCallbackErrorShape;
+			switch (oauthErr.code) {
+				case 'invalid_state':
+					throw badRequest('Invalid or expired state');
+				case 'credentials_not_configured':
+					throw new ManagementApiError(
+						400,
+						'missing_credentials',
+						'OAuth client credentials are not configured for this plugin',
+						{ missingFields: ['client_id', 'client_secret'] },
+					);
+			}
 		}
-		if (/credentials not configured/i.test(message)) {
-			throw new ManagementApiError(
-				400,
-				'missing_credentials',
-				'OAuth client credentials are not configured for this plugin',
-				{ missingFields: ['client_id', 'client_secret'] },
-			);
-		}
+		// Unknown causes surface as a generic 502 — provider responses stay
+		// on the server. processOAuthCallback wraps the OAuth provider's raw
+		// response inside its thrown Error, so the message may carry
+		// provider-specific details we don't want to echo to clients.
 		throw new ManagementApiError(
 			502,
 			'oauth_callback_failed',

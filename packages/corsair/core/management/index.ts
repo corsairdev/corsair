@@ -87,7 +87,7 @@ export function buildManagementNamespace(
 		},
 		connect: {
 			createLink: (input) => createConnectLink(internal, input),
-			resolve: (state) => resolveConnect(corsairShim, state),
+			resolve: (state) => resolveConnect(corsairShim, internal, state),
 			oauthCallback: (input) =>
 				completeOAuthCallback(corsairShim, internal, input),
 		},

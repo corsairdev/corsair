@@ -134,8 +134,8 @@ const ROUTES: Route[] = [
 	{
 		method: 'GET',
 		pattern: '/connect/resolve',
-		handler: async ({ corsair, query }) =>
-			json(200, await resolveConnect(corsair, query.state ?? '')),
+		handler: async ({ corsair, internal, query }) =>
+			json(200, await resolveConnect(corsair, internal, query.state ?? '')),
 	},
 	{
 		method: 'POST',

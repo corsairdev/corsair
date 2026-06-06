@@ -5,6 +5,11 @@ import type { CorsairPlugin } from '../core/plugins';
 import { setupCorsair } from '../setup';
 import { createTestDatabase } from './setup-db';
 
+// Casts: `as unknown as CorsairPlugin` on each fixture, `as any` on the
+// createCorsair calls — see management-handler.test.ts for the rationale.
+// The full CorsairPlugin interface is generic over runtime context that
+// would require re-implementing half the library to satisfy in a unit test.
+
 const slackOAuth = {
 	id: 'slack',
 	options: { authType: 'oauth_2' as const },
@@ -241,6 +246,28 @@ describe('managementHandler — GET /connect/resolve', () => {
 		expect(res.status).toBe(400);
 		const body = await readJson<{ missingFields: string[] }>(res);
 		expect(body.missingFields).toEqual(['state']);
+	});
+
+	it('500s with connect_not_configured when createCorsair was not given a connect config', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [slackOAuth],
+			database: env.db,
+			kek: KEK,
+		} as any);
+
+		const handler = managementHandler(corsair);
+		const res = await handler(
+			new Request(
+				'http://x/api/corsair/connect/resolve?state=anything',
+				{ method: 'GET' },
+			),
+		);
+		expect(res.status).toBe(500);
+		const body = await readJson<{ error: string }>(res);
+		// Must match the other connect routes' error code, not fall through to
+		// the generic `resolve_failed`.
+		expect(body.error).toBe('connect_not_configured');
 	});
 });
 
