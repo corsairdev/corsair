@@ -9,6 +9,8 @@ export type {
 	ConnectionStatus,
 	CorsairManageNamespace,
 	CreateTenantInput,
+	ExpressHandler,
+	HonoHandler,
 	ManagementHandlerOptions,
 	ManagementOk,
 	PermissionRecord,
@@ -16,7 +18,12 @@ export type {
 	PluginInfo,
 	Tenant,
 } from './core/management';
-export { managementHandler } from './core/management';
+export {
+	managementHandler,
+	toExpressHandler,
+	toHonoHandler,
+	toNextJsHandler,
+} from './core/management';
 export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,

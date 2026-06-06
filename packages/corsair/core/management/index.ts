@@ -69,6 +69,12 @@ export function buildManagementNamespace(
 	};
 }
 
+export type { ExpressHandler, HonoHandler } from './adapters';
+export {
+	toExpressHandler,
+	toHonoHandler,
+	toNextJsHandler,
+} from './adapters';
 export { managementHandler } from './handler';
 export type { ManagementHandlerOptions } from './handler';
 export type {
