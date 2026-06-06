@@ -183,7 +183,7 @@ export async function processWebhook(
 		[x: string]: string | string[] | undefined;
 	},
 ): Promise<WebhookFilterResult> {
-	console.log('PLUGIN IDS:');
+	
 	const normalizedHeaders = normalizeHeaders(headers);
 	let parsedBody =
 		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
