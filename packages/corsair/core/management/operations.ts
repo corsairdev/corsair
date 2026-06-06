@@ -56,6 +56,12 @@ async function getIntegrationCredState(
 	});
 
 	const fieldNames = BASE_AUTH_FIELDS[authType].integration as readonly string[];
+	// `IntegrationKeyManagerFor<AuthTypes>` is a public type whose accessors are
+	// generated per-auth-type via template literals; indexing it with a runtime
+	// `get_${field}` string isn't expressible in TS without a structural shim,
+	// and exposing a public `Record<string, ...>` interface would weaken the
+	// stricter type used elsewhere. The unknown→record double cast is local to
+	// this loop and bounded by `BASE_AUTH_FIELDS[authType].integration`.
 	const kmAny = km as unknown as Record<
 		string,
 		() => Promise<string | null>
@@ -170,20 +176,37 @@ export async function describeTenant(
 export async function listTenants(
 	internal: CorsairInternalConfig,
 ): Promise<Tenant[]> {
-	const ids = new Set<string>(['default']);
+	// Single grouped JOIN, assembled in memory. Previously this fanned out one
+	// `describeTenant` query per tenant, which N+1'd dashboards with many
+	// tenants (51 queries at 50 tenants). Now: one query, bounded cost.
+	const tenants = new Map<string, Tenant>();
+	tenants.set('default', { id: 'default', accounts: [], connectedPlugins: [] });
 
 	if (internal.database) {
 		const rows = await internal.database.db
-			.selectFrom('corsair_accounts')
-			.select('tenant_id')
-			.distinct()
+			.selectFrom('corsair_accounts as a')
+			.innerJoin('corsair_integrations as i', 'i.id', 'a.integration_id')
+			.select(['a.tenant_id', 'a.dek as dek', 'i.name as integrationName'])
 			.execute();
+
 		for (const r of rows) {
-			if (r.tenant_id) ids.add(r.tenant_id);
+			const tenantId = r.tenant_id;
+			if (!tenantId) continue;
+			let t = tenants.get(tenantId);
+			if (!t) {
+				t = { id: tenantId, accounts: [], connectedPlugins: [] };
+				tenants.set(tenantId, t);
+			}
+			const hasCredentials = !!r.dek;
+			t.accounts.push({
+				integrationName: r.integrationName,
+				hasCredentials,
+			});
+			if (hasCredentials) t.connectedPlugins.push(r.integrationName);
 		}
 	}
 
-	return Promise.all([...ids].map((id) => describeTenant(internal, id)));
+	return [...tenants.values()];
 }
 
 export async function getTenant(
@@ -264,8 +287,10 @@ export async function getPermissionByToken(
 	internal: CorsairInternalConfig,
 	token: string,
 ): Promise<PermissionRecord> {
+	// Token is a short-lived authorization credential — never echo it back in
+	// error messages or response bodies where it could end up in logs.
 	if (!internal.database) {
-		throw notFound(`Permission with token '${token}' not found`);
+		throw notFound('Permission not found');
 	}
 	const record = await internal.database.db
 		.selectFrom('corsair_permissions')
@@ -273,7 +298,7 @@ export async function getPermissionByToken(
 		.where('token', '=', token)
 		.executeTakeFirst();
 	if (!record) {
-		throw notFound(`Permission with token '${token}' not found`);
+		throw notFound('Permission not found');
 	}
 	return record;
 }

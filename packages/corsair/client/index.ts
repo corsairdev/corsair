@@ -90,8 +90,10 @@ export function createCorsairClient(
 		},
 		permissions: {
 			get: (id) => getJson<PermissionRecord>(`/permissions/${enc(id)}`),
+			// POST + body keeps the token off the URL where reverse proxies and
+			// access logs would capture it.
 			getByToken: (token) =>
-				getJson<PermissionRecord>(`/permissions/by-token/${enc(token)}`),
+				postJson<PermissionRecord>('/permissions/lookup-by-token', { token }),
 		},
 	};
 }

@@ -281,7 +281,7 @@ describe('managementHandler — /tenants', () => {
 				body: JSON.stringify({ id: 'new-tenant' }),
 			}),
 		);
-		expect(ok.status).toBe(200);
+		expect(ok.status).toBe(201);
 		const body = await readJson<{ id: string; accounts: unknown[] }>(ok);
 		expect(body.id).toBe('new-tenant');
 		expect(body.accounts).toEqual([]);
@@ -420,15 +420,43 @@ describe('managementHandler — /permissions', () => {
 		expect(idBody.token).toBe('tok-abc');
 
 		const byTok = await handler(
-			new Request('http://x/api/corsair/permissions/by-token/tok-abc', {
-				method: 'GET',
+			new Request('http://x/api/corsair/permissions/lookup-by-token', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ token: 'tok-abc' }),
 			}),
 		);
 		expect(byTok.status).toBe(200);
+		const byTokBody = await readJson<{ id: string }>(byTok);
+		expect(byTokBody.id).toBe('perm-1');
 
 		const missing = await handler(
 			new Request('http://x/api/corsair/permissions/nope', { method: 'GET' }),
 		);
 		expect(missing.status).toBe(404);
+
+		const missingTok = await handler(
+			new Request('http://x/api/corsair/permissions/lookup-by-token', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ token: 'does-not-exist' }),
+			}),
+		);
+		expect(missingTok.status).toBe(404);
+		// The error must not echo the token back into the message body —
+		// tokens are short-lived credentials.
+		const missingBody = await readJson<{ message: string }>(missingTok);
+		expect(missingBody.message ?? '').not.toContain('does-not-exist');
+
+		const noToken = await handler(
+			new Request('http://x/api/corsair/permissions/lookup-by-token', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({}),
+			}),
+		);
+		expect(noToken.status).toBe(400);
+		const noTokenBody = await readJson<{ missingFields?: string[] }>(noToken);
+		expect(noTokenBody.missingFields).toEqual(['token']);
 	});
 });

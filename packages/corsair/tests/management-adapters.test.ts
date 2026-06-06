@@ -57,7 +57,7 @@ describe('toNextJsHandler', () => {
 				body: JSON.stringify({ id: 'team-a' }),
 			}),
 		);
-		expect(created.status).toBe(200);
+		expect(created.status).toBe(201);
 		const body = await created.json();
 		expect(body.id).toBe('team-a');
 	});
@@ -159,7 +159,7 @@ describe('toExpressHandler', () => {
 		await handler(req, res, jest.fn());
 
 		const out = read();
-		expect(out.status).toBe(200);
+		expect(out.status).toBe(201);
 		expect(JSON.parse(out.body!).id).toBe('team-b');
 	});
 

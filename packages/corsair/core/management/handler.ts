@@ -16,8 +16,8 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 // Management HTTP handler — framework-agnostic (Request) => Promise<Response>.
 //
-// Mirrors better-auth's one-core-handler design. Framework adapters in Phase 1b
-// will be thin fan-outs over this single function.
+// One fetch-style core handler is the canonical entry point. Framework
+// adapters (Next.js, Express, Hono) are thin fan-outs over this function.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type ManagementHandlerOptions = {
@@ -44,6 +44,10 @@ type Route = {
 	handler: (ctx: RouteCtx) => Promise<Response>;
 };
 
+// Inline `body as { ... }` casts narrow the parsed-JSON `unknown` to a
+// structural shape for TypeScript only. Operation functions validate every
+// required field at runtime (e.g., `createTenant` rejects empty `id`), so the
+// cast never propagates unvalidated data.
 const ROUTES: Route[] = [
 	{
 		method: 'GET',
@@ -60,7 +64,7 @@ const ROUTES: Route[] = [
 		pattern: '/tenants',
 		handler: async ({ internal, body }) =>
 			json(
-				200,
+				201,
 				await createTenant(internal, body as { id: string }),
 			),
 	},
@@ -94,14 +98,26 @@ const ROUTES: Route[] = [
 			json(200, await getPermission(internal, params.id!)),
 	},
 	{
-		method: 'GET',
-		pattern: '/permissions/by-token/:token',
-		handler: async ({ internal, params }) =>
-			json(200, await getPermissionByToken(internal, params.token!)),
+		// POST + body, not GET + path. Tokens are short-lived authorization
+		// credentials; reverse proxies and access-log formatters routinely
+		// capture URL paths, so placing the token in the path leaks it.
+		method: 'POST',
+		pattern: '/permissions/lookup-by-token',
+		handler: async ({ internal, body }) => {
+			const token = (body as { token?: string } | undefined)?.token?.trim();
+			if (!token) {
+				return json(400, {
+					error: 'bad_request',
+					message: 'token is required',
+					missingFields: ['token'],
+				});
+			}
+			return json(200, await getPermissionByToken(internal, token));
+		},
 	},
 ];
 
-// ── pre-flight conflict check (better-auth pattern) ─────────────────────────
+// ── pre-flight route conflict check ─────────────────────────────────────────
 (() => {
 	const seen = new Set<string>();
 	for (const r of ROUTES) {
@@ -146,6 +162,10 @@ function stripBasePath(pathname: string, basePath: string): string {
 }
 
 function getInternal(corsair: unknown): CorsairInternalConfig {
+	// CORSAIR_INTERNAL is a private Symbol attached to every corsair instance
+	// by createCorsair(). TypeScript cannot represent symbol-keyed properties
+	// on `unknown`, so an `unknown → Record<symbol, unknown>` cast is required
+	// to access it. The presence check below guards the typed return.
 	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
 		| CorsairInternalConfig
 		| undefined;
@@ -173,6 +193,12 @@ async function parseBody(req: Request): Promise<unknown> {
 const DEFAULT_BASE_PATH = '/api/corsair';
 
 export function managementHandler(
+	// `corsair: unknown` is intentional: the handler accepts both
+	// CorsairSingleTenantClient and CorsairTenantWrapper, but it never reads
+	// public properties — only the CORSAIR_INTERNAL symbol via getInternal().
+	// Typing this as the union of both client shapes would require importing
+	// the generic Plugins type parameter at every call site and adds no
+	// safety, since the symbol read is dynamic.
 	corsair: unknown,
 	opts: ManagementHandlerOptions = {},
 ): (req: Request) => Promise<Response> {

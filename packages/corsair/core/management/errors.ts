@@ -1,8 +1,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Management API error type and JSON response helpers.
-// Mirrors better-auth's APIError shape: { error, message?, ...extra } as the
-// response body. Errors thrown from operations are caught by the handler and
-// serialized via toResponse().
+// Response body shape: { error, message?, ...extra }. Errors thrown from
+// operations are caught by the handler and serialized via errorResponse().
 // ─────────────────────────────────────────────────────────────────────────────
 
 export class ManagementApiError extends Error {

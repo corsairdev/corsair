@@ -15,6 +15,9 @@ import { managementHandler } from '../handler';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function toNextJsHandler(
+	// `unknown` matches the managementHandler signature — see the justification
+	// there. The handler only reads the CORSAIR_INTERNAL symbol, so the public
+	// client shape isn't needed at this seam.
 	corsair: unknown,
 	opts?: ManagementHandlerOptions,
 ): {
