@@ -13,7 +13,6 @@ import {
 export const deploymentHandlers = {
 	deploymentCreated: {
 		match: createVercelMatch('deployment.created'),
-		// @ts-expect-error - justification: request type varies depending on framework implementation
 		handler: async (ctx: VercelContext, request: any) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
@@ -49,7 +48,6 @@ export const deploymentHandlers = {
 
 	deploymentSucceeded: {
 		match: createVercelMatch('deployment.succeeded'),
-		// @ts-expect-error - justification: request type varies depending on framework implementation
 		handler: async (ctx: VercelContext, request: any) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
@@ -88,7 +86,6 @@ export const deploymentHandlers = {
 
 	deploymentError: {
 		match: createVercelMatch('deployment.error'),
-		// @ts-expect-error - justification: request type varies depending on framework implementation
 		handler: async (ctx: VercelContext, request: any) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {

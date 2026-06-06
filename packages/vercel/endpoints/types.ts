@@ -31,9 +31,7 @@ export const ProjectSchema = z
 		updatedAt: z.number(),
 		framework: z.string().nullable(),
 		link: ProjectLinkSchema.optional().nullable(),
-		// @ts-expect-error - justification: Vercel API response for latestDeployments is highly variable
 		latestDeployments: z.array(z.any()).optional().nullable(),
-		// @ts-expect-error - justification: Vercel API response for targets is highly variable
 		targets: z.record(z.string(), z.any()).optional().nullable(),
 	})
 	.passthrough();
@@ -223,7 +221,6 @@ export const VercelEndpointInputSchemas = {
 				})
 				.passthrough()
 				.optional(),
-			// @ts-expect-error - justification: Files structure varies based on deployment needs
 			files: z.array(z.any()).optional(),
 			meta: z.record(z.string(), z.string()).optional(),
 			env: z.record(z.string(), z.string()).optional(),
