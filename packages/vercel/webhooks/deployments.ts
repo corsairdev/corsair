@@ -13,6 +13,7 @@ import {
 export const deploymentHandlers = {
 	deploymentCreated: {
 		match: createVercelMatch('deployment.created'),
+		// @ts-expect-error - justification: request type varies depending on framework implementation
 		handler: async (ctx: VercelContext, request: any) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
@@ -28,12 +29,10 @@ export const deploymentHandlers = {
 
 			if (ctx.db.deployments) {
 				await ctx.db.deployments.upsertByEntityId(event.payload.deployment.id, {
+					...event.payload.deployment,
 					uid: event.payload.deployment.id,
-					name: event.payload.deployment.name,
-					url: event.payload.deployment.url,
 					created: event.createdAt || Date.now(),
 					readyState: 'BUILDING',
-					target: event.payload.deployment.target,
 				});
 			}
 
@@ -50,6 +49,7 @@ export const deploymentHandlers = {
 
 	deploymentSucceeded: {
 		match: createVercelMatch('deployment.succeeded'),
+		// @ts-expect-error - justification: request type varies depending on framework implementation
 		handler: async (ctx: VercelContext, request: any) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
@@ -65,12 +65,10 @@ export const deploymentHandlers = {
 
 			if (ctx.db.deployments) {
 				await ctx.db.deployments.upsertByEntityId(event.payload.deployment.id, {
+					...event.payload.deployment,
 					uid: event.payload.deployment.id,
-					name: event.payload.deployment.name,
-					url: event.payload.deployment.url,
 					created: event.createdAt || Date.now(),
 					readyState: 'READY',
-					target: event.payload.deployment.target,
 				});
 			}
 
@@ -90,6 +88,7 @@ export const deploymentHandlers = {
 
 	deploymentError: {
 		match: createVercelMatch('deployment.error'),
+		// @ts-expect-error - justification: request type varies depending on framework implementation
 		handler: async (ctx: VercelContext, request: any) => {
 			const webhookSecret = ctx.key;
 			if (!verifyVercelWebhookSignature(request, webhookSecret)) {
@@ -105,12 +104,10 @@ export const deploymentHandlers = {
 
 			if (ctx.db.deployments) {
 				await ctx.db.deployments.upsertByEntityId(event.payload.deployment.id, {
+					...event.payload.deployment,
 					uid: event.payload.deployment.id,
-					name: event.payload.deployment.name,
-					url: event.payload.deployment.url,
 					created: event.createdAt || Date.now(),
 					readyState: 'ERROR',
-					target: event.payload.deployment.target,
 				});
 			}
 

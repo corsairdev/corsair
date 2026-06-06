@@ -9,22 +9,16 @@ export const getDeployments: VercelEndpoints['deploymentsGetDeployments'] =
 		if (input.projectId) query.projectId = input.projectId;
 		if (input.limit) query.limit = input.limit;
 		if (input.until) query.until = input.until;
-		if (input.teamId) query.teamId = input.teamId;
 
 		const result = await makeAuthenticatedVercelRequest<
 			VercelEndpointOutputs['deploymentsGetDeployments']
-		>('/v6/deployments', ctx, { query });
+		>('/v6/deployments', ctx, { query, teamId: input.teamId });
 
 		if (result && result.deployments && ctx.db.deployments) {
 			for (const deployment of result.deployments) {
 				await ctx.db.deployments.upsertByEntityId(deployment.uid, {
-					uid: deployment.uid,
-					name: deployment.name,
-					url: deployment.url,
-					created: deployment.created,
-					readyState: deployment.readyState,
-					type: deployment.type as string,
-					target: deployment.target,
+					...deployment,
+					type: String(deployment.type),
 				});
 			}
 		}
@@ -48,13 +42,8 @@ export const getDeployment: VercelEndpoints['deploymentsGetDeployment'] =
 
 		if (result && ctx.db.deployments) {
 			await ctx.db.deployments.upsertByEntityId(result.uid, {
-				uid: result.uid,
-				name: result.name,
-				url: result.url,
-				created: result.created,
-				readyState: result.readyState,
-				type: result.type as string,
-				target: result.target,
+				...result,
+				type: String(result.type),
 			});
 		}
 
@@ -76,13 +65,8 @@ export const createDeployment: VercelEndpoints['deploymentsCreateDeployment'] =
 
 		if (result && ctx.db.deployments) {
 			await ctx.db.deployments.upsertByEntityId(result.uid, {
-				uid: result.uid,
-				name: result.name,
-				url: result.url,
-				created: result.created,
-				readyState: result.readyState,
-				type: result.type as string,
-				target: result.target,
+				...result,
+				type: String(result.type),
 			});
 		}
 

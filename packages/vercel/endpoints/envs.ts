@@ -16,13 +16,7 @@ export const getEnvVariables: VercelEndpoints['envsGetEnvVariables'] = async (
 	if (result && result.envs && ctx.db.envs) {
 		for (const env of result.envs) {
 			await ctx.db.envs.upsertByEntityId(env.id, {
-				id: env.id,
-				key: env.key,
-				value: env.value,
-				type: env.type,
-				target: env.target,
-				createdAt: env.createdAt,
-				updatedAt: env.updatedAt,
+				...env,
 			});
 		}
 	}
@@ -49,13 +43,7 @@ export const createEnvVariable: VercelEndpoints['envsCreateEnvVariable'] =
 
 		if (result && ctx.db.envs) {
 			await ctx.db.envs.upsertByEntityId(result.id, {
-				id: result.id,
-				key: result.key,
-				value: result.value,
-				type: result.type,
-				target: result.target,
-				createdAt: result.createdAt,
-				updatedAt: result.updatedAt,
+				...result,
 			});
 		}
 

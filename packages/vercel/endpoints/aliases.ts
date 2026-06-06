@@ -19,13 +19,7 @@ export const getAliases: VercelEndpoints['aliasesGetAliases'] = async (
 	if (result && result.aliases && ctx.db.aliases) {
 		for (const alias of result.aliases) {
 			await ctx.db.aliases.upsertByEntityId(alias.uid, {
-				uid: alias.uid,
-				alias: alias.alias,
-				created: alias.created,
-				createdAt: alias.createdAt,
-				deploymentId: alias.deploymentId,
-				projectId: alias.projectId,
-				redirect: alias.redirect,
+				...alias,
 			});
 		}
 	}
@@ -54,10 +48,8 @@ export const assignAlias: VercelEndpoints['aliasesAssignAlias'] = async (
 
 	if (result && ctx.db.aliases) {
 		await ctx.db.aliases.upsertByEntityId(result.uid, {
-			uid: result.uid,
-			alias: result.alias,
-			created: result.created,
-			deploymentId: deploymentId,
+			...result,
+			deploymentId,
 		});
 	}
 

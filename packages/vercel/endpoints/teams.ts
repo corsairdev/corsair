@@ -14,12 +14,7 @@ export const getTeams: VercelEndpoints['teamsGetTeams'] = async (
 	if (result && result.teams && ctx.db.teams) {
 		for (const team of result.teams) {
 			await ctx.db.teams.upsertByEntityId(team.id, {
-				id: team.id,
-				slug: team.slug,
-				name: team.name,
-				createdAt: team.createdAt,
-				updatedAt: team.updatedAt,
-				avatar: team.avatar,
+				...team,
 			});
 		}
 	}

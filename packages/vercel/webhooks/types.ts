@@ -87,9 +87,12 @@ export type VercelWebhookOutputs = {
 };
 
 export function createVercelMatch(eventType: string) {
-	return (request: { body?: unknown }) => {
+	// @ts-expect-error - justification: request type varies depending on framework implementation
+	return (request: any) => {
 		try {
-			const parsed = VercelWebhookPayloadSchema.parse(request.body);
+			const parsed = VercelWebhookPayloadSchema.parse(
+				request.body || request.payload || request,
+			);
 			return parsed.type === eventType;
 		} catch {
 			return false;

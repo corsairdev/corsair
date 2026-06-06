@@ -19,13 +19,7 @@ export const getDomains: VercelEndpoints['domainsGetDomains'] = async (
 	if (result && result.domains && ctx.db.domains) {
 		for (const domain of result.domains) {
 			await ctx.db.domains.upsertByEntityId(domain.id, {
-				id: domain.id,
-				name: domain.name,
-				createdAt: domain.createdAt,
-				boughtAt: domain.boughtAt,
-				expiresAt: domain.expiresAt,
-				transferredAt: domain.transferredAt,
-				verified: domain.verified,
+				...domain,
 			});
 		}
 	}
@@ -56,10 +50,8 @@ export const getProjectDomains: VercelEndpoints['domainsGetProjectDomains'] =
 		if (result && result.domains && ctx.db.domains) {
 			for (const domain of result.domains) {
 				await ctx.db.domains.upsertByEntityId(domain.name, {
+					...domain,
 					id: domain.name,
-					name: domain.name,
-					createdAt: domain.createdAt,
-					verified: domain.verified,
 				});
 			}
 		}

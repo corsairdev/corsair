@@ -19,12 +19,7 @@ export const getProjects: VercelEndpoints['projectsGetProjects'] = async (
 	if (result && result.projects && ctx.db.projects) {
 		for (const project of result.projects) {
 			await ctx.db.projects.upsertByEntityId(project.id, {
-				id: project.id,
-				name: project.name,
-				accountId: project.accountId,
-				createdAt: project.createdAt,
-				updatedAt: project.updatedAt,
-				framework: project.framework,
+				...project,
 			});
 		}
 	}
@@ -50,12 +45,7 @@ export const getProject: VercelEndpoints['projectsGetProject'] = async (
 
 	if (result && ctx.db.projects) {
 		await ctx.db.projects.upsertByEntityId(result.id, {
-			id: result.id,
-			name: result.name,
-			accountId: result.accountId,
-			createdAt: result.createdAt,
-			updatedAt: result.updatedAt,
-			framework: result.framework,
+			...result,
 		});
 	}
 
