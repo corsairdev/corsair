@@ -43,7 +43,7 @@ Corsair’s core supports these `authType` values (see `AuthTypes` in `packages/
 **Scenarios to document (where relevant):**
 
 - **Single-tenant / your keys only** — `api_key` or `bot_token`; no end-user OAuth.
-- **Multi-tenant SaaS** — `oauth_2`; redirect URLs, `corsair auth`, tokens per tenant; link to [Multi-Tenancy](/multi-tenancy).
+- **Multi-tenant SaaS** — `oauth_2`; redirect URLs, `corsair auth`, tokens per tenant; link to [Multi-Tenancy](/concepts/multi-tenancy).
 - **Optional env overrides** — Some plugins allow passing secrets in plugin options for dev; production should use encrypted DB storage (same pattern as Slack’s `key` / `signingSecret` options).
 
 Plugins **subset** these types; only document modes the plugin actually implements.
@@ -68,7 +68,7 @@ Plugins **subset** these types; only document modes the plugin actually implemen
    - **Credential setup:**
      - **`api_key` / `bot_token`:** `pnpm corsair setup --<plugin> <key_name>=…` (use the plugin’s real CLI key names); `pnpm corsair auth --plugin=<plugin> --credentials` to verify.
      - **`oauth_2`:** `pnpm corsair setup --<plugin> client_id=… client_secret=…` (and any plugin-specific fields), then `pnpm corsair auth --plugin=<plugin>`; note redirect URL requirements and multi-tenancy.
-   - Link to concepts: [Authentication](/concepts/auth), [Multi-Tenancy](/multi-tenancy) when OAuth is used.
+   - Link to concepts: [Authentication](/concepts/auth), [Multi-Tenancy](/concepts/multi-tenancy) when OAuth is used.
 4. **Minimal API example** — One `corsair.<plugin>.api.…` call readers can copy.
 5. **Query data** (`<Tabs>`: Live API vs cached DB) — Short examples for `api` vs `db`; link to `database.mdx`.
 6. **Webhooks (high level)** — Route handler using `processWebhook`, tiny `webhookHooks` sample, table of **event keys** (names only); link to `webhooks.mdx` for payloads.
