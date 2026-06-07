@@ -108,28 +108,25 @@ export function SiteMenu() {
 
 					{/* Desktop Menu */}
 					<div className="hidden md:flex shrink-0 items-center gap-1 sm:gap-2">
-						<div className="group relative flex min-w-[88px] cursor-pointer items-center justify-center px-2 py-2 text-[13px] font-medium text-[#1c1c1c]/60 transition-colors sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)]">
-							<span className="transition-all duration-300 ease-out group-hover:-translate-y-1 group-hover:scale-95 group-hover:opacity-0">GitHub</span>
-							<div className="absolute flex pointer-events-none items-center gap-5 translate-y-1 scale-95 opacity-0 transition-all duration-300 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100">
-								<a
-									href={GITHUB_URL}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
-									aria-label="GitHub"
-								>
-									<GithubLogo size={20} weight="fill" />
-								</a>
-								<a
-									href={DISCORD_URL}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
-									aria-label="Discord"
-								>
-									<DiscordLogo size={20} weight="fill" />
-								</a>
-							</div>
+						<div className="flex items-center gap-5 px-2 py-2 sm:px-3">
+							<a
+								href={GITHUB_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
+								aria-label="GitHub"
+							>
+								<GithubLogo size={20} weight="fill" />
+							</a>
+							<a
+								href={DISCORD_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
+								aria-label="Discord"
+							>
+								<DiscordLogo size={20} weight="fill" />
+							</a>
 						</div>
 						<a
 							href={DOCS_URL}
