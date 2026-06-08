@@ -23,9 +23,10 @@ export const createWebhook: VercelEndpoints['webhooksCreateWebhook'] = async (
 	ctx,
 	input,
 ) => {
+	const { teamId, ...body } = input;
 	const result = await makeAuthenticatedVercelRequest<
 		VercelEndpointOutputs['webhooksCreateWebhook']
-	>('/v1/webhooks', ctx, { method: 'POST', body: input });
+	>('/v1/webhooks', ctx, { method: 'POST', body, teamId });
 	await logEventFromContext(
 		ctx,
 		'vercel.webhooks.createWebhook',

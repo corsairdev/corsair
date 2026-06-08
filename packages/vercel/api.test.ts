@@ -1,14 +1,15 @@
 import 'dotenv/config';
 import { logEventFromContext } from 'corsair/core';
 import { getAliases } from './endpoints/aliases';
-import { getDeployments } from './endpoints/deployments';
+import { createDeployment, getDeployments } from './endpoints/deployments';
 import { getDomains, getProjectDomains } from './endpoints/domains';
 import { createEnvVariable, getEnvVariables } from './endpoints/envs';
 import { getProjects } from './endpoints/projects';
 import { getTeams } from './endpoints/teams';
 import { VercelEndpointOutputSchemas } from './endpoints/types';
-import { getWebhooks } from './endpoints/webhooks';
+import { createWebhook, getWebhooks } from './endpoints/webhooks';
 import type { VercelContext } from './index';
+import { makeAuthenticatedVercelRequest } from './client';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -16,7 +17,7 @@ jest.mock('corsair/core', () => ({
 }));
 
 jest.mock('./client', () => ({
-	makeAuthenticatedVercelRequest: jest.fn().mockImplementation((url) => {
+	makeAuthenticatedVercelRequest: jest.fn().mockImplementation((url, _ctx, options) => {
 		if (url.includes('projects') && url.includes('domains')) {
 			return {
 				domains: [
@@ -37,6 +38,17 @@ jest.mock('./client', () => ({
 		}
 		if (url.includes('projects'))
 			return { projects: [], pagination: { count: 0, next: null, prev: null } };
+		if (url.includes('/v13/deployments') && options?.method === 'POST') {
+			return {
+				uid: 'dpl_123',
+				name: options.body?.name ?? 'test-deployment',
+				url: 'test-deployment.vercel.app',
+				created: 1,
+				readyState: 'QUEUED',
+				type: 'LAMBDAS',
+				target: 'production',
+			};
+		}
 		if (url.includes('deployments'))
 			return {
 				deployments: [],
@@ -74,6 +86,16 @@ jest.mock('./client', () => ({
 		if (url.includes('/env')) return { envs: [] };
 		if (url.includes('aliases'))
 			return { aliases: [], pagination: { count: 0, next: null, prev: null } };
+		if (url.includes('webhooks') && options?.method === 'POST') {
+			return {
+				id: 'wh_123',
+				url: options.body?.url,
+				events: options.body?.events ?? [],
+				ownerId: 'owner_123',
+				createdAt: 1,
+				updatedAt: 1,
+			};
+		}
 		if (url.includes('webhooks')) return [];
 		if (url.includes('teams'))
 			return { teams: [], pagination: { count: 0, next: null, prev: null } };
@@ -141,9 +163,13 @@ describe('Vercel endpoint behavior', () => {
 	const mockedLogEventFromContext = logEventFromContext as jest.MockedFunction<
 		typeof logEventFromContext
 	>;
+	const mockedRequest = makeAuthenticatedVercelRequest as jest.MockedFunction<
+		typeof makeAuthenticatedVercelRequest
+	>;
 
 	beforeEach(() => {
 		mockedLogEventFromContext.mockClear();
+		mockedRequest.mockClear();
 	});
 
 	it('createEnvVariable excludes value from the event log', async () => {
@@ -189,5 +215,48 @@ describe('Vercel endpoint behavior', () => {
 		await getProjectDomains(ctxWithDb, { idOrName: 'prj_123' });
 
 		expect(upsertedEntityIds).toEqual(['example.com', 'example.com']);
+	});
+
+	it('createWebhook forwards teamId as query param and excludes it from body', async () => {
+		await createWebhook(mockCtx, {
+			url: 'https://example.com/webhook',
+			events: ['deployment.created'],
+			projectIds: ['prj_123'],
+			teamId: 'team_scoped_id',
+		});
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v1/webhooks',
+			mockCtx,
+			expect.objectContaining({
+				method: 'POST',
+				teamId: 'team_scoped_id',
+				body: {
+					url: 'https://example.com/webhook',
+					events: ['deployment.created'],
+					projectIds: ['prj_123'],
+				},
+			}),
+		);
+		expect(mockedRequest.mock.calls[0]?.[2]?.body).not.toHaveProperty('teamId');
+	});
+
+	it('createDeployment excludes env from the event log', async () => {
+		await createDeployment(mockCtx, {
+			name: 'test-deployment',
+			env: { API_KEY: 'super-secret-value' },
+		});
+
+		expect(mockedLogEventFromContext).toHaveBeenCalledWith(
+			mockCtx,
+			'vercel.deployments.createDeployment',
+			expect.not.objectContaining({
+				env: { API_KEY: 'super-secret-value' },
+			}),
+			'completed',
+		);
+		expect(mockedLogEventFromContext.mock.calls[0]?.[2]).toMatchObject({
+			name: 'test-deployment',
+		});
 	});
 });

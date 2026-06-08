@@ -70,10 +70,12 @@ export const createDeployment: VercelEndpoints['deploymentsCreateDeployment'] =
 			});
 		}
 
+		// Exclude env from the event log to avoid persisting credentials
+		const { env: _env, ...loggableInput } = input;
 		await logEventFromContext(
 			ctx,
 			'vercel.deployments.createDeployment',
-			{ ...input },
+			loggableInput,
 			'completed',
 		);
 		return result;
