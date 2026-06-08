@@ -38,6 +38,7 @@ export function toCorsairMcpConfig(config: CorsairConfig): {
  * import { createVercelAiClient } from '@corsair-dev/app';
  * import { generateText } from 'ai';
  * import { anthropic } from '@ai-sdk/anthropic';
+ * import { stepCountIs } from 'ai';
  *
  * const corsair = await createVercelAiClient({
  *   url: process.env.CORSAIR_MCP_URL!,
@@ -47,7 +48,7 @@ export function toCorsairMcpConfig(config: CorsairConfig): {
  * const { text } = await generateText({
  *   model: anthropic('claude-opus-4-5'),
  *   tools: await corsair.tools(),
- *   maxSteps: 5,
+ *   stopWhen: stepCountIs(5),
  *   prompt: 'What are my open GitHub issues?',
  * });
  *
