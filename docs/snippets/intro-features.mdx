@@ -1,0 +1,186 @@
+export const IntroFeatures = () => {
+  const features = [
+    {
+      title: 'Permissioning',
+      description: 'Gate risky actions before they run. Require approval for destructive ops, or lock down endpoints per plugin.',
+      href: '/concepts/permissions',
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      ),
+    },
+    {
+      title: 'MCP adapters',
+      description: 'Drop Corsair into Claude, Cursor, Vercel AI, OpenAI Agents, Mastra, and more — one layer, every framework.',
+      href: '/mcp-adapters/mcp-adapters',
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22v-5" />
+          <path d="M9 8V2" />
+          <path d="M15 8V2" />
+          <path d="M6 12H2a10 10 0 0 0 10 10 10 10 0 0 0 10-10h-4" />
+          <path d="M6 12a6 6 0 0 1 6-6 6 6 0 0 1 6 6" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Built-in database',
+      description: 'Every API response and webhook event lands in your database. Query, sync, and build on your own data.',
+      href: '/concepts/database',
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <ellipse cx="12" cy="5" rx="9" ry="3" />
+          <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+          <path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Webhook triggers',
+      description: 'Register handlers in seconds. Corsair verifies signatures, normalizes payloads, and routes events to your logic.',
+      href: '/concepts/webhooks',
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Multi-tenancy',
+      description: 'Scope every credential, token, and record to a tenant. No cross-contamination between your users.',
+      href: '/concepts/multi-tenancy',
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Extensible plugins',
+      description: 'Hundreds of integrations out of the box, plus a plugin API to add your own. Never locked into a fixed catalog.',
+      href: '/concepts/integrations',
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2 2 7l10 5 10-5-10-5z" />
+          <path d="m2 17 10 5 10-5" />
+          <path d="m2 12 10 5 10-5" />
+        </svg>
+      ),
+    },
+  ];
+
+  const primary = '#2d7387';
+  const primaryLight = '#95cbcf';
+
+  return (
+    <div
+      className="not-prose"
+      style={{
+        margin: '1.75rem 0',
+        borderRadius: '0.75rem',
+        border: '1px solid var(--border, rgba(255,255,255,0.1))',
+        background:
+          'linear-gradient(135deg, rgba(45, 115, 135, 0.12) 0%, rgba(149, 203, 207, 0.04) 100%)',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.875rem 1.25rem',
+          borderBottom: '1px solid var(--border, rgba(255,255,255,0.08))',
+          fontSize: '0.6875rem',
+          fontWeight: 600,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: primaryLight,
+        }}
+      >
+        <span
+          style={{
+            display: 'inline-block',
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            backgroundColor: primary,
+          }}
+        />
+        Everything you need to ship integrations
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+        }}
+      >
+        {features.map((feature, index) => (
+          <a
+            key={feature.title}
+            href={feature.href}
+            style={{
+              display: 'flex',
+              gap: '0.875rem',
+              padding: '1.125rem 1.25rem',
+              textDecoration: 'none',
+              color: 'inherit',
+              borderTop: index >= 2 ? '1px solid var(--border, rgba(255,255,255,0.06))' : 'none',
+              borderRight: index % 2 === 0 ? '1px solid var(--border, rgba(255,255,255,0.06))' : 'none',
+              transition: 'background-color 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(45, 115, 135, 0.14)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            <div
+              style={{
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '2.25rem',
+                height: '2.25rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(45, 115, 135, 0.2)',
+                color: primaryLight,
+              }}
+            >
+              {feature.icon}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontSize: '0.9375rem',
+                  fontWeight: 600,
+                  color: 'var(--foreground, rgba(255,255,255,0.92))',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                {feature.title}
+              </div>
+              <div
+                style={{
+                  fontSize: '0.8125rem',
+                  lineHeight: 1.5,
+                  color: 'var(--muted-foreground, rgba(255,255,255,0.55))',
+                }}
+              >
+                {feature.description}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+};
