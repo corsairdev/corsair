@@ -1,0 +1,169 @@
+---
+title: Database
+description: "Vercel local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Vercel plugin syncs data locally. Use `corsair.vercel.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Deployments
+
+Path: `vercel.db.deployments.search`
+
+```ts
+const rows = await corsair.vercel.db.deployments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+| --- | --- | --- |
+| `uid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `readyState` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `target` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+---
+
+## Projects
+
+Path: `vercel.db.projects.search`
+
+```ts
+const rows = await corsair.vercel.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+| --- | --- | --- |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `framework` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+---
+
+## Envs
+
+Path: `vercel.db.envs.search`
+
+```ts
+const rows = await corsair.vercel.db.envs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+| --- | --- | --- |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+---
+
+## Domains
+
+Path: `vercel.db.domains.search`
+
+```ts
+const rows = await corsair.vercel.db.domains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+| --- | --- | --- |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `boughtAt` | `number` | equals, gt, gte, lt, lte, in |
+| `expiresAt` | `number` | equals, gt, gte, lt, lte, in |
+| `transferredAt` | `number` | equals, gt, gte, lt, lte, in |
+| `verified` | `boolean` | equals |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+---
+
+## Aliases
+
+Path: `vercel.db.aliases.search`
+
+```ts
+const rows = await corsair.vercel.db.aliases.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+| --- | --- | --- |
+| `uid` | `string` | equals, contains, startsWith, endsWith, in |
+| `alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `deploymentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `redirect` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+---
+
+## Teams
+
+Path: `vercel.db.teams.search`
+
+```ts
+const rows = await corsair.vercel.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+| --- | --- | --- |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `avatar` | `string` | equals, contains, startsWith, endsWith, in |
