@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Boards, Cards, Checklists, Labels, Lists, Members } from './endpoints';
 import type {
 	TrelloEndpointInputs,
@@ -446,16 +447,12 @@ export function trello<const T extends TrelloPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:trello:api_key]: Trello API Key is missing',
-					);
+					throw new AuthMissingError('trello', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:trello:${authType}]: Trello key is missing`,
-			);
+			throw new AuthMissingError('trello', 'api_key');
 		},
 	} satisfies InternalTrelloPlugin;
 }

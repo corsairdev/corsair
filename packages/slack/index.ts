@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
@@ -766,9 +767,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:slack:api_key]: Slack API Key is missing',
-					);
+					throw new AuthMissingError('slack', 'api_key');
 				}
 
 				return res;
@@ -776,15 +775,13 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:slack:oauth_2]: Slack access token is missing',
-					);
+					throw new AuthMissingError('slack', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:slack:${authType}]: Slack key is missing`);
+			throw new AuthMissingError('slack', 'oauth_2');
 		},
 	} satisfies InternalSlackPlugin;
 }

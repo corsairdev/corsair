@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidSharepointAccessToken } from './client';
 import {
 	ContentTypes,
@@ -1383,9 +1384,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:sharepoint:refresh_token]: SharePoint refresh token is missing',
-					);
+					throw new AuthMissingError('sharepoint', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -1448,9 +1447,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:sharepoint:${authType}]: SharePoint key is missing`,
-			);
+			throw new AuthMissingError('sharepoint', 'oauth_2');
 		},
 	} satisfies InternalSharepointPlugin;
 }

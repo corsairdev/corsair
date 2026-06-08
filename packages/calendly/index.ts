@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	ActivityLog,
 	EventTypes,
@@ -780,16 +781,12 @@ export function calendly<const T extends CalendlyPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:calendly:api_key]: Calendly API Key is missing',
-					);
+					throw new AuthMissingError('calendly', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:calendly:${authType}]: Calendly key is missing`,
-			);
+			throw new AuthMissingError('calendly', 'api_key');
 		},
 	} satisfies InternalCalendlyPlugin;
 }

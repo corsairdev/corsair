@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Media,
 	Trends,
@@ -449,9 +450,7 @@ export function xquik<const T extends XquikPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:xquik:${ctx.authType}]: Xquik key is missing`,
-			);
+			throw new AuthMissingError('xquik', 'api_key');
 		},
 		options,
 		pluginWebhookMatcher: hasXquikSignature,

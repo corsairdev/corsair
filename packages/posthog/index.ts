@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Events } from './endpoints';
 import type {
 	PostHogEndpointInputs,
@@ -231,17 +232,13 @@ export function posthog<const T extends PostHogPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:posthog:api_key]: PostHog API Key is missing',
-					);
+					throw new AuthMissingError('posthog', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:posthog:${authType}]: PostHog key is missing`,
-			);
+			throw new AuthMissingError('posthog', 'api_key');
 		},
 	} satisfies InternalPostHogPlugin;
 }

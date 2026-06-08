@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Answer,
 	Contents,
@@ -372,13 +373,13 @@ export function exa<const T extends ExaPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error('[auth-missing:exa:api_key]: Exa API Key is missing');
+					throw new AuthMissingError('exa', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:exa:${authType}]: Exa key is missing`);
+			throw new AuthMissingError('exa', 'api_key');
 		},
 	} satisfies InternalExaPlugin;
 }

@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Activities,
 	Athletes,
@@ -433,17 +434,13 @@ export function strava<const T extends StravaPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:strava:oauth_2]: Strava access token is missing',
-					);
+					throw new AuthMissingError('strava', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:strava:${authType}]: Strava key is missing`,
-			);
+			throw new AuthMissingError('strava', 'oauth_2');
 		},
 	} satisfies InternalStravaPlugin;
 }

@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { IncidentNotes, Incidents, LogEntries, Users } from './endpoints';
 import type {
 	PagerdutyEndpointInputs,
@@ -334,17 +335,13 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:pagerduty:api_key]: PagerDuty API Key is missing',
-					);
+					throw new AuthMissingError('pagerduty', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:pagerduty:${authType}]: PagerDuty key is missing`,
-			);
+			throw new AuthMissingError('pagerduty', 'api_key');
 		},
 	} satisfies InternalPagerdutyPlugin;
 }

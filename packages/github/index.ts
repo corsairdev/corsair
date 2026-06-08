@@ -11,6 +11,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
 	CommentsEndpoints,
@@ -1704,9 +1705,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						throw new Error(
-							'[auth-missing:github:api_key]: GitHub API Key is missing',
-						);
+						throw new AuthMissingError('github', 'api_key');
 					}
 
 					return res;
@@ -1714,18 +1713,14 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						throw new Error(
-							'[auth-missing:github:oauth_2]: GitHub access token is missing',
-						);
+						throw new AuthMissingError('github', 'oauth_2');
 					}
 
 					return res;
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:github:${authType}]: GitHub key is missing`,
-			);
+			throw new AuthMissingError('github', 'oauth_2');
 		},
 	} satisfies InternalGithubPlugin;
 }

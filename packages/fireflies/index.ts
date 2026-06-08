@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type {
 	FirefliesEndpointInputs,
 	FirefliesEndpointOutputs,
@@ -427,17 +428,13 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:fireflies:api_key]: Fireflies API Key is missing',
-					);
+					throw new AuthMissingError('fireflies', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:fireflies:${authType}]: Fireflies key is missing`,
-			);
+			throw new AuthMissingError('fireflies', 'api_key');
 		},
 	} satisfies InternalFirefliesPlugin;
 }

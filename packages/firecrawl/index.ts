@@ -9,6 +9,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	AgentEndpoints,
 	CrawlEndpoints,
@@ -353,9 +354,7 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:firecrawl:${authType}]: Firecrawl key is missing`,
-			);
+			throw new AuthMissingError('firecrawl', 'api_key');
 		},
 	} satisfies InternalFirecrawlPlugin;
 }

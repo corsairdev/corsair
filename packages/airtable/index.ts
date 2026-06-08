@@ -12,6 +12,7 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Bases, Records, Webhooks } from './endpoints';
 import type {
 	AirtableEndpointInputs,
@@ -266,17 +267,13 @@ export function airtable<const T extends AirtablePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:airtable:api_key]: Airtable API Key is missing',
-					);
+					throw new AuthMissingError('airtable', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:airtable:${authType}]: Airtable key is missing`,
-			);
+			throw new AuthMissingError('airtable', 'api_key');
 		},
 	} satisfies InternalAirtablePlugin;
 }

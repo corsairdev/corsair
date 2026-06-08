@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	TweetsEndpoints,
 	TwitterEndpointInputSchemas,
@@ -178,16 +179,12 @@ export function twitter<const T extends TwitterPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:twitter:oauth_2]: Twitter access token is missing',
-					);
+					throw new AuthMissingError('twitter', 'oauth_2');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:twitter:${authType}]: Twitter key is missing`,
-			);
+			throw new AuthMissingError('twitter', 'oauth_2');
 		},
 	} satisfies InternalTwitterPlugin;
 }

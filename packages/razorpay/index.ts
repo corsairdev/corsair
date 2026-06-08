@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Customers,
 	Orders,
@@ -517,9 +518,7 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:razorpay:${authType}]: Razorpay key is missing`,
-			);
+			throw new AuthMissingError('razorpay', 'api_key');
 		},
 	} satisfies InternalRazorpayPlugin;
 }

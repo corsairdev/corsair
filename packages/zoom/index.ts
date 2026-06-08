@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	ArchiveFiles,
 	Devices,
@@ -445,15 +446,13 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:zoom:oauth_2]: Zoom access token is missing',
-					);
+					throw new AuthMissingError('zoom', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:zoom:${authType}]: Zoom key is missing`);
+			throw new AuthMissingError('zoom', 'oauth_2');
 		},
 	} satisfies InternalZoomPlugin;
 }

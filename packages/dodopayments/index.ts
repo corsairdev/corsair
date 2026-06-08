@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Customers, Payments, Refunds, Subscriptions } from './endpoints';
 import type {
 	CustomersCreateInput,
@@ -377,9 +378,7 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:dodopayments:${authType}]: Dodo Payments key is missing`,
-			);
+			throw new AuthMissingError('dodopayments', 'api_key');
 		},
 	} satisfies InternalDodoPaymentsPlugin;
 }

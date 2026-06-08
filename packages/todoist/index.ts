@@ -13,6 +13,7 @@ import type {
 	PluginEndpointMeta,
 	PluginPermissionsConfig,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Comments,
 	Labels,
@@ -493,17 +494,13 @@ export function todoist<const T extends TodoistPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:todoist:api_key]: Todoist API Key is missing',
-					);
+					throw new AuthMissingError('todoist', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:todoist:${authType}]: Todoist key is missing`,
-			);
+			throw new AuthMissingError('todoist', 'api_key');
 		},
 	} satisfies InternalTodoistPlugin;
 }

@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Profile, Summary } from './endpoints';
 import type {
 	OuraEndpointInputs,
@@ -219,14 +220,12 @@ export function oura<const T extends OuraPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:oura:api_key]: Oura API Key is missing',
-					);
+					throw new AuthMissingError('oura', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(`[auth-missing:oura:${authType}]: Oura key is missing`);
+			throw new AuthMissingError('oura', 'api_key');
 		},
 	} satisfies InternalOuraPlugin;
 }

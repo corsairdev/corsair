@@ -276,21 +276,14 @@ export function bindEndpointsRecursively({
 					if (
 						connectConfig?.oauthConfig &&
 						connectConfig.kek &&
-						err instanceof AuthMissingError
+						err instanceof AuthMissingError &&
+							err.authType === 'oauth_2'
 					) {
 						throw buildConnectError(pluginId, connectConfig, tenantId);
 					}
 					throw err;
 				}
 
-				if (
-					!key &&
-					keyBuilder &&
-					connectConfig?.oauthConfig &&
-					connectConfig.kek
-				) {
-					throw buildConnectError(pluginId, connectConfig, tenantId);
-				}
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, args);

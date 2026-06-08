@@ -14,6 +14,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	getValidGitlabAccessToken,
 	gitlabOAuthTokenUrl,
@@ -834,9 +835,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:gitlab:refresh_token]: GitLab refresh token is missing',
-					);
+					throw new AuthMissingError('gitlab', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -908,9 +907,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:gitlab:${authType}]: GitLab key is missing`,
-			);
+			throw new AuthMissingError('gitlab', 'oauth_2');
 		},
 	} satisfies InternalGitlabPlugin;
 }

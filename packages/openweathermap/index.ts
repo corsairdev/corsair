@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { History, Summary, Weather } from './endpoints';
 import type {
 	OpenWeatherMapEndpointInputs,
@@ -227,9 +228,7 @@ export function openweathermap<const T extends OpenWeatherMapPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:openweathermap:${authType}]: OpenWeatherMap key is missing`,
-			);
+			throw new AuthMissingError('openweathermap', 'api_key');
 		},
 	} satisfies InternalOpenWeatherMapPlugin;
 }

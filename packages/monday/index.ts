@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Boards,
 	Columns,
@@ -567,16 +568,12 @@ export function monday<const T extends MondayPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:monday:api_key]: Monday API Key is missing',
-					);
+					throw new AuthMissingError('monday', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:monday:${authType}]: Monday key is missing`,
-			);
+			throw new AuthMissingError('monday', 'api_key');
 		},
 	} satisfies InternalMondayPlugin;
 }

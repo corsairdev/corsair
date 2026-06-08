@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Dashboards,
 	Health,
@@ -280,16 +281,12 @@ export function grafana<const T extends GrafanaPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:grafana:api_key]: Grafana API Key is missing',
-					);
+					throw new AuthMissingError('grafana', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:grafana:${authType}]: Grafana key is missing`,
-			);
+			throw new AuthMissingError('grafana', 'api_key');
 		},
 	} satisfies InternalGrafanaPlugin;
 }
