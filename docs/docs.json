@@ -96,6 +96,7 @@
             "pages": [
               "concepts/integrations",
               "concepts/auth",
+              "concepts/permissions",
               "concepts/database",
               "concepts/webhooks",
               "concepts/hooks",
