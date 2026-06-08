@@ -18,7 +18,7 @@ export const getDomains: VercelEndpoints['domainsGetDomains'] = async (
 
 	if (result && result.domains && ctx.db.domains) {
 		for (const domain of result.domains) {
-			await ctx.db.domains.upsertByEntityId(domain.id, {
+			await ctx.db.domains.upsertByEntityId(domain.name, {
 				...domain,
 			});
 		}

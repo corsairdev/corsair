@@ -47,10 +47,12 @@ export const createEnvVariable: VercelEndpoints['envsCreateEnvVariable'] =
 			});
 		}
 
+		// Exclude value from the event log to avoid persisting credentials
+		const { value: _value, ...loggableInput } = input;
 		await logEventFromContext(
 			ctx,
 			'vercel.envs.createEnvVariable',
-			{ ...input },
+			loggableInput,
 			'completed',
 		);
 		return result;
