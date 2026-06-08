@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/airtable",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Airtable plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",

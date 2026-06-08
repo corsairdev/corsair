@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/intercom",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Intercom plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
