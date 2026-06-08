@@ -1,7 +1,10 @@
+'use client';
+
 import { DesktopPreview } from '../app-preview/desktop-preview';
 import { YcBackedLink } from '../yc-backed-link';
 import { HeroAppCta } from './hero-app-cta';
 import { HeroBackground } from './hero-background';
+import { Star } from '@phosphor-icons/react';
 
 export function LandingHero() {
 	return (
@@ -40,9 +43,16 @@ export function LandingHero() {
 						rel="noopener noreferrer"
 						className="group inline-flex items-center justify-center gap-2 rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-6 py-3 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-all duration-300 ease-out hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 active:translate-y-0"
 					>
-						<span className="transition-transform duration-300 ease-out group-hover:scale-110">
-							⭐
-						</span>
+						<div className="relative flex size-4 items-center justify-center transition-transform duration-300 ease-out group-hover:scale-110">
+							<Star
+								weight="fill"
+								className="absolute size-4 text-[#1c1c1c] transition-opacity duration-300 ease-out group-hover:opacity-0"
+							/>
+							<Star
+								weight="regular"
+								className="absolute size-4 text-[#1c1c1c] opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+							/>
+						</div>
 						Star on GitHub
 					</a>
 					<HeroAppCta />
