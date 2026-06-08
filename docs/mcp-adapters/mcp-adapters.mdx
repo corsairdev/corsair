@@ -10,7 +10,7 @@ Corsair provides first-class adapters for the most popular AI SDKs and agent run
 | Adapter | Use case |
 |---|---|
 | [Anthropic SDK](/mcp-adapters/anthropic-sdk) | Native tool use with Claude models |
-| [Claude SDK](/mcp-adapters/claude-sdk) | Managed tool loop via the Claude SDK |
+| [Claude Agent SDK](/mcp-adapters/claude-sdk) | In-process MCP with the Claude Agent SDK |
 | [OpenAI Agents](/mcp-adapters/openai-agents) | OpenAI Agents SDK tool integration |
 | [OpenAI](/mcp-adapters/openai) | OpenAI function calling |
 | [Vercel AI SDK](/mcp-adapters/vercel-ai) | Tools for `useChat` and `streamText` |
@@ -19,3 +19,29 @@ Corsair provides first-class adapters for the most popular AI SDKs and agent run
 ## Coding Agents
 
 For coding agents that use the MCP stdio protocol, see the [Coding Agents](/mcp-adapters/claude-code) section.
+
+## Tools
+
+Every adapter exposes the same four tools automatically:
+
+| Tool | What it does |
+|---|---|
+| `corsair_setup` | Check auth status and get credential instructions |
+| `list_operations` | Discover every available API endpoint |
+| `get_schema` | Inspect parameters for a specific endpoint |
+| `run_script` | Execute a JS snippet with `corsair` in scope |
+
+Your agent calls `corsair_setup` first, then `list_operations` to discover what's available, then `run_script` to execute. No code changes needed as you add plugins.
+
+## How the agent uses Corsair
+
+Once connected, your agent follows this pattern automatically:
+
+```
+1. corsair_setup          → check auth, get instructions for missing credentials
+2. list_operations        → discover available endpoints (github.repositories.list, slack.messages.post, ...)
+3. get_schema             → inspect parameters for a specific endpoint
+4. run_script             → execute: const repos = await corsair.github.api.repositories.list({ type: 'owner' })
+```
+
+No hard-coding required. As you add plugins, the agent discovers the new endpoints automatically.

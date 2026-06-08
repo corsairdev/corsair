@@ -35,7 +35,7 @@ app.listen(3000, () => console.log('MCP server running on :3000'));
 Connect from your Vercel AI application using `createVercelAiMcpClient`.
 
 ```ts agent.ts
-import { generateText } from 'ai';
+import { generateText, stepCountIs } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { createVercelAiMcpClient } from '@corsair-dev/mcp';
 
@@ -49,7 +49,7 @@ const { text } = await generateText({
     model: anthropic('claude-sonnet-4-6'),
     tools,
     prompt: 'Setup corsair, then list all Slack channels.',
-    maxSteps: 10,
+    stopWhen: stepCountIs(10),
 });
 
 console.log(text);
@@ -57,3 +57,20 @@ await client.close();
 ```
 
 `createVercelAiMcpClient` returns a client that speaks the MCP protocol over HTTP. Call `client.tools()` to retrieve the tool definitions, then pass them to any Vercel AI `generateText` or `streamText` call.
+
+## AI SDK 6
+
+In AI SDK 6, `maxSteps` was replaced by `stopWhen`. Without it, tool-calling agents may never complete or return output.
+
+Use `stopWhen: stepCountIs(10)` to cap the number of tool-call steps, or `stopWhen: isLoopFinished()` to run until the model finishes naturally:
+
+```ts
+import { generateText, isLoopFinished } from 'ai';
+
+const { text } = await generateText({
+  model: anthropic('claude-sonnet-4-6'),
+  tools,
+  prompt: 'List my GitHub repos with the most open issues.',
+  stopWhen: isLoopFinished(),
+});
+```
