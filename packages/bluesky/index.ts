@@ -10,6 +10,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	BlueskyEndpointInputSchemas,
 	BlueskyEndpointOutputSchemas,
@@ -205,16 +206,12 @@ export function bluesky<const T extends BlueskyPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:bluesky:api_key]: Bluesky app password is missing',
-					);
+					throw new AuthMissingError('bluesky', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:bluesky:${authType}]: Bluesky app password is missing`,
-			);
+			throw new AuthMissingError('bluesky', 'api_key');
 		},
 	} satisfies InternalBlueskyPlugin;
 }

@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Channels,
 	Guilds,
@@ -464,9 +465,7 @@ export function discord<const T extends DiscordPluginOptions>(
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:discord:${authType}]: Discord key is missing`,
-			);
+			throw new AuthMissingError('discord', 'api_key');
 		},
 	} satisfies InternalDiscordPlugin;
 }

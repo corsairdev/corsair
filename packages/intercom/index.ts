@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Admins,
 	Articles,
@@ -770,16 +771,12 @@ export function intercom<const T extends IntercomPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:intercom:api_key]: Intercom API Key is missing',
-					);
+					throw new AuthMissingError('intercom', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:intercom:${authType}]: Intercom key is missing`,
-			);
+			throw new AuthMissingError('intercom', 'api_key');
 		},
 	} satisfies InternalIntercomPlugin;
 }

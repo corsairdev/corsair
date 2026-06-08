@@ -12,6 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type { GmailEndpointInputs, GmailEndpointOutputs } from './endpoints';
 import {
@@ -440,9 +441,7 @@ export function gmail<const T extends GmailPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:gmail:refresh_token]: Gmail refresh token is missing',
-					);
+					throw new AuthMissingError('gmail', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -498,7 +497,7 @@ export function gmail<const T extends GmailPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(`[auth-missing:gmail:${authType}]: Gmail key is missing`);
+			throw new AuthMissingError('gmail', 'oauth_2');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;

@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Comments, Tickets, Users } from './endpoints';
 import type {
 	ZendeskEndpointInputs,
@@ -292,16 +293,12 @@ export function zendesk<const T extends ZendeskPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:zendesk:api_key]: Zendesk API Key is missing',
-					);
+					throw new AuthMissingError('zendesk', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:zendesk:${authType}]: Zendesk key is missing`,
-			);
+			throw new AuthMissingError('zendesk', 'api_key');
 		},
 	} satisfies InternalZendeskPlugin;
 }
