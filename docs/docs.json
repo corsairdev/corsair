@@ -699,6 +699,16 @@
                 ]
               },
               {
+                "group": "Zoho Mail",
+                "pages": [
+                  "plugins/zohomail/overview",
+                  "plugins/zohomail/get-credentials",
+                  "plugins/zohomail/api",
+                  "plugins/zohomail/database",
+                  "plugins/zohomail/webhooks"
+                ]
+              },
+              {
                 "group": "Zoom",
                 "pages": [
                   "plugins/zoom/overview",

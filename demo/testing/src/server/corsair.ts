@@ -10,8 +10,18 @@ import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { vapi } from '@corsair-dev/vapi';
+import { zohomail } from '@corsair-dev/zohomail';
 import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
+
+const zohoRegion = process.env.ZOHO_REGION as
+	| 'us'
+	| 'eu'
+	| 'in'
+	| 'au'
+	| 'jp'
+	| 'cn'
+	| undefined;
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -34,6 +44,10 @@ export const corsair = createCorsair({
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		}),
+		zohomail({
+			region: zohoRegion,
+			webhookSecret: process.env.ZOHO_WEBHOOK_SECRET,
 		}),
 	],
 });
