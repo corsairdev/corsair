@@ -1,110 +1,205 @@
 ---
 title: Database
-description: Four tables, unlimited integrations, always fresh data.
+description: Four tables, always-fresh integration data, tenant-scoped by default.
 ---
 
-No matter how many integrations you add, Corsair uses only four tables. This keeps your database clean and your queries fast.
+import { DatabaseMigration } from '/snippets/database-migration.mdx';
 
-## Core Tables
+Every API call and webhook that flows through Corsair is stored in your database automatically. When something changes in Slack, GitHub, or Linear, Corsair updates the same row — so your UI can read from `*.db.*` instead of hitting third-party APIs on every page load. Third-party data becomes an extension of your own DB, always fresh.
 
-### `corsair_providers`
+---
 
-All integrations you have enabled.
+## Get started
 
-```sql
--- Example row
-id: "slack"
-config: { ... }
-```
+Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/getting-started/quick-start) for a full setup example.
 
-### `corsair_connections`
+<DatabaseMigration />
 
-The tenant connections for each integration. If multi-tenancy is off, this is 1:1 with providers.
+---
 
-```sql
--- Example rows
-id: 1, tenant_id: "tenant_abc", provider_id: "slack", config: { botToken: "..." }
-id: 2, tenant_id: "tenant_xyz", provider_id: "slack", config: { botToken: "..." }
-```
+## Example: Slack
 
-### `corsair_resources`
+All data is scoped to tenants — `withTenant()` ensures you only read and write that tenant's rows, with no cross-contamination.
 
-Every piece of data from your integrations, cleaned up and constantly updated.
+```ts
+const tenant = corsair.withTenant('user_abc123');
 
-```sql
--- Example row
-id: "uuid", tenant_id: "tenant_abc", resource: "slack", service: "messages"
-resource_id: "msg_123", data: { text: "Hello!", channel: "C01234567" }
-```
-
-When you send a Slack message, Corsair stores it here. When a webhook arrives saying the message was updated, Corsair updates this row. Your data is never stale.
-
-### `corsair_events`
-
-A log of all events for replay and auditing.
-
-```sql
--- Example rows
-id: 1, resource_id: "msg_123", event_type: "created", ...
-id: 2, resource_id: "msg_123", event_type: "updated", ...
-```
-
-Want to see a message's history? Query this table to replay every change.
-
-## Querying Data
-
-Use the Corsair ORM to query data with full type safety.
-
-```ts example.ts
-// Find a specific resource
-const message = await corsair.slack.db.messages.findByResourceId("msg_123");
-
-// List all messages for this tenant
-const messages = await corsair.slack.db.messages.list({ limit: 50 });
-
-// Search by data fields (JSONB)
-const results = await corsair.slack.db.messages.search({
-    data: { channel: "C0123456789" },
-    limit: 20,
+// 1. Send a message — Corsair stores it in corsair_entities
+const posted = await tenant.slack.api.messages.post({
+    channel: 'C01234567',
+    text: 'Hello from Corsair!',
 });
+const messageId = posted.ts!;
 
-// Search with contains (LIKE)
-const partialMatch = await corsair.slack.db.channels.search({
-    data: { name: { contains: "general" } },
+// 2. Someone edits the message in Slack — a webhook updates the same row
+
+// 3. Your UI reads from the local DB — always up to date
+const [message] = await tenant.slack.db.messages.search({
+    entity_id: messageId,
 });
+console.log(message?.data.text);
 ```
 
-## Foreign Keys
+Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, and detail pages. Plugin-specific filters are in each plugin's database reference (e.g. [Slack](/plugins/slack/database)).
 
-You can create foreign keys from your own tables to `corsair_resources`. Since Corsair keeps this data fresh through API calls and webhooks, your references always point to up-to-date data.
+---
+
+## Core tables
+
+Four tables for every integration — Slack, GitHub, Linear, and the rest all share the same schema.
+
+| Table | Purpose |
+|-------|---------|
+| `corsair_integrations` | One row per enabled plugin (`slack`, `github`, …) |
+| `corsair_accounts` | Per-tenant connection + encrypted credentials (`tenant_id`, `integration_id`) |
+| `corsair_entities` | Synced resources — messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
+| `corsair_events` | Audit log of API calls and webhooks |
 
 ```sql
--- Your table
-CREATE TABLE my_tickets (
+-- corsair_entities example (a Slack message)
+account_id: "acc_1"
+entity_id: "1234567890.123456"
+entity_type: "messages"
+data: { text: "Hello!", channel: "C01234567", ts: "1234567890.123456" }
+```
+
+Schema types: [`packages/corsair/db/index.ts`](https://github.com/corsair-dev/corsair/blob/main/packages/corsair/db/index.ts).
+
+---
+
+## Keeping data fresh
+
+Corsair doesn't snapshot data once and forget it. Every write path keeps the same row current:
+
+1. **API calls** — when you call `tenant.slack.api.messages.post`, Corsair sends the request and upserts the response into `corsair_entities`.
+2. **Webhooks** — when Slack notifies you that a message changed, Corsair finds the row by `entity_id` and updates it in place.
+3. **Out-of-order events** — if an update arrives before you've seen the create, Corsair fetches from the API and backfills the row (see [Webhooks](/concepts/webhooks)).
+
+You don't build a sync layer or poll for changes. Query `corsair_entities` (or `*.db.*`) and trust that Corsair is maintaining it.
+
+---
+
+## How to use it
+
+### Query through Corsair
+
+Use the typed ORM on each plugin — no raw SQL required for most reads:
+
+```ts
+const tenant = corsair.withTenant('user_abc123');
+
+await tenant.slack.db.messages.list({ limit: 50 });
+await tenant.slack.db.messages.findByEntityId('1234567890.123456');
+await tenant.github.db.repositories.search({ data: { name: { contains: 'api' } } });
+```
+
+### Join to your own tables
+
+Reference `corsair_entities.id` from your schema and treat third-party data like first-class rows in your app:
+
+```sql
+CREATE TABLE support_tickets (
     id UUID PRIMARY KEY,
-    slack_message_id UUID REFERENCES corsair_resources(id),
-    ...
+    title TEXT NOT NULL,
+    slack_message_id TEXT NOT NULL REFERENCES corsair_entities(id)
 );
 ```
 
-## Database Configuration
+```ts
+// Create a ticket linked to a Corsair entity
+const posted = await tenant.slack.api.messages.post({ channel, text });
+const [entity] = await tenant.slack.db.messages.search({ entity_id: posted.ts! });
 
-Corsair connects directly to PostgreSQL. Pass either a `pg` Pool or a Kysely instance.
+await db.insert(supportTickets).values({
+    title: 'Customer issue',
+    slackMessageId: entity!.id, // corsair_entities.id
+});
 
-```ts corsair.ts
-import { Pool } from "pg";
+// Join your table to live Slack data
+const rows = await db
+    .select()
+    .from(supportTickets)
+    .innerJoin(corsairEntities, eq(supportTickets.slackMessageId, corsairEntities.id));
+// rows[].corsair_entities.data.text stays fresh via webhooks
+```
+
+Because Corsair updates `corsair_entities` on every API call and webhook, foreign keys to that table always point at current data — not a stale cache you wrote once.
+
+### When to use API vs DB
+
+| Use | When |
+|-----|------|
+| `*.api.*` | Writes, deletes, or you need the latest value right now from the source |
+| `*.db.*` | UI lists, search, detail pages — fast reads, no rate limits |
+
+---
+
+## SQLite, Postgres, and ORMs
+
+Corsair runs on **your** database. Pass a connection to `createCorsair` — it works alongside whatever ORM you already use for your own tables.
+
+<Tabs>
+<Tab title="SQLite">
+
+Best for local dev and small apps. Pass a `better-sqlite3` instance:
+
+```ts
+import Database from 'better-sqlite3';
 
 export const corsair = createCorsair({
-    database: new Pool({ connectionString: process.env.DATABASE_URL }),
-    plugins: [...],
+    database: new Database('corsair.db'),
+    plugins: [slack()],
+    kek: process.env.CORSAIR_KEK!,
 });
 ```
 
-## No Table Bloat
+</Tab>
+<Tab title="PostgreSQL">
 
-Adding more integrations doesn't add more tables. Slack, Linear, GitHub — they all use the same four tables. Your schema stays clean no matter how many integrations you add.
+Production default. Pass a `pg` Pool:
 
-## Next Steps
+```ts
+import { Pool } from 'pg';
 
-- PostgreSQL schema, indexes, and performance tips
+export const corsair = createCorsair({
+    database: new Pool({ connectionString: process.env.DATABASE_URL }),
+    plugins: [slack()],
+    kek: process.env.CORSAIR_KEK!,
+});
+```
 
+</Tab>
+<Tab title="Drizzle / Prisma">
+
+Define the four Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair — not the ORM client:
+
+```ts
+// Drizzle — pass the pg Pool, use Drizzle for your own tables
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+export const corsair = createCorsair({ database: pool, ... });
+export const db = drizzle(pool); // your app tables
+```
+
+Corsair also accepts **postgres.js** and a typed **Kysely** instance if you want to share a single query builder.
+
+</Tab>
+</Tabs>
+
+Supported connection types: `pg` Pool, `better-sqlite3`, postgres.js `Sql`, and Kysely. Use the same database for Corsair tables and your app tables — one migration, one connection string.
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Multi-Tenancy" href="/concepts/multi-tenancy">
+    Scope credentials and data per user with `withTenant()`.
+  </Card>
+  <Card title="Webhooks" href="/concepts/webhooks">
+    How incoming events update your rows automatically.
+  </Card>
+  <Card title="API" href="/concepts/api">
+    Call third-party APIs with full type safety.
+  </Card>
+</CardGroup>

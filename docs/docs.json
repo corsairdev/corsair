@@ -19,6 +19,75 @@
   "navigation": {
     "tabs": [
       {
+        "tab": "SDK",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "getting-started/introduction",
+              "getting-started/quick-start",
+              "getting-started/installation"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/integrations",
+              "concepts/auth",
+              "concepts/permissions",
+              "concepts/database",
+              "concepts/webhooks",
+              "concepts/hooks",
+              "concepts/multi-tenancy",
+              "concepts/api",
+              "concepts/error-handling",
+              "concepts/typescript"
+            ]
+          },
+          {
+            "group": "MCP Adapters",
+            "pages": [
+              "mcp-adapters/mcp-adapters",
+              "mcp-adapters/anthropic-sdk",
+              "mcp-adapters/claude-sdk",
+              "mcp-adapters/openai-agents",
+              "mcp-adapters/vercel-ai",
+              "mcp-adapters/mastra",
+              "mcp-adapters/openai"
+            ]
+          },
+          {
+            "group": "Coding Agents",
+            "pages": [
+              "mcp-adapters/coding-agents",
+              "mcp-adapters/claude-code",
+              "mcp-adapters/cursor"
+            ]
+          },
+          {
+            "group": "Studio",
+            "pages": ["studio/overview"]
+          },
+          {
+            "group": "Auth Types",
+            "pages": ["concepts/api-key", "concepts/oauth"]
+          },
+          {
+            "group": "Production",
+            "pages": ["production/oauth-process"]
+          },
+          {
+            "group": "Workflow Engines",
+            "pages": [
+              "guides/inngest",
+              "guides/temporal",
+              "guides/trigger-dev",
+              "guides/hatchet"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "App",
         "pages": [
           "app/home",
@@ -52,75 +121,6 @@
               "app/instances-and-plugins",
               "app/tenants-and-auth",
               "app/types-and-errors"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "SDK",
-        "groups": [
-          {
-            "group": "Get Started",
-            "pages": [
-              "getting-started/introduction",
-              "getting-started/quick-start",
-              "getting-started/installation"
-            ]
-          },
-          {
-            "group": "MCP Adapters",
-            "pages": [
-              "mcp-adapters/mcp-adapters",
-              "mcp-adapters/anthropic-sdk",
-              "mcp-adapters/claude-sdk",
-              "mcp-adapters/openai-agents",
-              "mcp-adapters/vercel-ai",
-              "mcp-adapters/mastra",
-              "mcp-adapters/openai"
-            ]
-          },
-          {
-            "group": "Coding Agents",
-            "pages": [
-              "mcp-adapters/coding-agents",
-              "mcp-adapters/claude-code",
-              "mcp-adapters/cursor"
-            ]
-          },
-          {
-            "group": "Studio",
-            "pages": ["studio/overview"]
-          },
-          {
-            "group": "Core Concepts",
-            "pages": [
-              "concepts/integrations",
-              "concepts/auth",
-              "concepts/permissions",
-              "concepts/database",
-              "concepts/webhooks",
-              "concepts/hooks",
-              "concepts/multi-tenancy",
-              "concepts/api",
-              "concepts/error-handling",
-              "concepts/typescript"
-            ]
-          },
-          {
-            "group": "Auth Types",
-            "pages": ["concepts/api-key", "concepts/oauth"]
-          },
-          {
-            "group": "Production",
-            "pages": ["production/oauth-process"]
-          },
-          {
-            "group": "Workflow Engines",
-            "pages": [
-              "guides/inngest",
-              "guides/temporal",
-              "guides/trigger-dev",
-              "guides/hatchet"
             ]
           }
         ]
@@ -725,7 +725,7 @@
     ]
   },
   "redirects": [
-    { "source": "/", "destination": "/app/home" },
+    { "source": "/", "destination": "/getting-started/introduction" },
     { "source": "/app/introduction", "destination": "/app/home" },
     { "source": "/hosted-sdk/overview", "destination": "/app/home" },
     { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },
