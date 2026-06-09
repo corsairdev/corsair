@@ -145,9 +145,9 @@ export type ZohoMailEndpointInputs = {
 
 const MessageSchema = z
 	.object({
-		messageId: z.string().optional(),
-		threadId: z.string().optional(),
-		folderId: z.string().optional(),
+		messageId: z.coerce.string().optional(),
+		threadId: z.coerce.string().optional(),
+		folderId: z.coerce.string().optional(),
 		subject: z.string().optional(),
 		summary: z.string().optional(),
 		fromAddress: z.string().optional(),
@@ -182,11 +182,11 @@ const MessageListResponseSchema = z.object({
 
 const FolderSchema = z
 	.object({
-		folderId: z.string().optional(),
+		folderId: z.coerce.string().optional(),
 		folderName: z.string().optional(),
 		path: z.string().optional(),
-		parentFolderId: z.string().optional(),
-		previousFolderId: z.string().optional(),
+		parentFolderId: z.coerce.string().optional(),
+		previousFolderId: z.coerce.string().optional(),
 		folderType: z.string().optional(),
 		isArchived: z.union([z.string(), z.boolean()]).optional(),
 		imapAccess: z.union([z.string(), z.boolean()]).optional(),

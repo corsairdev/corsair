@@ -31,14 +31,17 @@ import {
 import { errorHandlers } from './error-handlers';
 import type { ZohoMailCredentials } from './schema';
 import { ZohoMailSchema } from './schema';
-import { MessageWebhooks } from './webhooks';
+import { ChallengeWebhooks, MessageWebhooks } from './webhooks';
 import type {
+	ZohoMailChallengePayload,
 	ZohoMailWebhookEvent,
 	ZohoMailWebhookOutputs,
 } from './webhooks/types';
 import {
 	getZohoWebhookSecretFromRequest,
 	getZohoWebhookSignature,
+	ZohoMailChallengePayloadSchema,
+	ZohoMailChallengeResponseSchema,
 	ZohoMailWebhookEventSchema,
 } from './webhooks/types';
 
@@ -84,6 +87,7 @@ type ZohoMailWebhook<
 > = CorsairWebhook<ZohoMailContext, TEvent, ZohoMailWebhookOutputs[K]>;
 
 export type ZohoMailWebhooks = {
+	handshake: ZohoMailWebhook<'handshake', ZohoMailChallengePayload>;
 	messageReceived: ZohoMailWebhook<'messageReceived', ZohoMailWebhookEvent>;
 };
 
@@ -160,12 +164,21 @@ export const zohoMailEndpointSchemas = {
 } as const;
 
 export const zohoMailWebhooksNested = {
+	challenge: {
+		handshake: ChallengeWebhooks.handshake,
+	},
 	messages: {
 		received: MessageWebhooks.messageReceived,
 	},
 } as const;
 
 const zohoMailWebhookSchemas = {
+	'challenge.handshake': {
+		description:
+			'Zoho Mail initial webhook handshake via x-hook-secret header',
+		payload: ZohoMailChallengePayloadSchema,
+		response: ZohoMailChallengeResponseSchema,
+	},
 	'messages.received': {
 		description: 'A new email was received in the mailbox',
 		payload: ZohoMailWebhookEventSchema,
@@ -330,11 +343,17 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
+				const creds = options.credentials;
+
+				const [storedAccessToken, expiresAt, storedRefreshToken] =
+					await Promise.all([
+						ctx.keys.get_access_token(),
+						ctx.keys.get_expires_at(),
+						ctx.keys.get_refresh_token(),
+					]);
+
+				const accessToken = storedAccessToken ?? creds?.accessToken ?? null;
+				const refreshToken = storedRefreshToken ?? creds?.refreshToken ?? null;
 
 				if (!refreshToken) {
 					throw new Error(
@@ -342,9 +361,13 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 					);
 				}
 
-				const res = await ctx.keys.get_integration_credentials();
+				const integrationCreds = await ctx.keys.get_integration_credentials();
+				const clientId =
+					integrationCreds.client_id ?? creds?.clientId ?? undefined;
+				const clientSecret =
+					integrationCreds.client_secret ?? creds?.clientSecret ?? undefined;
 
-				if (!res.client_id || !res.client_secret) {
+				if (!clientId || !clientSecret) {
 					throw new Error(
 						'[auth-missing:zohomail:client_credentials]: Zoho Mail client credentials are missing',
 					);
@@ -359,8 +382,8 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 						accessToken,
 						expiresAt,
 						refreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
+						clientId,
+						clientSecret,
 					});
 				} catch (error) {
 					throw new Error(
@@ -387,8 +410,8 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 						accessToken: null,
 						expiresAt: null,
 						refreshToken,
-						clientId: res.client_id!,
-						clientSecret: res.client_secret!,
+						clientId,
+						clientSecret,
 						forceRefresh: true,
 					});
 					await ctx.keys.set_access_token(freshResult.accessToken);
@@ -419,6 +442,7 @@ export type { ZohoMailCredentials } from './schema';
 export { ZohoMailSchema } from './schema';
 export type * from './types';
 export type {
+	ZohoMailChallengePayload,
 	ZohoMailEventName,
 	ZohoMailWebhookEvent,
 	ZohoMailWebhookOutputs,

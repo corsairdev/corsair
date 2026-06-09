@@ -70,4 +70,10 @@ describe('zoho region datacenter mapping', () => {
 			'https://accounts.zoho.eu/oauth/v2/token',
 		);
 	});
+
+	it('exposes handshake and message webhooks', () => {
+		const plugin = zohomail();
+		expect(plugin.webhooks?.challenge.handshake).toBeDefined();
+		expect(plugin.webhooks?.messages.received).toBeDefined();
+	});
 });

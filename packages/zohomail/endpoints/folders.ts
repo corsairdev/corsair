@@ -2,19 +2,21 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedZohoRequest, resolveAccountId } from '../client';
 import type { ZohoMailEndpoints } from '../index';
 import type { ZohoFolder, ZohoResponse } from '../types';
+import { zohoEntityId } from '../webhooks/types';
 
 async function syncFolder(
 	ctx: Parameters<ZohoMailEndpoints['foldersGet']>[0],
 	folder: ZohoFolder,
 ) {
-	if (!folder.folderId || !ctx.db.folders) return;
+	const folderId = zohoEntityId(folder.folderId);
+	if (!folderId || !ctx.db.folders) return;
 	try {
-		await ctx.db.folders.upsertByEntityId(folder.folderId, {
-			id: folder.folderId,
-			folderId: folder.folderId,
+		await ctx.db.folders.upsertByEntityId(folderId, {
+			id: folderId,
+			folderId,
 			folderName: folder.folderName,
 			path: folder.path,
-			parentFolderId: folder.parentFolderId,
+			parentFolderId: zohoEntityId(folder.parentFolderId),
 			folderType: folder.folderType,
 			unreadCount: folder.unreadCount,
 			messageCount: folder.messageCount,
