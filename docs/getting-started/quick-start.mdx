@@ -90,6 +90,7 @@ export const corsair = createCorsair({
     plugins: [github()],
     database: db,
     kek: process.env.CORSAIR_KEK!,
+    multiTenancy: true,
 });
 ```
 
@@ -111,6 +112,7 @@ export const corsair = createCorsair({
     plugins: [github()],
     database: db,
     kek: process.env.CORSAIR_KEK!,
+    multiTenancy: true,
 });
 ```
 
@@ -131,6 +133,7 @@ export const corsair = createCorsair({
     plugins: [github()],
     database: pool,
     kek: process.env.CORSAIR_KEK!,
+    multiTenancy: true,
 });
 ```
 
@@ -149,6 +152,7 @@ export const corsair = createCorsair({
     plugins: [github()],
     database: pool,
     kek: process.env.CORSAIR_KEK!,
+    multiTenancy: true,
 });
 ```
 
