@@ -35,7 +35,7 @@ export async function makeTwilioRequest<T>(
 		VERSION: '2010-04-01',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: authToken,
+		TOKEN: undefined,
 		HEADERS: {
 			Authorization: `Basic ${basicAuth}`,
 			'Content-Type': 'application/x-www-form-urlencoded',

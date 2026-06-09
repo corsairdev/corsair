@@ -14,6 +14,8 @@ export const received: TwilioWebhooks['messageReceived'] = {
 	handler: async (ctx, request) => {
 		const url = request.headers['x-forwarded-url'] ?? '';
 		const signature = request.headers['x-twilio-signature'] ?? '';
+		// Twilio webhook payloads arrive as form-urlencoded key=value pairs (all string values),
+		// but the typed payload uses a structured Zod schema — cast to Record<string, string> for signature verification
 		const params = request.payload as unknown as Record<string, string>;
 
 		const verification = verifyTwilioWebhookSignature(
@@ -55,6 +57,8 @@ export const statusUpdate: TwilioWebhooks['messageStatus'] = {
 	handler: async (ctx, request) => {
 		const url = request.headers['x-forwarded-url'] ?? '';
 		const signature = request.headers['x-twilio-signature'] ?? '';
+		// Twilio webhook payloads arrive as form-urlencoded key=value pairs (all string values),
+		// but the typed payload uses a structured Zod schema — cast to Record<string, string> for signature verification
 		const params = request.payload as unknown as Record<string, string>;
 
 		const verification = verifyTwilioWebhookSignature(

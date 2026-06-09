@@ -1,4 +1,4 @@
-import { createHmac } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
@@ -162,7 +162,12 @@ export function verifyTwilioWebhookSignature(
 		.update(data)
 		.digest('base64');
 
-	const valid = expectedSignature === signature;
+	// Use timing-safe comparison to prevent timing side-channel attacks
+	const expectedBuf = Buffer.from(expectedSignature);
+	const actualBuf = Buffer.from(signature);
+	const valid =
+		expectedBuf.length === actualBuf.length &&
+		timingSafeEqual(expectedBuf, actualBuf);
 	return valid
 		? { valid: true }
 		: { valid: false, error: 'Signature verification failed' };
