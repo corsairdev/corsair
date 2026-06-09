@@ -90,7 +90,7 @@ export const corsair = createCorsair({
     plugins: [github()],
     database: db,
     kek: process.env.CORSAIR_KEK!,
-    multiTenancy: true,
+    multiTenancy: false,
 });
 ```
 
@@ -112,12 +112,16 @@ export const corsair = createCorsair({
     plugins: [github()],
     database: db,
     kek: process.env.CORSAIR_KEK!,
-    multiTenancy: true,
+    multiTenancy: false,
 });
 ```
 
 </Tab>
-<Tab title="Drizzle">
+<Tab title="Drizzle / Prisma">
+
+Pass the **underlying `pg` Pool** to Corsair — not the ORM client. Use Drizzle or Prisma for your own app tables on the same pool.
+
+**Drizzle:**
 
 ```ts src/server/corsair.ts
 import 'dotenv/config';
@@ -127,34 +131,37 @@ import { createCorsair } from 'corsair';
 import { github } from '@corsair-dev/github';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(pool);
+const db = drizzle(pool); // your app tables
 
 export const corsair = createCorsair({
     plugins: [github()],
     database: pool,
     kek: process.env.CORSAIR_KEK!,
-    multiTenancy: true,
+    multiTenancy: false,
 });
 ```
 
-</Tab>
-<Tab title="Prisma">
+**Prisma:**
 
 ```ts src/server/corsair.ts
 import 'dotenv/config';
+import { Pool } from 'pg';
 import { PrismaClient } from '@prisma/client';
 import { createCorsair } from 'corsair';
 import { github } from '@corsair-dev/github';
 
-const db = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient(); // your app tables
 
 export const corsair = createCorsair({
     plugins: [github()],
     database: pool,
     kek: process.env.CORSAIR_KEK!,
-    multiTenancy: true,
+    multiTenancy: false,
 });
 ```
+
+See [Database](/concepts/database) for SQLite, postgres.js, and Kysely options.
 
 </Tab>
 </Tabs>
@@ -473,16 +480,16 @@ Authenticate a plugin that uses OAuth:
 
 <CodeGroup>
 ```bash npm
-npx corsair auth --slack
+npx corsair auth --plugin=slack
 ```
 ```bash yarn
-yarn corsair auth --slack
+yarn corsair auth --plugin=slack
 ```
 ```bash pnpm
-pnpm corsair auth --slack
+pnpm corsair auth --plugin=slack
 ```
 ```bash bun
-bunx corsair auth --slack
+bunx corsair auth --plugin=slack
 ```
 </CodeGroup>
 
@@ -490,16 +497,16 @@ List available operations for a plugin:
 
 <CodeGroup>
 ```bash npm
-npx corsair list --github
+npx corsair list --plugin=github
 ```
 ```bash yarn
-yarn corsair list --github
+yarn corsair list --plugin=github
 ```
 ```bash pnpm
-pnpm corsair list --github
+pnpm corsair list --plugin=github
 ```
 ```bash bun
-bunx corsair list --github
+bunx corsair list --plugin=github
 ```
 </CodeGroup>
 

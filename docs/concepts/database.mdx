@@ -174,11 +174,15 @@ export const corsair = createCorsair({
 Define the four Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair — not the ORM client:
 
 ```ts
-// Drizzle — pass the pg Pool, use Drizzle for your own tables
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export const corsair = createCorsair({ database: pool, ... });
-export const db = drizzle(pool); // your app tables
+
+// Drizzle — your app tables
+export const db = drizzle(pool);
+
+// Prisma — your app tables (same pool, not PrismaClient)
+export const prisma = new PrismaClient();
 ```
 
 Corsair also accepts **postgres.js** and a typed **Kysely** instance if you want to share a single query builder.
