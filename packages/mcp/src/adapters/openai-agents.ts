@@ -1,7 +1,7 @@
 import type { tool as AgentsTool, Tool } from '@openai/agents';
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 import type { BaseMcpOptions } from '../core/adapters.js';
+import { shapeToJsonSchema } from '../core/json-schema.js';
 import { buildCorsairToolDefs } from '../core/tools.js';
 
 export type OpenAIAgentsProviderOptions = BaseMcpOptions & {
@@ -14,11 +14,9 @@ export class OpenAIAgentsProvider {
 	build(options: OpenAIAgentsProviderOptions): Tool<unknown>[] {
 		const { tool, ...mcpOptions } = options;
 		return buildCorsairToolDefs(mcpOptions).map((def) => {
-			const jsonSchema = zodToJsonSchema(z.object(def.shape) as never);
+			const jsonSchema = shapeToJsonSchema(def.shape);
 			const shapeKeys = new Set(Object.keys(def.shape));
 
-			// zodToJsonSchema produces a structurally valid JsonObjectSchemaNonStrict at
-			// runtime, but its static type is broader than what the SDK expects. Cast needed.
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			return tool({
 				name: def.name,
