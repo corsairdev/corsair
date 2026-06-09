@@ -72,23 +72,60 @@ function bindIfFunction(val: unknown, thisArg: object): unknown {
 }
 
 /**
- * postgres.js's `unsafe()` runs through Postgres' Bind step and applies
- * type-aware serializers for inferred parameter types (Date → ISO,
- * object/array → JSON for jsonb, etc.). For Kysely-compiled INSERT/UPDATE/SELECT
- * the parameter types are inferred from the column types, so we pass values
- * through without pre-serialization. Pre-stringifying objects here would cause
- * postgres.js to JSON.stringify a second time, producing a JSON string instead
- * of a JSONB object on the wire.
- *
- * The one place we must intervene is `Date` parameters in WHERE/INSERT slots
- * whose Postgres type is reported as TEXT/UNKNOWN (e.g., `corsair_permissions.expires_at`
- * is TEXT). For those, postgres.js's default "type not in serializers" path
- * (`'' + x`) yields `Date.toString()` which Postgres rejects. We coerce Date
- * to ISO string only — every other value passes through untouched.
+ * Pre-serializes parameters before they reach postgres.js's Bind step. We pin
+ * the json/jsonb serializers to identity (pinJsonSerializers) and convert
+ * values to their final wire form here, so behaviour does not depend on which
+ * serializers the (possibly shared) connection currently has:
+ *   - Date → ISO string. postgres.js's default path for untyped/TEXT slots
+ *     (e.g. `corsair_permissions.expires_at`) is `'' + x`, which yields
+ *     `Date.toString()` that Postgres rejects.
+ *   - Plain object/array → JSON text literal, valid for jsonb. A raw object
+ *     would otherwise hit `Buffer.byteLength(object)` and throw whenever the
+ *     jsonb serializer is an identity passthrough (e.g. when the connection is
+ *     shared with Drizzle, which overwrites it).
+ * Every other value passes through untouched.
  */
+// postgres.js JSON/JSONB type OIDs.
+const JSON_OID = 114;
+const JSONB_OID = 3802;
+
+function isJsonbCandidate(value: unknown): value is object {
+	if (typeof value !== 'object' || value === null) return false;
+	if (Buffer.isBuffer(value)) return false;
+	if (Array.isArray(value)) return true;
+	const proto = Object.getPrototypeOf(value);
+	return proto === Object.prototype || proto === null;
+}
+
 function serializeParam(value: unknown): unknown {
 	if (value instanceof Date) return value.toISOString();
+	// postgres.js serializes jsonb params with its registered serializer. When
+	// the connection is shared with another ORM (e.g. Drizzle), that serializer
+	// is overwritten with an identity passthrough, so a raw object reaches the
+	// byte writer and throws on Buffer.byteLength. We pin the json/jsonb
+	// serializers to identity (see pinJsonSerializers) and pre-serialize plain
+	// objects/arrays to a JSON text literal ourselves — valid for jsonb and
+	// independent of whichever serializer the connection currently has.
+	if (isJsonbCandidate(value)) return JSON.stringify(value);
 	return value;
+}
+
+/**
+ * Forces postgres.js's json/jsonb serializers to an identity passthrough so
+ * Corsair's own pre-serialization (serializeParam) is authoritative and never
+ * double-encoded. This mirrors what Drizzle's postgres-js driver does, making
+ * behaviour deterministic whether or not the connection is shared with Drizzle.
+ */
+function pinJsonSerializers(sql: Sql): void {
+	const serializers = (
+		sql as unknown as {
+			options?: { serializers?: Record<number, (val: unknown) => unknown> };
+		}
+	).options?.serializers;
+	if (!serializers) return;
+	const identity = (val: unknown): unknown => val;
+	serializers[JSON_OID] = identity;
+	serializers[JSONB_OID] = identity;
 }
 
 function withParamSerialization(sql: Sql): Sql {
@@ -161,6 +198,7 @@ export function createCorsairDatabase(
 	}
 
 	if (isPostgresJs(input)) {
+		pinJsonSerializers(input);
 		const db = new Kysely<CorsairKyselyDatabase>({
 			dialect: new PostgresJSDialect({
 				postgres: withParamSerialization(input),

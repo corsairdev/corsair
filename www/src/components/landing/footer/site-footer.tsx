@@ -1,11 +1,12 @@
 'use client';
 
-import { GithubLogo, TwitterLogo } from '@phosphor-icons/react';
+import { DiscordLogo, GithubLogo, TwitterLogo } from '@phosphor-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
 	APP_URL,
 	DOCS_URL,
+	DISCORD_URL,
 	GITHUB_ISSUES_URL,
 	GITHUB_LICENSE_URL,
 	GITHUB_URL,
@@ -105,7 +106,7 @@ export function SiteFooter() {
 									rel="noopener noreferrer"
 									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
 								>
-									License (MIT)
+									License (Apache 2.0)
 								</a>
 							</li>
 						</ul>
@@ -125,6 +126,15 @@ export function SiteFooter() {
 								className="text-[#1c1c1c66] transition-colors hover:text-[#1c1c1c]"
 							>
 								<GithubLogo size={20} />
+							</a>
+							<a
+								href={DISCORD_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								aria-label="Discord"
+								className="text-[#1c1c1c66] transition-colors hover:text-[#1c1c1c]"
+							>
+								<DiscordLogo size={20} />
 							</a>
 							<a
 								href={TWITTER_URL}

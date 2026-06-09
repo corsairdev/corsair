@@ -11,6 +11,7 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Callback,
 	Chat,
@@ -305,9 +306,7 @@ export function telegram<const T extends TelegramPluginOptions>(
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:telegram:${authType}]: Telegram key is missing`,
-			);
+			throw new AuthMissingError('telegram', 'bot_token');
 		},
 	} satisfies InternalTelegramPlugin;
 }

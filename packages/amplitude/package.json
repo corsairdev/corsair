@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/amplitude",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Amplitude plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",

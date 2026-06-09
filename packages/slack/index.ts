@@ -7,10 +7,12 @@ import type {
 	CorsairPluginContext,
 	CorsairWebhook,
 	KeyBuilderContext,
+	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
@@ -22,9 +24,16 @@ import {
 	Users,
 } from './endpoints';
 import {
+	conversationsGetTeams,
+	conversationsSearch,
+	conversationsSetTeams,
+	listTeams,
+} from './endpoints/admin';
+import {
 	SlackEndpointInputSchemas,
 	SlackEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { SlackSchema } from './schema';
 import {
 	ChallengeWebhooks,
@@ -68,10 +77,14 @@ import {
 	UserChangeEventSchema,
 } from './webhooks/types';
 
-export type { SlackReactionName } from './endpoints';
+export const Admin = {
+	listTeams,
+	conversationsSearch,
+	conversationsGetTeams,
+	conversationsSetTeams,
+};
 
-import type { PickAuth } from 'corsair/core';
-import { errorHandlers } from './error-handlers';
+export type { SlackReactionName } from './endpoints';
 
 export type SlackEndpoints = {
 	channelsArchive: SlackEndpoint<'channelsArchive'>;
@@ -115,6 +128,10 @@ export type SlackEndpoints = {
 	starsAdd: SlackEndpoint<'starsAdd'>;
 	starsRemove: SlackEndpoint<'starsRemove'>;
 	starsList: SlackEndpoint<'starsList'>;
+	adminTeamsList: SlackEndpoint<'adminTeamsList'>;
+	adminConversationsSearch: SlackEndpoint<'adminConversationsSearch'>;
+	adminConversationsGetTeams: SlackEndpoint<'adminConversationsGetTeams'>;
+	adminConversationsSetTeams: SlackEndpoint<'adminConversationsSetTeams'>;
 };
 
 const slackEndpointsNested = {
@@ -172,6 +189,12 @@ const slackEndpointsNested = {
 		add: Stars.add,
 		remove: Stars.remove,
 		list: Stars.list,
+	},
+	admin: {
+		listTeams: Admin.listTeams,
+		conversationsSearch: Admin.conversationsSearch,
+		conversationsGetTeams: Admin.conversationsGetTeams,
+		conversationsSetTeams: Admin.conversationsSetTeams,
 	},
 } as const;
 
@@ -339,6 +362,22 @@ export const slackEndpointSchemas = {
 	'stars.list': {
 		input: SlackEndpointInputSchemas.starsList,
 		output: SlackEndpointOutputSchemas.starsList,
+	},
+	'admin.listTeams': {
+		input: SlackEndpointInputSchemas.adminTeamsList,
+		output: SlackEndpointOutputSchemas.adminTeamsList,
+	},
+	'admin.conversationsSearch': {
+		input: SlackEndpointInputSchemas.adminConversationsSearch,
+		output: SlackEndpointOutputSchemas.adminConversationsSearch,
+	},
+	'admin.conversationsGetTeams': {
+		input: SlackEndpointInputSchemas.adminConversationsGetTeams,
+		output: SlackEndpointOutputSchemas.adminConversationsGetTeams,
+	},
+	'admin.conversationsSetTeams': {
+		input: SlackEndpointInputSchemas.adminConversationsSetTeams,
+		output: SlackEndpointOutputSchemas.adminConversationsSetTeams,
 	},
 } as const;
 
@@ -521,6 +560,23 @@ const slackEndpointMeta = {
 	'stars.list': {
 		riskLevel: 'read',
 		description: 'List starred items for the authenticated user',
+	},
+	'admin.listTeams': {
+		riskLevel: 'read',
+		description: 'List all teams on an Enterprise organization',
+	},
+	'admin.conversationsSearch': {
+		riskLevel: 'read',
+		description: 'Search for channels on an Enterprise organization',
+	},
+	'admin.conversationsGetTeams': {
+		riskLevel: 'read',
+		description: 'Get all the workspaces a given channel is connected to',
+	},
+	'admin.conversationsSetTeams': {
+		riskLevel: 'write',
+		description:
+			'Set the workspaces in an Enterprise grid org that connect to a channel',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof slackEndpointsNested>;
 
@@ -711,9 +767,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:slack:api_key]: Slack API Key is missing',
-					);
+					throw new AuthMissingError('slack', 'api_key');
 				}
 
 				return res;
@@ -721,15 +775,13 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:slack:oauth_2]: Slack access token is missing',
-					);
+					throw new AuthMissingError('slack', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:slack:${authType}]: Slack key is missing`);
+			throw new AuthMissingError('slack', 'oauth_2');
 		},
 	} satisfies InternalSlackPlugin;
 }
@@ -786,6 +838,10 @@ export { createSlackEventMatch } from './webhooks/types';
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	AdminConversationsGetTeamsResponse,
+	AdminConversationsSearchResponse,
+	AdminConversationsSetTeamsResponse,
+	AdminTeamsListResponse,
 	ChatDeleteResponse,
 	ChatGetPermalinkResponse,
 	ChatPostMessageResponse,
