@@ -1118,9 +1118,6 @@ importers:
       zod:
         specifier: ^4.1.13
         version: 4.1.13
-      zod-to-json-schema:
-        specifier: ^3.25.0
-        version: 3.25.1(zod@4.1.13)
     devDependencies:
       '@anthropic-ai/sdk':
         specifier: ^0.78.0
