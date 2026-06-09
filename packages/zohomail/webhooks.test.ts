@@ -1,7 +1,9 @@
 import crypto from 'node:crypto';
 import { zohomail } from './index';
 import {
+	createZohoMailHandshakeMatch,
 	createZohoMailMatch,
+	resolveZohoId,
 	verifyZohoWebhookSignature,
 } from './webhooks/types';
 
@@ -36,10 +38,35 @@ describe('zoho webhook signature verification', () => {
 	});
 });
 
-describe('zoho webhook matcher', () => {
+describe('zoho webhook handshake matcher', () => {
+	const match = createZohoMailHandshakeMatch();
+
+	it('matches when x-hook-secret is present', () => {
+		expect(
+			match({
+				headers: { 'x-hook-secret': 'sek' },
+				body: {},
+			} as never),
+		).toBe(true);
+	});
+
+	it('matches first request with both secret and signature headers', () => {
+		expect(
+			match({
+				headers: {
+					'x-hook-secret': 'sek',
+					'x-hook-signature': 'abc',
+				},
+				body: { messageId: '123', subject: 'hi' },
+			} as never),
+		).toBe(true);
+	});
+});
+
+describe('zoho webhook message matcher', () => {
 	const match = createZohoMailMatch();
 
-	it('matches a Zoho delivery (hook header + email body)', () => {
+	it('matches a signed Zoho delivery (signature header + email body)', () => {
 		expect(
 			match({
 				headers: { 'x-hook-signature': 'abc' },
@@ -48,13 +75,16 @@ describe('zoho webhook matcher', () => {
 		).toBe(true);
 	});
 
-	it('matches the handshake request (x-hook-secret header)', () => {
+	it('ignores handshake requests (x-hook-secret present)', () => {
 		expect(
 			match({
-				headers: { 'x-hook-secret': 'sek' },
-				body: { summary: 'new mail' },
+				headers: {
+					'x-hook-secret': 'sek',
+					'x-hook-signature': 'abc',
+				},
+				body: { messageId: '123', subject: 'hi' },
 			} as never),
-		).toBe(true);
+		).toBe(false);
 	});
 
 	it('ignores requests without Zoho hook headers', () => {
@@ -66,7 +96,7 @@ describe('zoho webhook matcher', () => {
 		).toBe(false);
 	});
 
-	it('ignores Zoho headers without an email body', () => {
+	it('ignores Zoho signature without an email body', () => {
 		expect(
 			match({
 				headers: { 'x-hook-signature': 'abc' },
@@ -76,9 +106,28 @@ describe('zoho webhook matcher', () => {
 	});
 });
 
+describe('resolveZohoId', () => {
+	it('preserves large numeric IDs from raw JSON', () => {
+		const rawBody =
+			'{"messageId":1560840837125110000,"folderId":3881227000000013000}';
+		expect(resolveZohoId(rawBody, 'messageId', undefined)).toBe(
+			'1560840837125110000',
+		);
+		expect(resolveZohoId(rawBody, 'folderId', undefined)).toBe(
+			'3881227000000013000',
+		);
+	});
+
+	it('falls back to the parsed value when raw body is unavailable', () => {
+		expect(resolveZohoId(undefined, 'messageId', '12345')).toBe('12345');
+		expect(resolveZohoId(undefined, 'messageId', 67890)).toBe('67890');
+	});
+});
+
 describe('zohomail plugin webhook wiring', () => {
-	it('registers the messageReceived webhook and matcher', () => {
+	it('registers handshake and messageReceived webhooks and matcher', () => {
 		const plugin = zohomail({ webhookSecret: SECRET });
+		expect(plugin.webhooks?.challenge.handshake).toBeDefined();
 		expect(plugin.webhooks?.messages.received).toBeDefined();
 
 		const matched = plugin.pluginWebhookMatcher?.({

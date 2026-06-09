@@ -16,8 +16,8 @@ import { z } from 'zod';
 
 export const ZohoMailWebhookEventSchema = z
 	.object({
-		messageId: z.string().optional(),
-		folderId: z.string().optional(),
+		messageId: z.coerce.string().optional(),
+		folderId: z.coerce.string().optional(),
 		subject: z.string().optional(),
 		summary: z.string().optional(),
 		html: z.string().optional(),
@@ -25,18 +25,65 @@ export const ZohoMailWebhookEventSchema = z
 		toAddress: z.string().optional(),
 		ccAddress: z.string().optional(),
 		sender: z.string().optional(),
-		sentDateInGMT: z.string().optional(),
-		receivedTime: z.string().optional(),
+		sentDateInGMT: z.coerce.string().optional(),
+		receivedTime: z.coerce.string().optional(),
 		size: z.union([z.string(), z.number()]).optional(),
 	})
 	.loose();
 export type ZohoMailWebhookEvent = z.infer<typeof ZohoMailWebhookEventSchema>;
 
-export type ZohoMailEventName = 'messageReceived';
+export const ZohoMailChallengePayloadSchema = z.object({}).loose();
+export type ZohoMailChallengePayload = z.infer<
+	typeof ZohoMailChallengePayloadSchema
+>;
+
+export const ZohoMailChallengeResponseSchema = z.object({
+	hookSecret: z.string(),
+});
+
+export type ZohoMailEventName = 'handshake' | 'messageReceived';
 
 export type ZohoMailWebhookOutputs = {
+	handshake: { hookSecret: string };
 	messageReceived: ZohoMailWebhookEvent;
 };
+
+/** Coerce Zoho entity IDs (string or number) to a stable string key. */
+export function zohoEntityId(
+	value: string | number | undefined | null,
+): string | undefined {
+	if (value === undefined || value === null || value === '') {
+		return undefined;
+	}
+	return String(value);
+}
+
+/**
+ * Read an ID from raw JSON without losing precision on large numeric literals.
+ * Falls back to the parsed payload value when raw body is unavailable.
+ */
+export function resolveZohoId(
+	rawBody: string | undefined,
+	key: string,
+	parsed: string | number | undefined,
+): string | undefined {
+	if (rawBody) {
+		const re = new RegExp(`"${key}"\\s*:\\s*("(?:[^"\\\\]|\\\\.)*"|[0-9]+)`);
+		const match = rawBody.match(re);
+		if (match?.[1]) {
+			const token = match[1];
+			if (token.startsWith('"')) {
+				try {
+					return JSON.parse(token) as string;
+				} catch {
+					return token.slice(1, -1);
+				}
+			}
+			return token;
+		}
+	}
+	return zohoEntityId(parsed);
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Signature verification
@@ -91,17 +138,27 @@ export function verifyZohoWebhookSignature(
 }
 
 /**
- * Matches incoming Zoho Mail webhook deliveries by the presence of the Zoho hook
- * headers plus an email identifier in the body. Used for routing only — the
- * handler performs the actual cryptographic verification.
+ * Matches the first-request handshake (`x-hook-secret` present).
+ * Per Zoho docs this header appears only on the very first delivery.
+ */
+export function createZohoMailHandshakeMatch(): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const headers = request.headers ?? {};
+		return getZohoWebhookSecretFromRequest(headers) !== undefined;
+	};
+}
+
+/**
+ * Matches signed Zoho Mail email deliveries (`x-hook-signature` present).
+ * Handshake requests (`x-hook-secret`) are routed to `challenge.handshake`.
  */
 export function createZohoMailMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const headers = request.headers ?? {};
-		const hasHookHeader =
-			getZohoWebhookSignature(headers) !== undefined ||
-			getZohoWebhookSecretFromRequest(headers) !== undefined;
-		if (!hasHookHeader) {
+		if (getZohoWebhookSecretFromRequest(headers) !== undefined) {
+			return false;
+		}
+		if (getZohoWebhookSignature(headers) === undefined) {
 			return false;
 		}
 

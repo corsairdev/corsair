@@ -6,6 +6,7 @@ import {
 } from '../client';
 import type { ZohoMailEndpoints } from '../index';
 import type { ZohoMessage, ZohoMessageDetail, ZohoResponse } from '../types';
+import { zohoEntityId } from '../webhooks/types';
 
 export const list: ZohoMailEndpoints['messagesList'] = async (ctx, input) => {
 	const region = ctx.options.region;
@@ -40,10 +41,12 @@ export const list: ZohoMailEndpoints['messagesList'] = async (ctx, input) => {
 	if (ctx.db.messages) {
 		try {
 			for (const message of messages) {
-				if (message.messageId) {
-					await ctx.db.messages.upsertByEntityId(message.messageId, {
+				const messageId = zohoEntityId(message.messageId);
+				if (messageId) {
+					await ctx.db.messages.upsertByEntityId(messageId, {
 						...message,
-						id: message.messageId,
+						id: messageId,
+						messageId,
 						createdAt: new Date(),
 					});
 				}
@@ -88,13 +91,13 @@ export const get: ZohoMailEndpoints['messagesGet'] = async (ctx, input) => {
 		content: content?.data?.content,
 	};
 
-	const messageId = message.messageId ?? input.messageId;
+	const messageId = zohoEntityId(message.messageId ?? input.messageId);
 	if (messageId && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsertByEntityId(String(messageId), {
+			await ctx.db.messages.upsertByEntityId(messageId, {
 				...message,
-				id: String(messageId),
-				messageId: String(messageId),
+				id: messageId,
+				messageId,
 				createdAt: new Date(),
 			});
 		} catch (error) {

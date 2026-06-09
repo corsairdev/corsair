@@ -3,6 +3,7 @@ import type { ZohoMailWebhooks } from '../index';
 import {
 	createZohoMailMatch,
 	getZohoWebhookSignature,
+	resolveZohoId,
 	verifyZohoWebhookSignature,
 } from './types';
 
@@ -12,51 +13,60 @@ export const messageReceived: ZohoMailWebhooks['messageReceived'] = {
 		const secret = ctx.key;
 		const signature = getZohoWebhookSignature(request.headers ?? {});
 
-		// Signed delivery — verify when we hold the secret.
 		if (signature) {
-			if (secret) {
-				const rawBody = request.rawBody;
-				if (!rawBody) {
-					return {
-						success: false,
-						statusCode: 401,
-						error: 'Missing raw body for signature verification',
-					};
-				}
-				if (!verifyZohoWebhookSignature(rawBody, secret, signature)) {
-					return {
-						success: false,
-						statusCode: 401,
-						error: 'Invalid signature',
-					};
-				}
-			} else {
-				console.warn(
-					'[corsair:zohomail] Received signed webhook but no webhook secret is configured — skipping verification.',
-				);
+			if (!secret) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Webhook secret is not configured',
+				};
+			}
+
+			const rawBody = request.rawBody;
+			if (!rawBody) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Missing raw body for signature verification',
+				};
+			}
+			if (!verifyZohoWebhookSignature(rawBody, secret, signature)) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Invalid signature',
+				};
 			}
 		}
-		// No signature → first/handshake request. Zoho saves the webhook only on a
-		// 200, so fall through and acknowledge.
 
 		const event = request.payload;
+		const messageId = resolveZohoId(
+			request.rawBody,
+			'messageId',
+			event?.messageId,
+		);
+		const folderId = resolveZohoId(
+			request.rawBody,
+			'folderId',
+			event?.folderId,
+		);
 
 		let corsairEntityId = '';
-		if (ctx.db.messages && event?.messageId) {
+		if (ctx.db.messages && messageId) {
 			try {
-				const entity = await ctx.db.messages.upsertByEntityId(event.messageId, {
-					id: event.messageId,
-					messageId: event.messageId,
-					folderId: event.folderId,
-					subject: event.subject,
-					summary: event.summary,
-					fromAddress: event.fromAddress,
-					toAddress: event.toAddress,
-					ccAddress: event.ccAddress,
-					sender: event.sender,
-					sentDateInGMT: event.sentDateInGMT,
-					receivedTime: event.receivedTime,
-					content: event.html,
+				const entity = await ctx.db.messages.upsertByEntityId(messageId, {
+					id: messageId,
+					messageId,
+					folderId,
+					subject: event?.subject,
+					summary: event?.summary,
+					fromAddress: event?.fromAddress,
+					toAddress: event?.toAddress,
+					ccAddress: event?.ccAddress,
+					sender: event?.sender,
+					sentDateInGMT: event?.sentDateInGMT,
+					receivedTime: event?.receivedTime,
+					content: event?.html,
 					createdAt: new Date(),
 				});
 				corsairEntityId = entity?.id ?? '';
