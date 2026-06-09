@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	ActivityLogs,
 	Comments,
@@ -777,15 +778,13 @@ export function figma<const T extends FigmaPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:figma:api_key]: Figma API Key is missing',
-					);
+					throw new AuthMissingError('figma', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:figma:${authType}]: Figma key is missing`);
+			throw new AuthMissingError('figma', 'api_key');
 		},
 	} satisfies InternalFigmaPlugin;
 }

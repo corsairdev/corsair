@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/xquik",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Search tweets, inspect users, manage Xquik webhooks, upload media, and run X actions from Corsair",
   "type": "module",
   "main": "./dist/index.js",

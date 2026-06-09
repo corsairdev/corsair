@@ -3423,3 +3423,237 @@ await corsair.slack.api.users.updateProfile({});
 
 ---
 
+## Admin
+
+### listTeams
+
+`admin.listTeams`
+
+List all teams on an Enterprise organization
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.admin.listTeams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `teams` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  discoverability?: string,
+  primary_owner?: {
+    user_id?: string,
+    email?: string
+  },
+  team_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### conversationsSearch
+
+`admin.conversationsSearch`
+
+Search for channels on an Enterprise organization
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.admin.conversationsSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_ids` | `string[]` | No | — |
+| `connected_team_ids` | `string[]` | No | — |
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `search_channel_types` | `string[]` | No | — |
+| `sort` | `string` | No | — |
+| `sort_dir` | `string` | No | — |
+| `total_count_only` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `conversations` | `object[]` | No | — |
+| `next_cursor` | `string` | No | — |
+| `total_count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="conversations full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### conversationsGetTeams
+
+`admin.conversationsGetTeams`
+
+Get all the workspaces a given channel is connected to
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.admin.conversationsGetTeams({
+  channel_id: ""
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `team_ids` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### conversationsSetTeams
+
+`admin.conversationsSetTeams`
+
+Set the workspaces in an Enterprise grid org that connect to a channel
+
+**Risk:** `write`
+
+```ts
+await corsair.slack.api.admin.conversationsSetTeams({
+  channel_id: ""
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `team_id` | `string` | No | — |
+| `target_team_ids` | `string[]` | No | — |
+| `org_channel` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

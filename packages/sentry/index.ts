@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type { SentryEndpointInputs, SentryEndpointOutputs } from './endpoints';
 import {
 	Events,
@@ -529,17 +530,13 @@ export function sentry<const T extends SentryPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:sentry:api_key]: Sentry API Key is missing',
-					);
+					throw new AuthMissingError('sentry', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:sentry:${authType}]: Sentry key is missing`,
-			);
+			throw new AuthMissingError('sentry', 'api_key');
 		},
 	} satisfies InternalSentryPlugin;
 }

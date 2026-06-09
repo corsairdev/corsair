@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/asana",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Asana plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",

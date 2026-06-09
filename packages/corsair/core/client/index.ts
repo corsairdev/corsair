@@ -24,6 +24,7 @@ import type {
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
 	EndpointMetaEntry,
+	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
@@ -348,6 +349,16 @@ export type BuildCorsairClientOptions = {
 			args: unknown;
 		}) => string;
 	};
+	/** Connect link config from createCorsair({ connect: ... }). Forwarded to endpoint binding. */
+	connectConfig?: {
+		baseUrl: string;
+		redirectUri: string;
+		onAuthMissing?: (opts: {
+			plugin: string;
+			connectUrl: string;
+			state: string;
+		}) => string;
+	};
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -366,8 +377,14 @@ export function buildCorsairClient<
 	plugins: Plugins,
 	options: BuildCorsairClientOptions,
 ): CorsairClient<Plugins> {
-	const { database, tenantId, kek, rootErrorHandlers, approvalConfig } =
-		options;
+	const {
+		database,
+		tenantId,
+		kek,
+		rootErrorHandlers,
+		approvalConfig,
+		connectConfig,
+	} = options;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
@@ -482,13 +499,20 @@ export function buildCorsairClient<
 			currentPath: [],
 			keyBuilder: plugin.keyBuilder as CorsairKeyBuilderBase | undefined,
 			permissionsConfig: pluginPermsConfig,
-			// endpointMeta is typed with plugin-specific literal keys — cast to runtime Record
 			endpointMeta: plugin.endpointMeta as
 				| Record<string, EndpointMetaEntry>
 				| undefined,
 			database,
 			approvalConfig,
 			tenantId,
+			connectConfig: connectConfig
+				? {
+						...connectConfig,
+						oauthConfig: (plugin as { oauthConfig?: OAuthConfig }).oauthConfig,
+						kek,
+						tenantId: effectiveTenantId,
+					}
+				: undefined,
 		});
 
 		if (Object.keys(boundTree).length > 0) {

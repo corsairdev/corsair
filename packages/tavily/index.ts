@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Crawl, Extract, Map, Search } from './endpoints';
 import type {
 	TavilyEndpointInputs,
@@ -156,9 +157,7 @@ export function tavily<const T extends TavilyPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:tavily:${authType}]: Tavily key is missing`,
-			);
+			throw new AuthMissingError('tavily', 'api_key');
 		},
 	} satisfies InternalTavilyPlugin;
 }

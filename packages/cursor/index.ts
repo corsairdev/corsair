@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Account, Agents, Models, Repositories } from './endpoints';
 import type {
 	AccountGetMeInput,
@@ -214,16 +215,12 @@ export function cursor<const T extends CursorPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:cursor:api_key]: Cursor API Key is missing',
-					);
+					throw new AuthMissingError('cursor', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:cursor:${authType}]: Cursor key is missing`,
-			);
+			throw new AuthMissingError('cursor', 'api_key');
 		},
 	} satisfies InternalCursorPlugin;
 }

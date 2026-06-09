@@ -3,8 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
-import { APP_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
+import { APP_URL, DOCS_URL, GITHUB_URL, DISCORD_URL } from '@/lib/site-links';
 import { ArrowRightIcon, PlusCorner } from '../icons';
+import { GithubLogo, DiscordLogo } from '@phosphor-icons/react';
 
 function MenuIcon() {
 	return (
@@ -65,23 +66,21 @@ export function SiteMenu() {
 	return (
 		<header className="sticky top-3 z-50 mx-3 sm:top-4 sm:mx-4 md:mx-10 transition-all duration-300">
 			<div
-				className={`relative mx-auto max-w-[1440px] transition-all duration-300 ${
-					hasScrolled || isMobileMenuOpen
-						? 'bg-[#f4f4f4]/90 backdrop-blur-xl shadow-sm'
-						: 'bg-[#f4f4f4]/40 backdrop-blur-md'
+				className={`site-menu-container relative mx-auto max-w-[1440px] ${
+					hasScrolled || isMobileMenuOpen ? 'site-menu-scrolled' : ''
 				}`}
 			>
 				{/* The signature plus signs at all four corners */}
-				<span className="pointer-events-none absolute -left-[7px] -top-[7px] z-10 transition-opacity duration-300">
+				<span className="site-menu-plus pointer-events-none absolute -left-[7px] -top-[7px] z-10">
 					<PlusCorner />
 				</span>
-				<span className="pointer-events-none absolute -right-[7px] -top-[7px] z-10 transition-opacity duration-300">
+				<span className="site-menu-plus pointer-events-none absolute -right-[7px] -top-[7px] z-10">
 					<PlusCorner />
 				</span>
-				<span className="pointer-events-none absolute -bottom-[7px] -left-[7px] z-10 transition-opacity duration-300">
+				<span className="site-menu-plus pointer-events-none absolute -bottom-[7px] -left-[7px] z-10">
 					<PlusCorner />
 				</span>
-				<span className="pointer-events-none absolute -bottom-[7px] -right-[7px] z-10 transition-opacity duration-300">
+				<span className="site-menu-plus pointer-events-none absolute -bottom-[7px] -right-[7px] z-10">
 					<PlusCorner />
 				</span>
 
@@ -109,21 +108,33 @@ export function SiteMenu() {
 
 					{/* Desktop Menu */}
 					<div className="hidden md:flex shrink-0 items-center gap-1 sm:gap-2">
+						<div className="flex items-center gap-5 px-2 py-2 sm:px-3">
+							<a
+								href={GITHUB_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
+								aria-label="GitHub"
+							>
+								<GithubLogo size={20} weight="fill" />
+							</a>
+							<a
+								href={DISCORD_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="text-[#1c1c1c]/60 transition-colors hover:text-[#1c1c1c]"
+								aria-label="Discord"
+							>
+								<DiscordLogo size={20} weight="fill" />
+							</a>
+						</div>
 						<a
 							href={DOCS_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="px-2 py-2 text-[13px] sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c]"
+							className="px-2 py-2 text-[13px] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c] sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)]"
 						>
 							Docs
-						</a>
-						<a
-							href={GITHUB_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="px-2 py-2 text-[13px] sm:px-3 sm:text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c]/60 no-underline transition-colors hover:text-[#1c1c1c]"
-						>
-							GitHub
 						</a>
 						<div className="ml-1 sm:ml-4 flex items-center">
 							<a
@@ -177,19 +188,33 @@ export function SiteMenu() {
 							<span>Docs</span>
 							<ArrowRightIcon />
 						</a>
-						<a
-							href={GITHUB_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-colors hover:bg-white"
-							onClick={() => setIsMobileMenuOpen(false)}
-						>
-							<span>GitHub</span>
-							<ArrowRightIcon />
-						</a>
+						<div className="flex items-center rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-2 py-2 shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm">
+							<a
+								href={GITHUB_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-medium text-[#1c1c1c] transition-colors hover:bg-white"
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
+								<GithubLogo size={20} weight="fill" />
+								<span>GitHub</span>
+							</a>
+							<div className="mx-1 h-5 w-px bg-[#1c1c1c]/10" />
+							<a
+								href={DISCORD_URL}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-medium text-[#1c1c1c] transition-colors hover:bg-white"
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
+								<DiscordLogo size={20} weight="fill" />
+								<span>Discord</span>
+							</a>
+						</div>
 					</div>
 				</div>
 			)}
 		</header>
 	);
 }
+

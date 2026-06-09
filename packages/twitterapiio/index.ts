@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	CommunitiesEndpoints,
 	ListsEndpoints,
@@ -731,9 +732,7 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:twitterapiio:${authType}]: Twitter API IO key is missing`,
-			);
+			throw new AuthMissingError('twitterapiio', 'api_key');
 		},
 	} satisfies InternalTwitterApiIOPlugin;
 }

@@ -1,8 +1,9 @@
-import BaseCommand from './base.command'
-import type { CommandActionData, CommandOption } from '../index.types'
-import { getCorsairInstance, resolveClient } from '../utils/corsair-instance'
+import type { CommandActionData, CommandOption } from '../index.types';
+import { getCorsairInstance, resolveClient } from '../utils/corsair-instance';
+import BaseCommand from './base.command';
 
-const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as new (
+const AsyncFunction = Object.getPrototypeOf(async function () {})
+	.constructor as new (
 	...args: string[]
 ) => (...fnArgs: unknown[]) => Promise<unknown>;
 
@@ -17,13 +18,21 @@ export default class ScriptCommand extends BaseCommand {
 
 	getOptions(): CommandOption[] {
 		return [
-			{ short: '-c', long: '--code <js>', description: 'Async JavaScript body to execute' },
-			{ short: '-t', long: '--tenant <id>', description: 'Tenant id for multi-tenant instances' },
+			{
+				short: '-c',
+				long: '--code <js>',
+				description: 'Async JavaScript body to execute',
+			},
+			{
+				short: '-t',
+				long: '--tenant <id>',
+				description: 'Tenant id for multi-tenant instances',
+			},
 		];
 	}
 
 	async action({ options }: CommandActionData) {
-		const { code, tenant } = options
+		const { code, tenant } = options;
 		if (!code) {
 			console.error('[#corsair]: Usage: corsair script --code "<js>"');
 			process.exit(1);
