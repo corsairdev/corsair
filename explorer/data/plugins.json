@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-21T14:51:16.610Z",
-  "corsairVersion": "0.1.69",
+  "generatedAt": "2026-06-09T01:04:56.268Z",
+  "corsairVersion": "0.1.75",
   "catalogVersion": 1,
   "plugins": [
     {
@@ -7297,6 +7297,280 @@
             },
             {
               "field": "businessCountry",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bluesky",
+      "displayName": "Bluesky",
+      "description": "Bluesky plugin for Corsair",
+      "npmPackageName": "@corsair-dev/bluesky",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 1
+      },
+      "auth": [
+        {
+          "authType": "api_key",
+          "integrationFields": [],
+          "accountFields": [
+            "api_key",
+            "webhook_signature",
+            "handle"
+          ]
+        }
+      ],
+      "api": [
+        {
+          "path": "bluesky.api.feeds.getTimeline",
+          "shortPath": "feeds.getTimeline",
+          "description": "Get the home timeline feed of the authenticated user",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "algorithm",
+                "optional": true,
+                "type": "string",
+                "description": "Algorithm to use for the feed"
+              },
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number",
+                "description": "Maximum number of items to return (1-100)"
+              },
+              {
+                "key": "cursor",
+                "optional": true,
+                "type": "string",
+                "description": "Pagination cursor"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "feed",
+                "optional": false,
+                "type": "{ post: { uri: string, cid: string, author: { did: string, handle: string, displayName?: string, avatar?: string }, record: { text: string, createdAt: string }, replyCount?: number, repostCount?: number, likeCount?: number } }[]"
+              },
+              {
+                "key": "cursor",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "path": "bluesky.api.posts.create",
+          "shortPath": "posts.create",
+          "description": "Create/publish a new post (skeet) on Bluesky",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "text",
+                "optional": false,
+                "type": "string",
+                "description": "The text content of the post (max 300 characters)"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "uri",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "cid",
+                "optional": false,
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "path": "bluesky.api.posts.deleteRecord",
+          "shortPath": "posts.deleteRecord",
+          "description": "Delete a post on Bluesky [DESTRUCTIVE]",
+          "riskLevel": "destructive",
+          "irreversible": true,
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "uri",
+                "optional": false,
+                "type": "string",
+                "description": "The AT Protocol URI (at://did:plc:...) of the post to delete"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "success",
+                "optional": false,
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        {
+          "path": "bluesky.api.profiles.get",
+          "shortPath": "profiles.get",
+          "description": "Get profile information for a Bluesky actor/user",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "actor",
+                "optional": false,
+                "type": "string",
+                "description": "The handle or DID of the user profile to fetch"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "did",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "handle",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "displayName",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "description",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "avatar",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "banner",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "followersCount",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "followsCount",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "postsCount",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          }
+        }
+      ],
+      "webhooks": [],
+      "db": [
+        {
+          "path": "bluesky.db.posts.search",
+          "entityName": "posts",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "uri",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "cid",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "text",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "authorDid",
               "type": "string",
               "operators": [
                 "equals",
@@ -43708,8 +43982,9 @@
               },
               {
                 "key": "draft",
-                "optional": false,
-                "type": "{ message?: { raw?: string, threadId?: string } }"
+                "optional": true,
+                "type": "{ message?: { raw?: string, threadId?: string } }",
+                "description": "Draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text."
               }
             ]
           },
@@ -43867,7 +44142,8 @@
               {
                 "key": "message",
                 "optional": true,
-                "type": "{ raw?: string, threadId?: string }"
+                "type": "{ raw?: string, threadId?: string }",
+                "description": "Optional message body when sending without a draft id. raw must be base64url-encoded RFC 2822, not plain text."
               }
             ]
           },
@@ -43917,7 +44193,8 @@
               {
                 "key": "raw",
                 "optional": true,
-                "type": "string"
+                "type": "string",
+                "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
               }
             ]
           }
@@ -43942,8 +44219,9 @@
               },
               {
                 "key": "draft",
-                "optional": false,
-                "type": "{ message?: { raw?: string, threadId?: string } }"
+                "optional": true,
+                "type": "{ message?: { raw?: string, threadId?: string } }",
+                "description": "Updated draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text."
               }
             ]
           },
@@ -44384,7 +44662,8 @@
               {
                 "key": "raw",
                 "optional": true,
-                "type": "string"
+                "type": "string",
+                "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
               }
             ]
           }
@@ -44526,7 +44805,8 @@
               {
                 "key": "raw",
                 "optional": true,
-                "type": "string"
+                "type": "string",
+                "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
               }
             ]
           }
@@ -44547,7 +44827,8 @@
               {
                 "key": "raw",
                 "optional": false,
-                "type": "string"
+                "type": "string",
+                "description": "Base64url-encoded RFC 2822 email — do NOT pass plain email text. Build the MIME message (From, To, Subject, Content-Type headers, blank line, body; lines separated by \\r\\n), then base64url-encode: standard base64, replace + with -, / with _, remove trailing =."
               },
               {
                 "key": "threadId",
@@ -44602,7 +44883,8 @@
               {
                 "key": "raw",
                 "optional": true,
-                "type": "string"
+                "type": "string",
+                "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
               }
             ]
           }
@@ -44673,7 +44955,8 @@
               {
                 "key": "raw",
                 "optional": true,
-                "type": "string"
+                "type": "string",
+                "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
               }
             ]
           }
@@ -44744,7 +45027,8 @@
               {
                 "key": "raw",
                 "optional": true,
-                "type": "string"
+                "type": "string",
+                "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
               }
             ]
           }
@@ -93280,7 +93564,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 41,
+        "api": 45,
         "webhooks": 9,
         "db": 5
       },
@@ -93310,6 +93594,285 @@
         }
       ],
       "api": [
+        {
+          "path": "slack.api.admin.conversationsGetTeams",
+          "shortPath": "admin.conversationsGetTeams",
+          "description": "Get all the workspaces a given channel is connected to",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "channel_id",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "cursor",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ok",
+                "optional": false,
+                "type": "boolean"
+              },
+              {
+                "key": "error",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "needed",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "provided",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "response_metadata",
+                "optional": true,
+                "type": "{ next_cursor?: string, messages?: string[] }"
+              },
+              {
+                "key": "team_ids",
+                "optional": true,
+                "type": "string[]"
+              }
+            ]
+          }
+        },
+        {
+          "path": "slack.api.admin.conversationsSearch",
+          "shortPath": "admin.conversationsSearch",
+          "description": "Search for channels on an Enterprise organization",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "team_ids",
+                "optional": true,
+                "type": "string[]"
+              },
+              {
+                "key": "connected_team_ids",
+                "optional": true,
+                "type": "string[]"
+              },
+              {
+                "key": "query",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "cursor",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "search_channel_types",
+                "optional": true,
+                "type": "string[]"
+              },
+              {
+                "key": "sort",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "sort_dir",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "total_count_only",
+                "optional": true,
+                "type": "boolean"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ok",
+                "optional": false,
+                "type": "boolean"
+              },
+              {
+                "key": "error",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "needed",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "provided",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "response_metadata",
+                "optional": true,
+                "type": "{ next_cursor?: string, messages?: string[] }"
+              },
+              {
+                "key": "conversations",
+                "optional": true,
+                "type": "{ id?: string, name?: string }[]"
+              },
+              {
+                "key": "next_cursor",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "total_count",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          }
+        },
+        {
+          "path": "slack.api.admin.conversationsSetTeams",
+          "shortPath": "admin.conversationsSetTeams",
+          "description": "Set the workspaces in an Enterprise grid org that connect to a channel",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "channel_id",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "team_id",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "target_team_ids",
+                "optional": true,
+                "type": "string[]"
+              },
+              {
+                "key": "org_channel",
+                "optional": true,
+                "type": "boolean"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ok",
+                "optional": false,
+                "type": "boolean"
+              },
+              {
+                "key": "error",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "needed",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "provided",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "response_metadata",
+                "optional": true,
+                "type": "{ next_cursor?: string, messages?: string[] }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "slack.api.admin.listTeams",
+          "shortPath": "admin.listTeams",
+          "description": "List all teams on an Enterprise organization",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "cursor",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ok",
+                "optional": false,
+                "type": "boolean"
+              },
+              {
+                "key": "error",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "needed",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "provided",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "response_metadata",
+                "optional": true,
+                "type": "{ next_cursor?: string, messages?: string[] }"
+              },
+              {
+                "key": "teams",
+                "optional": true,
+                "type": "{ id?: string, name?: string, discoverability?: string, primary_owner?: { user_id?: string, email?: string }, team_url?: string }[]"
+              }
+            ]
+          }
+        },
         {
           "path": "slack.api.channels.archive",
           "shortPath": "channels.archive",
@@ -127065,6 +127628,1505 @@
       ]
     },
     {
+      "id": "vercel",
+      "displayName": "Vercel",
+      "description": "Vercel plugin for Corsair",
+      "npmPackageName": "@corsair-dev/vercel",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 14,
+        "webhooks": 4,
+        "db": 6
+      },
+      "auth": [
+        {
+          "authType": "api_key",
+          "integrationFields": [],
+          "accountFields": [
+            "api_key",
+            "webhook_signature"
+          ]
+        }
+      ],
+      "api": [
+        {
+          "path": "vercel.api.aliases.assignAlias",
+          "shortPath": "aliases.assignAlias",
+          "description": "Assign an alias",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "deploymentId",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "alias",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "redirect",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "uid",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "alias",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "created",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "oldDeploymentId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.aliases.getAliases",
+          "shortPath": "aliases.getAliases",
+          "description": "Get all aliases",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "until",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "since",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "aliases",
+                "optional": false,
+                "type": "{ uid: string, alias: string, created: string, createdAt: number, deploymentId?: string | null, projectId?: string | null, redirect?: string | null }[]"
+              },
+              {
+                "key": "pagination",
+                "optional": false,
+                "type": "{ count: number, next?: number | null, prev?: number | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.deployments.createDeployment",
+          "shortPath": "deployments.createDeployment",
+          "description": "Create a deployment",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "name",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "project",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "target",
+                "optional": true,
+                "type": "production | staging"
+              },
+              {
+                "key": "gitSource",
+                "optional": true,
+                "type": "{ type: github | gitlab | bitbucket, ref?: string, repoId?: string | number, sha?: string }"
+              },
+              {
+                "key": "files",
+                "optional": true,
+                "type": "any[]"
+              },
+              {
+                "key": "meta",
+                "optional": true,
+                "type": "{}"
+              },
+              {
+                "key": "env",
+                "optional": true,
+                "type": "{}"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "uid",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "name",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "url",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "created",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "readyState",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "type",
+                "optional": false,
+                "type": "LAMBDAS | PREBUILT | STATIC | string"
+              },
+              {
+                "key": "creator",
+                "optional": true,
+                "type": "{ uid: string, email: string, username: string }"
+              },
+              {
+                "key": "meta",
+                "optional": true,
+                "type": "{}"
+              },
+              {
+                "key": "target",
+                "optional": true,
+                "type": "production | staging | string"
+              },
+              {
+                "key": "aliasError",
+                "optional": true,
+                "type": "{ code: string, message: string }"
+              },
+              {
+                "key": "aliasAssigned",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "inspectorUrl",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.deployments.getDeployment",
+          "shortPath": "deployments.getDeployment",
+          "description": "Get deployment details",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "idOrUrl",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "uid",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "name",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "url",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "created",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "readyState",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "type",
+                "optional": false,
+                "type": "LAMBDAS | PREBUILT | STATIC | string"
+              },
+              {
+                "key": "creator",
+                "optional": true,
+                "type": "{ uid: string, email: string, username: string }"
+              },
+              {
+                "key": "meta",
+                "optional": true,
+                "type": "{}"
+              },
+              {
+                "key": "target",
+                "optional": true,
+                "type": "production | staging | string"
+              },
+              {
+                "key": "aliasError",
+                "optional": true,
+                "type": "{ code: string, message: string }"
+              },
+              {
+                "key": "aliasAssigned",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "inspectorUrl",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.deployments.getDeployments",
+          "shortPath": "deployments.getDeployments",
+          "description": "Get all deployments",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "projectId",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "until",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "deployments",
+                "optional": false,
+                "type": "{ uid: string, name: string, url: string, created: number, readyState: string, type: LAMBDAS | PREBUILT | STATIC | string, creator?: { uid: string, email: string, username: string } | null, meta?: {} | null, target?: production | staging | string | null, aliasError?: { code: string, message: string } | null, aliasAssigned?: number | null, inspectorUrl?: string | null }[]"
+              },
+              {
+                "key": "pagination",
+                "optional": false,
+                "type": "{ count: number, next?: number | null, prev?: number | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.domains.getDomains",
+          "shortPath": "domains.getDomains",
+          "description": "Get all domains",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "until",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "since",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "domains",
+                "optional": false,
+                "type": "{ id: string, name: string, createdAt: number, boughtAt?: number | null, expiresAt?: number | null, transferredAt?: number | null, verified: boolean, nameservers: string[], intendedNameservers: string[] }[]"
+              },
+              {
+                "key": "pagination",
+                "optional": false,
+                "type": "{ count: number, next?: number | null, prev?: number | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.domains.getProjectDomains",
+          "shortPath": "domains.getProjectDomains",
+          "description": "Get project domains",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "idOrName",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "until",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "since",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "domains",
+                "optional": false,
+                "type": "{ name: string, apexName: string, projectId: string, redirect?: string | null, redirectStatusCode?: number | null, gitBranch?: string | null, updatedAt: number, createdAt: number, verified: boolean }[]"
+              },
+              {
+                "key": "pagination",
+                "optional": false,
+                "type": "{ count: number, next?: number | null, prev?: number | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.envs.createEnvVariable",
+          "shortPath": "envs.createEnvVariable",
+          "description": "Create an environment variable for a project (supports plain, secret, encrypted, and sensitive types)",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "idOrName",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "key",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "value",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "type",
+                "optional": false,
+                "type": "plain | secret | encrypted | sensitive"
+              },
+              {
+                "key": "target",
+                "optional": false,
+                "type": "production | preview | development[]"
+              },
+              {
+                "key": "gitBranch",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "comment",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "key",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "value",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "type",
+                "optional": false,
+                "type": "plain | secret | encrypted | sensitive"
+              },
+              {
+                "key": "target",
+                "optional": false,
+                "type": "production | preview | development[]"
+              },
+              {
+                "key": "gitBranch",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "configurationId",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "createdAt",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "updatedAt",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "createdBy",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "updatedBy",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.envs.getEnvVariables",
+          "shortPath": "envs.getEnvVariables",
+          "description": "Get environment variables for a project (may include secret/sensitive values)",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "idOrName",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "envs",
+                "optional": true,
+                "type": "{ id: string, key: string, value: string, type: plain | secret | encrypted | sensitive, target: production | preview | development[], gitBranch?: string | null, configurationId?: string | null, createdAt: number, updatedAt: number, createdBy?: string | null, updatedBy?: string | null }[]"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.projects.getProject",
+          "shortPath": "projects.getProject",
+          "description": "Get project details",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "idOrName",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "name",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "accountId",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "createdAt",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "updatedAt",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "framework",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "link",
+                "optional": true,
+                "type": "{ type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null }"
+              },
+              {
+                "key": "latestDeployments",
+                "optional": true,
+                "type": "any[]"
+              },
+              {
+                "key": "targets",
+                "optional": true,
+                "type": "{}"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.projects.getProjects",
+          "shortPath": "projects.getProjects",
+          "description": "Get all projects",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "limit",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "until",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "since",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "projects",
+                "optional": false,
+                "type": "{ id: string, name: string, accountId: string, createdAt: number, updatedAt: number, framework?: string | null, link?: { type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null } | null, latestDeployments?: any[] | null, targets?: {} | null }[]"
+              },
+              {
+                "key": "pagination",
+                "optional": false,
+                "type": "{ count: number, next?: number | null, prev?: number | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.teams.getTeams",
+          "shortPath": "teams.getTeams",
+          "description": "Get all teams",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "teams",
+                "optional": false,
+                "type": "{ id: string, slug: string, name: string, createdAt: number, updatedAt?: number | null, avatar?: string | null, membership: { uid: string, role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string, createdAt: number } }[]"
+              },
+              {
+                "key": "pagination",
+                "optional": false,
+                "type": "{ count: number, next?: number | null, prev?: number | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.webhooks.createWebhook",
+          "shortPath": "webhooks.createWebhook",
+          "description": "Create a webhook",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "url",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "events",
+                "optional": false,
+                "type": "(deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[]"
+              },
+              {
+                "key": "projectIds",
+                "optional": true,
+                "type": "string[]"
+              },
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "url",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "events",
+                "optional": false,
+                "type": "(deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[]"
+              },
+              {
+                "key": "ownerId",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "projectIds",
+                "optional": true,
+                "type": "string[]"
+              },
+              {
+                "key": "createdAt",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "updatedAt",
+                "optional": false,
+                "type": "number"
+              }
+            ]
+          }
+        },
+        {
+          "path": "vercel.api.webhooks.getWebhooks",
+          "shortPath": "webhooks.getWebhooks",
+          "description": "Get all webhooks",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "teamId",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "inline",
+            "type": "{ id: string, url: string, events: (deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[], ownerId: string, projectIds?: string[], createdAt: number, updatedAt: number }[]"
+          }
+        }
+      ],
+      "webhooks": [
+        {
+          "path": "vercel.webhooks.deploymentCreated",
+          "shortPath": "deploymentCreated",
+          "payload": {
+            "kind": "inline",
+            "type": "unknown"
+          },
+          "usageExample": "vercel({\n    webhookHooks: {\n        deploymentCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+        },
+        {
+          "path": "vercel.webhooks.deploymentError",
+          "shortPath": "deploymentError",
+          "payload": {
+            "kind": "inline",
+            "type": "unknown"
+          },
+          "usageExample": "vercel({\n    webhookHooks: {\n        deploymentError: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+        },
+        {
+          "path": "vercel.webhooks.deploymentSucceeded",
+          "shortPath": "deploymentSucceeded",
+          "payload": {
+            "kind": "inline",
+            "type": "unknown"
+          },
+          "usageExample": "vercel({\n    webhookHooks: {\n        deploymentSucceeded: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+        },
+        {
+          "path": "vercel.webhooks.projectCreated",
+          "shortPath": "projectCreated",
+          "payload": {
+            "kind": "inline",
+            "type": "unknown"
+          },
+          "usageExample": "vercel({\n    webhookHooks: {\n        projectCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+        }
+      ],
+      "db": [
+        {
+          "path": "vercel.db.aliases.search",
+          "entityName": "aliases",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "uid",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "alias",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "deploymentId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "projectId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "redirect",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "teamId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "vercel.db.deployments.search",
+          "entityName": "deployments",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "uid",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "name",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "url",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "created",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "readyState",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "type",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "target",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "projectId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "teamId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "vercel.db.domains.search",
+          "entityName": "domains",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "name",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "boughtAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "expiresAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "transferredAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "verified",
+              "type": "boolean",
+              "operators": [
+                "equals"
+              ]
+            },
+            {
+              "field": "projectId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "teamId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "vercel.db.envs.search",
+          "entityName": "envs",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "key",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "value",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "type",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "updatedAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "projectId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "teamId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "vercel.db.projects.search",
+          "entityName": "projects",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "name",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "accountId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "updatedAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "framework",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "teamId",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "vercel.db.teams.search",
+          "entityName": "teams",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "slug",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "name",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "updatedAt",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "avatar",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "xquik",
       "displayName": "Search tweets, inspect users, manage Xquik webhooks, upload media, and run X actions from Corsair",
       "description": "Search tweets, inspect users, manage Xquik webhooks, upload media, and run X actions from Corsair",
@@ -133110,6 +135172,861 @@
             },
             {
               "field": "createdAt",
+              "type": "date",
+              "operators": [
+                "equals",
+                "before",
+                "after",
+                "between"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zendesk",
+      "displayName": "Zendesk",
+      "description": "Zendesk plugin for Corsair",
+      "npmPackageName": "@corsair-dev/zendesk",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 11,
+        "webhooks": 0,
+        "db": 3
+      },
+      "auth": [
+        {
+          "authType": "api_key",
+          "integrationFields": [],
+          "accountFields": [
+            "api_key",
+            "webhook_signature",
+            "subdomain"
+          ]
+        }
+      ],
+      "api": [
+        {
+          "path": "zendesk.api.comments.list",
+          "shortPath": "comments.list",
+          "description": "List comments for a specific ticket",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ticket_id",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "page",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "per_page",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "comments",
+                "optional": false,
+                "type": "{ id: number, type?: string | null, body?: string | null, html_body?: string | null, plain_body?: string | null, public?: boolean | null, author_id?: number | null, attachments?: any[] | null, created_at?: string | null }[]"
+              },
+              {
+                "key": "next_page",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "previous_page",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "count",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.tickets.create",
+          "shortPath": "tickets.create",
+          "description": "Create a new ticket",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "subject",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "description",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "comment",
+                "optional": true,
+                "type": "{ body: string, public?: boolean, author_id?: number }"
+              },
+              {
+                "key": "status",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "priority",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "requester_id",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "assignee_id",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "group_id",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "organization_id",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "tags",
+                "optional": true,
+                "type": "string[]"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ticket",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.tickets.delete",
+          "shortPath": "tickets.delete",
+          "description": "Delete a ticket by its ID",
+          "riskLevel": "destructive",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "number"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.tickets.get",
+          "shortPath": "tickets.get",
+          "description": "Retrieve a ticket by its ID",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "number"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ticket",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.tickets.list",
+          "shortPath": "tickets.list",
+          "description": "List tickets with pagination",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "page",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "per_page",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "sort_by",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "sort_order",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "tickets",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }[]"
+              },
+              {
+                "key": "next_page",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "previous_page",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "count",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.tickets.update",
+          "shortPath": "tickets.update",
+          "description": "Update an existing ticket",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "subject",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "status",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "priority",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "requester_id",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "assignee_id",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "comment",
+                "optional": true,
+                "type": "{ body: string, public?: boolean, author_id?: number }"
+              },
+              {
+                "key": "tags",
+                "optional": true,
+                "type": "string[]"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "ticket",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, external_id?: string | null, created_at?: string | null, updated_at?: string | null, type?: string | null, subject?: string | null, raw_subject?: string | null, description?: string | null, priority?: string | null, status?: string | null, recipient?: string | null, requester_id?: number | null, submitter_id?: number | null, assignee_id?: number | null, organization_id?: number | null, group_id?: number | null, collaborator_ids?: number[] | null, follower_ids?: number[] | null, email_cc_ids?: number[] | null, forum_topic_id?: number | null, problem_id?: number | null, has_incidents?: boolean | null, is_public?: boolean | null, due_at?: string | null, tags?: string[] | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.users.create",
+          "shortPath": "users.create",
+          "description": "Create a new user",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "name",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "email",
+                "optional": false,
+                "type": "string"
+              },
+              {
+                "key": "role",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "external_id",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "active",
+                "optional": true,
+                "type": "boolean"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "user",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.users.delete",
+          "shortPath": "users.delete",
+          "description": "Delete a user by their ID",
+          "riskLevel": "destructive",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "number"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.users.get",
+          "shortPath": "users.get",
+          "description": "Retrieve a user by their ID",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "number"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "user",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.users.list",
+          "shortPath": "users.list",
+          "description": "List users with pagination",
+          "riskLevel": "read",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "page",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "per_page",
+                "optional": true,
+                "type": "number"
+              },
+              {
+                "key": "role",
+                "optional": true,
+                "type": "string"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "users",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }[]"
+              },
+              {
+                "key": "next_page",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "previous_page",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "count",
+                "optional": true,
+                "type": "number"
+              }
+            ]
+          }
+        },
+        {
+          "path": "zendesk.api.users.update",
+          "shortPath": "users.update",
+          "description": "Update an existing user",
+          "riskLevel": "write",
+          "input": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "id",
+                "optional": false,
+                "type": "number"
+              },
+              {
+                "key": "name",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "email",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "role",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "external_id",
+                "optional": true,
+                "type": "string"
+              },
+              {
+                "key": "active",
+                "optional": true,
+                "type": "boolean"
+              }
+            ]
+          },
+          "output": {
+            "kind": "object",
+            "fields": [
+              {
+                "key": "user",
+                "optional": false,
+                "type": "{ id: number, url?: string | null, name: string, email?: string | null, created_at?: string | null, updated_at?: string | null, time_zone?: string | null, iana_time_zone?: string | null, phone?: string | null, shared_phone?: boolean | null, locale_id?: number | null, locale?: string | null, organization_id?: number | null, role?: string | null, verified?: boolean | null, external_id?: string | null, tags?: string[] | null, active?: boolean | null }"
+              }
+            ]
+          }
+        }
+      ],
+      "webhooks": [],
+      "db": [
+        {
+          "path": "zendesk.db.comments.search",
+          "entityName": "comments",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "id",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "ticketId",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "body",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "authorId",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "public",
+              "type": "boolean",
+              "operators": [
+                "equals"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "date",
+              "operators": [
+                "equals",
+                "before",
+                "after",
+                "between"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "zendesk.db.tickets.search",
+          "entityName": "tickets",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "id",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "subject",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "description",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "status",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "priority",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "requesterId",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "assigneeId",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "organizationId",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "groupId",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "date",
+              "operators": [
+                "equals",
+                "before",
+                "after",
+                "between"
+              ]
+            },
+            {
+              "field": "updatedAt",
+              "type": "date",
+              "operators": [
+                "equals",
+                "before",
+                "after",
+                "between"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "zendesk.db.users.search",
+          "entityName": "users",
+          "filters": [
+            {
+              "field": "entity_id",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "id",
+              "type": "number",
+              "operators": [
+                "equals",
+                "gt",
+                "gte",
+                "lt",
+                "lte",
+                "in"
+              ]
+            },
+            {
+              "field": "name",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "email",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "role",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "active",
+              "type": "boolean",
+              "operators": [
+                "equals"
+              ]
+            },
+            {
+              "field": "timeZone",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "locale",
+              "type": "string",
+              "operators": [
+                "equals",
+                "contains",
+                "startsWith",
+                "endsWith",
+                "in"
+              ]
+            },
+            {
+              "field": "createdAt",
+              "type": "date",
+              "operators": [
+                "equals",
+                "before",
+                "after",
+                "between"
+              ]
+            },
+            {
+              "field": "updatedAt",
               "type": "date",
               "operators": [
                 "equals",

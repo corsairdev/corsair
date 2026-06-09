@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	aliases,
 	deployments,
@@ -299,8 +300,6 @@ export function vercel<const T extends VercelPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: VercelKeyBuilderContext, source) => {
-			const authType = ctx.authType;
-
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
@@ -322,16 +321,12 @@ export function vercel<const T extends VercelPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:vercel:api_key]: Vercel API Key is missing',
-					);
+					throw new AuthMissingError('vercel', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:vercel:${authType}]: Vercel key is missing`,
-			);
+			throw new AuthMissingError('vercel', 'api_key');
 		},
 	} satisfies InternalVercelPlugin;
 }
