@@ -6,8 +6,8 @@ import { zohomail } from './index';
 
 const SECRET = 'zoho-hook-secret-123';
 
-function sign(rawBody: string): string {
-	return crypto.createHmac('sha256', SECRET).update(rawBody).digest('base64');
+function sign(rawBody: string, secret = SECRET): string {
+	return crypto.createHmac('sha256', secret).update(rawBody).digest('base64');
 }
 
 async function buildCorsair(options: { webhookSecret?: string } = {}) {
@@ -135,6 +135,53 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 
 		const stored = await corsair.zohomail.keys.get_webhook_signature();
 		expect(stored).toBe(hookSecret);
+
+		testDb.cleanup();
+	});
+
+	it('handles first request with secret, signature, and email body', async () => {
+		const { corsair, testDb } = await buildCorsair({ webhookSecret: undefined });
+		const handshake = corsair.zohomail.webhooks.challenge.handshake;
+		const received = corsair.zohomail.webhooks.messages.received;
+		const hookSecret = 'first-request-hook-secret';
+		const rawBody = eventBody();
+		const headers = {
+			'x-hook-secret': hookSecret,
+			'x-hook-signature': sign(rawBody, hookSecret),
+		};
+		const body = JSON.parse(rawBody);
+
+		expect(handshake.match({ headers, body })).toBe(true);
+		expect(received.match({ headers, body })).toBe(false);
+
+		const response = await handshake.handler({
+			payload: body,
+			headers,
+			rawBody,
+		});
+		expect(response.success).toBe(true);
+
+		const stored = await corsair.zohomail.keys.get_webhook_signature();
+		expect(stored).toBe(hookSecret);
+
+		testDb.cleanup();
+	});
+
+	it('rejects handshake when signature does not match the secret', async () => {
+		const { corsair, testDb } = await buildCorsair({ webhookSecret: undefined });
+		const handshake = corsair.zohomail.webhooks.challenge.handshake;
+		const hookSecret = 'first-request-hook-secret';
+		const rawBody = eventBody();
+
+		const response = await handshake.handler({
+			payload: JSON.parse(rawBody),
+			headers: {
+				'x-hook-secret': hookSecret,
+				'x-hook-signature': sign(rawBody, 'wrong-secret'),
+			},
+			rawBody,
+		});
+		expect(response.success).toBe(false);
 
 		testDb.cleanup();
 	});

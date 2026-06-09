@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { zohomail } from './index';
 import {
+	createZohoMailHandshakeMatch,
 	createZohoMailMatch,
 	resolveZohoId,
 	verifyZohoWebhookSignature,
@@ -37,7 +38,32 @@ describe('zoho webhook signature verification', () => {
 	});
 });
 
-describe('zoho webhook matcher', () => {
+describe('zoho webhook handshake matcher', () => {
+	const match = createZohoMailHandshakeMatch();
+
+	it('matches when x-hook-secret is present', () => {
+		expect(
+			match({
+				headers: { 'x-hook-secret': 'sek' },
+				body: {},
+			} as never),
+		).toBe(true);
+	});
+
+	it('matches first request with both secret and signature headers', () => {
+		expect(
+			match({
+				headers: {
+					'x-hook-secret': 'sek',
+					'x-hook-signature': 'abc',
+				},
+				body: { messageId: '123', subject: 'hi' },
+			} as never),
+		).toBe(true);
+	});
+});
+
+describe('zoho webhook message matcher', () => {
 	const match = createZohoMailMatch();
 
 	it('matches a signed Zoho delivery (signature header + email body)', () => {
@@ -49,11 +75,14 @@ describe('zoho webhook matcher', () => {
 		).toBe(true);
 	});
 
-	it('ignores the handshake request (x-hook-secret without signature)', () => {
+	it('ignores handshake requests (x-hook-secret present)', () => {
 		expect(
 			match({
-				headers: { 'x-hook-secret': 'sek' },
-				body: { summary: 'new mail' },
+				headers: {
+					'x-hook-secret': 'sek',
+					'x-hook-signature': 'abc',
+				},
+				body: { messageId: '123', subject: 'hi' },
 			} as never),
 		).toBe(false);
 	});

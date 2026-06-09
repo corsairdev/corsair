@@ -1,28 +1,24 @@
 import type { ZohoMailWebhooks } from '../index';
 import {
+	createZohoMailHandshakeMatch,
 	getZohoWebhookSecretFromRequest,
 	getZohoWebhookSignature,
+	verifyZohoWebhookSignature,
 } from './types';
 
 /**
- * Zoho sends the webhook signing secret in `x-hook-secret` on the first POST
- * when an outgoing webhook is saved. A 200 response is required for Zoho to
- * persist the subscription; subsequent deliveries are signed with
- * `x-hook-signature` only.
+ * Zoho delivers `x-hook-secret` on the first POST when an outgoing webhook is
+ * saved. That value becomes the HMAC key for `x-hook-signature` on all
+ * requests (including the first). A 200 is required for Zoho to persist the
+ * subscription.
+ * @see https://www.zoho.com/mail/help/dev-platform/webhook.html#secure-webhooks
  */
 export const handshake: ZohoMailWebhooks['handshake'] = {
-	match: (request) => {
-		const headers = request.headers ?? {};
-		return (
-			getZohoWebhookSecretFromRequest(headers) !== undefined &&
-			getZohoWebhookSignature(headers) === undefined
-		);
-	},
+	match: createZohoMailHandshakeMatch(),
 
 	handler: async (ctx, request) => {
-		const hookSecret = getZohoWebhookSecretFromRequest(
-			request.headers ?? {},
-		);
+		const headers = request.headers ?? {};
+		const hookSecret = getZohoWebhookSecretFromRequest(headers);
 		if (!hookSecret) {
 			return {
 				success: false,
@@ -38,6 +34,30 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 				'[corsair:zohomail] Failed to persist webhook secret:',
 				error,
 			);
+			return {
+				success: false,
+				statusCode: 500,
+				error: 'Failed to persist webhook secret',
+			};
+		}
+
+		const signature = getZohoWebhookSignature(headers);
+		if (signature) {
+			const rawBody = request.rawBody;
+			if (!rawBody) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Missing raw body for signature verification',
+				};
+			}
+			if (!verifyZohoWebhookSignature(rawBody, hookSecret, signature)) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Invalid signature',
+				};
+			}
 		}
 
 		return {

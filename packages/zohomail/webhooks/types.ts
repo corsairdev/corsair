@@ -138,12 +138,26 @@ export function verifyZohoWebhookSignature(
 }
 
 /**
+ * Matches the first-request handshake (`x-hook-secret` present).
+ * Per Zoho docs this header appears only on the very first delivery.
+ */
+export function createZohoMailHandshakeMatch(): CorsairWebhookMatcher {
+	return (request: RawWebhookRequest) => {
+		const headers = request.headers ?? {};
+		return getZohoWebhookSecretFromRequest(headers) !== undefined;
+	};
+}
+
+/**
  * Matches signed Zoho Mail email deliveries (`x-hook-signature` present).
- * Handshake requests (`x-hook-secret` only) are routed to `challenge.handshake`.
+ * Handshake requests (`x-hook-secret`) are routed to `challenge.handshake`.
  */
 export function createZohoMailMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const headers = request.headers ?? {};
+		if (getZohoWebhookSecretFromRequest(headers) !== undefined) {
+			return false;
+		}
 		if (getZohoWebhookSignature(headers) === undefined) {
 			return false;
 		}
