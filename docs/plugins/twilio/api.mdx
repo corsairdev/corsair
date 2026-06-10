@@ -1,0 +1,400 @@
+---
+title: API
+description: "API reference for Twilio: every `twilio.api.*` operation with input and output types."
+---
+
+Every `twilio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calls
+
+### create
+
+`calls.create`
+
+Initiate an outbound phone call
+
+**Risk:** `write`
+
+```ts
+await corsair.twilio.api.calls.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `To` | `string` | Yes | — |
+| `From` | `string` | Yes | — |
+| `Url` | `string` | No | — |
+| `Twiml` | `string` | No | — |
+| `StatusCallback` | `string` | No | — |
+| `StatusCallbackMethod` | `GET \| POST` | No | — |
+| `StatusCallbackEvent` | `string[]` | No | — |
+| `Timeout` | `number` | No | — |
+| `Record` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sid` | `string` | Yes | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `account_sid` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `to_formatted` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `from_formatted` | `string` | No | — |
+| `phone_number_sid` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `start_time` | `string` | No | — |
+| `end_time` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `price` | `string` | No | — |
+| `price_unit` | `string` | No | — |
+| `direction` | `string` | Yes | — |
+| `api_version` | `string` | No | — |
+| `uri` | `string` | Yes | — |
+| `subresource_uris` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="subresource_uris full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`calls.get`
+
+Retrieve a call record by SID
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.calls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callSid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sid` | `string` | Yes | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `account_sid` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `to_formatted` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `from_formatted` | `string` | No | — |
+| `phone_number_sid` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `start_time` | `string` | No | — |
+| `end_time` | `string` | No | — |
+| `duration` | `string` | No | — |
+| `price` | `string` | No | — |
+| `price_unit` | `string` | No | — |
+| `direction` | `string` | Yes | — |
+| `api_version` | `string` | No | — |
+| `uri` | `string` | Yes | — |
+| `subresource_uris` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="subresource_uris full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List call records with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.calls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `To` | `string` | No | — |
+| `From` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `StartTime` | `string` | No | — |
+| `EndTime` | `string` | No | — |
+| `PageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calls` | `object[]` | Yes | — |
+| `first_page_uri` | `string` | No | — |
+| `next_page_uri` | `string` | No | — |
+| `previous_page_uri` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="calls full type">
+
+```ts
+{
+  sid: string,
+  date_created?: string | null,
+  date_updated?: string | null,
+  account_sid: string,
+  to: string,
+  to_formatted?: string,
+  from: string,
+  from_formatted?: string,
+  phone_number_sid?: string | null,
+  status: string,
+  start_time?: string | null,
+  end_time?: string | null,
+  duration?: string | null,
+  price?: string | null,
+  price_unit?: string | null,
+  direction: string,
+  api_version?: string,
+  uri: string,
+  subresource_uris?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+Retrieve a message by SID
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageSid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sid` | `string` | Yes | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `date_sent` | `string` | No | — |
+| `account_sid` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `num_segments` | `string` | No | — |
+| `num_media` | `string` | No | — |
+| `direction` | `string` | Yes | — |
+| `api_version` | `string` | No | — |
+| `price` | `string` | No | — |
+| `price_unit` | `string` | No | — |
+| `error_code` | `number` | No | — |
+| `error_message` | `string` | No | — |
+| `uri` | `string` | Yes | — |
+| `subresource_uris` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="subresource_uris full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.twilio.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `To` | `string` | No | — |
+| `From` | `string` | No | — |
+| `DateSent` | `string` | No | — |
+| `PageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `first_page_uri` | `string` | No | — |
+| `next_page_uri` | `string` | No | — |
+| `previous_page_uri` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  sid: string,
+  date_created?: string | null,
+  date_updated?: string | null,
+  date_sent?: string | null,
+  account_sid: string,
+  to: string,
+  from: string,
+  body?: string | null,
+  status: string,
+  num_segments?: string | null,
+  num_media?: string | null,
+  direction: string,
+  api_version?: string,
+  price?: string | null,
+  price_unit?: string | null,
+  error_code?: number | null,
+  error_message?: string | null,
+  uri: string,
+  subresource_uris?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send an SMS or MMS message
+
+**Risk:** `write`
+
+```ts
+await corsair.twilio.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `To` | `string` | Yes | — |
+| `From` | `string` | Yes | — |
+| `Body` | `string` | No | — |
+| `MediaUrl` | `string[]` | No | — |
+| `StatusCallback` | `string` | No | — |
+| `MessagingServiceSid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sid` | `string` | Yes | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+| `date_sent` | `string` | No | — |
+| `account_sid` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `num_segments` | `string` | No | — |
+| `num_media` | `string` | No | — |
+| `direction` | `string` | Yes | — |
+| `api_version` | `string` | No | — |
+| `price` | `string` | No | — |
+| `price_unit` | `string` | No | — |
+| `error_code` | `number` | No | — |
+| `error_message` | `string` | No | — |
+| `uri` | `string` | Yes | — |
+| `subresource_uris` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="subresource_uris full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

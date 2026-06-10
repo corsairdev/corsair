@@ -70,17 +70,17 @@ A Gmail message was received, deleted, or had its labels changed
   type: messageReceived,
   emailAddress: string,
   historyId: string,
-  message: any
+  message: custom
 } | {
   type: messageDeleted,
   emailAddress: string,
   historyId: string,
-  message: any
+  message: custom
 } | {
   type: messageLabelChanged,
   emailAddress: string,
   historyId: string,
-  message: any,
+  message: custom,
   labelsAdded?: string[],
   labelsRemoved?: string[]
 }

@@ -86,7 +86,7 @@ Store per-tenant secrets after you create the tenant record. See [Multi-tenancy]
 Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
 
 <Tabs>
-<Tab title="API Key (Default)">
+<Tab title="OAuth 2.0 (Default)">
 
 ```ts corsair.ts
 bitwarden()
@@ -94,7 +94,7 @@ bitwarden()
 
 Store credentials with `pnpm corsair setup --plugin=bitwarden` (see [Get Credentials](/plugins/bitwarden/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-More: [API Key](/concepts/api-key)
+More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>

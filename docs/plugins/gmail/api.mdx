@@ -28,7 +28,7 @@ await corsair.gmail.api.drafts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
-| `draft` | `object` | Yes | — |
+| `draft` | `object` | No | Draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text. |
 
 <AccordionGroup>
 <Accordion title="draft full type">
@@ -63,7 +63,7 @@ await corsair.gmail.api.drafts.create({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,
@@ -155,7 +155,7 @@ await corsair.gmail.api.drafts.get({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,
@@ -225,7 +225,7 @@ await corsair.gmail.api.drafts.list({});
     labelIds?: string[],
     snippet?: string,
     historyId?: string,
-    internalDate?: string | number | date | null,
+    internalDate?: string | number | Date | null,
     sizeEstimate?: number,
     payload?: {
       partId?: string,
@@ -271,7 +271,7 @@ await corsair.gmail.api.drafts.send({});
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
 | `id` | `string` | No | — |
-| `message` | `object` | No | — |
+| `message` | `object` | No | Optional message body when sending without a draft id. raw must be base64url-encoded RFC 2822, not plain text. |
 
 <AccordionGroup>
 <Accordion title="message full type">
@@ -296,10 +296,10 @@ await corsair.gmail.api.drafts.send({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| date` | No | — |
+| `internalDate` | `string \| number \| Date` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
-| `raw` | `string` | No | — |
+| `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -346,7 +346,7 @@ await corsair.gmail.api.drafts.update({});
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
 | `id` | `string` | Yes | — |
-| `draft` | `object` | Yes | — |
+| `draft` | `object` | No | Updated draft payload. message.raw must be a base64url-encoded RFC 2822 email, not plain text. |
 
 <AccordionGroup>
 <Accordion title="draft full type">
@@ -381,7 +381,7 @@ await corsair.gmail.api.drafts.update({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,
@@ -768,10 +768,10 @@ await corsair.gmail.api.messages.get({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| date` | No | — |
+| `internalDate` | `string \| number \| Date` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
-| `raw` | `string` | No | — |
+| `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -843,7 +843,7 @@ await corsair.gmail.api.messages.list({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,
@@ -902,10 +902,10 @@ await corsair.gmail.api.messages.modify({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| date` | No | — |
+| `internalDate` | `string \| number \| Date` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
-| `raw` | `string` | No | — |
+| `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -951,7 +951,7 @@ await corsair.gmail.api.messages.send({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
-| `raw` | `string` | Yes | — |
+| `raw` | `string` | Yes | Base64url-encoded RFC 2822 email — do NOT pass plain email text. Build the MIME message (From, To, Subject, Content-Type headers, blank line, body; lines separated by \\r\\n), then base64url-encode: standard base64, replace + with -, / with _, remove trailing =. |
 | `threadId` | `string` | No | — |
 
 
@@ -965,10 +965,10 @@ await corsair.gmail.api.messages.send({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| date` | No | — |
+| `internalDate` | `string \| number \| Date` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
-| `raw` | `string` | No | — |
+| `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -1027,10 +1027,10 @@ await corsair.gmail.api.messages.trash({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| date` | No | — |
+| `internalDate` | `string \| number \| Date` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
-| `raw` | `string` | No | — |
+| `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -1089,10 +1089,10 @@ await corsair.gmail.api.messages.untrash({});
 | `labelIds` | `string[]` | No | — |
 | `snippet` | `string` | No | — |
 | `historyId` | `string` | No | — |
-| `internalDate` | `string \| number \| date` | No | — |
+| `internalDate` | `string \| number \| Date` | No | — |
 | `sizeEstimate` | `number` | No | — |
 | `payload` | `object` | No | — |
-| `raw` | `string` | No | — |
+| `raw` | `string` | No | Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body. |
 
 <AccordionGroup>
 <Accordion title="payload full type">
@@ -1191,7 +1191,7 @@ await corsair.gmail.api.threads.get({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,
@@ -1265,7 +1265,7 @@ await corsair.gmail.api.threads.list({});
     labelIds?: string[],
     snippet?: string,
     historyId?: string,
-    internalDate?: string | number | date | null,
+    internalDate?: string | number | Date | null,
     sizeEstimate?: number,
     payload?: {
       partId?: string,
@@ -1335,7 +1335,7 @@ await corsair.gmail.api.threads.modify({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,
@@ -1402,7 +1402,7 @@ await corsair.gmail.api.threads.trash({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,
@@ -1469,7 +1469,7 @@ await corsair.gmail.api.threads.untrash({});
   labelIds?: string[],
   snippet?: string,
   historyId?: string,
-  internalDate?: string | number | date | null,
+  internalDate?: string | number | Date | null,
   sizeEstimate?: number,
   payload?: {
     partId?: string,

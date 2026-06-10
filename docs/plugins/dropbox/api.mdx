@@ -39,7 +39,39 @@ await corsair.dropbox.api.files.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `discriminatedunion` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  .tag: file,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string,
+  size?: number,
+  is_downloadable?: boolean,
+  server_modified?: string,
+  client_modified?: string,
+  rev?: string,
+  content_hash?: string
+} | {
+  .tag: folder,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+} | {
+  .tag: deleted,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -69,7 +101,39 @@ await corsair.dropbox.api.files.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `discriminatedunion` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  .tag: file,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string,
+  size?: number,
+  is_downloadable?: boolean,
+  server_modified?: string,
+  client_modified?: string,
+  rev?: string,
+  content_hash?: string
+} | {
+  .tag: folder,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+} | {
+  .tag: deleted,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -136,7 +200,39 @@ await corsair.dropbox.api.files.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `discriminatedunion` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  .tag: file,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string,
+  size?: number,
+  is_downloadable?: boolean,
+  server_modified?: string,
+  client_modified?: string,
+  rev?: string,
+  content_hash?: string
+} | {
+  .tag: folder,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+} | {
+  .tag: deleted,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -216,7 +312,39 @@ await corsair.dropbox.api.folders.copy({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `discriminatedunion` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  .tag: file,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string,
+  size?: number,
+  is_downloadable?: boolean,
+  server_modified?: string,
+  client_modified?: string,
+  rev?: string,
+  content_hash?: string
+} | {
+  .tag: folder,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+} | {
+  .tag: deleted,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -292,7 +420,39 @@ await corsair.dropbox.api.folders.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `discriminatedunion` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  .tag: file,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string,
+  size?: number,
+  is_downloadable?: boolean,
+  server_modified?: string,
+  client_modified?: string,
+  rev?: string,
+  content_hash?: string
+} | {
+  .tag: folder,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+} | {
+  .tag: deleted,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -326,9 +486,43 @@ await corsair.dropbox.api.folders.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `entries` | `discriminatedunion[]` | Yes | — |
+| `entries` | `object[]` | Yes | — |
 | `cursor` | `string` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+(
+  {
+    .tag: file,
+    id: string,
+    name: string,
+    path_lower?: string,
+    path_display?: string,
+    size?: number,
+    is_downloadable?: boolean,
+    server_modified?: string,
+    client_modified?: string,
+    rev?: string,
+    content_hash?: string
+  } | {
+    .tag: folder,
+    id: string,
+    name: string,
+    path_lower?: string,
+    path_display?: string
+  } | {
+    .tag: deleted,
+    name: string,
+    path_lower?: string,
+    path_display?: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -358,9 +552,43 @@ await corsair.dropbox.api.folders.listContinue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `entries` | `discriminatedunion[]` | Yes | — |
+| `entries` | `object[]` | Yes | — |
 | `cursor` | `string` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+(
+  {
+    .tag: file,
+    id: string,
+    name: string,
+    path_lower?: string,
+    path_display?: string,
+    size?: number,
+    is_downloadable?: boolean,
+    server_modified?: string,
+    client_modified?: string,
+    rev?: string,
+    content_hash?: string
+  } | {
+    .tag: folder,
+    id: string,
+    name: string,
+    path_lower?: string,
+    path_display?: string
+  } | {
+    .tag: deleted,
+    name: string,
+    path_lower?: string,
+    path_display?: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -394,7 +622,39 @@ await corsair.dropbox.api.folders.move({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `discriminatedunion` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  .tag: file,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string,
+  size?: number,
+  is_downloadable?: boolean,
+  server_modified?: string,
+  client_modified?: string,
+  rev?: string,
+  content_hash?: string
+} | {
+  .tag: folder,
+  id: string,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+} | {
+  .tag: deleted,
+  name: string,
+  path_lower?: string,
+  path_display?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -439,7 +699,30 @@ await corsair.dropbox.api.search.query({});
 ```ts
 {
   metadata?: {
-    metadata: discriminatedunion
+    metadata: {
+      .tag: file,
+      id: string,
+      name: string,
+      path_lower?: string,
+      path_display?: string,
+      size?: number,
+      is_downloadable?: boolean,
+      server_modified?: string,
+      client_modified?: string,
+      rev?: string,
+      content_hash?: string
+    } | {
+      .tag: folder,
+      id: string,
+      name: string,
+      path_lower?: string,
+      path_display?: string
+    } | {
+      .tag: deleted,
+      name: string,
+      path_lower?: string,
+      path_display?: string
+    }
   },
   match_type?: {
   }

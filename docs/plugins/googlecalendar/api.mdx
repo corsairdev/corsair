@@ -97,7 +97,7 @@ await corsair.googlecalendar.api.events.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `calendarId` | `string` | No | — |
+| `calendarId` | `string` | No | Calendar ID. Defaults to "primary". |
 | `event` | `object` | Yes | Event body. Provide at minimum "summary", "start", and "end". |
 | `sendUpdates` | `all \| externalOnly \| none` | No | — |
 | `sendNotifications` | `boolean` | No | — |
@@ -638,7 +638,7 @@ await corsair.googlecalendar.api.events.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `calendarId` | `string` | No | — |
+| `calendarId` | `string` | No | Calendar ID. Defaults to "primary". |
 | `id` | `string` | Yes | Event ID to update |
 | `event` | `object` | Yes | Updated event fields |
 | `sendUpdates` | `all \| externalOnly \| none` | No | — |

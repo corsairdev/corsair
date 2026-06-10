@@ -940,8 +940,8 @@ await corsair.twitterapiio.api.replies.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tweetId` | `string` | Yes | — |
-| `sinceTime` | `string` | No | — |
-| `untilTime` | `string` | No | — |
+| `sinceTime` | `string` | No | Unix timestamp in seconds |
+| `untilTime` | `string` | No | Unix timestamp in seconds |
 | `cursor` | `string` | No | — |
 
 
@@ -1055,7 +1055,7 @@ await corsair.twitterapiio.api.replies.getV2({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tweetId` | `string` | Yes | — |
-| `queryType` | `Relevance \| Latest \| Likes` | No | — |
+| `queryType` | `Relevance \| Latest \| Likes` | No | Sort order for replies. Default is Relevance. |
 | `cursor` | `string` | No | — |
 
 
@@ -1204,7 +1204,7 @@ await corsair.twitterapiio.api.stream.listUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `users` | `string[]` | No | — |
+| `users` | `string[]` | No | Monitored Twitter usernames |
 | `status` | `string` | No | — |
 | `msg` | `string` | No | — |
 
@@ -1261,7 +1261,7 @@ await corsair.twitterapiio.api.trends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `woeid` | `number` | No | — |
+| `woeid` | `number` | No | Where On Earth ID. 1 = worldwide |
 
 
 
@@ -1309,29 +1309,29 @@ await corsair.twitterapiio.api.tweets.advancedSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `keywords` | `string[]` | No | — |
-| `exactPhrase` | `string` | No | — |
-| `anyOf` | `string[]` | No | — |
-| `excludeKeywords` | `string[]` | No | — |
-| `hashtags` | `string[]` | No | — |
-| `fromUsers` | `string[]` | No | — |
-| `toUsers` | `string[]` | No | — |
-| `mentioningUsers` | `string[]` | No | — |
-| `language` | `am \| ar \| bg \| bn \| bo \| ca \| cs \| cy \| da \| de \| dv \| el \| en \| es \| et \| eu \| fa \| fi \| fr \| ga \| gl \| gu \| he \| hi \| hr \| hy \| id \| is \| it \| ja \| ka \| km \| kn \| ko \| lo \| lt \| lv \| ml \| mr \| my \| ne \| nl \| no \| or \| pa \| pl \| ps \| pt \| ro \| ru \| si \| sk \| sl \| sq \| sr \| sv \| sw \| ta \| te \| th \| tl \| tr \| ug \| uk \| ur \| vi \| zh` | No | — |
-| `since` | `string` | No | — |
-| `until` | `string` | No | — |
-| `sinceTime` | `number` | No | — |
-| `untilTime` | `number` | No | — |
-| `replies` | `only \| exclude` | No | — |
-| `retweets` | `only \| exclude` | No | — |
-| `onlyLinks` | `boolean` | No | — |
-| `onlyMedia` | `boolean` | No | — |
-| `onlyImages` | `boolean` | No | — |
-| `onlyVideos` | `boolean` | No | — |
-| `minReplies` | `number` | No | — |
-| `minLikes` | `number` | No | — |
-| `minRetweets` | `number` | No | — |
-| `queryType` | `Latest \| Top` | No | — |
+| `keywords` | `string[]` | No | Words that must all appear in tweets (AND logic) |
+| `exactPhrase` | `string` | No | Exact phrase that must appear in tweets |
+| `anyOf` | `string[]` | No | At least one of these words must appear (OR logic, minimum 2 items) |
+| `excludeKeywords` | `string[]` | No | Words that must not appear in tweets |
+| `hashtags` | `string[]` | No | Hashtags to search for (with or without leading #) |
+| `fromUsers` | `string[]` | No | Only tweets from these usernames |
+| `toUsers` | `string[]` | No | Only replies to these usernames |
+| `mentioningUsers` | `string[]` | No | Only tweets mentioning these usernames |
+| `language` | `am \| ar \| bg \| bn \| bo \| ca \| cs \| cy \| da \| de \| dv \| el \| en \| es \| et \| eu \| fa \| fi \| fr \| ga \| gl \| gu \| he \| hi \| hr \| hy \| id \| is \| it \| ja \| ka \| km \| kn \| ko \| lo \| lt \| lv \| ml \| mr \| my \| ne \| nl \| no \| or \| pa \| pl \| ps \| pt \| ro \| ru \| si \| sk \| sl \| sq \| sr \| sv \| sw \| ta \| te \| th \| tl \| tr \| ug \| uk \| ur \| vi \| zh` | No | ISO 639-1 language code (e.g. "en", "fr", "ja") |
+| `since` | `string` | No | Only tweets posted on or after this date (YYYY-MM-DD) |
+| `until` | `string` | No | Only tweets posted before this date (YYYY-MM-DD) |
+| `sinceTime` | `number` | No | Only tweets posted on or after this Unix timestamp (seconds) |
+| `untilTime` | `number` | No | Only tweets posted before this Unix timestamp (seconds) |
+| `replies` | `only \| exclude` | No | "only" to return only replies; "exclude" to omit replies |
+| `retweets` | `only \| exclude` | No | "only" to return only retweets; "exclude" to omit retweets |
+| `onlyLinks` | `boolean` | No | Only tweets containing links |
+| `onlyMedia` | `boolean` | No | Only tweets with media |
+| `onlyImages` | `boolean` | No | Only tweets with images |
+| `onlyVideos` | `boolean` | No | Only tweets with native video |
+| `minReplies` | `number` | No | Minimum number of replies |
+| `minLikes` | `number` | No | Minimum number of likes |
+| `minRetweets` | `number` | No | Minimum number of retweets |
+| `queryType` | `Latest \| Top` | No | Result ordering — "Latest" (default) or "Top" |
 | `cursor` | `string` | No | — |
 
 
@@ -1442,8 +1442,8 @@ await corsair.twitterapiio.api.tweets.create({});
 |------|------|----------|-------------|
 | `tweet` | `string` | Yes | Tweet text content |
 | `loginCookie` | `string` | Yes | Twitter login cookie from user_login_v2 |
-| `replyToTweetId` | `string` | No | — |
-| `mediaIds` | `string[]` | No | — |
+| `replyToTweetId` | `string` | No | Tweet ID to reply to |
+| `mediaIds` | `string[]` | No | Media IDs to attach |
 
 
 
@@ -2286,7 +2286,7 @@ await corsair.twitterapiio.api.tweets.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `queryType` | `Top \| Latest \| Photos \| Videos` | No | — |
+| `queryType` | `Top \| Latest \| Photos \| Videos` | No | Search type. Defaults to Top |
 | `cursor` | `string` | No | — |
 
 
@@ -2872,7 +2872,7 @@ await corsair.twitterapiio.api.users.login({});
 | `userName` | `string` | Yes | Twitter username |
 | `email` | `string` | Yes | Account email address |
 | `password` | `string` | Yes | Account password |
-| `totpSecret` | `string` | No | — |
+| `totpSecret` | `string` | No | TOTP secret for 2FA (from the account profile page) |
 | `proxy` | `string` | Yes | High-quality residential proxy URL (e.g. http://user:pass@host:port) |
 
 

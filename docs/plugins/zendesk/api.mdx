@@ -20,9 +20,7 @@ List comments for a specific ticket
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.comments.list({
-  ticket_id: 12345
-});
+await corsair.zendesk.api.comments.list({});
 ```
 
 **Input**
@@ -166,9 +164,7 @@ Delete a ticket by its ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.zendesk.api.tickets.delete({
-  id: 12345
-});
+await corsair.zendesk.api.tickets.delete({});
 ```
 
 **Input**
@@ -198,9 +194,7 @@ Retrieve a ticket by its ID
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.tickets.get({
-  id: 12345
-});
+await corsair.zendesk.api.tickets.get({});
 ```
 
 **Input**
@@ -338,10 +332,7 @@ Update an existing ticket
 **Risk:** `write`
 
 ```ts
-await corsair.zendesk.api.tickets.update({
-  id: 12345,
-  subject: "Updated ticket subject"
-});
+await corsair.zendesk.api.tickets.update({});
 ```
 
 **Input**
@@ -429,10 +420,7 @@ Create a new user
 **Risk:** `write`
 
 ```ts
-await corsair.zendesk.api.users.create({
-  name: "Jane Doe",
-  email: "jane.doe@example.com"
-});
+await corsair.zendesk.api.users.create({});
 ```
 
 **Input**
@@ -494,9 +482,7 @@ Delete a user by their ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.zendesk.api.users.delete({
-  id: 12345
-});
+await corsair.zendesk.api.users.delete({});
 ```
 
 **Input**
@@ -526,9 +512,7 @@ Retrieve a user by their ID
 **Risk:** `read`
 
 ```ts
-await corsair.zendesk.api.users.get({
-  id: 12345
-});
+await corsair.zendesk.api.users.get({});
 ```
 
 **Input**
@@ -649,10 +633,7 @@ Update an existing user
 **Risk:** `write`
 
 ```ts
-await corsair.zendesk.api.users.update({
-  id: 12345,
-  name: "Jane Smith"
-});
+await corsair.zendesk.api.users.update({});
 ```
 
 **Input**

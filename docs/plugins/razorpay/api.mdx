@@ -392,7 +392,7 @@ await corsair.razorpay.api.orders.list({});
   id: string,
   entity: order,
   amount: number,
-  amount_paid?: number,
+  amount_paid?: number | null,
   amount_due?: number,
   currency: string,
   receipt?: string | null,
@@ -1056,14 +1056,27 @@ await corsair.razorpay.api.settlements.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `entity` | `settlement` | Yes | — |
-| `amount` | `number` | No | — |
-| `status` | `created \| processed \| failed` | Yes | — |
-| `fees` | `number` | No | — |
-| `tax` | `number` | No | — |
-| `utr` | `string` | No | — |
-| `created_at` | `number` | No | — |
+| `entity` | `collection` | No | — |
+| `count` | `number` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  entity: settlement,
+  amount?: number | null,
+  status: created | processed | failed,
+  fees?: number | null,
+  tax?: number | null,
+  utr?: string | null,
+  created_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
