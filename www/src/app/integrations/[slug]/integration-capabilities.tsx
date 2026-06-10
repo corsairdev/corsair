@@ -53,7 +53,7 @@ export function IntegrationCapabilities({
 			</ExpandableSection>
 
 			<ExpandableSection
-				title="Triggers"
+				title="Webhooks"
 				count={triggerCount}
 				icon={<LightningIcon size={16} aria-hidden />}
 				defaultOpen={triggerCount > 0 && triggerCount <= 8}
@@ -66,7 +66,7 @@ export function IntegrationCapabilities({
 						description: trigger.description,
 						badge: trigger.type,
 					}))}
-					emptyMessage="No triggers."
+					emptyMessage="No webhooks."
 				/>
 			</ExpandableSection>
 		</>

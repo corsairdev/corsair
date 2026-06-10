@@ -13,7 +13,6 @@ type IntegrationCardProps = {
 		id: string;
 		slug: string;
 		name: string;
-		description: string | null;
 		operationCount: number;
 		triggerCount: number;
 		isClaimed: boolean;
@@ -106,12 +105,6 @@ export function IntegrationCard({
 						@{integration.claimerGithubUsername}
 					</a>
 				</div>
-			) : null}
-
-			{integration.description ? (
-				<p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-					{integration.description}
-				</p>
 			) : null}
 
 			<IntegrationLinkLabels urls={integration.urls} layout="stacked" />
