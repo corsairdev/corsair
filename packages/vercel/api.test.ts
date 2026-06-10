@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { logEventFromContext } from 'corsair/core';
+import { makeAuthenticatedVercelRequest } from './client';
 import { getAliases } from './endpoints/aliases';
 import { createDeployment, getDeployments } from './endpoints/deployments';
 import { getDomains, getProjectDomains } from './endpoints/domains';
@@ -9,7 +10,6 @@ import { getTeams } from './endpoints/teams';
 import { VercelEndpointOutputSchemas } from './endpoints/types';
 import { createWebhook, getWebhooks } from './endpoints/webhooks';
 import type { VercelContext } from './index';
-import { makeAuthenticatedVercelRequest } from './client';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -17,90 +17,98 @@ jest.mock('corsair/core', () => ({
 }));
 
 jest.mock('./client', () => ({
-	makeAuthenticatedVercelRequest: jest.fn().mockImplementation((url, _ctx, options) => {
-		if (url.includes('projects') && url.includes('domains')) {
-			return {
-				domains: [
-					{
-						name: 'example.com',
-						apexName: 'example.com',
-						projectId: 'prj_123',
-						redirect: null,
-						redirectStatusCode: null,
-						gitBranch: null,
-						updatedAt: 1,
-						createdAt: 1,
-						verified: true,
-					},
-				],
-				pagination: { count: 1, next: null, prev: null },
-			};
-		}
-		if (url.includes('projects'))
-			return { projects: [], pagination: { count: 0, next: null, prev: null } };
-		if (url.includes('/v13/deployments') && options?.method === 'POST') {
-			return {
-				uid: 'dpl_123',
-				name: options.body?.name ?? 'test-deployment',
-				url: 'test-deployment.vercel.app',
-				created: 1,
-				readyState: 'QUEUED',
-				type: 'LAMBDAS',
-				target: 'production',
-			};
-		}
-		if (url.includes('deployments'))
-			return {
-				deployments: [],
-				pagination: { count: 0, next: null, prev: null },
-			};
-		if (url.includes('domains'))
-			return {
-				domains: [
-					{
-						id: 'dmn_unique_id',
-						name: 'example.com',
-						createdAt: 1,
-						boughtAt: null,
-						expiresAt: null,
-						transferredAt: null,
-						verified: true,
-						nameservers: [],
-						intendedNameservers: [],
-					},
-				],
-				pagination: { count: 1, next: null, prev: null },
-			};
-		if (url.includes('/v10/projects') && url.includes('/env')) {
-			return {
-				id: 'env_123',
-				key: 'API_KEY',
-				value: 'secret-value',
-				type: 'secret',
-				target: ['production'],
-				gitBranch: null,
-				createdAt: 1,
-				updatedAt: 1,
-			};
-		}
-		if (url.includes('/env')) return { envs: [] };
-		if (url.includes('aliases'))
-			return { aliases: [], pagination: { count: 0, next: null, prev: null } };
-		if (url.includes('webhooks') && options?.method === 'POST') {
-			return {
-				id: 'wh_123',
-				url: options.body?.url,
-				events: options.body?.events ?? [],
-				ownerId: 'owner_123',
-				createdAt: 1,
-				updatedAt: 1,
-			};
-		}
-		if (url.includes('webhooks')) return [];
-		if (url.includes('teams'))
-			return { teams: [], pagination: { count: 0, next: null, prev: null } };
-		return {};
-	}),
+	makeAuthenticatedVercelRequest: jest
+		.fn()
+		.mockImplementation((url, _ctx, options) => {
+			if (url.includes('projects') && url.includes('domains')) {
+				return {
+					domains: [
+						{
+							name: 'example.com',
+							apexName: 'example.com',
+							projectId: 'prj_123',
+							redirect: null,
+							redirectStatusCode: null,
+							gitBranch: null,
+							updatedAt: 1,
+							createdAt: 1,
+							verified: true,
+						},
+					],
+					pagination: { count: 1, next: null, prev: null },
+				};
+			}
+			if (url.includes('projects'))
+				return {
+					projects: [],
+					pagination: { count: 0, next: null, prev: null },
+				};
+			if (url.includes('/v13/deployments') && options?.method === 'POST') {
+				return {
+					uid: 'dpl_123',
+					name: options.body?.name ?? 'test-deployment',
+					url: 'test-deployment.vercel.app',
+					created: 1,
+					readyState: 'QUEUED',
+					type: 'LAMBDAS',
+					target: 'production',
+				};
+			}
+			if (url.includes('deployments'))
+				return {
+					deployments: [],
+					pagination: { count: 0, next: null, prev: null },
+				};
+			if (url.includes('domains'))
+				return {
+					domains: [
+						{
+							id: 'dmn_unique_id',
+							name: 'example.com',
+							createdAt: 1,
+							boughtAt: null,
+							expiresAt: null,
+							transferredAt: null,
+							verified: true,
+							nameservers: [],
+							intendedNameservers: [],
+						},
+					],
+					pagination: { count: 1, next: null, prev: null },
+				};
+			if (url.includes('/v10/projects') && url.includes('/env')) {
+				return {
+					id: 'env_123',
+					key: 'API_KEY',
+					value: 'secret-value',
+					type: 'secret',
+					target: ['production'],
+					gitBranch: null,
+					createdAt: 1,
+					updatedAt: 1,
+				};
+			}
+			if (url.includes('/env')) return { envs: [] };
+			if (url.includes('aliases'))
+				return {
+					aliases: [],
+					pagination: { count: 0, next: null, prev: null },
+				};
+			if (url.includes('webhooks') && options?.method === 'POST') {
+				return {
+					id: 'wh_123',
+					url: options.body?.url,
+					events: options.body?.events ?? [],
+					ownerId: 'owner_123',
+					createdAt: 1,
+					updatedAt: 1,
+				};
+			}
+			if (url.includes('webhooks')) return [];
+			if (url.includes('teams'))
+				return { teams: [], pagination: { count: 0, next: null, prev: null } };
+			return {};
+		}),
 }));
 
 const TEST_TOKEN = process.env.VERCEL_TOKEN || 'test-token';

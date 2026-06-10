@@ -1,11 +1,11 @@
 'use client';
 
+import { DiscordLogo, GithubLogo } from '@phosphor-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
-import { APP_URL, DOCS_URL, GITHUB_URL, DISCORD_URL } from '@/lib/site-links';
+import { APP_URL, DISCORD_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
 import { ArrowRightIcon, PlusCorner } from '../icons';
-import { GithubLogo, DiscordLogo } from '@phosphor-icons/react';
 
 function MenuIcon() {
 	return (
@@ -217,4 +217,3 @@ export function SiteMenu() {
 		</header>
 	);
 }
-

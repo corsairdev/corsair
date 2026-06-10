@@ -1,10 +1,10 @@
 'use client';
 
+import { Star } from '@phosphor-icons/react';
 import { DesktopPreview } from '../app-preview/desktop-preview';
 import { YcBackedLink } from '../yc-backed-link';
 import { HeroAppCta } from './hero-app-cta';
 import { HeroBackground } from './hero-background';
-import { Star } from '@phosphor-icons/react';
 
 export function LandingHero() {
 	return (

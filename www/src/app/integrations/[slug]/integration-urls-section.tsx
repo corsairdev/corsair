@@ -1,4 +1,7 @@
-import { IntegrationUrlsDisplay, hasIntegrationUrls } from './integration-urls-display';
+import {
+	hasIntegrationUrls,
+	IntegrationUrlsDisplay,
+} from './integration-urls-display';
 import { IntegrationUrlsForm } from './integration-urls-form';
 
 type IntegrationUrls = {

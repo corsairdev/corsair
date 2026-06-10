@@ -1,9 +1,9 @@
-import BaseCommand from './base.command';
 import type { CommandActionData, CommandOption } from '../index.types';
-import TeamsCommand from './subscribe/teams.command';
-import SharepointCommand from './subscribe/sharepoint.command';
-import OutlookCommand from './subscribe/outlook.command';
+import BaseCommand from './base.command';
 import OnedriveCommand from './subscribe/onedrive.command';
+import OutlookCommand from './subscribe/outlook.command';
+import SharepointCommand from './subscribe/sharepoint.command';
+import TeamsCommand from './subscribe/teams.command';
 
 export default class SubscribeCommand extends BaseCommand {
 	getName(): string {

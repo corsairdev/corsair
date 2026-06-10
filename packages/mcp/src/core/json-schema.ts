@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import type { ZodRawShape } from 'zod';
+import { z } from 'zod';
 import * as z4mini from 'zod/v4-mini';
 
 /** Convert a Zod v4 raw shape to JSON Schema for tool parameter definitions. */

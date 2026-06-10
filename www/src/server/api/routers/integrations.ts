@@ -1,10 +1,19 @@
 import { TRPCError } from '@trpc/server';
-import { asc, and, count, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm';
 import type { SQL } from 'drizzle-orm';
+import {
+	and,
+	asc,
+	count,
+	desc,
+	eq,
+	ilike,
+	inArray,
+	or,
+	sql,
+} from 'drizzle-orm';
 import { z } from 'zod';
-
-import { user } from '@/db/auth-schema';
 import type { DB } from '@/db';
+import { user } from '@/db/auth-schema';
 import type { IntegrationUrls } from '@/db/schema';
 import {
 	integrations,
@@ -47,7 +56,11 @@ const integrationUrlsSchema = z.object({
 });
 
 function normalizeIntegrationUrls(
-	urls: IntegrationUrls | z.infer<typeof integrationUrlsSchema> | null | undefined,
+	urls:
+		| IntegrationUrls
+		| z.infer<typeof integrationUrlsSchema>
+		| null
+		| undefined,
 ) {
 	const parsed = integrationUrlsSchema.safeParse(urls ?? {});
 	if (!parsed.success) {
@@ -76,7 +89,9 @@ function searchFilter(query: string | undefined): SQL | undefined {
 
 function visibleIntegrationsFilter(query?: string): SQL {
 	const search = searchFilter(query);
-	return search ? and(eq(integrations.show, true), search)! : eq(integrations.show, true);
+	return search
+		? and(eq(integrations.show, true), search)!
+		: eq(integrations.show, true);
 }
 
 async function logIntegrationEvent(
@@ -148,10 +163,7 @@ export const integrationsRouter = createTRPCRouter({
 					.orderBy(asc(integrations.name))
 					.limit(PAGE_SIZE)
 					.offset(offset),
-				ctx.db
-					.select({ total: count() })
-					.from(integrations)
-					.where(where),
+				ctx.db.select({ total: count() }).from(integrations).where(where),
 			]);
 
 			const total = countResult[0]?.total ?? 0;
@@ -234,7 +246,9 @@ export const integrationsRouter = createTRPCRouter({
 					urls: integrations.urls,
 				})
 				.from(integrations)
-				.where(and(eq(integrations.slug, input.slug), eq(integrations.show, true)))
+				.where(
+					and(eq(integrations.slug, input.slug), eq(integrations.show, true)),
+				)
 				.limit(1);
 
 			if (!integration) {
@@ -305,7 +319,9 @@ export const integrationsRouter = createTRPCRouter({
 				timelineUsernames.push(claimerGithubUsername);
 			}
 
-			const avatars = await getGithubUserAvatars([...new Set(timelineUsernames)]);
+			const avatars = await getGithubUserAvatars([
+				...new Set(timelineUsernames),
+			]);
 
 			return {
 				id: integration.id,
@@ -319,8 +335,7 @@ export const integrationsRouter = createTRPCRouter({
 				triggers: triggerRows,
 				isClaimed: claimRow.length > 0,
 				claimedByCurrentUser:
-					currentUserId !== undefined &&
-					claimRow[0]?.userId === currentUserId,
+					currentUserId !== undefined && claimRow[0]?.userId === currentUserId,
 				claimerGithubUsername,
 				claimerAvatarUrl: claimerGithubUsername
 					? (avatars.get(claimerGithubUsername) ?? null)
@@ -455,7 +470,10 @@ export const integrationsRouter = createTRPCRouter({
 				.select({ id: integrations.id, slug: integrations.slug })
 				.from(integrations)
 				.where(
-					and(eq(integrations.id, input.integrationId), eq(integrations.show, true)),
+					and(
+						eq(integrations.id, input.integrationId),
+						eq(integrations.show, true),
+					),
 				)
 				.limit(1);
 

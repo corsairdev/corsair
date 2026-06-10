@@ -1,7 +1,7 @@
+import { TRPCError } from '@trpc/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { TRPCError } from '@trpc/server';
 
 import { Badge } from '@/components/ui/badge';
 import { getSession } from '@/lib/auth-server';
@@ -21,7 +21,9 @@ type PageProps = {
 	searchParams: Promise<{ gettingStarted?: string }>;
 };
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+	params,
+}: PageProps): Promise<Metadata> {
 	const { slug } = await params;
 	const api = await getApi();
 
@@ -35,7 +37,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 	}
 }
 
-export default async function IntegrationPage({ params, searchParams }: PageProps) {
+export default async function IntegrationPage({
+	params,
+	searchParams,
+}: PageProps) {
 	const { slug } = await params;
 	const { gettingStarted } = await searchParams;
 	const api = await getApi();
@@ -109,7 +114,9 @@ export default async function IntegrationPage({ params, searchParams }: PageProp
 									className="rounded-full ring-1 ring-border"
 								/>
 							) : null}
-							<span className="text-xs text-muted-foreground">Maintained by</span>
+							<span className="text-xs text-muted-foreground">
+								Maintained by
+							</span>
 							<a
 								href={`https://github.com/${integration.claimerGithubUsername}`}
 								className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium transition-colors hover:bg-muted/80"

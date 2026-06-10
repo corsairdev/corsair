@@ -15,9 +15,21 @@ type IntegrationUrls = {
 };
 
 const fields = [
-	{ name: 'issueUrl' as const, label: 'Issue URL', placeholder: 'github.com/org/repo/issues/123' },
-	{ name: 'prUrl' as const, label: 'PR URL', placeholder: 'github.com/org/repo/pull/456' },
-	{ name: 'docsUrl' as const, label: 'Docs URL', placeholder: 'docs.example.com/integration' },
+	{
+		name: 'issueUrl' as const,
+		label: 'Issue URL',
+		placeholder: 'github.com/org/repo/issues/123',
+	},
+	{
+		name: 'prUrl' as const,
+		label: 'PR URL',
+		placeholder: 'github.com/org/repo/pull/456',
+	},
+	{
+		name: 'docsUrl' as const,
+		label: 'Docs URL',
+		placeholder: 'docs.example.com/integration',
+	},
 ];
 
 export function IntegrationUrlsForm({
@@ -62,10 +74,7 @@ export function IntegrationUrlsForm({
 			<div className="grid gap-3">
 				{fields.map((field) => (
 					<label key={field.name}>
-						<Badge
-							variant="outline"
-							className="mb-1.5 text-[10px] uppercase"
-						>
+						<Badge variant="outline" className="mb-1.5 text-[10px] uppercase">
 							{field.label}
 						</Badge>
 						<input
@@ -79,12 +88,15 @@ export function IntegrationUrlsForm({
 				))}
 			</div>
 			<div className="mt-4 flex flex-wrap items-center gap-3">
-				<Button type="submit" disabled={loading} size="sm" className="rounded-lg">
+				<Button
+					type="submit"
+					disabled={loading}
+					size="sm"
+					className="rounded-lg"
+				>
 					{loading ? 'Saving...' : 'Save URLs'}
 				</Button>
-				{success ? (
-					<Badge variant="success">URLs saved</Badge>
-				) : null}
+				{success ? <Badge variant="success">URLs saved</Badge> : null}
 				{error ? (
 					<span className="text-xs text-destructive">{error}</span>
 				) : null}

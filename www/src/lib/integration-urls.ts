@@ -1,6 +1,8 @@
 function parseGithubNumber(url: string, kind: 'issue' | 'pr') {
 	const pattern =
-		kind === 'issue' ? /\/issues\/(\d+)(?:[/?#]|$)/i : /\/pull\/(\d+)(?:[/?#]|$)/i;
+		kind === 'issue'
+			? /\/issues\/(\d+)(?:[/?#]|$)/i
+			: /\/pull\/(\d+)(?:[/?#]|$)/i;
 	const match = url.match(pattern);
 	return match?.[1] ?? null;
 }

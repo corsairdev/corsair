@@ -7,7 +7,10 @@ import { cn } from '@/lib/utils';
 
 export type OssIntegrationsView = 'integrations' | 'leaderboard';
 
-function buildViewHref(view: OssIntegrationsView, searchParams: URLSearchParams) {
+function buildViewHref(
+	view: OssIntegrationsView,
+	searchParams: URLSearchParams,
+) {
 	const params = new URLSearchParams(searchParams.toString());
 
 	if (view === 'integrations') {

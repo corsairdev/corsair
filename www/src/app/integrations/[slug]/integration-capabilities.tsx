@@ -1,6 +1,6 @@
 'use client';
 
-import { PlugsIcon, LightningIcon } from '@phosphor-icons/react';
+import { LightningIcon, PlugsIcon } from '@phosphor-icons/react';
 
 import { ExpandableSection } from './expandable-section';
 import { IntegrationCapabilityList } from './integration-capability-list';

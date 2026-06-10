@@ -1,9 +1,10 @@
-import * as authSchema from '@/db/auth-schema';
-import { db } from '@/db';
+import 'dotenv/config';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { magicLink } from 'better-auth/plugins';
 import { Resend } from 'resend';
+import { db } from '@/db';
+import * as authSchema from '@/db/auth-schema';
 
 const resend = process.env.RESEND_API_KEY
 	? new Resend(process.env.RESEND_API_KEY)
@@ -15,7 +16,9 @@ function getBaseUrl() {
 	const url =
 		process.env.BETTER_AUTH_URL ??
 		process.env.NEXT_PUBLIC_APP_URL ??
-		(process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : undefined);
+		(process.env.NODE_ENV !== 'production'
+			? 'http://localhost:3000'
+			: undefined);
 
 	if (!url) return undefined;
 	return /^https?:\/\//.test(url) ? url : `https://${url}`;

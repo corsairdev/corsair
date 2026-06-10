@@ -3,9 +3,7 @@ export function integrationToPluginName(name: string, slug: string): string {
 		.replace(/[^a-zA-Z0-9\s-]/g, '')
 		.split(/[\s-]+/)
 		.filter(Boolean)
-		.map(
-			(word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-		)
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
 		.join('');
 
 	if (fromName.length >= 2) {

@@ -86,9 +86,7 @@ export function ClaimTimeline({ events }: { events: TimelineEvent[] }) {
 										</span>
 									)}
 									<Badge
-										variant={
-											event.type === 'claimed' ? 'success' : 'muted'
-										}
+										variant={event.type === 'claimed' ? 'success' : 'muted'}
 										className="text-[10px]"
 									>
 										{event.type === 'claimed' ? 'Claimed' : 'Unclaimed'}

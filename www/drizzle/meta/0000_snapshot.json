@@ -105,12 +105,8 @@
           "name": "auth_schemes_integration_id_integrations_id_fk",
           "tableFrom": "auth_schemes",
           "tableTo": "integrations",
-          "columnsFrom": [
-            "integration_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["integration_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -306,12 +302,8 @@
           "name": "operations_integration_id_integrations_id_fk",
           "tableFrom": "operations",
           "tableTo": "integrations",
-          "columnsFrom": [
-            "integration_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["integration_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -433,12 +425,8 @@
           "name": "triggers_integration_id_integrations_id_fk",
           "tableFrom": "triggers",
           "tableTo": "integrations",
-          "columnsFrom": [
-            "integration_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["integration_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -471,10 +459,7 @@
     "public.trigger_type": {
       "name": "trigger_type",
       "schema": "public",
-      "values": [
-        "poll",
-        "webhook"
-      ]
+      "values": ["poll", "webhook"]
     }
   },
   "schemas": {},

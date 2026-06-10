@@ -269,10 +269,7 @@ function getFieldNamesForPlugin(
 		level === 'integration'
 			? (plugin.authConfig?.[authType]?.integration ?? [])
 			: (plugin.authConfig?.[authType]?.account ?? []);
-	return new Set([
-		...BASE_AUTH_FIELDS[authType][level],
-		...extra,
-	]);
+	return new Set([...BASE_AUTH_FIELDS[authType][level], ...extra]);
 }
 
 function credentialsIncludeAccountFields(
@@ -554,10 +551,7 @@ function getTenantClient<const Plugins extends readonly CorsairPlugin[]>(
 	corsair: SetupCorsairInstance<Plugins>,
 	tenantId: string,
 ): Record<string, unknown> {
-	if (
-		'withTenant' in corsair &&
-		typeof corsair.withTenant === 'function'
-	) {
+	if ('withTenant' in corsair && typeof corsair.withTenant === 'function') {
 		return corsair.withTenant(tenantId) as Record<string, unknown>;
 	}
 	return corsair as Record<string, unknown>;
@@ -581,7 +575,9 @@ export async function applySetupCredentials<
 	for (const [pluginId, fields] of Object.entries(credentials)) {
 		const plugin = internal.plugins.find((p) => p.id === pluginId);
 		if (!plugin) {
-			warn(`[corsair:setup] Unknown plugin '${pluginId}' — skipping credentials.`);
+			warn(
+				`[corsair:setup] Unknown plugin '${pluginId}' — skipping credentials.`,
+			);
 			continue;
 		}
 
@@ -617,7 +613,10 @@ export async function applySetupCredentials<
 							'Run setup without --tenant if you intend to change this credential globally.',
 					);
 				}
-				const setter = getCallableProperty(integrationNamespace, `set_${field}`);
+				const setter = getCallableProperty(
+					integrationNamespace,
+					`set_${field}`,
+				);
 				if (!setter) {
 					warn(
 						`[corsair:setup] Cannot set integration field '${field}' for '${pluginId}'.`,
