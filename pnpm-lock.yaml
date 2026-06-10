@@ -125,6 +125,9 @@ importers:
       '@anthropic-ai/claude-agent-sdk':
         specifier: ^0.2.0
         version: 0.2.71(zod@3.25.76)
+      '@corsair-dev/agentql':
+        specifier: workspace:*
+        version: link:../../packages/agentql
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
