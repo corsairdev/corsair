@@ -50,8 +50,6 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 
 Corsair needs four tables. Run this once, then you're done.
 
-<WindowsMigrationNote />
-
 <Tabs>
   <Tab title="SQLite">
 
@@ -177,9 +175,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 sqlite3 corsair.db < migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content migration.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="PostgreSQL">
@@ -235,9 +248,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 psql $DATABASE_URL -f migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+psql $env:DATABASE_URL -f migration.sql
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="Drizzle">
@@ -550,10 +578,10 @@ export GITHUB_TOKEN=ghp_...
 $env:GITHUB_TOKEN = "ghp_..."
 ```
 
+<WindowsEnvVarsNote />
+
   </Tab>
 </Tabs>
-
-<WindowsEnvVarsNote />
 
 Run setup once with the Corsair CLI:
 
@@ -570,7 +598,10 @@ pnpm install @corsair-dev/cli
 ```bash bun
 bun add @corsair-dev/cli
 ```
-</CodeGroup> 
+</CodeGroup>
+
+<Tabs>
+  <Tab title="macOS / Linux">
 
 <CodeGroup>
 ```bash npm
@@ -586,6 +617,27 @@ pnpm corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
 bunx corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
 ```
 </CodeGroup>
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<CodeGroup>
+```bash npm
+npx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+```bash yarn
+yarn corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+```bash pnpm
+pnpm corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+```bash bun
+bunx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+</CodeGroup>
+
+  </Tab>
+</Tabs>
 
 <AccordionGroup>
 <Accordion title="pnpm: command not found or setup fails?">
@@ -799,7 +851,8 @@ bun add @corsair-dev/cli
 
 Check credentials and initialize a plugin:
 
-<WindowsEnvVarsNote />
+<Tabs>
+  <Tab title="macOS / Linux">
 
 <CodeGroup>
 ```bash npm
@@ -815,6 +868,27 @@ pnpm corsair setup --plugin=github api_key=$GITHUB_TOKEN
 bunx corsair setup --plugin=github api_key=$GITHUB_TOKEN
 ```
 </CodeGroup>
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<CodeGroup>
+```bash npm
+npx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+```bash yarn
+yarn corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+```bash pnpm
+pnpm corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+```bash bun
+bunx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+</CodeGroup>
+
+  </Tab>
+</Tabs>
 
 Authenticate a plugin that uses OAuth:
 

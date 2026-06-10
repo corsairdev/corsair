@@ -99,8 +99,6 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 
 ## Migrate the database
 
-<WindowsMigrationNote />
-
 Corsair needs five tables. Install the driver, then run the migration:
 
 <CodeGroup>
@@ -183,9 +181,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 sqlite3 corsair.db < migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content migration.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
 
 </Step>
 
