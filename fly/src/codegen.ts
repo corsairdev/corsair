@@ -27,6 +27,13 @@ export const PLUGIN_CATALOG: PluginDef[] = [
 		authType: 'oauth',
 	},
 	{
+		id: 'zohomail',
+		label: 'Zoho Mail',
+		package: '@corsair-dev/zohomail',
+		description: 'Send and read emails, manage folders',
+		authType: 'oauth',
+	},
+	{
 		id: 'googlecalendar',
 		label: 'Google Calendar',
 		package: '@corsair-dev/googlecalendar',

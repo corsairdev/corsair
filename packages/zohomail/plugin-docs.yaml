@@ -1,0 +1,14 @@
+displayName: Zoho Mail
+description: Zoho Mail plugin for Corsair — send and read emails, manage folders
+overviewNote: |
+  Zoho Mail runs region-specific datacenters. Pass `region` to the plugin factory
+  (`'us'` default, plus `'eu'`, `'in'`, `'au'`, `'jp'`, `'cn'`) so the correct
+  `accounts.zoho.*` and `mail.zoho.*` hosts are used:
+
+  ```ts
+  zohomail({ region: 'eu' })
+  ```
+
+  Every Zoho Mail call is scoped to an `accountId`. Pass it explicitly, or omit it
+  and the plugin resolves the first account on the authenticated user automatically
+  (cached for the rest of the session).
