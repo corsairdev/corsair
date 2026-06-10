@@ -19,6 +19,7 @@ import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
+import type { CorsairManageNamespace } from '../management';
 import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
@@ -208,6 +209,12 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	 * Available at the root regardless of multi-tenancy setting.
 	 */
 	permissions: CorsairPermissionsNamespace;
+	/**
+	 * Management control plane namespace — in-process equivalent of the HTTP
+	 * `managementHandler`. Lists tenants, plugins, connection status, and
+	 * permission records without going through HTTP.
+	 */
+	manage: CorsairManageNamespace;
 };
 
 /**
@@ -226,6 +233,12 @@ export type CorsairSingleTenantClient<
 	 * Available at the root regardless of multi-tenancy setting.
 	 */
 	permissions: CorsairPermissionsNamespace;
+	/**
+	 * Management control plane namespace — in-process equivalent of the HTTP
+	 * `managementHandler`. Lists tenants, plugins, connection status, and
+	 * permission records without going through HTTP.
+	 */
+	manage: CorsairManageNamespace;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
