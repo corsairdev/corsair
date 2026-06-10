@@ -266,7 +266,7 @@ importers:
         version: 5.9.3
       zod:
         specifier: ^4.1.13
-        version: 4.4.3
+        version: 4.1.13
 
   packages/airtable:
     dependencies:

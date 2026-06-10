@@ -1,38 +1,34 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { AgentQLEndpointInputs, AgentQLEndpointOutputs } from './endpoints/types';
-import { AgentQLEndpointInputSchemas, AgentQLEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import { Data } from './endpoints';
 import type {
-	AgentQLWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { AgentQLSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	AgentQLEndpointInputs,
+	AgentQLEndpointOutputs,
+} from './endpoints/types';
+import {
+	AgentQLEndpointInputSchemas,
+	AgentQLEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { AgentQLSchema } from './schema';
 
 export type AgentQLPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalAgentQLPlugin['hooks'];
-	webhookHooks?: InternalAgentQLPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof agentQLEndpointsNested>;
 };
@@ -46,62 +42,38 @@ export type AgentQLKeyBuilderContext = KeyBuilderContext<AgentQLPluginOptions>;
 
 export type AgentQLBoundEndpoints = BindEndpoints<typeof agentQLEndpointsNested>;
 
-type AgentQLEndpoint<
-	K extends keyof AgentQLEndpointOutputs,
-> = CorsairEndpoint<
+type AgentQLEndpoint<K extends keyof AgentQLEndpointOutputs> = CorsairEndpoint<
 	AgentQLContext,
 	AgentQLEndpointInputs[K],
 	AgentQLEndpointOutputs[K]
 >;
 
 export type AgentQLEndpoints = {
-	exampleGet: AgentQLEndpoint<'exampleGet'>;
+	queryData: AgentQLEndpoint<'queryData'>;
 };
-
-type AgentQLWebhook<
-	K extends keyof AgentQLWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<AgentQLContext, TEvent, AgentQLWebhookOutputs[K]>;
-
-export type AgentQLWebhooks = {
-	example: AgentQLWebhook<'example', ExampleEvent>;
-};
-
-export type AgentQLBoundWebhooks = BindWebhooks<AgentQLWebhooks>;
 
 const agentQLEndpointsNested = {
-	example: {
-		get: Example.get,
+	data: {
+		query: Data.query,
 	},
 } as const;
 
-const agentQLWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const agentQLWebhooksNested = {} as const;
 
 export const agentQLEndpointSchemas = {
-	'example.get': {
-		input: AgentQLEndpointInputSchemas.exampleGet,
-		output: AgentQLEndpointOutputSchemas.exampleGet,
+	'data.query': {
+		input: AgentQLEndpointInputSchemas.queryData,
+		output: AgentQLEndpointOutputSchemas.queryData,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof agentQLEndpointsNested>;
-
-const agentQLWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof agentQLWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const agentQLEndpointMeta = {
-	'example.get': {
+	'data.query': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'Tool to query structured data as JSON from a web page using an AgentQL query or natural language prompt. Use after defining your query or prompt and a URL or HTML.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof agentQLEndpointsNested>;
 
@@ -137,31 +109,16 @@ export function agentql<const T extends AgentQLPluginOptions>(
 		schema: AgentQLSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: agentQLEndpointsNested,
 		webhooks: agentQLWebhooksNested,
 		endpointMeta: agentQLEndpointMeta,
 		endpointSchemas: agentQLEndpointSchemas,
-		webhookSchemas: agentQLWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-agentql-signature' in headers;
-		},
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AgentQLKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -171,19 +128,14 @@ export function agentql<const T extends AgentQLPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			throw new AuthMissingError('agentql', 'api_key');
 		},
 	} satisfies InternalAgentQLPlugin;
 }
 
 export type {
-	ExampleEvent,
-	AgentQLWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	AgentQLEndpointInputs,
 	AgentQLEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	AgentQLQueryDataInput,
+	AgentQLQueryDataResponse,
 } from './endpoints/types';

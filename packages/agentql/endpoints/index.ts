@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import { query } from './query-data';
 
-export const Example = {
-	get: exampleGet,
+export const Data = {
+	query,
 };
 
 export * from './types';

@@ -12,8 +12,7 @@ export class AgentQLAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const AGENTQL_API_BASE = 'https://api.example.com';
+const AGENTQL_API_BASE = 'https://api.agentql.com';
 
 export async function makeAgentQLRequest<T>(
 	endpoint: string,
@@ -31,11 +30,10 @@ export async function makeAgentQLRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'X-API-Key': apiKey,
 		},
 	};
 
