@@ -21,6 +21,7 @@ import {
 	PullRequestsEndpoints,
 	ReleasesEndpoints,
 	RepositoriesEndpoints,
+	UsersEndpoints,
 	WorkflowsEndpoints,
 } from './endpoints';
 import {
@@ -321,6 +322,12 @@ export type GithubEndpoints = {
 	commentsGet: GithubEndpoint<'commentsGet'>;
 	commentsUpdate: GithubEndpoint<'commentsUpdate'>;
 	commentsDelete: GithubEndpoint<'commentsDelete'>;
+	usersList: GithubEndpoint<'usersList'>;
+	usersGet: GithubEndpoint<'usersGet'>;
+	usersGetById: GithubEndpoint<'usersGetById'>;
+	usersGetAuthenticated: GithubEndpoint<'usersGetAuthenticated'>;
+	usersUpdate: GithubEndpoint<'usersUpdate'>;
+	usersGetHovercard: GithubEndpoint<'usersGetHovercard'>;
 };
 
 export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;
@@ -641,6 +648,14 @@ const githubEndpointsNested = {
 		update: CommentsEndpoints.update,
 		delete: CommentsEndpoints.delete,
 	},
+	users: {
+		list: UsersEndpoints.list,
+		get: UsersEndpoints.get,
+		getById: UsersEndpoints.getById,
+		getAuthenticated: UsersEndpoints.getAuthenticated,
+		update: UsersEndpoints.update,
+		getHovercard: UsersEndpoints.getHovercard,
+	},
 } as const;
 
 export const githubEndpointSchemas = {
@@ -775,6 +790,30 @@ export const githubEndpointSchemas = {
 	'comments.delete': {
 		input: GithubEndpointInputSchemas.commentsDelete,
 		output: GithubEndpointOutputSchemas.commentsDelete,
+	},
+	'users.list': {
+		input: GithubEndpointInputSchemas.usersList,
+		output: GithubEndpointOutputSchemas.usersList,
+	},
+	'users.get': {
+		input: GithubEndpointInputSchemas.usersGet,
+		output: GithubEndpointOutputSchemas.usersGet,
+	},
+	'users.getById': {
+		input: GithubEndpointInputSchemas.usersGetById,
+		output: GithubEndpointOutputSchemas.usersGetById,
+	},
+	'users.getAuthenticated': {
+		input: GithubEndpointInputSchemas.usersGetAuthenticated,
+		output: GithubEndpointOutputSchemas.usersGetAuthenticated,
+	},
+	'users.update': {
+		input: GithubEndpointInputSchemas.usersUpdate,
+		output: GithubEndpointOutputSchemas.usersUpdate,
+	},
+	'users.getHovercard': {
+		input: GithubEndpointInputSchemas.usersGetHovercard,
+		output: GithubEndpointOutputSchemas.usersGetHovercard,
 	},
 } as const;
 
@@ -1603,6 +1642,30 @@ const githubEndpointMeta = {
 	'comments.delete': {
 		riskLevel: 'write',
 		description: 'Delete a comment',
+	},
+	'users.list': {
+		riskLevel: 'read',
+		description: 'List all GitHub users',
+	},
+	'users.get': {
+		riskLevel: 'read',
+		description: 'Get a user by username',
+	},
+	'users.getById': {
+		riskLevel: 'read',
+		description: 'Get a user by account ID',
+	},
+	'users.getAuthenticated': {
+		riskLevel: 'read',
+		description: 'Get the authenticated user',
+	},
+	'users.update': {
+		riskLevel: 'write',
+		description: 'Update the authenticated user profile',
+	},
+	'users.getHovercard': {
+		riskLevel: 'read',
+		description: 'Get contextual hovercard information for a user',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof githubEndpointsNested>;
 
