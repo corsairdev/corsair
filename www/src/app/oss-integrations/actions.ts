@@ -12,7 +12,9 @@ export async function setGithubUsername(username: string) {
 		revalidatePath('/oss-integrations');
 		return result;
 	} catch (error) {
-		throw new Error(getActionErrorMessage(error, 'Failed to save GitHub username'));
+		throw new Error(
+			getActionErrorMessage(error, 'Failed to save GitHub username'),
+		);
 	}
 }
 
@@ -24,7 +26,9 @@ export async function claimIntegration(integrationId: string) {
 		revalidatePath(`/integrations/${result.slug}`);
 		return result;
 	} catch (error) {
-		throw new Error(getActionErrorMessage(error, 'Failed to claim integration'));
+		throw new Error(
+			getActionErrorMessage(error, 'Failed to claim integration'),
+		);
 	}
 }
 
@@ -36,7 +40,9 @@ export async function unclaimIntegration(integrationId: string) {
 		revalidatePath(`/integrations/${result.slug}`);
 		return result;
 	} catch (error) {
-		throw new Error(getActionErrorMessage(error, 'Failed to unclaim integration'));
+		throw new Error(
+			getActionErrorMessage(error, 'Failed to unclaim integration'),
+		);
 	}
 }
 

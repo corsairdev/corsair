@@ -1,5 +1,5 @@
-import BaseCommand from '../base.command'
-import type { CommandActionData } from '../../index.types'
+import type { CommandActionData } from '../../index.types';
+import BaseCommand from '../base.command';
 
 export default class OnedriveCommand extends BaseCommand {
 	getName(): string {
@@ -11,7 +11,9 @@ export default class OnedriveCommand extends BaseCommand {
 	}
 
 	async action({}: CommandActionData) {
-		const { runOnedriveSubscribe } = await import('../../lib/microsoft/subscribe-microsoft');
+		const { runOnedriveSubscribe } = await import(
+			'../../lib/microsoft/subscribe-microsoft'
+		);
 		await runOnedriveSubscribe({ cwd: process.cwd() });
 	}
 }

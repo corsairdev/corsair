@@ -36,7 +36,9 @@ export function SignInForm() {
 	if (sent) {
 		return (
 			<div className="mx-auto max-w-md rounded-xl border border-border/70 bg-card p-6 shadow-sm">
-				<h1 className="text-2xl font-semibold tracking-tight">Check your email</h1>
+				<h1 className="text-2xl font-semibold tracking-tight">
+					Check your email
+				</h1>
 				<p className="mt-3 text-sm text-muted-foreground">
 					We sent a sign-in link to{' '}
 					<Badge variant="outline" className="font-normal">
@@ -68,7 +70,10 @@ export function SignInForm() {
 				onSubmit={handleSubmit}
 				className="mt-6 rounded-xl border border-border/70 bg-card p-6 shadow-sm"
 			>
-				<label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+				<label
+					htmlFor="email"
+					className="text-xs font-medium text-muted-foreground"
+				>
 					Email
 				</label>
 				<input

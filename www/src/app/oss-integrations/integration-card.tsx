@@ -2,11 +2,10 @@ import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-
+import { IntegrationTitleStats } from '../integrations/[slug]/integration-title-stats';
 import { ClaimIntegrationButton } from './claim-integration-button';
 import { IntegrationLinkLabels } from './integration-link-labels';
 import { UnclaimIntegrationButton } from './unclaim-integration-button';
-import { IntegrationTitleStats } from '../integrations/[slug]/integration-title-stats';
 
 type IntegrationCardProps = {
 	integration: {

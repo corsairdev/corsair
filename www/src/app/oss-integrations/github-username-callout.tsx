@@ -55,13 +55,16 @@ export function GithubUsernameCallout() {
 					placeholder="octocat"
 					className="min-w-[200px] flex-1 rounded-lg border border-border/70 bg-background px-3 py-2 text-sm shadow-sm transition-all focus:border-border focus:ring-2 focus:ring-foreground/5 focus:outline-none"
 				/>
-				<Button type="submit" disabled={loading} size="sm" className="rounded-lg">
+				<Button
+					type="submit"
+					disabled={loading}
+					size="sm"
+					className="rounded-lg"
+				>
 					{loading ? 'Saving...' : 'Save'}
 				</Button>
 			</form>
-			{error ? (
-				<p className="mt-2 text-xs text-destructive">{error}</p>
-			) : null}
+			{error ? <p className="mt-2 text-xs text-destructive">{error}</p> : null}
 		</div>
 	);
 }

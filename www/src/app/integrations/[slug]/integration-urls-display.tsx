@@ -30,7 +30,10 @@ export function IntegrationUrlsDisplay({ urls }: { urls: IntegrationUrls }) {
 						key={row.key}
 						className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 px-3 py-2.5"
 					>
-						<Badge variant={row.variant} className="mt-0.5 shrink-0 text-[10px]">
+						<Badge
+							variant={row.variant}
+							className="mt-0.5 shrink-0 text-[10px]"
+						>
 							{row.label}
 						</Badge>
 						<a

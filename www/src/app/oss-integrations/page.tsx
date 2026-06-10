@@ -10,8 +10,8 @@ import { GithubUsernameCallout } from './github-username-callout';
 import { IntegrationCard } from './integration-card';
 import { IntegrationSearch } from './integration-search';
 import { LeaderboardEntry } from './leaderboard-entry';
-import { ViewTabs } from './view-tabs';
 import type { OssIntegrationsView } from './view-tabs';
+import { ViewTabs } from './view-tabs';
 
 export const metadata: Metadata = {
 	title: 'OSS Integrations',

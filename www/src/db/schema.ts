@@ -260,9 +260,7 @@ export const userIntegrationEvents = pgTable(
 			.defaultNow(),
 	},
 	(table) => [
-		index('user_integration_events_integration_id_idx').on(
-			table.integrationId,
-		),
+		index('user_integration_events_integration_id_idx').on(table.integrationId),
 		index('user_integration_events_created_at_idx').on(table.createdAt),
 	],
 );

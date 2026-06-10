@@ -5,8 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
 	APP_URL,
-	DOCS_URL,
 	DISCORD_URL,
+	DOCS_URL,
 	GITHUB_ISSUES_URL,
 	GITHUB_LICENSE_URL,
 	GITHUB_URL,

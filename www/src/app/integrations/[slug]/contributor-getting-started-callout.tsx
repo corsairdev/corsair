@@ -4,7 +4,6 @@ import { CaretDown, RocketLaunch } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
 import { integrationToPluginName } from '@/lib/integration-plugin-name';
 import {
 	DISCORD_URL,
@@ -12,6 +11,7 @@ import {
 	GITHUB_ISSUES_URL,
 	GITHUB_URL,
 } from '@/lib/site-links';
+import { cn } from '@/lib/utils';
 
 import { CopyableCommand } from './copyable-command';
 
