@@ -124,23 +124,72 @@ export type AgentQLCreateRemoteBrowserSessionResponse = z.infer<
 	typeof AgentQLCreateRemoteBrowserSessionResponseSchema
 >;
 
+const AgentQLGetUsageInputSchema = z.object({});
+
+export type AgentQLGetUsageInput = z.infer<typeof AgentQLGetUsageInputSchema>;
+
+const AgentQLUsageInfoSchema = z
+	.object({
+		current_cycle: z.number().int().nullable().optional(),
+		lifetime: z.number().int().optional(),
+	})
+	.loose();
+
+const AgentQLSubscriptionStatusSchema = z
+	.object({
+		lifetime_usage_limit: z.number().int().nullable().optional(),
+		current_cycle_free_usage_limit: z
+			.number()
+			.int()
+			.nullable()
+			.optional(),
+		current_cycle_start: z.string().optional(),
+		current_cycle_end: z.string().optional(),
+	})
+	.loose();
+
+const AgentQLGetUsageResponseSchema = z.object({
+	data: z
+		.object({
+			current_subscription:
+				AgentQLSubscriptionStatusSchema.nullable().optional(),
+			api_key_usage: AgentQLUsageInfoSchema,
+			total_account_usage: AgentQLUsageInfoSchema,
+		})
+		.loose(),
+	metadata: z
+		.object({
+			request_id: z.string().optional(),
+		})
+		.loose()
+		.optional(),
+});
+
+export type AgentQLGetUsageResponse = z.infer<
+	typeof AgentQLGetUsageResponseSchema
+>;
+
 export type AgentQLEndpointInputs = {
 	queryData: AgentQLQueryDataInput;
 	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionInput;
+	getUsage: AgentQLGetUsageInput;
 };
 
 export type AgentQLEndpointOutputs = {
 	queryData: AgentQLQueryDataResponse;
 	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionResponse;
+	getUsage: AgentQLGetUsageResponse;
 };
 
 export const AgentQLEndpointInputSchemas = {
 	queryData: AgentQLQueryDataInputSchema,
 	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionInputSchema,
+	getUsage: AgentQLGetUsageInputSchema,
 } as const;
 
 export const AgentQLEndpointOutputSchemas = {
 	queryData: AgentQLQueryDataResponseSchema,
 	createRemoteBrowserSession:
 		AgentQLCreateRemoteBrowserSessionResponseSchema,
+	getUsage: AgentQLGetUsageResponseSchema,
 } as const;

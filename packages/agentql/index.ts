@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { BrowserSessions, Data } from './endpoints';
+import { BrowserSessions, Data, Usage } from './endpoints';
 import type {
 	AgentQLEndpointInputs,
 	AgentQLEndpointOutputs,
@@ -50,6 +50,7 @@ type AgentQLEndpoint<K extends keyof AgentQLEndpointOutputs> = CorsairEndpoint<
 
 export type AgentQLEndpoints = {
 	createRemoteBrowserSession: AgentQLEndpoint<'createRemoteBrowserSession'>;
+	getUsage: AgentQLEndpoint<'getUsage'>;
 	queryData: AgentQLEndpoint<'queryData'>;
 };
 
@@ -60,6 +61,9 @@ const agentQLEndpointsNested = {
 	},
 	data: {
 		query: Data.query,
+	},
+	usage: {
+		get: Usage.get,
 	},
 } as const;
 
@@ -73,6 +77,10 @@ export const agentQLEndpointSchemas = {
 	'data.query': {
 		input: AgentQLEndpointInputSchemas.queryData,
 		output: AgentQLEndpointOutputSchemas.queryData,
+	},
+	'usage.get': {
+		input: AgentQLEndpointInputSchemas.getUsage,
+		output: AgentQLEndpointOutputSchemas.getUsage,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof agentQLEndpointsNested>;
 
@@ -88,6 +96,11 @@ const agentQLEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Tool to query structured data as JSON from a web page using an AgentQL query or natural language prompt. Use after defining your query or prompt and a URL or HTML.',
+	},
+	'usage.get': {
+		riskLevel: 'read',
+		description:
+			'Retrieves API usage statistics and subscription limits for the AgentQL account. Returns current billing cycle dates, lifetime usage limits, API key usage counts, and total account usage. Useful for monitoring quota consumption and planning usage. No parameters required - uses the authenticated API key from connection settings.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof agentQLEndpointsNested>;
 
@@ -152,6 +165,8 @@ export type {
 	AgentQLCreateRemoteBrowserSessionResponse,
 	AgentQLEndpointInputs,
 	AgentQLEndpointOutputs,
+	AgentQLGetUsageInput,
+	AgentQLGetUsageResponse,
 	AgentQLQueryDataInput,
 	AgentQLQueryDataResponse,
 } from './endpoints/types';
