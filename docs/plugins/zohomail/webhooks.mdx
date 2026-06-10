@@ -1,0 +1,112 @@
+---
+title: Webhooks
+description: "Zoho Mail incoming webhooks: event paths, payloads, and response data."
+---
+
+The Zoho Mail plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/zohomail/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+<Warning>
+**Zoho Mail's webhook model differs from most providers — read before relying on it.**
+
+- **Per-account, not app-level.** There is no single webhook URL you register once in the API Console for all connected mailboxes. Each mailbox owner must add the URL **manually** in their own Zoho Mail UI (**Settings → Integrations → Developer Space → Outgoing Webhooks**).
+- **No API to register it** — it cannot be auto-provisioned per tenant.
+- **Paid plans only.** Developer Space (and thus webhooks) is gated behind a paid Zoho plan.
+- **Handshake + signature.** The first request carries the secret in the `x-hook-secret` header (acknowledge with a 200). Subsequent requests are signed with `x-hook-signature` = base64 HMAC-SHA256 of the **raw** request body. Your HTTP route **must verify against the raw body bytes** — re-serializing parsed JSON can break verification.
+
+**For multi-tenant / free-tier setups, prefer polling:** call `messages.list` on an interval and read the synced local DB. The plugin's `list`/`get` endpoints upsert to the database on every call, and `folders.list` is wired into `setupCorsair({ backfill: true })`.
+</Warning>
+
+## Webhook map
+
+- `messages`
+  - `received` (`messages.received`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Messages
+
+### Received
+
+`messages.received`
+
+A new email was received in the mailbox
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | No | — |
+| `folderId` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `html` | `string` | No | — |
+| `fromAddress` | `string` | No | — |
+| `toAddress` | `string` | No | — |
+| `ccAddress` | `string` | No | — |
+| `sender` | `string` | No | — |
+| `sentDateInGMT` | `string` | No | — |
+| `receivedTime` | `string` | No | — |
+| `size` | `string \| number` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  messageId?: string,
+  folderId?: string,
+  subject?: string,
+  summary?: string,
+  html?: string,
+  fromAddress?: string,
+  toAddress?: string,
+  ccAddress?: string,
+  sender?: string,
+  sentDateInGMT?: string,
+  receivedTime?: string,
+  size?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zohomail({
+    webhookHooks: {
+        messages: {
+            received: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
