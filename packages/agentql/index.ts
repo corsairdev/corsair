@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Data } from './endpoints';
+import { BrowserSessions, Data } from './endpoints';
 import type {
 	AgentQLEndpointInputs,
 	AgentQLEndpointOutputs,
@@ -49,10 +49,15 @@ type AgentQLEndpoint<K extends keyof AgentQLEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type AgentQLEndpoints = {
+	createRemoteBrowserSession: AgentQLEndpoint<'createRemoteBrowserSession'>;
 	queryData: AgentQLEndpoint<'queryData'>;
 };
 
 const agentQLEndpointsNested = {
+	browserSessions: {
+		createRemoteBrowserSession:
+			BrowserSessions.createRemoteBrowserSession,
+	},
 	data: {
 		query: Data.query,
 	},
@@ -61,6 +66,10 @@ const agentQLEndpointsNested = {
 const agentQLWebhooksNested = {} as const;
 
 export const agentQLEndpointSchemas = {
+	'browserSessions.createRemoteBrowserSession': {
+		input: AgentQLEndpointInputSchemas.createRemoteBrowserSession,
+		output: AgentQLEndpointOutputSchemas.createRemoteBrowserSession,
+	},
 	'data.query': {
 		input: AgentQLEndpointInputSchemas.queryData,
 		output: AgentQLEndpointOutputSchemas.queryData,
@@ -70,6 +79,11 @@ export const agentQLEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const agentQLEndpointMeta = {
+	'browserSessions.createRemoteBrowserSession': {
+		riskLevel: 'write',
+		description:
+			'Tool to create a remote browser session. Use when you need to run browser automation on remote infrastructure.',
+	},
 	'data.query': {
 		riskLevel: 'read',
 		description:
@@ -134,6 +148,8 @@ export function agentql<const T extends AgentQLPluginOptions>(
 }
 
 export type {
+	AgentQLCreateRemoteBrowserSessionInput,
+	AgentQLCreateRemoteBrowserSessionResponse,
 	AgentQLEndpointInputs,
 	AgentQLEndpointOutputs,
 	AgentQLQueryDataInput,

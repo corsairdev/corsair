@@ -6,6 +6,15 @@ export const AGENTQL_BROWSER_PROFILE = [
 	'stealth',
 	'tf-browser',
 ] as const;
+export const AGENTQL_BROWSER_UA_PRESET = [
+	'windows',
+	'macos',
+	'linux',
+] as const;
+export const AGENTQL_SHUTDOWN_MODE = [
+	'on_disconnect',
+	'on_inactivity_timeout',
+] as const;
 
 const AgentQLTetraProxySchema = z
 	.object({
@@ -76,18 +85,62 @@ export type AgentQLQueryDataResponse = z.infer<
 	typeof AgentQLQueryDataResponseSchema
 >;
 
+const AgentQLCreateRemoteBrowserSessionInputSchema = z
+	.object({
+		browser_ua_preset: z.enum(AGENTQL_BROWSER_UA_PRESET).optional(),
+		browser_profile: z.enum(AGENTQL_BROWSER_PROFILE).optional(),
+		inactivity_timeout_seconds: z
+			.number()
+			.int()
+			.min(5)
+			.max(86400)
+			.optional(),
+		proxy: z
+			.union([AgentQLTetraProxySchema, AgentQLCustomProxySchema])
+			.nullable()
+			.optional(),
+		shutdown_mode: z.enum(AGENTQL_SHUTDOWN_MODE).optional(),
+		sub_user_id: z.string().nullable().optional(),
+		branding: z.boolean().optional(),
+		browser_startup_url: z
+			.union([z.string().url(), z.literal('about:blank')])
+			.nullable()
+			.optional(),
+	})
+	.strict()
+	.optional();
+
+export type AgentQLCreateRemoteBrowserSessionInput = z.infer<
+	typeof AgentQLCreateRemoteBrowserSessionInputSchema
+>;
+
+const AgentQLCreateRemoteBrowserSessionResponseSchema = z.object({
+	session_id: z.string(),
+	cdp_url: z.string(),
+	base_url: z.string(),
+});
+
+export type AgentQLCreateRemoteBrowserSessionResponse = z.infer<
+	typeof AgentQLCreateRemoteBrowserSessionResponseSchema
+>;
+
 export type AgentQLEndpointInputs = {
 	queryData: AgentQLQueryDataInput;
+	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionInput;
 };
 
 export type AgentQLEndpointOutputs = {
 	queryData: AgentQLQueryDataResponse;
+	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionResponse;
 };
 
 export const AgentQLEndpointInputSchemas = {
 	queryData: AgentQLQueryDataInputSchema,
+	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionInputSchema,
 } as const;
 
 export const AgentQLEndpointOutputSchemas = {
 	queryData: AgentQLQueryDataResponseSchema,
+	createRemoteBrowserSession:
+		AgentQLCreateRemoteBrowserSessionResponseSchema,
 } as const;
