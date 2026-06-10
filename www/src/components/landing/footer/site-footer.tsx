@@ -90,6 +90,14 @@ export function SiteFooter() {
 						</h3>
 						<ul className="flex flex-col gap-2 p-0 list-none">
 							<li>
+								<Link
+									href="/blog"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Blog
+								</Link>
+							</li>
+							<li>
 								<a
 									href={GITHUB_ISSUES_URL}
 									target="_blank"
