@@ -7,9 +7,11 @@ import { getSession } from '@/lib/auth-server';
 import { getApi } from '@/server/api/caller';
 
 import { GithubUsernameCallout } from './github-username-callout';
+import { HowItWorks } from './how-it-works';
 import { IntegrationCard } from './integration-card';
 import { IntegrationSearch } from './integration-search';
 import { LeaderboardEntry } from './leaderboard-entry';
+import { SignInBanner } from './sign-in-banner';
 import type { OssIntegrationsView } from './view-tabs';
 import { ViewTabs } from './view-tabs';
 
@@ -32,7 +34,7 @@ function buildPageHref(page: number, q: string, view: OssIntegrationsView) {
 	if (view === 'integrations' && q) params.set('q', q);
 	if (page > 1) params.set('page', String(page));
 	const query = params.toString();
-	return query ? `/oss-integrations?${query}` : '/oss-integrations';
+	return query ? `/oss?${query}` : '/oss';
 }
 
 export default async function OssIntegrationsPage({ searchParams }: PageProps) {
@@ -60,22 +62,9 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 		<main className="px-6 py-8">
 			{session && !profile?.githubUsername ? <GithubUsernameCallout /> : null}
 
-			<Link
-				href="/"
-				className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-			>
-				← Corsair
-			</Link>
+			{!session ? <SignInBanner /> : null}
 
-			<div className="mb-8">
-				<h1 className="text-3xl font-semibold tracking-tight text-foreground">
-					OSS Integrations
-				</h1>
-				<p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
-					Browse, claim, and contribute open-source integrations to the Corsair
-					ecosystem.
-				</p>
-			</div>
+			<HowItWorks signedIn={Boolean(session)} />
 
 			{myIntegrations && myIntegrations.items.length > 0 ? (
 				<section className="mb-6 rounded-xl border border-border/70 bg-card p-4 shadow-sm">
@@ -123,7 +112,7 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 							<>
 								<Badge variant="accent">matching &ldquo;{q}&rdquo;</Badge>
 								<Link
-									href="/oss-integrations"
+									href="/oss"
 									className="text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
 								>
 									Clear search

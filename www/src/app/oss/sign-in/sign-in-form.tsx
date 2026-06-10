@@ -21,7 +21,7 @@ export function SignInForm() {
 		await authClient.signIn.magicLink(
 			{
 				email,
-				callbackURL: '/oss-integrations',
+				callbackURL: '/oss',
 			},
 			{
 				onSuccess: () => setSent(true),
@@ -103,7 +103,7 @@ export function SignInForm() {
 
 			<p className="mt-6 text-sm">
 				<Link
-					href="/oss-integrations"
+					href="/oss"
 					className="text-muted-foreground transition-colors hover:text-foreground"
 				>
 					← Back to integrations
