@@ -1,0 +1,1 @@
+ALTER TABLE "integrations" ADD COLUMN "show" boolean DEFAULT true NOT NULL;
