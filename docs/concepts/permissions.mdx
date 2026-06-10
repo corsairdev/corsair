@@ -3,6 +3,8 @@ title: Permissions
 description: Gate destructive agent actions behind human approval before they execute.
 ---
 
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+
 When an AI agent calls Corsair, you need guardrails. Permissions let you set a policy per integration — reads go through, writes may need sign-off, destructive actions can be blocked entirely.
 
 ```ts corsair.ts
@@ -73,6 +75,8 @@ Permissions require a database. Without `corsair_permissions`, any endpoint that
 ## Add the permissions table
 
 If you already ran the [quick start](/getting-started/quick-start) migration, add this table once. The schema matches what Corsair expects at runtime.
+
+<WindowsMigrationNote />
 
 <Tabs>
   <Tab title="SQLite">

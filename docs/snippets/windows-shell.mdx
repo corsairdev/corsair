@@ -1,0 +1,11 @@
+export const WindowsEnvVarsNote = () => (
+  <Note>
+    **Windows (PowerShell):** Commands that use `export VAR=value` or `$VAR` syntax are for macOS and Linux. In PowerShell, set environment variables with `$env:VAR_NAME = "value"` and reference them with `$env:VAR_NAME` — for example, `$env:GITHUB_TOKEN = "ghp_..."` and `api_key=$env:GITHUB_TOKEN`.
+  </Note>
+);
+
+export const WindowsMigrationNote = () => (
+  <Note>
+    **Windows (PowerShell):** The migration commands below use bash syntax. For SQLite, run `Get-Content migration.sql | sqlite3 corsair.db`. For PostgreSQL, run `psql $env:DATABASE_URL -f migration.sql`.
+  </Note>
+);

@@ -34,12 +34,28 @@ In Codex, add a custom MCP server with **Streamable HTTP**:
 
 **CLI:**
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 export CORSAIR_MCP_SECRET="ch_..."
 codex mcp add corsair \
   --url "https://api.corsair.dev/mcp/YOUR_INSTANCE_ID?tenantId=your-tenant-id" \
   --bearer-token-env-var CORSAIR_MCP_SECRET
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+```powershell
+$env:CORSAIR_MCP_SECRET = "ch_..."
+codex mcp add corsair `
+  --url "https://api.corsair.dev/mcp/YOUR_INSTANCE_ID?tenantId=your-tenant-id" `
+  --bearer-token-env-var CORSAIR_MCP_SECRET
+```
+
+  </Tab>
+</Tabs>
 
 **`~/.codex/config.toml`:**
 
