@@ -125,7 +125,20 @@ export type IntegrationUrls = {
 export const authModeEnum = pgEnum('auth_mode', authModes);
 export const triggerTypeEnum = pgEnum('trigger_type', triggerTypes);
 
-export const userIntegrationEventTypes = ['claimed', 'unclaimed'] as const;
+export const userIntegrationStatuses = ['in_progress', 'finished'] as const;
+
+export type UserIntegrationStatus = (typeof userIntegrationStatuses)[number];
+
+export const userIntegrationStatusEnum = pgEnum(
+	'user_integration_status',
+	userIntegrationStatuses,
+);
+
+export const userIntegrationEventTypes = [
+	'claimed',
+	'unclaimed',
+	'finished',
+] as const;
 
 export type UserIntegrationEventType =
 	(typeof userIntegrationEventTypes)[number];
@@ -234,6 +247,9 @@ export const userIntegrations = pgTable(
 		integrationId: text('integration_id')
 			.notNull()
 			.references(() => integrations.id, { onDelete: 'cascade' }),
+		status: userIntegrationStatusEnum('status')
+			.notNull()
+			.default('in_progress'),
 		...timestamps,
 	},
 	(table) => [

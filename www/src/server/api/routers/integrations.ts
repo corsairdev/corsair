@@ -99,7 +99,7 @@ async function logIntegrationEvent(
 	params: {
 		integrationId: string;
 		userId: string;
-		type: 'claimed' | 'unclaimed';
+		type: 'claimed' | 'unclaimed' | 'finished';
 	},
 ) {
 	await db.insert(userIntegrationEvents).values({
@@ -152,6 +152,7 @@ export const integrationsRouter = createTRPCRouter({
 						urls: integrations.urls,
 						claimerUserId: userIntegrations.userId,
 						claimerGithubUsername: user.githubUsername,
+						status: userIntegrations.status,
 					})
 					.from(integrations)
 					.leftJoin(
@@ -216,6 +217,7 @@ export const integrationsRouter = createTRPCRouter({
 				operationCount: operationCounts.get(row.id) ?? 0,
 				triggerCount: triggerCounts.get(row.id) ?? 0,
 				isClaimed: row.claimerUserId !== null,
+				status: row.claimerUserId !== null ? row.status : null,
 				claimedByCurrentUser:
 					currentUserId !== undefined && row.claimerUserId === currentUserId,
 				claimerGithubUsername: row.claimerGithubUsername ?? null,
@@ -289,6 +291,7 @@ export const integrationsRouter = createTRPCRouter({
 						.select({
 							userId: userIntegrations.userId,
 							githubUsername: user.githubUsername,
+							status: userIntegrations.status,
 						})
 						.from(userIntegrations)
 						.leftJoin(user, eq(user.id, userIntegrations.userId))
@@ -334,6 +337,7 @@ export const integrationsRouter = createTRPCRouter({
 				operations: operationRows,
 				triggers: triggerRows,
 				isClaimed: claimRow.length > 0,
+				status: claimRow[0]?.status ?? null,
 				claimedByCurrentUser:
 					currentUserId !== undefined && claimRow[0]?.userId === currentUserId,
 				claimerGithubUsername,
@@ -635,6 +639,89 @@ export const integrationsRouter = createTRPCRouter({
 				integrationId: input.integrationId,
 				slug: integration.slug,
 				urls: normalizeIntegrationUrls(updated.urls),
+			};
+		}),
+
+	markFinished: protectedProcedure
+		.input(z.object({ integrationId: z.string().min(1) }))
+		.mutation(async ({ ctx, input }) => {
+			const [integration] = await ctx.db
+				.select({
+					id: integrations.id,
+					slug: integrations.slug,
+					urls: integrations.urls,
+				})
+				.from(integrations)
+				.where(eq(integrations.id, input.integrationId))
+				.limit(1);
+
+			if (!integration) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'Integration not found',
+				});
+			}
+
+			const [claim] = await ctx.db
+				.select({
+					userId: userIntegrations.userId,
+					status: userIntegrations.status,
+				})
+				.from(userIntegrations)
+				.where(eq(userIntegrations.integrationId, input.integrationId))
+				.limit(1);
+
+			if (!claim) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'This integration is not claimed',
+				});
+			}
+
+			if (claim.userId !== ctx.user.id) {
+				throw new TRPCError({
+					code: 'FORBIDDEN',
+					message: 'Only the integration owner can mark it as finished',
+				});
+			}
+
+			if (claim.status === 'finished') {
+				return {
+					integrationId: input.integrationId,
+					slug: integration.slug,
+					status: 'finished' as const,
+				};
+			}
+
+			const urls = normalizeIntegrationUrls(integration.urls);
+			if (!urls.issueUrl || !urls.prUrl) {
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message:
+						'Add both an issue URL and a PR URL before marking this integration as finished',
+				});
+			}
+
+			await ctx.db
+				.update(userIntegrations)
+				.set({ status: 'finished' })
+				.where(
+					and(
+						eq(userIntegrations.integrationId, input.integrationId),
+						eq(userIntegrations.userId, ctx.user.id),
+					),
+				);
+
+			await logIntegrationEvent(ctx.db, {
+				integrationId: input.integrationId,
+				userId: ctx.user.id,
+				type: 'finished',
+			});
+
+			return {
+				integrationId: input.integrationId,
+				slug: integration.slug,
+				status: 'finished' as const,
 			};
 		}),
 });

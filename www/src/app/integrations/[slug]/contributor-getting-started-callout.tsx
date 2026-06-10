@@ -166,6 +166,11 @@ pnpm test`;
 							<strong>Open a pull request.</strong> Link the issue, describe the
 							API surface, and explain how you tested it.
 						</li>
+						<li>
+							<strong>Mark as finished.</strong> After saving your issue and PR
+							links below, mark the integration as finished so others know your
+							work is ready for review.
+						</li>
 					</ol>
 
 					<p className="mt-4 text-xs text-muted-foreground">
