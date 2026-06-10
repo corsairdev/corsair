@@ -5,6 +5,7 @@ import * as Issues from './issues';
 import * as PullRequests from './pull-requests';
 import * as Releases from './releases';
 import * as Repositories from './repositories';
+import * as Users from './users';
 import * as Workflows from './workflows';
 
 export const IssuesEndpoints = {
@@ -62,6 +63,15 @@ export const CommentsEndpoints = {
 	get: Comments.get,
 	update: Comments.update,
 	delete: Comments.deleteComment,
+};
+
+export const UsersEndpoints = {
+	list: Users.list,
+	get: Users.get,
+	getById: Users.getById,
+	getAuthenticated: Users.getAuthenticated,
+	update: Users.update,
+	getHovercard: Users.getHovercard,
 };
 
 export * from './types';
