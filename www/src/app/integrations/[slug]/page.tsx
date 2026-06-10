@@ -29,7 +29,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 		const integration = await api.integrations.getBySlug({ slug });
 		return {
 			title: integration.name,
-			description: integration.description,
 		};
 	} catch {
 		return { title: 'Integration not found' };
@@ -121,12 +120,6 @@ export default async function IntegrationPage({ params, searchParams }: PageProp
 						</div>
 					) : null}
 				</div>
-
-				{integration.description ? (
-					<p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-						{integration.description}
-					</p>
-				) : null}
 			</div>
 
 			{session && integration.claimedByCurrentUser ? (
