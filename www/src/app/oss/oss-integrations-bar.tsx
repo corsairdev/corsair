@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -19,13 +20,20 @@ export function OssIntegrationsBar({
 	return (
 		<header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-border/60 bg-[#f7f7f5]/90 px-6 py-3 text-sm backdrop-blur-sm">
 			<Link
-				href="/oss-integrations"
-				className="inline-flex items-center gap-2 font-medium text-foreground transition-colors hover:text-foreground/80"
+				href="/"
+				aria-label="Corsair home"
+				className="inline-flex shrink-0 items-center gap-2 no-underline transition-opacity hover:opacity-80"
 			>
-				<span className="flex size-6 items-center justify-center rounded-md bg-foreground text-[10px] font-bold text-background">
-					C
+				<Image
+					src="/corsair-logo.png"
+					alt=""
+					width={32}
+					height={32}
+					className="size-7 rounded-sm"
+				/>
+				<span className="text-base font-semibold tracking-tight text-foreground">
+					Corsair
 				</span>
-				OSS Integrations
 			</Link>
 			<div className="flex items-center gap-3">
 				{session?.user ? (
@@ -73,7 +81,7 @@ export function OssIntegrationsBar({
 					</>
 				) : (
 					<Link
-						href="/oss-integrations/sign-in"
+						href="/oss/sign-in"
 						className="inline-flex items-center rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-muted"
 					>
 						Sign in

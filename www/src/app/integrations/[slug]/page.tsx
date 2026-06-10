@@ -7,9 +7,9 @@ import { Badge } from '@/components/ui/badge';
 import { getSession } from '@/lib/auth-server';
 import { getApi } from '@/server/api/caller';
 
-import { ClaimIntegrationButton } from '../../oss-integrations/claim-integration-button';
-import { IntegrationLinkLabels } from '../../oss-integrations/integration-link-labels';
-import { UnclaimIntegrationButton } from '../../oss-integrations/unclaim-integration-button';
+import { ClaimIntegrationButton } from '../../oss/claim-integration-button';
+import { IntegrationLinkLabels } from '../../oss/integration-link-labels';
+import { UnclaimIntegrationButton } from '../../oss/unclaim-integration-button';
 import { ClaimTimeline } from './claim-timeline';
 import { ContributorGettingStartedCallout } from './contributor-getting-started-callout';
 import { IntegrationCapabilities } from './integration-capabilities';
@@ -60,7 +60,7 @@ export default async function IntegrationPage({
 	return (
 		<main className="px-6 py-8">
 			<Link
-				href="/oss-integrations"
+				href="/oss"
 				className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
 			>
 				← OSS Integrations

@@ -22,7 +22,7 @@ function buildViewHref(
 	params.delete('page');
 
 	const query = params.toString();
-	return query ? `/oss-integrations?${query}` : '/oss-integrations';
+	return query ? `/oss?${query}` : '/oss';
 }
 
 const tabs: Array<{ id: OssIntegrationsView; label: string }> = [

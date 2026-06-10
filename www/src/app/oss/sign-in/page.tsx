@@ -13,7 +13,7 @@ export default async function SignInPage() {
 	const session = await getSession();
 
 	if (session) {
-		redirect('/oss-integrations');
+		redirect('/oss');
 	}
 
 	return (

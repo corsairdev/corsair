@@ -41,7 +41,7 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 		params.delete('page');
 
 		const qs = params.toString();
-		router.replace(qs ? `/oss-integrations?${qs}` : '/oss-integrations');
+		router.replace(qs ? `/oss?${qs}` : '/oss');
 	};
 
 	const handleChange = (next: string) => {

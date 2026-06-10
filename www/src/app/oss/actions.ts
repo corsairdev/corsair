@@ -9,7 +9,7 @@ export async function setGithubUsername(username: string) {
 	try {
 		const api = await getApi();
 		const result = await api.account.setGithubUsername({ username });
-		revalidatePath('/oss-integrations');
+		revalidatePath('/oss');
 		return result;
 	} catch (error) {
 		throw new Error(
@@ -22,7 +22,7 @@ export async function claimIntegration(integrationId: string) {
 	try {
 		const api = await getApi();
 		const result = await api.integrations.claim({ integrationId });
-		revalidatePath('/oss-integrations');
+		revalidatePath('/oss');
 		revalidatePath(`/integrations/${result.slug}`);
 		return result;
 	} catch (error) {
@@ -36,7 +36,7 @@ export async function unclaimIntegration(integrationId: string) {
 	try {
 		const api = await getApi();
 		const result = await api.integrations.unclaim({ integrationId });
-		revalidatePath('/oss-integrations');
+		revalidatePath('/oss');
 		revalidatePath(`/integrations/${result.slug}`);
 		return result;
 	} catch (error) {
@@ -62,7 +62,7 @@ export async function updateIntegrationUrls(formData: FormData) {
 		const api = await getApi();
 		const result = await api.integrations.updateUrls({ integrationId, urls });
 		revalidatePath(`/integrations/${result.slug}`);
-		revalidatePath('/oss-integrations');
+		revalidatePath('/oss');
 		return result;
 	} catch (error) {
 		throw new Error(getActionErrorMessage(error, 'Failed to save URLs'));
