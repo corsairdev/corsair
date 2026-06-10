@@ -4,6 +4,7 @@ description: Scaffold a T3 app, wire in Google Calendar with Corsair, then let a
 ---
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 
 By the end of this guide you'll have a working Next.js app with a live Google Calendar dashboard — and you'll have written almost none of the UI yourself.
 
@@ -97,6 +98,8 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 <Step>
 
 ## Migrate the database
+
+<WindowsMigrationNote />
 
 Corsair needs five tables. Install the driver, then run the migration:
 

@@ -3,6 +3,8 @@ title: Database
 description: Four tables, always-fresh integration data, tenant-scoped by default.
 ---
 
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+
 Every API call and webhook that flows through Corsair is stored in your database automatically. When something changes in Slack, GitHub, or Linear, Corsair updates the same row — so your UI can read from `*.db.*` instead of hitting third-party APIs on every page load. Third-party data becomes an extension of your own DB, always fresh.
 
 ---
@@ -10,6 +12,8 @@ Every API call and webhook that flows through Corsair is stored in your database
 ## Get started
 
 Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/getting-started/quick-start) for a full setup example.
+
+<WindowsMigrationNote />
 
 <Tabs>
   <Tab title="SQLite">

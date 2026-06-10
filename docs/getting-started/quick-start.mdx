@@ -4,6 +4,7 @@ description: Get a working integration in a few steps.
 ---
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
+import { WindowsEnvVarsNote, WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 
 <Steps>
 
@@ -48,6 +49,8 @@ If you lose it, you lose access to all stored credentials. Treat it like a root 
 ## Migrate the database
 
 Corsair needs four tables. Run this once, then you're done.
+
+<WindowsMigrationNote />
 
 <Tabs>
   <Tab title="SQLite">
@@ -533,9 +536,24 @@ Use Corsair with any integration. Here's an example of how to get started with G
 3. Select scopes: `repo`, `read:org`, `read:user`
 4. Copy the token — it starts with `ghp_`
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 export GITHUB_TOKEN=ghp_...
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+```powershell
+$env:GITHUB_TOKEN = "ghp_..."
+```
+
+  </Tab>
+</Tabs>
+
+<WindowsEnvVarsNote />
 
 Run setup once with the Corsair CLI:
 
@@ -780,6 +798,8 @@ bun add @corsair-dev/cli
 </CodeGroup>
 
 Check credentials and initialize a plugin:
+
+<WindowsEnvVarsNote />
 
 <CodeGroup>
 ```bash npm
