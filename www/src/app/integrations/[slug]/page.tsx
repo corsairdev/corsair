@@ -9,6 +9,7 @@ import { getApi } from '@/server/api/caller';
 
 import { ClaimIntegrationButton } from '../../oss/claim-integration-button';
 import { IntegrationLinkLabels } from '../../oss/integration-link-labels';
+import { IntegrationStatusBadge } from '../../oss/integration-status-badge';
 import { UnclaimIntegrationButton } from '../../oss/unclaim-integration-button';
 import { ClaimTimeline } from './claim-timeline';
 import { ContributorGettingStartedCallout } from './contributor-getting-started-callout';
@@ -76,11 +77,10 @@ export default async function IntegrationPage({
 							<Badge variant="outline" className="font-mono text-xs">
 								{integration.slug}
 							</Badge>
-							{integration.isClaimed ? (
-								<Badge variant="success">Claimed</Badge>
-							) : (
-								<Badge variant="muted">Available</Badge>
-							)}
+							<IntegrationStatusBadge
+								isClaimed={integration.isClaimed}
+								status={integration.status}
+							/>
 						</div>
 						<IntegrationTitleStats
 							operationCount={integration.operationCount}
@@ -142,6 +142,7 @@ export default async function IntegrationPage({
 				integrationId={integration.id}
 				urls={integration.urls}
 				canEdit={Boolean(session && integration.claimedByCurrentUser)}
+				status={integration.status}
 			/>
 
 			<IntegrationCapabilities

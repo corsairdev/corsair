@@ -1,3 +1,9 @@
+import type { UserIntegrationStatus } from '@/db/schema';
+
+import {
+	FinishedStatusCallout,
+	MarkFinishedButton,
+} from '../../oss/mark-finished-button';
 import {
 	hasIntegrationUrls,
 	IntegrationUrlsDisplay,
@@ -14,10 +20,12 @@ export function IntegrationUrlsSection({
 	integrationId,
 	urls,
 	canEdit,
+	status,
 }: {
 	integrationId: string;
 	urls: IntegrationUrls;
 	canEdit: boolean;
+	status: UserIntegrationStatus | null;
 }) {
 	if (!canEdit && !hasIntegrationUrls(urls)) {
 		return null;
@@ -35,6 +43,14 @@ export function IntegrationUrlsSection({
 						integration.
 					</p>
 					<IntegrationUrlsForm integrationId={integrationId} urls={urls} />
+					{status === 'finished' ? (
+						<FinishedStatusCallout />
+					) : (
+						<MarkFinishedButton
+							integrationId={integrationId}
+							hasRequiredUrls={Boolean(urls.issueUrl && urls.prUrl)}
+						/>
+					)}
 				</div>
 			) : (
 				<IntegrationUrlsDisplay urls={urls} />

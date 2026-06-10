@@ -1,10 +1,12 @@
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
+import type { UserIntegrationStatus } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { IntegrationTitleStats } from '../integrations/[slug]/integration-title-stats';
 import { ClaimIntegrationButton } from './claim-integration-button';
 import { IntegrationLinkLabels } from './integration-link-labels';
+import { IntegrationStatusBadge } from './integration-status-badge';
 import { UnclaimIntegrationButton } from './unclaim-integration-button';
 
 type IntegrationCardProps = {
@@ -15,6 +17,7 @@ type IntegrationCardProps = {
 		operationCount: number;
 		triggerCount: number;
 		isClaimed: boolean;
+		status: UserIntegrationStatus | null;
 		claimedByCurrentUser: boolean;
 		claimerGithubUsername: string | null;
 		claimerAvatarUrl: string | null;
@@ -63,11 +66,10 @@ export function IntegrationCard({
 							operationCount={integration.operationCount}
 							triggerCount={integration.triggerCount}
 						/>
-						{integration.isClaimed ? (
-							<Badge variant="success">Claimed</Badge>
-						) : (
-							<Badge variant="muted">Available</Badge>
-						)}
+						<IntegrationStatusBadge
+							isClaimed={integration.isClaimed}
+							status={integration.status}
+						/>
 					</div>
 				</div>
 

@@ -20,11 +20,32 @@ function formatTimelineTime(isoDate: string) {
 
 type TimelineEvent = {
 	id: string;
-	type: 'claimed' | 'unclaimed';
+	type: 'claimed' | 'unclaimed' | 'finished';
 	createdAt: string;
 	githubUsername: string | null;
 	avatarUrl: string | null;
 };
+
+function timelineEventLabel(type: TimelineEvent['type']) {
+	switch (type) {
+		case 'claimed':
+			return 'Claimed';
+		case 'unclaimed':
+			return 'Unclaimed';
+		case 'finished':
+			return 'Finished';
+	}
+}
+
+function timelineEventVariant(type: TimelineEvent['type']) {
+	switch (type) {
+		case 'claimed':
+		case 'finished':
+			return 'success' as const;
+		case 'unclaimed':
+			return 'muted' as const;
+	}
+}
 
 export function ClaimTimeline({ events }: { events: TimelineEvent[] }) {
 	if (events.length === 0) {
@@ -86,10 +107,10 @@ export function ClaimTimeline({ events }: { events: TimelineEvent[] }) {
 										</span>
 									)}
 									<Badge
-										variant={event.type === 'claimed' ? 'success' : 'muted'}
+										variant={timelineEventVariant(event.type)}
 										className="text-[10px]"
 									>
-										{event.type === 'claimed' ? 'Claimed' : 'Unclaimed'}
+										{timelineEventLabel(event.type)}
 									</Badge>
 								</div>
 							</div>
