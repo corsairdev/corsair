@@ -64,6 +64,13 @@
       "when": 1781123726242,
       "tag": "0008_tranquil_monster_badoon",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1781215100672,
+      "tag": "0009_absent_karnak",
+      "breakpoints": true
     }
   ]
 }
