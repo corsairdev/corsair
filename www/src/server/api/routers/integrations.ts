@@ -14,6 +14,13 @@ import {
 import { z } from 'zod';
 import type { DB } from '@/db';
 import { user } from '@/db/auth-schema';
+import {
+	clearContributorIntegrationUrls,
+	emptyIntegrationUrls,
+	fetchIntegrationUrls,
+	fetchIntegrationUrlsByIntegrationIds,
+	upsertIntegrationUrls,
+} from '@/db/integration-urls';
 import type { IntegrationUrls } from '@/db/schema';
 import {
 	integrations,
@@ -149,7 +156,6 @@ export const integrationsRouter = createTRPCRouter({
 						name: integrations.name,
 						slug: integrations.slug,
 						description: integrations.description,
-						urls: integrations.urls,
 						claimerUserId: userIntegrations.userId,
 						claimerGithubUsername: user.githubUsername,
 						status: userIntegrations.status,
@@ -170,7 +176,7 @@ export const integrationsRouter = createTRPCRouter({
 			const total = countResult[0]?.total ?? 0;
 			const integrationIds = rows.map((row) => row.id);
 
-			const [operationCountRows, triggerCountRows] =
+			const [operationCountRows, triggerCountRows, urlsByIntegration] =
 				integrationIds.length > 0
 					? await Promise.all([
 							ctx.db
@@ -189,8 +195,9 @@ export const integrationsRouter = createTRPCRouter({
 								.from(triggers)
 								.where(inArray(triggers.integrationId, integrationIds))
 								.groupBy(triggers.integrationId),
+							fetchIntegrationUrlsByIntegrationIds(ctx.db, integrationIds),
 						])
-					: [[], []];
+					: [[], [], new Map<string, IntegrationUrls>()];
 
 			const operationCounts = new Map(
 				operationCountRows.map((row) => [row.integrationId, row.count]),
@@ -213,7 +220,9 @@ export const integrationsRouter = createTRPCRouter({
 				name: row.name,
 				slug: row.slug,
 				description: row.description,
-				urls: normalizeIntegrationUrls(row.urls),
+				urls: normalizeIntegrationUrls(
+					urlsByIntegration.get(row.id) ?? emptyIntegrationUrls(),
+				),
 				operationCount: operationCounts.get(row.id) ?? 0,
 				triggerCount: triggerCounts.get(row.id) ?? 0,
 				isClaimed: row.claimerUserId !== null,
@@ -245,7 +254,6 @@ export const integrationsRouter = createTRPCRouter({
 					name: integrations.name,
 					slug: integrations.slug,
 					description: integrations.description,
-					urls: integrations.urls,
 				})
 				.from(integrations)
 				.where(
@@ -262,7 +270,7 @@ export const integrationsRouter = createTRPCRouter({
 
 			const currentUserId = ctx.session?.user?.id;
 
-			const [operationRows, triggerRows, claimRow, timelineRows] =
+			const [operationRows, triggerRows, claimRow, timelineRows, urls] =
 				await Promise.all([
 					ctx.db
 						.select({
@@ -308,6 +316,7 @@ export const integrationsRouter = createTRPCRouter({
 						.innerJoin(user, eq(user.id, userIntegrationEvents.userId))
 						.where(eq(userIntegrationEvents.integrationId, integration.id))
 						.orderBy(desc(userIntegrationEvents.createdAt)),
+					fetchIntegrationUrls(ctx.db, integration.id),
 				]);
 
 			const claimerGithubUsername = claimRow[0]?.githubUsername ?? null;
@@ -331,7 +340,7 @@ export const integrationsRouter = createTRPCRouter({
 				name: integration.name,
 				slug: integration.slug,
 				description: integration.description,
-				urls: normalizeIntegrationUrls(integration.urls),
+				urls: normalizeIntegrationUrls(urls),
 				operationCount: operationRows.length,
 				triggerCount: triggerRows.length,
 				operations: operationRows,
@@ -526,7 +535,7 @@ export const integrationsRouter = createTRPCRouter({
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
 			const [integration] = await ctx.db
-				.select({ slug: integrations.slug, urls: integrations.urls })
+				.select({ slug: integrations.slug })
 				.from(integrations)
 				.where(eq(integrations.id, input.integrationId))
 				.limit(1);
@@ -573,15 +582,7 @@ export const integrationsRouter = createTRPCRouter({
 				type: 'unclaimed',
 			});
 
-			const urls = normalizeIntegrationUrls(integration.urls);
-			await ctx.db
-				.update(integrations)
-				.set({
-					urls: {
-						docsUrl: urls.docsUrl,
-					},
-				})
-				.where(eq(integrations.id, input.integrationId));
+			await clearContributorIntegrationUrls(ctx.db, input.integrationId);
 
 			return { integrationId: input.integrationId, slug: integration.slug };
 		}),
@@ -622,23 +623,12 @@ export const integrationsRouter = createTRPCRouter({
 
 			const urls = normalizeIntegrationUrls(input.urls);
 
-			const [updated] = await ctx.db
-				.update(integrations)
-				.set({ urls })
-				.where(eq(integrations.id, input.integrationId))
-				.returning({ urls: integrations.urls });
-
-			if (!updated) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'Integration not found',
-				});
-			}
+			await upsertIntegrationUrls(ctx.db, input.integrationId, urls);
 
 			return {
 				integrationId: input.integrationId,
 				slug: integration.slug,
-				urls: normalizeIntegrationUrls(updated.urls),
+				urls,
 			};
 		}),
 
@@ -649,7 +639,6 @@ export const integrationsRouter = createTRPCRouter({
 				.select({
 					id: integrations.id,
 					slug: integrations.slug,
-					urls: integrations.urls,
 				})
 				.from(integrations)
 				.where(eq(integrations.id, input.integrationId))
@@ -693,7 +682,9 @@ export const integrationsRouter = createTRPCRouter({
 				};
 			}
 
-			const urls = normalizeIntegrationUrls(integration.urls);
+			const urls = normalizeIntegrationUrls(
+				await fetchIntegrationUrls(ctx.db, input.integrationId),
+			);
 			if (!urls.issueUrl || !urls.prUrl) {
 				throw new TRPCError({
 					code: 'BAD_REQUEST',
