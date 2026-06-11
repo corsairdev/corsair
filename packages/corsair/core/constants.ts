@@ -69,6 +69,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'whatsapp',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -132,6 +133,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'whatsapp'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'

@@ -1,9 +1,9 @@
 import { createCorsair } from '../core';
-import { slack } from '../plugins/slack';
-import { makeSlackRequest } from '../plugins/slack/client';
+import { slack } from '@corsair-dev/slack';
+import { makeSlackRequest } from '@corsair-dev/slack/client';
 import { createTestDatabase } from './setup-db';
 
-jest.mock('../plugins/slack/client', () => ({
+jest.mock('@corsair-dev/slack/client', () => ({
 	makeSlackRequest: jest.fn(),
 }));
 
@@ -21,7 +21,7 @@ describe('Endpoint Hooks', () => {
 		jest.clearAllMocks();
 
 		mockedMakeSlackRequest.mockImplementation(
-			async (endpoint, token, options) => {
+			async (endpoint: any, token: any, options: any) => {
 				if (options?.body) {
 					capturedRequestBody = { ...options.body };
 				}
@@ -56,7 +56,7 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx, args) => {
+									before: async (ctx: any, args: any) => {
 										if (args && typeof args === 'object' && 'text' in args) {
 											(args as any).text = modifiedText;
 										}
@@ -97,7 +97,7 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx, args) => {
+									before: async (ctx: any, args: any) => {
 										if (args && typeof args === 'object') {
 											(args as any).channel = modifiedChannel;
 											(args as any).text = modifiedText;
@@ -136,7 +136,7 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx, args) => {
+									before: async (ctx: any, args: any) => {
 										if (args && typeof args === 'object') {
 											(args as any).username = 'custom-bot';
 											(args as any).icon_emoji = ':robot_face:';
@@ -190,7 +190,7 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									after: async (ctx, res) => {
+									after: async (ctx: any, res: any) => {
 										if (res && typeof res === 'object' && 'message' in res) {
 											(res as any).message.text = 'Modified by after hook';
 											(res as any).customField = 'added by hook';
@@ -239,7 +239,7 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									after: async (ctx, res) => {
+									after: async (ctx: any, res: any) => {
 										if (res && typeof res === 'object') {
 											(res as any).channel = 'C999999';
 											if ('message' in res && res.message) {
@@ -285,7 +285,7 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx, args) => {
+									before: async (ctx: any, args: any) => {
 										executionOrder.push('before');
 										if (args && typeof args === 'object') {
 											(args as any).text = 'Modified by before hook';
@@ -293,7 +293,7 @@ describe('Endpoint Hooks', () => {
 
 										return { ctx, args };
 									},
-									after: async (ctx, res) => {
+									after: async (ctx: any, res: any) => {
 										executionOrder.push('after');
 										if (res && typeof res === 'object') {
 											(res as any).executionOrder = executionOrder.slice();
@@ -308,7 +308,7 @@ describe('Endpoint Hooks', () => {
 			});
 
 			mockedMakeSlackRequest.mockImplementation(
-				async (endpoint, token, options) => {
+				async (endpoint: any, token: any, options: any) => {
 					executionOrder.push('endpoint');
 					if (options?.body) {
 						capturedRequestBody = { ...options.body };
@@ -345,14 +345,14 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx, args) => {
+									before: async (ctx: any, args: any) => {
 										if (args && typeof args === 'object') {
 											(args as any).text = 'Before hook modified';
 										}
 
 										return { ctx, args };
 									},
-									after: async (ctx, res) => {
+									after: async (ctx: any, res: any) => {
 										if (res && typeof res === 'object' && 'message' in res) {
 											(res as any).message.text = 'After hook modified';
 										}
@@ -388,7 +388,7 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx, args) => {
+									before: async (ctx: any, args: any) => {
 										if (args && typeof args === 'object') {
 											(args as any).text = 'Nested hook modified';
 										}

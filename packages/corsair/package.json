@@ -65,6 +65,9 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@corsair-dev/linear": "workspace:^",
+    "@corsair-dev/slack": "workspace:^",
+    "@corsair-dev/whatsapp": "workspace:^",
     "@types/jest": "^29.5.14",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.1",

@@ -3,6 +3,7 @@ module.exports = {
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
 	testMatch: [
+		'**/*.test.ts',
 		'**/tests/**/*.test.ts',
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
@@ -17,7 +18,7 @@ module.exports = {
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
-		'^.+\\.yaml$': '<rootDir>/jest-yaml-transform.cjs',
+		'^.+\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
 		'^.+\\.ts$': [
 			'ts-jest',
 			{
@@ -43,17 +44,8 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/core.ts',
-		'^corsair/db$': '<rootDir>/db.ts',
-		'^corsair/orm$': '<rootDir>/orm.ts',
-		'^corsair/http$': '<rootDir>/http.ts',
-		'^corsair/setup$': '<rootDir>/setup.ts',
-		'^corsair/tests$': '<rootDir>/tests.ts',
-		'^corsair$': '<rootDir>/index.ts',
-		'^@corsair-dev/slack$': '<rootDir>/../slack/index.ts',
-		'^@corsair-dev/linear$': '<rootDir>/../linear/index.ts',
-		'^@corsair-dev/whatsapp$': '<rootDir>/../whatsapp/index.ts',
-		'^@corsair-dev/whatsapp/error-handlers$': '<rootDir>/../whatsapp/error-handlers.ts',
+		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
