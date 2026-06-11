@@ -43,6 +43,7 @@
     "@corsair-dev/slack": "workspace:*",
     "@corsair-dev/teams": "workspace:*",
     "@corsair-dev/vapi": "workspace:*",
+    "@corsair-dev/whatsapp": "workspace:*",
     "@corsair-dev/xquik": "workspace:*",
     "@tanstack/react-query": "^5.62.14",
     "@trpc/client": "^11.0.0",
