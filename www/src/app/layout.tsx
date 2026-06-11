@@ -121,6 +121,7 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
+			suppressHydrationWarning
 			className={cn(
 				'scroll-smooth',
 				hostGrotesk.variable,
@@ -128,6 +129,13 @@ export default function RootLayout({
 				azeretMono.variable,
 			)}
 		>
+			<head>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `(function(){try{var t=localStorage.getItem("corsair-theme");if(t==="dark")document.documentElement.classList.add("dark")}catch(e){}})()`,
+					}}
+				/>
+			</head>
 			<body className="min-h-screen antialiased">
 				<script
 					type="application/ld+json"

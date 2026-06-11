@@ -19,7 +19,7 @@ export default async function IntegrationsLayout({
 		: null;
 
 	return (
-		<div className="min-h-screen bg-[#f7f7f5] text-foreground">
+		<div className="min-h-screen bg-[#f7f7f5] text-foreground dark:bg-background">
 			<div className="mx-auto max-w-3xl">
 				<OssIntegrationsBar
 					session={session}
