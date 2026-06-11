@@ -11,7 +11,7 @@ export const comments: InstagramWebhooks['comments'] = {
         const appSecret = credentials.client_secret;
 
         const verification = verifyInstagramWebhookSignature(request, appSecret);
-        console.log(verification);
+        
         if (!verification.valid)
             return {
                 success: false,

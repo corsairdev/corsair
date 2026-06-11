@@ -5,11 +5,7 @@ import { corsair } from './corsair';
 
 const app = express();
 
-app.use(express.json({
-    verify: (req: any, _res, buf) => {
-        req.rawBody = buf.toString('utf8');
-    },
-}));
+app.use(express.json());
 
 app.get('/webhooks', async (req, res) => {
 
@@ -39,9 +35,7 @@ app.get('/webhooks', async (req, res) => {
 // Single webhook endpoint for ALL integrations
 // Corsair automatically routes to the right plugin
 app.post('/webhooks', async (req, res) => {
-	const rawBody = (req as any).rawBody;
-  	// console.log(req.body);
-	console.log(rawBody);
+	
 	// Extract tenant ID from query params (optional)
 	const tenantId = req.query.tenantId as string | undefined;
 	// Process the webhook - one function handles everything!

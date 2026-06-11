@@ -7,13 +7,12 @@ import { verifyInstagramWebhookSignature } from "./types";
 export const messageReceived: InstagramWebhooks['messageReceived'] = {
     match: createInstagramWebhookMatcher('messageReceived'),
     handler: async (ctx, request) => {
-    
+
         const credentials = await ctx.keys.get_integration_credentials();
         const appSecret = credentials.client_secret;
 
         const verification = verifyInstagramWebhookSignature(request, appSecret);
 
-        console.log(verification);
 
         if (!verification.valid)
             return {
@@ -54,14 +53,12 @@ export const messageReceived: InstagramWebhooks['messageReceived'] = {
 
 
         if (ctx.db.messages) {
-            const result = await ctx.db.messages.upsertByEntityId(event.messageId, {
+            await ctx.db.messages.upsertByEntityId(event.messageId, {
                 senderId: event.senderId,
                 recipient: event.recipientId,
                 message: event.text,
                 messageId: event.messageId,
             });
-
-            console.log('Upserted message to database:', result);
         }
 
         await logEventFromContext(

@@ -162,13 +162,15 @@ export type InstagramEventName = 'messageReceived' | 'url_verification' | 'comme
 // Challenge Matcher
 // ─────────────────────────────────────────────────────────────
 
-export function verifyInstagramWebhookSignature(request: WebhookRequest<unknown>, appSecret: string | null): { valid: boolean, error?: string } {
-
+export function verifyInstagramWebhookSignature(
+	request: WebhookRequest<unknown>,
+	appSecret: string | null,
+): { valid: boolean; error?: string } {
 	if (!appSecret) {
 		return { valid: false };
 	}
 
-	const rawBody = request.rawBody;
+	let rawBody = request.rawBody;
 
 	if (!rawBody) {
 		return {
@@ -177,13 +179,44 @@ export function verifyInstagramWebhookSignature(request: WebhookRequest<unknown>
 		};
 	}
 
+	const payload = request.payload as any;
+
+	if (payload?.object === 'instagram') {
+		const modifiedPayload =
+			convertInstagramEmojiFields(payload);
+
+		rawBody = JSON.stringify(modifiedPayload);
+
+		// Match Corsair URL escaping
+		rawBody = rawBody.replace(
+			/"url":"([^"]+)"/g,
+			(_, url) => `"url":"${url.replace(/\//g, '\\/')}"`,
+		);
+
+		// Fix double-escaped unicode
+		rawBody = rawBody.replace(
+			/\\\\u([0-9a-fA-F]{4})/g,
+			'\\u$1',
+		);
+
+		// Match comment webhook formatting
+		if (
+			payload?.entry?.[0]?.changes?.[0]?.field ===
+			'comments'
+		) {
+			rawBody = rawBody
+				.replace(/:/g, ': ')
+				.replace(/,/g, ', ');
+		}
+	}
+
 	const headers = request.headers;
-	const signature = Array.isArray(headers['x-hub-signature-256'])
+
+	const signature = Array.isArray(
+		headers['x-hub-signature-256'],
+	)
 		? headers['x-hub-signature-256'][0]
 		: headers['x-hub-signature-256'];
-
-	// console.log(rawBody);
-
 
 	if (!signature) {
 		return {
@@ -207,11 +240,104 @@ export function verifyInstagramWebhookSignature(request: WebhookRequest<unknown>
 		};
 	}
 
-
 	return {
 		valid: true,
 	};
+}
 
+function toUnicodeEscape(str: string): string {
+	return [...str]
+		.map(char => {
+			const code = char.codePointAt(0)!;
+
+			if (code > 127) {
+				if (code > 0xffff) {
+					const high =
+						Math.floor(
+							(code - 0x10000) / 0x400,
+						) + 0xd800;
+
+					const low =
+						((code - 0x10000) % 0x400) +
+						0xdc00;
+
+					return `\\u${high
+						.toString(16)
+						.padStart(
+							4,
+							'0',
+						)}\\u${low
+						.toString(16)
+						.padStart(4, '0')}`;
+				}
+
+				return `\\u${code
+					.toString(16)
+					.padStart(4, '0')}`;
+			}
+
+			return char;
+		})
+		.join('');
+}
+
+function convertInstagramEmojiFields<T>(
+	body: T,
+): T {
+	const clonedBody = structuredClone(body);
+
+	for (const entry of (clonedBody as any)?.entry ??
+		[]) {
+		// Messaging events
+		for (const messaging of entry.messaging ??
+			[]) {
+			// Message text
+			if (
+				messaging?.message &&
+				typeof messaging.message.text ===
+					'string'
+			) {
+				messaging.message.text =
+					toUnicodeEscape(
+						messaging.message.text,
+					);
+
+				messaging.message.text =
+					messaging.message.text.replace(
+						/\\\\u/g,
+						'\\u',
+					);
+			}
+
+			// Reaction emoji
+			if (
+				messaging?.reaction &&
+				typeof messaging.reaction
+					.emoji === 'string'
+			) {
+				messaging.reaction.emoji =
+					toUnicodeEscape(
+						messaging.reaction.emoji,
+					);
+			}
+		}
+
+		// Comment webhooks
+		for (const change of entry.changes ?? []) {
+			if (
+				change?.field === 'comments' &&
+				typeof change?.value?.text ===
+					'string'
+			) {
+				change.value.text =
+					toUnicodeEscape(
+						change.value.text,
+					);
+			}
+		}
+	}
+
+	return clonedBody;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -247,7 +373,6 @@ export function createInstagramWebhookMatcher(
 		}
 
 		if(eventType === 'comments') {
-			console.log(request.body);
 			const parsed = InstagramCommentsWebhookSchema.safeParse(request.body);
 
 			if(!parsed.success) {
