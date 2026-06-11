@@ -135,34 +135,35 @@ export async function makeInstagramRequest<T>(
         }
     }
 
-    const response = await request<T>(config, requestOptions);
-    return response;
+    try {
+        return await request<T>(config, requestOptions);
+    } catch (error: any) {
+
+        const graphError =
+        error?.body?.error ??
+        error?.response?.body?.error ??
+        error?.response?.data?.error;
+
+        if (graphError) {
+            throw new InstagramAPIError(
+                graphError.message,
+                graphError.code
+            );
+        }
+
+        throw error;
+    }
 }
 
 function isUnauthorizedError(
-	error: unknown
+    error: unknown
 ): boolean {
 
-	if (
-		typeof error !== 'object' ||
-		error === null
-	) {
-		return false;
-	}
+    if (error instanceof InstagramAPIError) {
+        return error.code === 190;
+    }
 
-	const err = error as {
-		status?: number;
-		body?: {
-			error?: {
-				code?: number;
-			};
-		};
-	};
-
-	return (
-		err.status === 401 ||
-		err.body?.error?.code === 190
-	);
+    return false;
 }
 
 /**
@@ -180,7 +181,6 @@ export async function makeAuthenticatedInstagramRequest<T>(
     try {
         return await makeInstagramRequest<T>(endpoint, ctx.key, options);
     } catch (error) {
-
         if (isUnauthorizedError(error) && ctx._refreshAuth) {
             const freshToken = await ctx._refreshAuth();
             return await makeInstagramRequest<T>(endpoint, freshToken, options);

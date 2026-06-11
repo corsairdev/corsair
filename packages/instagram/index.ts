@@ -22,8 +22,15 @@ import { InstagramEndpointInputSchemas, InstagramEndpointOutputSchemas } from ".
 
 import { ProfileEndpoints, MediaEndpoints, ImageEndpoints, PublishEndpoints, ReelEndpoints, VideoEndponts, CarouselEndpoints, ConversationsEndpoints, MessagesEndpoints, CommentsEndpoints } from "./endpoints/index";
 
-import type { InstagramWebhookOutputs, InstagramWebhookPayload, InstagramMessageReceivedEvent } from "./webhooks/types"
-import { InstagramMessageReceivedEventSchema, InstagramWebhookPayloadSchema } from "./webhooks/types";
+import type { InstagramWebhookOutputs, InstagramMessageReceivedEvent, InstagramUrlVerificationEvent, InstagramWebhookUrlVerificationPayload, InstagramWebhookPayload, InstagramWebhookCommentPayload } from "./webhooks/types"
+import {
+    InstagramMessageReceivedEventSchema,
+    InstagramWebhookPayloadSchema,
+    InstagramWebhookUrlVerificationSchema, 
+    InstagramUrlVerificationEventSchema,
+    InstagramCommentsWebhookSchema,
+    InstagramCommentEventSchema
+} from "./webhooks/types";
 import { InstagramWebhooks } from "./webhooks/index";
 
 import {
@@ -33,10 +40,11 @@ import {
 import type {
     InstagramCredentials
 } from "./schema"
-import { inspect } from 'util';
 
 export const InstagramWebhooksNested = {
     messageReceived: InstagramWebhooks.messageReceived,
+    url_verification: InstagramWebhooks.url_verification,
+    comments: InstagramWebhooks.comments
 } as const;
 
 export const instagramAuthConfig = {
@@ -46,26 +54,26 @@ export const instagramAuthConfig = {
 } as const satisfies PluginAuthConfig;
 
 type InstagramEndpoint<K extends keyof InstagramEndpointOutputs> = CorsairEndpoint<
-	InstagramContext,
-	InstagramEndpointInputs[K],
-	InstagramEndpointOutputs[K]
+    InstagramContext,
+    InstagramEndpointInputs[K],
+    InstagramEndpointOutputs[K]
 >;
 
-type InstagramWebhook<K extends keyof InstagramWebhookOutputs, TEvent> = CorsairWebhook<
+type InstagramWebhook<K extends keyof InstagramWebhookOutputs, TPayload> = CorsairWebhook<
     InstagramContext,
-    InstagramWebhookPayload,
+    TPayload,
     InstagramWebhookOutputs[K]
 >;
 
 export type InstagramWebhooks = {
-    messageReceived: InstagramWebhook<'messageReceived', InstagramMessageReceivedEvent>;
+    messageReceived: InstagramWebhook<'messageReceived', InstagramWebhookPayload>,
+    url_verification: InstagramWebhook<'url_verification', InstagramWebhookUrlVerificationPayload>;
+    comments: InstagramWebhook<'comments', InstagramWebhookCommentPayload>
 }
 
 export type InstagramBoundWebhooks = BindWebhooks<typeof InstagramWebhooksNested>
 
 export type InstagramEndpoints = {
-    GetFacebookUser: InstagramEndpoint<'GetFacebookUser'>
-    GetFacebookPages: InstagramEndpoint<'GetFacebookPages'>
     GetInstagramUser: InstagramEndpoint<'GetInstagramUser'>
     GetInstagramMediaList: InstagramEndpoint<'GetInstagramMediaList'>
     GetInstagramMedia: InstagramEndpoint<'GetInstagramMedia'>
@@ -93,9 +101,7 @@ export type InstagramEndpoints = {
 
 export const InstagramEndpointsNested = {
     profile: {
-        GetFacebookUser: ProfileEndpoints.GetFacebookUser,
-        GetFacebookPages: ProfileEndpoints.GetFacebookPages,
-        GetInstagramUser: ProfileEndpoints.GetInstagramUser,
+        get: ProfileEndpoints.get,
         insights: ProfileEndpoints.insights,
     },
 
@@ -117,7 +123,7 @@ export const InstagramEndpointsNested = {
 
     video: {
         story: VideoEndponts.story,
-        createCarouselContainer: VideoEndponts.createCarouselContainer,
+        container: VideoEndponts.container,
     },
 
     carousel: {
@@ -152,15 +158,7 @@ export const InstagramEndpointsNested = {
 export type InstagramBoundEndpoints = BindEndpoints<typeof InstagramEndpointsNested>
 
 export const InstagramEndpointSchemas = {
-    'profile.GetFacebookUser': {
-        input: InstagramEndpointInputSchemas.GetFacebookUser,
-        output: InstagramEndpointOutputSchemas.GetFacebookUser,
-    },
-    'profile.GetFacebookPages': {
-        input: InstagramEndpointInputSchemas.GetFacebookPages,
-        output: InstagramEndpointOutputSchemas.GetFacebookPages,
-    },
-    'profile.GetInstagramUser': {
+    'profile.get': {
         input: InstagramEndpointInputSchemas.GetInstagramUser,
         output: InstagramEndpointOutputSchemas.GetInstagramUser,
     },
@@ -200,7 +198,7 @@ export const InstagramEndpointSchemas = {
         input: InstagramEndpointInputSchemas.CreateVideoStoryContainer,
         output: InstagramEndpointOutputSchemas.CreateVideoStoryContainer,
     },
-    'video.createCarouselContainer': {
+    'video.container': {
         input: InstagramEndpointInputSchemas.CreateCarouselContainer,
         output: InstagramEndpointOutputSchemas.CreateCarouselContainer,
     },
@@ -256,17 +254,8 @@ export const InstagramEndpointSchemas = {
 }
 
 const instagramEndpointMeta = {
-    'profile.GetFacebookUser': {
-        riskLevel: 'read',
-        description: 'read the user facebook profile.'
-    },
 
-    'profile.GetFacebookPages': {
-        riskLevel: 'read',
-        description: 'read the facebook pages connected to the user.'
-    },
-
-    'profile.GetInstagramUser': {
+    'profile.get': {
         riskLevel: 'read',
         description: 'read the user instagram profile.'
     },
@@ -316,7 +305,7 @@ const instagramEndpointMeta = {
         description: 'create a video story container for publishing on instagram.'
     },
 
-    'video.createCarouselContainer': {
+    'video.container': {
         riskLevel: 'write',
         description: 'create a video carousel container for publishing on instagram.'
     },
@@ -383,12 +372,24 @@ const instagramEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof InstagramEndpointsNested>;
 
 const InstagramWebhookSchemas = {
-	messageReceived: {
-		description:
-			'A Instagram message was received, sent or seen',
-		payload: InstagramWebhookPayloadSchema,
-		response: InstagramMessageReceivedEventSchema,
+    messageReceived: {
+        description:
+            'A Instagram message was received, sent or seen',
+        payload: InstagramWebhookPayloadSchema,
+        response: InstagramMessageReceivedEventSchema,
     },
+
+    url_verification: {
+        description: 'Represents a webhook URL verification challenge from Meta. Used to verify that the webhook endpoint is owned and controlled by the application.',
+        payload: InstagramWebhookUrlVerificationSchema,
+        response: InstagramUrlVerificationEventSchema
+    },
+
+    comments: {
+        description: 'Represents an Instagram comment webhook event containing information about a comment, including the commenter, media, comment text, and related metadata.',
+        payload: InstagramCommentsWebhookSchema,
+        response: InstagramCommentEventSchema
+    }
 } as const;
 
 export type InstagramPluginOptions = {
@@ -396,7 +397,7 @@ export type InstagramPluginOptions = {
     key?: string;
     credentials?: InstagramCredentials,
     hooks?: InternalInstagramPlugin['hooks'],
-    webhookHooks?: InternalInstagramPlugin['webhookHooks'], 
+    webhookHooks?: InternalInstagramPlugin['webhookHooks'],
     permissions?: PluginPermissionsConfig<typeof InstagramEndpointsNested>
 };
 
@@ -407,7 +408,7 @@ export type InstagramContext = CorsairPluginContext<
     typeof instagramAuthConfig
 >
 
-type InstagramKeyBuilderContext =
+export type InstagramKeyBuilderContext =
     KeyBuilderContext<
         InstagramPluginOptions,
         typeof instagramAuthConfig

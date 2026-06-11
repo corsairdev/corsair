@@ -10,7 +10,7 @@ export const story: InstagramEndpoints['CreateVideoStoryContainer'] = async (ctx
             method: 'POST',
             body: {
                 video_url: input.video_url,
-                media_type: input.media_type || 'STORIES',
+                media_type: 'STORIES',
                 user_tags: input.user_tags?.length ? JSON.stringify(input.user_tags) : undefined,
             }
         });
@@ -26,15 +26,15 @@ export const story: InstagramEndpoints['CreateVideoStoryContainer'] = async (ctx
 
 }
 
-export const createCarouselContainer: InstagramEndpoints['CreateVideoContainer'] = async (ctx, input) => {
+export const container: InstagramEndpoints['CreateVideoContainer'] = async (ctx, input) => {
 
     const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['CreateVideoContainer']>
         (`/${input.ig_id}/media`, ctx, {
             method: 'POST',
             body: {
-                media_type: input.media_type,
+                media_type: 'VIDEO',
                 video_url: input.video_url,
-                is_carousel_item: input.is_carousel_item || true,
+                is_carousel_item: true,
                 caption: input.caption,
                 alt_text: input.alt_text,
                 location_id: input.location_id,

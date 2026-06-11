@@ -2,32 +2,34 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints, InstagramBoundEndpoints } from "../index"
 import type { InstagramEndpointOutputs } from "./types"
+import { GetFacebookPages } from "./metaDataEndpoints"
+import type { FacebookPageSchema } from "../schema/database";
 
 
 export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
 
-    const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-
-    await endpoints.profile.GetFacebookPages({});
-
-    const page_access_token = await ctx.db.pages.findByEntityId(input.page_id);
+    const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
 
     const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['GetMessage']>
         (`/${input.message_id}`, ctx, {
             method: 'GET',
             query: {
-                access_token: page_access_token?.data.access_token,
+                access_token: res.access_token,
                 fields: input.q
             }
         });
 
     if (result.id) {
-        await ctx.db.messages.upsertByEntityId(result.id, {
-            messageId: result.id,
-            senderId: result.from?.id,
-            senderName: result.from?.username,
-            message: result.message
-        });
+        try {
+            await ctx.db.messages.upsertByEntityId(result.id, {
+                messageId: result.id,
+                senderId: result.from?.id,
+                senderName: result.from?.username,
+                message: result.message
+            });
+        } catch (err) {
+            console.warn('faild to save messages into database', err);
+        }
     }
 
     await logEventFromContext(
@@ -42,27 +44,7 @@ export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
 
 export const send: InstagramEndpoints['SendMessage'] = async (ctx, input) => {
 
-    const endpoints = ctx.endpoints as InstagramBoundEndpoints;
-
-    await endpoints.profile.GetFacebookPages({});
-
-    const page_access_token = await ctx.db.pages.findByEntityId(input.page_id);
-
-    if (!page_access_token) {
-        throw new Error('Page access token not found for page_id');
-    }
-
-    if (input.messaging_type === 'MESSAGE_TAG' && !input.tag) {
-        throw new Error(
-            'tag is required when messaging_type is MESSAGE_TAG.'
-        );
-    }
-
-    if (input.tag && input.messaging_type !== 'MESSAGE_TAG') {
-        throw new Error(
-            'messaging_type must be MESSAGE_TAG when tag is provided.'
-        );
-    }
+    const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
 
     const body: Record<string, any> = {
         recipient: {
@@ -83,7 +65,7 @@ export const send: InstagramEndpoints['SendMessage'] = async (ctx, input) => {
         (`/me/messages`, ctx, {
             method: 'POST',
             query: {
-                access_token: page_access_token.data.access_token,
+                access_token: res.access_token,
             },
             body
         });

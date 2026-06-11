@@ -144,9 +144,69 @@ function buildGoogleChannelBody(
 	};
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main Function
-// ─────────────────────────────────────────────────────────────────────────────
+function toUnicodeEscape(str: string): string {
+    return [...str].map(char => {
+        const code = char.codePointAt(0)!;
+        if (code > 127) {
+            if (code > 0xFFFF) {
+                // Supplementary plane → surrogate pair
+                const high = Math.floor((code - 0x10000) / 0x400) + 0xD800;
+                const low  = ((code - 0x10000) % 0x400) + 0xDC00;
+                return `\\u${high.toString(16).padStart(4, '0')}\\u${low.toString(16).padStart(4, '0')}`;
+            }
+            // BMP non-ASCII (covers ZWJ U+200D, U+FE0F, ♀ ♂ etc.)
+            return `\\u${code.toString(16).padStart(4, '0')}`;
+        }
+        return char;
+    }).join('');
+}
+
+function convertInstagramEmojiFields<T>(body: T): T {
+	const clonedBody = structuredClone(body);
+
+	for (const entry of (clonedBody as any)?.entry ?? []) {
+		// Messages
+		for (const messaging of entry.messaging ?? []) {
+			if (
+				messaging?.message &&
+				typeof messaging.message.text === 'string'
+			) {
+				messaging.message.text = toUnicodeEscape(
+					messaging.message.text,
+				);
+
+				messaging.message.text = messaging.message.text.replace(
+					/\\\\u/g,
+					'\\u',
+				);
+			}
+
+			if (
+				messaging?.reaction &&
+				typeof messaging.reaction.emoji === 'string'
+			) {
+				messaging.reaction.emoji = toUnicodeEscape(
+					messaging.reaction.emoji,
+				);
+			}
+		}
+
+		// Comments webhook
+		for (const change of entry.changes ?? []) {
+			if (
+				change?.field === 'comments' &&
+				typeof change?.value?.text === 'string'
+			) {
+
+				change.value.text = toUnicodeEscape(change.value.text);
+
+				console.log(change.value.text);
+			}
+		}
+	}
+
+	return clonedBody;
+}
 
 /**
  * Filters an incoming webhook request through all plugins in a corsair instance.
@@ -183,7 +243,7 @@ export async function processWebhook(
 		[x: string]: string | string[] | undefined;
 	},
 ): Promise<WebhookFilterResult> {
-	
+
 	const normalizedHeaders = normalizeHeaders(headers);
 	let parsedBody =
 		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
@@ -235,10 +295,46 @@ export async function processWebhook(
 
 		const action = matched.path.join('.');
 
+		let modifiedBody = body;
+
+		if (
+			typeof body !== 'string' &&
+			parsedBody &&
+			typeof parsedBody === 'object' &&
+			'object' in parsedBody &&
+			parsedBody.object === 'instagram'
+		) {
+			modifiedBody = convertInstagramEmojiFields(body);
+		}
+
+		let rawBodyString =
+			typeof modifiedBody === 'string'
+				? modifiedBody
+				: JSON.stringify(modifiedBody);
+
+		if (pluginId === 'instagram') {
+			rawBodyString = rawBodyString.replace(
+				/"url":"([^"]+)"/g,
+				(_, url) => `"url":"${url.replace(/\//g, '\\/')}"`,
+			);
+
+
+			rawBodyString = rawBodyString.replace(
+				/\\\\u([0-9a-fA-F]{4})/g,
+				'\\u$1'
+			);
+
+			if ((parsedBody as any).entry?.[0]?.changes?.[0]?.field === 'comments') {
+				rawBodyString = rawBodyString
+					.replace(/:/g, ': ')
+					.replace(/,/g, ', ');
+			}
+		}
+
 		const webhookRequest = {
 			payload: parsedBody,
 			headers: normalizedHeaders,
-			rawBody: typeof body === 'string' ? body : JSON.stringify(body),
+			rawBody: rawBodyString
 		};
 
 		try {

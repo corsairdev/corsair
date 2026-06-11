@@ -23,11 +23,9 @@ export type InstagramCredentials = z.infer<typeof InstagramCredentials>;
 export const InstagramSchema = {
     version: '1.0.0',
     entities: {
-        facebook: FacebookUser,
         users: InstagramUser,
         conversations: InstagramConversation,
         messages: InstagramMessage,
-        pages: FacebookPages,
         media: InstagramMedia,
         comments: CommentsOutputSchema
     }

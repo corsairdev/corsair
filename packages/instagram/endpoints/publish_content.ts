@@ -14,7 +14,6 @@ export const publish: InstagramEndpoints['PublishInstagramMedia'] = async (ctx, 
     });
 
     if(result.id) {
-        console.log(result.id);
         const endpoints = ctx.endpoints as InstagramBoundEndpoints;
         await endpoints.media.get({
             media_id: result.id

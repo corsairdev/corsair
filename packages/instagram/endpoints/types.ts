@@ -1,20 +1,9 @@
 import { z } from "zod";
 
 import {
-  FacebookPagesResponseSchema,
   InstagramUser
 } from "../schema/database"
 
-// input schema
-const GetFacebookUserInputSchema = z.object({
-  id: z.string().optional().describe('The Facebook User ID (PSID or Facebook User ID) to retrieve information for.')
-}).describe('Input schema for fetching a Facebook user profile.');
-
-const GetFacebookPagesInputSchema = z.object({
-  q: z.string().optional().describe(
-    'Search query used to filter Facebook Pages by name. If omitted, all accessible Pages for the authenticated user may be returned.'
-  )
-}).describe('Retrieve Facebook Pages accessible to the authenticated user.');
 
 const GetInstagramUserInputSchema = z.object({
   ig_id: z.string().describe(
@@ -306,12 +295,6 @@ const CreateImageStoryContainerinputSchema = z
         'A publicly accessible URL of the image to be uploaded as an Instagram Story.'
       ),
 
-    media_type: z
-      .string()
-      .describe(
-        'The type of media container to create. For image stories, this is typically set to STORIES.'
-      ),
-
     user_tags: z
       .array(z.string())
       .optional()
@@ -335,12 +318,6 @@ const CreateVideoStoryContainerinputSchema = z
       .url()
       .describe(
         'A publicly accessible URL of the video to be uploaded as an Instagram Story.'
-      ),
-
-    media_type: z
-      .string()
-      .describe(
-        'The type of media container to create. For video stories, this is typically set to STORIES.'
       ),
 
     user_tags: z
@@ -438,12 +415,6 @@ const CreateVideoContainerInputSchema = z
         'A publicly accessible URL of the video to be uploaded to Instagram.'
       ),
 
-    media_type: z
-      .literal('VIDEO')
-      .describe(
-        'The media type for the container. Must be set to VIDEO.'
-      ),
-
     caption: z
       .string()
       .optional()
@@ -456,13 +427,6 @@ const CreateVideoContainerInputSchema = z
       .optional()
       .describe(
         'Optional accessibility description of the video for screen readers.'
-      ),
-
-    is_carousel_item: z
-      .boolean()
-      .optional()
-      .describe(
-        'Set to true if this video will be included as an item in a carousel post rather than published as a standalone post.'
       ),
 
     location_id: z
@@ -1006,8 +970,8 @@ const DeleteCommentInputSchema = z
 
 
 export const InstagramEndpointInputSchemas = {
-  GetFacebookUser: GetFacebookUserInputSchema,
-  GetFacebookPages: GetFacebookPagesInputSchema,
+  // GetFacebookUser: GetFacebookUserInputSchema,
+  // GetFacebookPages: GetFacebookPagesInputSchema,
   GetInstagramUser: GetInstagramUserInputSchema,
   GetInstagramMediaList: GetInstagramMediaListInputSchema,
   GetInstagramMedia: GetInstagramMediaInputSchema,
@@ -1049,25 +1013,6 @@ const MetaPagination = z.object({
   next: z.url().optional(),
 }).optional();
 
-const GetFacebookUserOutputSchema = z
-  .object({
-    name: z
-      .string()
-      .optional()
-      .describe(
-        'The display name of the Facebook user.'
-      ),
-
-    id: z
-      .string()
-      .describe(
-        'The unique Facebook User ID.'
-      ),
-  })
-  .describe(
-    'Represents basic profile information for a Facebook user.'
-  );
-const GetFacebookPagesOutputSchema = FacebookPagesResponseSchema;
 const GetInstagramUserOutputSchema = InstagramUser;
 
 const InstagramMediaType = z.enum(['IMAGE', 'VIDEO', 'CAROUSEL_ALBUM']);
@@ -1549,8 +1494,6 @@ const UpdateCommentsOutputSchema = z
 const DeleteCommentOutputSchema = UpdateCommentsOutputSchema;
 
 
-export type GetFacebookUserOutputSchema = z.infer<typeof GetFacebookUserOutputSchema>
-export type GetFacebookPagesOutputSchema = z.infer<typeof GetFacebookPagesOutputSchema>
 export type GetInstagramUserOutputSchema = z.infer<typeof GetInstagramUserOutputSchema>
 export type GetInstagramMediaOutputSchema = z.infer<typeof GetInstagramMediaListOutputSchema>
 export type GetInstagramMediaOutputchema = z.infer<typeof InstagramMedia>
@@ -1571,8 +1514,6 @@ export type DeleteCommentOutputSchema = z.infer<typeof DeleteCommentOutputSchema
 export type media = keyof typeof MEDIA_TYPE_METRICS
 
 export const InstagramEndpointOutputSchemas = {
-  GetFacebookUser: GetFacebookUserOutputSchema,
-  GetFacebookPages: GetFacebookPagesOutputSchema,
   GetInstagramUser: GetInstagramUserOutputSchema,
   GetInstagramMediaList: GetInstagramMediaListOutputSchema,
   GetInstagramMedia: InstagramMedia,
@@ -1599,8 +1540,6 @@ export const InstagramEndpointOutputSchemas = {
 } as const;
 
 export type InstagramEndpointOutputs = {
-  GetFacebookUser: GetFacebookUserOutputSchema,
-  GetFacebookPages: GetFacebookPagesOutputSchema,
   GetInstagramUser: GetInstagramUserOutputSchema,
   GetInstagramMediaList: GetInstagramMediaOutputSchema,
   GetInstagramMedia: GetInstagramMediaOutputchema,

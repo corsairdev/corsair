@@ -1,11 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
 import { createInstagramWebhookMatcher, InstagramMessageReceivedEventSchema } from './types';
+import { verifyInstagramWebhookSignature } from "./types";
 
 
 export const messageReceived: InstagramWebhooks['messageReceived'] = {
     match: createInstagramWebhookMatcher('messageReceived'),
     handler: async (ctx, request) => {
+    
+        const credentials = await ctx.keys.get_integration_credentials();
+        const appSecret = credentials.client_secret;
+
+        const verification = verifyInstagramWebhookSignature(request, appSecret);
+
+        console.log(verification);
+
+        if (!verification.valid)
+            return {
+                success: false,
+                statusCode: 401,
+                error: verification.error || 'Signature verification failed',
+            };
+
         const body = request.payload;
 
         const messaging = body.entry[0]?.messaging[0];
@@ -54,12 +70,12 @@ export const messageReceived: InstagramWebhooks['messageReceived'] = {
             { ...event },
             'completed'
         );
-    
+
 
         return {
-        success: true,
-        event,
-    }
+            success: true,
+            data: event,
+        }
 
-}
+    }
 }

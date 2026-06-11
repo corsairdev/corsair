@@ -10,9 +10,7 @@ import * as Messages from "./messages"
 import * as Comments from "./comments"
 
 export const ProfileEndpoints = {
-    GetFacebookUser: Profile.facebookProfile,
-    GetFacebookPages: Profile.getFacebookPages,
-    GetInstagramUser: Profile.getInstagramUser,
+    get: Profile.get,
     insights: Profile.insights
 }
 
@@ -38,7 +36,7 @@ export const PublishEndpoints = {
 
 export const VideoEndponts = {
     story: Video.story,
-    createCarouselContainer: Video.createCarouselContainer,
+    container: Video.container,
 }
 
 export const CarouselEndpoints = {

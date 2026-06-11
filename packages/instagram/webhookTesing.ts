@@ -1,28 +1,47 @@
 import { processWebhook } from 'corsair';
 import express from 'express';
+import type { Request, Response } from 'express';
 import { corsair } from './corsair';
 
 const app = express();
-app.use(express.json());
 
-const META_VERIFY_TOKEN = 'corsair'; // Replace with your actual verify token
+app.use(express.json({
+    verify: (req: any, _res, buf) => {
+        req.rawBody = buf.toString('utf8');
+    },
+}));
 
-app.get('/webhooks', (req, res) => {
-  const mode = req.query['hub.mode'];
-  const verifyToken = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
+app.get('/webhooks', async (req, res) => {
 
-  if (mode === 'subscribe' && verifyToken === META_VERIFY_TOKEN) {
-    return res.status(200).send(challenge);
-  }
+	const body = {
+    type: 'url_verification',
+    mode: req.query['hub.mode'],
+    verify_token: req.query['hub.verify_token'],
+    challenge: req.query['hub.challenge'],
+  };
 
-  return res.status(403).send('Forbidden');
+  const tenantId = req.query.tenantId as string | undefined;
+  const result = await processWebhook(corsair, req.headers, body, {
+		tenantId,
+	});
+
+	if(result.response?.success) {
+		const data = result.response as ({
+			challenge: string,
+			success: boolean
+		});
+		return res.status(200).send(data.challenge);
+	}
+
+	return res.status(403).send('Forbidden');
 });
 
 // Single webhook endpoint for ALL integrations
 // Corsair automatically routes to the right plugin
 app.post('/webhooks', async (req, res) => {
-
+	const rawBody = (req as any).rawBody;
+  	// console.log(req.body);
+	console.log(rawBody);
 	// Extract tenant ID from query params (optional)
 	const tenantId = req.query.tenantId as string | undefined;
 	// Process the webhook - one function handles everything!

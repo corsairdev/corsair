@@ -40,7 +40,7 @@ export const story: InstagramEndpoints['CreateImageStoryContainer'] = async (ctx
         method: 'POST',
         body: {
             image_url: input.image_url,
-            media_type: input.media_type || 'STORIES',
+            media_type: 'STORIES',
             user_tags: input.user_tags?.length ? JSON.stringify(input.user_tags) : undefined,
         }
     });
