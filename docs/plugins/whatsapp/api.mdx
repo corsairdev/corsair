@@ -1,0 +1,612 @@
+---
+title: API
+description: "API reference for Whatsapp: every `whatsapp.api.*` operation with input and output types."
+---
+
+Every `whatsapp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Business Profiles
+
+### get
+
+`businessProfiles.get`
+
+Retrieve WhatsApp Business Profile information
+
+**Risk:** `read`
+
+```ts
+await corsair.whatsapp.api.businessProfiles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumberId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  about?: string,
+  address?: string,
+  description?: string,
+  email?: string,
+  profile_picture_url?: string,
+  websites?: string[],
+  vertical?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### getInfo
+
+`media.getInfo`
+
+Get information about uploaded media
+
+**Risk:** `read`
+
+```ts
+await corsair.whatsapp.api.media.getInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messaging_product` | `whatsapp` | Yes | — |
+| `url` | `string` | Yes | — |
+| `mime_type` | `string` | Yes | — |
+| `sha256` | `string` | Yes | — |
+| `file_size` | `number` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### upload
+
+`media.upload`
+
+Upload media to WhatsApp servers
+
+**Risk:** `write`
+
+```ts
+await corsair.whatsapp.api.media.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumberId` | `string` | No | — |
+| `file` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Messages
+
+### markRead
+
+`messages.markRead`
+
+Mark an incoming WhatsApp message as read
+
+**Risk:** `write`
+
+```ts
+await corsair.whatsapp.api.messages.markRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumberId` | `string` | No | — |
+| `messageId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a text, media, template, or interactive WhatsApp message
+
+**Risk:** `write`
+
+```ts
+await corsair.whatsapp.api.messages.send({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: text,
+  text: {
+    preview_url?: boolean,
+    body: string
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: image,
+  image: {
+    id?: string,
+    link?: string,
+    caption?: string,
+    filename?: string
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: audio,
+  audio: {
+    id?: string,
+    link?: string
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: document,
+  document: {
+    id?: string,
+    link?: string,
+    caption?: string,
+    filename?: string
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: video,
+  video: {
+    id?: string,
+    link?: string,
+    caption?: string
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: template,
+  template: {
+    name: string,
+    language: {
+      code: string,
+      policy?: deterministic
+    },
+    components?: {
+    }[]
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: interactive,
+  interactive: {
+    type: button | list | product | product_list | flow
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: location,
+  location: {
+    longitude: number,
+    latitude: number,
+    name?: string,
+    address?: string
+  }
+} | {
+  phoneNumberId?: string,
+  messaging_product: whatsapp,
+  recipient_type?: individual,
+  to: string,
+  context?: {
+    message_id: string
+  },
+  type: contacts,
+  contacts: {
+    name: {
+      formatted_name: string,
+      first_name?: string
+    },
+    phones?: {
+      phone?: string,
+      type?: string,
+      wa_id?: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messaging_product` | `whatsapp` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  input: string,
+  wa_id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  id: string,
+  message_status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Message Templates
+
+### create
+
+`messageTemplates.create`
+
+Create a new message template
+
+**Risk:** `write`
+
+```ts
+await corsair.whatsapp.api.messageTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessAccountId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `language` | `string` | Yes | — |
+| `category` | `string` | Yes | — |
+| `components` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `category` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`messageTemplates.delete`
+
+Delete a message template by name
+
+**Risk:** `write`
+
+```ts
+await corsair.whatsapp.api.messageTemplates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessAccountId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getStatus
+
+`messageTemplates.getStatus`
+
+Get the status of a message template
+
+**Risk:** `read`
+
+```ts
+await corsair.whatsapp.api.messageTemplates.getStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessAccountId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messageTemplates.list`
+
+List all message templates
+
+**Risk:** `read`
+
+```ts
+await corsair.whatsapp.api.messageTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessAccountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Phone Numbers
+
+### get
+
+`phoneNumbers.get`
+
+Validate credentials and retrieve phone number health
+
+**Risk:** `read`
+
+```ts
+await corsair.whatsapp.api.phoneNumbers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumberId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `display_phone_number` | `string` | No | — |
+| `verified_name` | `string` | No | — |
+| `quality_rating` | `string` | No | — |
+| `code_verification_status` | `string` | No | — |
+| `platform_type` | `string` | No | — |
+| `throughput` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="throughput full type">
+
+```ts
+{
+  level?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`phoneNumbers.list`
+
+List all phone numbers for the WhatsApp Business Account
+
+**Risk:** `read`
+
+```ts
+await corsair.whatsapp.api.phoneNumbers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessAccountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  display_phone_number?: string,
+  verified_name?: string,
+  quality_rating?: string,
+  code_verification_status?: string,
+  platform_type?: string,
+  throughput?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
