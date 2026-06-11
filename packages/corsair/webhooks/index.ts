@@ -200,7 +200,6 @@ function convertInstagramEmojiFields<T>(body: T): T {
 
 				change.value.text = toUnicodeEscape(change.value.text);
 
-				console.log(change.value.text);
 			}
 		}
 	}
