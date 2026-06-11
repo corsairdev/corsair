@@ -10,7 +10,7 @@ export const errorHandlers = {
 		match: (error) =>
 			(error instanceof WhatsappAPIError && error.status === 429) ||
 			isCode(error, [4, 17, 32, 613, 80007]),
-		handler: async () => ({ maxRetries: 5 }),
+		handler: async () => ({ maxRetries: 3 }),
 	},
 	AUTH_ERROR: {
 		match: (error) =>
