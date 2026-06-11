@@ -80,6 +80,31 @@ const InteractiveMessageSchema = BaseMessageSchema.extend({
 		.loose(),
 });
 
+const LocationMessageSchema = BaseMessageSchema.extend({
+	type: z.literal('location'),
+	location: z.object({
+		longitude: z.number(),
+		latitude: z.number(),
+		name: z.string().optional(),
+		address: z.string().optional(),
+	}),
+});
+
+const ContactsMessageSchema = BaseMessageSchema.extend({
+	type: z.literal('contacts'),
+	contacts: z.array(z.object({
+		name: z.object({
+			formatted_name: z.string(),
+			first_name: z.string().optional(),
+		}),
+		phones: z.array(z.object({
+			phone: z.string().optional(),
+			type: z.string().optional(),
+			wa_id: z.string().optional(),
+		})).optional(),
+	})).min(1),
+});
+
 export const MessagesSendInputSchema = z.discriminatedUnion('type', [
 	TextMessageSchema,
 	ImageMessageSchema,
@@ -88,6 +113,8 @@ export const MessagesSendInputSchema = z.discriminatedUnion('type', [
 	VideoMessageSchema,
 	TemplateMessageSchema,
 	InteractiveMessageSchema,
+	LocationMessageSchema,
+	ContactsMessageSchema,
 ]);
 
 export type MessagesSendInput = z.infer<typeof MessagesSendInputSchema>;
@@ -159,11 +186,97 @@ export const BusinessProfilesGetResponseSchema = z.object({
 	data: z.array(BusinessProfileSchema),
 });
 
+export const MediaUploadInputSchema = z.object({
+	phoneNumberId: PhoneNumberIdSchema,
+	file: z.string(), // Base64 string or URL
+	type: z.string(), // MIME type
+});
+
+export const MediaUploadResponseSchema = z.object({
+	id: z.string(),
+});
+
+export const MediaGetInfoInputSchema = z.object({
+	mediaId: z.string().min(1),
+});
+
+export const MediaGetInfoResponseSchema = z.object({
+	messaging_product: z.literal('whatsapp'),
+	url: z.string(),
+	mime_type: z.string(),
+	sha256: z.string(),
+	file_size: z.number().optional(),
+	id: z.string(),
+});
+
+export const MessageTemplatesCreateInputSchema = z.object({
+	businessAccountId: z.string().optional(),
+	name: z.string(),
+	language: z.string(),
+	category: z.string(),
+	components: z.array(z.record(z.string(), z.unknown())),
+});
+
+export const MessageTemplatesCreateResponseSchema = z.object({
+	id: z.string(),
+	status: z.string().optional(),
+	category: z.string().optional(),
+});
+
+export const MessageTemplatesDeleteInputSchema = z.object({
+	businessAccountId: z.string().optional(),
+	name: z.string(),
+});
+
+export const MessageTemplatesDeleteResponseSchema = z.object({
+	success: z.boolean(),
+});
+
+export const MessageTemplatesListInputSchema = z.object({
+	businessAccountId: z.string().optional(),
+});
+
+export const MessageTemplatesListResponseSchema = z.object({
+	data: z.array(z.record(z.string(), z.unknown())),
+});
+
+export const MessageTemplatesGetStatusInputSchema = z.object({
+	businessAccountId: z.string().optional(),
+	name: z.string(),
+});
+
+export const MessageTemplatesGetStatusResponseSchema = z.object({
+	data: z.array(z.record(z.string(), z.unknown())),
+});
+
+export const PhoneNumbersListInputSchema = z.object({
+	businessAccountId: z.string().optional(),
+});
+
+export const PhoneNumbersListResponseSchema = z.object({
+	data: z.array(z.object({
+		id: z.string(),
+		display_phone_number: z.string().optional(),
+		verified_name: z.string().optional(),
+		quality_rating: z.string().optional(),
+		code_verification_status: z.string().optional(),
+		platform_type: z.string().optional(),
+		throughput: z.record(z.string(), z.unknown()).optional(),
+	}).loose()),
+});
+
 export type WhatsappEndpointInputs = {
 	messagesSend: MessagesSendInput;
 	messagesMarkRead: z.infer<typeof MessagesMarkReadInputSchema>;
 	phoneNumbersGet: z.infer<typeof PhoneNumbersGetInputSchema>;
 	businessProfilesGet: z.infer<typeof BusinessProfilesGetInputSchema>;
+	mediaUpload: z.infer<typeof MediaUploadInputSchema>;
+	mediaGetInfo: z.infer<typeof MediaGetInfoInputSchema>;
+	messageTemplatesCreate: z.infer<typeof MessageTemplatesCreateInputSchema>;
+	messageTemplatesDelete: z.infer<typeof MessageTemplatesDeleteInputSchema>;
+	messageTemplatesList: z.infer<typeof MessageTemplatesListInputSchema>;
+	messageTemplatesGetStatus: z.infer<typeof MessageTemplatesGetStatusInputSchema>;
+	phoneNumbersList: z.infer<typeof PhoneNumbersListInputSchema>;
 };
 
 export type WhatsappEndpointOutputs = {
@@ -171,6 +284,13 @@ export type WhatsappEndpointOutputs = {
 	messagesMarkRead: z.infer<typeof MessagesMarkReadResponseSchema>;
 	phoneNumbersGet: z.infer<typeof PhoneNumbersGetResponseSchema>;
 	businessProfilesGet: z.infer<typeof BusinessProfilesGetResponseSchema>;
+	mediaUpload: z.infer<typeof MediaUploadResponseSchema>;
+	mediaGetInfo: z.infer<typeof MediaGetInfoResponseSchema>;
+	messageTemplatesCreate: z.infer<typeof MessageTemplatesCreateResponseSchema>;
+	messageTemplatesDelete: z.infer<typeof MessageTemplatesDeleteResponseSchema>;
+	messageTemplatesList: z.infer<typeof MessageTemplatesListResponseSchema>;
+	messageTemplatesGetStatus: z.infer<typeof MessageTemplatesGetStatusResponseSchema>;
+	phoneNumbersList: z.infer<typeof PhoneNumbersListResponseSchema>;
 };
 
 export const WhatsappEndpointInputSchemas = {
@@ -178,6 +298,13 @@ export const WhatsappEndpointInputSchemas = {
 	messagesMarkRead: MessagesMarkReadInputSchema,
 	phoneNumbersGet: PhoneNumbersGetInputSchema,
 	businessProfilesGet: BusinessProfilesGetInputSchema,
+	mediaUpload: MediaUploadInputSchema,
+	mediaGetInfo: MediaGetInfoInputSchema,
+	messageTemplatesCreate: MessageTemplatesCreateInputSchema,
+	messageTemplatesDelete: MessageTemplatesDeleteInputSchema,
+	messageTemplatesList: MessageTemplatesListInputSchema,
+	messageTemplatesGetStatus: MessageTemplatesGetStatusInputSchema,
+	phoneNumbersList: PhoneNumbersListInputSchema,
 } as const;
 
 export const WhatsappEndpointOutputSchemas = {
@@ -185,4 +312,11 @@ export const WhatsappEndpointOutputSchemas = {
 	messagesMarkRead: MessagesMarkReadResponseSchema,
 	phoneNumbersGet: PhoneNumbersGetResponseSchema,
 	businessProfilesGet: BusinessProfilesGetResponseSchema,
+	mediaUpload: MediaUploadResponseSchema,
+	mediaGetInfo: MediaGetInfoResponseSchema,
+	messageTemplatesCreate: MessageTemplatesCreateResponseSchema,
+	messageTemplatesDelete: MessageTemplatesDeleteResponseSchema,
+	messageTemplatesList: MessageTemplatesListResponseSchema,
+	messageTemplatesGetStatus: MessageTemplatesGetStatusResponseSchema,
+	phoneNumbersList: PhoneNumbersListResponseSchema,
 } as const;

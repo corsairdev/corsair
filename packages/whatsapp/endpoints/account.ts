@@ -61,3 +61,25 @@ export const getBusinessProfile: WhatsappEndpoints['businessProfilesGet'] =
 		);
 		return result;
 	};
+
+export const listPhoneNumbers: WhatsappEndpoints['phoneNumbersList'] = async (
+	ctx,
+	input,
+) => {
+	const { resolveBusinessAccountId } = await import('./message-templates');
+	const businessAccountId = await resolveBusinessAccountId(ctx, input.businessAccountId);
+	
+	const result = await makeWhatsappRequest<
+		WhatsappEndpointOutputs['phoneNumbersList']
+	>(`${businessAccountId}/phone_numbers`, ctx.key, {
+		method: 'GET',
+	});
+
+	await logEventFromContext(
+		ctx,
+		'whatsapp.phoneNumbers.list',
+		{ businessAccountId },
+		'completed',
+	);
+	return result;
+};
