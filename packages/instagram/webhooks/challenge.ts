@@ -1,8 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '../.env' });
 import { logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
 import { createInstagramWebhookMatcher } from './types';
 
-const META_VERIFY_TOKEN = 'corsair';
+const META_VERIFY_TOKEN = process.env.META_VERIFY_TOKEN;
 
 export const url_verification: InstagramWebhooks['url_verification'] = {
     match: createInstagramWebhookMatcher('url_verification'),
