@@ -124,3 +124,14 @@ For the full list of integrations, see our [docs](https://docs.corsair.dev/guide
 ## License
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](https://github.com/corsairdev/corsair/blob/main/LICENSE) for details.
+
+---
+## Star History
+
+<a href="https://www.star-history.com/?repos=corsairdev%2Fcorsair&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&legend=top-left" />
+ </picture>
+</a>

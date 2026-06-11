@@ -7,6 +7,7 @@ body:
         Interested in using a new API with Corsair? Let us know!
 
         **Before submitting:**
+        - If you plan to build this integration, check [corsair.dev/oss](https://corsair.dev/oss) first to see whether it is already claimed or in progress. Claim it there before you start so two people do not work on the same plugin.
         - Check if this integration has already been [requested](https://github.com/corsair/corsair/issues?q=is%3Aissue+label%3Aintegration) or [implemented](https://github.com/corsair/corsair/issues?q=is%3Aissue+label%3Aintegration+is%3Aclosed). If it has, please add a 👍 reaction instead of creating a duplicate.
         - For general feature requests, please use the [feature request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=feature_request.yml&title=) instead.
   - type: input
