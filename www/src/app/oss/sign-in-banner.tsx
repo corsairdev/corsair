@@ -5,7 +5,7 @@ export function SignInBanner() {
 	return (
 		<div
 			role="alert"
-			className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-3 text-left text-xs text-amber-950"
+			className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-amber-200/80 bg-amber-50 px-4 py-3 text-left text-xs text-amber-950 dark:border-amber-800/30 dark:bg-amber-950/20 dark:text-amber-300/90"
 		>
 			<div className="flex min-w-0 items-center gap-2">
 				<UserIcon className="size-4 shrink-0 text-current" />
