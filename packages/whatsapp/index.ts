@@ -15,7 +15,10 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { BusinessProfiles, Messages, PhoneNumbers } from './endpoints';
+import * as Account from './endpoints/account';
+import * as Messages from './endpoints/messages';
+import * as Media from './endpoints/media';
+import * as MessageTemplates from './endpoints/message-templates';
 import type {
 	WhatsappEndpointInputs,
 	WhatsappEndpointOutputs,
@@ -52,6 +55,8 @@ export type WhatsappPluginOptions = {
 	key?: string;
 	/** Default phone number ID used when an endpoint input omits phoneNumberId. */
 	phoneNumberId?: string;
+	/** Default business account ID used when an endpoint input omits businessAccountId. */
+	businessAccountId?: string;
 	/** Meta app secret used for X-Hub-Signature-256 verification. */
 	webhookSecret?: string;
 	hooks?: InternalWhatsappPlugin['hooks'];
@@ -84,6 +89,13 @@ export type WhatsappEndpoints = {
 	messagesMarkRead: WhatsappEndpoint<'messagesMarkRead'>;
 	phoneNumbersGet: WhatsappEndpoint<'phoneNumbersGet'>;
 	businessProfilesGet: WhatsappEndpoint<'businessProfilesGet'>;
+	mediaUpload: WhatsappEndpoint<'mediaUpload'>;
+	mediaGetInfo: WhatsappEndpoint<'mediaGetInfo'>;
+	messageTemplatesCreate: WhatsappEndpoint<'messageTemplatesCreate'>;
+	messageTemplatesDelete: WhatsappEndpoint<'messageTemplatesDelete'>;
+	messageTemplatesList: WhatsappEndpoint<'messageTemplatesList'>;
+	messageTemplatesGetStatus: WhatsappEndpoint<'messageTemplatesGetStatus'>;
+	phoneNumbersList: WhatsappEndpoint<'phoneNumbersList'>;
 };
 
 export type WhatsappBoundEndpoints = BindEndpoints<
@@ -96,10 +108,21 @@ const whatsappEndpointsNested = {
 		markRead: Messages.markRead,
 	},
 	phoneNumbers: {
-		get: PhoneNumbers.get,
+		get: Account.getPhoneNumber,
+		list: Account.listPhoneNumbers,
 	},
 	businessProfiles: {
-		get: BusinessProfiles.get,
+		get: Account.getBusinessProfile,
+	},
+	media: {
+		upload: Media.uploadMedia,
+		getInfo: Media.getMediaInfo,
+	},
+	messageTemplates: {
+		create: MessageTemplates.createMessageTemplate,
+		delete: MessageTemplates.deleteMessageTemplate,
+		list: MessageTemplates.listMessageTemplates,
+		getStatus: MessageTemplates.getTemplateStatus,
 	},
 } as const;
 
@@ -119,6 +142,34 @@ export const whatsappEndpointSchemas = {
 	'businessProfiles.get': {
 		input: WhatsappEndpointInputSchemas.businessProfilesGet,
 		output: WhatsappEndpointOutputSchemas.businessProfilesGet,
+	},
+	'media.upload': {
+		input: WhatsappEndpointInputSchemas.mediaUpload,
+		output: WhatsappEndpointOutputSchemas.mediaUpload,
+	},
+	'media.getInfo': {
+		input: WhatsappEndpointInputSchemas.mediaGetInfo,
+		output: WhatsappEndpointOutputSchemas.mediaGetInfo,
+	},
+	'messageTemplates.create': {
+		input: WhatsappEndpointInputSchemas.messageTemplatesCreate,
+		output: WhatsappEndpointOutputSchemas.messageTemplatesCreate,
+	},
+	'messageTemplates.delete': {
+		input: WhatsappEndpointInputSchemas.messageTemplatesDelete,
+		output: WhatsappEndpointOutputSchemas.messageTemplatesDelete,
+	},
+	'messageTemplates.list': {
+		input: WhatsappEndpointInputSchemas.messageTemplatesList,
+		output: WhatsappEndpointOutputSchemas.messageTemplatesList,
+	},
+	'messageTemplates.getStatus': {
+		input: WhatsappEndpointInputSchemas.messageTemplatesGetStatus,
+		output: WhatsappEndpointOutputSchemas.messageTemplatesGetStatus,
+	},
+	'phoneNumbers.list': {
+		input: WhatsappEndpointInputSchemas.phoneNumbersList,
+		output: WhatsappEndpointOutputSchemas.phoneNumbersList,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof whatsappEndpointsNested
@@ -140,9 +191,37 @@ const whatsappEndpointMeta = {
 	},
 	'businessProfiles.get': {
 		riskLevel: 'read',
-		description: 'Retrieve the WhatsApp Business profile',
+		description: 'Retrieve WhatsApp Business Profile information',
 	},
-} satisfies RequiredPluginEndpointMeta<typeof whatsappEndpointsNested>;
+	'media.upload': {
+		riskLevel: 'write',
+		description: 'Upload media to WhatsApp servers',
+	},
+	'media.getInfo': {
+		riskLevel: 'read',
+		description: 'Get information about uploaded media',
+	},
+	'messageTemplates.create': {
+		riskLevel: 'write',
+		description: 'Create a new message template',
+	},
+	'messageTemplates.delete': {
+		riskLevel: 'write',
+		description: 'Delete a message template by name',
+	},
+	'messageTemplates.list': {
+		riskLevel: 'read',
+		description: 'List all message templates',
+	},
+	'messageTemplates.getStatus': {
+		riskLevel: 'read',
+		description: 'Get the status of a message template',
+	},
+	'phoneNumbers.list': {
+		riskLevel: 'read',
+		description: 'List all phone numbers for the WhatsApp Business Account',
+	},
+} as const satisfies RequiredPluginEndpointMeta<typeof whatsappEndpointsNested>;
 
 type WhatsappWebhook<
 	K extends keyof WhatsappWebhookOutputs,
