@@ -16,7 +16,10 @@ export const list: GithubEndpoints['usersList'] = async (ctx, input) => {
 	if (result && ctx.db.users) {
 		try {
 			for (const user of result) {
-				await ctx.db.users.upsertByEntityId(user.id.toString(), user);
+				await ctx.db.users.upsertByEntityId(user.id.toString(), {
+					...user,
+					lowercaseUsername: user.login.toLowerCase(),
+				});
 			}
 		} catch (error) {
 			console.warn('Failed to save users to database:', error);
@@ -39,7 +42,10 @@ export const get: GithubEndpoints['usersGet'] = async (ctx, input) => {
 
 	if (result && ctx.db.users) {
 		try {
-			await ctx.db.users.upsertByEntityId(result.id.toString(), result);
+			await ctx.db.users.upsertByEntityId(result.id.toString(), {
+				...result,
+				lowercaseUsername: result.login.toLowerCase(),
+			});
 		} catch (error) {
 			console.warn('Failed to save user to database:', error);
 		}
@@ -56,7 +62,10 @@ export const getById: GithubEndpoints['usersGetById'] = async (ctx, input) => {
 
 	if (result && ctx.db.users) {
 		try {
-			await ctx.db.users.upsertByEntityId(result.id.toString(), result);
+			await ctx.db.users.upsertByEntityId(result.id.toString(), {
+				...result,
+				lowercaseUsername: result.login.toLowerCase(),
+			});
 		} catch (error) {
 			console.warn('Failed to save user to database:', error);
 		}
@@ -77,7 +86,10 @@ export const getAuthenticated: GithubEndpoints['usersGetAuthenticated'] =
 
 		if (result && ctx.db.users) {
 			try {
-				await ctx.db.users.upsertByEntityId(result.id.toString(), result);
+				await ctx.db.users.upsertByEntityId(result.id.toString(), {
+					...result,
+					lowercaseUsername: result.login.toLowerCase(),
+				});
 			} catch (error) {
 				console.warn('Failed to save authenticated user to database:', error);
 			}
@@ -101,7 +113,10 @@ export const update: GithubEndpoints['usersUpdate'] = async (ctx, input) => {
 
 	if (result && ctx.db.users) {
 		try {
-			await ctx.db.users.upsertByEntityId(result.id.toString(), result);
+			await ctx.db.users.upsertByEntityId(result.id.toString(), {
+				...result,
+				lowercaseUsername: result.login.toLowerCase(),
+			});
 		} catch (error) {
 			console.warn('Failed to update user in database:', error);
 		}

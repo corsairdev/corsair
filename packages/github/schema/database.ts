@@ -13,6 +13,7 @@ export const GithubUser = z.preprocess(
 	z.object({
 		id: z.number(),
 		login: z.string(),
+		lowercaseUsername: z.string().optional(),
 		nodeId: z.string().optional(),
 		avatarUrl: z.string().optional(),
 		gravatarId: z.string().nullable().optional(),
