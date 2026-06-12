@@ -22,8 +22,24 @@ const MessagesGetInputSchema = z.object({
 	message_id: z.string(),
 });
 
+const AddressOrAddressesSchema = z.union([z.string(), z.array(z.string())]);
+
+const MessagesSendInputSchema = z.object({
+	inbox_id: z.string(),
+	labels: z.array(z.string()).optional(),
+	reply_to: AddressOrAddressesSchema.optional(),
+	to: AddressOrAddressesSchema.optional(),
+	cc: AddressOrAddressesSchema.optional(),
+	bcc: AddressOrAddressesSchema.optional(),
+	subject: z.string().optional(),
+	text: z.string().optional(),
+	html: z.string().optional(),
+	headers: z.record(z.string(), z.string()).optional(),
+});
+
 export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
 export type MessagesGetInput = z.infer<typeof MessagesGetInputSchema>;
+export type MessagesSendInput = z.infer<typeof MessagesSendInputSchema>;
 
 const AttachmentSchema = z
 	.object({
@@ -78,25 +94,35 @@ const MessagesListResponseSchema = z.object({
 	next_page_token: z.string().nullable().optional(),
 });
 
+const MessagesSendResponseSchema = z.object({
+	message_id: z.string(),
+	thread_id: z.string(),
+});
+
 export type MessagesListResponse = z.infer<typeof MessagesListResponseSchema>;
 export type MessagesGetResponse = z.infer<typeof MessageSchema>;
+export type MessagesSendResponse = z.infer<typeof MessagesSendResponseSchema>;
 
 export type AgentMailEndpointInputs = {
 	messagesList: MessagesListInput;
 	messagesGet: MessagesGetInput;
+	messagesSend: MessagesSendInput;
 };
 
 export type AgentMailEndpointOutputs = {
 	messagesList: MessagesListResponse;
 	messagesGet: MessagesGetResponse;
+	messagesSend: MessagesSendResponse;
 };
 
 export const AgentMailEndpointInputSchemas = {
 	messagesList: MessagesListInputSchema,
 	messagesGet: MessagesGetInputSchema,
+	messagesSend: MessagesSendInputSchema,
 } as const;
 
 export const AgentMailEndpointOutputSchemas = {
 	messagesList: MessagesListResponseSchema,
 	messagesGet: MessageSchema,
+	messagesSend: MessagesSendResponseSchema,
 } as const;

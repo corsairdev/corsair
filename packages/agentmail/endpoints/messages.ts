@@ -3,6 +3,29 @@ import { makeAgentMailRequest } from '../client';
 import type { AgentMailEndpoints } from '../index';
 import type { AgentMailEndpointOutputs } from './types';
 
+export const send: AgentMailEndpoints['messagesSend'] = async (ctx, input) => {
+	const { inbox_id, ...bodyInput } = input;
+	const body = Object.fromEntries(
+		Object.entries(bodyInput).filter(([, value]) => value !== undefined),
+	);
+
+	const response = await makeAgentMailRequest<
+		AgentMailEndpointOutputs['messagesSend']
+	>(`inboxes/${encodeURIComponent(inbox_id)}/messages/send`, ctx.key, {
+		method: 'POST',
+		body,
+	});
+
+	await logEventFromContext(
+		ctx,
+		'agentmail.messages.send',
+		{ ...input },
+		'completed',
+	);
+
+	return response;
+};
+
 export const get: AgentMailEndpoints['messagesGet'] = async (ctx, input) => {
 	const response = await makeAgentMailRequest<
 		AgentMailEndpointOutputs['messagesGet']

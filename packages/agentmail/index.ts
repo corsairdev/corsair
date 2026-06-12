@@ -59,12 +59,14 @@ type AgentMailEndpoint<K extends keyof AgentMailEndpointOutputs> =
 export type AgentMailEndpoints = {
 	messagesList: AgentMailEndpoint<'messagesList'>;
 	messagesGet: AgentMailEndpoint<'messagesGet'>;
+	messagesSend: AgentMailEndpoint<'messagesSend'>;
 };
 
 const agentMailEndpointsNested = {
 	messages: {
 		get: Messages.get,
 		list: Messages.list,
+		send: Messages.send,
 	},
 } as const;
 
@@ -82,6 +84,10 @@ export const agentMailEndpointSchemas = {
 	'messages.get': {
 		input: AgentMailEndpointInputSchemas.messagesGet,
 		output: AgentMailEndpointOutputSchemas.messagesGet,
+	},
+	'messages.send': {
+		input: AgentMailEndpointInputSchemas.messagesSend,
+		output: AgentMailEndpointOutputSchemas.messagesSend,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof agentMailEndpointsNested
@@ -102,6 +108,10 @@ const agentMailEndpointMeta = {
 	'messages.get': {
 		riskLevel: 'read',
 		description: 'Retrieve the complete details of an AgentMail message',
+	},
+	'messages.send': {
+		riskLevel: 'write',
+		description: 'Send an email using AgentMail',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof agentMailEndpointsNested
@@ -189,4 +199,6 @@ export type {
 	MessagesGetResponse,
 	MessagesListInput,
 	MessagesListResponse,
+	MessagesSendInput,
+	MessagesSendResponse,
 } from './endpoints/types';
