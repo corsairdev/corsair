@@ -99,6 +99,7 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 						<CategoryOnboarding
 							tags={allTags.items}
 							hasActiveFilters={selectedTags.length > 0 || q.length > 0}
+							signedIn={Boolean(session)}
 						/>
 					) : null}
 
@@ -219,13 +220,32 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 
 					<ActivityFeed items={recentActivity.items} />
 
-					<TopContributors items={leaderboardData.items.slice(0, 5)} />
+					{view !== 'leaderboard' ? (
+						<TopContributors items={leaderboardData.items.slice(0, 5)} />
+					) : null}
 
 					<HowItWorks signedIn={Boolean(session)} />
 				</aside>
 			</div>
 		</main>
 	);
+}
+
+function getPaginationItems(
+	page: number,
+	totalPages: number,
+): Array<number | 'ellipsis'> {
+	if (totalPages <= 7) {
+		return Array.from({ length: totalPages }, (_, i) => i + 1);
+	}
+	const items: Array<number | 'ellipsis'> = [1];
+	const start = Math.max(2, page - 1);
+	const end = Math.min(totalPages - 1, page + 1);
+	if (start > 2) items.push('ellipsis');
+	for (let i = start; i <= end; i++) items.push(i);
+	if (end < totalPages - 1) items.push('ellipsis');
+	items.push(totalPages);
+	return items;
 }
 
 function Pagination({
@@ -254,26 +274,33 @@ function Pagination({
 					← prev
 				</Link>
 			) : null}
-			{Array.from({ length: totalPages }, (_, index) => {
-				const pageNumber = index + 1;
-
-				return pageNumber === page ? (
+			{getPaginationItems(page, totalPages).map((item, index) =>
+				item === 'ellipsis' ? (
 					<span
-						key={pageNumber}
+						key={`ellipsis-${index}`}
+						className="inline-flex size-8 items-center justify-center text-[#1c1c1c66]"
+						aria-hidden="true"
+					>
+						…
+					</span>
+				) : item === page ? (
+					<span
+						key={item}
+						aria-current="page"
 						className="inline-flex size-8 items-center justify-center border border-[#1c1c1c] bg-[#1c1c1c] tabular-nums text-white"
 					>
-						{pageNumber}
+						{item}
 					</span>
 				) : (
 					<Link
-						key={pageNumber}
-						href={buildPageHref(pageNumber, q, tags, view)}
+						key={item}
+						href={buildPageHref(item, q, tags, view)}
 						className="inline-flex size-8 items-center justify-center border border-transparent tabular-nums text-[#1c1c1c66] transition-colors hover:border-[#1c1c1c1a] hover:text-[#1c1c1c]"
 					>
-						{pageNumber}
+						{item}
 					</Link>
-				);
-			})}
+				),
+			)}
 			{page < totalPages ? (
 				<Link
 					href={buildPageHref(page + 1, q, tags, view)}

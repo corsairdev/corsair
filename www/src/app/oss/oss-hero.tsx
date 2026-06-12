@@ -18,7 +18,7 @@ const numberFormatter = new Intl.NumberFormat('en-US');
 
 function StatBlock({ label, value }: { label: string; value: number }) {
 	return (
-		<div className="px-5 py-4 sm:px-6">
+		<div className="bg-white px-5 py-4 sm:px-6">
 			<p className="font-[family-name:var(--font-landing-mono)] text-[26px] font-light leading-none tabular-nums text-[#1c1c1c]">
 				{numberFormatter.format(value)}
 			</p>
@@ -51,9 +51,9 @@ export function OssHero({ signedIn, stats }: OssHeroProps) {
 						</span>
 					</h1>
 					<p className="mt-5 max-w-[460px] text-[15px] leading-[1.65] text-[#1c1c1c99]">
-						Claim an integration, ship the plugin, earn the points. The catalog
-						is built by the community — and every shipped integration carries
-						its author&apos;s name.
+						Claim an integration, ship the plugin, climb the leaderboard.
+						Everything you ship goes live in the open catalog — powering real
+						agents, in real products, from day one.
 					</p>
 					<div className="mt-7 flex flex-wrap items-center gap-3">
 						<Link
@@ -74,7 +74,7 @@ export function OssHero({ signedIn, stats }: OssHeroProps) {
 				</div>
 
 				<FramedPanel>
-					<div className="grid grid-cols-2 divide-x divide-y divide-[#1c1c1c1a] sm:grid-cols-4 sm:divide-y-0">
+					<div className="grid grid-cols-2 gap-px bg-[#1c1c1c1a] sm:grid-cols-4">
 						<StatBlock label="Shipped" value={stats.finished} />
 						<StatBlock label="In progress" value={stats.inProgress} />
 						<StatBlock label="Up for grabs" value={stats.unclaimed} />
