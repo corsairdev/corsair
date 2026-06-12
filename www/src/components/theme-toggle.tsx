@@ -34,23 +34,29 @@ function MoonIcon({ className }: { className?: string }) {
 
 const STORAGE_KEY = 'corsair-theme';
 
+function getScope() {
+	return document.querySelector('[data-theme-scope]');
+}
+
 export function ThemeToggle() {
 	const [dark, setDark] = useState(false);
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
-		setDark(document.documentElement.classList.contains('dark'));
+		setDark(getScope()?.classList.contains('dark') ?? false);
 		setMounted(true);
 	}, []);
 
 	const toggle = useCallback(() => {
-		const next = !dark;
+		const scope = getScope();
+		if (!scope) return;
+		const next = !scope.classList.contains('dark');
+		scope.classList.toggle('dark', next);
 		setDark(next);
-		document.documentElement.classList.toggle('dark', next);
 		try {
 			localStorage.setItem(STORAGE_KEY, next ? 'dark' : 'light');
 		} catch {}
-	}, [dark]);
+	}, []);
 
 	if (!mounted) {
 		return <div className="size-7" />;
