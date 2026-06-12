@@ -1,0 +1,97 @@
+---
+title: Vanilla Client
+description: createCorsairClient is a typed fetch wrapper for the management API. No React, no framework, just types.
+---
+
+`createCorsairClient({ baseURL })` returns a typed client that mirrors every route on the [handler](/management/handler). Use it from a Node script, a CLI, a worker, or a non-React frontend.
+
+```ts client.ts
+import { createCorsairClient } from "corsair";
+
+const client = createCorsairClient({ baseURL: "/api/corsair" });
+```
+
+For React, prefer [`createCorsairReactClient`](/management/react) — it wraps this one and adds hooks.
+
+## Reading
+
+```ts reads.ts
+await client.tenants.list();                      // GET /tenants
+await client.tenants.get("acme");                 // GET /tenants/acme
+
+await client.plugins.list();                      // GET /plugins
+await client.plugins.get("github");               // GET /plugins/github
+
+await client.connectionStatus.get({               // GET /connection-status
+  tenantId: "acme",
+});
+
+await client.permissions.get("perm_123");         // GET /permissions/perm_123
+await client.permissions.getByToken("tok_abc");   // POST /permissions/lookup-by-token
+
+await client.ok();                                // GET /ok
+```
+
+Every method is typed against the route's response. Hovering `client.tenants.list()` in your editor shows `Promise<Tenant[]>`, and so on.
+
+`connectionStatus.get` returns a `Record<string, 'connected' | 'missing_credentials' | 'not_connected'>` keyed by plugin id:
+
+```ts
+const status = await client.connectionStatus.get({ tenantId: "acme" });
+// { github: 'connected', slack: 'not_connected', notion: 'missing_credentials' }
+```
+
+## Writing
+
+```ts writes.ts
+await client.tenants.create({ id: "acme" });      // POST /tenants
+```
+
+Connect/OAuth methods are documented on the [Connect page](/management/connect).
+
+## Options
+
+```ts
+createCorsairClient({
+  baseURL: "/api/corsair",     // required
+  fetch: customFetch,          // optional — override globalThis.fetch
+});
+```
+
+`baseURL` is the origin + base path the handler is mounted at, e.g. `https://app.example.com/api/corsair`. A trailing slash is tolerated.
+
+The `fetch` override is resolved lazily — if you omit it, `globalThis.fetch` is read on every call, not at construction. This makes the client work cleanly in test environments that inject `fetch` after module load (jsdom, Node's experimental fetch flag, etc.).
+
+Need auth headers, custom retry, or interceptors? Pass a wrapped `fetch`:
+
+```ts
+const client = createCorsairClient({
+  baseURL: "/api/corsair",
+  fetch: (input, init) =>
+    globalThis.fetch(input, {
+      ...init,
+      headers: { ...init?.headers, Authorization: `Bearer ${token()}` },
+    }),
+});
+```
+
+## Error handling
+
+Failed requests throw `CorsairClientError`:
+
+```ts
+import { CorsairClientError } from "corsair";
+
+try {
+  await client.tenants.get("does-not-exist");
+} catch (err) {
+  if (err instanceof CorsairClientError) {
+    err.status;   // number — HTTP status
+    err.code;     // string — e.g. "not_found"
+    err.message;  // string — human message from the server
+    err.extra;    // Record<string, unknown> — any additional fields the server returned
+  }
+}
+```
+
+Network failures (DNS, abort, no response) throw a plain `Error` — `CorsairClientError` is only used when the server responded with a non-2xx body.
