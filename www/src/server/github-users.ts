@@ -1,24 +1,42 @@
 import { corsair } from './corsair';
 
+const AVATAR_LOOKUP_TIMEOUT_MS = 2_000;
+
+function withTimeout<T>(promise: Promise<T>, fallback: T): Promise<T> {
+	return Promise.race([
+		promise,
+		new Promise<T>((resolve) =>
+			setTimeout(() => resolve(fallback), AVATAR_LOOKUP_TIMEOUT_MS),
+		),
+	]);
+}
+
 export async function getGithubUserAvatar(
 	username: string,
 ): Promise<string | null> {
-	const cached = await corsair.github.db.users.search({
-		data: {
-			login: username,
-		},
-		limit: 1,
-	});
-
-	const cachedAvatar = cached[0]?.data.avatarUrl;
-	if (cachedAvatar) {
-		return cachedAvatar;
-	}
-
 	try {
-		const user = await corsair.github.api.users.get({ username });
-		return user.avatarUrl ?? null;
+		const cached = await withTimeout(
+			corsair.github.db.users.search({
+				data: {
+					login: username,
+				},
+				limit: 1,
+			}),
+			[],
+		);
+
+		const cachedAvatar = cached[0]?.data.avatarUrl;
+		if (cachedAvatar) {
+			return cachedAvatar;
+		}
+
+		const user = await withTimeout(
+			corsair.github.api.users.get({ username }),
+			null,
+		);
+		return user?.avatarUrl ?? null;
 	} catch {
+		// Avatar lookup is best-effort; never let it break the page.
 		return null;
 	}
 }

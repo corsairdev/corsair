@@ -15,21 +15,21 @@ import { z } from 'zod';
 import type { DB } from '@/db';
 import { user } from '@/db/auth-schema';
 import {
+	fetchIntegrationTags,
+	fetchIntegrationTagsByIntegrationIds,
+} from '@/db/integration-tags';
+import {
 	clearContributorIntegrationUrls,
 	emptyIntegrationUrls,
 	fetchIntegrationUrls,
 	fetchIntegrationUrlsByIntegrationIds,
 	upsertIntegrationUrls,
 } from '@/db/integration-urls';
-import {
-	fetchIntegrationTags,
-	fetchIntegrationTagsByIntegrationIds,
-} from '@/db/integration-tags';
 import type { IntegrationUrls } from '@/db/schema';
 import {
 	authSchemes,
-	integrationTags,
 	integrations,
+	integrationTags,
 	operations,
 	tags,
 	triggers,
@@ -102,10 +102,7 @@ function searchFilter(query: string | undefined): SQL | undefined {
 	);
 }
 
-function visibleIntegrationsFilter(
-	query?: string,
-	tagSlugs?: string[],
-): SQL {
+function visibleIntegrationsFilter(query?: string, tagSlugs?: string[]): SQL {
 	const conditions: SQL[] = [eq(integrations.show, true)];
 
 	const search = searchFilter(query);
@@ -147,6 +144,107 @@ async function logIntegrationEvent(
 }
 
 export const integrationsRouter = createTRPCRouter({
+	stats: publicProcedure.query(async ({ ctx }) => {
+		const [totals, claims, contributors] = await Promise.all([
+			ctx.db
+				.select({ total: count() })
+				.from(integrations)
+				.where(eq(integrations.show, true)),
+			ctx.db
+				.select({
+					claimed: count(),
+					finished: sql<number>`cast(count(*) filter (where ${userIntegrations.status} = 'finished') as int)`,
+				})
+				.from(userIntegrations)
+				.innerJoin(
+					integrations,
+					and(
+						eq(integrations.id, userIntegrations.integrationId),
+						eq(integrations.show, true),
+					),
+				),
+			ctx.db
+				.select({
+					contributors: sql<number>`cast(count(distinct ${userIntegrations.userId}) as int)`,
+				})
+				.from(userIntegrations)
+				.innerJoin(
+					integrations,
+					and(
+						eq(integrations.id, userIntegrations.integrationId),
+						eq(integrations.show, true),
+					),
+				),
+		]);
+
+		const total = totals[0]?.total ?? 0;
+		const claimed = claims[0]?.claimed ?? 0;
+		const finished = claims[0]?.finished ?? 0;
+
+		return {
+			total,
+			claimed,
+			finished,
+			inProgress: Math.max(0, claimed - finished),
+			unclaimed: Math.max(0, total - claimed),
+			contributors: contributors[0]?.contributors ?? 0,
+		};
+	}),
+
+	recentActivity: publicProcedure
+		.input(
+			z
+				.object({ limit: z.number().int().min(1).max(50).default(12) })
+				.default({ limit: 12 }),
+		)
+		.query(async ({ ctx, input }) => {
+			const rows = await ctx.db
+				.select({
+					id: userIntegrationEvents.id,
+					type: userIntegrationEvents.type,
+					createdAt: userIntegrationEvents.createdAt,
+					githubUsername: user.githubUsername,
+					integrationName: integrations.name,
+					integrationSlug: integrations.slug,
+					points: integrations.points,
+				})
+				.from(userIntegrationEvents)
+				.innerJoin(user, eq(user.id, userIntegrationEvents.userId))
+				.innerJoin(
+					integrations,
+					and(
+						eq(integrations.id, userIntegrationEvents.integrationId),
+						eq(integrations.show, true),
+					),
+				)
+				.orderBy(desc(userIntegrationEvents.createdAt))
+				.limit(input.limit);
+
+			const usernames = [
+				...new Set(
+					rows
+						.map((row) => row.githubUsername)
+						.filter((username): username is string => username !== null),
+				),
+			];
+			const avatars = await getGithubUserAvatars(usernames);
+
+			return {
+				items: rows.map((row) => ({
+					id: row.id,
+					type: row.type,
+					createdAt: row.createdAt.toISOString(),
+					githubUsername: row.githubUsername ?? null,
+					avatarUrl: row.githubUsername
+						? (avatars.get(row.githubUsername) ?? null)
+						: null,
+					integrationName: row.integrationName,
+					integrationSlug: row.integrationSlug,
+					points: row.points,
+				})),
+			};
+		}),
+
 	listMine: protectedProcedure.query(async ({ ctx }) => {
 		const items = await ctx.db
 			.select({
@@ -355,69 +453,69 @@ export const integrationsRouter = createTRPCRouter({
 				urls,
 				integrationTagRows,
 			] = await Promise.all([
-					ctx.db
-						.select({
-							id: operations.id,
-							slug: operations.slug,
-							name: operations.name,
-							description: operations.description,
-							tags: operations.tags,
-							isDeprecated: operations.isDeprecated,
-						})
-						.from(operations)
-						.where(eq(operations.integrationId, integration.id))
-						.orderBy(asc(operations.name)),
-					ctx.db
-						.select({
-							id: triggers.id,
-							slug: triggers.slug,
-							name: triggers.name,
-							description: triggers.description,
-							type: triggers.type,
-						})
-						.from(triggers)
-						.where(eq(triggers.integrationId, integration.id))
-						.orderBy(asc(triggers.name)),
-					ctx.db
-						.select({
-							id: authSchemes.id,
-							mode: authSchemes.mode,
-							name: authSchemes.name,
-							requiredFields: authSchemes.requiredFields,
-							optionalFields: authSchemes.optionalFields,
-						})
-						.from(authSchemes)
-						.where(
-							and(
-								eq(authSchemes.integrationId, integration.id),
-								inArray(authSchemes.mode, visibleAuthModes),
-							),
-						)
-						.orderBy(asc(authSchemes.name)),
-					ctx.db
-						.select({
-							userId: userIntegrations.userId,
-							githubUsername: user.githubUsername,
-							status: userIntegrations.status,
-						})
-						.from(userIntegrations)
-						.leftJoin(user, eq(user.id, userIntegrations.userId))
-						.where(eq(userIntegrations.integrationId, integration.id))
-						.limit(1),
-					ctx.db
-						.select({
-							id: userIntegrationEvents.id,
-							type: userIntegrationEvents.type,
-							createdAt: userIntegrationEvents.createdAt,
-							githubUsername: user.githubUsername,
-						})
-						.from(userIntegrationEvents)
-						.innerJoin(user, eq(user.id, userIntegrationEvents.userId))
-						.where(eq(userIntegrationEvents.integrationId, integration.id))
-						.orderBy(desc(userIntegrationEvents.createdAt)),
-					fetchIntegrationUrls(ctx.db, integration.id),
-					fetchIntegrationTags(ctx.db, integration.id),
-				]);
+				ctx.db
+					.select({
+						id: operations.id,
+						slug: operations.slug,
+						name: operations.name,
+						description: operations.description,
+						tags: operations.tags,
+						isDeprecated: operations.isDeprecated,
+					})
+					.from(operations)
+					.where(eq(operations.integrationId, integration.id))
+					.orderBy(asc(operations.name)),
+				ctx.db
+					.select({
+						id: triggers.id,
+						slug: triggers.slug,
+						name: triggers.name,
+						description: triggers.description,
+						type: triggers.type,
+					})
+					.from(triggers)
+					.where(eq(triggers.integrationId, integration.id))
+					.orderBy(asc(triggers.name)),
+				ctx.db
+					.select({
+						id: authSchemes.id,
+						mode: authSchemes.mode,
+						name: authSchemes.name,
+						requiredFields: authSchemes.requiredFields,
+						optionalFields: authSchemes.optionalFields,
+					})
+					.from(authSchemes)
+					.where(
+						and(
+							eq(authSchemes.integrationId, integration.id),
+							inArray(authSchemes.mode, visibleAuthModes),
+						),
+					)
+					.orderBy(asc(authSchemes.name)),
+				ctx.db
+					.select({
+						userId: userIntegrations.userId,
+						githubUsername: user.githubUsername,
+						status: userIntegrations.status,
+					})
+					.from(userIntegrations)
+					.leftJoin(user, eq(user.id, userIntegrations.userId))
+					.where(eq(userIntegrations.integrationId, integration.id))
+					.limit(1),
+				ctx.db
+					.select({
+						id: userIntegrationEvents.id,
+						type: userIntegrationEvents.type,
+						createdAt: userIntegrationEvents.createdAt,
+						githubUsername: user.githubUsername,
+					})
+					.from(userIntegrationEvents)
+					.innerJoin(user, eq(user.id, userIntegrationEvents.userId))
+					.where(eq(userIntegrationEvents.integrationId, integration.id))
+					.orderBy(desc(userIntegrationEvents.createdAt)),
+				fetchIntegrationUrls(ctx.db, integration.id),
+				fetchIntegrationTags(ctx.db, integration.id),
+			]);
 
 			const claimerGithubUsername = claimRow[0]?.githubUsername ?? null;
 			const timelineUsernames = [
