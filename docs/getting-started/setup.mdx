@@ -1,250 +1,182 @@
 ---
 title: Setup
-description: How integrations, accounts, and tenants work — and how to initialize Corsair with the CLI or setupCorsair.
+description: Initialize Corsair with the CLI or setupCorsair — integrations, accounts, and tenants.
 ---
 
-Setup is how you turn a `createCorsair()` config into a working instance: database rows, encryption keys, and credential guidance for every plugin.
-
-This page explains the data model first, then walks through setup with the CLI or `setupCorsair` in code.
+Initialize database rows, DEKs, and credentials. Same logic in the CLI and `setupCorsair`.
 
 ---
 
 ## Prerequisites
 
-Before running setup, you need:
-
-1. **Corsair installed** — see [Quick start](/getting-started/quick-start) for package install, `CORSAIR_KEK`, and database migration.
-2. **A `corsair.ts` file** — export your instance with `plugins`, `database`, and `kek` configured.
+Install, migrate, and set `CORSAIR_KEK` — [Quick start](/getting-started/quick-start).
 
 ```ts corsair.ts
 import 'dotenv/config';
 import { createCorsair } from 'corsair';
-import { slack, linear } from 'corsair';
+import { slack, linear, gmail } from 'corsair';
 
 export const corsair = createCorsair({
-    plugins: [slack(), linear()],
+    plugins: [slack(), linear(), gmail()],
     database: db,
     kek: process.env.CORSAIR_KEK!,
-    multiTenancy: false, // set true for per-user credentials
+    multiTenancy: false, // true for per-user credentials
 });
 ```
 
 ---
 
-## Integrations, accounts, and tenants
+## Data model
 
-Corsair stores configuration in three layers. Understanding them makes setup predictable.
-
-### Integrations (plugins)
-
-An **integration** is one plugin you add to `createCorsair({ plugins: [...] })` — for example `slack()` or `linear()`.
-
-Each integration gets one row in `corsair_integrations`. Integration-level credentials are **shared across all tenants** — for OAuth plugins, that means `client_id`, `client_secret`, and `redirect_url`.
-
-```bash
-# Integration-level credentials (shared) — OAuth plugins only
-pnpm corsair setup --gmail client_id=... client_secret=...
+```
+corsair_integrations   ← one row per plugin in createCorsair({ plugins })
+corsair_accounts       ← one row per (tenant, plugin with authType)
 ```
 
-In code:
+| Layer | Table | Scope | Fields |
+|-------|-------|-------|--------|
+| Integration | `corsair_integrations` | Shared | OAuth: `client_id`, `client_secret`, `redirect_url` |
+| Account | `corsair_accounts` | Per tenant | API keys, tokens, refresh tokens |
+| Tenant | *(no table)* | Your ID string | Materializes when account rows exist |
+
+Account rows are only created for plugins with `authType` (`api_key`, `oauth_2`, `bot_token`).
+
+---
+
+## setupCorsair
 
 ```ts
-await corsair.keys.gmail.set_client_id('...');
-await corsair.keys.gmail.set_client_secret('...');
-```
-
-<Note>
-For `api_key` and `bot_token` plugins (Slack, Linear, etc.), credentials are **account-level** — see Accounts below. There are no integration-level fields for those auth types.
-</Note>
-
-### Accounts
-
-An **account** links one integration to one tenant. Each pair gets a row in `corsair_accounts` and its own Data Encryption Key (DEK).
-
-Account-level credentials are **per tenant** — API keys, bot tokens, OAuth access tokens, refresh tokens, and similar secrets.
-
-```bash
-# Single-tenant (default tenant) — no --tenant needed
-pnpm corsair setup --linear api_key=lin_api_...
-
-# Multi-tenant — --tenant required for account-level fields
-pnpm corsair setup --tenant=user_abc123 --linear api_key=lin_api_...
-```
-
-In code:
-
-```ts
-// Multi-tenant
-await corsair.withTenant('user_abc123').linear.keys.set_api_key('lin_api_...');
-
-// Single-tenant (implicit "default" tenant)
-await corsair.linear.keys.set_api_key('lin_api_...');
-```
-
-### Tenants
-
-A **tenant** is a stable identifier for whoever owns the data and credentials — a user ID, workspace ID, org slug, or `"default"` in single-tenant apps.
-
-Corsair does not use a separate `tenants` table. A tenant **materializes** when it has account rows in `corsair_accounts`. Pick any non-empty string as the ID and provision it with setup.
-
-Account rows are only created for plugins that declare an `authType` (`api_key`, `oauth_2`, or `bot_token`).
-
-| Mode | Tenant ID | When to pass `--tenant` / `tenantId` |
-|------|-----------|--------------------------------------|
-| Single-tenant (`multiTenancy: false`) | `"default"` (implicit) | Optional — setup always provisions the default tenant |
-| Multi-tenant (`multiTenancy: true`) | Your user/workspace ID | Required for account rows, account credentials, and backfill; omit only for integration-level setup |
-
-See [Multi-tenancy](/concepts/multi-tenancy) for scoping API calls and database queries with `withTenant()`.
-
----
-
-## What setup does
-
-Whether you use the CLI or `setupCorsair`, setup runs the same steps:
-
-1. **Checks tables** — warns if required `corsair_*` tables are missing (run migrations first).
-2. **Creates integration rows** — one per configured plugin, if not already present.
-3. **Creates account rows** — one per plugin **with an auth type**, for the requested tenant (when provisioning accounts).
-4. **Issues DEKs** — integration-level and account-level encryption keys where needed (auth-type plugins only).
-5. **Applies inline credentials** — if you pass `credentials` in options or `field=value` pairs on the CLI.
-6. **Reports missing credentials** — tells you exactly which fields still need values.
-7. **Optional backfill** — with `{ backfill: true }`, calls list endpoints for plugins that are fully configured (see `setup/backfill.yaml`).
-
-Setup does **not** open OAuth flows. After setup, use `corsair auth` or your app's connect flow for OAuth plugins.
-
----
-
-## Setup with the CLI
-
-The CLI wraps `setupCorsair` and prints runnable guidance when credentials are missing.
-
-### First run (single-tenant)
-
-```bash
-pnpm corsair setup
-```
-
-This provisions integration and account rows for the `"default"` tenant and lists any missing credentials.
-
-Pass credentials inline:
-
-```bash
-pnpm corsair setup --slack api_key=xoxb-... --linear api_key=lin_api_...
-```
-
-For OAuth plugins, set integration credentials first, then authorize:
-
-```bash
-pnpm corsair setup --gmail client_id=... client_secret=...
-pnpm corsair auth --plugin=gmail
-```
-
-### Multi-tenant
-
-Pass a tenant ID to provision that customer's account rows:
-
-```bash
-pnpm corsair setup --tenant=workspace_123
-pnpm corsair setup --tenant=workspace_123 --linear api_key=lin_api_...
-pnpm corsair auth --plugin=gmail --tenant=workspace_123
-```
-
-On multi-tenant instances, omitting `--tenant` only sets up integration-level rows and DEKs. Account rows and account credentials require an explicit tenant:
-
-```bash
-# Integration-level only (no account rows) — valid on multi-tenant
-pnpm corsair setup --gmail client_id=... client_secret=...
-
-# Per-tenant account rows + credentials
-pnpm corsair setup --tenant=workspace_123
-```
-
-### Useful flags
-
-| Flag | Description |
-|------|-------------|
-| `--tenant <id>` | Tenant to provision account rows and account credentials for |
-| `--plugin <id>` | Select plugin for following `field=value` pairs (alternative to `--<plugin>`) |
-| `--backfill` | Seed data from list endpoints after setup (requires `--tenant` on multi-tenant; skips plugins missing credentials) |
-| `--<plugin> field=value` | Set credentials inline (e.g. `--linear api_key=lin_api_...`) |
-
-See the [CLI README](https://github.com/corsairdev/corsair/blob/main/packages/cli/README.md) for full command reference.
-
----
-
-## Setup with `setupCorsair`
-
-Call `setupCorsair` from a script, API route, or background job — same behavior as the CLI, without shelling out.
-
-```ts provision.ts
 import { setupCorsair } from 'corsair';
 import { corsair } from './corsair';
 
-// Single-tenant: provisions the default tenant
+// Single-tenant → provisions "default"
 await setupCorsair(corsair);
 
-// Multi-tenant: provision a new customer
-await setupCorsair(corsair, {
-    tenantId: 'workspace_123',
-});
+// Multi-tenant → provision a tenant
+await setupCorsair(corsair, { tenantId: 'workspace_123' });
 
-// Set credentials during setup
+// Credentials + backfill
 await setupCorsair(corsair, {
     tenantId: 'workspace_123',
-    credentials: {
-        linear: { api_key: process.env.LINEAR_KEY! },
-    },
-});
-
-// Seed initial data
-await setupCorsair(corsair, {
-    tenantId: 'workspace_123',
+    credentials: { linear: { api_key: process.env.LINEAR_KEY! } },
     backfill: true,
 });
 ```
 
-`setupCorsair` returns a newline-separated log string and also prints to stdout/stderr.
+Returns a log string. Idempotent — skips existing rows.
 
-### Integration vs account credentials in code
+---
 
-```ts
-// Integration-level (shared) — no tenant
-await corsair.keys.gmail.set_client_id('...');
-await corsair.keys.gmail.set_client_secret('...');
+## CLI
 
-// Account-level (per tenant)
-const tenant = corsair.withTenant('workspace_123');
-await tenant.gmail.keys.set_access_token('...');
-await tenant.linear.keys.set_api_key('lin_api_...');
+```bash
+# Single-tenant
+pnpm corsair setup
+pnpm corsair setup --slack api_key=xoxb-... --linear api_key=lin_api_...
+
+# Multi-tenant
+pnpm corsair setup --tenant=workspace_123
+pnpm corsair setup --tenant=workspace_123 --linear api_key=lin_api_...
+
+# OAuth app creds (integration-level) — no --tenant on multi-tenant
+pnpm corsair setup --gmail client_id=... client_secret=...
+pnpm corsair auth --plugin=gmail
+pnpm corsair auth --plugin=gmail --tenant=workspace_123
 ```
 
-On multi-tenant instances, passing integration-level fields through `setupCorsair({ credentials, tenantId })` throws — set those with `setupCorsair` **without** `tenantId`, or on `corsair.keys` directly.
-
-Calling `tenant.*.keys.set_*()` requires the account row to exist first. If you skip `setupCorsair`, OAuth flows (`processOAuthCallback`, `corsair auth`) can create the account row lazily for that plugin — but direct `keys.set_*` calls will error until the row exists.
-
----
-
-## Management API vs provisioning
-
-`corsair.manage.tenants.create({ id })` and `POST /api/corsair/tenants` register a tenant ID but **do not** create account rows. Use that for lookups and dashboards; use `setupCorsair` (or the CLI) when you need full provisioning.
-
-For production tenant onboarding at scale, see [Tenant provisioning](/production/tenant-provisioning).
+| Flag | |
+|------|--|
+| `--tenant <id>` | Account rows + account credentials |
+| `--<plugin> field=value` | Inline credentials |
+| `--backfill` | Seed data (`setup/backfill.yaml`); needs `--tenant` on multi-tenant |
 
 ---
 
-## Next steps
+## Credentials
 
-<CardGroup cols={2}>
-  <Card title="Multi-tenancy" href="/concepts/multi-tenancy">
-    Scope every operation to a user with `withTenant()`.
-  </Card>
-  <Card title="Authentication" href="/concepts/auth">
-    OAuth, API keys, and envelope encryption.
-  </Card>
-  <Card title="Database" href="/concepts/database">
-    The four tables and how data flows through them.
-  </Card>
-  <Card title="OAuth in production" href="/production/oauth-process">
-    Connect routes, callbacks, and token storage.
-  </Card>
-</CardGroup>
+**Integration-level** (shared, OAuth only):
+
+```bash
+pnpm corsair setup --gmail client_id=... client_secret=...
+```
+
+```ts
+await corsair.keys.gmail.set_client_id('...');
+await corsair.keys.gmail.set_client_secret('...');
+```
+
+**Account-level** (per tenant — all `api_key` / `bot_token` fields, OAuth tokens):
+
+```bash
+# single-tenant
+pnpm corsair setup --linear api_key=lin_api_...
+
+# multi-tenant
+pnpm corsair setup --tenant=user_abc --linear api_key=lin_api_...
+```
+
+```ts
+// multi-tenant
+await corsair.withTenant('user_abc').linear.keys.set_api_key('lin_api_...');
+
+// single-tenant
+await corsair.linear.keys.set_api_key('lin_api_...');
+```
+
+<Warning>
+Multi-tenant: integration fields + `tenantId` in `setupCorsair({ credentials })` throws. Run integration setup without `tenantId`.
+</Warning>
+
+---
+
+## Multi-tenant
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [github(), linear()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+| | `--tenant` / `tenantId` |
+|--|-------------------------|
+| Integration rows + OAuth app creds | Omit |
+| Account rows, account creds, backfill | Required |
+
+```bash
+# integration only
+pnpm corsair setup --gmail client_id=... client_secret=...
+
+# tenant provisioning
+pnpm corsair setup --tenant=workspace_123
+```
+
+All runtime calls: `corsair.withTenant(id)`. See [Multi-tenancy](/concepts/multi-tenancy).
+
+---
+
+## OAuth
+
+Setup does not run OAuth. After integration creds are set:
+
+```bash
+pnpm corsair auth --plugin=gmail
+pnpm corsair auth --plugin=gmail --tenant=workspace_123
+```
+
+Or in app code: [OAuth process](/production/oauth-process).
+
+`processOAuthCallback` creates the account row lazily if missing. `keys.set_*()` does not — run setup first for API keys.
+
+---
+
+## Management API
+
+```ts
+// Does NOT create account rows
+await corsair.manage.tenants.create({ id: 'workspace_123' });
+```
+
+Use `setupCorsair` or the CLI to provision. Production flow: [Tenant provisioning](/production/tenant-provisioning).
