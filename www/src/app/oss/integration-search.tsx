@@ -5,9 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
-
-import { buildOssHref, parseTagSlugs } from './oss-url';
 import { useOssNavigation } from './oss-navigation';
+import { buildOssHref, parseTagSlugs } from './oss-url';
 
 const DEBOUNCE_MS = 500;
 
@@ -53,7 +52,7 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 		<div className="relative">
 			<MagnifyingGlass
 				size={16}
-				className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+				className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-[#1c1c1c66]"
 				aria-hidden
 			/>
 			<input
@@ -63,8 +62,8 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 				placeholder="Search integrations..."
 				disabled={isLeaderboard}
 				className={cn(
-					'w-full rounded-lg border border-border/70 bg-card py-2.5 pr-4 pl-9 text-sm shadow-sm transition-all',
-					'placeholder:text-muted-foreground focus:border-border focus:ring-2 focus:ring-foreground/5 focus:outline-none',
+					'w-full border border-[#1c1c1c1a] bg-white py-2.5 pr-4 pl-10 text-sm transition-colors',
+					'placeholder:text-[#1c1c1c66] focus:border-[#1c1c1c66] focus:outline-none',
 					isLeaderboard && 'cursor-not-allowed opacity-50',
 				)}
 			/>
