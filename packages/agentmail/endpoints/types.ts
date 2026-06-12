@@ -17,7 +17,13 @@ const MessagesListInputSchema = z.object({
 	subject: z.array(z.string()).optional(),
 });
 
+const MessagesGetInputSchema = z.object({
+	inbox_id: z.string(),
+	message_id: z.string(),
+});
+
 export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
+export type MessagesGetInput = z.infer<typeof MessagesGetInputSchema>;
 
 const AttachmentSchema = z
 	.object({
@@ -55,6 +61,16 @@ const MessageSummarySchema = z
 
 export type AgentMailMessageSummary = z.infer<typeof MessageSummarySchema>;
 
+const MessageSchema = MessageSummarySchema.extend({
+	reply_to: z.array(z.string()).optional(),
+	text: z.string().optional(),
+	html: z.string().optional(),
+	extracted_text: z.string().optional(),
+	extracted_html: z.string().optional(),
+});
+
+export type AgentMailMessage = z.infer<typeof MessageSchema>;
+
 const MessagesListResponseSchema = z.object({
 	count: z.number(),
 	messages: z.array(MessageSummarySchema),
@@ -63,19 +79,24 @@ const MessagesListResponseSchema = z.object({
 });
 
 export type MessagesListResponse = z.infer<typeof MessagesListResponseSchema>;
+export type MessagesGetResponse = z.infer<typeof MessageSchema>;
 
 export type AgentMailEndpointInputs = {
 	messagesList: MessagesListInput;
+	messagesGet: MessagesGetInput;
 };
 
 export type AgentMailEndpointOutputs = {
 	messagesList: MessagesListResponse;
+	messagesGet: MessagesGetResponse;
 };
 
 export const AgentMailEndpointInputSchemas = {
 	messagesList: MessagesListInputSchema,
+	messagesGet: MessagesGetInputSchema,
 } as const;
 
 export const AgentMailEndpointOutputSchemas = {
 	messagesList: MessagesListResponseSchema,
+	messagesGet: MessageSchema,
 } as const;
