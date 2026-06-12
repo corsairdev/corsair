@@ -8,7 +8,7 @@
 // } from '../async-core/rate-limit';
 // import { request } from '../async-core/request';
 // import { handleCorsairError } from '../core/errors/handler';
-// import { errorHandlers } from '../plugins/slack/error-handlers';
+// import { errorHandlers } from '@corsair-dev/slack/error-handlers';
 
 // dotenv.config();
 

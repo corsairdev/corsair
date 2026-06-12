@@ -5,8 +5,9 @@ import type { CorsairPlugin } from '../core';
 import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
-import { linear } from '../plugins/linear';
-import { slack } from '../plugins/slack';
+import { linear } from '@corsair-dev/linear';
+import { slack } from '@corsair-dev/slack';
+import { whatsapp } from '@corsair-dev/whatsapp';
 import { setupCorsair } from './index';
 
 function createTestDb() {
@@ -91,7 +92,7 @@ describe('setupCorsair', () => {
 	it('creates integration and account rows for each plugin', async () => {
 		const corsair = createCorsair({
 			kek: 'test-kek-32-chars-long-padding-x',
-			plugins: [slack(), linear()],
+			plugins: [slack(), linear(), whatsapp()],
 			database: testDb.db,
 		});
 
@@ -102,16 +103,17 @@ describe('setupCorsair', () => {
 			.selectAll()
 			.execute();
 
-		expect(integrations).toHaveLength(2);
+		expect(integrations).toHaveLength(3);
 		expect(integrations.map((i) => i.name)).toContain('slack');
 		expect(integrations.map((i) => i.name)).toContain('linear');
+		expect(integrations.map((i) => i.name)).toContain('whatsapp');
 
 		const accounts = await testDb.db
 			.selectFrom('corsair_accounts')
 			.selectAll()
 			.execute();
 
-		expect(accounts).toHaveLength(2);
+		expect(accounts).toHaveLength(3);
 		expect(accounts.every((a) => a.tenant_id === 'default')).toBe(true);
 	});
 

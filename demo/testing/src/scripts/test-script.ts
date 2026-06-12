@@ -3,10 +3,10 @@ import 'dotenv/config';
 import { corsair } from '@/server/corsair';
 
 const main = async () => {
-	const res = await corsair.hubspot.api.contacts.search({
-		query: 'test',
-		limit: 5,
+	const res = await corsair.whatsapp.api.phoneNumbers.get({
+		phoneNumberId: 'test-phone-id',
 	});
+	console.log('WhatsApp phone number response:', res);
 
 	// Example: Test Twilio API endpoints
 	// const sms = await corsair.twilio.api.messages.send({

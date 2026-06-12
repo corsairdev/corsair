@@ -1,26 +1,21 @@
 {
-  "name": "@corsair-dev/linear",
-  "version": "0.1.4",
-  "description": "Linear plugin for Corsair",
+  "name": "@corsair-dev/whatsapp",
+  "version": "0.1.0",
+  "description": "Whatsapp plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    "./client": {
-      "dev-source": "./client.ts",
-      "types": "./dist/client.d.ts",
-      "default": "./dist/client.js"
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./error-handlers": {
       "dev-source": "./error-handlers.ts",
       "types": "./dist/error-handlers.d.ts",
       "default": "./dist/error-handlers.js"
-    },
-    ".": {
-      "dev-source": "./index.ts",
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
     }
   },
   "scripts": {
@@ -38,11 +33,11 @@
     "ts-jest": "^29.4.9",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
-    "zod": "^4.1.13"
+    "zod": "catalog:"
   },
   "keywords": [
     "corsair",
-    "linear",
+    "whatsapp",
     "plugin"
   ],
   "author": "",
@@ -50,7 +45,7 @@
   "files": [
     "dist"
   ],
-  "dependencies": {
+  "devDependencies": {
     "jest": "^29.7.0"
   }
 }

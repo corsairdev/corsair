@@ -566,6 +566,15 @@ importers:
         specifier: ^4.1.13
         version: 4.1.13
     devDependencies:
+      '@corsair-dev/linear':
+        specifier: workspace:^
+        version: link:../linear
+      '@corsair-dev/slack':
+        specifier: workspace:^
+        version: link:../slack
+      '@corsair-dev/whatsapp':
+        specifier: workspace:^
+        version: link:../whatsapp
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
@@ -1968,6 +1977,31 @@ importers:
         version: 5.9.3
       zod:
         specifier: ^4.1.13
+        version: 4.1.13
+
+  packages/whatsapp:
+    dependencies:
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      ts-jest:
+        specifier: ^29.4.9
+        version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.14)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: 'catalog:'
         version: 4.1.13
 
   packages/xquik:
@@ -17727,7 +17761,7 @@ snapshots:
 
   zod-from-json-schema@0.5.2:
     dependencies:
-      zod: 4.1.13
+      zod: 4.4.3
 
   zod-to-json-schema@3.25.1(zod@3.25.76):
     dependencies:

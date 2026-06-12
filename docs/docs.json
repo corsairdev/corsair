@@ -119,7 +119,11 @@
           },
           {
             "group": "Agent SDKs",
-            "pages": ["app/vercel-ai", "app/openai", "app/claude"]
+            "pages": [
+              "app/vercel-ai",
+              "app/openai",
+              "app/claude"
+            ]
           },
           {
             "group": "SDK Concepts",
@@ -700,6 +704,15 @@
                 ]
               },
               {
+                "group": "Whatsapp",
+                "pages": [
+                  "plugins/whatsapp/overview",
+                  "plugins/whatsapp/api",
+                  "plugins/whatsapp/database",
+                  "plugins/whatsapp/webhooks"
+                ]
+              },
+              {
                 "group": "Xquik",
                 "pages": [
                   "plugins/xquik/overview",
@@ -766,10 +779,22 @@
     ]
   },
   "redirects": [
-    { "source": "/", "destination": "/getting-started/introduction" },
-    { "source": "/app/introduction", "destination": "/app/home" },
-    { "source": "/hosted-sdk/overview", "destination": "/app/home" },
-    { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },
+    {
+      "source": "/",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/app/introduction",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/overview",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/quickstart",
+      "destination": "/app/installation"
+    },
     {
       "source": "/hosted-sdk/instances-and-plugins",
       "destination": "/app/instances-and-plugins"

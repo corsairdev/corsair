@@ -2,8 +2,9 @@ import { ApiError } from '../async-core/ApiError';
 import type { ApiRequestOptions } from '../async-core/ApiRequestOptions';
 import type { ApiResult } from '../async-core/ApiResult';
 import { handleCorsairError } from '../core/errors/handler';
-import { errorHandlers as linearErrorHandlers } from '../plugins/linear/error-handlers';
-import { errorHandlers as slackErrorHandlers } from '../plugins/slack/error-handlers';
+import { errorHandlers as linearErrorHandlers } from '@corsair-dev/linear/error-handlers';
+import { errorHandlers as slackErrorHandlers } from '@corsair-dev/slack/error-handlers';
+import { errorHandlers as whatsappErrorHandlers } from '@corsair-dev/whatsapp/error-handlers';
 
 function createMockApiError(
 	status: number,
@@ -284,6 +285,90 @@ describe('Error Handlers', () => {
 				'issues.list',
 				{},
 				linearErrorHandlers,
+			);
+
+			expect(result.maxRetries).toBe(0);
+		});
+	});
+
+	describe('WhatsApp Plugin Error Handlers', () => {
+		it('should handle RATE_LIMIT_ERROR', async () => {
+			const error = createMockApiError(429, 'rate limit exceeded', 30);
+
+			const result = await handleCorsairError(
+				error,
+				'whatsapp',
+				'messages',
+				{},
+				whatsappErrorHandlers,
+			);
+
+			expect(result.maxRetries).toBe(3);
+			expect(result.headersRetryAfterMs).toBe(30);
+		});
+
+		it('should handle RATE_LIMIT_ERROR from Graph Error code', async () => {
+			const mockRequest: ApiRequestOptions = {
+				method: 'GET',
+				url: 'https://api.example.com/test',
+			};
+			const mockResponse: ApiResult = {
+				url: 'https://api.example.com/test',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: { error: { message: 'Rate limited', code: 4 } },
+			};
+			const error = new ApiError(mockRequest, mockResponse, 'Rate limited');
+			
+			const result = await handleCorsairError(
+				error,
+				'whatsapp',
+				'messages',
+				{},
+				whatsappErrorHandlers,
+			);
+
+			expect(result.maxRetries).toBe(3);
+		});
+
+		it('should handle AUTH_ERROR', async () => {
+			const error = createMockApiError(401, 'unauthorized');
+
+			const result = await handleCorsairError(
+				error,
+				'whatsapp',
+				'messages',
+				{},
+				whatsappErrorHandlers,
+			);
+
+			expect(result.maxRetries).toBe(0);
+		});
+
+		it('should handle NETWORK_ERROR', async () => {
+			const error = new Error('ECONNRESET connection reset');
+
+			const result = await handleCorsairError(
+				error,
+				'whatsapp',
+				'messages',
+				{},
+				whatsappErrorHandlers,
+			);
+
+			expect(result.maxRetries).toBe(3);
+		});
+
+		it('should handle DEFAULT error handler', async () => {
+			const error = new Error('Unexpected error');
+
+			const result = await handleCorsairError(
+				error,
+				'whatsapp',
+				'messages',
+				{},
+				whatsappErrorHandlers,
 			);
 
 			expect(result.maxRetries).toBe(0);

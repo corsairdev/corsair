@@ -7,6 +7,16 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    "./client": {
+      "dev-source": "./client.ts",
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
+    },
+    "./error-handlers": {
+      "dev-source": "./error-handlers.ts",
+      "types": "./dist/error-handlers.d.ts",
+      "default": "./dist/error-handlers.js"
+    },
     ".": {
       "dev-source": "./index.ts",
       "types": "./dist/index.d.ts",
