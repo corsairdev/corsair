@@ -25,7 +25,7 @@
     "corsair": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
-    "zod": "^4.1.13"
+    "zod": "4.1.13"
   },
   "keywords": [
     "corsair",

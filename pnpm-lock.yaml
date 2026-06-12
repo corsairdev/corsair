@@ -268,8 +268,8 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       zod:
-        specifier: ^4.1.13
-        version: 4.4.3
+        specifier: 4.1.13
+        version: 4.1.13
 
   packages/airtable:
     dependencies:
@@ -17741,7 +17741,7 @@ snapshots:
 
   zod-from-json-schema@0.5.2:
     dependencies:
-      zod: 4.4.3
+      zod: 4.1.13
 
   zod-to-json-schema@3.25.1(zod@3.25.76):
     dependencies:

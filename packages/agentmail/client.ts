@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class AgentMailAPIError extends Error {
@@ -12,8 +11,16 @@ export class AgentMailAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const AGENTMAIL_API_BASE = 'https://api.example.com';
+const AGENTMAIL_API_BASE = 'https://api.agentmail.to/v0';
+
+type QueryValue =
+	| string
+	| number
+	| boolean
+	| readonly string[]
+	| readonly number[]
+	| readonly boolean[]
+	| undefined;
 
 export async function makeAgentMailRequest<T>(
 	endpoint: string,
@@ -21,33 +28,30 @@ export async function makeAgentMailRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: Record<string, QueryValue>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+	const isWriteMethod =
+		method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const config: OpenAPIConfig = {
 		BASE: AGENTMAIL_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: 'v0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
+			Authorization: `Bearer ${apiKey}`,
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body: isWriteMethod ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: !isWriteMethod ? query : undefined,
 	};
 
 	try {

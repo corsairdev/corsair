@@ -1,11 +1,11 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -14,18 +14,18 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { AgentMailEndpointInputs, AgentMailEndpointOutputs } from './endpoints/types';
-import { AgentMailEndpointInputSchemas, AgentMailEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import { Messages } from './endpoints';
 import type {
-	AgentMailWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { AgentMailSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	AgentMailEndpointInputs,
+	AgentMailEndpointOutputs,
+} from './endpoints/types';
+import {
+	AgentMailEndpointInputSchemas,
+	AgentMailEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { AgentMailSchema } from './schema';
 
 export type AgentMailPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -42,68 +42,60 @@ export type AgentMailContext = CorsairPluginContext<
 	AgentMailPluginOptions
 >;
 
-export type AgentMailKeyBuilderContext = KeyBuilderContext<AgentMailPluginOptions>;
+export type AgentMailKeyBuilderContext =
+	KeyBuilderContext<AgentMailPluginOptions>;
 
-export type AgentMailBoundEndpoints = BindEndpoints<typeof agentMailEndpointsNested>;
-
-type AgentMailEndpoint<
-	K extends keyof AgentMailEndpointOutputs,
-> = CorsairEndpoint<
-	AgentMailContext,
-	AgentMailEndpointInputs[K],
-	AgentMailEndpointOutputs[K]
+export type AgentMailBoundEndpoints = BindEndpoints<
+	typeof agentMailEndpointsNested
 >;
 
+type AgentMailEndpoint<K extends keyof AgentMailEndpointOutputs> =
+	CorsairEndpoint<
+		AgentMailContext,
+		AgentMailEndpointInputs[K],
+		AgentMailEndpointOutputs[K]
+	>;
+
 export type AgentMailEndpoints = {
-	exampleGet: AgentMailEndpoint<'exampleGet'>;
+	messagesList: AgentMailEndpoint<'messagesList'>;
 };
-
-type AgentMailWebhook<
-	K extends keyof AgentMailWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<AgentMailContext, TEvent, AgentMailWebhookOutputs[K]>;
-
-export type AgentMailWebhooks = {
-	example: AgentMailWebhook<'example', ExampleEvent>;
-};
-
-export type AgentMailBoundWebhooks = BindWebhooks<AgentMailWebhooks>;
 
 const agentMailEndpointsNested = {
-	example: {
-		get: Example.get,
+	messages: {
+		list: Messages.list,
 	},
 } as const;
 
-const agentMailWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const agentMailWebhooksNested = {} as const;
+
+export type AgentMailBoundWebhooks = BindWebhooks<
+	typeof agentMailWebhooksNested
+>;
 
 export const agentMailEndpointSchemas = {
-	'example.get': {
-		input: AgentMailEndpointInputSchemas.exampleGet,
-		output: AgentMailEndpointOutputSchemas.exampleGet,
+	'messages.list': {
+		input: AgentMailEndpointInputSchemas.messagesList,
+		output: AgentMailEndpointOutputSchemas.messagesList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof agentMailEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof agentMailEndpointsNested
+>;
 
-const agentMailWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof agentMailWebhooksNested>;
+const agentMailWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof agentMailWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const agentMailEndpointMeta = {
-	'example.get': {
+	'messages.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List messages from an AgentMail inbox',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof agentMailEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof agentMailEndpointsNested
+>;
 
 export const agentMailAuthConfig = {
 	api_key: {
@@ -111,22 +103,25 @@ export const agentMailAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseAgentMailPlugin<T extends AgentMailPluginOptions> = CorsairPlugin<
-	'agentmail',
-	typeof AgentMailSchema,
-	typeof agentMailEndpointsNested,
-	typeof agentMailWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseAgentMailPlugin<T extends AgentMailPluginOptions> =
+	CorsairPlugin<
+		'agentmail',
+		typeof AgentMailSchema,
+		typeof agentMailEndpointsNested,
+		typeof agentMailWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalAgentMailPlugin = BaseAgentMailPlugin<AgentMailPluginOptions>;
+export type InternalAgentMailPlugin =
+	BaseAgentMailPlugin<AgentMailPluginOptions>;
 
 export type ExternalAgentMailPlugin<T extends AgentMailPluginOptions> =
 	BaseAgentMailPlugin<T>;
 
 export function agentmail<const T extends AgentMailPluginOptions>(
-	incomingOptions: AgentMailPluginOptions & T = {} as AgentMailPluginOptions & T,
+	incomingOptions: AgentMailPluginOptions & T = {} as AgentMailPluginOptions &
+		T,
 ): ExternalAgentMailPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -143,11 +138,7 @@ export function agentmail<const T extends AgentMailPluginOptions>(
 		endpointMeta: agentMailEndpointMeta,
 		endpointSchemas: agentMailEndpointSchemas,
 		webhookSchemas: agentMailWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-agentmail-signature' in headers;
-		},
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -168,22 +159,21 @@ export function agentmail<const T extends AgentMailPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('agentmail', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('agentmail', 'api_key');
 		},
 	} satisfies InternalAgentMailPlugin;
 }
 
 export type {
-	ExampleEvent,
-	AgentMailWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	AgentMailEndpointInputs,
 	AgentMailEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	AgentMailMessageSummary,
+	MessagesListInput,
+	MessagesListResponse,
 } from './endpoints/types';
