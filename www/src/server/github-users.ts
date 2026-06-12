@@ -5,7 +5,7 @@ export async function getGithubUserAvatar(
 ): Promise<string | null> {
 	const cached = await corsair.github.db.users.search({
 		data: {
-			login: username,
+			lowercaseUsername: username.toLowerCase(),
 		},
 		limit: 1,
 	});
