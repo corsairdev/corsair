@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:sync-show": "tsx src/db/sync-written-integration-show.ts",
+    "db:seed-tags": "tsx src/db/seed-integration-tags.ts",
     "corsair": "tsx src/server/corsair.ts"
   },
   "dependencies": {

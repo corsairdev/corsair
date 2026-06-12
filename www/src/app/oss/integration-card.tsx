@@ -1,11 +1,14 @@
 import Link from 'next/link';
 
+import { TrophyIcon } from '@phosphor-icons/react/dist/ssr';
+
 import { Badge } from '@/components/ui/badge';
 import type { UserIntegrationStatus } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { IntegrationTitleStats } from '../integrations/[slug]/integration-title-stats';
 import { ClaimIntegrationButton } from './claim-integration-button';
 import { IntegrationLinkLabels } from './integration-link-labels';
+import { IntegrationTagList } from './integration-tag-badge';
 import { IntegrationStatusBadge } from './integration-status-badge';
 import { UnclaimIntegrationButton } from './unclaim-integration-button';
 
@@ -14,13 +17,20 @@ type IntegrationCardProps = {
 		id: string;
 		slug: string;
 		name: string;
+		points: number;
 		operationCount: number;
 		triggerCount: number;
+		authSchemeCount: number;
 		isClaimed: boolean;
 		status: UserIntegrationStatus | null;
 		claimedByCurrentUser: boolean;
 		claimerGithubUsername: string | null;
 		claimerAvatarUrl: string | null;
+		tags: Array<{
+			slug: string;
+			name: string;
+			color: string;
+		}>;
 		urls: {
 			issueUrl: string | null;
 			prUrl: string | null;
@@ -42,7 +52,7 @@ export function IntegrationCard({
 				'hover:border-border hover:bg-muted/20 hover:shadow-md',
 			)}
 		>
-			<div className="flex flex-wrap items-start justify-between gap-3">
+			<div className="flex items-start justify-between gap-4">
 				<div className="min-w-0 flex-1 space-y-2">
 					<div className="flex flex-wrap items-center gap-2">
 						{index !== undefined ? (
@@ -65,15 +75,29 @@ export function IntegrationCard({
 						<IntegrationTitleStats
 							operationCount={integration.operationCount}
 							triggerCount={integration.triggerCount}
+							authSchemeCount={integration.authSchemeCount}
 						/>
 						<IntegrationStatusBadge
 							isClaimed={integration.isClaimed}
 							status={integration.status}
 						/>
 					</div>
+
+					<IntegrationTagList tags={integration.tags} />
 				</div>
 
-				<div className="flex flex-wrap items-center gap-2">
+				<div className="flex shrink-0 items-center gap-3">
+					<div className="flex flex-col items-end gap-0.5">
+						<div className="flex items-center gap-1.5 text-foreground">
+							<TrophyIcon size={16} aria-hidden className="text-muted-foreground" />
+							<span className="font-mono text-lg font-semibold tabular-nums">
+								{integration.points}
+							</span>
+						</div>
+						<span className="text-[10px] text-muted-foreground uppercase tracking-wide">
+							points
+						</span>
+					</div>
 					{session && integration.claimedByCurrentUser ? (
 						<UnclaimIntegrationButton integrationId={integration.id} />
 					) : null}

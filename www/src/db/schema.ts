@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import {
 	boolean,
 	index,
+	integer,
 	jsonb,
 	pgEnum,
 	pgTable,
@@ -181,6 +182,7 @@ export const integrations = pgTable(
 		slug: text('slug').notNull(),
 		description: text('description').notNull(),
 		show: boolean('show').notNull().default(true),
+		points: integer('points').notNull().default(0),
 		...timestamps,
 	},
 	(table) => [uniqueIndex('integrations_slug_idx').on(table.slug)],
@@ -337,6 +339,44 @@ export const triggers = pgTable(
 	],
 );
 
+export const tags = pgTable(
+	'tags',
+	{
+		id: text('id')
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		name: text('name').notNull(),
+		slug: text('slug').notNull(),
+		color: text('color').notNull().default('#e8f0fe'),
+		...timestamps,
+	},
+	(table) => [uniqueIndex('tags_slug_idx').on(table.slug)],
+);
+
+export const integrationTags = pgTable(
+	'integration_tags',
+	{
+		id: text('id')
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		integrationId: text('integration_id')
+			.notNull()
+			.references(() => integrations.id, { onDelete: 'cascade' }),
+		tagId: text('tag_id')
+			.notNull()
+			.references(() => tags.id, { onDelete: 'cascade' }),
+		...timestamps,
+	},
+	(table) => [
+		index('integration_tags_integration_id_idx').on(table.integrationId),
+		index('integration_tags_tag_id_idx').on(table.tagId),
+		uniqueIndex('integration_tags_integration_tag_idx').on(
+			table.integrationId,
+			table.tagId,
+		),
+	],
+);
+
 // ---------------------------------------------------------------------------
 // Relations
 // ---------------------------------------------------------------------------
@@ -344,6 +384,7 @@ export const triggers = pgTable(
 export const integrationsRelations = relations(integrations, ({ many }) => ({
 	authSchemes: many(authSchemes),
 	integrationUrls: many(integrationUrls),
+	integrationTags: many(integrationTags),
 	operations: many(operations),
 	triggers: many(triggers),
 	userIntegrations: many(userIntegrations),
@@ -409,6 +450,21 @@ export const triggersRelations = relations(triggers, ({ one }) => ({
 	}),
 }));
 
+export const tagsRelations = relations(tags, ({ many }) => ({
+	integrationTags: many(integrationTags),
+}));
+
+export const integrationTagsRelations = relations(integrationTags, ({ one }) => ({
+	integration: one(integrations, {
+		fields: [integrationTags.integrationId],
+		references: [integrations.id],
+	}),
+	tag: one(tags, {
+		fields: [integrationTags.tagId],
+		references: [tags.id],
+	}),
+}));
+
 // ---------------------------------------------------------------------------
 // Inferred row types
 // ---------------------------------------------------------------------------
@@ -433,3 +489,9 @@ export type NewUserIntegration = typeof userIntegrations.$inferInsert;
 
 export type UserIntegrationEvent = typeof userIntegrationEvents.$inferSelect;
 export type NewUserIntegrationEvent = typeof userIntegrationEvents.$inferInsert;
+
+export type Tag = typeof tags.$inferSelect;
+export type NewTag = typeof tags.$inferInsert;
+
+export type IntegrationTag = typeof integrationTags.$inferSelect;
+export type NewIntegrationTag = typeof integrationTags.$inferInsert;

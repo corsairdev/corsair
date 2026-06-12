@@ -1,8 +1,9 @@
 'use client';
 
-import { LightningIcon, PlugsIcon } from '@phosphor-icons/react';
+import { KeyIcon, LightningIcon, PlugsIcon } from '@phosphor-icons/react';
 
 import { ExpandableSection } from './expandable-section';
+import { IntegrationAuthSchemeList } from './integration-auth-scheme-list';
 import { IntegrationCapabilityList } from './integration-capability-list';
 
 type Operation = {
@@ -21,16 +22,26 @@ type Trigger = {
 	type: string;
 };
 
+type AuthScheme = {
+	id: string;
+	mode: string;
+	name: string;
+};
+
 export function IntegrationCapabilities({
 	operations,
 	triggers,
+	authSchemes,
 	operationCount,
 	triggerCount,
+	authSchemeCount,
 }: {
 	operations: Operation[];
 	triggers: Trigger[];
+	authSchemes: AuthScheme[];
 	operationCount: number;
 	triggerCount: number;
+	authSchemeCount: number;
 }) {
 	return (
 		<>
@@ -67,6 +78,18 @@ export function IntegrationCapabilities({
 						badge: trigger.type,
 					}))}
 					emptyMessage="No webhooks."
+				/>
+			</ExpandableSection>
+
+			<ExpandableSection
+				title="Auth types"
+				count={authSchemeCount}
+				icon={<KeyIcon size={16} aria-hidden />}
+				defaultOpen={authSchemeCount > 0 && authSchemeCount <= 8}
+			>
+				<IntegrationAuthSchemeList
+					items={authSchemes}
+					emptyMessage="No auth types."
 				/>
 			</ExpandableSection>
 		</>

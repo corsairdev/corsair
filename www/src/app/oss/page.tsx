@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Suspense } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { getSession } from '@/lib/auth-server';
@@ -9,11 +8,11 @@ import { getApi } from '@/server/api/caller';
 import { GithubUsernameCallout } from './github-username-callout';
 import { HowItWorks } from './how-it-works';
 import { IntegrationCard } from './integration-card';
-import { IntegrationSearch } from './integration-search';
 import { LeaderboardEntry } from './leaderboard-entry';
+import { buildOssHref, parseTagSlugs } from './oss-url';
+import { OssIntegrationsShell } from './oss-integrations-shell';
 import { SignInBanner } from './sign-in-banner';
 import type { OssIntegrationsView } from './view-tabs';
-import { ViewTabs } from './view-tabs';
 
 export const metadata: Metadata = {
 	title: 'OSS Integrations',
@@ -21,20 +20,20 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-	searchParams: Promise<{ page?: string; q?: string; view?: string }>;
+	searchParams: Promise<{ page?: string; q?: string; tags?: string; view?: string }>;
 };
 
 function parseView(view?: string): OssIntegrationsView {
 	return view === 'leaderboard' ? 'leaderboard' : 'integrations';
 }
 
-function buildPageHref(page: number, q: string, view: OssIntegrationsView) {
-	const params = new URLSearchParams();
-	if (view === 'leaderboard') params.set('view', 'leaderboard');
-	if (view === 'integrations' && q) params.set('q', q);
-	if (page > 1) params.set('page', String(page));
-	const query = params.toString();
-	return query ? `/oss?${query}` : '/oss';
+function buildPageHref(
+	page: number,
+	q: string,
+	tags: string[],
+	view: OssIntegrationsView,
+) {
+	return buildOssHref({ page, q, tags, view });
 }
 
 export default async function OssIntegrationsPage({ searchParams }: PageProps) {
@@ -42,14 +41,20 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const view = parseView(params.view);
 	const page = Math.max(1, Number(params.page) || 1);
 	const q = params.q?.trim() ?? '';
+	const selectedTags = parseTagSlugs(params.tags);
 	const api = await getApi();
 	const session = await getSession();
 	const profile = session ? await api.account.getProfile() : null;
 	const myIntegrations = session ? await api.integrations.listMine() : null;
+	const allTags = view === 'integrations' ? await api.integrations.listTags() : null;
 
 	const integrationsData =
 		view === 'integrations'
-			? await api.integrations.list({ page, q: q || undefined })
+			? await api.integrations.list({
+					page,
+					q: q || undefined,
+					tags: selectedTags.length > 0 ? selectedTags : undefined,
+				})
 			: null;
 	const leaderboardData =
 		view === 'leaderboard'
@@ -59,7 +64,7 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const startIndex = (page - 1) * (integrationsData?.pageSize ?? 50);
 
 	return (
-		<main className="px-6 py-8">
+		<main className="px-4 py-6 sm:px-6 sm:py-8">
 			{session && !profile?.githubUsername ? <GithubUsernameCallout /> : null}
 
 			{!session ? <SignInBanner /> : null}
@@ -89,101 +94,100 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 				</section>
 			) : null}
 
-			<div className="mb-4">
-				<Suspense>
-					<IntegrationSearch defaultValue={q} />
-				</Suspense>
-			</div>
+			<OssIntegrationsShell
+				q={q}
+				selectedTags={selectedTags}
+				tags={allTags?.items ?? null}
+				view={view}
+				integrationsContent={
+					integrationsData ? (
+						<>
+							<div className="mb-6 flex flex-wrap items-center gap-2">
+								<Badge variant="secondary">
+									{integrationsData.total} integration
+									{integrationsData.total === 1 ? '' : 's'}
+								</Badge>
+								{q ? (
+									<>
+										<Badge variant="accent">matching &ldquo;{q}&rdquo;</Badge>
+										<Link
+											href={buildOssHref({ tags: selectedTags })}
+											className="text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+										>
+											Clear search
+										</Link>
+									</>
+								) : null}
+							</div>
 
-			<div className="mb-6">
-				<Suspense>
-					<ViewTabs activeView={view} />
-				</Suspense>
-			</div>
+							{integrationsData.items.length === 0 ? (
+								<div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-6 py-12 text-center">
+									<p className="text-sm text-muted-foreground">
+										No integrations found.
+									</p>
+								</div>
+							) : (
+								<div className="space-y-3">
+									{integrationsData.items.map((integration, index) => (
+										<IntegrationCard
+											key={integration.id}
+											integration={integration}
+											session={Boolean(session)}
+											index={startIndex + index + 1}
+										/>
+									))}
+								</div>
+							)}
 
-			{view === 'integrations' && integrationsData ? (
-				<>
-					<div className="mb-6 flex flex-wrap items-center gap-2">
-						<Badge variant="secondary">
-							{integrationsData.total} integration
-							{integrationsData.total === 1 ? '' : 's'}
-						</Badge>
-						{q ? (
-							<>
-								<Badge variant="accent">matching &ldquo;{q}&rdquo;</Badge>
-								<Link
-									href="/oss"
-									className="text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-								>
-									Clear search
-								</Link>
-							</>
-						) : null}
-					</div>
-
-					{integrationsData.items.length === 0 ? (
-						<div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-6 py-12 text-center">
-							<p className="text-sm text-muted-foreground">
-								No integrations found.
-							</p>
-						</div>
-					) : (
-						<div className="space-y-3">
-							{integrationsData.items.map((integration, index) => (
-								<IntegrationCard
-									key={integration.id}
-									integration={integration}
-									session={Boolean(session)}
-									index={startIndex + index + 1}
+							{integrationsData.totalPages > 1 ? (
+								<Pagination
+									page={page}
+									totalPages={integrationsData.totalPages}
+									q={q}
+									tags={selectedTags}
+									view={view}
 								/>
-							))}
-						</div>
-					)}
+							) : null}
+						</>
+					) : null
+				}
+				leaderboardContent={
+					leaderboardData ? (
+						<>
+							<div className="mb-6">
+								<Badge variant="secondary">
+									{leaderboardData.total} contributor
+									{leaderboardData.total === 1 ? '' : 's'}
+								</Badge>
+							</div>
 
-					{integrationsData.totalPages > 1 ? (
-						<Pagination
-							page={page}
-							totalPages={integrationsData.totalPages}
-							q={q}
-							view={view}
-						/>
-					) : null}
-				</>
-			) : null}
+							{leaderboardData.items.length === 0 ? (
+								<div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-6 py-12 text-center">
+									<p className="text-sm text-muted-foreground">
+										No claimed integrations yet.
+									</p>
+								</div>
+							) : (
+								<div className="space-y-3">
+									{leaderboardData.items.map((entry) => (
+										<LeaderboardEntry key={entry.userId} entry={entry} />
+									))}
+								</div>
+							)}
 
-			{view === 'leaderboard' && leaderboardData ? (
-				<>
-					<div className="mb-6">
-						<Badge variant="secondary">
-							{leaderboardData.total} contributor
-							{leaderboardData.total === 1 ? '' : 's'}
-						</Badge>
-					</div>
-
-					{leaderboardData.items.length === 0 ? (
-						<div className="rounded-xl border border-dashed border-border/70 bg-muted/20 px-6 py-12 text-center">
-							<p className="text-sm text-muted-foreground">
-								No claimed integrations yet.
-							</p>
-						</div>
-					) : (
-						<div className="space-y-3">
-							{leaderboardData.items.map((entry) => (
-								<LeaderboardEntry key={entry.userId} entry={entry} />
-							))}
-						</div>
-					)}
-
-					{leaderboardData.totalPages > 1 ? (
-						<Pagination
-							page={page}
-							totalPages={leaderboardData.totalPages}
-							q={q}
-							view={view}
-						/>
-					) : null}
-				</>
-			) : null}
+							{leaderboardData.totalPages > 1 ? (
+								<Pagination
+									page={page}
+									totalPages={leaderboardData.totalPages}
+									q={q}
+									tags={selectedTags}
+									view={view}
+								/>
+							) : null}
+						</>
+					) : null
+				}
+			/>
 		</main>
 	);
 }
@@ -192,11 +196,13 @@ function Pagination({
 	page,
 	totalPages,
 	q,
+	tags,
 	view,
 }: {
 	page: number;
 	totalPages: number;
 	q: string;
+	tags: string[];
 	view: OssIntegrationsView;
 }) {
 	return (
@@ -206,7 +212,7 @@ function Pagination({
 		>
 			{page > 1 ? (
 				<Link
-					href={buildPageHref(page - 1, q, view)}
+					href={buildPageHref(page - 1, q, tags, view)}
 					className="rounded-lg border border-border/70 bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-muted"
 				>
 					Previous
@@ -225,7 +231,7 @@ function Pagination({
 				) : (
 					<Link
 						key={pageNumber}
-						href={buildPageHref(pageNumber, q, view)}
+						href={buildPageHref(pageNumber, q, tags, view)}
 						className="inline-flex size-8 items-center justify-center rounded-lg border border-border/70 bg-card text-xs font-medium transition-colors hover:bg-muted"
 					>
 						{pageNumber}
@@ -234,7 +240,7 @@ function Pagination({
 			})}
 			{page < totalPages ? (
 				<Link
-					href={buildPageHref(page + 1, q, view)}
+					href={buildPageHref(page + 1, q, tags, view)}
 					className="rounded-lg border border-border/70 bg-card px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-muted"
 				>
 					Next

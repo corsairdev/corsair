@@ -5,71 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1781046575771,
-      "tag": "0000_early_mysterio",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1781049048579,
-      "tag": "0001_demonic_squadron_sinister",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1781049357454,
-      "tag": "0002_aromatic_stone_men",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1781052030070,
-      "tag": "0003_many_omega_sentinel",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1781052612212,
-      "tag": "0004_first_stingray",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1781056967564,
-      "tag": "0005_square_toxin",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1781060902894,
-      "tag": "0006_legal_venus",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1781100418647,
-      "tag": "0007_freezing_rawhide_kid",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1781123726242,
-      "tag": "0008_tranquil_monster_badoon",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1781215100672,
-      "tag": "0009_absent_karnak",
+      "when": 1781280566495,
+      "tag": "0000_solid_martin_li",
       "breakpoints": true
     }
   ]
