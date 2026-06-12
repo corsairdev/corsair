@@ -118,14 +118,36 @@ export type IntegrationUrls = {
 	docsUrl?: string | null;
 };
 
+export const integrationUrlTypes = ['issue', 'pr', 'docs'] as const;
+
+export type IntegrationUrlType = (typeof integrationUrlTypes)[number];
+
 // ---------------------------------------------------------------------------
 // Enums
 // ---------------------------------------------------------------------------
 
+export const integrationUrlTypeEnum = pgEnum(
+	'integration_url_type',
+	integrationUrlTypes,
+);
+
 export const authModeEnum = pgEnum('auth_mode', authModes);
 export const triggerTypeEnum = pgEnum('trigger_type', triggerTypes);
 
-export const userIntegrationEventTypes = ['claimed', 'unclaimed'] as const;
+export const userIntegrationStatuses = ['in_progress', 'finished'] as const;
+
+export type UserIntegrationStatus = (typeof userIntegrationStatuses)[number];
+
+export const userIntegrationStatusEnum = pgEnum(
+	'user_integration_status',
+	userIntegrationStatuses,
+);
+
+export const userIntegrationEventTypes = [
+	'claimed',
+	'unclaimed',
+	'finished',
+] as const;
 
 export type UserIntegrationEventType =
 	(typeof userIntegrationEventTypes)[number];
@@ -159,10 +181,31 @@ export const integrations = pgTable(
 		slug: text('slug').notNull(),
 		description: text('description').notNull(),
 		show: boolean('show').notNull().default(true),
-		urls: jsonb('urls').$type<IntegrationUrls>().notNull().default({}),
 		...timestamps,
 	},
 	(table) => [uniqueIndex('integrations_slug_idx').on(table.slug)],
+);
+
+export const integrationUrls = pgTable(
+	'integration_urls',
+	{
+		id: text('id')
+			.primaryKey()
+			.$defaultFn(() => crypto.randomUUID()),
+		integrationId: text('integration_id')
+			.notNull()
+			.references(() => integrations.id, { onDelete: 'cascade' }),
+		type: integrationUrlTypeEnum('type').notNull(),
+		url: text('url').notNull(),
+		...timestamps,
+	},
+	(table) => [
+		index('integration_urls_integration_id_idx').on(table.integrationId),
+		uniqueIndex('integration_urls_integration_type_idx').on(
+			table.integrationId,
+			table.type,
+		),
+	],
 );
 
 export const authSchemes = pgTable(
@@ -234,6 +277,9 @@ export const userIntegrations = pgTable(
 		integrationId: text('integration_id')
 			.notNull()
 			.references(() => integrations.id, { onDelete: 'cascade' }),
+		status: userIntegrationStatusEnum('status')
+			.notNull()
+			.default('in_progress'),
 		...timestamps,
 	},
 	(table) => [
@@ -260,9 +306,7 @@ export const userIntegrationEvents = pgTable(
 			.defaultNow(),
 	},
 	(table) => [
-		index('user_integration_events_integration_id_idx').on(
-			table.integrationId,
-		),
+		index('user_integration_events_integration_id_idx').on(table.integrationId),
 		index('user_integration_events_created_at_idx').on(table.createdAt),
 	],
 );
@@ -299,11 +343,22 @@ export const triggers = pgTable(
 
 export const integrationsRelations = relations(integrations, ({ many }) => ({
 	authSchemes: many(authSchemes),
+	integrationUrls: many(integrationUrls),
 	operations: many(operations),
 	triggers: many(triggers),
 	userIntegrations: many(userIntegrations),
 	userIntegrationEvents: many(userIntegrationEvents),
 }));
+
+export const integrationUrlsRelations = relations(
+	integrationUrls,
+	({ one }) => ({
+		integration: one(integrations, {
+			fields: [integrationUrls.integrationId],
+			references: [integrations.id],
+		}),
+	}),
+);
 
 export const userIntegrationsRelations = relations(
 	userIntegrations,
@@ -360,6 +415,9 @@ export const triggersRelations = relations(triggers, ({ one }) => ({
 
 export type Integration = typeof integrations.$inferSelect;
 export type NewIntegration = typeof integrations.$inferInsert;
+
+export type IntegrationUrlRow = typeof integrationUrls.$inferSelect;
+export type NewIntegrationUrl = typeof integrationUrls.$inferInsert;
 
 export type AuthSchemeRow = typeof authSchemes.$inferSelect;
 export type NewAuthScheme = typeof authSchemes.$inferInsert;

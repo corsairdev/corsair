@@ -14,7 +14,15 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "DATABASE_URL",
+        "RESEND_API_KEY",
+        "RESEND_FROM_EMAIL",
+        "CORSAIR_KEK"
+      ]
     },
     "clean": {},
     "format": {

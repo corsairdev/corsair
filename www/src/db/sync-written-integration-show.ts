@@ -1,8 +1,8 @@
 import 'dotenv/config';
 
 import { execSync } from 'child_process';
-import { resolve } from 'path';
 import { inArray } from 'drizzle-orm';
+import { resolve } from 'path';
 
 import { db, pool } from '@/db';
 import { integrations } from '@/db/schema';

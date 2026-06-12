@@ -196,6 +196,14 @@
                 ]
               },
               {
+                "group": "Bluesky",
+                "pages": [
+                  "plugins/bluesky/overview",
+                  "plugins/bluesky/api",
+                  "plugins/bluesky/database"
+                ]
+              },
+              {
                 "group": "Box",
                 "pages": [
                   "plugins/box/overview",
@@ -648,6 +656,15 @@
                 ]
               },
               {
+                "group": "Twilio",
+                "pages": [
+                  "plugins/twilio/overview",
+                  "plugins/twilio/api",
+                  "plugins/twilio/database",
+                  "plugins/twilio/webhooks"
+                ]
+              },
+              {
                 "group": "Twitter",
                 "pages": [
                   "plugins/twitter/overview",
@@ -720,6 +737,16 @@
                   "plugins/zendesk/overview",
                   "plugins/zendesk/api",
                   "plugins/zendesk/database"
+                ]
+              },
+              {
+                "group": "Zoho Mail",
+                "pages": [
+                  "plugins/zohomail/overview",
+                  "plugins/zohomail/get-credentials",
+                  "plugins/zohomail/api",
+                  "plugins/zohomail/database",
+                  "plugins/zohomail/webhooks"
                 ]
               },
               {

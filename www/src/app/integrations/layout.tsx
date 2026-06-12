@@ -4,7 +4,7 @@ import { getSession } from '@/lib/auth-server';
 import { getApi } from '@/server/api/caller';
 import { getGithubUserAvatar } from '@/server/github-users';
 
-import { OssIntegrationsBar } from '../oss-integrations/oss-integrations-bar';
+import { OssIntegrationsBar } from '../oss/oss-integrations-bar';
 
 export default async function IntegrationsLayout({
 	children,

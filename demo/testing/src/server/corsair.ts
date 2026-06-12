@@ -9,6 +9,7 @@ import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
+import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
 import { whatsapp } from '@corsair-dev/whatsapp';
 import { createCorsair } from 'corsair';
@@ -33,6 +34,7 @@ export const corsair = createCorsair({
 		onedrive(),
 		hubspot(),
 		whatsapp(),
+		twilio(),
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,

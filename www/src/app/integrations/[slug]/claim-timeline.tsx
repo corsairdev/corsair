@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
 import { Badge } from '@/components/ui/badge';
 
 function formatTimelineTime(isoDate: string) {
@@ -18,13 +22,62 @@ function formatTimelineTime(isoDate: string) {
 	return { datePart, timePart };
 }
 
+function TimelineEventTime({ isoDate }: { isoDate: string }) {
+	const [parts, setParts] = useState<{
+		datePart: string;
+		timePart: string;
+	} | null>(null);
+
+	useEffect(() => {
+		setParts(formatTimelineTime(isoDate));
+	}, [isoDate]);
+
+	return (
+		<div className="w-[76px] shrink-0 pt-0.5 text-right">
+			<time
+				dateTime={isoDate}
+				className="block text-[11px] font-medium text-muted-foreground"
+			>
+				{parts?.datePart ?? '\u00A0'}
+			</time>
+			<time
+				dateTime={isoDate}
+				className="block text-[10px] text-muted-foreground/70"
+			>
+				{parts?.timePart ?? '\u00A0'}
+			</time>
+		</div>
+	);
+}
+
 type TimelineEvent = {
 	id: string;
-	type: 'claimed' | 'unclaimed';
+	type: 'claimed' | 'unclaimed' | 'finished';
 	createdAt: string;
 	githubUsername: string | null;
 	avatarUrl: string | null;
 };
+
+function timelineEventLabel(type: TimelineEvent['type']) {
+	switch (type) {
+		case 'claimed':
+			return 'Claimed';
+		case 'unclaimed':
+			return 'Unclaimed';
+		case 'finished':
+			return 'Finished';
+	}
+}
+
+function timelineEventVariant(type: TimelineEvent['type']) {
+	switch (type) {
+		case 'claimed':
+		case 'finished':
+			return 'success' as const;
+		case 'unclaimed':
+			return 'muted' as const;
+	}
+}
 
 export function ClaimTimeline({ events }: { events: TimelineEvent[] }) {
 	if (events.length === 0) {
@@ -43,18 +96,9 @@ export function ClaimTimeline({ events }: { events: TimelineEvent[] }) {
 			/>
 			<ol className="m-0 list-none space-y-4 p-0">
 				{events.map((event) => {
-					const { datePart, timePart } = formatTimelineTime(event.createdAt);
-
 					return (
 						<li key={event.id} className="relative flex items-start gap-3">
-							<div className="w-[76px] shrink-0 pt-0.5 text-right">
-								<div className="text-[11px] font-medium text-muted-foreground">
-									{datePart}
-								</div>
-								<div className="text-[10px] text-muted-foreground/70">
-									{timePart}
-								</div>
-							</div>
+							<TimelineEventTime isoDate={event.createdAt} />
 							<div className="relative z-1 flex w-6 shrink-0 justify-center pt-1.5">
 								<div
 									aria-hidden
@@ -86,12 +130,10 @@ export function ClaimTimeline({ events }: { events: TimelineEvent[] }) {
 										</span>
 									)}
 									<Badge
-										variant={
-											event.type === 'claimed' ? 'success' : 'muted'
-										}
+										variant={timelineEventVariant(event.type)}
 										className="text-[10px]"
 									>
-										{event.type === 'claimed' ? 'Claimed' : 'Unclaimed'}
+										{timelineEventLabel(event.type)}
 									</Badge>
 								</div>
 							</div>

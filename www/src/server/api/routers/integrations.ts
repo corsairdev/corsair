@@ -1,10 +1,26 @@
 import { TRPCError } from '@trpc/server';
-import { asc, and, count, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm';
 import type { SQL } from 'drizzle-orm';
+import {
+	and,
+	asc,
+	count,
+	desc,
+	eq,
+	ilike,
+	inArray,
+	or,
+	sql,
+} from 'drizzle-orm';
 import { z } from 'zod';
-
-import { user } from '@/db/auth-schema';
 import type { DB } from '@/db';
+import { user } from '@/db/auth-schema';
+import {
+	clearContributorIntegrationUrls,
+	emptyIntegrationUrls,
+	fetchIntegrationUrls,
+	fetchIntegrationUrlsByIntegrationIds,
+	upsertIntegrationUrls,
+} from '@/db/integration-urls';
 import type { IntegrationUrls } from '@/db/schema';
 import {
 	integrations,
@@ -47,7 +63,11 @@ const integrationUrlsSchema = z.object({
 });
 
 function normalizeIntegrationUrls(
-	urls: IntegrationUrls | z.infer<typeof integrationUrlsSchema> | null | undefined,
+	urls:
+		| IntegrationUrls
+		| z.infer<typeof integrationUrlsSchema>
+		| null
+		| undefined,
 ) {
 	const parsed = integrationUrlsSchema.safeParse(urls ?? {});
 	if (!parsed.success) {
@@ -76,7 +96,9 @@ function searchFilter(query: string | undefined): SQL | undefined {
 
 function visibleIntegrationsFilter(query?: string): SQL {
 	const search = searchFilter(query);
-	return search ? and(eq(integrations.show, true), search)! : eq(integrations.show, true);
+	return search
+		? and(eq(integrations.show, true), search)!
+		: eq(integrations.show, true);
 }
 
 async function logIntegrationEvent(
@@ -84,7 +106,7 @@ async function logIntegrationEvent(
 	params: {
 		integrationId: string;
 		userId: string;
-		type: 'claimed' | 'unclaimed';
+		type: 'claimed' | 'unclaimed' | 'finished';
 	},
 ) {
 	await db.insert(userIntegrationEvents).values({
@@ -134,9 +156,9 @@ export const integrationsRouter = createTRPCRouter({
 						name: integrations.name,
 						slug: integrations.slug,
 						description: integrations.description,
-						urls: integrations.urls,
 						claimerUserId: userIntegrations.userId,
 						claimerGithubUsername: user.githubUsername,
+						status: userIntegrations.status,
 					})
 					.from(integrations)
 					.leftJoin(
@@ -148,16 +170,13 @@ export const integrationsRouter = createTRPCRouter({
 					.orderBy(asc(integrations.name))
 					.limit(PAGE_SIZE)
 					.offset(offset),
-				ctx.db
-					.select({ total: count() })
-					.from(integrations)
-					.where(where),
+				ctx.db.select({ total: count() }).from(integrations).where(where),
 			]);
 
 			const total = countResult[0]?.total ?? 0;
 			const integrationIds = rows.map((row) => row.id);
 
-			const [operationCountRows, triggerCountRows] =
+			const [operationCountRows, triggerCountRows, urlsByIntegration] =
 				integrationIds.length > 0
 					? await Promise.all([
 							ctx.db
@@ -176,8 +195,9 @@ export const integrationsRouter = createTRPCRouter({
 								.from(triggers)
 								.where(inArray(triggers.integrationId, integrationIds))
 								.groupBy(triggers.integrationId),
+							fetchIntegrationUrlsByIntegrationIds(ctx.db, integrationIds),
 						])
-					: [[], []];
+					: [[], [], new Map<string, IntegrationUrls>()];
 
 			const operationCounts = new Map(
 				operationCountRows.map((row) => [row.integrationId, row.count]),
@@ -200,10 +220,13 @@ export const integrationsRouter = createTRPCRouter({
 				name: row.name,
 				slug: row.slug,
 				description: row.description,
-				urls: normalizeIntegrationUrls(row.urls),
+				urls: normalizeIntegrationUrls(
+					urlsByIntegration.get(row.id) ?? emptyIntegrationUrls(),
+				),
 				operationCount: operationCounts.get(row.id) ?? 0,
 				triggerCount: triggerCounts.get(row.id) ?? 0,
 				isClaimed: row.claimerUserId !== null,
+				status: row.claimerUserId !== null ? row.status : null,
 				claimedByCurrentUser:
 					currentUserId !== undefined && row.claimerUserId === currentUserId,
 				claimerGithubUsername: row.claimerGithubUsername ?? null,
@@ -231,10 +254,11 @@ export const integrationsRouter = createTRPCRouter({
 					name: integrations.name,
 					slug: integrations.slug,
 					description: integrations.description,
-					urls: integrations.urls,
 				})
 				.from(integrations)
-				.where(and(eq(integrations.slug, input.slug), eq(integrations.show, true)))
+				.where(
+					and(eq(integrations.slug, input.slug), eq(integrations.show, true)),
+				)
 				.limit(1);
 
 			if (!integration) {
@@ -246,7 +270,7 @@ export const integrationsRouter = createTRPCRouter({
 
 			const currentUserId = ctx.session?.user?.id;
 
-			const [operationRows, triggerRows, claimRow, timelineRows] =
+			const [operationRows, triggerRows, claimRow, timelineRows, urls] =
 				await Promise.all([
 					ctx.db
 						.select({
@@ -275,6 +299,7 @@ export const integrationsRouter = createTRPCRouter({
 						.select({
 							userId: userIntegrations.userId,
 							githubUsername: user.githubUsername,
+							status: userIntegrations.status,
 						})
 						.from(userIntegrations)
 						.leftJoin(user, eq(user.id, userIntegrations.userId))
@@ -291,6 +316,7 @@ export const integrationsRouter = createTRPCRouter({
 						.innerJoin(user, eq(user.id, userIntegrationEvents.userId))
 						.where(eq(userIntegrationEvents.integrationId, integration.id))
 						.orderBy(desc(userIntegrationEvents.createdAt)),
+					fetchIntegrationUrls(ctx.db, integration.id),
 				]);
 
 			const claimerGithubUsername = claimRow[0]?.githubUsername ?? null;
@@ -305,22 +331,24 @@ export const integrationsRouter = createTRPCRouter({
 				timelineUsernames.push(claimerGithubUsername);
 			}
 
-			const avatars = await getGithubUserAvatars([...new Set(timelineUsernames)]);
+			const avatars = await getGithubUserAvatars([
+				...new Set(timelineUsernames),
+			]);
 
 			return {
 				id: integration.id,
 				name: integration.name,
 				slug: integration.slug,
 				description: integration.description,
-				urls: normalizeIntegrationUrls(integration.urls),
+				urls: normalizeIntegrationUrls(urls),
 				operationCount: operationRows.length,
 				triggerCount: triggerRows.length,
 				operations: operationRows,
 				triggers: triggerRows,
 				isClaimed: claimRow.length > 0,
+				status: claimRow[0]?.status ?? null,
 				claimedByCurrentUser:
-					currentUserId !== undefined &&
-					claimRow[0]?.userId === currentUserId,
+					currentUserId !== undefined && claimRow[0]?.userId === currentUserId,
 				claimerGithubUsername,
 				claimerAvatarUrl: claimerGithubUsername
 					? (avatars.get(claimerGithubUsername) ?? null)
@@ -455,7 +483,10 @@ export const integrationsRouter = createTRPCRouter({
 				.select({ id: integrations.id, slug: integrations.slug })
 				.from(integrations)
 				.where(
-					and(eq(integrations.id, input.integrationId), eq(integrations.show, true)),
+					and(
+						eq(integrations.id, input.integrationId),
+						eq(integrations.show, true),
+					),
 				)
 				.limit(1);
 
@@ -504,7 +535,7 @@ export const integrationsRouter = createTRPCRouter({
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
 			const [integration] = await ctx.db
-				.select({ slug: integrations.slug, urls: integrations.urls })
+				.select({ slug: integrations.slug })
 				.from(integrations)
 				.where(eq(integrations.id, input.integrationId))
 				.limit(1);
@@ -551,15 +582,7 @@ export const integrationsRouter = createTRPCRouter({
 				type: 'unclaimed',
 			});
 
-			const urls = normalizeIntegrationUrls(integration.urls);
-			await ctx.db
-				.update(integrations)
-				.set({
-					urls: {
-						docsUrl: urls.docsUrl,
-					},
-				})
-				.where(eq(integrations.id, input.integrationId));
+			await clearContributorIntegrationUrls(ctx.db, input.integrationId);
 
 			return { integrationId: input.integrationId, slug: integration.slug };
 		}),
@@ -600,23 +623,96 @@ export const integrationsRouter = createTRPCRouter({
 
 			const urls = normalizeIntegrationUrls(input.urls);
 
-			const [updated] = await ctx.db
-				.update(integrations)
-				.set({ urls })
-				.where(eq(integrations.id, input.integrationId))
-				.returning({ urls: integrations.urls });
+			await upsertIntegrationUrls(ctx.db, input.integrationId, urls);
 
-			if (!updated) {
+			return {
+				integrationId: input.integrationId,
+				slug: integration.slug,
+				urls,
+			};
+		}),
+
+	markFinished: protectedProcedure
+		.input(z.object({ integrationId: z.string().min(1) }))
+		.mutation(async ({ ctx, input }) => {
+			const [integration] = await ctx.db
+				.select({
+					id: integrations.id,
+					slug: integrations.slug,
+				})
+				.from(integrations)
+				.where(eq(integrations.id, input.integrationId))
+				.limit(1);
+
+			if (!integration) {
 				throw new TRPCError({
 					code: 'NOT_FOUND',
 					message: 'Integration not found',
 				});
 			}
 
+			const [claim] = await ctx.db
+				.select({
+					userId: userIntegrations.userId,
+					status: userIntegrations.status,
+				})
+				.from(userIntegrations)
+				.where(eq(userIntegrations.integrationId, input.integrationId))
+				.limit(1);
+
+			if (!claim) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'This integration is not claimed',
+				});
+			}
+
+			if (claim.userId !== ctx.user.id) {
+				throw new TRPCError({
+					code: 'FORBIDDEN',
+					message: 'Only the integration owner can mark it as finished',
+				});
+			}
+
+			if (claim.status === 'finished') {
+				return {
+					integrationId: input.integrationId,
+					slug: integration.slug,
+					status: 'finished' as const,
+				};
+			}
+
+			const urls = normalizeIntegrationUrls(
+				await fetchIntegrationUrls(ctx.db, input.integrationId),
+			);
+			if (!urls.issueUrl || !urls.prUrl) {
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message:
+						'Add both an issue URL and a PR URL before marking this integration as finished',
+				});
+			}
+
+			await ctx.db
+				.update(userIntegrations)
+				.set({ status: 'finished' })
+				.where(
+					and(
+						eq(userIntegrations.integrationId, input.integrationId),
+						eq(userIntegrations.userId, ctx.user.id),
+					),
+				);
+
+			await logIntegrationEvent(ctx.db, {
+				integrationId: input.integrationId,
+				userId: ctx.user.id,
+				type: 'finished',
+			});
+
 			return {
 				integrationId: input.integrationId,
 				slug: integration.slug,
-				urls: normalizeIntegrationUrls(updated.urls),
+				status: 'finished' as const,
 			};
 		}),
 });

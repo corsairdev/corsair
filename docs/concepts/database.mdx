@@ -3,6 +3,8 @@ title: Database
 description: Four tables, always-fresh integration data, tenant-scoped by default.
 ---
 
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+
 Every API call and webhook that flows through Corsair is stored in your database automatically. When something changes in Slack, GitHub, or Linear, Corsair updates the same row — so your UI can read from `*.db.*` instead of hitting third-party APIs on every page load. Third-party data becomes an extension of your own DB, always fresh.
 
 ---
@@ -136,9 +138,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 sqlite3 corsair.db < migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content migration.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="PostgreSQL">
@@ -194,9 +211,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 psql $DATABASE_URL -f migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+psql $env:DATABASE_URL -f migration.sql
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="Drizzle">

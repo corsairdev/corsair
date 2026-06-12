@@ -98,6 +98,19 @@ Store credentials with `pnpm corsair setup --plugin=linear` (see [Get Credential
 More: [API Key](/concepts/api-key)
 
 </Tab>
+<Tab title="OAuth 2.0">
+
+```ts corsair.ts
+linear({
+    authType: 'oauth_2',
+})
+```
+
+Store credentials with `pnpm corsair setup --plugin=linear` (see [Get Credentials](/plugins/linear/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
 </Tabs>
 
 ## Webhooks

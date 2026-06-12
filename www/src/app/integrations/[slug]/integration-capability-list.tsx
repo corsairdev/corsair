@@ -22,9 +22,7 @@ export function IntegrationCapabilityList({
 	emptyMessage: string;
 }) {
 	if (items.length === 0) {
-		return (
-			<p className="mt-3 text-sm text-muted-foreground">{emptyMessage}</p>
-		);
+		return <p className="mt-3 text-sm text-muted-foreground">{emptyMessage}</p>;
 	}
 
 	return (

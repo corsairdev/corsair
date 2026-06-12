@@ -4,6 +4,7 @@ description: Get a working integration in a few steps.
 ---
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
+import { WindowsEnvVarsNote, WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 
 <Steps>
 
@@ -174,9 +175,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 sqlite3 corsair.db < migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content migration.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="PostgreSQL">
@@ -232,9 +248,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 psql $DATABASE_URL -f migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+psql $env:DATABASE_URL -f migration.sql
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="Drizzle">
@@ -533,9 +564,24 @@ Use Corsair with any integration. Here's an example of how to get started with G
 3. Select scopes: `repo`, `read:org`, `read:user`
 4. Copy the token — it starts with `ghp_`
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 export GITHUB_TOKEN=ghp_...
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+```powershell
+$env:GITHUB_TOKEN = "ghp_..."
+```
+
+<WindowsEnvVarsNote />
+
+  </Tab>
+</Tabs>
 
 Run setup once with the Corsair CLI:
 
@@ -552,7 +598,10 @@ pnpm install @corsair-dev/cli
 ```bash bun
 bun add @corsair-dev/cli
 ```
-</CodeGroup> 
+</CodeGroup>
+
+<Tabs>
+  <Tab title="macOS / Linux">
 
 <CodeGroup>
 ```bash npm
@@ -568,6 +617,27 @@ pnpm corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
 bunx corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
 ```
 </CodeGroup>
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<CodeGroup>
+```bash npm
+npx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+```bash yarn
+yarn corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+```bash pnpm
+pnpm corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+```bash bun
+bunx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
+```
+</CodeGroup>
+
+  </Tab>
+</Tabs>
 
 <AccordionGroup>
 <Accordion title="pnpm: command not found or setup fails?">
@@ -781,6 +851,9 @@ bun add @corsair-dev/cli
 
 Check credentials and initialize a plugin:
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 <CodeGroup>
 ```bash npm
 npx corsair setup --plugin=github api_key=$GITHUB_TOKEN
@@ -795,6 +868,27 @@ pnpm corsair setup --plugin=github api_key=$GITHUB_TOKEN
 bunx corsair setup --plugin=github api_key=$GITHUB_TOKEN
 ```
 </CodeGroup>
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<CodeGroup>
+```bash npm
+npx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+```bash yarn
+yarn corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+```bash pnpm
+pnpm corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+```bash bun
+bunx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
+```
+</CodeGroup>
+
+  </Tab>
+</Tabs>
 
 Authenticate a plugin that uses OAuth:
 

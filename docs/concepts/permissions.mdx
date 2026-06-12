@@ -3,6 +3,8 @@ title: Permissions
 description: Gate destructive agent actions behind human approval before they execute.
 ---
 
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+
 When an AI agent calls Corsair, you need guardrails. Permissions let you set a policy per integration — reads go through, writes may need sign-off, destructive actions can be blocked entirely.
 
 ```ts corsair.ts
@@ -99,9 +101,24 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 sqlite3 corsair.db < permissions.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content permissions.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="PostgreSQL">
@@ -128,9 +145,24 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 psql $DATABASE_URL -f permissions.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+psql $env:DATABASE_URL -f permissions.sql
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
 </Tabs>

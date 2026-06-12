@@ -45,12 +45,7 @@ export const get: GithubEndpoints['usersGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(
-		ctx,
-		'github.users.get',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'github.users.get', { ...input }, 'completed');
 	return result;
 };
 
@@ -76,28 +71,26 @@ export const getById: GithubEndpoints['usersGetById'] = async (ctx, input) => {
 	return result;
 };
 
-export const getAuthenticated: GithubEndpoints['usersGetAuthenticated'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeGithubRequest<UserGetResponse>('/user', ctx.key);
+export const getAuthenticated: GithubEndpoints['usersGetAuthenticated'] =
+	async (ctx, input) => {
+		const result = await makeGithubRequest<UserGetResponse>('/user', ctx.key);
 
-	if (result && ctx.db.users) {
-		try {
-			await ctx.db.users.upsertByEntityId(result.id.toString(), result);
-		} catch (error) {
-			console.warn('Failed to save authenticated user to database:', error);
+		if (result && ctx.db.users) {
+			try {
+				await ctx.db.users.upsertByEntityId(result.id.toString(), result);
+			} catch (error) {
+				console.warn('Failed to save authenticated user to database:', error);
+			}
 		}
-	}
 
-	await logEventFromContext(
-		ctx,
-		'github.users.getAuthenticated',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'github.users.getAuthenticated',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
 
 export const update: GithubEndpoints['usersUpdate'] = async (ctx, input) => {
 	const { ...body } = input;

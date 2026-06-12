@@ -42,6 +42,7 @@
     "@corsair-dev/sharepoint": "workspace:*",
     "@corsair-dev/slack": "workspace:*",
     "@corsair-dev/teams": "workspace:*",
+    "@corsair-dev/twilio": "workspace:*",
     "@corsair-dev/vapi": "workspace:*",
     "@corsair-dev/whatsapp": "workspace:*",
     "@corsair-dev/xquik": "workspace:*",
