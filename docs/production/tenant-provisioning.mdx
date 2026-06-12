@@ -1,0 +1,163 @@
+---
+title: Tenant Provisioning
+description: Provision new tenants in production with setupCorsair — without redeploying for each customer.
+---
+
+In production, new customers appear constantly. Corsair does not require a deploy per tenant — you provision tenants at runtime by calling `setupCorsair` with a stable tenant ID whenever someone signs up or joins a workspace.
+
+This page covers that flow, what happens under the hood, and when you **do** need to redeploy.
+
+---
+
+## When to call `setupCorsair`
+
+Call `setupCorsair` when:
+
+- A new user or workspace is created in your app
+- A customer connects their first integration and you need account rows + DEKs
+- You want to backfill synced data for a newly provisioned tenant
+
+Do **not** call it on every HTTP request — once per tenant (or once per tenant + plugin if you provision lazily) is enough. Setup is idempotent: re-running it for the same tenant skips existing rows.
+
+---
+
+## Typical signup flow
+
+Use any stable ID from your auth system — database user ID, Clerk org ID, workspace slug, etc.
+
+```ts onboarding.ts
+import { setupCorsair } from 'corsair';
+import { corsair } from '@/server/corsair';
+
+export async function onUserCreated(userId: string) {
+    // 1. Provision account rows for every configured plugin
+    await setupCorsair(corsair, { tenantId: userId });
+
+    // 2. Later — when the user connects an integration
+    const tenant = corsair.withTenant(userId);
+    await tenant.linear.keys.set_api_key(apiKeyFromConnectFlow);
+}
+```
+
+For OAuth, wire connect and callback routes as in [OAuth process](/production/oauth-process). `processOAuthCallback` creates the account row and DEK for that plugin if it does not exist yet (integration rows must already exist from setup). Upfront `setupCorsair({ tenantId })` is still recommended so every plugin is ready before the user opens a connect screen.
+
+```ts
+// processOAuthCallback saves tokens after the provider redirect
+import { processOAuthCallback } from 'corsair/oauth';
+
+await processOAuthCallback(corsair, { code, state, redirectUri });
+```
+
+---
+
+## Multi-tenant requirements
+
+Your `corsair.ts` must have `multiTenancy: true`:
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    multiTenancy: true,
+    plugins: [github(), slack(), linear()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+});
+```
+
+Every runtime operation uses `withTenant()`:
+
+```ts
+const tenant = corsair.withTenant(userId);
+await tenant.github.api.repositories.list({ type: 'owner' });
+```
+
+Webhooks should include the tenant in the URL: `?tenantId=user_abc123`. See [Multi-tenancy](/concepts/multi-tenancy).
+
+---
+
+## What setup creates (and what it does not)
+
+For `{ tenantId: 'user_abc123' }`, `setupCorsair`:
+
+| Creates | Does not create |
+|---------|-----------------|
+| `corsair_accounts` rows for **each auth-type plugin in your code** | New plugins — those come from a code change |
+| Account-level DEKs (auth-type plugins) | OAuth tokens — use connect/auth flows |
+| Integration rows for all configured plugins (if missing) | Integration credentials — set once on `corsair.keys` or via setup without `tenantId` |
+
+Integration-level credentials (OAuth app client ID/secret, shared config) are set once and shared across tenants. Per-tenant secrets go on the tenant client.
+
+---
+
+## Adding a new integration requires a redeploy
+
+Plugins are defined in `createCorsair({ plugins: [...] })` at **build time**. Corsair cannot add Slack, HubSpot, or any other integration to a running deployment without updating that array and redeploying.
+
+After deploy:
+
+1. **Run setup once** after deploy (creates the new integration row; on single-tenant, also creates the default account row):
+
+   ```bash
+   pnpm corsair setup
+   ```
+
+   Set any new integration-level credentials (OAuth app keys, etc.). On multi-tenant, this step alone does **not** create account rows for existing tenants.
+
+2. **Provision existing tenants** so they get account rows for the new plugin:
+
+   ```ts
+   for (const tenantId of await listActiveTenantIds()) {
+       await setupCorsair(corsair, { tenantId });
+   }
+   ```
+
+   Or provision lazily when a tenant first connects that integration.
+
+3. **Existing tenants still need to authorize** — new account rows do not copy credentials. Each tenant connects the new integration through your normal auth or connect flow.
+
+<Warning>
+Removing a plugin from code does not delete its database rows automatically. Plan migrations if you retire an integration.
+</Warning>
+
+---
+
+## CLI vs in-app provisioning
+
+| Approach | Best for |
+|----------|----------|
+| `setupCorsair` in your backend | Production signup, workspace creation, automated onboarding |
+| `pnpm corsair setup --tenant=<id>` | Local dev, one-off ops, agent-driven setup |
+| `corsair ui` (Studio) | Exploring plugins and credentials during development |
+
+Prefer `setupCorsair` in production so tenant creation stays in your application logic, not a shell on the server.
+
+---
+
+## Lazy provisioning alternative
+
+You can skip upfront `setupCorsair({ tenantId })` for OAuth-only onboarding:
+
+1. Run `setupCorsair(corsair)` once (no `tenantId` on multi-tenant) to create integration rows and set shared OAuth app credentials.
+2. When a user completes OAuth, `processOAuthCallback` (or `corsair auth --tenant=<id>`) creates the account row and DEK for **that plugin only**.
+
+This does **not** work for API key plugins — `tenant.*.keys.set_*()` throws if the account row is missing. Call `setupCorsair({ tenantId })` before setting API keys.
+
+Explicit `setupCorsair` on signup is still simpler: every auth-type plugin gets an account row and DEK before the user connects anything, and backfill can run immediately.
+
+---
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Setup" href="/getting-started/setup">
+    Integrations, accounts, tenants, CLI, and setupCorsair basics.
+  </Card>
+  <Card title="Multi-tenancy" href="/concepts/multi-tenancy">
+    `withTenant()`, credential isolation, and webhook routing.
+  </Card>
+  <Card title="OAuth process" href="/production/oauth-process">
+    Production connect and callback routes.
+  </Card>
+  <Card title="Database" href="/concepts/database">
+    How account rows relate to synced entity data.
+  </Card>
+</CardGroup>
