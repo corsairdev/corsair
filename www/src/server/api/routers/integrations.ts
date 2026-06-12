@@ -21,14 +21,22 @@ import {
 	fetchIntegrationUrlsByIntegrationIds,
 	upsertIntegrationUrls,
 } from '@/db/integration-urls';
+import {
+	fetchIntegrationTags,
+	fetchIntegrationTagsByIntegrationIds,
+} from '@/db/integration-tags';
 import type { IntegrationUrls } from '@/db/schema';
 import {
+	authSchemes,
+	integrationTags,
 	integrations,
 	operations,
+	tags,
 	triggers,
 	userIntegrationEvents,
 	userIntegrations,
 } from '@/db/schema';
+import { visibleAuthModes } from '@/lib/visible-auth-modes';
 import { getGithubUserAvatars } from '@/server/github-users';
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
@@ -94,11 +102,33 @@ function searchFilter(query: string | undefined): SQL | undefined {
 	);
 }
 
-function visibleIntegrationsFilter(query?: string): SQL {
+function visibleIntegrationsFilter(
+	query?: string,
+	tagSlugs?: string[],
+): SQL {
+	const conditions: SQL[] = [eq(integrations.show, true)];
+
 	const search = searchFilter(query);
-	return search
-		? and(eq(integrations.show, true), search)!
-		: eq(integrations.show, true);
+	if (search) conditions.push(search);
+
+	const slugs = tagSlugs?.map((slug) => slug.trim()).filter(Boolean);
+	if (slugs?.length) {
+		conditions.push(
+			inArray(
+				integrations.id,
+				sql`(
+					select ${integrationTags.integrationId}
+					from ${integrationTags}
+					inner join ${tags} on ${integrationTags.tagId} = ${tags.id}
+					where ${inArray(tags.slug, slugs)}
+					group by ${integrationTags.integrationId}
+					having count(distinct ${tags.slug}) = ${slugs.length}
+				)`,
+			),
+		);
+	}
+
+	return and(...conditions)!;
 }
 
 async function logIntegrationEvent(
@@ -141,12 +171,13 @@ export const integrationsRouter = createTRPCRouter({
 				.object({
 					page: z.number().int().min(1).default(1),
 					q: z.string().optional(),
+					tags: z.array(z.string().min(1)).optional(),
 				})
 				.default({ page: 1 }),
 		)
 		.query(async ({ ctx, input }) => {
 			const offset = (input.page - 1) * PAGE_SIZE;
-			const where = visibleIntegrationsFilter(input.q);
+			const where = visibleIntegrationsFilter(input.q, input.tags);
 			const currentUserId = ctx.session?.user?.id;
 
 			const [rows, countResult] = await Promise.all([
@@ -156,6 +187,7 @@ export const integrationsRouter = createTRPCRouter({
 						name: integrations.name,
 						slug: integrations.slug,
 						description: integrations.description,
+						points: integrations.points,
 						claimerUserId: userIntegrations.userId,
 						claimerGithubUsername: user.githubUsername,
 						status: userIntegrations.status,
@@ -176,7 +208,13 @@ export const integrationsRouter = createTRPCRouter({
 			const total = countResult[0]?.total ?? 0;
 			const integrationIds = rows.map((row) => row.id);
 
-			const [operationCountRows, triggerCountRows, urlsByIntegration] =
+			const [
+				operationCountRows,
+				triggerCountRows,
+				authSchemeCountRows,
+				urlsByIntegration,
+				tagsByIntegration,
+			] =
 				integrationIds.length > 0
 					? await Promise.all([
 							ctx.db
@@ -195,15 +233,32 @@ export const integrationsRouter = createTRPCRouter({
 								.from(triggers)
 								.where(inArray(triggers.integrationId, integrationIds))
 								.groupBy(triggers.integrationId),
+							ctx.db
+								.select({
+									integrationId: authSchemes.integrationId,
+									count: count(),
+								})
+								.from(authSchemes)
+								.where(
+									and(
+										inArray(authSchemes.integrationId, integrationIds),
+										inArray(authSchemes.mode, visibleAuthModes),
+									),
+								)
+								.groupBy(authSchemes.integrationId),
 							fetchIntegrationUrlsByIntegrationIds(ctx.db, integrationIds),
+							fetchIntegrationTagsByIntegrationIds(ctx.db, integrationIds),
 						])
-					: [[], [], new Map<string, IntegrationUrls>()];
+					: [[], [], [], new Map<string, IntegrationUrls>(), new Map()];
 
 			const operationCounts = new Map(
 				operationCountRows.map((row) => [row.integrationId, row.count]),
 			);
 			const triggerCounts = new Map(
 				triggerCountRows.map((row) => [row.integrationId, row.count]),
+			);
+			const authSchemeCounts = new Map(
+				authSchemeCountRows.map((row) => [row.integrationId, row.count]),
 			);
 
 			const claimerUsernames = [
@@ -220,11 +275,14 @@ export const integrationsRouter = createTRPCRouter({
 				name: row.name,
 				slug: row.slug,
 				description: row.description,
+				points: row.points,
+				tags: tagsByIntegration.get(row.id) ?? [],
 				urls: normalizeIntegrationUrls(
 					urlsByIntegration.get(row.id) ?? emptyIntegrationUrls(),
 				),
 				operationCount: operationCounts.get(row.id) ?? 0,
 				triggerCount: triggerCounts.get(row.id) ?? 0,
+				authSchemeCount: authSchemeCounts.get(row.id) ?? 0,
 				isClaimed: row.claimerUserId !== null,
 				status: row.claimerUserId !== null ? row.status : null,
 				claimedByCurrentUser:
@@ -242,8 +300,26 @@ export const integrationsRouter = createTRPCRouter({
 				pageSize: PAGE_SIZE,
 				totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
 				q: input.q?.trim() ?? '',
+				tags: input.tags ?? [],
 			};
 		}),
+
+	listTags: publicProcedure.query(async ({ ctx }) => {
+		const items = await ctx.db
+			.select({
+				id: tags.id,
+				name: tags.name,
+				slug: tags.slug,
+				color: tags.color,
+				integrationCount: count(integrationTags.id),
+			})
+			.from(tags)
+			.leftJoin(integrationTags, eq(integrationTags.tagId, tags.id))
+			.groupBy(tags.id, tags.name, tags.slug, tags.color)
+			.orderBy(desc(count(integrationTags.id)), asc(tags.name));
+
+		return { items };
+	}),
 
 	getBySlug: publicProcedure
 		.input(z.object({ slug: z.string().min(1) }))
@@ -270,8 +346,15 @@ export const integrationsRouter = createTRPCRouter({
 
 			const currentUserId = ctx.session?.user?.id;
 
-			const [operationRows, triggerRows, claimRow, timelineRows, urls] =
-				await Promise.all([
+			const [
+				operationRows,
+				triggerRows,
+				authSchemeRows,
+				claimRow,
+				timelineRows,
+				urls,
+				integrationTagRows,
+			] = await Promise.all([
 					ctx.db
 						.select({
 							id: operations.id,
@@ -297,6 +380,22 @@ export const integrationsRouter = createTRPCRouter({
 						.orderBy(asc(triggers.name)),
 					ctx.db
 						.select({
+							id: authSchemes.id,
+							mode: authSchemes.mode,
+							name: authSchemes.name,
+							requiredFields: authSchemes.requiredFields,
+							optionalFields: authSchemes.optionalFields,
+						})
+						.from(authSchemes)
+						.where(
+							and(
+								eq(authSchemes.integrationId, integration.id),
+								inArray(authSchemes.mode, visibleAuthModes),
+							),
+						)
+						.orderBy(asc(authSchemes.name)),
+					ctx.db
+						.select({
 							userId: userIntegrations.userId,
 							githubUsername: user.githubUsername,
 							status: userIntegrations.status,
@@ -317,6 +416,7 @@ export const integrationsRouter = createTRPCRouter({
 						.where(eq(userIntegrationEvents.integrationId, integration.id))
 						.orderBy(desc(userIntegrationEvents.createdAt)),
 					fetchIntegrationUrls(ctx.db, integration.id),
+					fetchIntegrationTags(ctx.db, integration.id),
 				]);
 
 			const claimerGithubUsername = claimRow[0]?.githubUsername ?? null;
@@ -340,11 +440,14 @@ export const integrationsRouter = createTRPCRouter({
 				name: integration.name,
 				slug: integration.slug,
 				description: integration.description,
+				tags: integrationTagRows,
 				urls: normalizeIntegrationUrls(urls),
 				operationCount: operationRows.length,
 				triggerCount: triggerRows.length,
+				authSchemeCount: authSchemeRows.length,
 				operations: operationRows,
 				triggers: triggerRows,
+				authSchemes: authSchemeRows,
 				isClaimed: claimRow.length > 0,
 				status: claimRow[0]?.status ?? null,
 				claimedByCurrentUser:
@@ -381,7 +484,6 @@ export const integrationsRouter = createTRPCRouter({
 					.select({
 						userId: userIntegrations.userId,
 						githubUsername: user.githubUsername,
-						claimCount: count(userIntegrations.id),
 					})
 					.from(userIntegrations)
 					.innerJoin(
@@ -393,7 +495,7 @@ export const integrationsRouter = createTRPCRouter({
 					)
 					.innerJoin(user, eq(user.id, userIntegrations.userId))
 					.groupBy(userIntegrations.userId, user.githubUsername)
-					.orderBy(desc(count(userIntegrations.id)))
+					.orderBy(desc(sql`coalesce(sum(${integrations.points}), 0)`))
 					.limit(PAGE_SIZE)
 					.offset(offset),
 				ctx.db
@@ -421,6 +523,7 @@ export const integrationsRouter = createTRPCRouter({
 								id: integrations.id,
 								name: integrations.name,
 								slug: integrations.slug,
+								points: integrations.points,
 							})
 							.from(userIntegrations)
 							.innerJoin(
@@ -436,7 +539,7 @@ export const integrationsRouter = createTRPCRouter({
 
 			const integrationsByUser = new Map<
 				string,
-				{ id: string; name: string; slug: string }[]
+				{ id: string; name: string; slug: string; points: number }[]
 			>();
 			for (const claim of claims) {
 				const existing = integrationsByUser.get(claim.userId) ?? [];
@@ -444,6 +547,7 @@ export const integrationsRouter = createTRPCRouter({
 					id: claim.id,
 					name: claim.name,
 					slug: claim.slug,
+					points: claim.points,
 				});
 				integrationsByUser.set(claim.userId, existing);
 			}
@@ -457,15 +561,25 @@ export const integrationsRouter = createTRPCRouter({
 			];
 			const avatars = await getGithubUserAvatars(usernames);
 
-			const items = rows.map((row, index) => ({
-				rank: offset + index + 1,
-				userId: row.userId,
-				githubUsername: row.githubUsername ?? null,
-				avatarUrl: row.githubUsername
-					? (avatars.get(row.githubUsername) ?? null)
-					: null,
-				integrations: integrationsByUser.get(row.userId) ?? [],
-			}));
+			const items = rows.map((row, index) => {
+				const userClaimedIntegrations =
+					integrationsByUser.get(row.userId) ?? [];
+				const totalPoints = userClaimedIntegrations.reduce(
+					(sum, integration) => sum + integration.points,
+					0,
+				);
+
+				return {
+					rank: offset + index + 1,
+					userId: row.userId,
+					githubUsername: row.githubUsername ?? null,
+					avatarUrl: row.githubUsername
+						? (avatars.get(row.githubUsername) ?? null)
+						: null,
+					totalPoints,
+					integrations: userClaimedIntegrations,
+				};
+			});
 
 			return {
 				items,

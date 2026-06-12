@@ -1,15 +1,18 @@
 'use client';
 
 import { MagnifyingGlass } from '@phosphor-icons/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
+import { buildOssHref, parseTagSlugs } from './oss-url';
+import { useOssNavigation } from './oss-navigation';
+
 const DEBOUNCE_MS = 500;
 
 export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
-	const router = useRouter();
+	const { navigate } = useOssNavigation();
 	const searchParams = useSearchParams();
 	const [value, setValue] = useState(defaultValue);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -30,18 +33,8 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 
 		if (trimmed === current) return;
 
-		const params = new URLSearchParams(searchParams.toString());
-
-		if (trimmed) {
-			params.set('q', trimmed);
-		} else {
-			params.delete('q');
-		}
-
-		params.delete('page');
-
-		const qs = params.toString();
-		router.replace(qs ? `/oss?${qs}` : '/oss');
+		const tags = parseTagSlugs(searchParams.get('tags') ?? undefined);
+		navigate(buildOssHref({ q: trimmed, tags }));
 	};
 
 	const handleChange = (next: string) => {

@@ -9,6 +9,7 @@ import { getApi } from '@/server/api/caller';
 
 import { ClaimIntegrationButton } from '../../oss/claim-integration-button';
 import { IntegrationLinkLabels } from '../../oss/integration-link-labels';
+import { IntegrationTagList } from '../../oss/integration-tag-badge';
 import { IntegrationStatusBadge } from '../../oss/integration-status-badge';
 import { UnclaimIntegrationButton } from '../../oss/unclaim-integration-button';
 import { ClaimTimeline } from './claim-timeline';
@@ -85,7 +86,9 @@ export default async function IntegrationPage({
 						<IntegrationTitleStats
 							operationCount={integration.operationCount}
 							triggerCount={integration.triggerCount}
+							authSchemeCount={integration.authSchemeCount}
 						/>
+						<IntegrationTagList tags={integration.tags} />
 					</div>
 
 					<div className="flex flex-wrap items-center gap-2">
@@ -148,8 +151,10 @@ export default async function IntegrationPage({
 			<IntegrationCapabilities
 				operations={integration.operations}
 				triggers={integration.triggers}
+				authSchemes={integration.authSchemes}
 				operationCount={integration.operationCount}
 				triggerCount={integration.triggerCount}
+				authSchemeCount={integration.authSchemeCount}
 			/>
 
 			<section className="mt-8">
