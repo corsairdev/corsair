@@ -1,5 +1,6 @@
 import 'dotenv/config';
 
+import { agentmail } from '@corsair-dev/agentmail';
 import { github } from '@corsair-dev/github';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -33,6 +34,10 @@ export const corsair = createCorsair({
 		onedrive(),
 		hubspot(),
 		twilio(),
+		agentmail({
+			key: process.env.AGENTMAIL_API_KEY,
+			webhookSecret: process.env.AGENTMAIL_WEBHOOK_SECRET,
+		}),
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
