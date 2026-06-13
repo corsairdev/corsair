@@ -2,6 +2,8 @@ import type { CorsairInternalConfig } from '..';
 import { CORSAIR_INTERNAL } from '..';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
+	completeOAuthCallback,
+	createConnectLink,
 	createTenant,
 	getConnectionStatus,
 	getPermission,
@@ -11,6 +13,7 @@ import {
 	listPlugins,
 	listTenants,
 	ok,
+	resolveConnect,
 } from './operations';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -31,6 +34,7 @@ export type ManagementHandlerOptions = {
 };
 
 type RouteCtx = {
+	corsair: unknown;
 	internal: CorsairInternalConfig;
 	req: Request;
 	params: Record<string, string>;
@@ -114,6 +118,37 @@ const ROUTES: Route[] = [
 			}
 			return json(200, await getPermissionByToken(internal, token));
 		},
+	},
+	{
+		method: 'POST',
+		pattern: '/connect/links',
+		handler: async ({ internal, body }) =>
+			json(
+				200,
+				await createConnectLink(
+					internal,
+					body as { plugin: string; tenantId?: string },
+				),
+			),
+	},
+	{
+		method: 'GET',
+		pattern: '/connect/resolve',
+		handler: async ({ corsair, internal, query }) =>
+			json(200, await resolveConnect(corsair, internal, query.state ?? '')),
+	},
+	{
+		method: 'POST',
+		pattern: '/connect/oauth/callback',
+		handler: async ({ corsair, internal, body }) =>
+			json(
+				200,
+				await completeOAuthCallback(
+					corsair,
+					internal,
+					body as { code: string; state: string },
+				),
+			),
 	},
 ];
 
@@ -217,7 +252,14 @@ export function managementHandler(
 				const params = matchPattern(route.pattern, pathname);
 				if (!params) continue;
 				const body = await parseBody(req);
-				return await route.handler({ internal, req, params, query, body });
+				return await route.handler({
+					corsair,
+					internal,
+					req,
+					params,
+					query,
+					body,
+				});
 			}
 
 			throw notFound(`No route for ${method} ${pathname}`);

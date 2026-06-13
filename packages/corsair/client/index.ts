@@ -1,14 +1,14 @@
 import type {
 	ConnectionStatus,
+	ConnectLink,
 	ManagementOk,
+	OAuthCallbackResult,
 	PermissionRecord,
 	PluginInfo,
+	ResolvedConnectLink,
 	Tenant,
 } from '../core/management/types';
-import type {
-	CorsairClientOptions,
-	CorsairManagementClient,
-} from './types';
+import type { CorsairClientOptions, CorsairManagementClient } from './types';
 import { CorsairClientError } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -43,7 +43,11 @@ export function createCorsairClient(
 	opts: CorsairClientOptions,
 ): CorsairManagementClient {
 	const baseURL = trimBase(opts.baseURL);
-	const fetchImpl = opts.fetch ?? globalThis.fetch.bind(globalThis);
+	// Defer globalThis.fetch binding to call time so environments that inject
+	// fetch after module load (e.g. jsdom test environments) work correctly.
+	// An explicit opts.fetch always wins.
+	const fetchImpl: typeof fetch =
+		opts.fetch ?? ((...args) => globalThis.fetch(...args));
 
 	async function getJson<T>(
 		path: string,
@@ -95,11 +99,18 @@ export function createCorsairClient(
 			getByToken: (token) =>
 				postJson<PermissionRecord>('/permissions/lookup-by-token', { token }),
 		},
+		connect: {
+			createLink: (input) => postJson<ConnectLink>('/connect/links', input),
+			resolve: (state) =>
+				getJson<ResolvedConnectLink>('/connect/resolve', { state }),
+			oauthCallback: (input) =>
+				postJson<OAuthCallbackResult>('/connect/oauth/callback', input),
+		},
 	};
 }
 
-export { CorsairClientError } from './types';
 export type {
 	CorsairClientOptions,
 	CorsairManagementClient,
 } from './types';
+export { CorsairClientError } from './types';
