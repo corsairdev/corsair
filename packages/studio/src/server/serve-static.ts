@@ -26,7 +26,11 @@ const MIME: Record<string, string> = {
 function resolveWebRoot(): string {
 	const here = fileURLToPath(new URL('.', import.meta.url));
 	const built = resolve(here, '../web');
-	if (existsSync(join(built, 'index.html'))) return built;
+	if (
+		existsSync(join(built, 'index.html')) &&
+		!existsSync(join(built, 'main.tsx'))
+	)
+		return built;
 	const viaDev = resolve(here, '../../dist/web');
 	return viaDev;
 }
