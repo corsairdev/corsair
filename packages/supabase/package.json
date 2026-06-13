@@ -1,0 +1,40 @@
+{
+  "name": "@corsair-dev/supabase",
+  "version": "0.1.0",
+  "description": "Supabase plugin for Corsair",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "corsair": "workspace:*",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "supabase",
+    "plugin"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ]
+}
