@@ -6,6 +6,7 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -26,6 +27,8 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { AgentMailSchema } from './schema';
+import type { AgentMailWebhookOutputs, MessageReceivedEvent } from './webhooks';
+import { MessageReceivedEventSchema, MessageWebhooks } from './webhooks';
 
 export type AgentMailPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -62,6 +65,15 @@ export type AgentMailEndpoints = {
 	messagesSend: AgentMailEndpoint<'messagesSend'>;
 };
 
+type AgentMailWebhook<
+	K extends keyof AgentMailWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<AgentMailContext, TEvent, AgentMailWebhookOutputs[K]>;
+
+export type AgentMailWebhooks = {
+	messageReceived: AgentMailWebhook<'messageReceived', MessageReceivedEvent>;
+};
+
 const agentMailEndpointsNested = {
 	messages: {
 		get: Messages.get,
@@ -70,7 +82,11 @@ const agentMailEndpointsNested = {
 	},
 } as const;
 
-const agentMailWebhooksNested = {} as const;
+const agentMailWebhooksNested = {
+	message: {
+		received: MessageWebhooks.received,
+	},
+} as const;
 
 export type AgentMailBoundWebhooks = BindWebhooks<
 	typeof agentMailWebhooksNested
@@ -93,10 +109,15 @@ export const agentMailEndpointSchemas = {
 	typeof agentMailEndpointsNested
 >;
 
-const agentMailWebhookSchemas =
-	{} as const satisfies RequiredPluginWebhookSchemas<
-		typeof agentMailWebhooksNested
-	>;
+const agentMailWebhookSchemas = {
+	'message.received': {
+		description: 'A new email was received in an AgentMail inbox',
+		payload: MessageReceivedEventSchema,
+		response: MessageReceivedEventSchema,
+	},
+} as const satisfies RequiredPluginWebhookSchemas<
+	typeof agentMailWebhooksNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -158,7 +179,17 @@ export function agentmail<const T extends AgentMailPluginOptions>(
 		endpointMeta: agentMailEndpointMeta,
 		endpointSchemas: agentMailEndpointSchemas,
 		webhookSchemas: agentMailWebhookSchemas,
-		pluginWebhookMatcher: undefined,
+		pluginWebhookMatcher: (request) => {
+			const hasSvixSignature = 'svix-signature' in request.headers;
+			const body = request.body;
+			return (
+				hasSvixSignature &&
+				body !== null &&
+				typeof body === 'object' &&
+				!Array.isArray(body) &&
+				(body as Record<string, unknown>).event_type === 'message.received'
+			);
+		},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -202,3 +233,8 @@ export type {
 	MessagesSendInput,
 	MessagesSendResponse,
 } from './endpoints/types';
+export type {
+	AgentMailWebhookOutputs,
+	AgentMailWebhookPayload,
+	MessageReceivedEvent,
+} from './webhooks/types';
