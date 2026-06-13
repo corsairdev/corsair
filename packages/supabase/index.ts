@@ -1,6 +1,5 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -9,8 +8,11 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type {
 	SupabaseEndpointInputs,
 	SupabaseEndpointOutputs,
@@ -54,26 +56,20 @@ export type SupabaseEndpoints = {
 	exampleGet: SupabaseEndpoint<'exampleGet'>;
 };
 
-export type SupabaseWebhooks = Record<string, never>;
-
-export type SupabaseBoundWebhooks = BindWebhooks<SupabaseWebhooks>;
-
 const supabaseEndpointsNested = {
 	example: {
 		get: Example.get,
 	},
 } as const;
 
-const supabaseWebhooksNested = {} as const;
-
 export const supabaseEndpointSchemas = {
 	'example.get': {
 		input: SupabaseEndpointInputSchemas.exampleGet,
 		output: SupabaseEndpointOutputSchemas.exampleGet,
 	},
-} as const;
-
-const supabaseWebhookSchemas = {} as const;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof supabaseEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -82,7 +78,7 @@ const supabaseEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get an example resource by ID',
 	},
-} as const;
+} as const satisfies RequiredPluginEndpointMeta<typeof supabaseEndpointsNested>;
 
 export const supabaseAuthConfig = {
 	api_key: {
@@ -94,7 +90,7 @@ export type BaseSupabasePlugin<T extends SupabasePluginOptions> = CorsairPlugin<
 	'supabase',
 	typeof SupabaseSchema,
 	typeof supabaseEndpointsNested,
-	typeof supabaseWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -118,10 +114,9 @@ export function supabase<const T extends SupabasePluginOptions>(
 		options: options,
 		hooks: options.hooks,
 		endpoints: supabaseEndpointsNested,
-		webhooks: supabaseWebhooksNested,
+		webhooks: {},
 		endpointMeta: supabaseEndpointMeta,
 		endpointSchemas: supabaseEndpointSchemas,
-		webhookSchemas: supabaseWebhookSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
@@ -134,10 +129,13 @@ export function supabase<const T extends SupabasePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('supabase', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('supabase', 'api_key');
 		},
 	} satisfies InternalSupabasePlugin;
 }
