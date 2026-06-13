@@ -1,7 +1,3 @@
-import { example } from './example';
-
-export const ExampleWebhooks = {
-	example: example,
-};
+export const SupabaseWebhooks = {};
 
 export * from './types';
