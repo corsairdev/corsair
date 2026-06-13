@@ -1,0 +1,95 @@
+core:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'packages/corsair/**'
+          - 'packages/ui/**'
+
+plugin:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'packages/airtable/**'
+          - 'packages/amplitude/**'
+          - 'packages/asana/**'
+          - 'packages/bitwarden/**'
+          - 'packages/bluesky/**'
+          - 'packages/box/**'
+          - 'packages/cal/**'
+          - 'packages/calendly/**'
+          - 'packages/cloudflare/**'
+          - 'packages/cursor/**'
+          - 'packages/discord/**'
+          - 'packages/dodopayments/**'
+          - 'packages/dropbox/**'
+          - 'packages/exa/**'
+          - 'packages/figma/**'
+          - 'packages/firecrawl/**'
+          - 'packages/fireflies/**'
+          - 'packages/github/**'
+          - 'packages/gitlab/**'
+          - 'packages/gmail/**'
+          - 'packages/googlecalendar/**'
+          - 'packages/googledrive/**'
+          - 'packages/googlesheets/**'
+          - 'packages/grafana/**'
+          - 'packages/hackernews/**'
+          - 'packages/hubspot/**'
+          - 'packages/intercom/**'
+          - 'packages/jira/**'
+          - 'packages/linear/**'
+          - 'packages/monday/**'
+          - 'packages/notion/**'
+          - 'packages/onedrive/**'
+          - 'packages/openweathermap/**'
+          - 'packages/oura/**'
+          - 'packages/outlook/**'
+          - 'packages/pagerduty/**'
+          - 'packages/posthog/**'
+          - 'packages/razorpay/**'
+          - 'packages/reddit/**'
+          - 'packages/resend/**'
+          - 'packages/sentry/**'
+          - 'packages/sharepoint/**'
+          - 'packages/slack/**'
+          - 'packages/spotify/**'
+          - 'packages/strava/**'
+          - 'packages/stripe/**'
+          - 'packages/tally/**'
+          - 'packages/tavily/**'
+          - 'packages/teams/**'
+          - 'packages/telegram/**'
+          - 'packages/todoist/**'
+          - 'packages/trello/**'
+          - 'packages/twitter/**'
+          - 'packages/twitterapiio/**'
+          - 'packages/typeform/**'
+          - 'packages/vapi/**'
+          - 'packages/vercel/**'
+          - 'packages/whatsapp/**'
+          - 'packages/xquik/**'
+          - 'packages/youtube/**'
+          - 'packages/zendesk/**'
+          - 'packages/zoom/**'
+
+app:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'www/**'
+          - 'packages/studio/**'
+          - 'packages/app/**'
+
+cli:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'packages/cli/**'
+          - 'packages/mcp/**'
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**'
+          - '**/*.md'
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**'
