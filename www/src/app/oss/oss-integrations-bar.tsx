@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Badge } from '@/components/ui/badge';
 import type { getSession } from '@/lib/auth-server';
 
@@ -18,7 +19,7 @@ export function OssIntegrationsBar({
 	githubAvatarUrl: string | null;
 }) {
 	return (
-		<header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-border/60 bg-[#f7f7f5]/90 px-6 py-3 text-sm backdrop-blur-sm">
+		<header className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-border/60 bg-[#f7f7f5]/90 px-6 py-3 text-sm backdrop-blur-sm dark:bg-background/90">
 			<Link
 				href="/"
 				aria-label="Corsair home"
@@ -36,6 +37,7 @@ export function OssIntegrationsBar({
 				</span>
 			</Link>
 			<div className="flex items-center gap-3">
+				<ThemeToggle />
 				{session?.user ? (
 					<>
 						<div className="hidden items-center gap-2 sm:flex">
