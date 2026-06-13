@@ -102,7 +102,14 @@ const EventInputSchema = z.object({
 		.enum(['default', 'public', 'private', 'confidential'])
 		.optional(),
 	eventType: z
-		.enum(['default', 'outOfOffice', 'focusTime', 'workingLocation'])
+		.enum([
+			'default',
+			'outOfOffice',
+			'focusTime',
+			'workingLocation',
+			'birthday',
+			'fromGmail',
+		])
 		.optional(),
 	status: z.enum(['confirmed', 'tentative', 'cancelled']).optional(),
 	reminders: EventRemindersSchema.optional(),
@@ -251,7 +258,14 @@ const EventSchema = z.object({
 	privateCopy: z.boolean().optional(),
 	locked: z.boolean().optional(),
 	eventType: z
-		.enum(['default', 'outOfOffice', 'focusTime', 'workingLocation'])
+		.enum([
+			'default',
+			'outOfOffice',
+			'focusTime',
+			'workingLocation',
+			'birthday',
+			'fromGmail',
+		])
 		.optional(),
 });
 

@@ -73,7 +73,14 @@ export const GoogleCalendarEvent = z.object({
 	privateCopy: z.boolean().optional(),
 	locked: z.boolean().optional(),
 	eventType: z
-		.enum(['default', 'outOfOffice', 'focusTime', 'workingLocation'])
+		.enum([
+			'default',
+			'outOfOffice',
+			'focusTime',
+			'workingLocation',
+			'birthday',
+			'fromGmail',
+		])
 		.optional(),
 	calendarId: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
