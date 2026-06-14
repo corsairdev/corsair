@@ -93,9 +93,20 @@ function projectApiKey(ctx: SupabaseContext, input: SupabaseEndpointInput) {
 	);
 }
 
-function projectHeaders(ctx: SupabaseContext, input: SupabaseEndpointInput) {
+function requireProjectApiKey(
+	ctx: SupabaseContext,
+	input: SupabaseEndpointInput,
+) {
 	const key = projectApiKey(ctx, input);
-	if (!key) return input.headers;
+	if (!key) {
+		throw new Error(
+			'[supabase] projectApiKey is required for project-hosted endpoints',
+		);
+	}
+	return key;
+}
+
+function projectHeaders(key: string, input: SupabaseEndpointInput) {
 	return {
 		apikey: key,
 		...input.headers,
@@ -124,29 +135,40 @@ function quoteIdentifier(identifier: string): string {
 	return `"${identifier.replace(/"/g, '""')}"`;
 }
 
+function sqlIdentifierName(identifier: string): string {
+	if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(identifier)) {
+		throw new Error(`[supabase] invalid SQL identifier: ${identifier}`);
+	}
+	return identifier;
+}
+
 function listTablesBody(input: SupabaseEndpointInput) {
-	const schema = typeof input.schema === 'string' ? input.schema : 'public';
+	const schema = sqlIdentifierName(
+		typeof input.schema === 'string' ? input.schema : 'public',
+	);
 	return {
 		query: `
 select table_schema, table_name, table_type
 from information_schema.tables
-where table_schema = '${schema.replace(/'/g, "''")}'
+where table_schema = '${schema}'
 order by table_schema, table_name
 `,
 	};
 }
 
 function getTableSchemasBody(input: SupabaseEndpointInput) {
-	const schema = typeof input.schema === 'string' ? input.schema : 'public';
+	const schema = sqlIdentifierName(
+		typeof input.schema === 'string' ? input.schema : 'public',
+	);
 	const tableFilter =
 		typeof input.table === 'string'
-			? `and table_name = '${input.table.replace(/'/g, "''")}'`
+			? `and table_name = '${sqlIdentifierName(input.table)}'`
 			: '';
 	return {
 		query: `
 select table_schema, table_name, column_name, data_type, is_nullable, column_default
 from information_schema.columns
-where table_schema = '${schema.replace(/'/g, "''")}'
+where table_schema = '${schema}'
 ${tableFilter}
 order by table_schema, table_name, ordinal_position
 `,
@@ -207,11 +229,13 @@ function createEndpoint(operation: SupabaseOperation): SupabaseEndpoint {
 			return result;
 		}
 
+		const projectKey =
+			operation.kind === 'project'
+				? requireProjectApiKey(ctx, input)
+				: undefined;
 		const response = await makeSupabaseRequest(
 			resolvePath(operation.path, input),
-			operation.kind === 'project'
-				? (projectApiKey(ctx, input) ?? ctx.key)
-				: ctx.key,
+			projectKey ?? ctx.key,
 			{
 				method: operation.method,
 				body: bodyForOperation(operation, input),
@@ -220,8 +244,8 @@ function createEndpoint(operation: SupabaseOperation): SupabaseEndpoint {
 					...input.query,
 				},
 				headers:
-					operation.kind === 'project'
-						? projectHeaders(ctx, input)
+					operation.kind === 'project' && projectKey
+						? projectHeaders(projectKey, input)
 						: input.headers,
 				mediaType: input.mediaType ?? operation.mediaType,
 				baseUrl:

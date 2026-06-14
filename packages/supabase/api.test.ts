@@ -267,6 +267,29 @@ describe('Supabase endpoints', () => {
 		);
 	});
 
+	it('requires a project API key for project-hosted APIs', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			edgeFunctions: {
+				invokeEdgeFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string; body: { hello: string } },
+				) => Promise<unknown>;
+			};
+		};
+
+		await expect(
+			endpoints.edgeFunctions.invokeEdgeFunction(mockCtx, {
+				ref: 'abcdefghijklmnopqrst',
+				functionSlug: 'hello-world',
+				body: { hello: 'world' },
+			}),
+		).rejects.toThrow('projectApiKey is required');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('defaults API key reads to unrevealed responses', async () => {
 		const plugin = supabase({ key: 'test-token' });
 		const endpoints = plugin.endpoints as NonNullable<
@@ -289,6 +312,28 @@ describe('Supabase endpoints', () => {
 			url: '/v1/projects/abcdefghijklmnopqrst/api-keys',
 			query: { reveal: false },
 		});
+	});
+
+	it('rejects unsafe SQL helper identifiers', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			database: {
+				getTableSchemas: (
+					ctx: SupabaseContext,
+					input: { ref: string; schema: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await expect(
+			endpoints.database.getTableSchemas(mockCtx, {
+				ref: 'abcdefghijklmnopqrst',
+				schema: "public'; drop table users; --",
+			}),
+		).rejects.toThrow('invalid SQL identifier');
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('builds safe read-only SQL helper bodies', async () => {

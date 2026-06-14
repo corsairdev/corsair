@@ -121,7 +121,7 @@ export function supabase<const T extends SupabasePluginOptions>(
 				return res;
 			}
 
-			throw new AuthMissingError('supabase', 'oauth_2');
+			throw new AuthMissingError('supabase', ctx.authType);
 		},
 	} satisfies InternalSupabasePlugin;
 }
