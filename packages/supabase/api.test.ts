@@ -217,5 +217,77 @@ describe('Supabase endpoints', () => {
 				}),
 			]),
 		);
+		expect(mockRequest.mock.calls.at(-1)?.[1].body).toContain(
+			'client_secret=client-secret',
+		);
+	});
+
+	it('routes project-hosted APIs through the project base URL', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			edgeFunctions: {
+				invokeEdgeFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string; body: { hello: string } },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.edgeFunctions.invokeEdgeFunction(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			functionSlug: 'hello-world',
+			body: { hello: 'world' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://abcdefghijklmnopqrst.supabase.co',
+			}),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/functions/v1/hello-world',
+				body: { hello: 'world' },
+			}),
+		);
+	});
+
+	it('builds safe read-only SQL helper bodies', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			database: {
+				selectFromTable: (
+					ctx: SupabaseContext,
+					input: {
+						ref: string;
+						schema: string;
+						table: string;
+						columns: string[];
+						limit: number;
+						offset: number;
+					},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.database.selectFromTable(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			schema: 'public',
+			table: 'todos',
+			columns: ['id', 'name'],
+			limit: 5,
+			offset: 10,
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/v1/projects/abcdefghijklmnopqrst/database/query/read-only',
+			body: {
+				query: 'select "id", "name" from "public"."todos" limit 5 offset 10',
+			},
+		});
 	});
 });
