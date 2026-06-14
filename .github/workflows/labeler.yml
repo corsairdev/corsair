@@ -1,6 +1,6 @@
-name: "Pull Request Labeler"
+name: 'Pull Request Labeler'
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -10,4 +10,11 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/labeler@v5
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.base.sha }}
+      - run: node scripts/generate-labeler-config.mjs
+      - uses: actions/labeler@v5
+        with:
+          configuration-path: .github/labeler.generated.yml
