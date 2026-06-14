@@ -267,6 +267,43 @@ describe('Supabase endpoints', () => {
 		);
 	});
 
+	it('keeps non-path fields in auto-built request bodies', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				createProject: (
+					ctx: SupabaseContext,
+					input: {
+						name: string;
+						organization_id: string;
+						db_pass: string;
+						region: string;
+					},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.projects.createProject(mockCtx, {
+			name: 'demo-project',
+			organization_id: 'org_123',
+			db_pass: 'db-password',
+			region: 'us-east-1',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/v1/projects',
+			body: {
+				name: 'demo-project',
+				organization_id: 'org_123',
+				db_pass: 'db-password',
+				region: 'us-east-1',
+			},
+		});
+	});
+
 	it('requires a project API key for project-hosted APIs', async () => {
 		const plugin = supabase({ key: 'test-token' });
 		const endpoints = plugin.endpoints as NonNullable<

@@ -24,8 +24,7 @@ const PATH_PARAM_KEYS = [
 	'uploadId',
 ] as const;
 
-const CONTROL_KEYS = new Set([
-	...PATH_PARAM_KEYS,
+const BODY_CONTROL_KEYS = new Set([
 	'body',
 	'query',
 	'headers',
@@ -58,12 +57,20 @@ function resolvePath(path: string, input: SupabaseEndpointInput): string {
 	);
 }
 
-function requestBody(input: SupabaseEndpointInput): unknown {
+function requestBody(
+	operation: SupabaseOperation,
+	input: SupabaseEndpointInput,
+): unknown {
 	if ('body' in input) return input.body;
 
+	const pathParams = new Set(operation.pathParams ?? []);
 	const body = Object.fromEntries(
 		Object.entries(input).filter(([key, value]) => {
-			return !CONTROL_KEYS.has(key) && value !== undefined;
+			return (
+				!pathParams.has(key) &&
+				!BODY_CONTROL_KEYS.has(key) &&
+				value !== undefined
+			);
 		}),
 	);
 	return Object.keys(body).length > 0 ? body : undefined;
@@ -211,9 +218,9 @@ function bodyForOperation(
 	if (operation.kind === 'getTableSchemas') return getTableSchemasBody(input);
 	if (operation.kind === 'selectFromTable') return selectFromTableBody(input);
 	if (operation.mediaType === 'application/x-www-form-urlencoded') {
-		return formEncodeBody(requestBody(input));
+		return formEncodeBody(requestBody(operation, input));
 	}
-	return requestBody(input);
+	return requestBody(operation, input);
 }
 
 function createEndpoint(operation: SupabaseOperation): SupabaseEndpoint {
