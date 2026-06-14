@@ -428,6 +428,7 @@ export const integrationsRouter = createTRPCRouter({
 					name: integrations.name,
 					slug: integrations.slug,
 					description: integrations.description,
+					points: integrations.points,
 				})
 				.from(integrations)
 				.where(
@@ -538,6 +539,7 @@ export const integrationsRouter = createTRPCRouter({
 				name: integration.name,
 				slug: integration.slug,
 				description: integration.description,
+				points: integration.points,
 				tags: integrationTagRows,
 				urls: normalizeIntegrationUrls(urls),
 				operationCount: operationRows.length,

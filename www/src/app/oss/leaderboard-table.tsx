@@ -77,7 +77,7 @@ export function LeaderboardTable({ entries }: { entries: TableEntry[] }) {
 									{entry.integrations.slice(0, 4).map((integration) => (
 										<Link
 											key={integration.id}
-											href={`/integrations/${integration.slug}`}
+											href={`/oss/${integration.slug}`}
 											className="text-[#1c1c1c99] no-underline hover:text-[#1c1c1c] hover:underline"
 										>
 											{integration.slug}

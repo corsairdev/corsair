@@ -23,7 +23,7 @@ export async function claimIntegration(integrationId: string) {
 		const api = await getApi();
 		const result = await api.integrations.claim({ integrationId });
 		revalidatePath('/oss');
-		revalidatePath(`/integrations/${result.slug}`);
+		revalidatePath(`/oss/${result.slug}`);
 		return result;
 	} catch (error) {
 		throw new Error(
@@ -37,7 +37,7 @@ export async function unclaimIntegration(integrationId: string) {
 		const api = await getApi();
 		const result = await api.integrations.unclaim({ integrationId });
 		revalidatePath('/oss');
-		revalidatePath(`/integrations/${result.slug}`);
+		revalidatePath(`/oss/${result.slug}`);
 		return result;
 	} catch (error) {
 		throw new Error(
@@ -51,7 +51,7 @@ export async function markIntegrationFinished(integrationId: string) {
 		const api = await getApi();
 		const result = await api.integrations.markFinished({ integrationId });
 		revalidatePath('/oss');
-		revalidatePath(`/integrations/${result.slug}`);
+		revalidatePath(`/oss/${result.slug}`);
 		return result;
 	} catch (error) {
 		throw new Error(
@@ -75,7 +75,7 @@ export async function updateIntegrationUrls(formData: FormData) {
 	try {
 		const api = await getApi();
 		const result = await api.integrations.updateUrls({ integrationId, urls });
-		revalidatePath(`/integrations/${result.slug}`);
+		revalidatePath(`/oss/${result.slug}`);
 		revalidatePath('/oss');
 		return result;
 	} catch (error) {

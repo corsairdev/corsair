@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import type { UserIntegrationStatus } from '@/db/schema';
 import { cn } from '@/lib/utils';
+import { buildOssIntegrationHref } from './oss-url';
 import { ClaimIntegrationButton } from './claim-integration-button';
 import { UnclaimIntegrationButton } from './unclaim-integration-button';
 
@@ -31,6 +32,7 @@ type IntegrationCardProps = {
 	};
 	session: boolean;
 	index?: number;
+	activeSlug?: string;
 };
 
 function StatusLabel({
@@ -55,9 +57,19 @@ export function IntegrationCard({
 	integration,
 	session,
 	index,
+	activeSlug,
 }: IntegrationCardProps) {
+	const isActive = activeSlug === integration.slug;
+
 	return (
-		<article className="group grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 px-4 py-3 transition-colors hover:bg-[#1c1c1c]/[0.02] sm:grid-cols-[2.5rem_minmax(0,5fr)_minmax(0,4fr)_auto] sm:items-center sm:px-6">
+		<article
+			className={cn(
+				'group grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 px-4 py-3 transition-colors sm:grid-cols-[2.5rem_minmax(0,5fr)_minmax(0,4fr)_auto] sm:items-center sm:px-6',
+				isActive
+					? 'bg-[#1c1c1c]/[0.04]'
+					: 'hover:bg-[#1c1c1c]/[0.02]',
+			)}
+		>
 			<span className="hidden font-[family-name:var(--font-landing-mono)] text-[11px] tabular-nums text-[#1c1c1c40] sm:block">
 				{index !== undefined ? String(index).padStart(2, '0') : ''}
 			</span>
@@ -65,8 +77,11 @@ export function IntegrationCard({
 			<div className="min-w-0">
 				<div className="flex flex-wrap items-baseline gap-x-2.5">
 					<Link
-						href={`/integrations/${integration.slug}`}
-						className="text-[15px] font-medium text-[#1c1c1c] no-underline underline-offset-2 hover:underline"
+						href={buildOssIntegrationHref(integration.slug)}
+						className={cn(
+							'text-[15px] font-medium no-underline underline-offset-2 hover:underline',
+							isActive ? 'text-[#4a38f5]' : 'text-[#1c1c1c]',
+						)}
 					>
 						{integration.name}
 					</Link>

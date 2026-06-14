@@ -5,14 +5,11 @@ import { getSession } from '@/lib/auth-server';
 import { getApi } from '@/server/api/caller';
 
 import { ActivityFeed } from './activity-feed';
-import { CategoryOnboarding } from './category-onboarding';
 import { FramedPanel } from './framed-panel';
-import { GithubUsernameCallout } from './github-username-callout';
 import { HowItWorks } from './how-it-works';
 import { IntegrationCard } from './integration-card';
 import { LeaderboardPodium } from './leaderboard-podium';
 import { LeaderboardTable } from './leaderboard-table';
-import { OssHero } from './oss-hero';
 import { OssIntegrationsShell } from './oss-integrations-shell';
 import { buildOssHref, parseTagSlugs } from './oss-url';
 import { TopContributors } from './top-contributors';
@@ -53,19 +50,10 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const selectedTags = parseTagSlugs(params.tags);
 	const api = await getApi();
 	const session = await getSession();
-	const [
-		profile,
-		myIntegrations,
-		allTags,
-		stats,
-		recentActivity,
-		integrationsData,
-		leaderboardData,
-	] = await Promise.all([
-		session ? api.account.getProfile() : null,
+	const [myIntegrations, allTags, recentActivity, integrationsData, leaderboardData] =
+		await Promise.all([
 		session ? api.integrations.listMine() : null,
 		view === 'integrations' ? api.integrations.listTags() : null,
-		api.integrations.stats(),
 		api.integrations.recentActivity({ limit: 10 }),
 		view === 'integrations'
 			? api.integrations.list({
@@ -87,22 +75,8 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 
 	return (
 		<main className="pb-16">
-			<OssHero signedIn={Boolean(session)} stats={stats} />
-
 			<div className="grid gap-10 pt-8 lg:grid-cols-[minmax(0,8fr)_minmax(0,3fr)]">
 				<div>
-					{session && !profile?.githubUsername ? (
-						<GithubUsernameCallout />
-					) : null}
-
-					{view === 'integrations' && allTags ? (
-						<CategoryOnboarding
-							tags={allTags.items}
-							hasActiveFilters={selectedTags.length > 0 || q.length > 0}
-							signedIn={Boolean(session)}
-						/>
-					) : null}
-
 					<OssIntegrationsShell
 						q={q}
 						selectedTags={selectedTags}
@@ -207,7 +181,7 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 								{myIntegrations.items.map((integration) => (
 									<li key={integration.id}>
 										<Link
-											href={`/integrations/${integration.slug}`}
+											href={`/oss/${integration.slug}`}
 											className="font-[family-name:var(--font-landing-mono)] text-[12px] text-[#1c1c1c] underline decoration-[#1c1c1c33] underline-offset-2 transition-colors hover:decoration-[#4a38f5] hover:text-[#4a38f5]"
 										>
 											{integration.slug}

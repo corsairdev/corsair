@@ -54,7 +54,7 @@ export function ActivityFeed({ items }: { items: ActivityItem[] }) {
 								)}{' '}
 								{eventLabel[item.type]}{' '}
 								<Link
-									href={`/integrations/${item.integrationSlug}`}
+									href={`/oss/${item.integrationSlug}`}
 									className="font-[family-name:var(--font-landing-mono)] text-[12px] text-[#1c1c1c] no-underline hover:underline"
 								>
 									{item.integrationSlug}
