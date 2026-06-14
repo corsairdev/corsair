@@ -212,7 +212,7 @@ describe('Supabase endpoints', () => {
 				expect.objectContaining({
 					method: 'POST',
 					url: '/v1/oauth/token',
-					body: expect.any(URLSearchParams),
+					body: expect.stringContaining('grant_type=authorization_code'),
 					mediaType: 'application/x-www-form-urlencoded',
 				}),
 			]),

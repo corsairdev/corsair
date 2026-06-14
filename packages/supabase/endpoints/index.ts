@@ -85,9 +85,9 @@ function projectBaseUrl(input: SupabaseEndpointInput): string {
 	return `https://${input.ref}.supabase.co`;
 }
 
-function formEncodeBody(body: unknown): URLSearchParams | undefined {
+function formEncodeBody(body: unknown): string | undefined {
 	if (body === undefined) return undefined;
-	if (body instanceof URLSearchParams) return body;
+	if (body instanceof URLSearchParams) return body.toString();
 	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
 		throw new Error('[supabase] form body must be an object');
 	}
@@ -97,7 +97,7 @@ function formEncodeBody(body: unknown): URLSearchParams | undefined {
 			params.set(key, String(value));
 		}
 	}
-	return params;
+	return params.toString();
 }
 
 function quoteIdentifier(identifier: string): string {
