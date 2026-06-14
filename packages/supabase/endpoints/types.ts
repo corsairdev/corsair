@@ -26,6 +26,7 @@ export const SupabaseEndpointInputBaseSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 	mediaType: z.string().optional(),
 	baseUrl: z.string().url().optional(),
+	projectApiKey: z.string().min(1).optional(),
 });
 
 export type SupabaseEndpointInput = z.infer<

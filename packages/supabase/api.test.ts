@@ -57,6 +57,7 @@ describe('Supabase plugin shape', () => {
 			providerName: 'Supabase',
 			authUrl: 'https://api.supabase.com/v1/oauth/authorize',
 			tokenUrl: 'https://api.supabase.com/v1/oauth/token',
+			scopes: ['all'],
 			requiresRegisteredRedirect: true,
 		});
 	});
@@ -223,14 +224,22 @@ describe('Supabase endpoints', () => {
 	});
 
 	it('routes project-hosted APIs through the project base URL', async () => {
-		const plugin = supabase({ key: 'test-token' });
+		const plugin = supabase({
+			key: 'test-token',
+			projectApiKey: 'project-token',
+		});
 		const endpoints = plugin.endpoints as NonNullable<
 			typeof plugin.endpoints
 		> & {
 			edgeFunctions: {
 				invokeEdgeFunction: (
 					ctx: SupabaseContext,
-					input: { ref: string; functionSlug: string; body: { hello: string } },
+					input: {
+						ref: string;
+						functionSlug: string;
+						body: { hello: string };
+						projectApiKey: string;
+					},
 				) => Promise<unknown>;
 			};
 		};
@@ -239,11 +248,16 @@ describe('Supabase endpoints', () => {
 			ref: 'abcdefghijklmnopqrst',
 			functionSlug: 'hello-world',
 			body: { hello: 'world' },
+			projectApiKey: 'project-token',
 		});
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://abcdefghijklmnopqrst.supabase.co',
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer project-token',
+					apikey: 'project-token',
+				}),
 			}),
 			expect.objectContaining({
 				method: 'POST',
@@ -251,6 +265,30 @@ describe('Supabase endpoints', () => {
 				body: { hello: 'world' },
 			}),
 		);
+	});
+
+	it('defaults API key reads to unrevealed responses', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			secrets: {
+				getProjectApiKeys: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.secrets.getProjectApiKeys(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/projects/abcdefghijklmnopqrst/api-keys',
+			query: { reveal: false },
+		});
 	});
 
 	it('builds safe read-only SQL helper bodies', async () => {

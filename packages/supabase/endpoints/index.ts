@@ -31,6 +31,7 @@ const CONTROL_KEYS = new Set([
 	'headers',
 	'mediaType',
 	'baseUrl',
+	'projectApiKey',
 	'schema',
 	'table',
 	'columns',
@@ -83,6 +84,22 @@ function projectBaseUrl(input: SupabaseEndpointInput): string {
 	if (!input.ref)
 		throw new Error('[supabase] ref is required for project URLs');
 	return `https://${input.ref}.supabase.co`;
+}
+
+function projectApiKey(ctx: SupabaseContext, input: SupabaseEndpointInput) {
+	return (
+		input.projectApiKey ??
+		(ctx.options as { projectApiKey?: string } | undefined)?.projectApiKey
+	);
+}
+
+function projectHeaders(ctx: SupabaseContext, input: SupabaseEndpointInput) {
+	const key = projectApiKey(ctx, input);
+	if (!key) return input.headers;
+	return {
+		apikey: key,
+		...input.headers,
+	};
 }
 
 function formEncodeBody(body: unknown): string | undefined {
@@ -192,12 +209,20 @@ function createEndpoint(operation: SupabaseOperation): SupabaseEndpoint {
 
 		const response = await makeSupabaseRequest(
 			resolvePath(operation.path, input),
-			ctx.key,
+			operation.kind === 'project'
+				? (projectApiKey(ctx, input) ?? ctx.key)
+				: ctx.key,
 			{
 				method: operation.method,
 				body: bodyForOperation(operation, input),
-				query: input.query,
-				headers: input.headers,
+				query: {
+					...operation.defaultQuery,
+					...input.query,
+				},
+				headers:
+					operation.kind === 'project'
+						? projectHeaders(ctx, input)
+						: input.headers,
 				mediaType: input.mediaType ?? operation.mediaType,
 				baseUrl:
 					operation.kind === 'project' ? projectBaseUrl(input) : input.baseUrl,

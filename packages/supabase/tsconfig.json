@@ -14,7 +14,13 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*"],
-  "exclude": ["dist", "node_modules"],
+  "include": [
+    "./index.ts",
+    "./client.ts",
+    "./error-handlers.ts",
+    "./endpoints/**/*.ts",
+    "./schema/**/*.ts"
+  ],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "jest.config.*"],
   "references": []
 }

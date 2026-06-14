@@ -29,6 +29,7 @@ export type SupabaseOperation = {
 	irreversible?: boolean;
 	kind?: SupabaseOperationKind;
 	mediaType?: string;
+	defaultQuery?: Record<string, unknown>;
 };
 
 export const supabaseOperations = [
@@ -629,6 +630,7 @@ export const supabaseOperations = [
 		path: '/v1/projects/{ref}/api-keys/{id}',
 		pathParams: ['ref', 'id'],
 		riskLevel: 'read',
+		defaultQuery: { reveal: false },
 		description: 'Get a project API key',
 	},
 	{
@@ -639,6 +641,7 @@ export const supabaseOperations = [
 		path: '/v1/projects/{ref}/api-keys',
 		pathParams: ['ref'],
 		riskLevel: 'read',
+		defaultQuery: { reveal: false },
 		description: 'Get project API keys',
 	},
 	{

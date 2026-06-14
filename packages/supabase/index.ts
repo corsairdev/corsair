@@ -23,6 +23,7 @@ import { SupabaseSchema } from './schema';
 export type SupabasePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	projectApiKey?: string;
 	hooks?: InternalSupabasePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof supabaseEndpointsNested>;
@@ -81,7 +82,7 @@ export function supabase<const T extends SupabasePluginOptions>(
 			providerName: 'Supabase',
 			authUrl: 'https://api.supabase.com/v1/oauth/authorize',
 			tokenUrl: 'https://api.supabase.com/v1/oauth/token',
-			scopes: [],
+			scopes: ['all'],
 			requiresRegisteredRedirect: true,
 		},
 		hooks: options.hooks,
