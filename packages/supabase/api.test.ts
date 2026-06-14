@@ -46,11 +46,11 @@ describe('Supabase plugin shape', () => {
 	});
 
 	it('supports api key and oauth auth configuration', () => {
-		const plugin = supabase({ authType: 'oauth_2' } as never) as any;
+		const plugin = supabase({ authType: 'oauth_2' });
 
-		expect(plugin.options.authType).toBe('oauth_2');
+		expect(plugin.options?.authType).toBe('oauth_2');
 		expect(plugin.authConfig).toEqual({
-			api_key: { account: ['api_key'] },
+			api_key: {},
 			oauth_2: {},
 		});
 		expect(plugin.oauthConfig).toMatchObject({
@@ -96,10 +96,10 @@ describe('Supabase request client', () => {
 		await makeSupabaseRequest('/v1/projects/ref/actions', 'test-token', {
 			method: 'HEAD',
 			query: { limit: 10 },
-		} as never);
+		});
 		await makeSupabaseRequest('/v1/upload/resumable', 'test-token', {
 			method: 'OPTIONS',
-		} as never);
+		});
 
 		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
 			method: 'HEAD',
@@ -119,7 +119,49 @@ describe('Supabase endpoints', () => {
 
 	it('maps representative operations to official API routes', async () => {
 		const plugin = supabase({ key: 'test-token' });
-		const endpoints = plugin.endpoints as Record<string, any>;
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				listAllProjects: (ctx: SupabaseContext, input: {}) => Promise<unknown>;
+				getProject: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+			};
+			database: {
+				applyMigration: (
+					ctx: SupabaseContext,
+					input: { ref: string; body: { query: string } },
+				) => Promise<unknown>;
+			};
+			edgeFunctions: {
+				getFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string },
+				) => Promise<unknown>;
+			};
+			secrets: {
+				getProjectApiKey: (
+					ctx: SupabaseContext,
+					input: { ref: string; id: string },
+				) => Promise<unknown>;
+			};
+			oauth: {
+				exchangeOauthToken: (
+					ctx: SupabaseContext,
+					input: {
+						body: {
+							grant_type: string;
+							code: string;
+							client_id: string;
+							client_secret: string;
+							redirect_uri: string;
+						};
+					},
+				) => Promise<unknown>;
+			};
+		};
 
 		await endpoints.projects.listAllProjects(mockCtx, {});
 		await endpoints.projects.getProject(mockCtx, {

@@ -45,9 +45,7 @@ export type SupabaseEndpoints = typeof supabaseEndpointsNested;
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const supabaseAuthConfig = {
-	api_key: {
-		account: ['api_key'] as const,
-	},
+	api_key: {},
 	oauth_2: {},
 } as const satisfies PluginAuthConfig;
 
