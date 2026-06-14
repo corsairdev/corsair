@@ -49,6 +49,7 @@ import {
 export const gmailAuthConfig = {
 	oauth_2: {
 		integration: ['topic_id'] as const,
+		account: ['history_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -260,6 +261,15 @@ export type GmailPluginOptions = {
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
+	/**
+	 * Webhook processing options. Defaults are tuned to reduce noisy Gmail push traffic.
+	 */
+	webhooks?: {
+		/** When true, label add/remove notifications trigger a full message resync. Default false. */
+		syncLabelChanges?: boolean;
+		/** When true, scan recent messages if the history API returns no changes. Default false. */
+		useHistoryFallback?: boolean;
+	};
 	/**
 	 * Permission configuration for the Gmail plugin.
 	 * Controls what the AI agent is allowed to do.

@@ -253,7 +253,51 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 		} as TypedEntity<DataSchema>;
 	}
 
+	function buildEntity(
+		id: string,
+		accountId: string,
+		entityId: string,
+		createdAt: Date,
+		updatedAt: Date,
+		data: z.infer<DataSchema>,
+	): TypedEntity<DataSchema> {
+		return {
+			id,
+			account_id: accountId,
+			entity_id: entityId,
+			entity_type: entityTypeName,
+			version,
+			created_at: createdAt,
+			updated_at: updatedAt,
+			data,
+		} as TypedEntity<DataSchema>;
+	}
+
 	return {
+		existsByEntityId: async (entityId) => {
+			const accountId = await getAccountId();
+			const row = await db
+				.selectFrom('corsair_entities')
+				.select('id')
+				.where('account_id', '=', accountId)
+				.where('entity_type', '=', entityTypeName)
+				.where('entity_id', '=', entityId)
+				.executeTakeFirst();
+			return row !== undefined;
+		},
+
+		findIdByEntityId: async (entityId) => {
+			const accountId = await getAccountId();
+			const row = await db
+				.selectFrom('corsair_entities')
+				.select('id')
+				.where('account_id', '=', accountId)
+				.where('entity_type', '=', entityTypeName)
+				.where('entity_id', '=', entityId)
+				.executeTakeFirst();
+			return row?.id ?? null;
+		},
+
 		findByEntityId: async (entityId) => {
 			const accountId = await getAccountId();
 			const row = await baseQuery(db, accountId, entityTypeName)
@@ -318,8 +362,11 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			const parsed = dataSchema.parse(data);
 			const now = new Date();
 
-			const existing = await baseQuery(db, accountId, entityTypeName)
-				.select('id')
+			const existing = await db
+				.selectFrom('corsair_entities')
+				.select(['id', 'created_at'])
+				.where('account_id', '=', accountId)
+				.where('entity_type', '=', entityTypeName)
 				.where('entity_id', '=', entityId)
 				.executeTakeFirst();
 
@@ -333,12 +380,14 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 					})
 					.where('id', '=', existing.id)
 					.execute();
-				const updated = await db
-					.selectFrom('corsair_entities')
-					.selectAll()
-					.where('id', '=', existing.id)
-					.executeTakeFirst();
-				return parseRow(updated!);
+				return buildEntity(
+					existing.id,
+					accountId,
+					entityId,
+					existing.created_at,
+					now,
+					parsed,
+				);
 			}
 
 			const id = generateUUID();
@@ -356,12 +405,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 				})
 				.execute();
 
-			const inserted = await db
-				.selectFrom('corsair_entities')
-				.selectAll()
-				.where('id', '=', id)
-				.executeTakeFirst();
-			return parseRow(inserted!);
+			return buildEntity(id, accountId, entityId, now, now, parsed);
 		},
 
 		deleteById: async (id) => {

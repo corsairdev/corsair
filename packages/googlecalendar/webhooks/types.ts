@@ -65,10 +65,26 @@ export const EventDeletedEventSchema = z.object({
 });
 export type EventDeletedEvent = z.infer<typeof EventDeletedEventSchema>;
 
+export const SyncAcknowledgedEventSchema = z.object({
+	type: z.literal('syncAcknowledged'),
+	calendarId: z.string(),
+	timestamp: z.string(),
+});
+export type SyncAcknowledgedEvent = z.infer<typeof SyncAcknowledgedEventSchema>;
+
+export const NoChangesEventSchema = z.object({
+	type: z.literal('noChanges'),
+	calendarId: z.string(),
+	timestamp: z.string(),
+});
+export type NoChangesEvent = z.infer<typeof NoChangesEventSchema>;
+
 export const GoogleCalendarWebhookEventSchema = z.union([
 	EventCreatedEventSchema,
 	EventUpdatedEventSchema,
 	EventDeletedEventSchema,
+	SyncAcknowledgedEventSchema,
+	NoChangesEventSchema,
 ]);
 export type GoogleCalendarWebhookEvent = z.infer<
 	typeof GoogleCalendarWebhookEventSchema
@@ -77,14 +93,24 @@ export type GoogleCalendarWebhookEvent = z.infer<
 export type GoogleCalendarEventName = 'eventChanged';
 
 export interface GoogleCalendarEventMap {
-	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
+	eventChanged:
+		| EventCreatedEvent
+		| EventUpdatedEvent
+		| EventDeletedEvent
+		| SyncAcknowledgedEvent
+		| NoChangesEvent;
 }
 
 export type GoogleCalendarWebhookPayload<TEvent = unknown> =
 	PubSubNotification<TEvent>;
 
 export type GoogleCalendarWebhookOutputs = {
-	eventChanged: EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent;
+	eventChanged:
+		| EventCreatedEvent
+		| EventUpdatedEvent
+		| EventDeletedEvent
+		| SyncAcknowledgedEvent
+		| NoChangesEvent;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

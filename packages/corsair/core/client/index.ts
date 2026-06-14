@@ -324,6 +324,8 @@ function createEntityClient(
 
 	return {
 		findByEntityId: async () => null,
+		existsByEntityId: async () => false,
+		findIdByEntityId: async () => null,
 		findById: async () => null,
 		findManyByEntityIds: async () => [],
 		list: async () => [],
