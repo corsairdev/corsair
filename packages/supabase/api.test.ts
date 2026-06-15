@@ -431,6 +431,48 @@ describe('Supabase endpoints', () => {
 		);
 	});
 
+	it('deletes cached entities for destructive operations', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				deleteProject: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+			};
+			edgeFunctions: {
+				deleteFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string },
+				) => Promise<unknown>;
+			};
+		};
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				projects: { deleteByEntityId: jest.fn() },
+				functions: { deleteByEntityId: jest.fn() },
+			},
+		} as unknown as SupabaseContext;
+
+		await endpoints.projects.deleteProject(ctxWithDb, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+		await endpoints.edgeFunctions.deleteFunction(ctxWithDb, {
+			ref: 'abcdefghijklmnopqrst',
+			functionSlug: 'hello-world',
+		});
+
+		expect(ctxWithDb.db.projects.deleteByEntityId).toHaveBeenCalledWith(
+			'abcdefghijklmnopqrst',
+		);
+		expect(ctxWithDb.db.functions.deleteByEntityId).toHaveBeenCalledWith(
+			'hello-world',
+		);
+	});
+
 	it('requires a project API key for project-hosted APIs', async () => {
 		const plugin = supabase({ key: 'test-token' });
 		const endpoints = plugin.endpoints as NonNullable<

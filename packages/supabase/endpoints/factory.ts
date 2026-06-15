@@ -43,6 +43,7 @@ type CacheRule = {
 	entity: string;
 	idKeys: string[];
 	listKeys?: string[];
+	deleteInputKeys?: string[];
 };
 
 const CACHE_RULES: Record<string, CacheRule> = {
@@ -54,6 +55,11 @@ const CACHE_RULES: Record<string, CacheRule> = {
 	getProject: { entity: 'projects', idKeys: ['ref', 'id'] },
 	createProject: { entity: 'projects', idKeys: ['ref', 'id'] },
 	updateProject: { entity: 'projects', idKeys: ['ref', 'id'] },
+	deleteProject: {
+		entity: 'projects',
+		idKeys: ['ref', 'id'],
+		deleteInputKeys: ['ref', 'id'],
+	},
 	listAllOrganizations: {
 		entity: 'organizations',
 		idKeys: ['slug', 'id', 'name'],
@@ -72,6 +78,11 @@ const CACHE_RULES: Record<string, CacheRule> = {
 	getFunction: { entity: 'functions', idKeys: ['slug', 'id', 'name'] },
 	createFunction: { entity: 'functions', idKeys: ['slug', 'id', 'name'] },
 	updateFunction: { entity: 'functions', idKeys: ['slug', 'id', 'name'] },
+	deleteFunction: {
+		entity: 'functions',
+		idKeys: ['slug', 'id', 'name'],
+		deleteInputKeys: ['functionSlug', 'slug', 'id', 'name'],
+	},
 	listDatabaseBranches: {
 		entity: 'branches',
 		idKeys: ['id', 'branch_id', 'ref', 'name'],
@@ -90,6 +101,11 @@ const CACHE_RULES: Record<string, CacheRule> = {
 		entity: 'branches',
 		idKeys: ['id', 'branch_id', 'ref', 'name'],
 	},
+	deleteDatabaseBranch: {
+		entity: 'branches',
+		idKeys: ['id', 'branch_id', 'ref', 'name'],
+		deleteInputKeys: ['branchId', 'id', 'branch_id', 'ref', 'name'],
+	},
 	listBuckets: {
 		entity: 'buckets',
 		idKeys: ['id', 'name'],
@@ -103,6 +119,11 @@ const CACHE_RULES: Record<string, CacheRule> = {
 	getProjectApiKey: { entity: 'apiKeys', idKeys: ['id', 'name'] },
 	createApiKey: { entity: 'apiKeys', idKeys: ['id', 'name'] },
 	updateApiKey: { entity: 'apiKeys', idKeys: ['id', 'name'] },
+	deleteApiKey: {
+		entity: 'apiKeys',
+		idKeys: ['id', 'name'],
+		deleteInputKeys: ['id', 'name'],
+	},
 	listMigrationHistory: {
 		entity: 'migrations',
 		idKeys: ['version', 'name'],
@@ -321,6 +342,7 @@ function cacheEntityId(item: Record<string, unknown>, rule: CacheRule) {
 async function cacheOperationResult(
 	ctx: SupabaseContext,
 	operation: SupabaseOperation,
+	input: SupabaseEndpointInput,
 	response: unknown,
 ) {
 	const rule = CACHE_RULES[operation.key];
@@ -334,11 +356,21 @@ async function cacheOperationResult(
 							entityId: string,
 							data: Record<string, unknown>,
 						) => Promise<unknown>;
+						deleteByEntityId?: (entityId: string) => Promise<boolean>;
 				  }
 				| undefined
 		  >
 		| undefined;
 	const client = db?.[rule.entity];
+
+	if (operation.method === 'DELETE' && rule.deleteInputKeys) {
+		const entityId = cacheDeleteEntityId(input, rule);
+		if (entityId && client?.deleteByEntityId) {
+			await client.deleteByEntityId(entityId);
+		}
+		return;
+	}
+
 	if (!client?.upsertByEntityId) return;
 
 	for (const item of cacheItems(response, rule)) {
@@ -346,6 +378,15 @@ async function cacheOperationResult(
 		if (!entityId) continue;
 		await client.upsertByEntityId(entityId, item);
 	}
+}
+
+function cacheDeleteEntityId(input: SupabaseEndpointInput, rule: CacheRule) {
+	for (const key of rule.deleteInputKeys ?? []) {
+		const value = input[key];
+		if (typeof value === 'string' && value.length > 0) return value;
+		if (typeof value === 'number') return String(value);
+	}
+	return undefined;
 }
 
 export async function runSupabaseOperation(
@@ -386,7 +427,7 @@ export async function runSupabaseOperation(
 		},
 	);
 
-	await cacheOperationResult(ctx, operation, response);
+	await cacheOperationResult(ctx, operation, input, response);
 
 	await logEventFromContext(
 		ctx,
