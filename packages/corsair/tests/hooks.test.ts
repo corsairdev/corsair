@@ -1,9 +1,10 @@
-import { makeSlackRequest, slack } from '@corsair-dev/slack';
+import { slack } from '@corsair-dev/slack';
+import { makeSlackRequest } from '@corsair-dev/slack/client';
 import { createCorsair } from '../core';
 import { createTestDatabase } from './setup-db';
 
-jest.mock('@corsair-dev/slack', () => {
-	const original = jest.requireActual('@corsair-dev/slack');
+jest.mock('@corsair-dev/slack/client', () => {
+	const original = jest.requireActual('@corsair-dev/slack/client');
 	return {
 		...original,
 		makeSlackRequest: jest.fn(),
