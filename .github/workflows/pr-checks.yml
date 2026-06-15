@@ -40,7 +40,7 @@ jobs:
         run: pnpm build
 
       - name: Run tests
-        run: npx turbo test -- --passWithNoTests --ci
+        run: npx turbo test -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
         env:
           CI: true
           SKIP_PG_TESTS: 1

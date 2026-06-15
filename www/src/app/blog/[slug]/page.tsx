@@ -3,11 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { BlogProse } from '@/components/blog/blog-prose';
-import {
-	formatPostDate,
-	getAllSlugs,
-	getPostBySlug,
-} from '@/lib/blog';
+import { formatPostDate, getAllSlugs, getPostBySlug } from '@/lib/blog';
 
 type PageProps = {
 	params: Promise<{ slug: string }>;

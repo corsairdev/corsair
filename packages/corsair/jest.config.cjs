@@ -29,6 +29,10 @@ module.exports = {
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					paths: {
+						'@corsair-dev/slack': ['../slack/index.ts'],
+						'@corsair-dev/linear': ['../linear/index.ts'],
+					},
 				},
 			},
 		],
@@ -39,6 +43,13 @@ module.exports = {
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+					paths: {
+						'@corsair-dev/slack': ['../slack/index.ts'],
+						'@corsair-dev/linear': ['../linear/index.ts'],
+					},
 				},
 			},
 		],

@@ -2,12 +2,8 @@ import { desc, eq, inArray } from 'drizzle-orm';
 
 import type { DB } from '@/db';
 import { user } from '@/db/auth-schema';
-import {
-	type IntegrationPhase,
-	type IntegrationReleaseReason,
-	integrations,
-	integrationStatus,
-} from '@/db/schema';
+import type { IntegrationPhase, IntegrationReleaseReason } from '@/db/schema';
+import { integrationStatus, integrations } from '@/db/schema';
 import {
 	isIntegrationActivelyClaimed,
 	isWipPhase,
@@ -123,7 +119,10 @@ export async function getLatestStatusesForIntegrations(
 		})
 		.from(integrationStatus)
 		.where(inArray(integrationStatus.integrationId, integrationIds))
-		.orderBy(integrationStatus.integrationId, desc(integrationStatus.occurredAt));
+		.orderBy(
+			integrationStatus.integrationId,
+			desc(integrationStatus.occurredAt),
+		);
 
 	return new Map(rows.map((row) => [row.integrationId, row]));
 }
@@ -155,10 +154,14 @@ export async function getUserWipClaim(db: DB, userId: string) {
 		})
 		.from(integrationStatus)
 		.where(eq(integrationStatus.userId, userId))
-		.orderBy(integrationStatus.integrationId, desc(integrationStatus.occurredAt));
+		.orderBy(
+			integrationStatus.integrationId,
+			desc(integrationStatus.occurredAt),
+		);
 
-	const wipIntegrationId = rows.find((row) => isWipPhase(row.phase))
-		?.integrationId;
+	const wipIntegrationId = rows.find((row) =>
+		isWipPhase(row.phase),
+	)?.integrationId;
 
 	if (!wipIntegrationId) {
 		return null;
@@ -210,7 +213,10 @@ export async function getExpiredDeadlineClaims(db: DB) {
 			prDeadlineAt: integrationStatus.prDeadlineAt,
 		})
 		.from(integrationStatus)
-		.orderBy(integrationStatus.integrationId, desc(integrationStatus.occurredAt));
+		.orderBy(
+			integrationStatus.integrationId,
+			desc(integrationStatus.occurredAt),
+		);
 
 	const now = new Date();
 

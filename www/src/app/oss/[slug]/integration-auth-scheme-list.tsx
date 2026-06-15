@@ -24,10 +24,7 @@ export function IntegrationAuthSchemeList({
 	return (
 		<ul className="m-0 divide-y divide-[#1c1c1c0d] p-0">
 			{items.map((item) => (
-				<li
-					key={item.id}
-					className="px-4 py-3 sm:px-6"
-				>
+				<li key={item.id} className="px-4 py-3 sm:px-6">
 					<span className="text-[15px] font-medium text-[#1c1c1c]">
 						{formatAuthModeLabel(item.mode, item.name)}
 					</span>
