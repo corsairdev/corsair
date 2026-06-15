@@ -1,8 +1,9 @@
-import type { UserIntegrationStatus } from '@/db/schema';
+import type { IntegrationPhase } from '@/db/schema';
 
 import {
 	FinishedStatusCallout,
-	MarkFinishedButton,
+	MarkReadyToReviewButton,
+	ReadyToReviewStatusCallout,
 } from '../mark-finished-button';
 import {
 	hasIntegrationUrls,
@@ -20,18 +21,26 @@ export function IntegrationUrlsSection({
 	integrationId,
 	urls,
 	canEdit,
-	status,
+	phase,
 	variant = 'default',
 }: {
 	integrationId: string;
 	urls: IntegrationUrls;
 	canEdit: boolean;
-	status: UserIntegrationStatus | null;
+	phase: IntegrationPhase | null;
 	variant?: 'default' | 'sidebar';
 }) {
 	if (!canEdit && !hasIntegrationUrls(urls)) {
 		return null;
 	}
+
+	const readyToReviewControl = (
+		<MarkReadyToReviewButton
+			integrationId={integrationId}
+			hasRequiredUrls={Boolean(urls.issueUrl && urls.prUrl)}
+			phase={phase}
+		/>
+	);
 
 	if (variant === 'sidebar') {
 		return (
@@ -47,13 +56,12 @@ export function IntegrationUrlsSection({
 								integration.
 							</p>
 							<IntegrationUrlsForm integrationId={integrationId} urls={urls} />
-							{status === 'finished' ? (
+							{phase === 'finished' ? (
 								<FinishedStatusCallout />
+							) : phase === 'ready_to_review' ? (
+								<ReadyToReviewStatusCallout />
 							) : (
-								<MarkFinishedButton
-									integrationId={integrationId}
-									hasRequiredUrls={Boolean(urls.issueUrl && urls.prUrl)}
-								/>
+								readyToReviewControl
 							)}
 						</div>
 					) : (
@@ -76,14 +84,7 @@ export function IntegrationUrlsSection({
 						integration.
 					</p>
 					<IntegrationUrlsForm integrationId={integrationId} urls={urls} />
-					{status === 'finished' ? (
-						<FinishedStatusCallout />
-					) : (
-						<MarkFinishedButton
-							integrationId={integrationId}
-							hasRequiredUrls={Boolean(urls.issueUrl && urls.prUrl)}
-						/>
-					)}
+					{readyToReviewControl}
 				</div>
 			) : (
 				<IntegrationUrlsDisplay urls={urls} />

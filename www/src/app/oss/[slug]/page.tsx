@@ -6,7 +6,8 @@ import { notFound } from 'next/navigation';
 import { getSession } from '@/lib/auth-server';
 import { getApi } from '@/server/api/caller';
 
-import { ContributorGettingStartedCallout } from './contributor-getting-started-callout';
+import { ContributorWorkflowSteps } from './contributor-workflow-steps';
+import { ClaimExpiredCallout } from './claim-expired-callout';
 import { IntegrationCapabilities } from './integration-capabilities';
 import { IntegrationClaimCallout } from './integration-claim-callout';
 import { IntegrationDetailSidebar } from './integration-detail-sidebar';
@@ -15,7 +16,6 @@ import { IntegrationTagList } from '../integration-tag-badge';
 
 type PageProps = {
 	params: Promise<{ slug: string }>;
-	searchParams: Promise<{ gettingStarted?: string }>;
 };
 
 export async function generateMetadata({
@@ -34,12 +34,8 @@ export async function generateMetadata({
 	}
 }
 
-export default async function OssIntegrationPage({
-	params,
-	searchParams,
-}: PageProps) {
+export default async function OssIntegrationPage({ params }: PageProps) {
 	const { slug } = await params;
-	const { gettingStarted } = await searchParams;
 	const api = await getApi();
 	const session = await getSession();
 	const profile = session ? await api.account.getProfile() : null;
@@ -94,6 +90,14 @@ export default async function OssIntegrationPage({
 						) : null}
 					</div>
 
+					{integration.claimExpiredForCurrentUser ? (
+						<ClaimExpiredCallout
+							integrationName={integration.name}
+							reason={integration.claimExpiredForCurrentUser.reason}
+							expiredAt={integration.claimExpiredForCurrentUser.expiredAt}
+						/>
+					) : null}
+
 					{!integration.isClaimed ? (
 						<IntegrationClaimCallout
 							integrationId={integration.id}
@@ -101,15 +105,21 @@ export default async function OssIntegrationPage({
 							integrationName={integration.name}
 							points={integration.points}
 							session={Boolean(session)}
+							canClaimAnother={integration.canClaimAnother}
+							wipIntegrationName={integration.wipIntegrationName}
 						/>
 					) : null}
 
 					{session && integration.claimedByCurrentUser ? (
-						<ContributorGettingStartedCallout
+						<ContributorWorkflowSteps
+							integrationId={integration.id}
 							integrationName={integration.name}
 							integrationSlug={integration.slug}
 							githubUsername={profile?.githubUsername ?? null}
-							defaultOpen={gettingStarted === '1'}
+							phase={integration.phase}
+							issueDeadlineAt={integration.issueDeadlineAt}
+							prDeadlineAt={integration.prDeadlineAt}
+							urls={integration.urls}
 						/>
 					) : null}
 

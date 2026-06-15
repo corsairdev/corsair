@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-import { updateIntegrationUrls } from '../../oss/actions';
+import { updateIntegrationUrls } from '@/server/actions/update-integration-urls';
 
 type IntegrationUrls = {
 	issueUrl: string | null;

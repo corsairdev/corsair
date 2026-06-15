@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import type { UserIntegrationStatus } from '@/db/schema';
+import type { IntegrationPhase } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { buildOssIntegrationHref } from './oss-url';
 import { ClaimIntegrationButton } from './claim-integration-button';
@@ -16,7 +16,9 @@ type IntegrationCardProps = {
 		triggerCount: number;
 		authSchemeCount: number;
 		isClaimed: boolean;
-		status: UserIntegrationStatus | null;
+		phase: IntegrationPhase | null;
+		status: 'in_progress' | 'finished' | null;
+		userCanClaim?: boolean;
 		claimedByCurrentUser: boolean;
 		claimerGithubUsername: string | null;
 		claimerAvatarUrl: string | null;
@@ -33,21 +35,32 @@ type IntegrationCardProps = {
 	session: boolean;
 	index?: number;
 	activeSlug?: string;
+	wipIntegrationName?: string | null;
 };
 
 function StatusLabel({
 	isClaimed,
+	phase,
 	status,
 }: {
 	isClaimed: boolean;
-	status: UserIntegrationStatus | null;
+	phase: IntegrationPhase | null;
+	status: 'in_progress' | 'finished' | null;
 }) {
 	if (!isClaimed) {
 		return <span className="text-[#1c1c1c66]">available</span>;
 	}
 
-	if (status === 'finished') {
+	if (phase === 'finished' || status === 'finished') {
 		return <span className="font-medium text-[#1c1c1c]">shipped</span>;
+	}
+
+	if (phase === 'ready_to_review') {
+		return <span className="font-medium text-[#4a38f5]">ready to review</span>;
+	}
+
+	if (phase === 'awaiting_issue' || phase === 'awaiting_pr') {
+		return <span className="font-medium text-[#4a38f5]">awaiting links</span>;
 	}
 
 	return <span className="font-medium text-[#4a38f5]">in progress</span>;
@@ -58,6 +71,7 @@ export function IntegrationCard({
 	session,
 	index,
 	activeSlug,
+	wipIntegrationName,
 }: IntegrationCardProps) {
 	const isActive = activeSlug === integration.slug;
 
@@ -106,6 +120,7 @@ export function IntegrationCard({
 				</span>
 				<StatusLabel
 					isClaimed={integration.isClaimed}
+					phase={integration.phase}
 					status={integration.status}
 				/>
 				{integration.isClaimed && integration.claimerGithubUsername ? (
@@ -148,6 +163,8 @@ export function IntegrationCard({
 					<ClaimIntegrationButton
 						integrationId={integration.id}
 						integrationSlug={integration.slug}
+						disabled={integration.userCanClaim === false}
+						wipIntegrationName={wipIntegrationName}
 					/>
 				) : null}
 			</div>

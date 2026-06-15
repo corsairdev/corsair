@@ -7,12 +7,16 @@ export function IntegrationClaimCallout({
 	integrationName,
 	points,
 	session,
+	canClaimAnother = true,
+	wipIntegrationName,
 }: {
 	integrationId: string;
 	integrationSlug: string;
 	integrationName: string;
 	points: number;
 	session: boolean;
+	canClaimAnother?: boolean;
+	wipIntegrationName?: string | null;
 }) {
 	return (
 		<section className="mb-8">
@@ -28,7 +32,8 @@ export function IntegrationClaimCallout({
 						<span className="font-[family-name:var(--font-landing-mono)] font-medium text-[#1c1c1c]">
 							{points} pts
 						</span>
-						.
+						. You have 1 hour to link an issue, then 3 hours to open a PR with
+						the plugin scaffold.
 					</p>
 					<div className="mt-6">
 						{session ? (
@@ -36,6 +41,8 @@ export function IntegrationClaimCallout({
 								integrationId={integrationId}
 								integrationSlug={integrationSlug}
 								size="lg"
+								disabled={!canClaimAnother}
+								wipIntegrationName={wipIntegrationName}
 							/>
 						) : (
 							<SignInToClaimLink />

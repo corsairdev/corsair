@@ -118,6 +118,9 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 														integration={integration}
 														session={Boolean(session)}
 														index={startIndex + index + 1}
+														wipIntegrationName={
+															integrationsData.wipIntegrationName
+														}
 													/>
 												))}
 											</div>

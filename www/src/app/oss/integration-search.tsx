@@ -46,8 +46,6 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 		}, DEBOUNCE_MS);
 	};
 
-	const isLeaderboard = searchParams.get('view') === 'leaderboard';
-
 	return (
 		<div className="relative">
 			<MagnifyingGlass
@@ -60,11 +58,9 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 				value={value}
 				onChange={(event) => handleChange(event.target.value)}
 				placeholder="Search integrations..."
-				disabled={isLeaderboard}
 				className={cn(
 					'w-full border border-[#1c1c1c1a] bg-white py-2.5 pr-4 pl-10 text-sm transition-colors',
 					'placeholder:text-[#1c1c1c66] focus:border-[#1c1c1c66] focus:outline-none',
-					isLeaderboard && 'cursor-not-allowed opacity-50',
 				)}
 			/>
 		</div>

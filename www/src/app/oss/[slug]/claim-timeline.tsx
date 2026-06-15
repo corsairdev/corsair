@@ -2,20 +2,18 @@
 
 import { useEffect, useState } from 'react';
 
+import type { IntegrationPhase } from '@/db/schema';
+import { phaseLabel } from '@/lib/integration-phases';
+
 import { formatRelativeTime } from '../relative-time';
 
 type TimelineEvent = {
 	id: string;
-	type: 'claimed' | 'unclaimed' | 'finished';
+	phase: IntegrationPhase;
 	createdAt: string;
 	githubUsername: string | null;
 	avatarUrl: string | null;
-};
-
-const eventLabel: Record<TimelineEvent['type'], string> = {
-	claimed: 'claimed',
-	unclaimed: 'released',
-	finished: 'shipped',
+	releaseReason?: string | null;
 };
 
 export function ClaimTimeline({ events }: { events: TimelineEvent[] }) {
@@ -70,7 +68,13 @@ function ClaimTimelineItem({ event }: { event: TimelineEvent }) {
 				) : (
 					<span className="font-medium text-[#1c1c1c]">someone</span>
 				)}{' '}
-				{eventLabel[event.type]}
+				<span className="text-[#1c1c1c66]">{phaseLabel(event.phase)}</span>
+				{event.releaseReason ? (
+					<span className="text-[#1c1c1c40]">
+						{' '}
+						({event.releaseReason.replaceAll('_', ' ')})
+					</span>
+				) : null}
 			</p>
 		</li>
 	);

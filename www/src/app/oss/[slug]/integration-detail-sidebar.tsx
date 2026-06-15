@@ -1,4 +1,4 @@
-import type { UserIntegrationStatus } from '@/db/schema';
+import type { IntegrationPhase } from '@/db/schema';
 
 import type { ReactNode } from 'react';
 
@@ -9,10 +9,11 @@ import { IntegrationUrlsSection } from './integration-urls-section';
 
 type TimelineEvent = {
 	id: string;
-	type: 'claimed' | 'unclaimed' | 'finished';
+	phase: IntegrationPhase;
 	createdAt: string;
 	githubUsername: string | null;
 	avatarUrl: string | null;
+	releaseReason?: string | null;
 };
 
 type IntegrationDetailSidebarProps = {
@@ -22,7 +23,8 @@ type IntegrationDetailSidebarProps = {
 		name: string;
 		points: number;
 		isClaimed: boolean;
-		status: UserIntegrationStatus | null;
+		phase: IntegrationPhase | null;
+		status: 'in_progress' | 'finished' | null;
 		claimedByCurrentUser: boolean;
 		claimerGithubUsername: string | null;
 		claimerAvatarUrl: string | null;
@@ -72,6 +74,7 @@ export function IntegrationDetailSidebar({
 					<div className="flex flex-wrap items-center gap-2">
 						<IntegrationStatusBadge
 							isClaimed={integration.isClaimed}
+							phase={integration.phase}
 							status={integration.status}
 						/>
 						<span className="font-[family-name:var(--font-landing-mono)] text-[12px] tabular-nums text-[#1c1c1c66]">
@@ -112,13 +115,15 @@ export function IntegrationDetailSidebar({
 				</div>
 			</SidebarSection>
 
-			<IntegrationUrlsSection
-				integrationId={integration.id}
-				urls={integration.urls}
-				canEdit={Boolean(session && integration.claimedByCurrentUser)}
-				status={integration.status}
-				variant="sidebar"
-			/>
+			{!(session && integration.claimedByCurrentUser) ? (
+				<IntegrationUrlsSection
+					integrationId={integration.id}
+					urls={integration.urls}
+					canEdit={false}
+					phase={integration.phase}
+					variant="sidebar"
+				/>
+			) : null}
 
 			<SidebarSection title="Claim history">
 				<ClaimTimeline events={integration.timeline} />
