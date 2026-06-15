@@ -28,6 +28,10 @@ module.exports = {
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					paths: {
+						'@corsair-dev/slack': ['../slack/index.ts'],
+						'@corsair-dev/linear': ['../linear/index.ts']
+					}
 				},
 			},
 		],
@@ -38,6 +42,13 @@ module.exports = {
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+					paths: {
+						'@corsair-dev/slack': ['../slack/index.ts'],
+						'@corsair-dev/linear': ['../linear/index.ts']
+					}
 				},
 			},
 		],
@@ -51,6 +62,7 @@ module.exports = {
 		'^corsair/tests$': '<rootDir>/tests.ts',
 		'^corsair$': '<rootDir>/index.ts',
 		'^@corsair-dev/slack$': '<rootDir>/../slack/index.ts',
+		'^@corsair-dev/linear$': '<rootDir>/../linear/index.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],

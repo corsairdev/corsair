@@ -885,3 +885,5 @@ export type {
 	UsersProfileGetResponse,
 	UsersProfileSetResponse,
 } from './endpoints/types';
+export * from './error-handlers';
+export * from './client';

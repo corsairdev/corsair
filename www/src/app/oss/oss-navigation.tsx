@@ -38,7 +38,9 @@ export function useOssNavigation() {
 	const context = useContext(OssNavigationContext);
 
 	if (!context) {
-		throw new Error('useOssNavigation must be used within OssNavigationProvider');
+		throw new Error(
+			'useOssNavigation must be used within OssNavigationProvider',
+		);
 	}
 
 	return context;

@@ -89,7 +89,11 @@ export function IntegrationCard({
 				<div className="flex shrink-0 items-center gap-3">
 					<div className="flex flex-col items-end gap-0.5">
 						<div className="flex items-center gap-1.5 text-foreground">
-							<TrophyIcon size={16} aria-hidden className="text-muted-foreground" />
+							<TrophyIcon
+								size={16}
+								aria-hidden
+								className="text-muted-foreground"
+							/>
 							<span className="font-mono text-lg font-semibold tabular-nums">
 								{integration.points}
 							</span>

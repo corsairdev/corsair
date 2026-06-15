@@ -75,7 +75,11 @@ export function LeaderboardEntry({ entry }: LeaderboardEntryProps) {
 				</div>
 				<div className="flex shrink-0 flex-col items-end gap-0.5">
 					<div className="flex items-center gap-1.5 text-foreground">
-						<TrophyIcon size={16} aria-hidden className="text-muted-foreground" />
+						<TrophyIcon
+							size={16}
+							aria-hidden
+							className="text-muted-foreground"
+						/>
 						<span className="font-mono text-lg font-semibold tabular-nums">
 							{entry.totalPoints}
 						</span>

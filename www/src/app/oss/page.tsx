@@ -20,7 +20,12 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-	searchParams: Promise<{ page?: string; q?: string; tags?: string; view?: string }>;
+	searchParams: Promise<{
+		page?: string;
+		q?: string;
+		tags?: string;
+		view?: string;
+	}>;
 };
 
 function parseView(view?: string): OssIntegrationsView {
@@ -46,7 +51,8 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const session = await getSession();
 	const profile = session ? await api.account.getProfile() : null;
 	const myIntegrations = session ? await api.integrations.listMine() : null;
-	const allTags = view === 'integrations' ? await api.integrations.listTags() : null;
+	const allTags =
+		view === 'integrations' ? await api.integrations.listTags() : null;
 
 	const integrationsData =
 		view === 'integrations'

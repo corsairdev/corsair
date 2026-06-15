@@ -21,7 +21,9 @@ function getPool() {
 	if (!globalForDb.pool) {
 		const connectionString = process.env.DATABASE_URL;
 		if (!connectionString) {
-			throw new Error('DATABASE_URL environment variable is not set');
+			console.warn('DATABASE_URL environment variable is not set');
+			globalForDb.pool = new pg.Pool();
+			return globalForDb.pool;
 		}
 
 		globalForDb.pool = new pg.Pool({

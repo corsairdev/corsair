@@ -108,8 +108,7 @@ describe('toExpressHandler', () => {
 			read: () => ({
 				status: statusCode,
 				headers,
-				body:
-					typeof body === 'string' ? body : body?.toString('utf-8'),
+				body: typeof body === 'string' ? body : body?.toString('utf-8'),
 			}),
 		};
 	}

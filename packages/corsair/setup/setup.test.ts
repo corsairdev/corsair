@@ -5,8 +5,8 @@ import type { CorsairPlugin } from '../core';
 import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
-import { linear } from '../plugins/linear';
-import { slack } from '../plugins/slack';
+import { linear } from '@corsair-dev/linear';
+import { slack } from '@corsair-dev/slack';
 import { setupCorsair } from './index';
 
 function createTestDb() {

@@ -80,7 +80,9 @@ export async function upsertIntegrationUrls(
 	integrationId: string,
 	urls: IntegrationUrls,
 ) {
-	for (const field of Object.keys(FIELD_TO_URL_TYPE) as (keyof IntegrationUrls)[]) {
+	for (const field of Object.keys(
+		FIELD_TO_URL_TYPE,
+	) as (keyof IntegrationUrls)[]) {
 		const type = FIELD_TO_URL_TYPE[field];
 		const url = urls[field];
 

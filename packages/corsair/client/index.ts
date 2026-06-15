@@ -5,10 +5,7 @@ import type {
 	PluginInfo,
 	Tenant,
 } from '../core/management/types';
-import type {
-	CorsairClientOptions,
-	CorsairManagementClient,
-} from './types';
+import type { CorsairClientOptions, CorsairManagementClient } from './types';
 import { CorsairClientError } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
