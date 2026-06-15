@@ -135,28 +135,39 @@ export const integrationUrlTypeEnum = pgEnum(
 export const authModeEnum = pgEnum('auth_mode', authModes);
 export const triggerTypeEnum = pgEnum('trigger_type', triggerTypes);
 
-export const userIntegrationStatuses = ['in_progress', 'finished'] as const;
-
-export type UserIntegrationStatus = (typeof userIntegrationStatuses)[number];
-
-export const userIntegrationStatusEnum = pgEnum(
-	'user_integration_status',
-	userIntegrationStatuses,
-);
-
-export const userIntegrationEventTypes = [
-	'claimed',
-	'unclaimed',
+export const integrationPhases = [
+	'awaiting_issue',
+	'awaiting_pr',
+	'building',
+	'ready_to_review',
 	'finished',
+	'released',
 ] as const;
 
-export type UserIntegrationEventType =
-	(typeof userIntegrationEventTypes)[number];
+export type IntegrationPhase = (typeof integrationPhases)[number];
 
-export const userIntegrationEventTypeEnum = pgEnum(
-	'user_integration_event_type',
-	userIntegrationEventTypes,
+export const integrationPhaseEnum = pgEnum(
+	'integration_phase',
+	integrationPhases,
 );
+
+export const integrationReleaseReasons = [
+	'issue_timeout',
+	'pr_timeout',
+	'manual',
+	'abuse',
+] as const;
+
+export type IntegrationReleaseReason =
+	(typeof integrationReleaseReasons)[number];
+
+export const integrationReleaseReasonEnum = pgEnum(
+	'integration_release_reason',
+	integrationReleaseReasons,
+);
+
+/** @deprecated Use IntegrationPhase */
+export type UserIntegrationStatus = 'in_progress' | 'finished';
 
 const timestamps = {
 	createdAt: timestamp('created_at', { withTimezone: true })
@@ -267,31 +278,8 @@ export const operations = pgTable(
 	],
 );
 
-export const userIntegrations = pgTable(
-	'user_integrations',
-	{
-		id: text('id')
-			.primaryKey()
-			.$defaultFn(() => crypto.randomUUID()),
-		userId: text('user_id')
-			.notNull()
-			.references(() => user.id, { onDelete: 'cascade' }),
-		integrationId: text('integration_id')
-			.notNull()
-			.references(() => integrations.id, { onDelete: 'cascade' }),
-		status: userIntegrationStatusEnum('status')
-			.notNull()
-			.default('in_progress'),
-		...timestamps,
-	},
-	(table) => [
-		uniqueIndex('user_integrations_integration_id_idx').on(table.integrationId),
-		index('user_integrations_user_id_idx').on(table.userId),
-	],
-);
-
-export const userIntegrationEvents = pgTable(
-	'user_integration_events',
+export const integrationStatus = pgTable(
+	'integration_status',
 	{
 		id: text('id')
 			.primaryKey()
@@ -302,14 +290,24 @@ export const userIntegrationEvents = pgTable(
 		userId: text('user_id')
 			.notNull()
 			.references(() => user.id, { onDelete: 'cascade' }),
-		type: userIntegrationEventTypeEnum('type').notNull(),
-		createdAt: timestamp('created_at', { withTimezone: true })
+		phase: integrationPhaseEnum('phase').notNull(),
+		occurredAt: timestamp('occurred_at', { withTimezone: true })
 			.notNull()
 			.defaultNow(),
+		issueDeadlineAt: timestamp('issue_deadline_at', { withTimezone: true }),
+		prDeadlineAt: timestamp('pr_deadline_at', { withTimezone: true }),
+		greptileScore: integer('greptile_score'),
+		releaseReason: integrationReleaseReasonEnum('release_reason'),
+		metadata: jsonb('metadata').$type<Record<string, unknown>>(),
 	},
 	(table) => [
-		index('user_integration_events_integration_id_idx').on(table.integrationId),
-		index('user_integration_events_created_at_idx').on(table.createdAt),
+		index('integration_status_integration_id_idx').on(table.integrationId),
+		index('integration_status_user_id_idx').on(table.userId),
+		index('integration_status_occurred_at_idx').on(table.occurredAt),
+		index('integration_status_integration_occurred_idx').on(
+			table.integrationId,
+			table.occurredAt,
+		),
 	],
 );
 
@@ -387,8 +385,7 @@ export const integrationsRelations = relations(integrations, ({ many }) => ({
 	integrationTags: many(integrationTags),
 	operations: many(operations),
 	triggers: many(triggers),
-	userIntegrations: many(userIntegrations),
-	userIntegrationEvents: many(userIntegrationEvents),
+	statuses: many(integrationStatus),
 }));
 
 export const integrationUrlsRelations = relations(
@@ -401,29 +398,15 @@ export const integrationUrlsRelations = relations(
 	}),
 );
 
-export const userIntegrationsRelations = relations(
-	userIntegrations,
+export const integrationStatusRelations = relations(
+	integrationStatus,
 	({ one }) => ({
 		integration: one(integrations, {
-			fields: [userIntegrations.integrationId],
+			fields: [integrationStatus.integrationId],
 			references: [integrations.id],
 		}),
 		user: one(user, {
-			fields: [userIntegrations.userId],
-			references: [user.id],
-		}),
-	}),
-);
-
-export const userIntegrationEventsRelations = relations(
-	userIntegrationEvents,
-	({ one }) => ({
-		integration: one(integrations, {
-			fields: [userIntegrationEvents.integrationId],
-			references: [integrations.id],
-		}),
-		user: one(user, {
-			fields: [userIntegrationEvents.userId],
+			fields: [integrationStatus.userId],
 			references: [user.id],
 		}),
 	}),
@@ -484,11 +467,8 @@ export type NewOperation = typeof operations.$inferInsert;
 export type TriggerRow = typeof triggers.$inferSelect;
 export type NewTrigger = typeof triggers.$inferInsert;
 
-export type UserIntegration = typeof userIntegrations.$inferSelect;
-export type NewUserIntegration = typeof userIntegrations.$inferInsert;
-
-export type UserIntegrationEvent = typeof userIntegrationEvents.$inferSelect;
-export type NewUserIntegrationEvent = typeof userIntegrationEvents.$inferInsert;
+export type IntegrationStatusRow = typeof integrationStatus.$inferSelect;
+export type NewIntegrationStatusRow = typeof integrationStatus.$inferInsert;
 
 export type Tag = typeof tags.$inferSelect;
 export type NewTag = typeof tags.$inferInsert;

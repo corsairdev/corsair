@@ -14,14 +14,21 @@ export function IntegrationAuthSchemeList({
 	emptyMessage: string;
 }) {
 	if (items.length === 0) {
-		return <p className="mt-3 text-sm text-muted-foreground">{emptyMessage}</p>;
+		return (
+			<p className="px-4 py-4 font-[family-name:var(--font-landing-mono)] text-[12px] text-[#1c1c1c66] sm:px-6">
+				{emptyMessage}
+			</p>
+		);
 	}
 
 	return (
-		<ul className="mt-1 divide-y divide-border/50">
+		<ul className="m-0 divide-y divide-[#1c1c1c0d] p-0">
 			{items.map((item) => (
-				<li key={item.id} className="py-3.5 first:pt-2">
-					<span className="text-sm font-medium">
+				<li
+					key={item.id}
+					className="px-4 py-3 sm:px-6"
+				>
+					<span className="text-[15px] font-medium text-[#1c1c1c]">
 						{formatAuthModeLabel(item.mode, item.name)}
 					</span>
 				</li>

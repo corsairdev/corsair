@@ -44,8 +44,9 @@ export function IntegrationLinkLabels({
 	return (
 		<div
 			className={cn(
-				'flex items-center gap-2',
-				layout === 'stacked' ? 'mt-3' : 'ml-2 inline-flex',
+				layout === 'stacked'
+					? 'flex flex-col items-start gap-2'
+					: 'ml-2 inline-flex items-center gap-2',
 			)}
 		>
 			{content}

@@ -2,8 +2,6 @@
 
 import { KeyIcon, LightningIcon, PlugsIcon } from '@phosphor-icons/react';
 
-import { Badge } from '@/components/ui/badge';
-
 export function IntegrationTitleStats({
 	operationCount,
 	triggerCount,
@@ -14,19 +12,19 @@ export function IntegrationTitleStats({
 	authSchemeCount: number;
 }) {
 	return (
-		<span className="inline-flex items-center gap-1.5">
-			<Badge variant="outline" className="gap-1 font-mono">
+		<span className="inline-flex flex-wrap items-center gap-x-3 font-[family-name:var(--font-landing-mono)] text-[11px] text-[#1c1c1c66]">
+			<span className="inline-flex items-center gap-1">
 				<PlugsIcon size={12} aria-hidden />
-				{operationCount}
-			</Badge>
-			<Badge variant="outline" className="gap-1 font-mono">
+				{operationCount} ops
+			</span>
+			<span className="inline-flex items-center gap-1">
 				<LightningIcon size={12} aria-hidden />
-				{triggerCount}
-			</Badge>
-			<Badge variant="outline" className="gap-1 font-mono">
+				{triggerCount} trig
+			</span>
+			<span className="inline-flex items-center gap-1">
 				<KeyIcon size={12} aria-hidden />
-				{authSchemeCount}
-			</Badge>
+				{authSchemeCount} auth
+			</span>
 		</span>
 	);
 }
