@@ -1,0 +1,8044 @@
+---
+title: API
+description: "API reference for Supabase: every `supabase.api.*` operation with input and output types."
+---
+
+Every `supabase.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Advisors
+
+### getPerformanceAdvisors
+
+`advisors.getPerformanceAdvisors`
+
+Get performance advisors
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.advisors.getPerformanceAdvisors({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSecurityAdvisors
+
+`advisors.getSecurityAdvisors`
+
+Get security advisors
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.advisors.getSecurityAdvisors({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Analytics
+
+### getProjectLogs
+
+`analytics.getProjectLogs`
+
+Get project logs
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.analytics.getProjectLogs({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Auth
+
+### createProjectSigningKey
+
+`auth.createProjectSigningKey`
+
+Create a project signing key
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.auth.createProjectSigningKey({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createSsoProvider
+
+`auth.createSsoProvider`
+
+Create an SSO provider
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.auth.createSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createThirdPartyAuthIntegration
+
+`auth.createThirdPartyAuthIntegration`
+
+Create a third-party auth integration
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.auth.createThirdPartyAuthIntegration({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteSsoProvider
+
+`auth.deleteSsoProvider`
+
+Remove an SSO provider
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.auth.deleteSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+  providerId: 'provider_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | Yes | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteThirdPartyAuthIntegration
+
+`auth.deleteThirdPartyAuthIntegration`
+
+Delete a third-party auth integration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.auth.deleteThirdPartyAuthIntegration({
+  ref: 'abcdefghijklmnopqrst',
+  tpaId: 'tpa_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | Yes | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getLegacySigningKey
+
+`auth.getLegacySigningKey`
+
+Get legacy signing key
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.auth.getLegacySigningKey({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectAuthConfig
+
+`auth.getProjectAuthConfig`
+
+Get project auth config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.auth.getProjectAuthConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectSigningKeys
+
+`auth.getProjectSigningKeys`
+
+Get project signing keys
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.auth.getProjectSigningKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSsoProvider
+
+`auth.getSsoProvider`
+
+Get an SSO provider
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.auth.getSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+  providerId: 'provider_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | Yes | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getThirdPartyIntegration
+
+`auth.getThirdPartyIntegration`
+
+Get a third-party auth integration
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.auth.getThirdPartyIntegration({
+  ref: 'abcdefghijklmnopqrst',
+  tpaId: 'tpa_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | Yes | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listSsoProviders
+
+`auth.listSsoProviders`
+
+List SSO providers
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.auth.listSsoProviders({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listThirdPartyAuthIntegrations
+
+`auth.listThirdPartyAuthIntegrations`
+
+List third-party auth integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.auth.listThirdPartyAuthIntegrations({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectAuthConfig
+
+`auth.updateProjectAuthConfig`
+
+Update project auth config
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.auth.updateProjectAuthConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSsoProvider
+
+`auth.updateSsoProvider`
+
+Update an SSO provider
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.auth.updateSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+  providerId: 'provider_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | Yes | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Database
+
+### applyMigration
+
+`database.applyMigration`
+
+Apply a database migration
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.applyMigration({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createLoginRole
+
+`database.createLoginRole`
+
+Create a CLI login role
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.createLoginRole({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createReadReplica
+
+`database.createReadReplica`
+
+Set up a read replica
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.createReadReplica({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteLoginRoles
+
+`database.deleteLoginRoles`
+
+Delete CLI login roles
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.database.deleteLoginRoles({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### disableProjectReadonly
+
+`database.disableProjectReadonly`
+
+Temporarily disable project read-only mode
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.disableProjectReadonly({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### enableDatabaseWebhooks
+
+`database.enableDatabaseWebhooks`
+
+Enable database webhooks
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.enableDatabaseWebhooks({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### generateTypescriptTypes
+
+`database.generateTypescriptTypes`
+
+Generate TypeScript database types
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.generateTypescriptTypes({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDatabaseMetadata
+
+`database.getDatabaseMetadata`
+
+Get database metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getDatabaseMetadata({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getJitAccessConfig
+
+`database.getJitAccessConfig`
+
+Get JIT access config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getJitAccessConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getMigration
+
+`database.getMigration`
+
+Get a migration
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getMigration({
+  ref: 'abcdefghijklmnopqrst',
+  version: '20240101000000',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | Yes | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectPgbouncerConfig
+
+`database.getProjectPgbouncerConfig`
+
+Get project PgBouncer config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getProjectPgbouncerConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectPostgresConfig
+
+`database.getProjectPostgresConfig`
+
+Get project postgres config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getProjectPostgresConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectReadonlyModeStatus
+
+`database.getProjectReadonlyModeStatus`
+
+Get project read-only mode status
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getProjectReadonlyModeStatus({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectSslEnforcementConfig
+
+`database.getProjectSslEnforcementConfig`
+
+Get project SSL enforcement config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getProjectSslEnforcementConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectSupavisorConfig
+
+`database.getProjectSupavisorConfig`
+
+Get project Supavisor config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getProjectSupavisorConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSqlSnippet
+
+`database.getSqlSnippet`
+
+Get a SQL snippet
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getSqlSnippet({
+  id: 'resource_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getTableSchemas
+
+`database.getTableSchemas`
+
+Get database table schemas
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.getTableSchemas({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listBackups
+
+`database.listBackups`
+
+List project database backups
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.listBackups({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listMigrationHistory
+
+`database.listMigrationHistory`
+
+List migration history
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.listMigrationHistory({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listSqlSnippets
+
+`database.listSqlSnippets`
+
+List SQL snippets
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.listSqlSnippets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listTables
+
+`database.listTables`
+
+List database tables
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.listTables({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### patchMigration
+
+`database.patchMigration`
+
+Patch a migration
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.patchMigration({
+  ref: 'abcdefghijklmnopqrst',
+  version: '20240101000000',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | Yes | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeReadReplica
+
+`database.removeReadReplica`
+
+Remove a read replica
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.database.removeReadReplica({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### restorePitrBackup
+
+`database.restorePitrBackup`
+
+Restore database PITR backup
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.database.restorePitrBackup({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runReadOnlyQuery
+
+`database.runReadOnlyQuery`
+
+Execute a read-only database query
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.runReadOnlyQuery({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### runSqlQuery
+
+`database.runSqlQuery`
+
+Execute a project database query
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.runSqlQuery({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### selectFromTable
+
+`database.selectFromTable`
+
+Select rows from a database table
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.database.selectFromTable({
+  ref: 'abcdefghijklmnopqrst',
+  table: 'todos',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDatabasePassword
+
+`database.updateDatabasePassword`
+
+Update database password
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.updateDatabasePassword({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateJitAccessConfig
+
+`database.updateJitAccessConfig`
+
+Update JIT access config
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.updateJitAccessConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectPostgresConfig
+
+`database.updateProjectPostgresConfig`
+
+Update project postgres config
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.updateProjectPostgresConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectSupavisorConfig
+
+`database.updateProjectSupavisorConfig`
+
+Update project Supavisor config
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.updateProjectSupavisorConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSslEnforcementConfig
+
+`database.updateSslEnforcementConfig`
+
+Update SSL enforcement config
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.updateSslEnforcementConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### upsertMigration
+
+`database.upsertMigration`
+
+Upsert a migration
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.database.upsertMigration({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Domains
+
+### activateCustomHostname
+
+`domains.activateCustomHostname`
+
+Activate a configured custom hostname
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.domains.activateCustomHostname({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### activateVanitySubdomain
+
+`domains.activateVanitySubdomain`
+
+Activate a vanity subdomain for a project
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.domains.activateVanitySubdomain({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### checkVanitySubdomainAvailability
+
+`domains.checkVanitySubdomainAvailability`
+
+Check vanity subdomain availability
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.domains.checkVanitySubdomainAvailability({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteCustomHostnameConfig
+
+`domains.deleteCustomHostnameConfig`
+
+Delete custom hostname configuration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.domains.deleteCustomHostnameConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectVanitySubdomain
+
+`domains.deleteProjectVanitySubdomain`
+
+Delete a project vanity subdomain
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.domains.deleteProjectVanitySubdomain({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectCustomHostnameConfig
+
+`domains.getProjectCustomHostnameConfig`
+
+Get a project custom hostname configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.domains.getProjectCustomHostnameConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getVanitySubdomainConfig
+
+`domains.getVanitySubdomainConfig`
+
+Get current vanity subdomain config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.domains.getVanitySubdomainConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectCustomHostname
+
+`domains.updateProjectCustomHostname`
+
+Update project custom hostname
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.domains.updateProjectCustomHostname({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### verifyCustomHostnameDns
+
+`domains.verifyCustomHostnameDns`
+
+Reverify custom hostname DNS
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.domains.verifyCustomHostnameDns({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Edge Functions
+
+### createFunction
+
+`edgeFunctions.createFunction`
+
+Create an Edge Function
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.edgeFunctions.createFunction({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteFunction
+
+`edgeFunctions.deleteFunction`
+
+Delete an Edge Function
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.edgeFunctions.deleteFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | Yes | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deployFunction
+
+`edgeFunctions.deployFunction`
+
+Deploy an Edge Function
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.edgeFunctions.deployFunction({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getFunction
+
+`edgeFunctions.getFunction`
+
+Retrieve an Edge Function
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.edgeFunctions.getFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | Yes | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getFunctionBody
+
+`edgeFunctions.getFunctionBody`
+
+Retrieve an Edge Function body
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.edgeFunctions.getFunctionBody({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | Yes | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### invokeEdgeFunction
+
+`edgeFunctions.invokeEdgeFunction`
+
+Invoke an Edge Function
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.edgeFunctions.invokeEdgeFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+  projectApiKey: 'project_api_key',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | Yes | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listFunctions
+
+`edgeFunctions.listFunctions`
+
+List Edge Functions
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.edgeFunctions.listFunctions({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateFunction
+
+`edgeFunctions.updateFunction`
+
+Update an Edge Function
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.edgeFunctions.updateFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | Yes | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateFunctions
+
+`edgeFunctions.updateFunctions`
+
+Bulk update Edge Functions
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.edgeFunctions.updateFunctions({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Environments
+
+### countActionRuns
+
+`environments.countActionRuns`
+
+Count action runs
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.environments.countActionRuns({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createDatabaseBranch
+
+`environments.createDatabaseBranch`
+
+Create a database branch
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.environments.createDatabaseBranch({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteDatabaseBranch
+
+`environments.deleteDatabaseBranch`
+
+Delete a database branch
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.environments.deleteDatabaseBranch({
+  branchId: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | Yes | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### disablePreviewBranching
+
+`environments.disablePreviewBranching`
+
+Disable preview branching
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.environments.disablePreviewBranching({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActionRun
+
+`environments.getActionRun`
+
+Get action run status
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.environments.getActionRun({
+  ref: 'abcdefghijklmnopqrst',
+  runId: 'run_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | Yes | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getActionRunLogs
+
+`environments.getActionRunLogs`
+
+Get action run logs
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.environments.getActionRunLogs({
+  ref: 'abcdefghijklmnopqrst',
+  runId: 'run_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | Yes | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getBranch
+
+`environments.getBranch`
+
+Get a database branch by name
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.environments.getBranch({
+  ref: 'abcdefghijklmnopqrst',
+  name: 'resource-name',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getDatabaseBranchConfig
+
+`environments.getDatabaseBranchConfig`
+
+Get database branch config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.environments.getDatabaseBranchConfig({
+  branchId: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | Yes | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listDatabaseBranches
+
+`environments.listDatabaseBranches`
+
+List database branches
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.environments.listDatabaseBranches({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### pushBranch
+
+`environments.pushBranch`
+
+Push a database branch
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.environments.pushBranch({
+  branchId: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | Yes | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### resetDatabaseBranch
+
+`environments.resetDatabaseBranch`
+
+Reset a database branch
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.environments.resetDatabaseBranch({
+  branchId: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | Yes | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateDatabaseBranchConfig
+
+`environments.updateDatabaseBranchConfig`
+
+Update database branch config
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.environments.updateDatabaseBranchConfig({
+  branchId: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | Yes | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Oauth
+
+### authorizeUserThroughOauth
+
+`oauth.authorizeUserThroughOauth`
+
+Generate a Supabase OAuth authorization URL
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.oauth.authorizeUserThroughOauth({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### exchangeOauthToken
+
+`oauth.exchangeOauthToken`
+
+Exchange an OAuth authorization code or refresh token
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.oauth.exchangeOauthToken({
+  body: {
+    grant_type: 'authorization_code',
+    code: 'authorization_code',
+    client_id: 'client_id',
+    client_secret: 'client_secret',
+    redirect_uri: 'https://example.com/callback',
+  },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Organizations
+
+### createOrganization
+
+`organizations.createOrganization`
+
+Create an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.organizations.createOrganization({
+  name: 'Demo Organization',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganization
+
+`organizations.getOrganization`
+
+Get organization information
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.organizations.getOrganization({
+  slug: 'resource-slug',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listAllOrganizations
+
+`organizations.listAllOrganizations`
+
+List organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.organizations.listAllOrganizations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listOrganizationMembers
+
+`organizations.listOrganizationMembers`
+
+List organization members
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.organizations.listOrganizationMembers({
+  slug: 'resource-slug',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Projects
+
+### createProject
+
+`projects.createProject`
+
+Create a project
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.projects.createProject({
+  name: 'demo-project',
+  organization_id: 'organization_id',
+  db_pass: 'database_password',
+  region: 'us-east-1',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProject
+
+`projects.deleteProject`
+
+Delete a project
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.projects.deleteProject({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAvailableRegions
+
+`projects.getAvailableRegions`
+
+Get available project regions
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getAvailableRegions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getHealth
+
+`projects.getHealth`
+
+Get project API health status
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getHealth({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProject
+
+`projects.getProject`
+
+Get a project
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getProject({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectNetworkBans
+
+`projects.getProjectNetworkBans`
+
+Retrieve project network bans
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getProjectNetworkBans({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectNetworkRestrictions
+
+`projects.getProjectNetworkRestrictions`
+
+Get project network restrictions
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getProjectNetworkRestrictions({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectServiceHealthStatus
+
+`projects.getProjectServiceHealthStatus`
+
+Get project service health status
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getProjectServiceHealthStatus({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectUpgradeEligibility
+
+`projects.getProjectUpgradeEligibility`
+
+Get project upgrade eligibility
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getProjectUpgradeEligibility({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectUpgradeStatus
+
+`projects.getProjectUpgradeStatus`
+
+Get project upgrade status
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.getProjectUpgradeStatus({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listAllProjects
+
+`projects.listAllProjects`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.projects.listAllProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | No | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### patchNetworkRestrictions
+
+`projects.patchNetworkRestrictions`
+
+Patch project network restrictions
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.projects.patchNetworkRestrictions({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeNetworkBans
+
+`projects.removeNetworkBans`
+
+Remove project network bans
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.projects.removeNetworkBans({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProject
+
+`projects.updateProject`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.projects.updateProject({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectNetworkRestrictions
+
+`projects.updateProjectNetworkRestrictions`
+
+Apply project network restrictions
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.projects.updateProjectNetworkRestrictions({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### upgradeProjectPostgresVersion
+
+`projects.upgradeProjectPostgresVersion`
+
+Upgrade project PostgreSQL version
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.projects.upgradeProjectPostgresVersion({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Rest
+
+### getProjectPostgrestConfig
+
+`rest.getProjectPostgrestConfig`
+
+Get project PostgREST config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.rest.getProjectPostgrestConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectPostgrestConfig
+
+`rest.updateProjectPostgrestConfig`
+
+Update project PostgREST config
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.rest.updateProjectPostgrestConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Secrets
+
+### createApiKey
+
+`secrets.createApiKey`
+
+Create a project API key
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.secrets.createApiKey({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createBulkSecrets
+
+`secrets.createBulkSecrets`
+
+Create multiple project secrets
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.secrets.createBulkSecrets({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteApiKey
+
+`secrets.deleteApiKey`
+
+Delete a project API key
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.secrets.deleteApiKey({
+  ref: 'abcdefghijklmnopqrst',
+  id: 'resource_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteSecrets
+
+`secrets.deleteSecrets`
+
+Delete multiple project secrets
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supabase.api.secrets.deleteSecrets({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectApiKey
+
+`secrets.getProjectApiKey`
+
+Get a project API key
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.secrets.getProjectApiKey({
+  ref: 'abcdefghijklmnopqrst',
+  id: 'resource_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectApiKeys
+
+`secrets.getProjectApiKeys`
+
+Get project API keys
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.secrets.getProjectApiKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectLegacyApiKeys
+
+`secrets.getProjectLegacyApiKeys`
+
+Get project legacy API keys status
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.secrets.getProjectLegacyApiKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectPgsodiumConfig
+
+`secrets.getProjectPgsodiumConfig`
+
+Get project pgsodium config
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.secrets.getProjectPgsodiumConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listSecrets
+
+`secrets.listSecrets`
+
+List project secrets
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.secrets.listSecrets({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateApiKey
+
+`secrets.updateApiKey`
+
+Update a project API key
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.secrets.updateApiKey({
+  ref: 'abcdefghijklmnopqrst',
+  id: 'resource_id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updatePgsodiumConfig
+
+`secrets.updatePgsodiumConfig`
+
+Update pgsodium root key
+
+**Risk:** `destructive`
+
+```ts
+await corsair.supabase.api.secrets.updatePgsodiumConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectLegacyApiKeys
+
+`secrets.updateProjectLegacyApiKeys`
+
+Update project legacy API keys
+
+**Risk:** `write`
+
+```ts
+await corsair.supabase.api.secrets.updateProjectLegacyApiKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Storage
+
+### getResumableUploadBaseOptions
+
+`storage.getResumableUploadBaseOptions`
+
+Get TUS resumable upload base options
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.storage.getResumableUploadBaseOptions({
+  ref: 'abcdefghijklmnopqrst',
+  projectApiKey: 'project_api_key',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getResumableUploadOptions
+
+`storage.getResumableUploadOptions`
+
+Get TUS resumable upload options
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.storage.getResumableUploadOptions({
+  ref: 'abcdefghijklmnopqrst',
+  uploadId: 'upload_id',
+  projectApiKey: 'project_api_key',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | Yes | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### handleResumableUploadSignOptions
+
+`storage.handleResumableUploadSignOptions`
+
+Handle TUS resumable upload sign options
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.storage.handleResumableUploadSignOptions({
+  ref: 'abcdefghijklmnopqrst',
+  projectApiKey: 'project_api_key',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### handleResumableUploadSignOptionsWithId
+
+`storage.handleResumableUploadSignOptionsWithId`
+
+Handle TUS resumable upload sign options with ID
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.storage.handleResumableUploadSignOptionsWithId({
+  ref: 'abcdefghijklmnopqrst',
+  uploadId: 'upload_id',
+  projectApiKey: 'project_api_key',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | Yes | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listBuckets
+
+`storage.listBuckets`
+
+List storage buckets
+
+**Risk:** `read`
+
+```ts
+await corsair.supabase.api.storage.listBuckets({
+  ref: 'abcdefghijklmnopqrst',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `version` | `string` | No | — |
+| `runId` | `string` | No | — |
+| `tpaId` | `string` | No | — |
+| `providerId` | `string` | No | — |
+| `branchId` | `string` | No | — |
+| `functionSlug` | `string` | No | — |
+| `uploadId` | `string` | No | — |
+| `schema` | `string` | No | — |
+| `table` | `string` | No | — |
+| `columns` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `mediaType` | `string` | No | — |
+| `baseUrl` | `string` | No | — |
+| `projectApiKey` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`

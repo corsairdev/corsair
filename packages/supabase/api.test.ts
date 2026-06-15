@@ -1,0 +1,507 @@
+import { request } from 'corsair/http';
+import { makeSupabaseRequest } from './client';
+import type { SupabaseContext } from './index';
+import { supabase, supabaseEndpointSchemas } from './index';
+
+jest.mock('corsair/http', () => {
+	const original = jest.requireActual('corsair/http');
+	return {
+		...original,
+		request: jest.fn(),
+	};
+});
+
+const mockRequest = request as jest.Mock;
+
+function countLeaves(tree: Record<string, unknown>): number {
+	return Object.values(tree).reduce<number>((count, value) => {
+		if (typeof value === 'function') return count + 1;
+		if (value && typeof value === 'object') {
+			return count + countLeaves(value as Record<string, unknown>);
+		}
+		return count;
+	}, 0);
+}
+
+const mockCtx = {
+	key: 'test-token',
+	$getAccountId: () => 'test-account-id',
+	options: {},
+	logEvent: jest.fn(),
+	db: {},
+} as unknown as SupabaseContext;
+
+describe('Supabase plugin shape', () => {
+	it('exposes every listed operation with schemas and no webhooks', () => {
+		const plugin = supabase();
+		const endpoints = plugin.endpoints as Record<string, unknown>;
+
+		expect(countLeaves(endpoints)).toBe(121);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(121);
+		expect(Object.keys(supabaseEndpointSchemas)).toHaveLength(121);
+		expect(Object.keys(plugin.schema?.entities ?? {})).toEqual([
+			'projects',
+			'organizations',
+			'functions',
+			'branches',
+			'buckets',
+			'apiKeys',
+			'migrations',
+		]);
+		expect(plugin.webhooks).toEqual({});
+		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: '' })).toBe(
+			false,
+		);
+	});
+
+	it('supports api key and oauth auth configuration', () => {
+		const plugin = supabase({ authType: 'oauth_2' });
+
+		expect(plugin.options?.authType).toBe('oauth_2');
+		expect(plugin.authConfig).toEqual({
+			api_key: {},
+			oauth_2: {},
+		});
+		expect(plugin.oauthConfig).toMatchObject({
+			providerName: 'Supabase',
+			authUrl: 'https://api.supabase.com/v1/oauth/authorize',
+			tokenUrl: 'https://api.supabase.com/v1/oauth/token',
+			scopes: ['all'],
+			requiresRegisteredRedirect: true,
+		});
+	});
+});
+
+describe('Supabase request client', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({ ok: true });
+	});
+
+	it('sends bearer auth and JSON bodies to the Management API', async () => {
+		await makeSupabaseRequest('/v1/projects', 'test-token', {
+			method: 'POST',
+			body: { name: 'demo' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://api.supabase.com',
+				TOKEN: 'test-token',
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer test-token',
+					'Content-Type': 'application/json',
+				}),
+			}),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/v1/projects',
+				body: { name: 'demo' },
+				mediaType: 'application/json; charset=utf-8',
+			}),
+		);
+	});
+
+	it('keeps query params for non-GET methods and supports HEAD and OPTIONS', async () => {
+		await makeSupabaseRequest('/v1/projects/ref/actions', 'test-token', {
+			method: 'HEAD',
+			query: { limit: 10 },
+		});
+		await makeSupabaseRequest('/v1/upload/resumable', 'test-token', {
+			method: 'OPTIONS',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'HEAD',
+			query: { limit: 10 },
+		});
+		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({
+			method: 'OPTIONS',
+		});
+	});
+});
+
+describe('Supabase endpoints', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({ ok: true });
+	});
+
+	it('maps representative operations to official API routes', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				listAllProjects: (ctx: SupabaseContext, input: {}) => Promise<unknown>;
+				getProject: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+			};
+			database: {
+				applyMigration: (
+					ctx: SupabaseContext,
+					input: { ref: string; body: { query: string } },
+				) => Promise<unknown>;
+			};
+			edgeFunctions: {
+				getFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string },
+				) => Promise<unknown>;
+			};
+			secrets: {
+				getProjectApiKey: (
+					ctx: SupabaseContext,
+					input: { ref: string; id: string },
+				) => Promise<unknown>;
+			};
+			oauth: {
+				exchangeOauthToken: (
+					ctx: SupabaseContext,
+					input: {
+						body: {
+							grant_type: string;
+							code: string;
+							client_id: string;
+							client_secret: string;
+							redirect_uri: string;
+						};
+					},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.projects.listAllProjects(mockCtx, {});
+		await endpoints.projects.getProject(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+		await endpoints.database.applyMigration(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			body: { query: 'create table todos(id int);' },
+		});
+		await endpoints.edgeFunctions.getFunction(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			functionSlug: 'hello-world',
+		});
+		await endpoints.secrets.getProjectApiKey(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			id: 'key-id',
+		});
+		await endpoints.oauth.exchangeOauthToken(mockCtx, {
+			body: {
+				grant_type: 'authorization_code',
+				code: 'auth-code',
+				client_id: 'client-id',
+				client_secret: 'client-secret',
+				redirect_uri: 'https://example.com/callback',
+			},
+		});
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ method: 'GET', url: '/v1/projects' }),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/v1/projects/abcdefghijklmnopqrst',
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/v1/projects/abcdefghijklmnopqrst/database/migrations',
+					body: { query: 'create table todos(id int);' },
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/v1/projects/abcdefghijklmnopqrst/functions/hello-world',
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/v1/projects/abcdefghijklmnopqrst/api-keys/key-id',
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/v1/oauth/token',
+					body: expect.stringContaining('grant_type=authorization_code'),
+					mediaType: 'application/x-www-form-urlencoded',
+				}),
+			]),
+		);
+		expect(mockRequest.mock.calls.at(-1)?.[1].body).toContain(
+			'client_secret=client-secret',
+		);
+	});
+
+	it('routes project-hosted APIs through the project base URL', async () => {
+		const plugin = supabase({
+			key: 'test-token',
+			projectApiKey: 'project-token',
+		});
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			edgeFunctions: {
+				invokeEdgeFunction: (
+					ctx: SupabaseContext,
+					input: {
+						ref: string;
+						functionSlug: string;
+						body: { hello: string };
+						projectApiKey: string;
+					},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.edgeFunctions.invokeEdgeFunction(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			functionSlug: 'hello-world',
+			body: { hello: 'world' },
+			projectApiKey: 'project-token',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://abcdefghijklmnopqrst.supabase.co',
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer project-token',
+					apikey: 'project-token',
+				}),
+			}),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/functions/v1/hello-world',
+				body: { hello: 'world' },
+			}),
+		);
+	});
+
+	it('keeps non-path fields in auto-built request bodies', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				createProject: (
+					ctx: SupabaseContext,
+					input: {
+						name: string;
+						organization_id: string;
+						db_pass: string;
+						region: string;
+					},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.projects.createProject(mockCtx, {
+			name: 'demo-project',
+			organization_id: 'org_123',
+			db_pass: 'db-password',
+			region: 'us-east-1',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/v1/projects',
+			body: {
+				name: 'demo-project',
+				organization_id: 'org_123',
+				db_pass: 'db-password',
+				region: 'us-east-1',
+			},
+		});
+	});
+
+	it('distinguishes project health from service health', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				getHealth: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+				getProjectServiceHealthStatus: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.projects.getHealth(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+		await endpoints.projects.getProjectServiceHealthStatus(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/projects/abcdefghijklmnopqrst/health',
+			query: {},
+		});
+		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/projects/abcdefghijklmnopqrst/health',
+			query: { services: 'auth,db,pooler,realtime,rest,storage' },
+		});
+	});
+
+	it('caches project and function reads when database clients exist', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				listAllProjects: (ctx: SupabaseContext, input: {}) => Promise<unknown>;
+			};
+			edgeFunctions: {
+				getFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string },
+				) => Promise<unknown>;
+			};
+		};
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				projects: { upsertByEntityId: jest.fn() },
+				functions: { upsertByEntityId: jest.fn() },
+			},
+		} as unknown as SupabaseContext;
+
+		mockRequest
+			.mockResolvedValueOnce([
+				{ id: 'project-id', ref: 'abcdefghijklmnopqrst', name: 'Demo' },
+			])
+			.mockResolvedValueOnce({
+				id: 'function-id',
+				slug: 'hello-world',
+				name: 'Hello World',
+			});
+
+		await endpoints.projects.listAllProjects(ctxWithDb, {});
+		await endpoints.edgeFunctions.getFunction(ctxWithDb, {
+			ref: 'abcdefghijklmnopqrst',
+			functionSlug: 'hello-world',
+		});
+
+		expect(ctxWithDb.db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'abcdefghijklmnopqrst',
+			expect.objectContaining({ name: 'Demo' }),
+		);
+		expect(ctxWithDb.db.functions.upsertByEntityId).toHaveBeenCalledWith(
+			'hello-world',
+			expect.objectContaining({ name: 'Hello World' }),
+		);
+	});
+
+	it('requires a project API key for project-hosted APIs', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			edgeFunctions: {
+				invokeEdgeFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string; body: { hello: string } },
+				) => Promise<unknown>;
+			};
+		};
+
+		await expect(
+			endpoints.edgeFunctions.invokeEdgeFunction(mockCtx, {
+				ref: 'abcdefghijklmnopqrst',
+				functionSlug: 'hello-world',
+				body: { hello: 'world' },
+			}),
+		).rejects.toThrow('projectApiKey is required');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('defaults API key reads to unrevealed responses', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			secrets: {
+				getProjectApiKeys: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.secrets.getProjectApiKeys(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/projects/abcdefghijklmnopqrst/api-keys',
+			query: { reveal: false },
+		});
+	});
+
+	it('rejects unsafe SQL helper identifiers', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			database: {
+				getTableSchemas: (
+					ctx: SupabaseContext,
+					input: { ref: string; schema: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await expect(
+			endpoints.database.getTableSchemas(mockCtx, {
+				ref: 'abcdefghijklmnopqrst',
+				schema: "public'; drop table users; --",
+			}),
+		).rejects.toThrow('invalid SQL identifier');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('builds safe read-only SQL helper bodies', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			database: {
+				selectFromTable: (
+					ctx: SupabaseContext,
+					input: {
+						ref: string;
+						schema: string;
+						table: string;
+						columns: string[];
+						limit: number;
+						offset: number;
+					},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.database.selectFromTable(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+			schema: 'public',
+			table: 'todos',
+			columns: ['id', 'name'],
+			limit: 5,
+			offset: 10,
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/v1/projects/abcdefghijklmnopqrst/database/query/read-only',
+			body: {
+				query: 'select "id", "name" from "public"."todos" limit 5 offset 10',
+			},
+		});
+	});
+});

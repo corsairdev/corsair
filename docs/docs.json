@@ -605,6 +605,15 @@
                 ]
               },
               {
+                "group": "Supabase",
+                "pages": [
+                  "plugins/supabase/overview",
+                  "plugins/supabase/get-credentials",
+                  "plugins/supabase/api",
+                  "plugins/supabase/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
