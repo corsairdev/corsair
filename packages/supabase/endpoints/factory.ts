@@ -3,7 +3,6 @@ import { logEventFromContext } from 'corsair/core';
 import { makeSupabaseRequest } from '../client';
 import type { SupabaseContext } from '../index';
 import type { SupabaseOperation } from './operations';
-import { supabaseOperations } from './operations';
 import type { SupabaseEndpointInput } from './types';
 
 const PATH_PARAM_KEYS = [
@@ -34,7 +33,7 @@ const BODY_CONTROL_KEYS = new Set([
 	'offset',
 ]);
 
-type SupabaseEndpoint = CorsairEndpoint<
+export type SupabaseEndpoint = CorsairEndpoint<
 	SupabaseContext,
 	SupabaseEndpointInput,
 	unknown
@@ -349,63 +348,51 @@ async function cacheOperationResult(
 	}
 }
 
-function createEndpoint(operation: SupabaseOperation): SupabaseEndpoint {
-	return async (ctx, input = {}) => {
-		if (operation.kind === 'oauthAuthorizeUrl') {
-			const result = oauthAuthorizeUrl(input);
-			await logEventFromContext(
-				ctx,
-				`supabase.${operation.group}.${operation.name}`,
-				safeLogInput(input),
-				'completed',
-			);
-			return result;
-		}
-
-		const projectKey =
-			operation.kind === 'project'
-				? requireProjectApiKey(ctx, input)
-				: undefined;
-		const response = await makeSupabaseRequest(
-			resolvePath(operation.path, input),
-			projectKey ?? ctx.key,
-			{
-				method: operation.method,
-				body: bodyForOperation(operation, input),
-				query: {
-					...operation.defaultQuery,
-					...input.query,
-				},
-				headers:
-					operation.kind === 'project' && projectKey
-						? projectHeaders(projectKey, input)
-						: input.headers,
-				mediaType: input.mediaType ?? operation.mediaType,
-				baseUrl:
-					operation.kind === 'project' ? projectBaseUrl(input) : input.baseUrl,
-			},
-		);
-
-		await cacheOperationResult(ctx, operation, response);
-
+export async function runSupabaseOperation(
+	ctx: SupabaseContext,
+	input: SupabaseEndpointInput,
+	operation: SupabaseOperation,
+) {
+	if (operation.kind === 'oauthAuthorizeUrl') {
+		const result = oauthAuthorizeUrl(input);
 		await logEventFromContext(
 			ctx,
 			`supabase.${operation.group}.${operation.name}`,
 			safeLogInput(input),
 			'completed',
 		);
-		return response;
-	};
-}
+		return result;
+	}
 
-export type EndpointBranch = Record<string, SupabaseEndpoint>;
-
-export function buildSupabaseEndpointBranch(
-	group: SupabaseOperation['group'],
-): EndpointBranch {
-	return Object.fromEntries(
-		supabaseOperations
-			.filter((operation) => operation.group === group)
-			.map((operation) => [operation.name, createEndpoint(operation)]),
+	const projectKey =
+		operation.kind === 'project' ? requireProjectApiKey(ctx, input) : undefined;
+	const response = await makeSupabaseRequest(
+		resolvePath(operation.path, input),
+		projectKey ?? ctx.key,
+		{
+			method: operation.method,
+			body: bodyForOperation(operation, input),
+			query: {
+				...operation.defaultQuery,
+				...input.query,
+			},
+			headers:
+				operation.kind === 'project' && projectKey
+					? projectHeaders(projectKey, input)
+					: input.headers,
+			mediaType: input.mediaType ?? operation.mediaType,
+			baseUrl:
+				operation.kind === 'project' ? projectBaseUrl(input) : input.baseUrl,
+		},
 	);
+
+	await cacheOperationResult(ctx, operation, response);
+
+	await logEventFromContext(
+		ctx,
+		`supabase.${operation.group}.${operation.name}`,
+		safeLogInput(input),
+		'completed',
+	);
+	return response;
 }

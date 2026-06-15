@@ -8,8 +8,6 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -88,13 +86,8 @@ export function supabase<const T extends SupabasePluginOptions>(
 		hooks: options.hooks,
 		endpoints: supabaseEndpointsNested,
 		webhooks: {},
-		endpointMeta: supabaseEndpointMeta satisfies RequiredPluginEndpointMeta<
-			typeof supabaseEndpointsNested
-		>,
-		endpointSchemas:
-			supabaseEndpointSchemas satisfies RequiredPluginEndpointSchemas<
-				typeof supabaseEndpointsNested
-			>,
+		endpointMeta: supabaseEndpointMeta,
+		endpointSchemas: supabaseEndpointSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,

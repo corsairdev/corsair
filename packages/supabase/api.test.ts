@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { request } from 'corsair/http';
 import { makeSupabaseRequest } from './client';
 import type { SupabaseContext } from './index';
@@ -23,6 +25,17 @@ function countLeaves(tree: Record<string, unknown>): number {
 	}, 0);
 }
 
+function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
+	return Object.entries(tree).flatMap(([key, value]) => {
+		const path = prefix ? `${prefix}.${key}` : key;
+		if (typeof value === 'function') return [path];
+		if (value && typeof value === 'object') {
+			return endpointPaths(value as Record<string, unknown>, path);
+		}
+		return [];
+	});
+}
+
 const mockCtx = {
 	key: 'test-token',
 	$getAccountId: () => 'test-account-id',
@@ -32,13 +45,33 @@ const mockCtx = {
 } as unknown as SupabaseContext;
 
 describe('Supabase plugin shape', () => {
+	it('keeps endpoint domain files explicit', () => {
+		const projectsSource = readFileSync(
+			join(__dirname, 'endpoints/projects.ts'),
+			'utf8',
+		);
+		const databaseSource = readFileSync(
+			join(__dirname, 'endpoints/database.ts'),
+			'utf8',
+		);
+
+		expect(projectsSource).toContain('export const getProject');
+		expect(projectsSource).toContain('export const createProject');
+		expect(databaseSource).toContain('export const applyMigration');
+		expect(projectsSource).not.toContain('buildSupabaseEndpointBranch');
+		expect(databaseSource).not.toContain('buildSupabaseEndpointBranch');
+	});
+
 	it('exposes every listed operation with schemas and no webhooks', () => {
 		const plugin = supabase();
 		const endpoints = plugin.endpoints as Record<string, unknown>;
+		const paths = endpointPaths(endpoints).sort();
 
 		expect(countLeaves(endpoints)).toBe(121);
 		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(121);
 		expect(Object.keys(supabaseEndpointSchemas)).toHaveLength(121);
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(paths);
+		expect(Object.keys(supabaseEndpointSchemas).sort()).toEqual(paths);
 		expect(Object.keys(plugin.schema?.entities ?? {})).toEqual([
 			'projects',
 			'organizations',
