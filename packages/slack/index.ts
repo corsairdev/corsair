@@ -837,7 +837,6 @@ export { createSlackEventMatch } from './webhooks/types';
 // Endpoint Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export * from './client';
 export type {
 	AdminConversationsGetTeamsResponse,
 	AdminConversationsSearchResponse,
