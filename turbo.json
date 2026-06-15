@@ -30,6 +30,10 @@
     },
     "//#format": {},
     "lint": {},
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
+    },
     "deploy": {
       "cache": false
     },
