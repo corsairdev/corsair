@@ -95,8 +95,8 @@ export function createCorsairClient(
 	};
 }
 
-export { CorsairClientError } from './types';
 export type {
 	CorsairClientOptions,
 	CorsairManagementClient,
 } from './types';
+export { CorsairClientError } from './types';

@@ -1,9 +1,9 @@
+import { errorHandlers as linearErrorHandlers } from '@corsair-dev/linear';
+import { errorHandlers as slackErrorHandlers } from '@corsair-dev/slack';
 import { ApiError } from '../async-core/ApiError';
 import type { ApiRequestOptions } from '../async-core/ApiRequestOptions';
 import type { ApiResult } from '../async-core/ApiResult';
 import { handleCorsairError } from '../core/errors/handler';
-import { errorHandlers as linearErrorHandlers } from '@corsair-dev/linear';
-import { errorHandlers as slackErrorHandlers } from '@corsair-dev/slack';
 
 function createMockApiError(
 	status: number,

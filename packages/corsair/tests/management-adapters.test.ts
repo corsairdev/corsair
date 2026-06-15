@@ -1,9 +1,9 @@
+import { createCorsair } from '../core';
 import {
 	toExpressHandler,
 	toHonoHandler,
 	toNextJsHandler,
 } from '../core/management';
-import { createCorsair } from '../core';
 import type { CorsairPlugin } from '../core/plugins';
 import { createTestDatabase } from './setup-db';
 

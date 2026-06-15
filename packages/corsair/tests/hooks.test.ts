@@ -1,5 +1,5 @@
+import { makeSlackRequest, slack } from '@corsair-dev/slack';
 import { createCorsair } from '../core';
-import { slack, makeSlackRequest } from '@corsair-dev/slack';
 import { createTestDatabase } from './setup-db';
 
 jest.mock('@corsair-dev/slack', () => {
@@ -24,7 +24,11 @@ describe('Endpoint Hooks', () => {
 		jest.clearAllMocks();
 
 		mockedMakeSlackRequest.mockImplementation(
-			async (endpoint: any, token: any, options: any) => {
+			async (
+				endpoint: any /* MockedFunction callback; full Slack types not needed in test scope */,
+				token: any /* MockedFunction callback; full Slack types not needed in test scope */,
+				options: any /* MockedFunction callback; full Slack types not needed in test scope */,
+			) => {
 				if (options?.body) {
 					capturedRequestBody = { ...options.body };
 				}
@@ -33,11 +37,15 @@ describe('Endpoint Hooks', () => {
 					channel: 'C123456',
 					ts: '1234567890.123456',
 					message: {
-						text: (options?.body as any)?.text || '',
+						text:
+							(
+								options?.body as any
+							) /* MockedFunction callback; full Slack types not needed in test scope */
+								?.text || '',
 						user: 'U123456',
 						type: 'message',
 					},
-				} as any;
+				} as any /* MockedFunction callback; full Slack types not needed in test scope */;
 			},
 		);
 	});
@@ -59,9 +67,15 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx: any, args: any) => {
+									before: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										args: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (args && typeof args === 'object' && 'text' in args) {
-											(args as any).text = modifiedText;
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.text =
+												modifiedText;
 										}
 
 										return { ctx, args };
@@ -100,10 +114,19 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx: any, args: any) => {
+									before: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										args: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (args && typeof args === 'object') {
-											(args as any).channel = modifiedChannel;
-											(args as any).text = modifiedText;
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.channel =
+												modifiedChannel;
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.text =
+												modifiedText;
 										}
 
 										return { ctx, args };
@@ -139,10 +162,19 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx: any, args: any) => {
+									before: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										args: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (args && typeof args === 'object') {
-											(args as any).username = 'custom-bot';
-											(args as any).icon_emoji = ':robot_face:';
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.username =
+												'custom-bot';
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.icon_emoji =
+												':robot_face:';
 										}
 
 										return { args, ctx };
@@ -180,9 +212,12 @@ describe('Endpoint Hooks', () => {
 				},
 			};
 
-			mockedMakeSlackRequest.mockResolvedValueOnce(originalResponse as any);
+			mockedMakeSlackRequest.mockResolvedValueOnce(
+				originalResponse as any /* MockedFunction callback; full Slack types not needed in test scope */,
+			);
 
-			let capturedResponse: any = null;
+			let capturedResponse: any /* MockedFunction callback; full Slack types not needed in test scope */ =
+				null;
 
 			const corsair = createCorsair({
 				kek: '',
@@ -193,10 +228,19 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									after: async (ctx: any, res: any) => {
+									after: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										res: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (res && typeof res === 'object' && 'message' in res) {
-											(res as any).message.text = 'Modified by after hook';
-											(res as any).customField = 'added by hook';
+											(
+												res as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.message.text =
+												'Modified by after hook';
+											(
+												res as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.customField =
+												'added by hook';
 										}
 									},
 								},
@@ -214,8 +258,18 @@ describe('Endpoint Hooks', () => {
 
 			expect(result).not.toBeNull();
 			if (result && typeof result === 'object' && 'message' in result) {
-				expect((result as any).message.text).toBe('Modified by after hook');
-				expect((result as any).customField).toBe('added by hook');
+				expect(
+					(
+						result as any
+					) /* MockedFunction callback; full Slack types not needed in test scope */
+						.message.text,
+				).toBe('Modified by after hook');
+				expect(
+					(
+						result as any
+					) /* MockedFunction callback; full Slack types not needed in test scope */
+						.customField,
+				).toBe('added by hook');
 			}
 		});
 
@@ -231,7 +285,9 @@ describe('Endpoint Hooks', () => {
 				},
 			};
 
-			mockedMakeSlackRequest.mockResolvedValueOnce(originalResponse as any);
+			mockedMakeSlackRequest.mockResolvedValueOnce(
+				originalResponse as any /* MockedFunction callback; full Slack types not needed in test scope */,
+			);
 
 			const corsair = createCorsair({
 				kek: '',
@@ -242,12 +298,24 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									after: async (ctx: any, res: any) => {
+									after: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										res: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (res && typeof res === 'object') {
-											(res as any).channel = 'C999999';
+											(
+												res as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.channel =
+												'C999999';
 											if ('message' in res && res.message) {
-												(res.message as any).text = 'Modified text';
-												(res.message as any).user = 'U999999';
+												(
+													res.message as any
+												) /* MockedFunction callback; full Slack types not needed in test scope */.text =
+													'Modified text';
+												(
+													res.message as any
+												) /* MockedFunction callback; full Slack types not needed in test scope */.user =
+													'U999999';
 											}
 										}
 									},
@@ -266,10 +334,25 @@ describe('Endpoint Hooks', () => {
 
 			expect(result).not.toBeNull();
 			if (result && typeof result === 'object') {
-				expect((result as any).channel).toBe('C999999');
+				expect(
+					(
+						result as any
+					) /* MockedFunction callback; full Slack types not needed in test scope */
+						.channel,
+				).toBe('C999999');
 				if ('message' in result && result.message) {
-					expect((result.message as any).text).toBe('Modified text');
-					expect((result.message as any).user).toBe('U999999');
+					expect(
+						(
+							result.message as any
+						) /* MockedFunction callback; full Slack types not needed in test scope */
+							.text,
+					).toBe('Modified text');
+					expect(
+						(
+							result.message as any
+						) /* MockedFunction callback; full Slack types not needed in test scope */
+							.user,
+					).toBe('U999999');
 				}
 			}
 		});
@@ -288,18 +371,30 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx: any, args: any) => {
+									before: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										args: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										executionOrder.push('before');
 										if (args && typeof args === 'object') {
-											(args as any).text = 'Modified by before hook';
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.text =
+												'Modified by before hook';
 										}
 
 										return { ctx, args };
 									},
-									after: async (ctx: any, res: any) => {
+									after: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										res: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										executionOrder.push('after');
 										if (res && typeof res === 'object') {
-											(res as any).executionOrder = executionOrder.slice();
+											(
+												res as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.executionOrder =
+												executionOrder.slice();
 										}
 									},
 								},
@@ -311,7 +406,11 @@ describe('Endpoint Hooks', () => {
 			});
 
 			mockedMakeSlackRequest.mockImplementation(
-				async (endpoint: any, token: any, options: any) => {
+				async (
+					endpoint: any /* MockedFunction callback; full Slack types not needed in test scope */,
+					token: any /* MockedFunction callback; full Slack types not needed in test scope */,
+					options: any /* MockedFunction callback; full Slack types not needed in test scope */,
+				) => {
 					executionOrder.push('endpoint');
 					if (options?.body) {
 						capturedRequestBody = { ...options.body };
@@ -325,7 +424,7 @@ describe('Endpoint Hooks', () => {
 							user: 'U123456',
 							type: 'message',
 						},
-					} as any;
+					} as any /* MockedFunction callback; full Slack types not needed in test scope */;
 				},
 			);
 
@@ -348,16 +447,28 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx: any, args: any) => {
+									before: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										args: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (args && typeof args === 'object') {
-											(args as any).text = 'Before hook modified';
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.text =
+												'Before hook modified';
 										}
 
 										return { ctx, args };
 									},
-									after: async (ctx: any, res: any) => {
+									after: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										res: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (res && typeof res === 'object' && 'message' in res) {
-											(res as any).message.text = 'After hook modified';
+											(
+												res as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.message.text =
+												'After hook modified';
 										}
 									},
 								},
@@ -375,7 +486,12 @@ describe('Endpoint Hooks', () => {
 
 			expect(capturedRequestBody?.text).toBe('Before hook modified');
 			if (result && typeof result === 'object' && 'message' in result) {
-				expect((result as any).message.text).toBe('After hook modified');
+				expect(
+					(
+						result as any
+					) /* MockedFunction callback; full Slack types not needed in test scope */
+						.message.text,
+				).toBe('After hook modified');
 			}
 		});
 	});
@@ -391,9 +507,15 @@ describe('Endpoint Hooks', () => {
 						hooks: {
 							messages: {
 								post: {
-									before: async (ctx: any, args: any) => {
+									before: async (
+										ctx: any /* MockedFunction callback; full Slack types not needed in test scope */,
+										args: any /* MockedFunction callback; full Slack types not needed in test scope */,
+									) => {
 										if (args && typeof args === 'object') {
-											(args as any).text = 'Nested hook modified';
+											(
+												args as any
+											) /* MockedFunction callback; full Slack types not needed in test scope */.text =
+												'Nested hook modified';
 										}
 
 										return { ctx, args };

@@ -50,8 +50,13 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const selectedTags = parseTagSlugs(params.tags);
 	const api = await getApi();
 	const session = await getSession();
-	const [myIntegrations, allTags, recentActivity, integrationsData, leaderboardData] =
-		await Promise.all([
+	const [
+		myIntegrations,
+		allTags,
+		recentActivity,
+		integrationsData,
+		leaderboardData,
+	] = await Promise.all([
 		session ? api.integrations.listMine() : null,
 		view === 'integrations' ? api.integrations.listTags() : null,
 		api.integrations.recentActivity({ limit: 10 }),

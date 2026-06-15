@@ -31,8 +31,8 @@ module.exports = {
 					moduleResolution: 'Bundler',
 					paths: {
 						'@corsair-dev/slack': ['../slack/index.ts'],
-						'@corsair-dev/linear': ['../linear/index.ts']
-					}
+						'@corsair-dev/linear': ['../linear/index.ts'],
+					},
 				},
 			},
 		],
@@ -48,8 +48,8 @@ module.exports = {
 					moduleResolution: 'Bundler',
 					paths: {
 						'@corsair-dev/slack': ['../slack/index.ts'],
-						'@corsair-dev/linear': ['../linear/index.ts']
-					}
+						'@corsair-dev/linear': ['../linear/index.ts'],
+					},
 				},
 			},
 		],

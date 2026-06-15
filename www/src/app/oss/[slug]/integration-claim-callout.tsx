@@ -1,4 +1,7 @@
-import { ClaimIntegrationButton, SignInToClaimLink } from '../claim-integration-button';
+import {
+	ClaimIntegrationButton,
+	SignInToClaimLink,
+} from '../claim-integration-button';
 import { FramedPanel } from '../framed-panel';
 
 export function IntegrationClaimCallout({
@@ -27,7 +30,9 @@ export function IntegrationClaimCallout({
 					</p>
 					<p className="mt-3 max-w-xl text-[15px] leading-relaxed text-[#1c1c1c99]">
 						Build and ship the{' '}
-						<span className="font-medium text-[#1c1c1c]">{integrationName}</span>{' '}
+						<span className="font-medium text-[#1c1c1c]">
+							{integrationName}
+						</span>{' '}
 						plugin to earn{' '}
 						<span className="font-[family-name:var(--font-landing-mono)] font-medium text-[#1c1c1c]">
 							{points} pts

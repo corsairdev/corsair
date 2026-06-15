@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 import type { IntegrationPhase } from '@/db/schema';
 import { cn } from '@/lib/utils';
-import { buildOssIntegrationHref } from './oss-url';
 import { ClaimIntegrationButton } from './claim-integration-button';
+import { buildOssIntegrationHref } from './oss-url';
 import { UnclaimIntegrationButton } from './unclaim-integration-button';
 
 type IntegrationCardProps = {
@@ -79,9 +79,7 @@ export function IntegrationCard({
 		<article
 			className={cn(
 				'group grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-1 px-4 py-3 transition-colors sm:grid-cols-[2.5rem_minmax(0,5fr)_minmax(0,4fr)_auto] sm:items-center sm:px-6',
-				isActive
-					? 'bg-[#1c1c1c]/[0.04]'
-					: 'hover:bg-[#1c1c1c]/[0.02]',
+				isActive ? 'bg-[#1c1c1c]/[0.04]' : 'hover:bg-[#1c1c1c]/[0.02]',
 			)}
 		>
 			<span className="hidden font-[family-name:var(--font-landing-mono)] text-[11px] tabular-nums text-[#1c1c1c40] sm:block">

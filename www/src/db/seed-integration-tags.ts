@@ -7,7 +7,7 @@ import {
 	assignIntegrationTagSlugs,
 	INTEGRATION_TAG_DEFINITIONS,
 } from '@/db/integration-tag-definitions';
-import { integrationTags, integrations, tags } from '@/db/schema';
+import { integrations, integrationTags, tags } from '@/db/schema';
 
 async function seedTags() {
 	for (const definition of INTEGRATION_TAG_DEFINITIONS) {
