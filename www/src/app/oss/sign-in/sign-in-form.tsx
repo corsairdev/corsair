@@ -21,7 +21,7 @@ export function SignInForm() {
 		await authClient.signIn.magicLink(
 			{
 				email,
-				callbackURL: '/oss',
+				callbackURL: '/oss/waitlist',
 			},
 			{
 				onSuccess: () => setSent(true),

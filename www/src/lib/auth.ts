@@ -5,6 +5,7 @@ import { magicLink } from 'better-auth/plugins';
 import { Resend } from 'resend';
 import { db } from '@/db';
 import * as authSchema from '@/db/auth-schema';
+import { buildMagicLinkEmailFromUrl } from '@/lib/auth-emails';
 
 const resend = process.env.RESEND_API_KEY
 	? new Resend(process.env.RESEND_API_KEY)
@@ -40,11 +41,13 @@ export const auth = betterAuth({
 					return;
 				}
 
+				const { subject, html } = buildMagicLinkEmailFromUrl(url);
+
 				await resend.emails.send({
 					from: fromEmail,
 					to: email,
-					subject: 'Sign in to Corsair',
-					html: `<p>Click the link below to sign in. This link expires soon.</p><p><a href="${url}">${url}</a></p>`,
+					subject,
+					html,
 				});
 			},
 		}),

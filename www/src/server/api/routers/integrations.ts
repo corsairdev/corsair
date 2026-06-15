@@ -21,6 +21,7 @@ import {
 	getIntegrationStatusHistory,
 	getLatestStatusesForIntegrations,
 	getLatestStatusForIntegration,
+	getUserActiveDeadlineClaim,
 	getUserWipClaim,
 	ISSUE_DEADLINE_MS,
 	insertIntegrationStatus,
@@ -354,6 +355,25 @@ export const integrationsRouter = createTRPCRouter({
 				})),
 			};
 		}),
+
+	activeDeadlineClaim: protectedProcedure.query(async ({ ctx }) => {
+		const claim = await getUserActiveDeadlineClaim(ctx.db, ctx.user.id);
+
+		if (!claim) {
+			return null;
+		}
+
+		return {
+			slug: claim.slug,
+			name: claim.name,
+			phase: claim.phase,
+			deadlineAt: claim.deadlineAt.toISOString(),
+			label:
+				claim.phase === 'awaiting_issue'
+					? 'Time left to link your issue'
+					: 'Time left to link your PR',
+		};
+	}),
 
 	listMine: protectedProcedure.query(async ({ ctx }) => {
 		const activeClaims = await getActiveClaimsForUser(ctx.db, ctx.user.id);
