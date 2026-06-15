@@ -1,12 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import {
-	createContext,
-	useContext,
-	useTransition,
-	type ReactNode,
-} from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useTransition } from 'react';
 
 type OssNavigationContextValue = {
 	isPending: boolean;
@@ -38,7 +34,9 @@ export function useOssNavigation() {
 	const context = useContext(OssNavigationContext);
 
 	if (!context) {
-		throw new Error('useOssNavigation must be used within OssNavigationProvider');
+		throw new Error(
+			'useOssNavigation must be used within OssNavigationProvider',
+		);
 	}
 
 	return context;

@@ -21,7 +21,10 @@ function getSlugFromFilename(filename: string) {
 	return filename.replace(/\.md$/, '');
 }
 
-function parsePostMeta(slug: string, data: Record<string, unknown>): BlogPostMeta {
+function parsePostMeta(
+	slug: string,
+	data: Record<string, unknown>,
+): BlogPostMeta {
 	return {
 		slug,
 		title: String(data.title ?? slug),

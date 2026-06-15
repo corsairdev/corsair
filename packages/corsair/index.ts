@@ -2,7 +2,7 @@ export type {
 	CorsairClientOptions,
 	CorsairManagementClient,
 } from './client';
-export { createCorsairClient, CorsairClientError } from './client';
+export { CorsairClientError, createCorsairClient } from './client';
 export type { ResolveConnectLinkResult } from './core';
 export { AuthMissingError, createCorsair, resolveConnectLink } from './core';
 export type {

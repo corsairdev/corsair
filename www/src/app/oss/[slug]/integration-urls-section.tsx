@@ -52,8 +52,8 @@ export function IntegrationUrlsSection({
 					{canEdit ? (
 						<div className="space-y-4">
 							<p className="text-[13px] leading-relaxed text-[#1c1c1c66]">
-								Add links for the issue, pull request, and documentation for this
-								integration.
+								Add links for the issue, pull request, and documentation for
+								this integration.
 							</p>
 							<IntegrationUrlsForm integrationId={integrationId} urls={urls} />
 							{phase === 'finished' ? (

@@ -55,7 +55,7 @@
     "test:api": "jest --testPathPattern=api\\.test\\.ts",
     "build": "tsup",
     "build:watch": "tsup --watch",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "ind": "tsx index.ts"
   },
   "dependencies": {

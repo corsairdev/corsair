@@ -27,7 +27,11 @@ function IntegrationCardSkeleton() {
 
 export function IntegrationListSkeleton({ count = 6 }: { count?: number }) {
 	return (
-		<div className="space-y-3" aria-busy="true" aria-label="Loading integrations">
+		<div
+			className="space-y-3"
+			aria-busy="true"
+			aria-label="Loading integrations"
+		>
 			<div className="mb-6 flex flex-wrap items-center gap-2">
 				<div className="h-6 w-28 animate-pulse rounded-full bg-muted" />
 			</div>

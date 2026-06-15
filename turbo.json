@@ -32,7 +32,8 @@
     "lint": {},
     "test": {
       "dependsOn": ["^build"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "env": ["SKIP_PG_TESTS"]
     },
     "deploy": {
       "cache": false

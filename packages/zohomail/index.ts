@@ -174,8 +174,7 @@ export const zohoMailWebhooksNested = {
 
 const zohoMailWebhookSchemas = {
 	'challenge.handshake': {
-		description:
-			'Zoho Mail initial webhook handshake via x-hook-secret header',
+		description: 'Zoho Mail initial webhook handshake via x-hook-secret header',
 		payload: ZohoMailChallengePayloadSchema,
 		response: ZohoMailChallengeResponseSchema,
 	},

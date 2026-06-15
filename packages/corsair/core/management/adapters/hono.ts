@@ -21,9 +21,7 @@ type HonoLikeContext = {
 	req: { raw: Request };
 };
 
-export type HonoHandler = (
-	c: HonoLikeContext,
-) => Response | Promise<Response>;
+export type HonoHandler = (c: HonoLikeContext) => Response | Promise<Response>;
 
 export function toHonoHandler(
 	// `unknown` matches the managementHandler signature — see the justification

@@ -14,6 +14,23 @@ import {
 import { z } from 'zod';
 import type { DB } from '@/db';
 import { user } from '@/db/auth-schema';
+import type { LatestIntegrationStatus } from '@/db/integration-status';
+import {
+	getActiveClaimsForUser,
+	getClaimExpiredForUser,
+	getIntegrationStatusHistory,
+	getLatestStatusesForIntegrations,
+	getLatestStatusForIntegration,
+	getUserWipClaim,
+	ISSUE_DEADLINE_MS,
+	insertIntegrationStatus,
+	isIntegrationActivelyClaimed,
+	isIntegrationAvailable,
+	legacyStatusFromPhase,
+	PR_DEADLINE_MS,
+	releaseIntegrationClaim,
+	userHasWipClaim,
+} from '@/db/integration-status';
 import {
 	fetchIntegrationTags,
 	fetchIntegrationTagsByIntegrationIds,
@@ -25,28 +42,11 @@ import {
 	fetchIntegrationUrlsByIntegrationIds,
 	upsertIntegrationUrls,
 } from '@/db/integration-urls';
-import {
-	getActiveClaimsForUser,
-	getIntegrationStatusHistory,
-	getLatestStatusForIntegration,
-	getLatestStatusesForIntegrations,
-	insertIntegrationStatus,
-	ISSUE_DEADLINE_MS,
-	type LatestIntegrationStatus,
-	isIntegrationActivelyClaimed,
-	isIntegrationAvailable,
-	legacyStatusFromPhase,
-	PR_DEADLINE_MS,
-	releaseIntegrationClaim,
-	getUserWipClaim,
-	getClaimExpiredForUser,
-	userHasWipClaim,
-} from '@/db/integration-status';
 import type { IntegrationPhase, IntegrationUrls } from '@/db/schema';
 import {
 	authSchemes,
-	integrations,
 	integrationStatus,
+	integrations,
 	integrationTags,
 	operations,
 	tags,
@@ -169,8 +169,12 @@ function mapIntegrationClaimFields(
 			latestStatus!.userId === currentUserId,
 		claimerGithubUsername: isClaimed ? claimerGithubUsername : null,
 		claimerAvatarUrl: isClaimed ? claimerAvatarUrl : null,
-		issueDeadlineAt: isClaimed ? latestStatus!.issueDeadlineAt?.toISOString() ?? null : null,
-		prDeadlineAt: isClaimed ? latestStatus!.prDeadlineAt?.toISOString() ?? null : null,
+		issueDeadlineAt: isClaimed
+			? (latestStatus!.issueDeadlineAt?.toISOString() ?? null)
+			: null,
+		prDeadlineAt: isClaimed
+			? (latestStatus!.prDeadlineAt?.toISOString() ?? null)
+			: null,
 		greptileScore: isClaimed ? latestStatus!.greptileScore : null,
 	};
 }
@@ -753,9 +757,7 @@ export const integrationsRouter = createTRPCRouter({
 				visibleRows.map((row) => row.id),
 			);
 
-			const integrationsById = new Map(
-				visibleRows.map((row) => [row.id, row]),
-			);
+			const integrationsById = new Map(visibleRows.map((row) => [row.id, row]));
 
 			const userClaims = new Map<
 				string,

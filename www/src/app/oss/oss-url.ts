@@ -3,7 +3,14 @@ export type OssIntegrationsView = 'integrations' | 'leaderboard';
 export function parseTagSlugs(raw?: string): string[] {
 	if (!raw?.trim()) return [];
 
-	return [...new Set(raw.split(',').map((slug) => slug.trim()).filter(Boolean))];
+	return [
+		...new Set(
+			raw
+				.split(',')
+				.map((slug) => slug.trim())
+				.filter(Boolean),
+		),
+	];
 }
 
 export function buildOssHref({

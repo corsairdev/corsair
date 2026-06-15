@@ -126,8 +126,8 @@ export function ReadyToReviewStatusCallout({
 			<div>
 				<Badge variant="accent">Ready to review</Badge>
 				<p className="mt-2 text-[14px] text-[#1c1c1c99]">
-					This integration is ready for review. You can claim another integration
-					while we review your work.
+					This integration is ready for review. You can claim another
+					integration while we review your work.
 				</p>
 			</div>
 		);

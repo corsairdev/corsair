@@ -5,14 +5,13 @@ import { notFound } from 'next/navigation';
 
 import { getSession } from '@/lib/auth-server';
 import { getApi } from '@/server/api/caller';
-
-import { ContributorWorkflowSteps } from './contributor-workflow-steps';
+import { IntegrationTagList } from '../integration-tag-badge';
 import { ClaimExpiredCallout } from './claim-expired-callout';
+import { ContributorWorkflowSteps } from './contributor-workflow-steps';
 import { IntegrationCapabilities } from './integration-capabilities';
 import { IntegrationClaimCallout } from './integration-claim-callout';
 import { IntegrationDetailSidebar } from './integration-detail-sidebar';
 import { IntegrationTitleStats } from './integration-title-stats';
-import { IntegrationTagList } from '../integration-tag-badge';
 
 type PageProps = {
 	params: Promise<{ slug: string }>;

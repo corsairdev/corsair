@@ -1,8 +1,8 @@
 'use client';
 
-import type { IntegrationPhase } from '@/db/schema';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+import type { IntegrationPhase } from '@/db/schema';
 
 import { integrationToPluginName } from '@/lib/integration-plugin-name';
 import {
@@ -37,7 +37,10 @@ function phaseToStepIndex(phase: IntegrationPhase | null) {
 	return workflowSteps.findIndex((step) => step.phase === phase);
 }
 
-function getStepStatus(stepIndex: number, phase: IntegrationPhase | null): StepStatus {
+function getStepStatus(
+	stepIndex: number,
+	phase: IntegrationPhase | null,
+): StepStatus {
 	const currentIndex = phaseToStepIndex(phase);
 
 	if (phase === 'ready_to_review') {
@@ -70,7 +73,10 @@ function WorkflowStepper({
 				const isLast = index === workflowSteps.length - 1;
 
 				return (
-					<li key={step.phase} className="flex min-w-0 flex-1 items-center gap-2">
+					<li
+						key={step.phase}
+						className="flex min-w-0 flex-1 items-center gap-2"
+					>
 						<button
 							type="button"
 							onClick={() => onSelectStep(index)}
@@ -79,11 +85,14 @@ function WorkflowStepper({
 								'flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-left transition-colors',
 								isSelected &&
 									'border-[#1c1c1c]/30 bg-[#1c1c1c]/[0.06] ring-1 ring-[#1c1c1c]/10',
-								!isSelected && status === 'current' &&
+								!isSelected &&
+									status === 'current' &&
 									'border-[#1c1c1c]/20 bg-[#1c1c1c]/[0.04] hover:bg-[#1c1c1c]/[0.06]',
-								!isSelected && status === 'complete' &&
+								!isSelected &&
+									status === 'complete' &&
 									'border-[#1c1c1c]/10 bg-[#1c1c1c]/[0.02] text-[#1c1c1c66] hover:bg-[#1c1c1c]/[0.04]',
-								!isSelected && status === 'upcoming' &&
+								!isSelected &&
+									status === 'upcoming' &&
 									'border-[#1c1c1c]/10 text-[#1c1c1c40] hover:bg-[#1c1c1c]/[0.03] hover:text-[#1c1c1c66]',
 							)}
 						>
@@ -100,7 +109,8 @@ function WorkflowStepper({
 							<span
 								className={cn(
 									'truncate text-sm',
-									(status === 'current' || isSelected) && 'font-medium text-[#1c1c1c]',
+									(status === 'current' || isSelected) &&
+										'font-medium text-[#1c1c1c]',
 								)}
 							>
 								{step.label}
@@ -266,7 +276,8 @@ pnpm test`;
 								<strong className="font-medium text-[#1c1c1c]">
 									Generate the plugin scaffold.
 								</strong>{' '}
-								From the repo root, run the generator with PascalCase plugin name{' '}
+								From the repo root, run the generator with PascalCase plugin
+								name{' '}
 								<code className="rounded-md bg-[#1c1c1c]/5 px-1.5 py-0.5 font-mono text-xs">
 									{pluginName}
 								</code>

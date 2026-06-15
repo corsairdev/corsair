@@ -1,6 +1,11 @@
 'use client';
 
-import { CaretDown, KeyIcon, LightningIcon, PlugsIcon } from '@phosphor-icons/react';
+import {
+	CaretDown,
+	KeyIcon,
+	LightningIcon,
+	PlugsIcon,
+} from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 

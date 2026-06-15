@@ -55,17 +55,15 @@ async function getIntegrationCredState(
 		database: internal.database,
 	});
 
-	const fieldNames = BASE_AUTH_FIELDS[authType].integration as readonly string[];
+	const fieldNames = BASE_AUTH_FIELDS[authType]
+		.integration as readonly string[];
 	// `IntegrationKeyManagerFor<AuthTypes>` is a public type whose accessors are
 	// generated per-auth-type via template literals; indexing it with a runtime
 	// `get_${field}` string isn't expressible in TS without a structural shim,
 	// and exposing a public `Record<string, ...>` interface would weaken the
 	// stricter type used elsewhere. The unknown→record double cast is local to
 	// this loop and bounded by `BASE_AUTH_FIELDS[authType].integration`.
-	const kmAny = km as unknown as Record<
-		string,
-		() => Promise<string | null>
-	>;
+	const kmAny = km as unknown as Record<string, () => Promise<string | null>>;
 	// If the integration row or DEK hasn't been seeded yet (setupCorsair not
 	// run), the underlying getter throws. Treat that as "all fields missing"
 	// so /plugins and /connection-status stay 200 on a fresh install.

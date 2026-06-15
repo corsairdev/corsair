@@ -14,7 +14,8 @@ export function IntegrationStatusBadge({
 		return <Badge variant="muted">Available</Badge>;
 	}
 
-	const resolvedPhase = phase ?? (status === 'finished' ? 'finished' : 'building');
+	const resolvedPhase =
+		phase ?? (status === 'finished' ? 'finished' : 'building');
 
 	switch (resolvedPhase) {
 		case 'awaiting_issue':

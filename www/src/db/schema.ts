@@ -437,16 +437,19 @@ export const tagsRelations = relations(tags, ({ many }) => ({
 	integrationTags: many(integrationTags),
 }));
 
-export const integrationTagsRelations = relations(integrationTags, ({ one }) => ({
-	integration: one(integrations, {
-		fields: [integrationTags.integrationId],
-		references: [integrations.id],
+export const integrationTagsRelations = relations(
+	integrationTags,
+	({ one }) => ({
+		integration: one(integrations, {
+			fields: [integrationTags.integrationId],
+			references: [integrations.id],
+		}),
+		tag: one(tags, {
+			fields: [integrationTags.tagId],
+			references: [tags.id],
+		}),
 	}),
-	tag: one(tags, {
-		fields: [integrationTags.tagId],
-		references: [tags.id],
-	}),
-}));
+);
 
 // ---------------------------------------------------------------------------
 // Inferred row types

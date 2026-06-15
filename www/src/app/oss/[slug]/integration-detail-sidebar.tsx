@@ -1,6 +1,5 @@
-import type { IntegrationPhase } from '@/db/schema';
-
 import type { ReactNode } from 'react';
+import type { IntegrationPhase } from '@/db/schema';
 
 import { IntegrationStatusBadge } from '../integration-status-badge';
 import { UnclaimIntegrationButton } from '../unclaim-integration-button';

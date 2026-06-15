@@ -10,7 +10,10 @@ export function getTagTextColor(backgroundColor: string): string {
 	return luminance > 0.62 ? '#1a1a1a' : '#fafafa';
 }
 
-export function getTagBorderColor(backgroundColor: string, alpha = 0.35): string {
+export function getTagBorderColor(
+	backgroundColor: string,
+	alpha = 0.35,
+): string {
 	const hex = backgroundColor.replace('#', '');
 	if (hex.length !== 6) return 'rgba(0, 0, 0, 0.12)';
 
