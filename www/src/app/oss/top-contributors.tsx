@@ -18,7 +18,7 @@ export function TopContributors({ items }: { items: Contributor[] }) {
 		<section>
 			<div className="flex items-baseline justify-between">
 				<h2 className="font-[family-name:var(--font-landing-mono)] text-xs font-medium tracking-[0.02em] text-[#1c1c1c99] uppercase">
-					Top contributors
+					Leaderboard
 				</h2>
 				<Link
 					href="/oss?view=leaderboard"

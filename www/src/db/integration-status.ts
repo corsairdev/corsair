@@ -146,6 +146,70 @@ export async function getIntegrationStatusHistory(
 		.orderBy(desc(integrationStatus.occurredAt));
 }
 
+export type ActiveDeadlineClaim = {
+	id: string;
+	name: string;
+	slug: string;
+	phase: 'awaiting_issue' | 'awaiting_pr';
+	deadlineAt: Date;
+};
+
+export async function getUserActiveDeadlineClaim(db: DB, userId: string) {
+	const rows = await db
+		.selectDistinctOn([integrationStatus.integrationId], {
+			integrationId: integrationStatus.integrationId,
+			phase: integrationStatus.phase,
+			issueDeadlineAt: integrationStatus.issueDeadlineAt,
+			prDeadlineAt: integrationStatus.prDeadlineAt,
+		})
+		.from(integrationStatus)
+		.where(eq(integrationStatus.userId, userId))
+		.orderBy(
+			integrationStatus.integrationId,
+			desc(integrationStatus.occurredAt),
+		);
+
+	const wipRow = rows.find((row) => isWipPhase(row.phase));
+	if (!wipRow) {
+		return null;
+	}
+
+	let deadlineAt: Date | null = null;
+	let phase: ActiveDeadlineClaim['phase'] | null = null;
+
+	if (wipRow.phase === 'awaiting_issue' && wipRow.issueDeadlineAt) {
+		deadlineAt = wipRow.issueDeadlineAt;
+		phase = 'awaiting_issue';
+	} else if (wipRow.phase === 'awaiting_pr' && wipRow.prDeadlineAt) {
+		deadlineAt = wipRow.prDeadlineAt;
+		phase = 'awaiting_pr';
+	}
+
+	if (!deadlineAt || !phase) {
+		return null;
+	}
+
+	const [integration] = await db
+		.select({
+			id: integrations.id,
+			name: integrations.name,
+			slug: integrations.slug,
+		})
+		.from(integrations)
+		.where(eq(integrations.id, wipRow.integrationId))
+		.limit(1);
+
+	if (!integration) {
+		return null;
+	}
+
+	return {
+		...integration,
+		phase,
+		deadlineAt,
+	} satisfies ActiveDeadlineClaim;
+}
+
 export async function getUserWipClaim(db: DB, userId: string) {
 	const rows = await db
 		.selectDistinctOn([integrationStatus.integrationId], {
