@@ -64,6 +64,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 						hooks: {
 							messages: {
 								post: {
@@ -111,6 +112,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 						hooks: {
 							messages: {
 								post: {
@@ -158,6 +160,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 
 						hooks: {
 							messages: {
@@ -224,6 +227,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 
 						hooks: {
 							messages: {
@@ -294,6 +298,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 
 						hooks: {
 							messages: {
@@ -367,6 +372,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 
 						hooks: {
 							messages: {
@@ -443,6 +449,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 
 						hooks: {
 							messages: {
@@ -503,6 +510,7 @@ describe('Endpoint Hooks', () => {
 				plugins: [
 					slack({
 						authType: 'api_key',
+						key: 'fake-key',
 
 						hooks: {
 							messages: {
