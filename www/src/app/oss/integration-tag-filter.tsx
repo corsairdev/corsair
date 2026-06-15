@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
 import { IntegrationTagBadge } from './integration-tag-badge';
-import { buildOssHref } from './oss-url';
 import { useOssNavigation } from './oss-navigation';
+import { buildOssHref } from './oss-url';
 
 type IntegrationTagFilterProps = {
 	tags: Array<{
@@ -50,7 +50,7 @@ export function IntegrationTagFilter({
 	return (
 		<div className="space-y-2">
 			<div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-				<span className="shrink-0 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+				<span className="shrink-0 font-[family-name:var(--font-landing-mono)] text-xs font-medium tracking-[0.02em] text-[#1c1c1c99] uppercase">
 					Tags
 				</span>
 				{optimisticSlugs.length > 0 ? (
@@ -58,7 +58,7 @@ export function IntegrationTagFilter({
 						type="button"
 						onClick={clearTags}
 						disabled={isLeaderboard}
-						className="text-xs text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+						className="text-xs text-[#1c1c1c66] underline-offset-2 transition-colors hover:text-[#1c1c1c] hover:underline disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						Clear tags
 					</button>

@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
-import { unclaimIntegration } from './actions';
+import { unclaimIntegration } from '@/server/actions/unclaim-integration';
 
 export function UnclaimIntegrationButton({
 	integrationId,

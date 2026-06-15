@@ -29,3 +29,8 @@ export function buildOssHref({
 	const query = params.toString();
 	return query ? `/oss?${query}` : '/oss';
 }
+
+export function buildOssIntegrationHref(slug: string, searchParams?: string) {
+	const base = `/oss/${slug}`;
+	return searchParams ? `${base}?${searchParams}` : base;
+}

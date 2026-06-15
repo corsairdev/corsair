@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 
-import { setGithubUsername } from './actions';
+import { setGithubUsername } from '@/server/actions/set-github-username';
 
 export function GithubUsernameCallout() {
 	const router = useRouter();

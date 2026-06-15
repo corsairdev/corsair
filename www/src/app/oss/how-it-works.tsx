@@ -1,31 +1,47 @@
 import Link from 'next/link';
 
+const steps = [
+	{
+		title: 'Claim',
+		description: 'Pick an unclaimed integration. It locks under your name.',
+	},
+	{
+		title: 'Build',
+		description: 'Open an issue, ship the plugin PR following the guide.',
+	},
+	{
+		title: 'Ship',
+		description: 'Once merged, mark it finished and collect the points.',
+	},
+];
+
 export function HowItWorks({ signedIn }: { signedIn: boolean }) {
 	return (
-		<section className="mb-6 rounded-xl border border-border/70 bg-card p-4 shadow-sm">
-			<h2 className="mb-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+		<section>
+			<h2 className="font-[family-name:var(--font-landing-mono)] text-xs font-medium tracking-[0.02em] text-[#1c1c1c99] uppercase">
 				How it works
 			</h2>
-			<p className="text-sm leading-relaxed text-muted-foreground">
-				This page tracks integrations the community is building and shipping.
-				See what&apos;s available, who&apos;s working on what, and follow work
-				as it moves from claim to merge.
-			</p>
-			<p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-				{signedIn ? (
-					<>Claim an integration to see next steps. </>
-				) : (
-					<>Sign in and claim an integration to see next steps. </>
-				)}
-				Browse the{' '}
+			<ol className="mt-4 space-y-3.5">
+				{steps.map((step, index) => (
+					<li key={step.title} className="flex gap-3 text-[13px] leading-snug">
+						<span className="font-[family-name:var(--font-landing-mono)] text-[11px] text-[#1c1c1c40]">
+							0{index + 1}
+						</span>
+						<p className="text-[#1c1c1c99]">
+							<span className="font-medium text-[#1c1c1c]">{step.title}.</span>{' '}
+							{step.description}
+						</p>
+					</li>
+				))}
+			</ol>
+			{!signedIn ? (
 				<Link
-					href="/oss?view=leaderboard"
-					className="font-medium text-foreground underline-offset-2 hover:underline"
+					href="/oss/sign-in"
+					className="mt-4 inline-block text-[13px] font-medium text-[#1c1c1c] underline underline-offset-2 hover:text-[#4a38f5]"
 				>
-					leaderboard
-				</Link>{' '}
-				for contributors who have shipped integrations.
-			</p>
+					Sign in to get started
+				</Link>
+			) : null}
 		</section>
 	);
 }

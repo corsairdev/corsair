@@ -33,16 +33,18 @@ function OssIntegrationsShellInner({
 }: OssIntegrationsShellProps) {
 	return (
 		<>
-			<div className="mb-4 space-y-3">
-				<IntegrationSearch defaultValue={q} />
-				{tags ? (
-					<IntegrationTagFilter tags={tags} selectedSlugs={selectedTags} />
-				) : null}
-			</div>
-
 			<div className="mb-6">
 				<ViewTabs activeView={view} />
 			</div>
+
+			{view === 'integrations' ? (
+				<div className="mb-4 space-y-3">
+					<IntegrationSearch defaultValue={q} />
+					{tags ? (
+						<IntegrationTagFilter tags={tags} selectedSlugs={selectedTags} />
+					) : null}
+				</div>
+			) : null}
 
 			{view === 'integrations' ? (
 				<OssIntegrationsResults>{integrationsContent}</OssIntegrationsResults>

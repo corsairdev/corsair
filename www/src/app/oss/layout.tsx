@@ -19,13 +19,13 @@ export default async function OssIntegrationsLayout({
 		: null;
 
 	return (
-		<div className="min-h-screen bg-[#f7f7f5] text-foreground">
-			<div className="mx-auto max-w-3xl">
-				<OssIntegrationsBar
-					session={session}
-					githubUsername={githubUsername}
-					githubAvatarUrl={githubAvatarUrl}
-				/>
+		<div className="min-h-screen bg-[#f4f4f4] font-[family-name:var(--font-landing-sans)] text-[#1c1c1c]">
+			<OssIntegrationsBar
+				session={session}
+				githubUsername={githubUsername}
+				githubAvatarUrl={githubAvatarUrl}
+			/>
+			<div className="mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10">
 				{children}
 			</div>
 		</div>
