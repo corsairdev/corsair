@@ -97,6 +97,7 @@ export const projectsOperations = [
 		method: 'GET',
 		path: '/v1/projects/{ref}/health',
 		pathParams: ['ref'],
+		defaultQuery: { services: 'auth,db,pooler,realtime,rest,storage' },
 		riskLevel: 'read',
 		description: 'Get project service health status',
 	},

@@ -313,6 +313,42 @@ describe('Supabase endpoints', () => {
 		});
 	});
 
+	it('distinguishes project health from service health', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				getHealth: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+				getProjectServiceHealthStatus: (
+					ctx: SupabaseContext,
+					input: { ref: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.projects.getHealth(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+		await endpoints.projects.getProjectServiceHealthStatus(mockCtx, {
+			ref: 'abcdefghijklmnopqrst',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/projects/abcdefghijklmnopqrst/health',
+			query: {},
+		});
+		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({
+			method: 'GET',
+			url: '/v1/projects/abcdefghijklmnopqrst/health',
+			query: { services: 'auth,db,pooler,realtime,rest,storage' },
+		});
+	});
+
 	it('caches project and function reads when database clients exist', async () => {
 		const plugin = supabase({ key: 'test-token' });
 		const endpoints = plugin.endpoints as NonNullable<
