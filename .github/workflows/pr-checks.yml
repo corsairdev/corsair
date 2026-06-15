@@ -40,7 +40,7 @@ jobs:
         run: pnpm build
 
       - name: Run tests
-        run: pnpm test -- --passWithNoTests --ci
+        run: npx turbo test -- --passWithNoTests --ci
         env:
           CI: true
           SKIP_PG_TESTS: 1
