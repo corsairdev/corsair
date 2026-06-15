@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
@@ -699,6 +700,11 @@ export * from './types';
 			}
 		}
 	}
+
+	execSync('node scripts/generate-labeler-config.mjs', {
+		cwd: join(import.meta.dirname, '..'),
+		stdio: 'inherit',
+	});
 
 	console.log(`✅ Created plugin at packages/${lowerName}/`);
 	console.log(`\n📝 Next steps:`);

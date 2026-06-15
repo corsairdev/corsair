@@ -203,6 +203,7 @@ playwright-report/
 test-results/
 
 state.txt
+.github/labeler.generated.yml
 
 **/orginal-sdk/
 **/fixtures

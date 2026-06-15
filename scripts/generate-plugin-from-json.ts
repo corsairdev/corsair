@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 
@@ -1247,6 +1248,11 @@ export const errorHandlers = {
 			}
 		}
 	}
+
+	execSync('node scripts/generate-labeler-config.mjs', {
+		cwd: join(import.meta.dirname, '..'),
+		stdio: 'inherit',
+	});
 
 	const opCount = apiOps.length;
 	const groupCount = groupedOps.size;

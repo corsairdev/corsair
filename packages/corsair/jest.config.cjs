@@ -22,6 +22,7 @@ module.exports = {
 			'ts-jest',
 			{
 				useESM: true,
+				isolatedModules: true,
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
@@ -50,7 +51,13 @@ module.exports = {
 		'^corsair/setup$': '<rootDir>/setup.ts',
 		'^corsair/tests$': '<rootDir>/tests.ts',
 		'^corsair$': '<rootDir>/index.ts',
+		'^@corsair-dev/linear$': '<rootDir>/../linear/index.ts',
+		'^@corsair-dev/linear/error-handlers$':
+			'<rootDir>/../linear/error-handlers.ts',
 		'^@corsair-dev/slack$': '<rootDir>/../slack/index.ts',
+		'^@corsair-dev/slack/client$': '<rootDir>/../slack/client.ts',
+		'^@corsair-dev/slack/error-handlers$':
+			'<rootDir>/../slack/error-handlers.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
