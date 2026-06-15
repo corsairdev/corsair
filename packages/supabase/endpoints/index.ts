@@ -44,6 +44,81 @@ type SupabaseEndpoint = CorsairEndpoint<
 	unknown
 >;
 
+type CacheRule = {
+	entity: string;
+	idKeys: string[];
+	listKeys?: string[];
+};
+
+const CACHE_RULES: Record<string, CacheRule> = {
+	listAllProjects: {
+		entity: 'projects',
+		idKeys: ['ref', 'id'],
+		listKeys: ['projects'],
+	},
+	getProject: { entity: 'projects', idKeys: ['ref', 'id'] },
+	createProject: { entity: 'projects', idKeys: ['ref', 'id'] },
+	updateProject: { entity: 'projects', idKeys: ['ref', 'id'] },
+	listAllOrganizations: {
+		entity: 'organizations',
+		idKeys: ['slug', 'id', 'name'],
+		listKeys: ['organizations'],
+	},
+	getOrganization: { entity: 'organizations', idKeys: ['slug', 'id', 'name'] },
+	createOrganization: {
+		entity: 'organizations',
+		idKeys: ['slug', 'id', 'name'],
+	},
+	listFunctions: {
+		entity: 'functions',
+		idKeys: ['slug', 'id', 'name'],
+		listKeys: ['functions'],
+	},
+	getFunction: { entity: 'functions', idKeys: ['slug', 'id', 'name'] },
+	createFunction: { entity: 'functions', idKeys: ['slug', 'id', 'name'] },
+	updateFunction: { entity: 'functions', idKeys: ['slug', 'id', 'name'] },
+	listDatabaseBranches: {
+		entity: 'branches',
+		idKeys: ['id', 'branch_id', 'ref', 'name'],
+		listKeys: ['branches'],
+	},
+	getBranch: { entity: 'branches', idKeys: ['id', 'branch_id', 'ref', 'name'] },
+	getDatabaseBranchConfig: {
+		entity: 'branches',
+		idKeys: ['id', 'branch_id', 'ref', 'name'],
+	},
+	createDatabaseBranch: {
+		entity: 'branches',
+		idKeys: ['id', 'branch_id', 'ref', 'name'],
+	},
+	updateDatabaseBranchConfig: {
+		entity: 'branches',
+		idKeys: ['id', 'branch_id', 'ref', 'name'],
+	},
+	listBuckets: {
+		entity: 'buckets',
+		idKeys: ['id', 'name'],
+		listKeys: ['buckets'],
+	},
+	getProjectApiKeys: {
+		entity: 'apiKeys',
+		idKeys: ['id', 'name'],
+		listKeys: ['apiKeys', 'api_keys', 'keys'],
+	},
+	getProjectApiKey: { entity: 'apiKeys', idKeys: ['id', 'name'] },
+	createApiKey: { entity: 'apiKeys', idKeys: ['id', 'name'] },
+	updateApiKey: { entity: 'apiKeys', idKeys: ['id', 'name'] },
+	listMigrationHistory: {
+		entity: 'migrations',
+		idKeys: ['version', 'name'],
+		listKeys: ['migrations'],
+	},
+	getMigration: { entity: 'migrations', idKeys: ['version', 'name'] },
+	applyMigration: { entity: 'migrations', idKeys: ['version', 'name'] },
+	upsertMigration: { entity: 'migrations', idKeys: ['version', 'name'] },
+	patchMigration: { entity: 'migrations', idKeys: ['version', 'name'] },
+};
+
 function encodePathPart(value: unknown): string {
 	if (typeof value !== 'string' || value.length === 0) {
 		throw new Error('[supabase] missing required path parameter');
@@ -223,6 +298,61 @@ function bodyForOperation(
 	return requestBody(operation, input);
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function cacheItems(response: unknown, rule: CacheRule) {
+	if (Array.isArray(response)) return response.filter(isRecord);
+	if (!isRecord(response)) return [];
+
+	for (const key of rule.listKeys ?? []) {
+		const value = response[key];
+		if (Array.isArray(value)) return value.filter(isRecord);
+	}
+
+	return [response];
+}
+
+function cacheEntityId(item: Record<string, unknown>, rule: CacheRule) {
+	for (const key of rule.idKeys) {
+		const value = item[key];
+		if (typeof value === 'string' && value.length > 0) return value;
+		if (typeof value === 'number') return String(value);
+	}
+	return undefined;
+}
+
+async function cacheOperationResult(
+	ctx: SupabaseContext,
+	operation: SupabaseOperation,
+	response: unknown,
+) {
+	const rule = CACHE_RULES[operation.key];
+	if (!rule) return;
+
+	const db = ctx.db as
+		| Record<
+				string,
+				| {
+						upsertByEntityId?: (
+							entityId: string,
+							data: Record<string, unknown>,
+						) => Promise<unknown>;
+				  }
+				| undefined
+		  >
+		| undefined;
+	const client = db?.[rule.entity];
+	if (!client?.upsertByEntityId) return;
+
+	for (const item of cacheItems(response, rule)) {
+		const entityId = cacheEntityId(item, rule);
+		if (!entityId) continue;
+		await client.upsertByEntityId(entityId, item);
+	}
+}
+
 function createEndpoint(operation: SupabaseOperation): SupabaseEndpoint {
 	return async (ctx, input = {}) => {
 		if (operation.kind === 'oauthAuthorizeUrl') {
@@ -259,6 +389,8 @@ function createEndpoint(operation: SupabaseOperation): SupabaseEndpoint {
 					operation.kind === 'project' ? projectBaseUrl(input) : input.baseUrl,
 			},
 		);
+
+		await cacheOperationResult(ctx, operation, response);
 
 		await logEventFromContext(
 			ctx,

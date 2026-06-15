@@ -39,6 +39,15 @@ describe('Supabase plugin shape', () => {
 		expect(countLeaves(endpoints)).toBe(121);
 		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(121);
 		expect(Object.keys(supabaseEndpointSchemas)).toHaveLength(121);
+		expect(Object.keys(plugin.schema?.entities ?? {})).toEqual([
+			'projects',
+			'organizations',
+			'functions',
+			'branches',
+			'buckets',
+			'apiKeys',
+			'migrations',
+		]);
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: '' })).toBe(
 			false,
@@ -302,6 +311,55 @@ describe('Supabase endpoints', () => {
 				region: 'us-east-1',
 			},
 		});
+	});
+
+	it('caches project and function reads when database clients exist', async () => {
+		const plugin = supabase({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				listAllProjects: (ctx: SupabaseContext, input: {}) => Promise<unknown>;
+			};
+			edgeFunctions: {
+				getFunction: (
+					ctx: SupabaseContext,
+					input: { ref: string; functionSlug: string },
+				) => Promise<unknown>;
+			};
+		};
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				projects: { upsertByEntityId: jest.fn() },
+				functions: { upsertByEntityId: jest.fn() },
+			},
+		} as unknown as SupabaseContext;
+
+		mockRequest
+			.mockResolvedValueOnce([
+				{ id: 'project-id', ref: 'abcdefghijklmnopqrst', name: 'Demo' },
+			])
+			.mockResolvedValueOnce({
+				id: 'function-id',
+				slug: 'hello-world',
+				name: 'Hello World',
+			});
+
+		await endpoints.projects.listAllProjects(ctxWithDb, {});
+		await endpoints.edgeFunctions.getFunction(ctxWithDb, {
+			ref: 'abcdefghijklmnopqrst',
+			functionSlug: 'hello-world',
+		});
+
+		expect(ctxWithDb.db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'abcdefghijklmnopqrst',
+			expect.objectContaining({ name: 'Demo' }),
+		);
+		expect(ctxWithDb.db.functions.upsertByEntityId).toHaveBeenCalledWith(
+			'hello-world',
+			expect.objectContaining({ name: 'Hello World' }),
+		);
 	});
 
 	it('requires a project API key for project-hosted APIs', async () => {
