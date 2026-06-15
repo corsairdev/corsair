@@ -262,6 +262,24 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 			return row ? parseRow(row) : null;
 		},
 
+		existsByEntityId: async (entityId) => {
+			const accountId = await getAccountId();
+			const row = await baseQuery(db, accountId, entityTypeName)
+				.select('id')
+				.where('entity_id', '=', entityId)
+				.executeTakeFirst();
+			return row !== undefined;
+		},
+
+		findIdByEntityId: async (entityId) => {
+			const accountId = await getAccountId();
+			const row = await baseQuery(db, accountId, entityTypeName)
+				.select('id')
+				.where('entity_id', '=', entityId)
+				.executeTakeFirst();
+			return row?.id ?? null;
+		},
+
 		findById: async (id) => {
 			const accountId = await getAccountId();
 			const row = await baseQuery(db, accountId, entityTypeName)
