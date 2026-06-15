@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Supabase plugin for Corsair"
+description: 'Supabase plugin for Corsair'
 ---
 
 Use **Supabase** through Corsair: one client, typed API calls, optional local DB sync.
@@ -65,17 +65,19 @@ Follow [Get Credentials](/plugins/supabase/get-credentials) if you need help get
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --plugin=supabase
+pnpm corsair setup --supabase api_key=<supabase_pat>
 ```
 
 Use the key names documented in [Get Credentials](/plugins/supabase/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --plugin=supabase --tenant=<tenantId>
+pnpm corsair setup --tenant=<tenantId> --supabase api_key=<supabase_pat>
 ```
 
 Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+
 </Tab>
 </Tabs>
 
@@ -94,7 +96,7 @@ Each tab shows how to register the plugin for that authentication method. The de
 supabase()
 ```
 
-Store credentials with `pnpm corsair setup --plugin=supabase` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+Store credentials with `pnpm corsair setup --supabase api_key=<supabase_pat>` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
@@ -103,38 +105,38 @@ More: [API Key](/concepts/api-key)
 
 ```ts corsair.ts
 supabase({
-    authType: 'oauth_2',
+  authType: 'oauth_2',
 })
 ```
 
-Store credentials with `pnpm corsair setup --plugin=supabase` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+Store credentials with `pnpm corsair setup --supabase client_id=<client_id> --supabase client_secret=<client_secret>` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
-
 ## Query synced data
 
 Synced entities support `corsair.supabase.db.<entity>.search()` and `.list()`. See [Database](/plugins/supabase/database) for filters and operators.
-
 
 ## Example API calls
 
 **Read-style (read):** `advisors.getPerformanceAdvisors`
 
 ```ts
-await corsair.supabase.api.advisors.getPerformanceAdvisors({});
+await corsair.supabase.api.advisors.getPerformanceAdvisors({
+  ref: 'abcdefghijklmnopqrst',
+})
 ```
-
 
 **Write-style (write):** `auth.createProjectSigningKey`
 
 ```ts
-await corsair.supabase.api.auth.createProjectSigningKey({});
+await corsair.supabase.api.auth.createProjectSigningKey({
+  ref: 'abcdefghijklmnopqrst',
+})
 ```
-
 
 See the full list on the [API](/plugins/supabase/api) page. Use `pnpm corsair list --plugin=supabase` and `pnpm corsair schema <path>` locally to inspect schemas.
 
@@ -148,8 +150,8 @@ Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, a
 
 ## Reference
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/supabase/api) |
-| Database | [Database](/plugins/supabase/database) |
+| Topic       | Link                                                 |
+| ----------- | ---------------------------------------------------- |
+| API         | [API](/plugins/supabase/api)                         |
+| Database    | [Database](/plugins/supabase/database)               |
 | Credentials | [Get credentials](/plugins/supabase/get-credentials) |

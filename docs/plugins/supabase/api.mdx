@@ -20,7 +20,9 @@ Get performance advisors
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.advisors.getPerformanceAdvisors({});
+await corsair.supabase.api.advisors.getPerformanceAdvisors({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -84,7 +86,9 @@ Get security advisors
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.advisors.getSecurityAdvisors({});
+await corsair.supabase.api.advisors.getSecurityAdvisors({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -150,7 +154,9 @@ Get project logs
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.analytics.getProjectLogs({});
+await corsair.supabase.api.analytics.getProjectLogs({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -216,7 +222,9 @@ Create a project signing key
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.createProjectSigningKey({});
+await corsair.supabase.api.auth.createProjectSigningKey({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -280,7 +288,9 @@ Create an SSO provider
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.createSsoProvider({});
+await corsair.supabase.api.auth.createSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -344,7 +354,9 @@ Create a third-party auth integration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.createThirdPartyAuthIntegration({});
+await corsair.supabase.api.auth.createThirdPartyAuthIntegration({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -408,7 +420,10 @@ Remove an SSO provider
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.auth.deleteSsoProvider({});
+await corsair.supabase.api.auth.deleteSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+  providerId: 'provider_id',
+});
 ```
 
 **Input**
@@ -472,7 +487,10 @@ Delete a third-party auth integration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.auth.deleteThirdPartyAuthIntegration({});
+await corsair.supabase.api.auth.deleteThirdPartyAuthIntegration({
+  ref: 'abcdefghijklmnopqrst',
+  tpaId: 'tpa_id',
+});
 ```
 
 **Input**
@@ -536,7 +554,9 @@ Get legacy signing key
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getLegacySigningKey({});
+await corsair.supabase.api.auth.getLegacySigningKey({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -600,7 +620,9 @@ Get project auth config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getProjectAuthConfig({});
+await corsair.supabase.api.auth.getProjectAuthConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -664,7 +686,9 @@ Get project signing keys
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getProjectSigningKeys({});
+await corsair.supabase.api.auth.getProjectSigningKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -728,7 +752,10 @@ Get an SSO provider
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getSsoProvider({});
+await corsair.supabase.api.auth.getSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+  providerId: 'provider_id',
+});
 ```
 
 **Input**
@@ -792,7 +819,10 @@ Get a third-party auth integration
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.getThirdPartyIntegration({});
+await corsair.supabase.api.auth.getThirdPartyIntegration({
+  ref: 'abcdefghijklmnopqrst',
+  tpaId: 'tpa_id',
+});
 ```
 
 **Input**
@@ -856,7 +886,9 @@ List SSO providers
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.listSsoProviders({});
+await corsair.supabase.api.auth.listSsoProviders({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -920,7 +952,9 @@ List third-party auth integrations
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.auth.listThirdPartyAuthIntegrations({});
+await corsair.supabase.api.auth.listThirdPartyAuthIntegrations({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -984,7 +1018,9 @@ Update project auth config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.updateProjectAuthConfig({});
+await corsair.supabase.api.auth.updateProjectAuthConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1048,7 +1084,10 @@ Update an SSO provider
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.auth.updateSsoProvider({});
+await corsair.supabase.api.auth.updateSsoProvider({
+  ref: 'abcdefghijklmnopqrst',
+  providerId: 'provider_id',
+});
 ```
 
 **Input**
@@ -1114,7 +1153,9 @@ Apply a database migration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.applyMigration({});
+await corsair.supabase.api.database.applyMigration({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1178,7 +1219,9 @@ Create a CLI login role
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.createLoginRole({});
+await corsair.supabase.api.database.createLoginRole({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1242,7 +1285,9 @@ Set up a read replica
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.createReadReplica({});
+await corsair.supabase.api.database.createReadReplica({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1306,7 +1351,9 @@ Delete CLI login roles
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.database.deleteLoginRoles({});
+await corsair.supabase.api.database.deleteLoginRoles({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1370,7 +1417,9 @@ Temporarily disable project read-only mode
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.disableProjectReadonly({});
+await corsair.supabase.api.database.disableProjectReadonly({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1434,7 +1483,9 @@ Enable database webhooks
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.enableDatabaseWebhooks({});
+await corsair.supabase.api.database.enableDatabaseWebhooks({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1498,7 +1549,9 @@ Generate TypeScript database types
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.generateTypescriptTypes({});
+await corsair.supabase.api.database.generateTypescriptTypes({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1562,7 +1615,9 @@ Get database metadata
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getDatabaseMetadata({});
+await corsair.supabase.api.database.getDatabaseMetadata({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1626,7 +1681,9 @@ Get JIT access config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getJitAccessConfig({});
+await corsair.supabase.api.database.getJitAccessConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1690,7 +1747,10 @@ Get a migration
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getMigration({});
+await corsair.supabase.api.database.getMigration({
+  ref: 'abcdefghijklmnopqrst',
+  version: '20240101000000',
+});
 ```
 
 **Input**
@@ -1754,7 +1814,9 @@ Get project PgBouncer config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectPgbouncerConfig({});
+await corsair.supabase.api.database.getProjectPgbouncerConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1818,7 +1880,9 @@ Get project postgres config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectPostgresConfig({});
+await corsair.supabase.api.database.getProjectPostgresConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1882,7 +1946,9 @@ Get project read-only mode status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectReadonlyModeStatus({});
+await corsair.supabase.api.database.getProjectReadonlyModeStatus({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -1946,7 +2012,9 @@ Get project SSL enforcement config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectSslEnforcementConfig({});
+await corsair.supabase.api.database.getProjectSslEnforcementConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2010,7 +2078,9 @@ Get project Supavisor config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getProjectSupavisorConfig({});
+await corsair.supabase.api.database.getProjectSupavisorConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2074,7 +2144,9 @@ Get a SQL snippet
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getSqlSnippet({});
+await corsair.supabase.api.database.getSqlSnippet({
+  id: 'resource_id',
+});
 ```
 
 **Input**
@@ -2138,7 +2210,9 @@ Get database table schemas
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.getTableSchemas({});
+await corsair.supabase.api.database.getTableSchemas({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2202,7 +2276,9 @@ List project database backups
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.listBackups({});
+await corsair.supabase.api.database.listBackups({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2266,7 +2342,9 @@ List migration history
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.listMigrationHistory({});
+await corsair.supabase.api.database.listMigrationHistory({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2394,7 +2472,9 @@ List database tables
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.listTables({});
+await corsair.supabase.api.database.listTables({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2458,7 +2538,10 @@ Patch a migration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.patchMigration({});
+await corsair.supabase.api.database.patchMigration({
+  ref: 'abcdefghijklmnopqrst',
+  version: '20240101000000',
+});
 ```
 
 **Input**
@@ -2522,7 +2605,9 @@ Remove a read replica
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.database.removeReadReplica({});
+await corsair.supabase.api.database.removeReadReplica({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2586,7 +2671,9 @@ Restore database PITR backup
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.database.restorePitrBackup({});
+await corsair.supabase.api.database.restorePitrBackup({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2650,7 +2737,9 @@ Execute a read-only database query
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.runReadOnlyQuery({});
+await corsair.supabase.api.database.runReadOnlyQuery({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2714,7 +2803,9 @@ Execute a project database query
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.runSqlQuery({});
+await corsair.supabase.api.database.runSqlQuery({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2778,7 +2869,10 @@ Select rows from a database table
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.database.selectFromTable({});
+await corsair.supabase.api.database.selectFromTable({
+  ref: 'abcdefghijklmnopqrst',
+  table: 'todos',
+});
 ```
 
 **Input**
@@ -2842,7 +2936,9 @@ Update database password
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateDatabasePassword({});
+await corsair.supabase.api.database.updateDatabasePassword({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2906,7 +3002,9 @@ Update JIT access config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateJitAccessConfig({});
+await corsair.supabase.api.database.updateJitAccessConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -2970,7 +3068,9 @@ Update project postgres config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateProjectPostgresConfig({});
+await corsair.supabase.api.database.updateProjectPostgresConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3034,7 +3134,9 @@ Update project Supavisor config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateProjectSupavisorConfig({});
+await corsair.supabase.api.database.updateProjectSupavisorConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3098,7 +3200,9 @@ Update SSL enforcement config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.updateSslEnforcementConfig({});
+await corsair.supabase.api.database.updateSslEnforcementConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3162,7 +3266,9 @@ Upsert a migration
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.database.upsertMigration({});
+await corsair.supabase.api.database.upsertMigration({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3228,7 +3334,9 @@ Activate a configured custom hostname
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.activateCustomHostname({});
+await corsair.supabase.api.domains.activateCustomHostname({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3292,7 +3400,9 @@ Activate a vanity subdomain for a project
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.activateVanitySubdomain({});
+await corsair.supabase.api.domains.activateVanitySubdomain({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3356,7 +3466,9 @@ Check vanity subdomain availability
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.domains.checkVanitySubdomainAvailability({});
+await corsair.supabase.api.domains.checkVanitySubdomainAvailability({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3420,7 +3532,9 @@ Delete custom hostname configuration
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.domains.deleteCustomHostnameConfig({});
+await corsair.supabase.api.domains.deleteCustomHostnameConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3484,7 +3598,9 @@ Delete a project vanity subdomain
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.domains.deleteProjectVanitySubdomain({});
+await corsair.supabase.api.domains.deleteProjectVanitySubdomain({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3548,7 +3664,9 @@ Get a project custom hostname configuration
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.domains.getProjectCustomHostnameConfig({});
+await corsair.supabase.api.domains.getProjectCustomHostnameConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3612,7 +3730,9 @@ Get current vanity subdomain config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.domains.getVanitySubdomainConfig({});
+await corsair.supabase.api.domains.getVanitySubdomainConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3676,7 +3796,9 @@ Update project custom hostname
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.updateProjectCustomHostname({});
+await corsair.supabase.api.domains.updateProjectCustomHostname({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3740,7 +3862,9 @@ Reverify custom hostname DNS
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.domains.verifyCustomHostnameDns({});
+await corsair.supabase.api.domains.verifyCustomHostnameDns({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3806,7 +3930,9 @@ Create an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.createFunction({});
+await corsair.supabase.api.edgeFunctions.createFunction({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3870,7 +3996,10 @@ Delete an Edge Function
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.edgeFunctions.deleteFunction({});
+await corsair.supabase.api.edgeFunctions.deleteFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
 ```
 
 **Input**
@@ -3934,7 +4063,9 @@ Deploy an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.deployFunction({});
+await corsair.supabase.api.edgeFunctions.deployFunction({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -3998,7 +4129,10 @@ Retrieve an Edge Function
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.getFunction({});
+await corsair.supabase.api.edgeFunctions.getFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
 ```
 
 **Input**
@@ -4062,7 +4196,10 @@ Retrieve an Edge Function body
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.getFunctionBody({});
+await corsair.supabase.api.edgeFunctions.getFunctionBody({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
 ```
 
 **Input**
@@ -4126,7 +4263,11 @@ Invoke an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.invokeEdgeFunction({});
+await corsair.supabase.api.edgeFunctions.invokeEdgeFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+  projectApiKey: 'project_api_key',
+});
 ```
 
 **Input**
@@ -4190,7 +4331,9 @@ List Edge Functions
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.listFunctions({});
+await corsair.supabase.api.edgeFunctions.listFunctions({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4254,7 +4397,10 @@ Update an Edge Function
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.updateFunction({});
+await corsair.supabase.api.edgeFunctions.updateFunction({
+  ref: 'abcdefghijklmnopqrst',
+  functionSlug: 'hello-world',
+});
 ```
 
 **Input**
@@ -4318,7 +4464,9 @@ Bulk update Edge Functions
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.edgeFunctions.updateFunctions({});
+await corsair.supabase.api.edgeFunctions.updateFunctions({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4384,7 +4532,9 @@ Count action runs
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.countActionRuns({});
+await corsair.supabase.api.environments.countActionRuns({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4448,7 +4598,9 @@ Create a database branch
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.createDatabaseBranch({});
+await corsair.supabase.api.environments.createDatabaseBranch({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4512,7 +4664,9 @@ Delete a database branch
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.environments.deleteDatabaseBranch({});
+await corsair.supabase.api.environments.deleteDatabaseBranch({
+  branchId: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4576,7 +4730,9 @@ Disable preview branching
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.disablePreviewBranching({});
+await corsair.supabase.api.environments.disablePreviewBranching({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4640,7 +4796,10 @@ Get action run status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getActionRun({});
+await corsair.supabase.api.environments.getActionRun({
+  ref: 'abcdefghijklmnopqrst',
+  runId: 'run_id',
+});
 ```
 
 **Input**
@@ -4704,7 +4863,10 @@ Get action run logs
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getActionRunLogs({});
+await corsair.supabase.api.environments.getActionRunLogs({
+  ref: 'abcdefghijklmnopqrst',
+  runId: 'run_id',
+});
 ```
 
 **Input**
@@ -4768,7 +4930,10 @@ Get a database branch by name
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getBranch({});
+await corsair.supabase.api.environments.getBranch({
+  ref: 'abcdefghijklmnopqrst',
+  name: 'resource-name',
+});
 ```
 
 **Input**
@@ -4832,7 +4997,9 @@ Get database branch config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.getDatabaseBranchConfig({});
+await corsair.supabase.api.environments.getDatabaseBranchConfig({
+  branchId: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4896,7 +5063,9 @@ List database branches
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.environments.listDatabaseBranches({});
+await corsair.supabase.api.environments.listDatabaseBranches({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -4960,7 +5129,9 @@ Push a database branch
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.pushBranch({});
+await corsair.supabase.api.environments.pushBranch({
+  branchId: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5024,7 +5195,9 @@ Reset a database branch
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.environments.resetDatabaseBranch({});
+await corsair.supabase.api.environments.resetDatabaseBranch({
+  branchId: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5088,7 +5261,9 @@ Update database branch config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.environments.updateDatabaseBranchConfig({});
+await corsair.supabase.api.environments.updateDatabaseBranchConfig({
+  branchId: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5218,7 +5393,15 @@ Exchange an OAuth authorization code or refresh token
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.oauth.exchangeOauthToken({});
+await corsair.supabase.api.oauth.exchangeOauthToken({
+  body: {
+    grant_type: 'authorization_code',
+    code: 'authorization_code',
+    client_id: 'client_id',
+    client_secret: 'client_secret',
+    redirect_uri: 'https://example.com/callback',
+  },
+});
 ```
 
 **Input**
@@ -5284,7 +5467,9 @@ Create an organization
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.organizations.createOrganization({});
+await corsair.supabase.api.organizations.createOrganization({
+  name: 'Demo Organization',
+});
 ```
 
 **Input**
@@ -5348,7 +5533,9 @@ Get organization information
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.organizations.getOrganization({});
+await corsair.supabase.api.organizations.getOrganization({
+  slug: 'resource-slug',
+});
 ```
 
 **Input**
@@ -5476,7 +5663,9 @@ List organization members
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.organizations.listOrganizationMembers({});
+await corsair.supabase.api.organizations.listOrganizationMembers({
+  slug: 'resource-slug',
+});
 ```
 
 **Input**
@@ -5542,7 +5731,12 @@ Create a project
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.createProject({});
+await corsair.supabase.api.projects.createProject({
+  name: 'demo-project',
+  organization_id: 'organization_id',
+  db_pass: 'database_password',
+  region: 'us-east-1',
+});
 ```
 
 **Input**
@@ -5606,7 +5800,9 @@ Delete a project
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.projects.deleteProject({});
+await corsair.supabase.api.projects.deleteProject({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5734,7 +5930,9 @@ Get project API health status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getHealth({});
+await corsair.supabase.api.projects.getHealth({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5798,7 +5996,9 @@ Get a project
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProject({});
+await corsair.supabase.api.projects.getProject({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5862,7 +6062,9 @@ Retrieve project network bans
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectNetworkBans({});
+await corsair.supabase.api.projects.getProjectNetworkBans({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5926,7 +6128,9 @@ Get project network restrictions
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectNetworkRestrictions({});
+await corsair.supabase.api.projects.getProjectNetworkRestrictions({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -5990,7 +6194,9 @@ Get project service health status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectServiceHealthStatus({});
+await corsair.supabase.api.projects.getProjectServiceHealthStatus({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6054,7 +6260,9 @@ Get project upgrade eligibility
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectUpgradeEligibility({});
+await corsair.supabase.api.projects.getProjectUpgradeEligibility({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6118,7 +6326,9 @@ Get project upgrade status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.projects.getProjectUpgradeStatus({});
+await corsair.supabase.api.projects.getProjectUpgradeStatus({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6246,7 +6456,9 @@ Patch project network restrictions
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.patchNetworkRestrictions({});
+await corsair.supabase.api.projects.patchNetworkRestrictions({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6310,7 +6522,9 @@ Remove project network bans
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.removeNetworkBans({});
+await corsair.supabase.api.projects.removeNetworkBans({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6374,7 +6588,9 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.updateProject({});
+await corsair.supabase.api.projects.updateProject({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6438,7 +6654,9 @@ Apply project network restrictions
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.updateProjectNetworkRestrictions({});
+await corsair.supabase.api.projects.updateProjectNetworkRestrictions({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6502,7 +6720,9 @@ Upgrade project PostgreSQL version
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.projects.upgradeProjectPostgresVersion({});
+await corsair.supabase.api.projects.upgradeProjectPostgresVersion({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6568,7 +6788,9 @@ Get project PostgREST config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.rest.getProjectPostgrestConfig({});
+await corsair.supabase.api.rest.getProjectPostgrestConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6632,7 +6854,9 @@ Update project PostgREST config
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.rest.updateProjectPostgrestConfig({});
+await corsair.supabase.api.rest.updateProjectPostgrestConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6698,7 +6922,9 @@ Create a project API key
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.createApiKey({});
+await corsair.supabase.api.secrets.createApiKey({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6762,7 +6988,9 @@ Create multiple project secrets
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.createBulkSecrets({});
+await corsair.supabase.api.secrets.createBulkSecrets({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6826,7 +7054,10 @@ Delete a project API key
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.secrets.deleteApiKey({});
+await corsair.supabase.api.secrets.deleteApiKey({
+  ref: 'abcdefghijklmnopqrst',
+  id: 'resource_id',
+});
 ```
 
 **Input**
@@ -6890,7 +7121,9 @@ Delete multiple project secrets
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.supabase.api.secrets.deleteSecrets({});
+await corsair.supabase.api.secrets.deleteSecrets({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -6954,7 +7187,10 @@ Get a project API key
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectApiKey({});
+await corsair.supabase.api.secrets.getProjectApiKey({
+  ref: 'abcdefghijklmnopqrst',
+  id: 'resource_id',
+});
 ```
 
 **Input**
@@ -7018,7 +7254,9 @@ Get project API keys
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectApiKeys({});
+await corsair.supabase.api.secrets.getProjectApiKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -7082,7 +7320,9 @@ Get project legacy API keys status
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectLegacyApiKeys({});
+await corsair.supabase.api.secrets.getProjectLegacyApiKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -7146,7 +7386,9 @@ Get project pgsodium config
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.getProjectPgsodiumConfig({});
+await corsair.supabase.api.secrets.getProjectPgsodiumConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -7210,7 +7452,9 @@ List project secrets
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.secrets.listSecrets({});
+await corsair.supabase.api.secrets.listSecrets({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -7274,7 +7518,10 @@ Update a project API key
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.updateApiKey({});
+await corsair.supabase.api.secrets.updateApiKey({
+  ref: 'abcdefghijklmnopqrst',
+  id: 'resource_id',
+});
 ```
 
 **Input**
@@ -7338,7 +7585,9 @@ Update pgsodium root key
 **Risk:** `destructive`
 
 ```ts
-await corsair.supabase.api.secrets.updatePgsodiumConfig({});
+await corsair.supabase.api.secrets.updatePgsodiumConfig({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -7402,7 +7651,9 @@ Update project legacy API keys
 **Risk:** `write`
 
 ```ts
-await corsair.supabase.api.secrets.updateProjectLegacyApiKeys({});
+await corsair.supabase.api.secrets.updateProjectLegacyApiKeys({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
@@ -7468,7 +7719,10 @@ Get TUS resumable upload base options
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.getResumableUploadBaseOptions({});
+await corsair.supabase.api.storage.getResumableUploadBaseOptions({
+  ref: 'abcdefghijklmnopqrst',
+  projectApiKey: 'project_api_key',
+});
 ```
 
 **Input**
@@ -7532,7 +7786,11 @@ Get TUS resumable upload options
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.getResumableUploadOptions({});
+await corsair.supabase.api.storage.getResumableUploadOptions({
+  ref: 'abcdefghijklmnopqrst',
+  uploadId: 'upload_id',
+  projectApiKey: 'project_api_key',
+});
 ```
 
 **Input**
@@ -7596,7 +7854,10 @@ Handle TUS resumable upload sign options
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.handleResumableUploadSignOptions({});
+await corsair.supabase.api.storage.handleResumableUploadSignOptions({
+  ref: 'abcdefghijklmnopqrst',
+  projectApiKey: 'project_api_key',
+});
 ```
 
 **Input**
@@ -7660,7 +7921,11 @@ Handle TUS resumable upload sign options with ID
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.handleResumableUploadSignOptionsWithId({});
+await corsair.supabase.api.storage.handleResumableUploadSignOptionsWithId({
+  ref: 'abcdefghijklmnopqrst',
+  uploadId: 'upload_id',
+  projectApiKey: 'project_api_key',
+});
 ```
 
 **Input**
@@ -7724,7 +7989,9 @@ List storage buckets
 **Risk:** `read`
 
 ```ts
-await corsair.supabase.api.storage.listBuckets({});
+await corsair.supabase.api.storage.listBuckets({
+  ref: 'abcdefghijklmnopqrst',
+});
 ```
 
 **Input**
