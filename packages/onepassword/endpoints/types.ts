@@ -13,7 +13,7 @@ export const VaultSchema = z.object({
 
 export type Vault = z.infer<typeof VaultSchema>;
 
-export const VaultsListInputSchema = z.object({}).optional();
+export const VaultsListInputSchema = z.object({});
 export type VaultsListInput = z.infer<typeof VaultsListInputSchema>;
 
 export const VaultsListResponseSchema = z.array(VaultSchema);
