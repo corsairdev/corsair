@@ -1219,6 +1219,21 @@ importers:
         specifier: ^4.1.13
         version: 4.1.13
 
+  packages/onepassword:
+    devDependencies:
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.6.1)(postcss@8.5.14)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.8.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: 4.1.13
+        version: 4.1.13
+
   packages/openweathermap:
     dependencies:
       jest:
