@@ -48,6 +48,7 @@ export const BaseProviders = [
 	'monday',
 	'notion',
 	'onedrive',
+	'onepassword',
 	'openweathermap',
 	'oura',
 	'outlook',
@@ -195,6 +196,7 @@ export type AllProviders =
 	| 'monday'
 	| 'notion'
 	| 'onedrive'
+	| 'onepassword'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
