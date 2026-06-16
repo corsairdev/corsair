@@ -21,6 +21,8 @@ export async function makeOnePasswordRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Using `unknown` for body values because the 1Password Connect API accepts
+		// heterogeneous field shapes (strings, objects, arrays) that vary by item category.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
