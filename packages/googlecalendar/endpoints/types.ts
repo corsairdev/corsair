@@ -74,7 +74,9 @@ const ConferenceDataSchema = z.object({
 	createRequest: z
 		.object({
 			requestId: z.string().optional(),
-			conferenceSolutionKey: z.object({ type: z.string().optional() }).optional(),
+			conferenceSolutionKey: z
+				.object({ type: z.string().optional() })
+				.optional(),
 			status: z.object({ statusCode: z.string().optional() }).optional(),
 		})
 		.optional(),
