@@ -257,6 +257,26 @@ const EventSchema = z.object({
 	guestsCanSeeOtherGuests: z.boolean().optional(),
 	privateCopy: z.boolean().optional(),
 	locked: z.boolean().optional(),
+	conferenceData: z.any().optional(),
+	attachments: z.array(z.any()).optional(),
+	source: z
+		.object({
+			url: z.string().optional(),
+			title: z.string().optional(),
+		})
+		.optional(),
+	gadget: z
+		.object({
+			type: z.string().optional(),
+			title: z.string().optional(),
+			link: z.string().optional(),
+			iconLink: z.string().optional(),
+			width: z.number().optional(),
+			height: z.number().optional(),
+			display: z.string().optional(),
+			preferences: z.record(z.string(), z.string()).optional(),
+		})
+		.optional(),
 	eventType: z
 		.enum([
 			'default',
