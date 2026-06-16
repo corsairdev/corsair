@@ -1,5 +1,9 @@
 import type { SupabaseEndpoint } from './factory';
-import { runSupabaseOperation } from './factory';
+import {
+	logSupabaseOperation,
+	requestSupabaseOperation,
+	syncSupabaseOperationResult,
+} from './factory';
 import { restOperations } from './operation-groups/rest';
 
 function getOperation(name: (typeof restOperations)[number]['name']) {
@@ -17,7 +21,19 @@ export const getProjectPostgrestConfig: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getProjectPostgrestConfigOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getProjectPostgrestConfigOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getProjectPostgrestConfigOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getProjectPostgrestConfigOperation);
+	return result;
 };
 
 const updateProjectPostgrestConfigOperation = getOperation(
@@ -27,11 +43,19 @@ export const updateProjectPostgrestConfig: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(
+	const result = await requestSupabaseOperation(
 		ctx,
 		input,
 		updateProjectPostgrestConfigOperation,
 	);
+	await syncSupabaseOperationResult(
+		ctx,
+		updateProjectPostgrestConfigOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, updateProjectPostgrestConfigOperation);
+	return result;
 };
 
 export const RestEndpoints = {

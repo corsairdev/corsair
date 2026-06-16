@@ -339,7 +339,7 @@ function cacheEntityId(item: Record<string, unknown>, rule: CacheRule) {
 	return undefined;
 }
 
-async function cacheOperationResult(
+export async function syncSupabaseOperationResult(
 	ctx: SupabaseContext,
 	operation: SupabaseOperation,
 	input: SupabaseEndpointInput,
@@ -389,25 +389,31 @@ function cacheDeleteEntityId(input: SupabaseEndpointInput, rule: CacheRule) {
 	return undefined;
 }
 
-export async function runSupabaseOperation(
+export async function logSupabaseOperation(
+	ctx: SupabaseContext,
+	input: SupabaseEndpointInput,
+	operation: SupabaseOperation,
+) {
+	await logEventFromContext(
+		ctx,
+		`supabase.${operation.group}.${operation.name}`,
+		safeLogInput(input),
+		'completed',
+	);
+}
+
+export async function requestSupabaseOperation(
 	ctx: SupabaseContext,
 	input: SupabaseEndpointInput,
 	operation: SupabaseOperation,
 ) {
 	if (operation.kind === 'oauthAuthorizeUrl') {
-		const result = oauthAuthorizeUrl(input);
-		await logEventFromContext(
-			ctx,
-			`supabase.${operation.group}.${operation.name}`,
-			safeLogInput(input),
-			'completed',
-		);
-		return result;
+		return oauthAuthorizeUrl(input);
 	}
 
 	const projectKey =
 		operation.kind === 'project' ? requireProjectApiKey(ctx, input) : undefined;
-	const response = await makeSupabaseRequest(
+	return makeSupabaseRequest(
 		resolvePath(operation.path, input),
 		projectKey ?? ctx.key,
 		{
@@ -426,14 +432,4 @@ export async function runSupabaseOperation(
 				operation.kind === 'project' ? projectBaseUrl(input) : input.baseUrl,
 		},
 	);
-
-	await cacheOperationResult(ctx, operation, input, response);
-
-	await logEventFromContext(
-		ctx,
-		`supabase.${operation.group}.${operation.name}`,
-		safeLogInput(input),
-		'completed',
-	);
-	return response;
 }

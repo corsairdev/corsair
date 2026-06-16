@@ -1,5 +1,9 @@
 import type { SupabaseEndpoint } from './factory';
-import { runSupabaseOperation } from './factory';
+import {
+	logSupabaseOperation,
+	requestSupabaseOperation,
+	syncSupabaseOperationResult,
+} from './factory';
 import { advisorsOperations } from './operation-groups/advisors';
 
 function getOperation(name: (typeof advisorsOperations)[number]['name']) {
@@ -17,7 +21,19 @@ export const getSecurityAdvisors: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getSecurityAdvisorsOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getSecurityAdvisorsOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getSecurityAdvisorsOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getSecurityAdvisorsOperation);
+	return result;
 };
 
 const getPerformanceAdvisorsOperation = getOperation('getPerformanceAdvisors');
@@ -25,7 +41,19 @@ export const getPerformanceAdvisors: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getPerformanceAdvisorsOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getPerformanceAdvisorsOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getPerformanceAdvisorsOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getPerformanceAdvisorsOperation);
+	return result;
 };
 
 export const AdvisorsEndpoints = {

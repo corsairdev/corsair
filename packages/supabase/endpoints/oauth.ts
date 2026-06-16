@@ -1,5 +1,9 @@
 import type { SupabaseEndpoint } from './factory';
-import { runSupabaseOperation } from './factory';
+import {
+	logSupabaseOperation,
+	requestSupabaseOperation,
+	syncSupabaseOperationResult,
+} from './factory';
 import { oauthOperations } from './operation-groups/oauth';
 
 function getOperation(name: (typeof oauthOperations)[number]['name']) {
@@ -19,12 +23,36 @@ export const authorizeUserThroughOauth: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, authorizeUserThroughOauthOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		authorizeUserThroughOauthOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		authorizeUserThroughOauthOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, authorizeUserThroughOauthOperation);
+	return result;
 };
 
 const exchangeOauthTokenOperation = getOperation('exchangeOauthToken');
 export const exchangeOauthToken: SupabaseEndpoint = async (ctx, input = {}) => {
-	return runSupabaseOperation(ctx, input, exchangeOauthTokenOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		exchangeOauthTokenOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		exchangeOauthTokenOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, exchangeOauthTokenOperation);
+	return result;
 };
 
 export const OAuthEndpoints = {

@@ -1,5 +1,9 @@
 import type { SupabaseEndpoint } from './factory';
-import { runSupabaseOperation } from './factory';
+import {
+	logSupabaseOperation,
+	requestSupabaseOperation,
+	syncSupabaseOperationResult,
+} from './factory';
 import { authOperations } from './operation-groups/auth';
 
 function getOperation(name: (typeof authOperations)[number]['name']) {
@@ -12,7 +16,19 @@ function getOperation(name: (typeof authOperations)[number]['name']) {
 
 const createSsoProviderOperation = getOperation('createSsoProvider');
 export const createSsoProvider: SupabaseEndpoint = async (ctx, input = {}) => {
-	return runSupabaseOperation(ctx, input, createSsoProviderOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		createSsoProviderOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		createSsoProviderOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, createSsoProviderOperation);
+	return result;
 };
 
 const createThirdPartyAuthIntegrationOperation = getOperation(
@@ -22,11 +38,23 @@ export const createThirdPartyAuthIntegration: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(
+	const result = await requestSupabaseOperation(
 		ctx,
 		input,
 		createThirdPartyAuthIntegrationOperation,
 	);
+	await syncSupabaseOperationResult(
+		ctx,
+		createThirdPartyAuthIntegrationOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(
+		ctx,
+		input,
+		createThirdPartyAuthIntegrationOperation,
+	);
+	return result;
 };
 
 const createProjectSigningKeyOperation = getOperation(
@@ -36,7 +64,19 @@ export const createProjectSigningKey: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, createProjectSigningKeyOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		createProjectSigningKeyOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		createProjectSigningKeyOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, createProjectSigningKeyOperation);
+	return result;
 };
 
 const deleteThirdPartyAuthIntegrationOperation = getOperation(
@@ -46,16 +86,40 @@ export const deleteThirdPartyAuthIntegration: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(
+	const result = await requestSupabaseOperation(
 		ctx,
 		input,
 		deleteThirdPartyAuthIntegrationOperation,
 	);
+	await syncSupabaseOperationResult(
+		ctx,
+		deleteThirdPartyAuthIntegrationOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(
+		ctx,
+		input,
+		deleteThirdPartyAuthIntegrationOperation,
+	);
+	return result;
 };
 
 const getSsoProviderOperation = getOperation('getSsoProvider');
 export const getSsoProvider: SupabaseEndpoint = async (ctx, input = {}) => {
-	return runSupabaseOperation(ctx, input, getSsoProviderOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getSsoProviderOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getSsoProviderOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getSsoProviderOperation);
+	return result;
 };
 
 const getThirdPartyIntegrationOperation = getOperation(
@@ -65,7 +129,19 @@ export const getThirdPartyIntegration: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getThirdPartyIntegrationOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getThirdPartyIntegrationOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getThirdPartyIntegrationOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getThirdPartyIntegrationOperation);
+	return result;
 };
 
 const getLegacySigningKeyOperation = getOperation('getLegacySigningKey');
@@ -73,7 +149,19 @@ export const getLegacySigningKey: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getLegacySigningKeyOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getLegacySigningKeyOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getLegacySigningKeyOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getLegacySigningKeyOperation);
+	return result;
 };
 
 const getProjectSigningKeysOperation = getOperation('getProjectSigningKeys');
@@ -81,7 +169,19 @@ export const getProjectSigningKeys: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getProjectSigningKeysOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getProjectSigningKeysOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getProjectSigningKeysOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getProjectSigningKeysOperation);
+	return result;
 };
 
 const getProjectAuthConfigOperation = getOperation('getProjectAuthConfig');
@@ -89,12 +189,36 @@ export const getProjectAuthConfig: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getProjectAuthConfigOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getProjectAuthConfigOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getProjectAuthConfigOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getProjectAuthConfigOperation);
+	return result;
 };
 
 const listSsoProvidersOperation = getOperation('listSsoProviders');
 export const listSsoProviders: SupabaseEndpoint = async (ctx, input = {}) => {
-	return runSupabaseOperation(ctx, input, listSsoProvidersOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		listSsoProvidersOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		listSsoProvidersOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, listSsoProvidersOperation);
+	return result;
 };
 
 const listThirdPartyAuthIntegrationsOperation = getOperation(
@@ -104,21 +228,57 @@ export const listThirdPartyAuthIntegrations: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(
+	const result = await requestSupabaseOperation(
 		ctx,
 		input,
 		listThirdPartyAuthIntegrationsOperation,
 	);
+	await syncSupabaseOperationResult(
+		ctx,
+		listThirdPartyAuthIntegrationsOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(
+		ctx,
+		input,
+		listThirdPartyAuthIntegrationsOperation,
+	);
+	return result;
 };
 
 const deleteSsoProviderOperation = getOperation('deleteSsoProvider');
 export const deleteSsoProvider: SupabaseEndpoint = async (ctx, input = {}) => {
-	return runSupabaseOperation(ctx, input, deleteSsoProviderOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		deleteSsoProviderOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		deleteSsoProviderOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, deleteSsoProviderOperation);
+	return result;
 };
 
 const updateSsoProviderOperation = getOperation('updateSsoProvider');
 export const updateSsoProvider: SupabaseEndpoint = async (ctx, input = {}) => {
-	return runSupabaseOperation(ctx, input, updateSsoProviderOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		updateSsoProviderOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		updateSsoProviderOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, updateSsoProviderOperation);
+	return result;
 };
 
 const updateProjectAuthConfigOperation = getOperation(
@@ -128,7 +288,19 @@ export const updateProjectAuthConfig: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, updateProjectAuthConfigOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		updateProjectAuthConfigOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		updateProjectAuthConfigOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, updateProjectAuthConfigOperation);
+	return result;
 };
 
 export const AuthEndpoints = {

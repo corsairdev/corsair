@@ -1,5 +1,9 @@
 import type { SupabaseEndpoint } from './factory';
-import { runSupabaseOperation } from './factory';
+import {
+	logSupabaseOperation,
+	requestSupabaseOperation,
+	syncSupabaseOperationResult,
+} from './factory';
 import { storageOperations } from './operation-groups/storage';
 
 function getOperation(name: (typeof storageOperations)[number]['name']) {
@@ -19,11 +23,23 @@ export const getResumableUploadBaseOptions: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(
+	const result = await requestSupabaseOperation(
 		ctx,
 		input,
 		getResumableUploadBaseOptionsOperation,
 	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getResumableUploadBaseOptionsOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(
+		ctx,
+		input,
+		getResumableUploadBaseOptionsOperation,
+	);
+	return result;
 };
 
 const getResumableUploadOptionsOperation = getOperation(
@@ -33,12 +49,31 @@ export const getResumableUploadOptions: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(ctx, input, getResumableUploadOptionsOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		getResumableUploadOptionsOperation,
+	);
+	await syncSupabaseOperationResult(
+		ctx,
+		getResumableUploadOptionsOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(ctx, input, getResumableUploadOptionsOperation);
+	return result;
 };
 
 const listBucketsOperation = getOperation('listBuckets');
 export const listBuckets: SupabaseEndpoint = async (ctx, input = {}) => {
-	return runSupabaseOperation(ctx, input, listBucketsOperation);
+	const result = await requestSupabaseOperation(
+		ctx,
+		input,
+		listBucketsOperation,
+	);
+	await syncSupabaseOperationResult(ctx, listBucketsOperation, input, result);
+	await logSupabaseOperation(ctx, input, listBucketsOperation);
+	return result;
 };
 
 const handleResumableUploadSignOptionsWithIdOperation = getOperation(
@@ -48,11 +83,23 @@ export const handleResumableUploadSignOptionsWithId: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(
+	const result = await requestSupabaseOperation(
 		ctx,
 		input,
 		handleResumableUploadSignOptionsWithIdOperation,
 	);
+	await syncSupabaseOperationResult(
+		ctx,
+		handleResumableUploadSignOptionsWithIdOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(
+		ctx,
+		input,
+		handleResumableUploadSignOptionsWithIdOperation,
+	);
+	return result;
 };
 
 const handleResumableUploadSignOptionsOperation = getOperation(
@@ -62,11 +109,23 @@ export const handleResumableUploadSignOptions: SupabaseEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	return runSupabaseOperation(
+	const result = await requestSupabaseOperation(
 		ctx,
 		input,
 		handleResumableUploadSignOptionsOperation,
 	);
+	await syncSupabaseOperationResult(
+		ctx,
+		handleResumableUploadSignOptionsOperation,
+		input,
+		result,
+	);
+	await logSupabaseOperation(
+		ctx,
+		input,
+		handleResumableUploadSignOptionsOperation,
+	);
+	return result;
 };
 
 export const StorageEndpoints = {
