@@ -112,9 +112,7 @@ export function WaitlistProfileForm({
 			setHasJoined(true);
 			router.refresh();
 		} catch (err) {
-			setError(
-				err instanceof Error ? err.message : 'Failed to join waitlist',
-			);
+			setError(err instanceof Error ? err.message : 'Failed to join waitlist');
 		} finally {
 			setSubmitLoading(false);
 		}
@@ -132,8 +130,8 @@ export function WaitlistProfileForm({
 					</h2>
 					<p className="mx-auto mt-3 max-w-md text-[14px] leading-[1.65] text-[#1c1c1c99]">
 						We&apos;ll email you at{' '}
-						<span className="font-medium text-[#1c1c1c]">{email}</span> when
-						the OSS hackathon opens.
+						<span className="font-medium text-[#1c1c1c]">{email}</span> when the
+						OSS hackathon opens.
 					</p>
 					<dl className="mx-auto mt-6 max-w-sm space-y-3 border-t border-[#1c1c1c1a] pt-6 text-left">
 						<div className="flex items-center justify-between gap-4 text-[13px]">
@@ -162,8 +160,8 @@ export function WaitlistProfileForm({
 				</h2>
 				<p className="mt-2 text-[13px] leading-[1.65] text-[#1c1c1c99]">
 					Signed in as{' '}
-					<span className="font-medium text-[#1c1c1c]">{email}</span>. Add
-					your GitHub handle, join Discord, then enter your Discord username.
+					<span className="font-medium text-[#1c1c1c]">{email}</span>. Add your
+					GitHub handle, join Discord, then enter your Discord username.
 				</p>
 
 				<div className="mt-6 space-y-5">

@@ -42,7 +42,11 @@ Useful commands from the repo root:
 ```bash
 pnpm typecheck
 pnpm lint
+pnpm lint:fix
+pnpm format
+pnpm run validate:plugins
 pnpm build
+pnpm test
 ```
 
 If your change needs credentials or local environment setup, follow the package-specific docs or examples in the repo before running tests.
