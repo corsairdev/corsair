@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { request, ApiError } from 'corsair/http';
 
 export class OnePasswordAPIError extends Error {
 	constructor(
@@ -37,7 +37,6 @@ export async function makeOnePasswordRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${apiKey}`,
 		},
 	};
 
@@ -55,6 +54,9 @@ export async function makeOnePasswordRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new OnePasswordAPIError(error.message);
 		}
