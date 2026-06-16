@@ -37,10 +37,14 @@ export default async function OssWaitlistPage() {
 					</h1>
 					<div className="mt-5 max-w-[560px] space-y-4 text-[15px] leading-[1.65] text-[#1c1c1c99]">
 						<p>
-							This is a two-week hackathon to earn the most points by building
-							integrations. Corsair supplies all the integration information you
-							need to get started. You write and test the integration code and
-							ship it for thousands of developers to use.
+							This is a two-week hackathon to build integrations. Corsair
+							supplies all the integration information you need to get started.
+							You write and test the integration code and ship it for thousands
+							of developers to use.
+						</p>
+						<p>
+							Gain TypeScript expertise and show off your own code in a
+							production codebase used by thousands.
 						</p>
 						<p>
 							Claim an integration, open your PR, and rack up points as you
