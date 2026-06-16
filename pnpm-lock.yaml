@@ -257,10 +257,6 @@ importers:
         version: 5.9.3
 
   packages/airtable:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -268,6 +264,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -282,10 +281,6 @@ importers:
         version: 4.1.13
 
   packages/amplitude:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -293,6 +288,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -328,10 +326,6 @@ importers:
         version: 5.9.3
 
   packages/asana:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -339,6 +333,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -354,9 +351,15 @@ importers:
 
   packages/bitwarden:
     devDependencies:
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.14)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.8.1)
@@ -392,10 +395,6 @@ importers:
         version: 4.1.13
 
   packages/box:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -403,6 +402,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -417,10 +419,6 @@ importers:
         version: 4.1.13
 
   packages/cal:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -428,6 +426,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -442,10 +443,6 @@ importers:
         version: 4.1.13
 
   packages/calendly:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -453,6 +450,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -634,10 +634,6 @@ importers:
         version: 4.1.13
 
   packages/discord:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -645,6 +641,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -660,9 +659,15 @@ importers:
 
   packages/dodopayments:
     devDependencies:
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.14)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.8.1)
@@ -674,10 +679,6 @@ importers:
         version: 4.1.13
 
   packages/dropbox:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -685,6 +686,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -699,10 +703,6 @@ importers:
         version: 4.1.13
 
   packages/exa:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -710,6 +710,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -724,10 +727,6 @@ importers:
         version: 4.1.13
 
   packages/figma:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -735,6 +734,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -749,10 +751,6 @@ importers:
         version: 4.1.13
 
   packages/firecrawl:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -760,6 +758,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -774,10 +775,6 @@ importers:
         version: 4.1.13
 
   packages/fireflies:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -785,6 +782,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -799,10 +799,6 @@ importers:
         version: 4.1.13
 
   packages/github:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -810,6 +806,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -824,10 +823,6 @@ importers:
         version: 4.1.13
 
   packages/gitlab:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -835,6 +830,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -849,10 +847,6 @@ importers:
         version: 4.1.13
 
   packages/gmail:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -860,6 +854,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -874,10 +871,6 @@ importers:
         version: 4.1.13
 
   packages/googlecalendar:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -885,6 +878,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -899,10 +895,6 @@ importers:
         version: 4.1.13
 
   packages/googledrive:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -910,6 +902,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -924,10 +919,6 @@ importers:
         version: 4.1.13
 
   packages/googlesheets:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -935,6 +926,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -949,10 +943,6 @@ importers:
         version: 4.1.13
 
   packages/grafana:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -960,6 +950,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -974,10 +967,6 @@ importers:
         version: 4.1.13
 
   packages/hackernews:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -985,6 +974,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -999,10 +991,6 @@ importers:
         version: 4.1.13
 
   packages/hubspot:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1010,6 +998,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1024,10 +1015,6 @@ importers:
         version: 4.1.13
 
   packages/intercom:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1035,6 +1022,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1049,10 +1039,6 @@ importers:
         version: 4.1.13
 
   packages/jira:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1060,6 +1046,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1074,10 +1063,6 @@ importers:
         version: 4.1.13
 
   packages/linear:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1085,6 +1070,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1145,10 +1133,6 @@ importers:
         version: 5.9.3
 
   packages/monday:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1156,6 +1140,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1170,10 +1157,6 @@ importers:
         version: 4.1.13
 
   packages/notion:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1181,6 +1164,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1195,10 +1181,6 @@ importers:
         version: 4.1.13
 
   packages/onedrive:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1206,6 +1188,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1220,10 +1205,6 @@ importers:
         version: 4.1.13
 
   packages/openweathermap:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1231,6 +1212,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1245,10 +1229,6 @@ importers:
         version: 4.1.13
 
   packages/oura:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1256,6 +1236,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1270,10 +1253,6 @@ importers:
         version: 4.1.13
 
   packages/outlook:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1281,6 +1260,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1295,10 +1277,6 @@ importers:
         version: 4.1.13
 
   packages/pagerduty:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1306,6 +1284,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1321,9 +1302,6 @@ importers:
 
   packages/posthog:
     dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
@@ -1334,6 +1312,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1396,10 +1377,6 @@ importers:
         version: 4.1.13
 
   packages/resend:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1407,6 +1384,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1421,10 +1401,6 @@ importers:
         version: 4.1.13
 
   packages/sentry:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1432,6 +1408,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1446,10 +1425,6 @@ importers:
         version: 4.1.13
 
   packages/sharepoint:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1457,6 +1432,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1471,10 +1449,6 @@ importers:
         version: 4.1.13
 
   packages/slack:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1482,6 +1456,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1496,10 +1473,6 @@ importers:
         version: 4.1.13
 
   packages/spotify:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1507,6 +1480,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1545,10 +1521,6 @@ importers:
         version: 4.1.13
 
   packages/stripe:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1556,6 +1528,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1646,10 +1621,6 @@ importers:
         version: 6.4.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.20.6)(yaml@2.8.1)
 
   packages/tally:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1657,6 +1628,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1695,10 +1669,6 @@ importers:
         version: 4.1.13
 
   packages/teams:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1706,6 +1676,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1720,10 +1693,6 @@ importers:
         version: 4.1.13
 
   packages/telegram:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1731,6 +1700,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1745,10 +1717,6 @@ importers:
         version: 4.1.13
 
   packages/todoist:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1756,6 +1724,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1770,10 +1741,6 @@ importers:
         version: 4.1.13
 
   packages/trello:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1781,6 +1748,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1819,10 +1789,6 @@ importers:
         version: 4.1.13
 
   packages/twitter:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1830,6 +1796,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1844,10 +1813,6 @@ importers:
         version: 4.1.13
 
   packages/twitterapiio:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1855,6 +1820,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1869,10 +1837,6 @@ importers:
         version: 4.1.13
 
   packages/typeform:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1880,6 +1844,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1925,10 +1892,6 @@ importers:
         version: 5.9.3
 
   packages/vapi:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1936,6 +1899,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1974,10 +1940,6 @@ importers:
         version: 4.1.13
 
   packages/xquik:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1985,6 +1947,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -1999,10 +1964,6 @@ importers:
         version: 4.1.13
 
   packages/youtube:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -2010,6 +1971,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -2024,10 +1988,6 @@ importers:
         version: 4.1.13
 
   packages/zendesk:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -2035,6 +1995,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -2049,10 +2012,6 @@ importers:
         version: 4.1.13
 
   packages/zohomail:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -2060,6 +2019,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
@@ -2074,10 +2036,6 @@ importers:
         version: 4.1.13
 
   packages/zoom:
-    dependencies:
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -2085,6 +2043,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.28.6)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.6))(esbuild@0.27.0)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)

@@ -23,8 +23,7 @@ export function OssBarAuth({
 	githubAvatarUrl: string | null;
 }) {
 	const pathname = usePathname();
-	const hideSignIn =
-		!session?.user && pathname.startsWith('/oss/waitlist');
+	const hideSignIn = !session?.user && pathname.startsWith('/oss/waitlist');
 
 	if (session?.user) {
 		return (

@@ -21,7 +21,8 @@
     "generate:labeler-config": "node scripts/generate-labeler-config.mjs",
     "generate:docs": "tsx scripts/generate-plugin-docs.ts",
     "generate:docs:all": "tsx scripts/generate-plugin-docs.ts --all",
-    "build:explorer-catalog": "tsx scripts/build-explorer-catalog.ts"
+    "build:explorer-catalog": "tsx scripts/build-explorer-catalog.ts",
+    "validate:plugins": "tsx scripts/validate-plugins.ts"
   },
   "pnpm": {
     "overrides": {
