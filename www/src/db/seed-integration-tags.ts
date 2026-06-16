@@ -7,7 +7,7 @@ import {
 	assignIntegrationTagSlugs,
 	INTEGRATION_TAG_DEFINITIONS,
 } from '@/db/integration-tag-definitions';
-import { integrationTags, integrations, tags } from '@/db/schema';
+import { integrations, integrationTags, tags } from '@/db/schema';
 
 async function seedTags() {
 	for (const definition of INTEGRATION_TAG_DEFINITIONS) {
@@ -51,7 +51,10 @@ async function seedIntegrationTags(allTags: (typeof tags.$inferSelect)[]) {
 
 	for (const integration of allIntegrations) {
 		const tagSlugs = assignIntegrationTagSlugs(integration);
-		distribution.set(tagSlugs.length, (distribution.get(tagSlugs.length) ?? 0) + 1);
+		distribution.set(
+			tagSlugs.length,
+			(distribution.get(tagSlugs.length) ?? 0) + 1,
+		);
 
 		for (const tagSlug of tagSlugs) {
 			const tagId = tagIdBySlug.get(tagSlug);
@@ -94,7 +97,9 @@ async function seedIntegrationTags(allTags: (typeof tags.$inferSelect)[]) {
 
 	console.log('\nTag usage:');
 	for (const row of tagCounts) {
-		console.log(`  ${String(row.count).padStart(4)}  ${row.name} (${row.color})`);
+		console.log(
+			`  ${String(row.count).padStart(4)}  ${row.name} (${row.color})`,
+		);
 	}
 }
 

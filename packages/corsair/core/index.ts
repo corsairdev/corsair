@@ -3,7 +3,6 @@ import { createCorsairDatabase } from '../db/kysely/database';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
-import type { CorsairManageNamespace } from './management';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
 import type { CorsairIntegration, CorsairPlugin } from './plugins';
