@@ -206,7 +206,10 @@ async function handleOAuthCallbackTunnel(
 }
 
 export type ProcessCorsairOptions = {
+	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
+	/** Local development only. Skips signature verification when signingSecret is omitted. */
+	allowUnsignedTunnel?: boolean;
 };
 
 export async function processCorsair(
@@ -219,7 +222,15 @@ export async function processCorsair(
 		normalizeHeader(request.headers, 'x-corsair-signature'),
 	);
 
-	if (options.signingSecret) {
+	if (!options.signingSecret) {
+		if (!options.allowUnsignedTunnel) {
+			return {
+				status: 'failed',
+				retryable: false,
+				error: 'Tunnel signing secret is required',
+			};
+		}
+	} else {
 		const valid = verifyTunnelSignature(
 			request.body,
 			signature,

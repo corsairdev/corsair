@@ -4,15 +4,21 @@ import { asRecord, firstString, readBodyRecord } from 'corsair/core';
 const CALENDLY_ORGANIZATION_URI =
 	/^https:\/\/api\.calendly\.com\/organizations\/[^/]+$/;
 const CALENDLY_USER_URI = /^https:\/\/api\.calendly\.com\/users\/[^/]+$/;
+const MAX_TRAVERSAL_DEPTH = 32;
 
-function findCalendlyOrganizationUri(value: unknown): string | undefined {
+function findCalendlyOrganizationUri(
+	value: unknown,
+	depth = 0,
+): string | undefined {
+	if (depth > MAX_TRAVERSAL_DEPTH) return undefined;
+
 	if (typeof value === 'string' && CALENDLY_ORGANIZATION_URI.test(value)) {
 		return value;
 	}
 
 	if (Array.isArray(value)) {
 		for (const item of value) {
-			const organizationUri = findCalendlyOrganizationUri(item);
+			const organizationUri = findCalendlyOrganizationUri(item, depth + 1);
 			if (organizationUri) return organizationUri;
 		}
 		return undefined;
@@ -30,21 +36,23 @@ function findCalendlyOrganizationUri(value: unknown): string | undefined {
 	}
 
 	for (const nested of Object.values(record)) {
-		const organizationUri = findCalendlyOrganizationUri(nested);
+		const organizationUri = findCalendlyOrganizationUri(nested, depth + 1);
 		if (organizationUri) return organizationUri;
 	}
 
 	return undefined;
 }
 
-function findCalendlyUserUri(value: unknown): string | undefined {
+function findCalendlyUserUri(value: unknown, depth = 0): string | undefined {
+	if (depth > MAX_TRAVERSAL_DEPTH) return undefined;
+
 	if (typeof value === 'string' && CALENDLY_USER_URI.test(value)) {
 		return value;
 	}
 
 	if (Array.isArray(value)) {
 		for (const item of value) {
-			const userUri = findCalendlyUserUri(item);
+			const userUri = findCalendlyUserUri(item, depth + 1);
 			if (userUri) return userUri;
 		}
 		return undefined;
@@ -54,7 +62,7 @@ function findCalendlyUserUri(value: unknown): string | undefined {
 	if (!record) return undefined;
 
 	for (const nested of Object.values(record)) {
-		const userUri = findCalendlyUserUri(nested);
+		const userUri = findCalendlyUserUri(nested, depth + 1);
 		if (userUri) return userUri;
 	}
 

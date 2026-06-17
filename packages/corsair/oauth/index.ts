@@ -295,22 +295,36 @@ export async function processOAuthCallback(
 		);
 	}
 
-	const tenantLink = await resolveOAuthWebhookTenantLink(
-		internal.plugins,
-		pluginId,
-		tokens,
-	);
-	if (tenantLink) {
-		const extraAccountFields = plugin.authConfig?.oauth_2?.account ?? [];
-		await setWebhookTenantLink({
-			database: internal.database,
-			kek: internal.kek,
+	try {
+		const tenantLink = await resolveOAuthWebhookTenantLink(
+			internal.plugins,
 			pluginId,
-			tenantId,
-			link: tenantLink,
-			authType: 'oauth_2',
-			extraAccountFields,
-		});
+			tokens,
+		);
+		if (tenantLink) {
+			try {
+				const extraAccountFields = plugin.authConfig?.oauth_2?.account ?? [];
+				await setWebhookTenantLink({
+					database: internal.database,
+					kek: internal.kek,
+					pluginId,
+					tenantId,
+					link: tenantLink,
+					authType: 'oauth_2',
+					extraAccountFields,
+				});
+			} catch (error) {
+				console.warn(
+					`[corsair:oauth] Failed to persist webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
+					error,
+				);
+			}
+		}
+	} catch (error) {
+		console.warn(
+			`[corsair:oauth] Failed to resolve webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
+			error,
+		);
 	}
 
 	return { plugin: pluginId, tenantId };
