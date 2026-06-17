@@ -5,8 +5,20 @@ import { setupCorsair } from '../setup';
 import { createTestDatabase } from './setup-db';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Test fixtures — minimal plugin stand-ins.
-// The management handler reads .id, .options.authType, and .oauthConfig;
+// Test fixtures and casts.
+//
+// The `as unknown as CorsairPlugin` cast on each fixture is intentional. The
+// full CorsairPlugin interface is generic over a runtime endpoint/schema
+// context that's only meaningful inside createCorsair, and constructing a
+// fully-typed instance here would re-implement half the library. The
+// management handler only reads .id, .options.authType, and .oauthConfig,
+// which these stubs supply.
+//
+// The `as any` on every createCorsair(...) call sidesteps the strict generic
+// inference of `createCorsair<const Plugins extends ...>`, which can't infer
+// a stable shape from the cast-down plugin array. Using `any` at the call
+// site is local and only used to build a corsair instance — runtime behavior
+// is the same.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const slackOAuth = {
