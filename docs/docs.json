@@ -26,7 +26,7 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/installation"
+              "getting-started/setup"
             ]
           },
           {
@@ -80,7 +80,8 @@
           {
             "group": "Production",
             "pages": [
-              "production/oauth-process"
+              "production/oauth-process",
+              "production/tenant-provisioning"
             ]
           },
           {
@@ -727,6 +728,16 @@
                 ]
               },
               {
+                "group": "Zoho Mail",
+                "pages": [
+                  "plugins/zohomail/overview",
+                  "plugins/zohomail/get-credentials",
+                  "plugins/zohomail/api",
+                  "plugins/zohomail/database",
+                  "plugins/zohomail/webhooks"
+                ]
+              },
+              {
                 "group": "Zoom",
                 "pages": [
                   "plugins/zoom/overview",
@@ -757,6 +768,10 @@
   },
   "redirects": [
     { "source": "/", "destination": "/getting-started/introduction" },
+    {
+      "source": "/getting-started/installation",
+      "destination": "/getting-started/setup"
+    },
     { "source": "/app/introduction", "destination": "/app/home" },
     { "source": "/hosted-sdk/overview", "destination": "/app/home" },
     { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },

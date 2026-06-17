@@ -88,3 +88,10 @@ todoist:
 cal:
   bookings:
     list: {}
+
+zohomail:
+  folders:
+    list: {}
+  messages:
+    # folderId omitted → defaults to the Inbox. Set one to seed a different folder.
+    list: {}

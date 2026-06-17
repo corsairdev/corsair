@@ -1,4 +1,4 @@
-import OnedriveCommand from './subscribe/onedrive.command'
+import OnedriveCommand from './subscribe/onedrive.command';
 
 export default class OnedriveSubscribeCommand extends OnedriveCommand {
 	getName(): string {

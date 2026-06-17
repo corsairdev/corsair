@@ -1,0 +1,489 @@
+---
+title: API
+description: "API reference for Zoho Mail: every `zohomail.api.*` operation with input and output types."
+---
+
+Every `zohomail.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a new folder
+
+**Risk:** `write`
+
+```ts
+await corsair.zohomail.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `folderName` | `string` | Yes | — |
+| `parentFolderId` | `string` | No | Parent folder ID for creating a sub-folder. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | No | — |
+| `folderName` | `string` | No | — |
+| `path` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `previousFolderId` | `string` | No | — |
+| `folderType` | `string` | No | — |
+| `isArchived` | `string \| boolean` | No | — |
+| `imapAccess` | `string \| boolean` | No | — |
+| `unreadCount` | `string \| number` | No | — |
+| `messageCount` | `string \| number` | No | — |
+| `URI` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a folder along with its emails and sub-folders [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.zohomail.api.folders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `folderId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`folders.get`
+
+Get a specific folder
+
+**Risk:** `read`
+
+```ts
+await corsair.zohomail.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `folderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | No | — |
+| `folderName` | `string` | No | — |
+| `path` | `string` | No | — |
+| `parentFolderId` | `string` | No | — |
+| `previousFolderId` | `string` | No | — |
+| `folderType` | `string` | No | — |
+| `isArchived` | `string \| boolean` | No | — |
+| `imapAccess` | `string \| boolean` | No | — |
+| `unreadCount` | `string \| number` | No | — |
+| `messageCount` | `string \| number` | No | — |
+| `URI` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List all mail folders
+
+**Risk:** `read`
+
+```ts
+await corsair.zohomail.api.folders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  folderId?: string,
+  folderName?: string,
+  path?: string,
+  parentFolderId?: string,
+  previousFolderId?: string,
+  folderType?: string,
+  isArchived?: string | boolean,
+  imapAccess?: string | boolean,
+  unreadCount?: string | number,
+  messageCount?: string | number,
+  URI?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Rename, mark all emails read, or empty a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.zohomail.api.folders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `folderId` | `string` | Yes | — |
+| `mode` | `rename \| markAsRead \| emptyFolder` | Yes | — |
+| `folderName` | `string` | No | New folder name. Required when mode = rename. |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Permanently delete an email [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.zohomail.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `folderId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`messages.get`
+
+Get a specific email with its content
+
+**Risk:** `read`
+
+```ts
+await corsair.zohomail.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `folderId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `folderId` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `fromAddress` | `string` | No | — |
+| `toAddress` | `string` | No | — |
+| `ccAddress` | `string` | No | — |
+| `sender` | `string` | No | — |
+| `sentDateInGMT` | `string` | No | — |
+| `receivedTime` | `string` | No | — |
+| `size` | `string` | No | — |
+| `hasAttachment` | `string` | No | — |
+| `hasInline` | `string` | No | — |
+| `status` | `string` | No | — |
+| `status2` | `string` | No | — |
+| `flagid` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `calendarType` | `string` | No | — |
+| `threadCount` | `string` | No | — |
+| `content` | `string` | No | — |
+| `mailFormat` | `string` | No | — |
+| `returnPath` | `string` | No | — |
+| `bccAddress` | `string` | No | — |
+| `replyTo` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List emails in a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.zohomail.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `folderId` | `string` | Yes | Folder to list emails from (required). |
+| `start` | `number` | No | Starting sequence number (default 1). |
+| `limit` | `number` | No | Number of emails to retrieve, 1-200 (default 10). |
+| `status` | `read \| unread \| all` | No | — |
+| `sortBy` | `date \| messageId \| size` | No | — |
+| `sortorder` | `boolean` | No | true = ascending, false = descending (default). |
+| `includeto` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  messageId?: string,
+  threadId?: string,
+  folderId?: string,
+  subject?: string,
+  summary?: string,
+  fromAddress?: string,
+  toAddress?: string,
+  ccAddress?: string,
+  sender?: string,
+  sentDateInGMT?: string,
+  receivedTime?: string,
+  size?: string,
+  hasAttachment?: string,
+  hasInline?: string,
+  status?: string,
+  status2?: string,
+  flagid?: string,
+  priority?: string,
+  calendarType?: string,
+  threadCount?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markRead
+
+`messages.markRead`
+
+Mark emails as read
+
+**Risk:** `write`
+
+```ts
+await corsair.zohomail.api.messages.markRead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `messageId` | `string[]` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### markUnread
+
+`messages.markUnread`
+
+Mark emails as unread
+
+**Risk:** `write`
+
+```ts
+await corsair.zohomail.api.messages.markUnread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `messageId` | `string[]` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### move
+
+`messages.move`
+
+Move emails to another folder
+
+**Risk:** `write`
+
+```ts
+await corsair.zohomail.api.messages.move({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `messageId` | `string[]` | Yes | Message IDs to move. |
+| `destfolderId` | `string` | Yes | Destination folder ID. |
+
+
+
+**Output:** `void`
+
+
+---
+
+### send
+
+`messages.send`
+
+Send an email to one or more recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.zohomail.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
+| `fromAddress` | `string` | Yes | Sender address; must belong to the authenticated account. |
+| `toAddress` | `string` | Yes | Recipient address(es), comma-separated. |
+| `ccAddress` | `string` | No | — |
+| `bccAddress` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `content` | `string` | No | — |
+| `mailFormat` | `html \| plaintext` | No | — |
+| `askReceipt` | `yes \| no` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | No | — |
+| `threadId` | `string` | No | — |
+| `folderId` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `fromAddress` | `string` | No | — |
+| `toAddress` | `string` | No | — |
+| `ccAddress` | `string` | No | — |
+| `sender` | `string` | No | — |
+| `sentDateInGMT` | `string` | No | — |
+| `receivedTime` | `string` | No | — |
+| `size` | `string` | No | — |
+| `hasAttachment` | `string` | No | — |
+| `hasInline` | `string` | No | — |
+| `status` | `string` | No | — |
+| `status2` | `string` | No | — |
+| `flagid` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `calendarType` | `string` | No | — |
+| `threadCount` | `string` | No | — |
+
+
+
+---
+

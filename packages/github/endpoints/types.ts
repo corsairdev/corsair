@@ -335,6 +335,40 @@ const ForksListInputSchema = z.object({
 	page: z.number().optional(),
 });
 
+const UsersListInputSchema = z.object({
+	since: z.number().optional(),
+	perPage: z.number().optional(),
+});
+
+const UsersGetInputSchema = z.object({
+	username: z.string(),
+});
+
+const UsersGetByIdInputSchema = z.object({
+	accountId: z.number(),
+});
+
+const UsersGetAuthenticatedInputSchema = z.object({});
+
+const UsersUpdateInputSchema = z.object({
+	name: z.string().optional(),
+	email: z.string().optional(),
+	blog: z.string().optional(),
+	twitterUsername: z.string().nullable().optional(),
+	company: z.string().optional(),
+	location: z.string().optional(),
+	hireable: z.boolean().optional(),
+	bio: z.string().optional(),
+});
+
+const UsersGetHovercardInputSchema = z.object({
+	username: z.string(),
+	subjectType: z
+		.enum(['organization', 'repository', 'issue', 'pull_request'])
+		.optional(),
+	subjectId: z.string().optional(),
+});
+
 export const GithubEndpointInputSchemas = {
 	issuesList: IssuesListInputSchema,
 	issuesGet: IssuesGetInputSchema,
@@ -369,6 +403,12 @@ export const GithubEndpointInputSchemas = {
 	commentsGet: CommentsGetInputSchema,
 	commentsUpdate: CommentsUpdateInputSchema,
 	commentsDelete: CommentsDeleteInputSchema,
+	usersList: UsersListInputSchema,
+	usersGet: UsersGetInputSchema,
+	usersGetById: UsersGetByIdInputSchema,
+	usersGetAuthenticated: UsersGetAuthenticatedInputSchema,
+	usersUpdate: UsersUpdateInputSchema,
+	usersGetHovercard: UsersGetHovercardInputSchema,
 } as const;
 
 export type GithubEndpointInputs = {
@@ -399,6 +439,39 @@ const SimpleUserSchema = z.object({
 	type: z.string().optional(),
 	siteAdmin: z.boolean().optional(),
 	starredAt: z.coerce.date().nullable().optional(),
+	userViewType: z.string().optional(),
+});
+
+const UserPlanSchema = z.object({
+	collaborators: z.number().optional(),
+	name: z.string().optional(),
+	space: z.number().optional(),
+	privateRepos: z.number().optional(),
+});
+
+const UserSchema = SimpleUserSchema.extend({
+	company: z.string().nullable().optional(),
+	blog: z.string().nullable().optional(),
+	location: z.string().nullable().optional(),
+	notificationEmail: z.string().nullable().optional(),
+	hireable: z.boolean().nullable().optional(),
+	bio: z.string().nullable().optional(),
+	twitterUsername: z.string().nullable().optional(),
+	publicRepos: z.number().optional(),
+	publicGists: z.number().optional(),
+	followers: z.number().optional(),
+	following: z.number().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
+	updatedAt: z.coerce.date().nullable().optional(),
+	privateGists: z.number().optional(),
+	totalPrivateRepos: z.number().optional(),
+	ownedPrivateRepos: z.number().optional(),
+	diskUsage: z.number().optional(),
+	collaborators: z.number().optional(),
+	twoFactorAuthentication: z.boolean().optional(),
+	plan: UserPlanSchema.optional(),
+	businessPlus: z.boolean().optional(),
+	ldapDn: z.string().optional(),
 });
 
 const LabelSchema = z.object({
@@ -855,6 +928,19 @@ export const GithubEndpointOutputSchemas = {
 	commentsGet: CommentSchema,
 	commentsUpdate: CommentSchema,
 	commentsDelete: z.void(),
+	usersList: z.array(SimpleUserSchema),
+	usersGet: UserSchema,
+	usersGetById: UserSchema,
+	usersGetAuthenticated: UserSchema,
+	usersUpdate: UserSchema,
+	usersGetHovercard: z.object({
+		contexts: z.array(
+			z.object({
+				message: z.string(),
+				octicon: z.string(),
+			}),
+		),
+	}),
 } as const;
 
 export type GithubEndpointOutputs = {
@@ -949,4 +1035,17 @@ export type CommentGetResponse = z.infer<
 >;
 export type CommentUpdateResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.commentsUpdate
+>;
+
+export type UsersListResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.usersList
+>;
+export type UserGetResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.usersGet
+>;
+export type UserUpdateResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.usersUpdate
+>;
+export type UserHovercardGetResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.usersGetHovercard
 >;

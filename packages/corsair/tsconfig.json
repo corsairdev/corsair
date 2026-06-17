@@ -7,7 +7,6 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "outDir": "./dist",
-    "rootDir": "./",
     "composite": true,
     "incremental": true,
     "emitDeclarationOnly": true,
@@ -19,12 +18,6 @@
     }
   },
   "include": ["./**/*"],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "sandbox/**/*",
-    "tests/**/*.test.ts",
-    "setup/**/*.test.ts"
-  ],
+  "exclude": ["dist", "node_modules", "sandbox/**/*", "**/*.test.ts"],
   "references": []
 }

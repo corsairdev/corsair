@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1781280566495,
+      "tag": "0000_solid_martin_li",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781280566496,
+      "tag": "0001_integration_status",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781280566497,
+      "tag": "0002_oss_waitlist",
+      "breakpoints": true
+    }
+  ]
+}

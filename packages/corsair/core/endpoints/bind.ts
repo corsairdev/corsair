@@ -286,9 +286,7 @@ export function bindEndpointsRecursively({
 					}
 					throw err;
 				}
-
 				const finalArgs = permArgs ?? args;
-
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, finalArgs);
 					await onPermissionComplete?.();

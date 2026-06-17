@@ -73,6 +73,7 @@ export const BaseProviders = [
 	'xquik',
 	'youtube',
 	'zendesk',
+	'zohomail',
 	'zoom',
 ] as const;
 
@@ -137,6 +138,7 @@ export type AllProviders =
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
+	| 'zohomail'
 	| 'zoom'
 	| (string & {});
 
