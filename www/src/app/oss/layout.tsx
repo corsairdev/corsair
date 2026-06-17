@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { getSession } from '@/lib/auth-server';
+import { getCurrentProfile } from '@/lib/current-user-server';
 import { getApi } from '@/server/api/caller';
 import { getGithubUserAvatar } from '@/server/github-users';
 
@@ -13,11 +14,10 @@ export default async function OssIntegrationsLayout({
 	children: ReactNode;
 }) {
 	const session = await getSession();
-	const api = await getApi();
 	const [profile, activeDeadlineClaim] = session
 		? await Promise.all([
-				api.account.getProfile(),
-				api.integrations.activeDeadlineClaim(),
+				getCurrentProfile(),
+				(await getApi()).integrations.activeDeadlineClaim(),
 			])
 		: [null, null];
 	const githubUsername = profile?.githubUsername ?? null;
