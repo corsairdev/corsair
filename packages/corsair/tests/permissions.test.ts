@@ -43,20 +43,30 @@ describe('Modify and Approve Permissions', () => {
 		await createIntegrationAndAccount(testDb.db, 'slack');
 
 		mockedMakeSlackRequest.mockImplementation(
-			async (endpoint: any, token: any, options: any) => {
+			async (
+				endpoint: string,
+				token: string,
+				options?: {
+					method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+					body?: Record<string, unknown>;
+					query?: Record<string, string | number | boolean | undefined>;
+				},
+			) => {
 				if (options?.body) {
 					capturedRequestBody = { ...options.body };
 				}
-				return {
+				const response = {
 					ok: true,
 					channel: 'C123456',
 					ts: '1234567890.123456',
 					message: {
-						text: (options?.body as any)?.text || '',
+						text: (options?.body?.text as string) || '',
 						user: 'U123456',
 						type: 'message',
 					},
-				} as any;
+				};
+				// biome-ignore lint/suspicious/noExplicitAny: Mocking generic endpoint return type requires casting to any
+				return response as any;
 			},
 		);
 	});
