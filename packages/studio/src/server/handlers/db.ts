@@ -26,6 +26,17 @@ type KyselyDb = {
 			};
 		};
 	};
+	updateTable: (table: string) => {
+		set: (values: Record<string, unknown>) => {
+			where: (
+				col: string,
+				op: string,
+				val: unknown,
+			) => {
+				execute: () => Promise<unknown>;
+			};
+		};
+	};
 	introspection: {
 		getTables: () => Promise<Array<{ name: string }>>;
 	};
@@ -273,4 +284,37 @@ export const listPermissions: HandlerFn = async (ctx) => {
 	} catch (err) {
 		return { rows: [], note: (err as Error).message };
 	}
+};
+
+export const updatePermission: HandlerFn = async (ctx) => {
+	const body = await readJsonBody(ctx.req);
+	const id = String(body.id ?? '');
+	const status = String(body.status ?? '');
+	const args = typeof body.args === 'string' ? body.args : undefined;
+
+	if (!id) throw new Error('Missing permission id.');
+	if (status !== 'approved' && status !== 'denied') {
+		throw new Error('Invalid status.');
+	}
+
+	const { internal } = await ctx.getCorsair();
+	if (!internal.database) throw new Error('No database configured.');
+	const db = getKyselyDb(internal.database);
+	if (!db) throw new Error('Could not access kysely db handle.');
+
+	const updateData: Record<string, unknown> = {
+		status,
+		updated_at: new Date(),
+	};
+	if (args !== undefined) {
+		updateData.error = `__corsair_modified_args__:${args}`;
+	}
+
+	await db
+		.updateTable('corsair_permissions')
+		.set(updateData)
+		.where('id', '=', id)
+		.execute();
+
+	return { ok: true };
 };

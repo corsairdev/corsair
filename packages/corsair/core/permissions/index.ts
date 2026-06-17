@@ -180,6 +180,8 @@ export type EnforcePermissionResult = {
 	id?: string;
 	/** Permission token (the value embedded in review URLs). Present when a pending approval record exists. */
 	token?: string;
+	/** Modified payload from human review, if applicable. */
+	args?: unknown;
 	/**
 	 * Called by the endpoint binding layer after the endpoint executes successfully.
 	 * Marks the permission record as 'completed' (single-use approval consumed).
@@ -202,15 +204,28 @@ async function pollUntilResolved(
 	while (Date.now() < deadline) {
 		const record = await db.db
 			.selectFrom('corsair_permissions')
-			.select(['id', 'status'])
+			.select(['id', 'status', 'args', 'error'])
 			.where('id', '=', permissionId)
 			.executeTakeFirst();
 
 		if (!record) return { result: 'blocked', reason: 'pending' };
 
 		if (record.status === 'approved') {
+			let resolvedArgs = record.args;
+			if (
+				typeof record.error === 'string' &&
+				record.error.startsWith('__corsair_modified_args__:')
+			) {
+				resolvedArgs = record.error.substring(
+					'__corsair_modified_args__:'.length,
+				);
+			}
 			return {
 				result: 'allow',
+				args:
+					typeof resolvedArgs === 'string'
+						? JSON.parse(resolvedArgs)
+						: resolvedArgs,
 				onComplete: async () => {
 					await db.db
 						.updateTable('corsair_permissions')
@@ -293,8 +308,21 @@ export async function enforcePermission(
 			// Single-use: let the call through; onComplete will mark it 'completed'
 			const db = opts.db;
 			const permissionId = existing.id;
+			let resolvedArgs = existing.args;
+			if (
+				typeof existing.error === 'string' &&
+				existing.error.startsWith('__corsair_modified_args__:')
+			) {
+				resolvedArgs = existing.error.substring(
+					'__corsair_modified_args__:'.length,
+				);
+			}
 			return {
 				result: 'allow',
+				args:
+					typeof resolvedArgs === 'string'
+						? JSON.parse(resolvedArgs)
+						: resolvedArgs,
 				onComplete: async () => {
 					await db.db
 						.updateTable('corsair_permissions')
