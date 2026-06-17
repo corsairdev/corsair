@@ -3,23 +3,20 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { getSession } from '@/lib/auth-server';
-import { getApi } from '@/server/api/caller';
+import { getCurrentProfile } from '@/lib/current-user-server';
 import {
 	getIntegrationCapabilitiesForPage,
 	getIntegrationSummaryForPage,
 } from '@/server/integration-cache';
 
 import { IntegrationTagList } from '../integration-tag-badge';
+import { Pulse } from '../oss-skeletons';
 import { ClaimExpiredCallout } from './claim-expired-callout';
 import { ContributorWorkflowSteps } from './contributor-workflow-steps';
 import { IntegrationCapabilities } from './integration-capabilities';
 import { IntegrationClaimCallout } from './integration-claim-callout';
 import { IntegrationDetailSidebar } from './integration-detail-sidebar';
 import { IntegrationTitleStats } from './integration-title-stats';
-
-function Pulse({ className }: { className: string }) {
-	return <div className={`animate-pulse bg-[#1c1c1c0d] ${className}`} />;
-}
 
 type IntegrationHeaderSectionProps = {
 	slug: string;
@@ -44,7 +41,7 @@ export async function IntegrationHeaderSection({
 
 	const profile =
 		session && integration.claimedByCurrentUser
-			? await (await getApi()).account.getProfile()
+			? await getCurrentProfile()
 			: null;
 
 	return (

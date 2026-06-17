@@ -1,6 +1,6 @@
 import { FramedPanel } from './framed-panel';
 
-function Pulse({ className }: { className: string }) {
+export function Pulse({ className }: { className: string }) {
 	return <div className={`animate-pulse bg-[#1c1c1c0d] ${className}`} />;
 }
 
