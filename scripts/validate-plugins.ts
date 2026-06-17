@@ -140,7 +140,7 @@ for (const plugin of plugins) {
 		} else {
 			// Some plugins like MCP or older ones might just have index.ts, but standard is types.ts. We'll make it a requirement if endpoints/ exists and has multiple files.
 			const files = fs.readdirSync(endpointsPath);
-			if (files.length > 2 && !fs.existsSync(typesTsPath)) {
+			if (files.length > 2) {
 				logError(
 					plugin,
 					'Missing endpoints/types.ts for Zod schema definitions',
