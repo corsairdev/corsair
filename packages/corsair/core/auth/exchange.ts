@@ -7,6 +7,7 @@ export type TokenResponse = {
 	refresh_token?: string;
 	expires_in?: number;
 	token_type?: string;
+	[key: string]: unknown;
 };
 
 /**

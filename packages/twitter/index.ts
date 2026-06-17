@@ -111,7 +111,7 @@ const twitterEndpointMeta = {
 
 export const twitterAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['for_user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -145,6 +145,7 @@ export function twitter<const T extends TwitterPluginOptions>(
 
 	return {
 		id: 'twitter',
+		authConfig: twitterAuthConfig,
 		schema: TwitterSchema,
 		options,
 		hooks: options.hooks,

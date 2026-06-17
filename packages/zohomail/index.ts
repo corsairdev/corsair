@@ -47,7 +47,11 @@ import {
 } from './webhooks/types';
 
 /** Zoho Mail uses standard OAuth2; no plugin-specific integration fields. */
-export const zohoMailAuthConfig = {} as const satisfies PluginAuthConfig;
+export const zohoMailAuthConfig = {
+	oauth_2: {
+		account: ['zuid'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 export type ZohoMailContext = CorsairPluginContext<
 	typeof ZohoMailSchema,

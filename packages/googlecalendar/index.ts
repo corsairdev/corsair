@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -182,6 +183,12 @@ const googleCalendarEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleCalendarEndpointsNested>;
 
+export const googleCalendarAuthConfig = {
+	oauth_2: {
+		account: ['channel_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 	CorsairPlugin<
 		'googlecalendar',
@@ -209,6 +216,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 	};
 	return {
 		id: 'googlecalendar',
+		authConfig: googleCalendarAuthConfig,
 		schema: GoogleCalendarSchema,
 		options: options,
 		oauthConfig: {

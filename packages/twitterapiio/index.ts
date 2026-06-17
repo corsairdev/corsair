@@ -640,7 +640,7 @@ const twitterApiIOEndpointMeta = {
 
 export const twitterApiIOAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -677,6 +677,7 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 
 	return {
 		id: 'twitterapiio',
+		authConfig: twitterApiIOAuthConfig,
 		schema: TwitterApiIOSchema,
 		options,
 		hooks: options.hooks,

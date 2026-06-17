@@ -416,7 +416,7 @@ const todoistWebhookSchemas = {
 
 export const todoistAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -448,6 +448,7 @@ export function todoist<const T extends TodoistPluginOptions>(
 	};
 	return {
 		id: 'todoist',
+		authConfig: todoistAuthConfig,
 		schema: TodoistSchema,
 		options: options,
 		hooks: options.hooks,

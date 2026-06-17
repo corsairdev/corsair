@@ -9,6 +9,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
@@ -260,6 +261,12 @@ const vercelEndpointMeta = {
 	'teams.getTeams': { riskLevel: 'read', description: 'Get all teams' },
 } satisfies RequiredPluginEndpointMeta<typeof vercelEndpointsNested>;
 
+export const vercelAuthConfig = {
+	api_key: {
+		account: ['team_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseVercelPlugin<T extends VercelPluginOptions> = CorsairPlugin<
 	'vercel',
 	typeof VercelSchema,
@@ -282,6 +289,7 @@ export function vercel<const T extends VercelPluginOptions>(
 	};
 	return {
 		id: 'vercel',
+		authConfig: vercelAuthConfig,
 		schema: VercelSchema,
 		options: options,
 		oauthConfig: undefined,

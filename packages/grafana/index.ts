@@ -58,7 +58,7 @@ export type GrafanaPluginOptions = {
  */
 export const grafanaAuthConfig = {
 	api_key: {
-		account: ['grafana_url'] as const,
+		account: ['grafana_url', 'org_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

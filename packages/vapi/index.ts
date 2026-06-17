@@ -553,7 +553,9 @@ const vapiEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof vapiEndpointsNested>;
 
 export const vapiAuthConfig = {
-	api_key: {},
+	api_key: {
+		account: ['org_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseVapiPlugin<T extends VapiPluginOptions> = CorsairPlugin<
@@ -578,6 +580,7 @@ export function vapi<const T extends VapiPluginOptions>(
 	};
 	return {
 		id: 'vapi',
+		authConfig: vapiAuthConfig,
 		schema: VapiSchema,
 		options: options,
 		hooks: options.hooks,

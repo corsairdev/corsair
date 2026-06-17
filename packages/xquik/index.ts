@@ -388,9 +388,7 @@ const xquikEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof xquikEndpointsNested>;
 
 export const xquikAuthConfig = {
-	api_key: {
-		account: ['one', 'webhook_signature'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type XquikKeyBuilderContext = KeyBuilderContext<
@@ -422,6 +420,7 @@ export function xquik<const T extends XquikPluginOptions>(
 	};
 
 	return {
+		id: 'xquik',
 		authConfig: xquikAuthConfig,
 		endpointMeta: xquikEndpointMeta,
 		endpointSchemas: xquikEndpointSchemas,
@@ -431,7 +430,6 @@ export function xquik<const T extends XquikPluginOptions>(
 			...options.errorHandlers,
 		},
 		hooks: options.hooks,
-		id: 'xquik',
 		keyBuilder: async (ctx: XquikKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;

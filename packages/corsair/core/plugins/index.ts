@@ -17,6 +17,7 @@ import type {
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
+	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhookTenantMatcher,
 	WebhookPathsOf,
 	WebhookRequest,
@@ -471,6 +472,11 @@ export type CorsairPlugin<
 	 * the request cannot be mapped to a tenant.
 	 */
 	pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
+	/**
+	 * Resolves the external id to store on the account after OAuth so incoming
+	 * webhooks can be routed to the correct tenant. Return null when unavailable.
+	 */
+	oauthWebhookTenantLinkResolver?: CorsairOAuthWebhookTenantLinkResolver;
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
 	/**

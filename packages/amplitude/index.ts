@@ -380,9 +380,7 @@ const amplitudeWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const amplitudeAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseAmplitudePlugin<T extends AmplitudePluginOptions> =
@@ -411,6 +409,7 @@ export function amplitude<const T extends AmplitudePluginOptions>(
 	};
 	return {
 		id: 'amplitude',
+		authConfig: amplitudeAuthConfig,
 		schema: AmplitudeSchema,
 		options: options,
 		hooks: options.hooks,

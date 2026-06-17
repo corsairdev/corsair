@@ -680,7 +680,7 @@ const calendlyEndpointMeta = {
 
 export const calendlyAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['organization', 'user_uri'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -741,6 +741,7 @@ export function calendly<const T extends CalendlyPluginOptions>(
 	};
 	return {
 		id: 'calendly',
+		authConfig: calendlyAuthConfig,
 		schema: CalendlySchema,
 		options: options,
 		hooks: options.hooks,

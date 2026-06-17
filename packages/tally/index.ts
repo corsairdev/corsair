@@ -412,7 +412,7 @@ const tallyWebhookSchemas = {
 
 export const tallyAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['form_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -449,6 +449,7 @@ export function tally<const T extends TallyPluginOptions>(
 	};
 	return {
 		id: 'tally',
+		authConfig: tallyAuthConfig,
 		schema: TallySchema,
 		options: options,
 		hooks: options.hooks,

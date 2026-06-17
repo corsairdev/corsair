@@ -45,6 +45,7 @@ export default defineConfig({
 		'db.ts',
 		'mcp.ts',
 		'oauth.ts',
+		'tunnel.ts',
 		'orm.ts',
 		'setup.ts',
 		'http.ts',

@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -242,6 +243,12 @@ const googleSheetsEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleSheetsEndpointsNested>;
 
+export const googlesheetsAuthConfig = {
+	oauth_2: {
+		account: ['spreadsheet_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
 	CorsairPlugin<
 		'googlesheets',
@@ -268,6 +275,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 	};
 	return {
 		id: 'googlesheets',
+		authConfig: googlesheetsAuthConfig,
 		schema: GoogleSheetsSchema,
 		options: options,
 		oauthConfig: {

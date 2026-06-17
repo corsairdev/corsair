@@ -30,7 +30,7 @@ import { matchBlueskyTenantWebhook } from './webhooks/tenant-matcher';
 
 export const blueskyAuthConfig = {
 	api_key: {
-		account: ['handle'] as const,
+		account: ['handle', 'did'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

@@ -18,6 +18,8 @@ import {
 	verifyAndDecodeState,
 } from '../core/auth/state';
 import { createCorsairOrm } from '../db/orm';
+import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
+import { setWebhookTenantLink } from '../webhooks/tenant-links';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
@@ -291,6 +293,24 @@ export async function processOAuthCallback(
 		await accountKm.set_expires_at(
 			String(Math.floor(Date.now() / 1000) + tokens.expires_in),
 		);
+	}
+
+	const tenantLink = await resolveOAuthWebhookTenantLink(
+		internal.plugins,
+		pluginId,
+		tokens,
+	);
+	if (tenantLink) {
+		const extraAccountFields = plugin.authConfig?.oauth_2?.account ?? [];
+		await setWebhookTenantLink({
+			database: internal.database,
+			kek: internal.kek,
+			pluginId,
+			tenantId,
+			link: tenantLink,
+			authType: 'oauth_2',
+			extraAccountFields,
+		});
 	}
 
 	return { plugin: pluginId, tenantId };

@@ -743,7 +743,7 @@ const defaultAuthType = 'oauth_2' as const;
 
 export const onedriveAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

@@ -298,7 +298,7 @@ const cloudflareEndpointMeta = {
 
 export const cloudflareAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -328,6 +328,7 @@ export function cloudflare<const T extends CloudflarePluginOptions>(
 	};
 	return {
 		id: 'cloudflare',
+		authConfig: cloudflareAuthConfig,
 		schema: CloudflareSchema,
 		options: options,
 		hooks: options.hooks,

@@ -706,8 +706,8 @@ const figmaWebhookSchemas = {
 } as const;
 
 export const figmaAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
+	oauth_2: {
+		account: ['webhook_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -735,6 +735,7 @@ export function figma<const T extends FigmaPluginOptions>(
 	};
 	return {
 		id: 'figma',
+		authConfig: figmaAuthConfig,
 		schema: FigmaSchema,
 		options: options,
 		hooks: options.hooks,

@@ -290,9 +290,7 @@ const hackerNewsEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof hackerNewsEndpointsNested>;
 
 export const hackerNewsAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseHackerNewsPlugin<T extends HackerNewsPluginOptions> =
@@ -322,6 +320,7 @@ export function hackernews<const T extends HackerNewsPluginOptions>(
 	};
 	return {
 		id: 'hackernews',
+		authConfig: hackerNewsAuthConfig,
 		schema: HackerNewsSchema,
 		options,
 		hooks: options.hooks,

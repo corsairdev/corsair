@@ -62,7 +62,7 @@ const defaultAuthType = 'oauth_2' as const;
 export const sharepointAuthConfig = {
 	oauth_2: {
 		// site_id is the Graph API site identifier e.g. "tenant.sharepoint.com:/sites/MySite"
-		account: ['site_id'] as const,
+		account: ['site_id', 'subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

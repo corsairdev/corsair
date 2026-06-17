@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -339,6 +340,12 @@ const googleDriveEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleDriveEndpointsNested>;
 
+export const googledriveAuthConfig = {
+	oauth_2: {
+		account: ['channel_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
 	CorsairPlugin<
 		'googledrive',
@@ -365,6 +372,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 	};
 	return {
 		id: 'googledrive',
+		authConfig: googledriveAuthConfig,
 		schema: GoogleDriveSchema,
 		options: options,
 		oauthConfig: {

@@ -371,7 +371,7 @@ const zoomEndpointMeta = {
 
 export const zoomAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -403,6 +403,7 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 	};
 	return {
 		id: 'zoom',
+		authConfig: zoomAuthConfig,
 		schema: ZoomSchema,
 		options: options,
 		hooks: options.hooks,

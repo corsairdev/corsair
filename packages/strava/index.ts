@@ -375,7 +375,7 @@ const stravaEndpointMeta = {
 
 export const stravaAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['owner_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -407,6 +407,7 @@ export function strava<const T extends StravaPluginOptions>(
 	};
 	return {
 		id: 'strava',
+		authConfig: stravaAuthConfig,
 		schema: StravaSchema,
 		options: options,
 		hooks: options.hooks,

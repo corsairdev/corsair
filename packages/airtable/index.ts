@@ -194,7 +194,7 @@ const airtableEndpointMeta = {
 
 export const airtableAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['base_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -221,6 +221,7 @@ export function airtable<const T extends AirtablePluginOptions>(
 	};
 	return {
 		id: 'airtable',
+		authConfig: airtableAuthConfig,
 		oauthConfig: {
 			providerName: 'Airtable',
 			authUrl: 'https://airtable.com/oauth2/v1/authorize',

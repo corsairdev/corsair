@@ -9,6 +9,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
@@ -355,6 +356,10 @@ const razorpayWebhookSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+export const razorpayAuthConfig = {
+	api_key: { account: ['account_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 const razorpayEndpointMeta = {
 	'orders.create': {
 		riskLevel: 'write',
@@ -482,6 +487,7 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 	};
 	return {
 		id: 'razorpay',
+		authConfig: razorpayAuthConfig,
 		schema: RazorpaySchema,
 		options: options,
 		hooks: options.hooks,

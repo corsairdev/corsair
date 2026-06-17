@@ -363,7 +363,11 @@ const discordEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof discordEndpointsNested>;
 
-export const discordAuthConfig = {} as const satisfies PluginAuthConfig;
+export const discordAuthConfig = {
+	api_key: {
+		account: ['guild_id', 'application_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 // ── Plugin Type Hierarchy ──────────────────────────────────────────────────────
 
@@ -393,6 +397,7 @@ export function discord<const T extends DiscordPluginOptions>(
 
 	return {
 		id: 'discord',
+		authConfig: discordAuthConfig,
 		schema: DiscordSchema,
 		options,
 		hooks: options.hooks,

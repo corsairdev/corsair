@@ -37,6 +37,7 @@ import type {
 import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
 import { matchGmailTenantWebhook } from './webhooks/tenant-matcher';
+import { resolveGmailOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import {
 	decodePubSubMessage,
 	GmailWebhookEventSchema,
@@ -50,6 +51,7 @@ import {
 export const gmailAuthConfig = {
 	oauth_2: {
 		integration: ['topic_id'] as const,
+		account: ['email_address'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -520,6 +522,7 @@ export function gmail<const T extends GmailPluginOptions>(
 			}
 		},
 		pluginTenantWebhookMatcher: matchGmailTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveGmailOAuthWebhookTenantLink,
 	} satisfies InternalGmailPlugin;
 }
 

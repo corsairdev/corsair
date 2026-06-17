@@ -1,6 +1,12 @@
 import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import {
+	buildAuthConfigTs,
+	buildOAuthTenantLinkTs,
+	buildTenantMatcherTs,
+	formatTenantRoutingPluginFields,
+} from './plugin-tenant-routing-scaffold.ts';
 
 function validatePascalCase(name: string): void {
 	if (name.includes('-')) {
@@ -56,6 +62,9 @@ function generatePlugin(pluginName: string) {
 	mkdirSync(join(pluginDir, 'endpoints'), { recursive: true });
 	mkdirSync(join(pluginDir, 'webhooks'), { recursive: true });
 	mkdirSync(join(pluginDir, 'schema'), { recursive: true });
+
+	const tenantRoutingPluginFields = formatTenantRoutingPluginFields(pascalName);
+	const authConfigBlock = buildAuthConfigTs(camelName, ['api_key', 'oauth_2']);
 
 	// ── package.json ──────────────────────────────────────────────────────────
 	const packageJson = {
@@ -144,6 +153,16 @@ export default defineConfig({
 `,
 	);
 
+	// ── webhooks/tenant-matcher.ts + oauth-tenant-link.ts ─────────────────────
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'tenant-matcher.ts'),
+		buildTenantMatcherTs(pascalName, lowerName),
+	);
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'oauth-tenant-link.ts'),
+		buildOAuthTenantLinkTs(pascalName),
+	);
+
 	// ── index.ts ──────────────────────────────────────────────────────────────
 	writeFileSync(
 		join(pluginDir, 'index.ts'),
@@ -175,9 +194,11 @@ import { Example } from './endpoints';
 import { ${pascalName}Schema } from './schema';
 import { ExampleWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
+import { match${pascalName}TenantWebhook } from './webhooks/tenant-matcher';
+import { resolve${pascalName}OAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type ${pascalName}PluginOptions = {
-\tauthType?: PickAuth<'api_key'>;
+\tauthType?: PickAuth<'api_key' | 'oauth_2'>;
 \tkey?: string;
 \twebhookSecret?: string;
 \thooks?: Internal${pascalName}Plugin['hooks'];
@@ -254,11 +275,7 @@ const ${camelName}EndpointMeta = {
 \t},
 } as const satisfies RequiredPluginEndpointMeta<typeof ${camelName}EndpointsNested>;
 
-export const ${camelName}AuthConfig = {
-\tapi_key: {
-\t\taccount: ['one'] as const,
-\t},
-} as const satisfies PluginAuthConfig;
+${authConfigBlock}
 
 export type Base${pascalName}Plugin<T extends ${pascalName}PluginOptions> = CorsairPlugin<
 \t'${lowerName}',
@@ -283,6 +300,7 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 \t};
 \treturn {
 \t\tid: '${lowerName}',
+\t\tauthConfig: ${camelName}AuthConfig,
 \t\tschema: ${pascalName}Schema,
 \t\toptions: options,
 \t\thooks: options.hooks,
@@ -297,6 +315,7 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 \t\t\t// TODO: Update to match your webhook signature headers
 \t\t\treturn 'x-${lowerName}-signature' in headers;
 \t\t},
+${tenantRoutingPluginFields}
 \t\terrorHandlers: {
 \t\t\t...errorHandlers,
 \t\t\t...options.errorHandlers,
@@ -317,6 +336,11 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 
 \t\t\tif (source === 'endpoint' && ctx.authType === 'api_key') {
 \t\t\t\tconst res = await ctx.keys.get_api_key();
+\t\t\t\treturn res ?? '';
+\t\t\t}
+
+\t\t\tif (source === 'endpoint' && ctx.authType === 'oauth_2') {
+\t\t\t\tconst res = await ctx.keys.get_access_token();
 \t\t\t\treturn res ?? '';
 \t\t\t}
 
@@ -619,6 +643,8 @@ export const ExampleWebhooks = {
 };
 
 export * from './types';
+export * from './tenant-matcher';
+export * from './oauth-tenant-link';
 `,
 	);
 
@@ -710,8 +736,9 @@ export * from './types';
 	console.log(`\n📝 Next steps:`);
 	console.log(`   1. Run: pnpm install`);
 	console.log(`   2. Update the API base URL and auth in client.ts`);
-	console.log(`   3. Replace the example endpoints/webhooks with real ones`);
-	console.log(`   4. Run: cd packages/${lowerName} && pnpm typecheck`);
+	console.log(`   3. Configure webhook tenant routing (tenant-matcher, oauth-tenant-link, authConfig)`);
+	console.log(`   4. Replace the example endpoints/webhooks with real ones`);
+	console.log(`   5. Run: cd packages/${lowerName} && pnpm typecheck`);
 }
 
 const pluginName = process.argv[2];

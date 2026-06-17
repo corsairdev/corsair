@@ -481,7 +481,7 @@ const typeformWebhookSchemas = {
 
 export const typeformAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['form_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -513,6 +513,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 
 	return {
 		id: 'typeform',
+		authConfig: typeformAuthConfig,
 		schema: TypeformSchema,
 		options: options,
 		hooks: options.hooks,

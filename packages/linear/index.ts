@@ -8,6 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
@@ -47,6 +48,7 @@ import {
 	ProjectUpdatedEventSchema,
 } from './webhooks/types';
 import { matchLinearTenantWebhook } from './webhooks/tenant-matcher';
+import { resolveLinearOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -295,6 +297,11 @@ const linearWebhookSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+export const linearAuthConfig = {
+	api_key: { account: ['organization_id'] as const },
+	oauth_2: { account: ['organization_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 /**
  * Risk-level metadata for each Linear endpoint.
  * Used by the MCP server permission system to decide allow / deny / require_approval.
@@ -384,6 +391,7 @@ export function linear<const T extends LinearPluginOptions>(
 	};
 	return {
 		id: 'linear',
+		authConfig: linearAuthConfig,
 		oauthConfig: {
 			providerName: 'Linear',
 			authUrl: 'https://linear.app/oauth/authorize',
@@ -406,6 +414,7 @@ export function linear<const T extends LinearPluginOptions>(
 			return hasLinearSignature;
 		},
 		pluginTenantWebhookMatcher: matchLinearTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveLinearOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

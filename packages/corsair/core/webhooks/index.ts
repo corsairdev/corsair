@@ -82,6 +82,14 @@ export type CorsairWebhookTenantMatcher = (
 ) => WebhookTenantMatch | null;
 
 /**
+ * Resolves the webhook tenant link field after OAuth completes.
+ * Return null when the provider does not expose a stable external id.
+ */
+export type CorsairOAuthWebhookTenantLinkResolver = (
+	tokens: import('../auth/exchange').TokenResponse,
+) => WebhookTenantMatch | null | Promise<WebhookTenantMatch | null>;
+
+/**
  * Bivariance hack for webhook function types to ensure proper type inference.
  * @template Args - The function arguments
  * @template R - The function return type

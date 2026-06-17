@@ -14,6 +14,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { matchSlackTenantWebhook } from './webhooks/tenant-matcher';
+import { resolveSlackOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
@@ -637,7 +638,10 @@ type SlackEndpoint<K extends keyof SlackEndpointOutputs> = CorsairEndpoint<
 >;
 export const slackAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['team_id'] as const,
+	},
+	oauth_2: {
+		account: ['team_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -706,6 +710,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 	};
 	return {
 		id: 'slack',
+		authConfig: slackAuthConfig,
 		oauthConfig: {
 			providerName: 'Slack',
 			authUrl: 'https://slack.com/oauth/v2/authorize',
@@ -737,6 +742,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 			return hasSlackSignature && hasSlackTimestamp;
 		},
 		pluginTenantWebhookMatcher: matchSlackTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveSlackOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

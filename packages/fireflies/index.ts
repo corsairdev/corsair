@@ -330,9 +330,7 @@ type FirefliesWebhook<
 const defaultAuthType = 'api_key' as const;
 
 export const firefliesAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type FirefliesBoundEndpoints = BindEndpoints<
@@ -385,6 +383,7 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 	};
 	return {
 		id: 'fireflies',
+		authConfig: firefliesAuthConfig,
 		schema: FirefliesSchema,
 		options: options,
 		hooks: options.hooks,

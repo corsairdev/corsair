@@ -150,9 +150,7 @@ const cursorEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof cursorEndpointsNested>;
 
 export const cursorAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseCursorPlugin<T extends CursorPluginOptions> = CorsairPlugin<
@@ -178,6 +176,7 @@ export function cursor<const T extends CursorPluginOptions>(
 	};
 	return {
 		id: 'cursor',
+		authConfig: cursorAuthConfig,
 		schema: CursorSchema,
 		options: options,
 		hooks: options.hooks,

@@ -45,7 +45,7 @@ export type ZendeskPluginOptions = {
 
 export const zendeskAuthConfig = {
 	api_key: {
-		account: ['subdomain'] as const,
+		account: ['subdomain', 'account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

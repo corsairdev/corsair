@@ -1,4 +1,5 @@
 import type { AllProviders } from '../constants';
+import type { CorsairPlugin } from '../plugins';
 import type {
 	CorsairWebhookMatcher,
 	CorsairWebhookTenantMatcher,
@@ -47,4 +48,26 @@ export function matchWebhookPluginAndTenant(
 	if (!tenantMatch) return null;
 
 	return { plugin: pluginId, tenantMatch };
+}
+
+/**
+ * Collects plugin-level webhook matchers from a corsair plugin list.
+ */
+export function collectPluginWebhookMatchers(
+	plugins: readonly CorsairPlugin[],
+): Record<string, PluginWebhookMatchers> {
+	const result: Record<string, PluginWebhookMatchers> = {};
+
+	for (const plugin of plugins) {
+		if (!plugin.pluginWebhookMatcher && !plugin.pluginTenantWebhookMatcher) {
+			continue;
+		}
+
+		result[plugin.id] = {
+			pluginWebhookMatcher: plugin.pluginWebhookMatcher,
+			pluginTenantWebhookMatcher: plugin.pluginTenantWebhookMatcher,
+		};
+	}
+
+	return result;
 }

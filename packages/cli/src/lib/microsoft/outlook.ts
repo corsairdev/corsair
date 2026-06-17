@@ -5,7 +5,7 @@ import {
 	promptTenantId,
 	promptWebhookUrl,
 } from '../../utils/prompts';
-import { resolveAccessToken, saveWebhookSignature } from './credentials';
+import { resolveAccessToken, saveSubscriptionTenantLink, saveWebhookSignature } from './credentials';
 import { createGraphSubscription } from './graph';
 
 type OutlookResourceType =
@@ -112,6 +112,10 @@ export async function runOutlookSubscribe({
 			results.push(
 				`${cfg.label}\n  ID: ${subscription.id}\n  Expires: ${subscription.expirationDateTime}`,
 			);
+			await saveSubscriptionTenantLink(
+				{ pluginId: 'outlook', tenantId, internal },
+				subscription.id,
+			);
 		} catch (error) {
 			subSpin.stop(`Failed: ${cfg.label}`);
 			p.log.error(error instanceof Error ? error.message : String(error));
@@ -123,7 +127,11 @@ export async function runOutlookSubscribe({
 		p.note(results.join('\n\n'), 'Subscriptions created');
 	}
 
-	await saveWebhookSignature(accountKm, clientState);
+	await saveWebhookSignature(accountKm, clientState, {
+		pluginId: 'outlook',
+		tenantId,
+		internal,
+	});
 
 	if (!hasError) {
 		p.log.success('Outlook webhook subscriptions set up successfully.');

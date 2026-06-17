@@ -43,6 +43,7 @@ import {
 	PingWebhooks,
 } from './webhooks';
 import { matchStripeTenantWebhook } from './webhooks/tenant-matcher';
+import { resolveStripeOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import type {
 	StripeChargeFailedEvent,
 	StripeChargeRefundedEvent,
@@ -424,7 +425,10 @@ const stripeWebhookSchemas = {
 
 export const stripeAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['account_id'] as const,
+	},
+	oauth_2: {
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -452,6 +456,7 @@ export function stripe<const T extends StripePluginOptions>(
 	};
 	return {
 		id: 'stripe',
+		authConfig: stripeAuthConfig,
 		schema: StripeSchema,
 		options: options,
 		oauthConfig: {
@@ -473,6 +478,7 @@ export function stripe<const T extends StripePluginOptions>(
 			return 'stripe-signature' in request.headers;
 		},
 		pluginTenantWebhookMatcher: matchStripeTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveStripeOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

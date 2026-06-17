@@ -282,7 +282,7 @@ const defaultAuthType: AuthTypes = 'bot_token';
 
 export const telegramAuthConfig = {
 	bot_token: {
-		account: ['one'] as const,
+		account: ['bot_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

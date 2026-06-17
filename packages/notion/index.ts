@@ -27,6 +27,7 @@ import { errorHandlers } from './error-handlers';
 import { NotionSchema } from './schema';
 import { NotionWebhooks } from './webhooks';
 import { matchNotionTenantWebhook } from './webhooks/tenant-matcher';
+import { resolveNotionOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import type {
 	NotionWebhookOutputs,
 	PageCreatedEvent,
@@ -285,9 +286,11 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const notionAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['workspace_id'] as const,
 	},
-	oauth_2: {},
+	oauth_2: {
+		account: ['workspace_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseNotionPlugin<T extends NotionPluginOptions> = CorsairPlugin<
@@ -346,6 +349,7 @@ export function notion<const T extends NotionPluginOptions>(
 			return hasSignature;
 		},
 		pluginTenantWebhookMatcher: matchNotionTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveNotionOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

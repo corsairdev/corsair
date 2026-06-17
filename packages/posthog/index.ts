@@ -8,6 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
@@ -126,6 +127,10 @@ const posthogWebhookSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+export const posthogAuthConfig = {
+	api_key: { account: ['project_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 /**
  * Risk-level metadata for each PostHog endpoint.
  * Used by the MCP server permission system to decide allow / deny / require_approval.
@@ -181,6 +186,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 	};
 	return {
 		id: 'posthog',
+		authConfig: posthogAuthConfig,
 		schema: PostHogSchema,
 		options: options,
 		hooks: options.hooks,

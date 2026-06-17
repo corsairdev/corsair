@@ -225,7 +225,7 @@ const pagerdutyEndpointMeta = {
 
 export const pagerdutyAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['subdomain'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -292,6 +292,7 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 	};
 	return {
 		id: 'pagerduty',
+		authConfig: pagerdutyAuthConfig,
 		schema: PagerdutySchema,
 		options: options,
 		hooks: options.hooks,

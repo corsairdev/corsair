@@ -270,9 +270,7 @@ const exaEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof exaEndpointsNested>;
 
 export const exaAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type ExaBoundEndpoints = BindEndpoints<typeof exaEndpointsNested>;
@@ -330,6 +328,7 @@ export function exa<const T extends ExaPluginOptions>(
 	};
 	return {
 		id: 'exa',
+		authConfig: exaAuthConfig,
 		schema: ExaSchema,
 		options: options,
 		hooks: options.hooks,

@@ -155,7 +155,7 @@ const ouraEndpointMeta = {
 
 export const ouraAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -181,6 +181,7 @@ export function oura<const T extends OuraPluginOptions>(
 	};
 	return {
 		id: 'oura',
+		authConfig: ouraAuthConfig,
 		schema: OuraSchema,
 		options: options,
 		hooks: options.hooks,

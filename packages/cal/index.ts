@@ -224,7 +224,7 @@ const calWebhookSchemas = {
 
 export const calAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['organization_id', 'user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -250,6 +250,7 @@ export function cal<const T extends CalPluginOptions>(
 	};
 	return {
 		id: 'cal',
+		authConfig: calAuthConfig,
 		schema: CalSchema,
 		options: options,
 		hooks: options.hooks,

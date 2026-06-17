@@ -378,7 +378,7 @@ const defaultAuthType = 'api_key' as const;
 
 export const trelloAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['idModel'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -407,6 +407,7 @@ export function trello<const T extends TrelloPluginOptions>(
 	};
 	return {
 		id: 'trello',
+		authConfig: trelloAuthConfig,
 		schema: TrelloSchema,
 		options: options,
 		hooks: options.hooks,

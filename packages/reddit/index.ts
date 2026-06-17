@@ -336,7 +336,7 @@ const redditEndpointMeta = {
 
 export const redditAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['subreddit_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -363,6 +363,7 @@ export function reddit<const T extends RedditPluginOptions>(
 	};
 	return {
 		id: 'reddit',
+		authConfig: redditAuthConfig,
 		schema: RedditSchema,
 		options,
 		hooks: options.hooks,
