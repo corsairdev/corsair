@@ -13,9 +13,18 @@
     "emitDeclarationOnly": true,
     "declaration": true,
     "declarationMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@corsair-dev/slack": ["../slack/index.ts"]
+    }
   },
   "include": ["./**/*"],
-  "exclude": ["dist", "node_modules", "sandbox/**/*"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "sandbox/**/*",
+    "tests/**/*.test.ts",
+    "setup/**/*.test.ts"
+  ],
   "references": []
 }

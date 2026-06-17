@@ -25,6 +25,15 @@ type KyselyDb = {
 				execute: () => Promise<Record<string, unknown>[]>;
 			};
 		};
+		select: (cols: string[]) => {
+			where: (
+				col: string,
+				op: string,
+				val: unknown,
+			) => {
+				executeTakeFirst: () => Promise<Record<string, unknown> | undefined>;
+			};
+		};
 	};
 	updateTable: (table: string) => {
 		set: (values: Record<string, unknown>) => {
@@ -297,10 +306,33 @@ export const updatePermission: HandlerFn = async (ctx) => {
 		throw new Error('Invalid status.');
 	}
 
+	if (args !== undefined) {
+		try {
+			JSON.parse(args);
+		} catch {
+			throw new Error('Invalid JSON payload for arguments.');
+		}
+	}
+
 	const { internal } = await ctx.getCorsair();
 	if (!internal.database) throw new Error('No database configured.');
 	const db = getKyselyDb(internal.database);
 	if (!db) throw new Error('Could not access kysely db handle.');
+
+	const existing = await db
+		.selectFrom('corsair_permissions')
+		.select(['status'])
+		.where('id', '=', id)
+		.executeTakeFirst();
+
+	if (!existing) {
+		throw new Error(`Permission not found: ${id}`);
+	}
+	if (existing.status !== 'pending') {
+		throw new Error(
+			`Permission ${id} is already ${String(existing.status)} and cannot be updated.`,
+		);
+	}
 
 	const updateData: Record<string, unknown> = {
 		status,

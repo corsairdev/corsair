@@ -190,6 +190,15 @@ export type EnforcePermissionResult = {
 	onComplete?: () => Promise<void>;
 };
 
+function safeParseJson(value: unknown): unknown {
+	if (typeof value !== 'string') return value;
+	try {
+		return JSON.parse(value);
+	} catch {
+		return value;
+	}
+}
+
 /**
  * Polls a corsair_permissions row every 500 ms until it reaches a terminal state or the
  * deadline is exceeded. Used by synchronous approval mode so the MCP tool call blocks
@@ -222,10 +231,7 @@ async function pollUntilResolved(
 			}
 			return {
 				result: 'allow',
-				args:
-					typeof resolvedArgs === 'string'
-						? JSON.parse(resolvedArgs)
-						: resolvedArgs,
+				args: safeParseJson(resolvedArgs),
 				onComplete: async () => {
 					await db.db
 						.updateTable('corsair_permissions')
@@ -319,10 +325,7 @@ export async function enforcePermission(
 			}
 			return {
 				result: 'allow',
-				args:
-					typeof resolvedArgs === 'string'
-						? JSON.parse(resolvedArgs)
-						: resolvedArgs,
+				args: safeParseJson(resolvedArgs),
 				onComplete: async () => {
 					await db.db
 						.updateTable('corsair_permissions')

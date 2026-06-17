@@ -200,10 +200,14 @@ export async function executePermission(
 				'__corsair_modified_args__:'.length,
 			);
 		}
-		const parsedArgs =
-			typeof resolvedArgs === 'string'
-				? JSON.parse(resolvedArgs)
-				: resolvedArgs;
+		let parsedArgs = resolvedArgs;
+		if (typeof resolvedArgs === 'string') {
+			try {
+				parsedArgs = JSON.parse(resolvedArgs);
+			} catch {
+				parsedArgs = resolvedArgs;
+			}
+		}
 		const result = await endpointFn(parsedArgs);
 		await corsair.permissions.set_completed(permission.id);
 		return { plugin: permission.plugin, endpoint: permission.endpoint, result };
