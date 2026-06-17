@@ -13,6 +13,8 @@ export type RawWebhookRequest = {
 	headers: Record<string, string | string[] | undefined>;
 	/** Raw request body (string or already parsed object) */
 	body: unknown;
+	/** Query string parameters when available (e.g. Microsoft Graph validationToken). */
+	query?: Record<string, string | string[] | undefined>;
 };
 
 /**
@@ -27,6 +29,8 @@ export type WebhookRequest<TPayload = unknown> = {
 	headers: Record<string, string | string[] | undefined>;
 	/** Raw request body string (for signature verification) */
 	rawBody?: string;
+	/** Query string parameters when available. */
+	query?: Record<string, string | string[] | undefined>;
 };
 
 /**

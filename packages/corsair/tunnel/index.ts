@@ -183,9 +183,16 @@ async function handleWebhookTunnel(
 		};
 	}
 
-	const responseBody = result.response?.returnToSender
-		? result.response.returnToSender
-		: result.response?.data ?? result.response;
+	const returnToSender = result.response?.returnToSender;
+	const responseBody =
+		returnToSender &&
+		typeof returnToSender === 'object' &&
+		typeof returnToSender.validationToken === 'string' &&
+		Object.keys(returnToSender).length === 1
+			? returnToSender.validationToken
+			: returnToSender
+				? returnToSender
+				: (result.response?.data ?? result.response);
 
 	return {
 		status: 'ok',

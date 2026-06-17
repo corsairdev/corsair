@@ -295,8 +295,11 @@ export {
 export {
 	asRecord,
 	decodePubSubData,
+	extractMicrosoftGraphValidationToken,
 	firstString,
 	getHeader,
+	isMicrosoftGraphValidationHandshake,
 	readBodyRecord,
+	readQueryParam,
 	toExternalId,
 } from './webhooks/tenant-match-utils';

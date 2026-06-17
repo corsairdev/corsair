@@ -1,19 +1,10 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import { asRecord, firstString, readBodyRecord } from 'corsair/core';
-
-function isSharepointValidationHandshake(
-	request: RawWebhookRequest,
-): boolean {
-	const url = (request as unknown as { url?: string }).url ?? '';
-	if (url.toLowerCase().includes('validationtoken')) return true;
-
-	const body = readBodyRecord(request);
-	return (
-		!!body &&
-		typeof body.validationToken === 'string' &&
-		body.validationToken.length > 0
-	);
-}
+import {
+	asRecord,
+	firstString,
+	isMicrosoftGraphValidationHandshake,
+	readBodyRecord,
+} from 'corsair/core';
 
 function extractGraphNotificationTenant(
 	notifications: unknown[],
@@ -41,7 +32,7 @@ function extractGraphNotificationTenant(
 export function matchSharepointTenantWebhook(
 	request: RawWebhookRequest,
 ): WebhookTenantMatch | null {
-	if (isSharepointValidationHandshake(request)) return null;
+	if (isMicrosoftGraphValidationHandshake(request)) return null;
 
 	const body = readBodyRecord(request);
 	if (!body || !Array.isArray(body.value)) return null;
