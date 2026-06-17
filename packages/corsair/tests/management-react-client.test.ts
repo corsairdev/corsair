@@ -27,6 +27,10 @@ type MockClient = {
 	[K in keyof CorsairManagementClient]: CorsairManagementClient[K] extends object
 		? {
 				[M in keyof CorsairManagementClient[K]]: jest.MockedFunction<
+					// any[] is required here: this conditional only needs to test
+					// whether the member is *callable* to extract its real signature,
+					// and the `infer`-free `(...a: any[]) => any` is the standard way
+					// to match an arbitrary function type without narrowing it.
 					CorsairManagementClient[K][M] extends (...a: any[]) => any
 						? CorsairManagementClient[K][M]
 						: never

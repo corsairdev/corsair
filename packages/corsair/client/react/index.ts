@@ -80,6 +80,9 @@ const IDLE = {
 // useAsync — runs `fn` on mount (and when `deps` change), tracks loading/error/data.
 function useAsync<T>(
 	fn: () => Promise<T>,
+	// unknown[] mirrors React's own DependencyList (readonly unknown[]) — a
+	// dependency may be any primitive, object, or undefined passed by callers,
+	// so a stricter element type isn't feasible here.
 	deps: unknown[],
 ): AsyncState<T> & { refetch: () => void } {
 	const [state, dispatch] = useReducer(
@@ -91,22 +94,37 @@ function useAsync<T>(
 	const fnRef = useRef(fn);
 	fnRef.current = fn;
 
+	// Monotonic token: only the most recent run may dispatch. A slow earlier
+	// request (e.g. after deps change from 'a' to 'b') can no longer overwrite a
+	// newer run's result, and unmount/dep-change cleanup invalidates in-flight work.
+	const runIdRef = useRef(0);
+
 	const run = useCallback(() => {
+		const runId = ++runIdRef.current;
 		dispatch({ type: 'FETCH' });
 		fnRef
 			.current()
-			.then((data) => dispatch({ type: 'SUCCESS', data }))
-			.catch((err: unknown) =>
-				dispatch({
-					type: 'ERROR',
-					error: err instanceof Error ? err : new Error(String(err)),
-				}),
-			);
+			.then((data) => {
+				if (runId === runIdRef.current) dispatch({ type: 'SUCCESS', data });
+			})
+			.catch((err: unknown) => {
+				if (runId === runIdRef.current) {
+					dispatch({
+						type: 'ERROR',
+						error: err instanceof Error ? err : new Error(String(err)),
+					});
+				}
+			});
 	}, []);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	useEffect(() => {
 		run();
+		return () => {
+			// Invalidate the in-flight request so a stale resolve can't clobber
+			// the next run's state.
+			runIdRef.current++;
+		};
 	}, deps);
 
 	return { ...state, refetch: run };
