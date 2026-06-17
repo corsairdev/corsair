@@ -13,8 +13,9 @@ const plugins = fs
 
 let hasErrors = false;
 
-function logError(plugin: string, message: string) {
+function logError(plugin: string, message: string, fix?: string) {
 	console.error(`[ERROR] [${plugin}] ${message}`);
+	console.error(`  -> Fix/Reference: ${fix || 'See packages/slack for a compliant example'}`);
 	hasErrors = true;
 }
 
@@ -64,18 +65,16 @@ for (const plugin of plugins) {
 		const indexTsContent = fs.readFileSync(indexTsPath, 'utf8');
 
 		// 3.1 Check for database schema import
-		if (
-			!indexTsContent.includes("from './schema'") &&
-			!indexTsContent.includes("from './schema/'")
-		) {
-			logError(plugin, 'index.ts must import database schema from ./schema');
+		if (!/from\s+['"]\.\/schema\/?['"]/.test(indexTsContent)) {
+			logError(plugin, 'Missing database schema import in index.ts', 'Add `import ... from "./schema"`');
 		}
 
 		// 3.2 Check for RequiredPluginEndpointMeta validation
-		if (!indexTsContent.includes('satisfies RequiredPluginEndpointMeta<')) {
+		if (!/satisfies\s+RequiredPluginEndpointMeta\s*</.test(indexTsContent)) {
 			logError(
 				plugin,
-				'endpointMeta must strictly validate the risk-level metadata by using "satisfies RequiredPluginEndpointMeta<...>"',
+				'endpointMeta missing RequiredPluginEndpointMeta validation',
+				'Add `satisfies RequiredPluginEndpointMeta<typeof yourEndpointsNested>` to endpointMeta'
 			);
 		}
 	}
@@ -97,7 +96,8 @@ for (const plugin of plugins) {
 		if (fs.existsSync(path.join(endpointsPath, 'operation-groups'))) {
 			logError(
 				plugin,
-				'endpoints/operation-groups directory is forbidden. Endpoints must be defined as proper functions, not raw JSON configurations.',
+				'Forbidden directory: endpoints/operation-groups',
+				'Define endpoints as individual exported functions instead of operation-groups'
 			);
 		}
 
@@ -110,13 +110,11 @@ for (const plugin of plugins) {
 					checkEndpointFiles(fullPath);
 				} else if (item.isFile() && fullPath.endsWith('.ts')) {
 					const content = fs.readFileSync(fullPath, 'utf8');
-					if (
-						/satisfies\s+readonly\s+\w*Operation\[\]/.test(content) ||
-						/satisfies\s+\w*Operation\[\]/.test(content)
-					) {
+					if (/satisfies\s+(?:readonly\s+)?\w*Operation\[\]/.test(content)) {
 						logError(
 							plugin,
-							`File ${item.name} uses an array of Operations which violates standard Corsair endpoint syntax. Endpoints must be defined as explicitly exported functions.`,
+							`Invalid endpoint array syntax in ${item.name}`,
+							'Export individual endpoint functions instead of an array of Operations'
 						);
 					}
 				}
@@ -126,7 +124,13 @@ for (const plugin of plugins) {
 
 		// 4.3 Check for types.ts and schemas
 		const typesTsPath = path.join(endpointsPath, 'types.ts');
-		if (fs.existsSync(typesTsPath)) {
+		if (!fs.existsSync(typesTsPath)) {
+			logError(
+				plugin,
+				'Missing endpoints/types.ts file',
+				'Create endpoints/types.ts to hold Zod schema definitions for this plugin'
+			);
+		} else {
 			const typesContent = fs.readFileSync(typesTsPath, 'utf8');
 			if (
 				!/EndpointInputSchemas/.test(typesContent) ||
@@ -134,16 +138,8 @@ for (const plugin of plugins) {
 			) {
 				logError(
 					plugin,
-					'endpoints/types.ts must export ...EndpointInputSchemas and ...EndpointOutputSchemas',
-				);
-			}
-		} else {
-			// Some plugins like MCP or older ones might just have index.ts, but standard is types.ts. We'll make it a requirement if endpoints/ exists and has multiple files.
-			const files = fs.readdirSync(endpointsPath);
-			if (files.length > 2) {
-				logError(
-					plugin,
-					'Missing endpoints/types.ts for Zod schema definitions',
+					'Missing schema exports in endpoints/types.ts',
+					'Export EndpointInputSchemas and EndpointOutputSchemas'
 				);
 			}
 		}
