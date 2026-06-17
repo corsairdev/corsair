@@ -365,7 +365,7 @@ const discordEndpointMeta = {
 
 export const discordAuthConfig = {
 	api_key: {
-		account: ['guild_id', 'application_id'] as const,
+		account: ['guild_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
