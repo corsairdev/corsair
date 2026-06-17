@@ -15,7 +15,9 @@ let hasErrors = false;
 
 function logError(plugin: string, message: string, fix?: string) {
 	console.error(`[ERROR] [${plugin}] ${message}`);
-	console.error(`  -> Fix/Reference: ${fix || 'See packages/slack for a compliant example'}`);
+	console.error(
+		`  -> Fix/Reference: ${fix || 'See packages/slack for a compliant example'}`,
+	);
 	hasErrors = true;
 }
 
@@ -66,7 +68,11 @@ for (const plugin of plugins) {
 
 		// 3.1 Check for database schema import
 		if (!/from\s+['"]\.\/schema\/?['"]/.test(indexTsContent)) {
-			logError(plugin, 'Missing database schema import in index.ts', 'Add `import ... from "./schema"`');
+			logError(
+				plugin,
+				'Missing database schema import in index.ts',
+				'Add `import ... from "./schema"`',
+			);
 		}
 
 		// 3.2 Check for RequiredPluginEndpointMeta validation
@@ -74,7 +80,7 @@ for (const plugin of plugins) {
 			logError(
 				plugin,
 				'endpointMeta missing RequiredPluginEndpointMeta validation',
-				'Add `satisfies RequiredPluginEndpointMeta<typeof yourEndpointsNested>` to endpointMeta'
+				'Add `satisfies RequiredPluginEndpointMeta<typeof yourEndpointsNested>` to endpointMeta',
 			);
 		}
 	}
@@ -97,7 +103,7 @@ for (const plugin of plugins) {
 			logError(
 				plugin,
 				'Forbidden directory: endpoints/operation-groups',
-				'Define endpoints as individual exported functions instead of operation-groups'
+				'Define endpoints as individual exported functions instead of operation-groups',
 			);
 		}
 
@@ -114,7 +120,7 @@ for (const plugin of plugins) {
 						logError(
 							plugin,
 							`Invalid endpoint array syntax in ${item.name}`,
-							'Export individual endpoint functions instead of an array of Operations'
+							'Export individual endpoint functions instead of an array of Operations',
 						);
 					}
 				}
@@ -128,7 +134,7 @@ for (const plugin of plugins) {
 			logError(
 				plugin,
 				'Missing endpoints/types.ts file',
-				'Create endpoints/types.ts to hold Zod schema definitions for this plugin'
+				'Create endpoints/types.ts to hold Zod schema definitions for this plugin',
 			);
 		} else {
 			const typesContent = fs.readFileSync(typesTsPath, 'utf8');
@@ -139,7 +145,7 @@ for (const plugin of plugins) {
 				logError(
 					plugin,
 					'Missing schema exports in endpoints/types.ts',
-					'Export EndpointInputSchemas and EndpointOutputSchemas'
+					'Export EndpointInputSchemas and EndpointOutputSchemas',
 				);
 			}
 		}
