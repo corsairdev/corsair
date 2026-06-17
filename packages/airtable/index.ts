@@ -11,6 +11,7 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Bases, Records, Webhooks } from './endpoints';
@@ -184,7 +185,11 @@ const airtableEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update fields on an existing record',
 	},
-} as const;
+	'webhooks.getPayloads': {
+		riskLevel: 'read',
+		description: 'Get webhook payloads',
+	},
+} as const satisfies RequiredPluginEndpointMeta<typeof airtableEndpointsNested>;
 
 export const airtableAuthConfig = {
 	api_key: {
