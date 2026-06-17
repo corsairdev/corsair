@@ -71,10 +71,7 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 
 					{view === 'integrations' ? (
 						<Suspense fallback={null}>
-							<OssCategoryOnboardingSection
-								selectedTags={selectedTags}
-								q={q}
-							/>
+							<OssCategoryOnboardingSection selectedTags={selectedTags} q={q} />
 						</Suspense>
 					) : null}
 

@@ -193,10 +193,7 @@ export function IntegrationCapabilitiesSkeleton() {
 			<Pulse className="h-4 w-32" />
 			<div className="space-y-2">
 				{Array.from({ length: 6 }, (_, i) => (
-					<Pulse
-						key={i}
-						className="h-14 w-full border border-[#1c1c1c1a]"
-					/>
+					<Pulse key={i} className="h-14 w-full border border-[#1c1c1c1a]" />
 				))}
 			</div>
 		</div>

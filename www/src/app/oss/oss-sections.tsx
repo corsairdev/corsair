@@ -172,9 +172,7 @@ export async function OssLeaderboardSection({
 	if (leaderboardData.items.length === 0) {
 		return (
 			<div className="border border-dashed border-[#1c1c1c33] px-6 py-12 text-center">
-				<p className="text-sm text-[#1c1c1c66]">
-					No claimed integrations yet.
-				</p>
+				<p className="text-sm text-[#1c1c1c66]">No claimed integrations yet.</p>
 			</div>
 		);
 	}

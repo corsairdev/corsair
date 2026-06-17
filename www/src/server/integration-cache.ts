@@ -1,5 +1,5 @@
-import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 
 import { db } from '@/db';
 import {
@@ -33,8 +33,7 @@ function getCachedIntegrationSummary(slug: string) {
 
 function getCachedIntegrationCapabilities(slug: string) {
 	return unstable_cache(
-		async () =>
-			createPublicCaller().integrations.capabilitiesBySlug({ slug }),
+		async () => createPublicCaller().integrations.capabilitiesBySlug({ slug }),
 		['integration-capabilities', slug],
 		{
 			revalidate: 60,
