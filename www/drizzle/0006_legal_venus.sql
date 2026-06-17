@@ -1,1 +1,0 @@
-ALTER TABLE "integrations" ADD COLUMN "urls" jsonb DEFAULT '{}'::jsonb NOT NULL;

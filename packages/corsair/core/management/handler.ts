@@ -67,10 +67,7 @@ const ROUTES: Route[] = [
 		method: 'POST',
 		pattern: '/tenants',
 		handler: async ({ internal, body }) =>
-			json(
-				201,
-				await createTenant(internal, body as { id: string }),
-			),
+			json(201, await createTenant(internal, body as { id: string })),
 	},
 	{
 		method: 'GET',
@@ -186,9 +183,7 @@ function matchPattern(
 
 function stripBasePath(pathname: string, basePath: string): string {
 	if (!basePath) return pathname;
-	const normalized = basePath.endsWith('/')
-		? basePath.slice(0, -1)
-		: basePath;
+	const normalized = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
 	if (pathname === normalized) return '/';
 	if (pathname.startsWith(`${normalized}/`)) {
 		return pathname.slice(normalized.length);
@@ -221,7 +216,11 @@ async function parseBody(req: Request): Promise<unknown> {
 		if (!text) return undefined;
 		return JSON.parse(text);
 	} catch {
-		throw new ManagementApiError(400, 'invalid_json', 'Request body is not valid JSON');
+		throw new ManagementApiError(
+			400,
+			'invalid_json',
+			'Request body is not valid JSON',
+		);
 	}
 }
 

@@ -26,7 +26,7 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/installation"
+              "getting-started/setup"
             ]
           },
           {
@@ -66,21 +66,17 @@
           },
           {
             "group": "Studio",
-            "pages": [
-              "studio/overview"
-            ]
+            "pages": ["studio/overview"]
           },
           {
             "group": "Auth Types",
-            "pages": [
-              "concepts/api-key",
-              "concepts/oauth"
-            ]
+            "pages": ["concepts/api-key", "concepts/oauth"]
           },
           {
             "group": "Production",
             "pages": [
-              "production/oauth-process"
+              "production/oauth-process",
+              "production/tenant-provisioning"
             ]
           },
           {
@@ -137,10 +133,7 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "guides/plugins",
-              "guides/create-your-own-plugin"
-            ]
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
@@ -755,11 +748,7 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": [
-              "guides/webhooks",
-              "guides/workflows",
-              "guides/dashboard"
-            ]
+            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
           }
         ]
       }
@@ -767,6 +756,10 @@
   },
   "redirects": [
     { "source": "/", "destination": "/getting-started/introduction" },
+    {
+      "source": "/getting-started/installation",
+      "destination": "/getting-started/setup"
+    },
     { "source": "/app/introduction", "destination": "/app/home" },
     { "source": "/hosted-sdk/overview", "destination": "/app/home" },
     { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },

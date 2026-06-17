@@ -8,10 +8,7 @@ import type {
 	ResolvedConnectLink,
 	Tenant,
 } from '../core/management/types';
-import type {
-	CorsairClientOptions,
-	CorsairManagementClient,
-} from './types';
+import type { CorsairClientOptions, CorsairManagementClient } from './types';
 import { CorsairClientError } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -108,8 +105,8 @@ export function createCorsairClient(
 	};
 }
 
-export { CorsairClientError } from './types';
 export type {
 	CorsairClientOptions,
 	CorsairManagementClient,
 } from './types';
+export { CorsairClientError } from './types';

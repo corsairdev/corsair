@@ -100,8 +100,8 @@ export {
 	toHonoHandler,
 	toNextJsHandler,
 } from './adapters';
-export { managementHandler } from './handler';
 export type { ManagementHandlerOptions } from './handler';
+export { managementHandler } from './handler';
 export type {
 	ConnectionStatus,
 	ConnectLink,

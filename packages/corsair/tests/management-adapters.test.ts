@@ -1,9 +1,9 @@
+import { createCorsair } from '../core';
 import {
 	toExpressHandler,
 	toHonoHandler,
 	toNextJsHandler,
 } from '../core/management';
-import { createCorsair } from '../core';
 import type { CorsairPlugin } from '../core/plugins';
 import { createTestDatabase } from './setup-db';
 
@@ -111,8 +111,7 @@ describe('toExpressHandler', () => {
 			read: () => ({
 				status: statusCode,
 				headers,
-				body:
-					typeof body === 'string' ? body : body?.toString('utf-8'),
+				body: typeof body === 'string' ? body : body?.toString('utf-8'),
 			}),
 		};
 	}

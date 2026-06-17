@@ -55,7 +55,9 @@ function makeEnv() {
 	return createTestDatabase();
 }
 
-async function ensurePermissionsTable(db: ReturnType<typeof createTestDatabase>['db']) {
+async function ensurePermissionsTable(
+	db: ReturnType<typeof createTestDatabase>['db'],
+) {
 	// SqliteDialect underlying connection — execute raw SQL via Kysely's schema
 	await db.schema
 		.createTable('corsair_permissions')
@@ -148,15 +150,16 @@ describe('managementHandler — /plugins', () => {
 			new Request('http://x/api/corsair/plugins', { method: 'GET' }),
 		);
 		expect(res.status).toBe(200);
-		const body = await readJson<
-			Array<{
-				id: string;
-				authType: string | null;
-				configured: boolean;
-				missingFields: string[];
-				oauth: unknown;
-			}>
-		>(res);
+		const body =
+			await readJson<
+				Array<{
+					id: string;
+					authType: string | null;
+					configured: boolean;
+					missingFields: string[];
+					oauth: unknown;
+				}>
+			>(res);
 
 		expect(body).toHaveLength(2);
 		const slack = body.find((p) => p.id === 'slack')!;
@@ -191,7 +194,10 @@ describe('managementHandler — /plugins', () => {
 		const res = await handler(
 			new Request('http://x/api/corsair/plugins/slack', { method: 'GET' }),
 		);
-		const body = await readJson<{ configured: boolean; missingFields: string[] }>(res);
+		const body = await readJson<{
+			configured: boolean;
+			missingFields: string[];
+		}>(res);
 		expect(body.configured).toBe(true);
 		expect(body.missingFields).toEqual(['redirect_url']);
 	});
@@ -268,9 +274,8 @@ describe('managementHandler — /tenants', () => {
 		const res = await handler(
 			new Request('http://x/api/corsair/tenants', { method: 'GET' }),
 		);
-		const body = await readJson<
-			Array<{ id: string; connectedPlugins: string[] }>
-		>(res);
+		const body =
+			await readJson<Array<{ id: string; connectedPlugins: string[] }>>(res);
 		const ids = body.map((t) => t.id).sort();
 		expect(ids).toEqual(['acme', 'default']);
 		const acme = body.find((t) => t.id === 'acme')!;
@@ -306,7 +311,9 @@ describe('managementHandler — /tenants', () => {
 			}),
 		);
 		expect(bad.status).toBe(400);
-		const badBody = await readJson<{ error: string; missingFields?: string[] }>(bad);
+		const badBody = await readJson<{ error: string; missingFields?: string[] }>(
+			bad,
+		);
 		expect(badBody.error).toBe('bad_request');
 		expect(badBody.missingFields).toEqual(['id']);
 	});

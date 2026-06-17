@@ -1,15 +1,17 @@
 'use client';
 
 import { MagnifyingGlass } from '@phosphor-icons/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/utils';
+import { useOssNavigation } from './oss-navigation';
+import { buildOssHref, parseTagSlugs } from './oss-url';
 
 const DEBOUNCE_MS = 500;
 
 export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
-	const router = useRouter();
+	const { navigate } = useOssNavigation();
 	const searchParams = useSearchParams();
 	const [value, setValue] = useState(defaultValue);
 	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -30,18 +32,8 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 
 		if (trimmed === current) return;
 
-		const params = new URLSearchParams(searchParams.toString());
-
-		if (trimmed) {
-			params.set('q', trimmed);
-		} else {
-			params.delete('q');
-		}
-
-		params.delete('page');
-
-		const qs = params.toString();
-		router.replace(qs ? `/oss?${qs}` : '/oss');
+		const tags = parseTagSlugs(searchParams.get('tags') ?? undefined);
+		navigate(buildOssHref({ q: trimmed, tags }));
 	};
 
 	const handleChange = (next: string) => {
@@ -54,13 +46,11 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 		}, DEBOUNCE_MS);
 	};
 
-	const isLeaderboard = searchParams.get('view') === 'leaderboard';
-
 	return (
 		<div className="relative">
 			<MagnifyingGlass
 				size={16}
-				className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+				className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-[#1c1c1c66]"
 				aria-hidden
 			/>
 			<input
@@ -68,11 +58,9 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 				value={value}
 				onChange={(event) => handleChange(event.target.value)}
 				placeholder="Search integrations..."
-				disabled={isLeaderboard}
 				className={cn(
-					'w-full rounded-lg border border-border/70 bg-card py-2.5 pr-4 pl-9 text-sm shadow-sm transition-all',
-					'placeholder:text-muted-foreground focus:border-border focus:ring-2 focus:ring-foreground/5 focus:outline-none',
-					isLeaderboard && 'cursor-not-allowed opacity-50',
+					'w-full border border-[#1c1c1c1a] bg-white py-2.5 pr-4 pl-10 text-sm transition-colors',
+					'placeholder:text-[#1c1c1c66] focus:border-[#1c1c1c66] focus:outline-none',
 				)}
 			/>
 		</div>

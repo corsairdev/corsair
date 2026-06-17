@@ -1,4 +1,4 @@
-import { createCorsairClient, CorsairClientError } from '../client';
+import { CorsairClientError, createCorsairClient } from '../client';
 import { createCorsair } from '../core';
 import { managementHandler } from '../core/management';
 import type { CorsairPlugin } from '../core/plugins';
