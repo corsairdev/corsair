@@ -40,3 +40,33 @@ export type ConnectionStatus = Record<string, PluginConnectionState>;
 export type ManagementOk = { ok: true };
 
 export type PermissionRecord = CorsairPermission;
+
+// ── connect / OAuth ────────────────────────────────────────────────────────
+
+export type CreateConnectLinkInput = {
+	plugin: string;
+	tenantId?: string;
+};
+
+export type ConnectLink = {
+	connectUrl: string;
+	state: string;
+};
+
+export type ResolvedConnectLink = {
+	plugin: string;
+	tenantId: string;
+	providerName: string;
+	oauthUrl: string;
+	state: string;
+};
+
+export type OAuthCallbackInput = {
+	code: string;
+	state: string;
+};
+
+export type OAuthCallbackResult = {
+	plugin: string;
+	tenantId: string;
+};

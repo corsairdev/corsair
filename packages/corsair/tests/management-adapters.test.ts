@@ -12,6 +12,9 @@ import { createTestDatabase } from './setup-db';
 // (Request) => Promise<Response> handler; we just confirm the bridge wires up
 // methods, paths, and bodies correctly. The handler's own semantics are
 // covered exhaustively in management-handler.test.ts.
+//
+// Casts: `as unknown as CorsairPlugin` on the fixture, `as any` on the
+// createCorsair call — see management-handler.test.ts for the rationale.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const slack = {

@@ -7,15 +7,20 @@ export type { ResolveConnectLinkResult } from './core';
 export { AuthMissingError, createCorsair, resolveConnectLink } from './core';
 export type {
 	ConnectionStatus,
+	ConnectLink,
 	CorsairManageNamespace,
+	CreateConnectLinkInput,
 	CreateTenantInput,
 	ExpressHandler,
 	HonoHandler,
 	ManagementHandlerOptions,
 	ManagementOk,
+	OAuthCallbackInput,
+	OAuthCallbackResult,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
+	ResolvedConnectLink,
 	Tenant,
 } from './core/management';
 export {
