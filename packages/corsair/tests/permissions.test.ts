@@ -65,7 +65,6 @@ describe('Modify and Approve Permissions', () => {
 						type: 'message',
 					},
 				};
-				// biome-ignore lint/suspicious/noExplicitAny: Mocking generic endpoint return type requires casting to any
 				return response as any;
 			},
 		);
