@@ -9,6 +9,7 @@ import type {
 	KeyBuilderContext,
 	PickAuth,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { getValidBitwardenAccessToken } from './client';
@@ -162,7 +163,9 @@ const bitwardenEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get details for a specific organization member',
 	},
-} as const;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof bitwardenEndpointsNested
+>;
 
 export type BaseBitwardenPlugin<T extends BitwardenPluginOptions> =
 	CorsairPlugin<

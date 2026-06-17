@@ -10,8 +10,8 @@ import type {
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -369,7 +369,7 @@ const todoistEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update a Todoist reminder',
 	},
-} satisfies PluginEndpointMeta<typeof todoistEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof todoistEndpointsNested>;
 
 const todoistWebhookSchemas = {
 	'items.added': {

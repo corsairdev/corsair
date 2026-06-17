@@ -1,5 +1,5 @@
-import { encodeOAuthState, signState } from '../core/auth/state';
 import { createCorsair } from '../core';
+import { encodeOAuthState, signState } from '../core/auth/state';
 import { managementHandler } from '../core/management';
 import type { CorsairPlugin } from '../core/plugins';
 import { setupCorsair } from '../setup';
@@ -86,7 +86,9 @@ describe('managementHandler — POST /connect/links', () => {
 			}),
 		);
 		expect(res.status).toBe(400);
-		const body = await readJson<{ error: string; missingFields: string[] }>(res);
+		const body = await readJson<{ error: string; missingFields: string[] }>(
+			res,
+		);
 		expect(body.error).toBe('missing_credentials');
 		expect(body.missingFields).toEqual(
 			expect.arrayContaining(['client_id', 'client_secret']),
@@ -220,8 +222,9 @@ describe('managementHandler — GET /connect/resolve', () => {
 		await (corsair as any).keys.slack.set_client_id('cid');
 		await (corsair as any).keys.slack.set_client_secret('csec');
 
-		const tampered = signState(encodeOAuthState('slack', 'default'), KEK)
-			.slice(0, -5) + 'XXXXX';
+		const tampered =
+			signState(encodeOAuthState('slack', 'default'), KEK).slice(0, -5) +
+			'XXXXX';
 		const handler = managementHandler(corsair);
 		const res = await handler(
 			new Request(
@@ -258,10 +261,9 @@ describe('managementHandler — GET /connect/resolve', () => {
 
 		const handler = managementHandler(corsair);
 		const res = await handler(
-			new Request(
-				'http://x/api/corsair/connect/resolve?state=anything',
-				{ method: 'GET' },
-			),
+			new Request('http://x/api/corsair/connect/resolve?state=anything', {
+				method: 'GET',
+			}),
 		);
 		expect(res.status).toBe(500);
 		const body = await readJson<{ error: string }>(res);

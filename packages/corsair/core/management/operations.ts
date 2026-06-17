@@ -2,8 +2,8 @@ import type { CorsairInternalConfig } from '..';
 import { createIntegrationKeyManager } from '../auth/key-manager';
 import { encodeOAuthState, signState } from '../auth/state';
 import { BASE_AUTH_FIELDS } from '../auth/types';
-import type { AuthTypes } from '../constants';
 import { ConnectError, resolveConnectLink } from '../connect';
+import type { AuthTypes } from '../constants';
 import type { CorsairPlugin, OAuthConfig } from '../plugins';
 import { badRequest, ManagementApiError, notFound } from './errors';
 import type {

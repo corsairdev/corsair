@@ -1,9 +1,9 @@
-## 📝 Description
+## Description
 
 <!-- Briefly describe the changes you've made and why they're necessary. -->
 <!-- Link to any related issues (e.g. "Fixes #123"). -->
 
-## ✅ Checklist
+## Checklist
 
 Before submitting your PR, please verify the following:
 
@@ -14,10 +14,10 @@ Before submitting your PR, please verify the following:
 - [ ] I have added or updated tests where applicable
 - [ ] I have added or updated necessary documentation
 
-## 📸 Screenshots / Demos (if applicable)
+## Screenshots / Demos (if applicable)
 
 <!-- If your changes affect the UI or CLI output, please include screenshots or terminal recordings. -->
 
-## 🛠️ Additional Notes
+## Additional Notes
 
 <!-- Any other information that reviewers should know? (e.g. breaking changes, new dependencies) -->
