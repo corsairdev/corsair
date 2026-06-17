@@ -22,6 +22,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { RedditSchema } from './schema';
+import { matchRedditTenantWebhook } from './webhooks/tenant-matcher';
 
 export type RedditPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -371,6 +372,7 @@ export function reddit<const T extends RedditPluginOptions>(
 		endpointMeta: redditEndpointMeta,
 		endpointSchemas: redditEndpointSchemas,
 		pluginWebhookMatcher: (_request) => false,
+		pluginTenantWebhookMatcher: matchRedditTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -37,6 +37,7 @@ import {
 	RecordingWebhooks,
 	WebinarWebhooks,
 } from './webhooks';
+import { matchZoomTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	MeetingCancelledEvent,
 	MeetingCreatedEvent,
@@ -415,6 +416,7 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 			const headers = request.headers;
 			return 'x-zm-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchZoomTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

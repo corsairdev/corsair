@@ -35,6 +35,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { StravaSchema } from './schema';
+import { matchStravaTenantWebhook } from './webhooks/tenant-matcher';
 import type { StravaWebhookOutputs } from './webhooks/types';
 
 export type StravaPluginOptions = {
@@ -419,6 +420,7 @@ export function strava<const T extends StravaPluginOptions>(
 			// Webhooks are not implemented yet
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchStravaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

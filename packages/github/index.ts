@@ -267,6 +267,7 @@ import {
 	WorkflowRunInProgressEventSchema,
 	WorkflowRunRequestedEventSchema,
 } from './webhooks/types';
+import { matchGithubTenantWebhook } from './webhooks/tenant-matcher';
 
 export {
 	createGithubEventMatch,
@@ -1744,6 +1745,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 			const hasGithubSignature = headers['x-hub-signature-256'] !== undefined;
 			return hasGithubEvent && hasGithubSignature;
 		},
+		pluginTenantWebhookMatcher: matchGithubTenantWebhook,
 		keyBuilder: async (ctx: GithubKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

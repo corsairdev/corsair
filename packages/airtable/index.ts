@@ -26,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { AirtableSchema } from './schema';
 import { EventWebhooks } from './webhooks';
+import { matchAirtableTenantWebhook } from './webhooks/tenant-matcher';
 import type { AirtableEvent, AirtableWebhookOutputs } from './webhooks/types';
 import {
 	AirtableEventPayloadSchema,
@@ -241,6 +242,7 @@ export function airtable<const T extends AirtablePluginOptions>(
 			const hasMac = 'x-airtable-content-mac' in headers;
 			return hasMac;
 		},
+		pluginTenantWebhookMatcher: matchAirtableTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

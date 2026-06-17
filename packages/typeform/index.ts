@@ -35,6 +35,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TypeformSchema } from './schema';
 import { FormWebhooks } from './webhooks';
+import { matchTypeformTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TypeformFormResponseEvent,
 	TypeformWebhookOutputs,
@@ -525,6 +526,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 			const headers = request.headers;
 			return 'typeform-signature' in headers || 'Typeform-Signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchTypeformTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -33,6 +33,7 @@ import type {
 import { errorHandlers } from './error-handlers';
 import { TwitterApiIOSchema } from './schema';
 import { TweetWebhooks } from './webhooks';
+import { matchTwitterApiIOTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TweetCreatedEvent,
 	TweetFilterMatchEvent,
@@ -711,6 +712,7 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 				body?.type === 'tweet.created' || body?.type === 'tweet.filter_match';
 			return hasSignature || hasKnownType;
 		},
+		pluginTenantWebhookMatcher: matchTwitterApiIOTenantWebhook,
 		keyBuilder: async (ctx: TwitterApiIOKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

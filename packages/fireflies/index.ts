@@ -29,6 +29,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { FirefliesSchema } from './schema';
 import { MeetingWebhooks, TranscriptionWebhooks } from './webhooks';
+import { matchFirefliesTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	FirefliesWebhookOutputs,
 	InMeetingEvent,
@@ -397,6 +398,7 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 			const headers = request.headers;
 			return 'x-fireflies-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchFirefliesTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

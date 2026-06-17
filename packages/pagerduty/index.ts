@@ -25,6 +25,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { PagerdutySchema } from './schema';
 import { IncidentWebhooks } from './webhooks';
+import { matchPagerdutyTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	IncidentAcknowledgedEvent,
 	IncidentAssignedEvent,
@@ -304,6 +305,7 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 			const headers = request.headers;
 			return 'x-pagerduty-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchPagerdutyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

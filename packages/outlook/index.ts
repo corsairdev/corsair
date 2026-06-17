@@ -45,6 +45,7 @@ import type {
 	OutlookWebhookPayload,
 	SubscriptionValidationPayload,
 } from './webhooks/types';
+import { matchOutlookTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	ContactCreatedEventSchema,
 	EventChangedEventSchema,
@@ -609,6 +610,7 @@ export function outlook<const T extends OutlookPluginOptions>(
 			}
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchOutlookTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

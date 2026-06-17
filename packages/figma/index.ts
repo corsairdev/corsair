@@ -47,6 +47,7 @@ import {
 	LibraryPublishWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { matchFigmaTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	FigmaFileCommentEvent,
 	FigmaFileDeleteEvent,
@@ -747,6 +748,7 @@ export function figma<const T extends FigmaPluginOptions>(
 			const hasSignature = 'x-figma-signature' in headers;
 			return hasSignature;
 		},
+		pluginTenantWebhookMatcher: matchFigmaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

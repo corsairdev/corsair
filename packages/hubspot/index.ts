@@ -55,6 +55,7 @@ import {
 	DealWebhooks,
 	TicketWebhooks,
 } from './webhooks';
+import { matchHubspotTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CompanyCreatedEventSchema,
 	CompanyDeletedEventSchema,
@@ -631,6 +632,7 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 			);
 			return hasHubSpotSignature || hasHubSpotPayload;
 		},
+		pluginTenantWebhookMatcher: matchHubspotTenantWebhook,
 		errorHandlers: options.errorHandlers || errorHandlers,
 		keyBuilder: async (ctx: HubSpotKeyBuilderContext, source) => {
 			const authType = ctx.authType;

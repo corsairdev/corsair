@@ -35,6 +35,7 @@ import type {
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
+import { matchGoogleDriveTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	DriveChangedEventSchema,
 	decodePubSubMessage,
@@ -466,6 +467,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGoogleDriveTenantWebhook,
 	} satisfies InternalGoogleDrivePlugin;
 }
 

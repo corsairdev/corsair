@@ -23,6 +23,7 @@ import type {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TwitterSchema } from './schema';
+import { matchTwitterTenantWebhook } from './webhooks/tenant-matcher';
 
 // ── Context & Key Builder ─────────────────────────────────────────────────────
 
@@ -160,6 +161,7 @@ export function twitter<const T extends TwitterPluginOptions>(
 			// Webhooks not implemented yet
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchTwitterTenantWebhook,
 		keyBuilder: async (ctx: TwitterKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

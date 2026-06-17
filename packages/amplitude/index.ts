@@ -40,6 +40,7 @@ import {
 	ExperimentWebhooks,
 	MonitorWebhooks,
 } from './webhooks';
+import { matchAmplitudeTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	AmplitudeAnnotationCreatedEvent,
 	AmplitudeAnnotationUpdatedEvent,
@@ -423,6 +424,7 @@ export function amplitude<const T extends AmplitudePluginOptions>(
 			const headers = request.headers;
 			return 'x-amplitude-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchAmplitudeTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

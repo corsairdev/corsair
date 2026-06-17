@@ -24,6 +24,7 @@ import {
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
+import { matchPostHogTenantWebhook } from './webhooks/tenant-matcher';
 import { EventCapturedEventSchema } from './webhooks/types';
 
 export type PostHogPluginOptions = {
@@ -204,6 +205,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 				'distinct_id' in parsedBody;
 			return hasPostHogSignature || hasPostHogPayload;
 		},
+		pluginTenantWebhookMatcher: matchPostHogTenantWebhook,
 		errorHandlers: options.errorHandlers,
 		keyBuilder: async (ctx: PostHogKeyBuilderContext, source) => {
 			const authType = ctx.authType;

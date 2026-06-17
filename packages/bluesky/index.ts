@@ -24,6 +24,7 @@ import type {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BlueskySchema } from './schema';
+import { matchBlueskyTenantWebhook } from './webhooks/tenant-matcher';
 
 // ── Auth Config ───────────────────────────────────────────────────────────────
 
@@ -196,6 +197,7 @@ export function bluesky<const T extends BlueskyPluginOptions>(
 			// Webhooks not supported on Bluesky
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchBlueskyTenantWebhook,
 		keyBuilder: async (ctx: BlueskyKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

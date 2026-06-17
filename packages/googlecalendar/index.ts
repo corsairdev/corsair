@@ -32,6 +32,7 @@ import type {
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
+import { matchGoogleCalendarTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	decodePubSubMessage,
 	GoogleCalendarWebhookEventSchema,
@@ -314,6 +315,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGoogleCalendarTenantWebhook,
 	} satisfies InternalGoogleCalendarPlugin;
 }
 

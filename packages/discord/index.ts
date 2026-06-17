@@ -48,6 +48,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { DiscordSchema } from './schema';
 import { InteractionWebhooks } from './webhooks';
+import { matchDiscordTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DiscordApplicationCommandInteraction,
 	DiscordMessageComponentInteraction,
@@ -436,6 +437,7 @@ export function discord<const T extends DiscordPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchDiscordTenantWebhook,
 
 		errorHandlers: {
 			...errorHandlers,

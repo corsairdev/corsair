@@ -42,3 +42,17 @@ export type { PermissionExecuteResult } from './permissions';
 export { executePermission } from './permissions';
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';
 export { processWebhook } from './webhooks';
+export {
+	matchWebhookPlugin,
+	matchWebhookPluginAndTenant,
+	type PluginWebhookMatchers,
+	type WebhookPluginTenantMatch,
+} from './core/webhooks/tenant-match';
+export {
+	asRecord,
+	decodePubSubData,
+	firstString,
+	getHeader,
+	readBodyRecord,
+	toExternalId,
+} from './core/webhooks/tenant-match-utils';

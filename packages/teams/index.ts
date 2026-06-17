@@ -35,6 +35,7 @@ import type {
 	TeamsMembershipChangedEvent,
 	TeamsWebhookOutputs,
 } from './webhooks/types';
+import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	TeamsChannelCreatedEventSchema,
 	TeamsChannelCreatedPayloadSchema,
@@ -452,6 +453,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				headers['content-type']?.includes('application/json') ?? false;
 			return hasTeamsHeader && isJsonPost;
 		},
+		pluginTenantWebhookMatcher: matchTeamsTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

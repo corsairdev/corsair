@@ -17,6 +17,7 @@ import type {
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
+	CorsairWebhookTenantMatcher,
 	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
@@ -464,6 +465,12 @@ export type CorsairPlugin<
 	 * should handle an incoming request. Acts as a first-level filter.
 	 */
 	pluginWebhookMatcher?: CorsairWebhookMatcher;
+	/**
+	 * Extracts the external identifier used to resolve a tenant for this webhook
+	 * (for example Slack `team_id`, GitHub `installation.id`). Return null when
+	 * the request cannot be mapped to a tenant.
+	 */
+	pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
 	/**

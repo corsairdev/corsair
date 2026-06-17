@@ -40,6 +40,7 @@ import {
 	ItemWebhooks,
 	StatusWebhooks,
 } from './webhooks';
+import { matchMondayTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ColumnValueChangedEvent,
 	ItemCreatedEvent,
@@ -540,6 +541,7 @@ export function monday<const T extends MondayPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchMondayTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

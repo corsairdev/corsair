@@ -2,8 +2,10 @@ import { BaseProviders } from '../core/constants';
 import type {
 	BoundWebhook,
 	BoundWebhookTree,
+	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookResponse,
+	WebhookTenantMatch,
 } from '../core/webhooks';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,6 +40,8 @@ type PluginWithWebhooks = {
 	webhooks?: BoundWebhookTree;
 	/** Plugin-level matcher to quickly check if a webhook is for this plugin */
 	pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
+	/** Extracts the external tenant lookup key for this plugin's webhook */
+	pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 };
 
 /**

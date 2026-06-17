@@ -30,6 +30,7 @@ import { todoistEndpointSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TodoistSchema } from './schema';
 import { ItemWebhooks, NoteWebhooks, ProjectWebhooks } from './webhooks';
+import { matchTodoistTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ItemAddedEvent,
 	ItemCompletedEvent,
@@ -461,6 +462,7 @@ export function todoist<const T extends TodoistPluginOptions>(
 			const hasDeliveryId = 'x-todoist-delivery-id' in headers;
 			return hasDeliveryId;
 		},
+		pluginTenantWebhookMatcher: matchTodoistTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

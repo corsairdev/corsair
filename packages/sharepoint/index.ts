@@ -45,6 +45,7 @@ import type {
 	SharepointListChangedPayload,
 	SharepointWebhookOutputs,
 } from './webhooks/types';
+import { matchSharepointTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	ListChangedEventSchema,
 	SharepointListChangedPayloadSchema,
@@ -1361,6 +1362,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				contentType.includes('application/json')
 			);
 		},
+		pluginTenantWebhookMatcher: matchSharepointTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

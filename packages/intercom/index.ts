@@ -38,6 +38,7 @@ import {
 	ConversationWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { matchIntercomTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ContactCreatedEvent,
 	ContactDeletedEvent,
@@ -743,6 +744,7 @@ export function intercom<const T extends IntercomPluginOptions>(
 			const hasSubscriptionId = 'intercom-webhook-subscription-id' in headers;
 			return hasSignature && hasSubscriptionId;
 		},
+		pluginTenantWebhookMatcher: matchIntercomTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

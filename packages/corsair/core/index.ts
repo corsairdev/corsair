@@ -276,9 +276,25 @@ export type {
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
+	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
+	WebhookTenantMatch,
 	WebhookTree,
 } from './webhooks';
+export {
+	matchWebhookPlugin,
+	matchWebhookPluginAndTenant,
+	type PluginWebhookMatchers,
+	type WebhookPluginTenantMatch,
+} from './webhooks/tenant-match';
+export {
+	asRecord,
+	decodePubSubData,
+	firstString,
+	getHeader,
+	readBodyRecord,
+	toExternalId,
+} from './webhooks/tenant-match-utils';

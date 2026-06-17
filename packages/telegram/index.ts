@@ -51,6 +51,7 @@ import type {
 	ShippingQueryEvent,
 	TelegramWebhookOutputs,
 } from './webhooks/types';
+import { matchTelegramTenantWebhook } from './webhooks/tenant-matcher';
 
 /**
  * Plugin options type - configure authentication and behavior
@@ -335,6 +336,7 @@ export function telegram<const T extends TelegramPluginOptions>(
 
 			return hasSignature && 'update_id' in body;
 		},
+		pluginTenantWebhookMatcher: matchTelegramTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { matchSlackTenantWebhook } from './webhooks/tenant-matcher';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
@@ -735,6 +736,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 
 			return hasSlackSignature && hasSlackTimestamp;
 		},
+		pluginTenantWebhookMatcher: matchSlackTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

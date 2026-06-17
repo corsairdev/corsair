@@ -29,6 +29,7 @@ import {
 	MetadataWebhooks,
 	SharedLinkWebhooks,
 } from './webhooks';
+import { matchBoxTenantWebhook } from './webhooks/tenant-matcher';
 import type { BoxWebhookOutputs, BoxWebhookPayload } from './webhooks/types';
 import {
 	CollaborationAcceptedPayloadSchema,
@@ -546,6 +547,7 @@ export function box<const T extends BoxPluginOptions>(
 			const hasTimestamp = 'box-delivery-timestamp' in headers;
 			return hasTimestamp;
 		},
+		pluginTenantWebhookMatcher: matchBoxTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

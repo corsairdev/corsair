@@ -40,6 +40,7 @@ import type {
 	OnedriveWebhookOutputs,
 	OnedriveWebhookPayload,
 } from './webhooks/types';
+import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	createOnedriveMatch,
 	createOnedriveValidationMatch,
@@ -800,6 +801,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 			return createOnedriveMatch()(request);
 		},
+		pluginTenantWebhookMatcher: matchOnedriveTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

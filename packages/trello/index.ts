@@ -30,6 +30,7 @@ import {
 	ListWebhooks,
 	MemberWebhooks,
 } from './webhooks';
+import { matchTrelloTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TrelloCardCreatedEvent,
 	TrelloCardUpdatedEvent,
@@ -419,6 +420,7 @@ export function trello<const T extends TrelloPluginOptions>(
 			const headers = request.headers;
 			return 'x-trello-webhook' in headers;
 		},
+		pluginTenantWebhookMatcher: matchTrelloTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

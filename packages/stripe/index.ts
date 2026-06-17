@@ -42,6 +42,7 @@ import {
 	PaymentIntentWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { matchStripeTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	StripeChargeFailedEvent,
 	StripeChargeRefundedEvent,
@@ -471,6 +472,7 @@ export function stripe<const T extends StripePluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'stripe-signature' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchStripeTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

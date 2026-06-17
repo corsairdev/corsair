@@ -63,6 +63,25 @@ export type WebhookResponse<TData = unknown> = {
 export type CorsairWebhookMatcher = (request: RawWebhookRequest) => boolean;
 
 /**
+ * Identifies which external credential key should be used to resolve a tenant
+ * for an incoming webhook. The `linkType` names the field stored on
+ * `corsair_accounts` (for example `team_id`, `installation_id`).
+ */
+export type WebhookTenantMatch = {
+	linkType: string;
+	externalId: string;
+};
+
+/**
+ * Extracts the tenant lookup key from a webhook after the plugin has been
+ * identified. Return null when the payload does not contain a resolvable id
+ * (for example URL verification challenges).
+ */
+export type CorsairWebhookTenantMatcher = (
+	request: RawWebhookRequest,
+) => WebhookTenantMatch | null;
+
+/**
  * Bivariance hack for webhook function types to ensure proper type inference.
  * @template Args - The function arguments
  * @template R - The function return type

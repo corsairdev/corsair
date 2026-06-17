@@ -60,6 +60,7 @@ import {
 	PipelineEventSchema,
 	PushEventSchema,
 } from './webhooks/types';
+import { matchGitlabTenantWebhook } from './webhooks/tenant-matcher';
 
 export const gitlabAuthConfig = {} as const satisfies PluginAuthConfig;
 
@@ -802,6 +803,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 			const event = headers['x-gitlab-event'];
 			return token !== undefined || event !== undefined;
 		},
+		pluginTenantWebhookMatcher: matchGitlabTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -59,6 +59,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { RazorpaySchema } from './schema';
 import { OrderWebhooks, PaymentWebhooks, RefundWebhooks } from './webhooks';
+import { matchRazorpayTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	RazorpayOrderPaidEvent,
 	RazorpayPaymentCapturedEvent,
@@ -493,6 +494,7 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'x-razorpay-signature' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchRazorpayTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

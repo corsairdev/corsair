@@ -47,6 +47,7 @@ import {
 	AsanaTaskWebhookPayloadSchema,
 	AsanaWebhookEventSchema,
 } from './webhooks/types';
+import { matchAsanaTenantWebhook } from './webhooks/tenant-matcher';
 
 export type AsanaEndpoints = {
 	// Tasks
@@ -992,6 +993,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			const headers = request.headers;
 			return 'x-hook-signature' in headers || 'x-hook-secret' in headers;
 		},
+		pluginTenantWebhookMatcher: matchAsanaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

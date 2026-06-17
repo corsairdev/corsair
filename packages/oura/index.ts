@@ -26,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { OuraSchema } from './schema';
 import { SummaryWebhooks } from './webhooks';
+import { matchOuraTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DailyActivityWebhookEvent,
 	DailyReadinessWebhookEvent,
@@ -192,6 +193,7 @@ export function oura<const T extends OuraPluginOptions>(
 			const headers = request.headers;
 			return 'x-oura-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchOuraTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

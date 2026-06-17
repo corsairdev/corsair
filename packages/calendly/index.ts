@@ -42,6 +42,7 @@ import {
 	RoutingFormWebhooks,
 	UserWebhooks,
 } from './webhooks';
+import { matchCalendlyTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	CalendlyWebhookOutputs,
 	EventTypeUpdatedPayload,
@@ -753,6 +754,7 @@ export function calendly<const T extends CalendlyPluginOptions>(
 			const headers = request.headers;
 			return 'calendly-webhook-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchCalendlyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

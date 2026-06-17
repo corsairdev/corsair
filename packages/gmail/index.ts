@@ -36,6 +36,7 @@ import type {
 } from './webhooks';
 import { MessageWebhooks } from './webhooks';
 import type { PubSubNotification } from './webhooks/types';
+import { matchGmailTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	decodePubSubMessage,
 	GmailWebhookEventSchema,
@@ -518,6 +519,7 @@ export function gmail<const T extends GmailPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGmailTenantWebhook,
 	} satisfies InternalGmailPlugin;
 }
 

@@ -23,6 +23,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { CalSchema } from './schema';
 import { BookingWebhooks, PingWebhooks } from './webhooks';
+import { matchCalTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	BookingCancelledEvent,
 	BookingCreatedEvent,
@@ -262,8 +263,8 @@ export function cal<const T extends CalPluginOptions>(
 			const headers = request.headers;
 			const hasSignature = 'x-cal-signature-256' in headers;
 			return hasSignature;
-			return hasSignature;
 		},
+		pluginTenantWebhookMatcher: matchCalTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

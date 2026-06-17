@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { matchVercelTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	aliases,
 	deployments,
@@ -295,6 +296,7 @@ export function vercel<const T extends VercelPluginOptions>(
 			const headers = request.headers;
 			return 'x-vercel-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchVercelTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

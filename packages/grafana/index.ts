@@ -33,6 +33,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { GrafanaSchema } from './schema';
+import { matchGrafanaTenantWebhook } from './webhooks/tenant-matcher';
 
 export type GrafanaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -262,6 +263,7 @@ export function grafana<const T extends GrafanaPluginOptions>(
 		endpointSchemas: grafanaEndpointSchemas,
 		// Grafana has no webhooks — no incoming webhook requests to match
 		pluginWebhookMatcher: (_request) => false,
+		pluginTenantWebhookMatcher: matchGrafanaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

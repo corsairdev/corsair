@@ -26,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { NotionSchema } from './schema';
 import { NotionWebhooks } from './webhooks';
+import { matchNotionTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	NotionWebhookOutputs,
 	PageCreatedEvent,
@@ -344,6 +345,7 @@ export function notion<const T extends NotionPluginOptions>(
 			const hasSignature = 'x-notion-signature' in headers;
 			return hasSignature;
 		},
+		pluginTenantWebhookMatcher: matchNotionTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

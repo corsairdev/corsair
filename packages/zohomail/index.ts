@@ -32,6 +32,7 @@ import { errorHandlers } from './error-handlers';
 import type { ZohoMailCredentials } from './schema';
 import { ZohoMailSchema } from './schema';
 import { ChallengeWebhooks, MessageWebhooks } from './webhooks';
+import { matchZohoMailTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ZohoMailChallengePayload,
 	ZohoMailWebhookEvent,
@@ -325,6 +326,7 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 				getZohoWebhookSecretFromRequest(headers) !== undefined
 			);
 		},
+		pluginTenantWebhookMatcher: matchZohoMailTenantWebhook,
 		keyBuilder: async (ctx: ZohoMailKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

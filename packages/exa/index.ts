@@ -31,6 +31,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { ExaSchema } from './schema';
 import { ContentWebhooks, SearchWebhooks, WebsetWebhooks } from './webhooks';
+import { matchExaTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ContentIndexedEvent,
 	ExaWebhookOutputs,
@@ -342,6 +343,7 @@ export function exa<const T extends ExaPluginOptions>(
 			const headers = request.headers;
 			return 'x-exa-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchExaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

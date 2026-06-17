@@ -29,6 +29,7 @@ import type {
 	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
+import { matchGoogleSheetsTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	GoogleAppsScriptWebhookPayloadSchema,
 	RangeUpdatedEventSchema,
@@ -359,6 +360,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			const hasSheetsEventType = body?.eventType === 'rangeUpdated';
 			return hasSpreadsheetId || hasSheetsEventType;
 		},
+		pluginTenantWebhookMatcher: matchGoogleSheetsTenantWebhook,
 	} satisfies InternalGoogleSheetsPlugin;
 }
 

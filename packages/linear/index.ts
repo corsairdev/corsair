@@ -46,6 +46,7 @@ import {
 	ProjectDeletedEventSchema,
 	ProjectUpdatedEventSchema,
 } from './webhooks/types';
+import { matchLinearTenantWebhook } from './webhooks/tenant-matcher';
 
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -404,6 +405,7 @@ export function linear<const T extends LinearPluginOptions>(
 			const hasLinearSignature = 'linear-signature' in headers;
 			return hasLinearSignature;
 		},
+		pluginTenantWebhookMatcher: matchLinearTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

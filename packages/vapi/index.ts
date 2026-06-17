@@ -50,6 +50,7 @@ import {
 	VapiTransferDestinationRequestEventSchema,
 	VapiWorkflowNodeStartedEventSchema,
 } from './webhooks';
+import { matchVapiTenantWebhook } from './webhooks/tenant-matcher';
 
 export type VapiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -589,6 +590,7 @@ export function vapi<const T extends VapiPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'x-vapi-secret' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchVapiTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

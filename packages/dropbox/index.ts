@@ -25,6 +25,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { DropboxSchema } from './schema';
 import { FileSystemWebhooks } from './webhooks';
+import { matchDropboxTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DropboxFileSystemChangedEvent,
 	DropboxWebhookOutputs,
@@ -274,6 +275,7 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			const headers = request.headers;
 			return 'x-dropbox-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchDropboxTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

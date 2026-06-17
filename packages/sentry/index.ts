@@ -58,6 +58,7 @@ import {
 	IssueResolvedEventSchema,
 	MetricAlertEventSchema,
 } from './webhooks/types';
+import { matchSentryTenantWebhook } from './webhooks/tenant-matcher';
 
 export type SentryPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -499,6 +500,7 @@ export function sentry<const T extends SentryPluginOptions>(
 				'sentry-hook-signature' in headers && 'sentry-hook-resource' in headers
 			);
 		},
+		pluginTenantWebhookMatcher: matchSentryTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

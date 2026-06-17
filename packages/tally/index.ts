@@ -34,6 +34,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TallySchema } from './schema';
 import { FormResponseWebhooks } from './webhooks';
+import { matchTallyTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TallyFormResponseEvent,
 	TallyWebhookOutputs,
@@ -460,6 +461,7 @@ export function tally<const T extends TallyPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'tally-signature' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchTallyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -38,6 +38,7 @@ import type {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { YoutubeSchema } from './schema';
+import { matchYoutubeTenantWebhook } from './webhooks/tenant-matcher';
 import type { YoutubeWebhookOutputs } from './webhooks/types';
 
 // ── Context & Key Builder ─────────────────────────────────────────────────────
@@ -703,6 +704,7 @@ export function youtube<const T extends YoutubePluginOptions>(
 			// Webhooks not implemented yet
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchYoutubeTenantWebhook,
 		keyBuilder: async (ctx: YoutubeKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

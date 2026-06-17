@@ -41,6 +41,7 @@ import type {
 	XquikWebhookPayload,
 } from './webhooks/types';
 import { hasXquikSignature } from './webhooks/types';
+import { matchXquikTenantWebhook } from './webhooks/tenant-matcher';
 
 export type XquikPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -454,6 +455,7 @@ export function xquik<const T extends XquikPluginOptions>(
 		},
 		options,
 		pluginWebhookMatcher: hasXquikSignature,
+		pluginTenantWebhookMatcher: matchXquikTenantWebhook,
 		schema: XquikSchema,
 		webhookHooks: options.webhookHooks,
 		webhookSchemas: xquikWebhookSchemas,

@@ -39,6 +39,7 @@ import {
 	RefundWebhooks,
 	SubscriptionWebhooks,
 } from './webhooks';
+import { matchDodoPaymentsTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DodoPaymentFailedEvent,
 	DodoPaymentSucceededEvent,
@@ -353,6 +354,7 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 				typeof body.timestamp === 'string'
 			);
 		},
+		pluginTenantWebhookMatcher: matchDodoPaymentsTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

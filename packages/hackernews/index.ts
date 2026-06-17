@@ -22,6 +22,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { HackerNewsSchema } from './schema';
+import { matchHackerNewsTenantWebhook } from './webhooks/tenant-matcher';
 
 export type HackerNewsPluginOptions = {
 	// HackerNews is a public API (NO_AUTH) — api_key auth type is kept for framework compatibility
@@ -331,6 +332,7 @@ export function hackernews<const T extends HackerNewsPluginOptions>(
 		endpointSchemas: hackerNewsEndpointSchemas,
 		// HackerNews has no webhooks — no incoming webhook requests to match
 		pluginWebhookMatcher: (_request) => false,
+		pluginTenantWebhookMatcher: matchHackerNewsTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
