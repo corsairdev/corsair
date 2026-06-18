@@ -108,7 +108,7 @@ const VolumeMonthlyHistorySchema = z.record(z.string(), z.unknown());
 export const KeywordOverviewSchema = z
 	.object({
 		clicks: z.number().int().nullable().optional(),
-		cpc: z.number().int().nullable().optional(),
+		cpc: z.number().nullable().optional(),
 		cps: z.number().nullable().optional(),
 		difficulty: z.number().int().nullable().optional(),
 		first_seen: z.string().nullable().optional(),
