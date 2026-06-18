@@ -5,12 +5,14 @@ import type {
 	CorsairAccount,
 	CorsairEntity,
 	CorsairEvent,
+	CorsairExecution,
 	CorsairIntegration,
 } from './';
 import {
 	CorsairAccountsSchema,
 	CorsairEntitiesSchema,
 	CorsairEventsSchema,
+	CorsairExecutionsSchema,
 	CorsairIntegrationsSchema,
 } from './';
 import type { CorsairDatabase, CorsairKyselyDatabase } from './kysely/database';
@@ -25,6 +27,7 @@ export type CorsairOrmDatabase = {
 	corsair_accounts: CorsairAccount;
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
+	corsair_executions: CorsairExecution;
 };
 
 export type CorsairOrmTableName = keyof CorsairOrmDatabase;
@@ -42,6 +45,7 @@ export const TABLE_SCHEMAS = {
 	corsair_accounts: CorsairAccountsSchema,
 	corsair_entities: CorsairEntitiesSchema,
 	corsair_events: CorsairEventsSchema,
+	corsair_executions: CorsairExecutionsSchema,
 } as const;
 
 function getTableSchema<TName extends CorsairOrmTableName>(tableName: TName) {
@@ -201,6 +205,32 @@ export type CorsairEventsClient = CorsairTableClient<CorsairEvent> & {
 	) => Promise<CorsairEvent | null>;
 };
 
+export type CorsairExecutionsClient = CorsairTableClient<CorsairExecution> & {
+	listByTenant: (
+		tenantId: string,
+		options?: {
+			plugin?: string;
+			status?: 'pending' | 'completed' | 'failed';
+			limit?: number;
+			offset?: number;
+		},
+	) => Promise<CorsairExecution[]>;
+	listByPlugin: (
+		plugin: string,
+		options?: {
+			tenantId?: string;
+			status?: 'pending' | 'completed' | 'failed';
+			limit?: number;
+			offset?: number;
+		},
+	) => Promise<CorsairExecution[]>;
+	countByFilters: (filters?: {
+		tenantId?: string;
+		plugin?: string;
+		status?: 'pending' | 'completed' | 'failed';
+	}) => Promise<number>;
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Base ORM
 // ─────────────────────────────────────────────────────────────────────────────
@@ -210,6 +240,7 @@ export type CorsairOrm = {
 	accounts: CorsairAccountsClient;
 	entities: CorsairEntitiesClient;
 	events: CorsairEventsClient;
+	executions: CorsairExecutionsClient;
 };
 
 function buildWhere<TRecord>(
@@ -647,6 +678,43 @@ function createEventsClient(
 	};
 }
 
+function createExecutionsClient(
+	database: CorsairDatabase | undefined,
+): CorsairExecutionsClient {
+	const base = createBaseTableClient(database, 'corsair_executions');
+
+	return {
+		...base,
+		listByTenant: (tenantId, options) => {
+			const where: WhereClause<CorsairExecution> = { tenant_id: tenantId };
+			if (options?.plugin) where.plugin = options.plugin;
+			if (options?.status) where.status = options.status;
+			return base.findMany({
+				where,
+				limit: options?.limit,
+				offset: options?.offset,
+			});
+		},
+		listByPlugin: (plugin, options) => {
+			const where: WhereClause<CorsairExecution> = { plugin };
+			if (options?.tenantId) where.tenant_id = options.tenantId;
+			if (options?.status) where.status = options.status;
+			return base.findMany({
+				where,
+				limit: options?.limit,
+				offset: options?.offset,
+			});
+		},
+		countByFilters: (filters) => {
+			const where: WhereClause<CorsairExecution> = {};
+			if (filters?.tenantId) where.tenant_id = filters.tenantId;
+			if (filters?.plugin) where.plugin = filters.plugin;
+			if (filters?.status) where.status = filters.status;
+			return base.count(where);
+		},
+	};
+}
+
 /**
  * Creates the base Corsair ORM with all table clients.
  */
@@ -658,6 +726,7 @@ export function createCorsairOrm(
 		accounts: createAccountsClient(database),
 		entities: createEntitiesClient(database),
 		events: createEventsClient(database),
+		executions: createExecutionsClient(database),
 	};
 }
 

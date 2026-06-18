@@ -5,6 +5,7 @@ const items: Array<{ id: Route; label: string; icon: string }> = [
 	{ id: 'operations', label: 'Operations', icon: '⇢' },
 	{ id: 'database', label: 'Data', icon: '▤' },
 	{ id: 'permissions', label: 'Permissions', icon: '⚑' },
+	{ id: 'executions', label: 'Executions', icon: '⟳' },
 	{ id: 'script', label: 'Script', icon: '›_' },
 	{ id: 'chat', label: 'Chat', icon: '✦' },
 ];

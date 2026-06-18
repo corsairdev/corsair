@@ -158,6 +158,58 @@ export type CorsairPermissionInsert = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Corsair Executions (audit trail)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CorsairExecutionsSchema = z.object({
+	id: z.string(),
+	created_at: z.coerce.date(),
+	updated_at: z.coerce.date(),
+
+	/** Tenant identifier for multi-tenant instances */
+	tenant_id: z.string(),
+	/** Plugin identifier, e.g. 'slack' */
+	plugin: z.string(),
+	/** Dot-notation endpoint path, e.g. 'messages.post' */
+	endpoint: z.string(),
+	/** JSON-encoded input arguments (sensitive data obfuscated) */
+	input: z
+		.record(z.string(), z.unknown())
+		.nullable()
+		.transform((v) => v ?? {}),
+	/** JSON-encoded output/response (sensitive data obfuscated) */
+	output: z
+		.record(z.string(), z.unknown())
+		.nullable()
+		.transform((v) => v ?? {}),
+	/** Execution status */
+	status: z.enum(['pending', 'completed', 'failed']),
+	/** Execution duration in milliseconds */
+	duration_ms: z.number().nullable().optional(),
+	/** Error message if status is 'failed' */
+	error: z.string().nullable().optional(),
+	/** Reference to permission request if approval was required */
+	permission_id: z.string().nullable().optional(),
+});
+
+export type CorsairExecution = z.infer<typeof CorsairExecutionsSchema>;
+
+export type CorsairExecutionInsert = {
+	id?: string;
+	created_at?: Date;
+	updated_at?: Date;
+	tenant_id: string;
+	plugin: string;
+	endpoint: string;
+	input: Record<string, unknown>;
+	output: Record<string, unknown>;
+	status: 'pending' | 'completed' | 'failed';
+	duration_ms?: number | null;
+	error?: string | null;
+	permission_id?: string | null;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Table Names
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -167,6 +219,7 @@ export type CorsairTableName =
 	| 'corsair_entities'
 	| 'corsair_events'
 	| 'corsair_permissions'
+	| 'corsair_executions'
 	| (string & {});
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -178,6 +231,7 @@ export type CorsairTableRow = {
 	corsair_accounts: CorsairAccount;
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
+	corsair_executions: CorsairExecution;
 };
 
 export type TableRowType<T extends CorsairTableName> =
@@ -234,6 +288,7 @@ export type CorsairTableInsert = {
 	corsair_accounts: CorsairAccountInsert;
 	corsair_entities: CorsairEntityInsert;
 	corsair_events: CorsairEventInsert;
+	corsair_executions: CorsairExecutionInsert;
 };
 
 export type TableInsertType<T extends CorsairTableName> =
@@ -261,11 +316,16 @@ export type CorsairEventUpdate = Partial<
 	Omit<CorsairEvent, 'id' | 'created_at'>
 >;
 
+export type CorsairExecutionUpdate = Partial<
+	Omit<CorsairExecution, 'id' | 'created_at'>
+>;
+
 export type CorsairTableUpdate = {
 	corsair_integrations: CorsairIntegrationUpdate;
 	corsair_accounts: CorsairAccountUpdate;
 	corsair_entities: CorsairEntityUpdate;
 	corsair_events: CorsairEventUpdate;
+	corsair_executions: CorsairExecutionUpdate;
 };
 
 export type TableUpdateType<T extends CorsairTableName> =

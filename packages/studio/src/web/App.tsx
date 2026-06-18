@@ -4,6 +4,7 @@ import { api } from './api';
 import { Sidebar } from './components/Sidebar';
 import { ChatPage } from './pages/ChatPage';
 import { DatabasePage } from './pages/DatabasePage';
+import { ExecutionsPage } from './pages/ExecutionsPage';
 import { OperationsPage } from './pages/OperationsPage';
 import { PermissionsPage } from './pages/PermissionsPage';
 import { PluginsPage } from './pages/PluginsPage';
@@ -15,7 +16,8 @@ export type Route =
 	| 'database'
 	| 'permissions'
 	| 'script'
-	| 'chat';
+	| 'chat'
+	| 'executions';
 
 const TITLES: Record<Route, string> = {
 	plugins: 'Plugins',
@@ -24,6 +26,7 @@ const TITLES: Record<Route, string> = {
 	permissions: 'Permissions',
 	script: 'Script',
 	chat: 'Chat',
+	executions: 'Execution History',
 };
 
 type AppLocation = {
@@ -38,6 +41,7 @@ const ROUTES = new Set<Route>([
 	'permissions',
 	'script',
 	'chat',
+	'executions',
 ]);
 
 function parseLocation(pathname: string): AppLocation {
@@ -178,6 +182,12 @@ export function App() {
 					{route === 'permissions' ? <PermissionsPage /> : null}
 					{route === 'script' ? <ScriptPage tenant={tenant} /> : null}
 					{route === 'chat' ? <ChatPage tenant={tenant} /> : null}
+					{route === 'executions' ? (
+						<ExecutionsPage
+							tenant={tenant}
+							multiTenancy={!!status?.multiTenancy}
+						/>
+					) : null}
 				</div>
 			</main>
 		</div>

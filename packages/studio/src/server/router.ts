@@ -15,6 +15,10 @@ import {
 	updatePermission,
 } from './handlers/db';
 import {
+	getExecutionStats,
+	listExecutions,
+} from './handlers/executions';
+import {
 	listOperations,
 	runOperation,
 	runScript,
@@ -79,6 +83,9 @@ const routes: Route[] = [
 	},
 
 	{ method: 'POST', path: '/api/chat', handler: chatHandler },
+
+	{ method: 'POST', path: '/api/executions/list', handler: listExecutions },
+	{ method: 'GET', path: '/api/executions/stats', handler: getExecutionStats },
 ];
 
 export async function handleApi(
