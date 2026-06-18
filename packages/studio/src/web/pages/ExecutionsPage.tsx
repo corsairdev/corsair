@@ -92,7 +92,14 @@ export function ExecutionsPage({ tenant, multiTenancy }: ExecutionsPageProps) {
 			})
 			.catch((e) => setError(e.message))
 			.finally(() => setLoading(false));
-	}, [tenant, multiTenancy, filterPlugin, filterStatus, debouncedSearch, offset]);
+	}, [
+		tenant,
+		multiTenancy,
+		filterPlugin,
+		filterStatus,
+		debouncedSearch,
+		offset,
+	]);
 
 	return (
 		<div className="h-full min-h-0 flex flex-col gap-4">
@@ -119,7 +126,9 @@ export function ExecutionsPage({ tenant, multiTenancy }: ExecutionsPageProps) {
 					</select>
 					<select
 						value={filterStatus}
-						onChange={(e) => setFilterStatus(e.target.value as ExecutionStatus | '')}
+						onChange={(e) =>
+							setFilterStatus(e.target.value as ExecutionStatus | '')
+						}
 						className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 					>
 						<option value="">All Status</option>
@@ -162,7 +171,9 @@ export function ExecutionsPage({ tenant, multiTenancy }: ExecutionsPageProps) {
 						<div className="flex items-center gap-2">
 							<button
 								type="button"
-								onClick={() => setOffset((current) => Math.max(0, current - PAGE_SIZE))}
+								onClick={() =>
+									setOffset((current) => Math.max(0, current - PAGE_SIZE))
+								}
 								disabled={offset === 0}
 								className="h-7 px-3 rounded border border-[var(--color-border)] text-[var(--color-text)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--color-bg-hover)]"
 							>
@@ -236,9 +247,7 @@ function ExecutionRow({ row }: { row: ExecutionRow }) {
 					</div>
 					<div className="flex items-center gap-4 text-[11px] text-[var(--color-text-subtle)]">
 						<span>{timeStr}</span>
-						{row.duration_ms !== null && (
-							<span>{row.duration_ms}ms</span>
-						)}
+						{row.duration_ms !== null && <span>{row.duration_ms}ms</span>}
 						{row.tenant_id && (
 							<span className="font-mono">tenant: {row.tenant_id}</span>
 						)}

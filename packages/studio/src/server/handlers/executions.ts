@@ -35,7 +35,6 @@ export const listExecutions: HandlerFn = async (ctx) => {
 	// Check if table exists
 	const tables = await db.introspection.getTables();
 	const tableExists = tables.some((t) => t.name === 'corsair_executions');
-	
 	if (!tableExists) {
 		return {
 			rows: [],
@@ -56,7 +55,10 @@ export const listExecutions: HandlerFn = async (ctx) => {
 	if (plugin) {
 		query = query.where('plugin', '=', plugin);
 	}
-	if (status && (status === 'pending' || status === 'completed' || status === 'failed')) {
+	if (
+		status &&
+		(status === 'pending' || status === 'completed' || status === 'failed')
+	) {
 		query = query.where('status', '=', status);
 	}
 
@@ -69,7 +71,10 @@ export const listExecutions: HandlerFn = async (ctx) => {
 	}
 
 	// Order by created_at desc (most recent first) and apply pagination
-	query = query.orderBy('created_at', 'desc').limit(limit + 1).offset(offset);
+	query = query
+		.orderBy('created_at', 'desc')
+		.limit(limit + 1)
+		.offset(offset);
 
 	const rows = await query.execute();
 	const hasMore = rows.length > limit;
@@ -83,7 +88,10 @@ export const listExecutions: HandlerFn = async (ctx) => {
 	if (plugin) {
 		countQuery = countQuery.where('plugin', '=', plugin);
 	}
-	if (status && (status === 'pending' || status === 'completed' || status === 'failed')) {
+	if (
+		status &&
+		(status === 'pending' || status === 'completed' || status === 'failed')
+	) {
 		countQuery = countQuery.where('status', '=', status);
 	}
 	if (search) {
@@ -114,7 +122,6 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 	// Check if table exists
 	const tables = await db.introspection.getTables();
 	const tableExists = tables.some((t) => t.name === 'corsair_executions');
-	
 	if (!tableExists) {
 		return {
 			totalExecutions: 0,
@@ -170,11 +177,17 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
  * Obfuscate sensitive data in execution records.
  * Truncates long values and masks potential secrets.
  */
-function obfuscateSensitiveData(row: Record<string, unknown>): Record<string, unknown> {
+function obfuscateSensitiveData(
+	row: Record<string, unknown>,
+): Record<string, unknown> {
 	const copy = { ...row };
 
 	// Obfuscate input
-	if (copy.input && typeof copy.input === 'object' && !Array.isArray(copy.input)) {
+	if (
+		copy.input &&
+		typeof copy.input === 'object' &&
+		!Array.isArray(copy.input)
+	) {
 		const input = copy.input as Record<string, unknown>;
 		const masked: Record<string, unknown> = {};
 		for (const [k, v] of Object.entries(input)) {
@@ -188,7 +201,11 @@ function obfuscateSensitiveData(row: Record<string, unknown>): Record<string, un
 	}
 
 	// Obfuscate output
-	if (copy.output && typeof copy.output === 'object' && !Array.isArray(copy.output)) {
+	if (
+		copy.output &&
+		typeof copy.output === 'object' &&
+		!Array.isArray(copy.output)
+	) {
 		const output = copy.output as Record<string, unknown>;
 		const masked: Record<string, unknown> = {};
 		for (const [k, v] of Object.entries(output)) {

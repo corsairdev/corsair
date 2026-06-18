@@ -14,10 +14,7 @@ import {
 	queryEntityData,
 	updatePermission,
 } from './handlers/db';
-import {
-	getExecutionStats,
-	listExecutions,
-} from './handlers/executions';
+import { getExecutionStats, listExecutions } from './handlers/executions';
 import {
 	listOperations,
 	runOperation,
