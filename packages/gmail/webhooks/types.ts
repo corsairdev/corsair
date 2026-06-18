@@ -38,6 +38,7 @@ export const MessageReceivedEventSchema = z.object({
 	emailAddress: z.string(),
 	historyId: z.string(),
 	message: z.custom<Message>(),
+	skipped: z.literal('duplicate-history-id').optional(),
 });
 export type MessageReceivedEvent = z.infer<typeof MessageReceivedEventSchema>;
 
@@ -56,6 +57,7 @@ export const MessageLabelChangedEventSchema = z.object({
 	message: z.custom<Message>(),
 	labelsAdded: z.array(z.string()).optional(),
 	labelsRemoved: z.array(z.string()).optional(),
+	skipped: z.literal('label-only').optional(),
 });
 export type MessageLabelChangedEvent = z.infer<
 	typeof MessageLabelChangedEventSchema

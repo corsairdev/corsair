@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -27,6 +28,8 @@ import type {
 	EventCreatedEvent,
 	EventDeletedEvent,
 	EventUpdatedEvent,
+	NoChangesEvent,
+	SyncAcknowledgedEvent,
 	GoogleCalendarWebhookOutputs,
 	GoogleCalendarWebhookPayload,
 } from './webhooks';
@@ -38,9 +41,17 @@ import {
 	PubSubNotificationSchema,
 } from './webhooks/types';
 
+export const googleCalendarAuthConfig = {
+	oauth_2: {
+		account: ['calendar_sync_state'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type GoogleCalendarContext = CorsairPluginContext<
 	typeof GoogleCalendarSchema,
-	GoogleCalendarPluginOptions
+	GoogleCalendarPluginOptions,
+	undefined,
+	typeof googleCalendarAuthConfig
 >;
 
 type GoogleCalendarEndpoint<K extends keyof GoogleCalendarEndpointOutputs> =
@@ -75,7 +86,11 @@ type GoogleCalendarWebhook<
 export type GoogleCalendarWebhooks = {
 	onEventChanged: GoogleCalendarWebhook<
 		'eventChanged',
-		EventCreatedEvent | EventUpdatedEvent | EventDeletedEvent
+		| EventCreatedEvent
+		| EventUpdatedEvent
+		| EventDeletedEvent
+		| SyncAcknowledgedEvent
+		| NoChangesEvent
 	>;
 };
 
@@ -140,8 +155,10 @@ export type GoogleCalendarPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof googleCalendarEndpointsNested>;
 };
 
-export type GoogleCalendarKeyBuilderContext =
-	KeyBuilderContext<GoogleCalendarPluginOptions>;
+export type GoogleCalendarKeyBuilderContext = KeyBuilderContext<
+	GoogleCalendarPluginOptions,
+	typeof googleCalendarAuthConfig
+>;
 
 const googlecalendarWebhookSchemas = {
 	onEventChanged: {
@@ -188,7 +205,8 @@ export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 		typeof googleCalendarEndpointsNested,
 		typeof googleCalendarWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof googleCalendarAuthConfig
 	>;
 
 export type InternalGoogleCalendarPlugin =
@@ -210,6 +228,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 		id: 'googlecalendar',
 		schema: GoogleCalendarSchema,
 		options: options,
+		authConfig: googleCalendarAuthConfig,
 		oauthConfig: {
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -325,6 +344,8 @@ export type {
 	EventCreatedEvent,
 	EventDeletedEvent,
 	EventUpdatedEvent,
+	NoChangesEvent,
+	SyncAcknowledgedEvent,
 	GoogleCalendarEventName,
 	GoogleCalendarPushNotification,
 	GoogleCalendarWebhookEvent,
