@@ -893,10 +893,10 @@ const defaultAuthType = 'api_key' as const;
 
 export const asanaAuthConfig = {
 	api_key: {
-		account: ['workspace_gid'] as const,
+		account: ['workspace_gid', 'project_gid'] as const,
 	},
 	oauth_2: {
-		account: ['workspace_gid'] as const,
+		account: ['workspace_gid', 'project_gid'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

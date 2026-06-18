@@ -6,6 +6,27 @@ import {
 	toExternalId,
 } from 'corsair/core';
 
+function projectGidFromEvents(events: unknown[]): string | undefined {
+	for (const event of events) {
+		const eventRecord = asRecord(event);
+		if (!eventRecord) continue;
+
+		const resource = asRecord(eventRecord.resource);
+		if (resource?.resource_type === 'project') {
+			const projectGid = toExternalId(resource.gid);
+			if (projectGid) return projectGid;
+		}
+
+		const parent = asRecord(eventRecord.parent);
+		if (parent?.resource_type === 'project') {
+			const projectGid = toExternalId(parent.gid);
+			if (projectGid) return projectGid;
+		}
+	}
+
+	return undefined;
+}
+
 function workspaceGidFromEvents(events: unknown[]): string | undefined {
 	for (const event of events) {
 		const eventRecord = asRecord(event);
@@ -28,7 +49,7 @@ function workspaceGidFromEvents(events: unknown[]): string | undefined {
 }
 
 // Asana handshake (X-Hook-Secret) and heartbeat deliveries (empty events) carry no tenant id.
-// Workspace-scoped events include resource.resource_type === 'workspace'.
+// Project/task webhooks include a project parent; workspace webhooks include workspace resources.
 // See https://developers.asana.com/docs/webhooks-guide
 export function matchAsanaTenantWebhook(
 	request: RawWebhookRequest,
@@ -41,8 +62,15 @@ export function matchAsanaTenantWebhook(
 	const events = body.events;
 	if (!Array.isArray(events) || events.length === 0) return null;
 
-	const workspaceGid = workspaceGidFromEvents(events);
-	if (!workspaceGid) return null;
+	const projectGid = projectGidFromEvents(events);
+	if (projectGid) {
+		return { linkType: 'project_gid', externalId: projectGid };
+	}
 
-	return { linkType: 'workspace_gid', externalId: workspaceGid };
+	const workspaceGid = workspaceGidFromEvents(events);
+	if (workspaceGid) {
+		return { linkType: 'workspace_gid', externalId: workspaceGid };
+	}
+
+	return null;
 }
