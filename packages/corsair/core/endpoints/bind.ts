@@ -1,4 +1,5 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
+import { createCorsairOrm } from '../../db/orm';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { encodeOAuthState, signState } from '../auth/state';
 import type { CorsairErrorHandler } from '../errors';
@@ -54,6 +55,111 @@ function buildConnectError(
 		? connectConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
 		: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
 	return new Error(msg);
+}
+
+/**
+ * Record an execution to the audit trail table.
+ * Safely captures endpoint invocations with obfuscated sensitive data.
+ * Non-blocking: silently fails if database is not configured or table doesn't exist.
+ */
+async function recordExecution({
+	database,
+	tenantId,
+	pluginId,
+	operationPath,
+	finalArgs,
+	status,
+	duration,
+	error,
+}: {
+	database?: CorsairDatabase;
+	tenantId: string;
+	pluginId: string;
+	operationPath: string;
+	finalArgs: unknown;
+	status: 'completed' | 'failed';
+	duration: number;
+	error: string | null;
+}): Promise<void> {
+	if (!database) return; // Database not configured, skip recording
+
+	try {
+		// Obfuscate input arguments before storage
+		const input = obfuscateInput(finalArgs);
+
+		// Create ORM and insert execution record
+		const orm = createCorsairOrm(database);
+		await orm.executions.insert({
+			tenant_id: tenantId,
+			plugin: pluginId,
+			endpoint: operationPath,
+			input,
+			output: {}, // Output is empty in bind layer; would be captured at SDK level
+			status,
+			duration_ms: duration,
+			error: error ?? undefined,
+			permission_id: undefined,
+		});
+	} catch {
+		// Silently fail recording — don't interrupt the actual endpoint call
+		// This allows executions to continue even if audit trail fails
+	}
+}
+
+/**
+ * Obfuscate sensitive fields in input arguments before storing in audit trail.
+ * Masks potential secrets like tokens, keys, and credentials.
+ */
+function obfuscateInput(value: unknown): Record<string, unknown> {
+	if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+		const obj = value as Record<string, unknown>;
+		const result: Record<string, unknown> = {};
+
+		for (const [key, val] of Object.entries(obj)) {
+			if (shouldObfuscateField(key)) {
+				result[key] = obfuscateValue(val);
+			} else {
+				result[key] = val;
+			}
+		}
+		return result;
+	}
+
+	return { args: value };
+}
+
+/**
+ * Check if a field name suggests it contains sensitive data.
+ */
+function shouldObfuscateField(fieldName: string): boolean {
+	const sensitivePatterns = [
+		'key',
+		'token',
+		'secret',
+		'password',
+		'credential',
+		'auth',
+		'api_key',
+		'access_token',
+		'refresh_token',
+	];
+	const lowerName = fieldName.toLowerCase();
+	return sensitivePatterns.some((pattern) => lowerName.includes(pattern));
+}
+
+/**
+ * Obfuscate a value (truncate and mask).
+ */
+function obfuscateValue(value: unknown): unknown {
+	if (value === null || value === undefined) return '***';
+	if (typeof value === 'string') {
+		if (value.length === 0) return '***';
+		if (value.length <= 8) return '***';
+		return `${value.slice(0, 4)}…${value.slice(-3)} (${value.length} chars)`;
+	}
+	if (typeof value === 'number') return value;
+	if (typeof value === 'boolean') return value;
+	return '***';
 }
 
 /**
@@ -288,29 +394,78 @@ export function bindEndpointsRecursively({
 				}
 				const finalArgs = permArgs ?? args;
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					const res = await call(0, { ...ctx, key }, finalArgs);
-					await onPermissionComplete?.();
-					return res;
+					const startTime = Date.now();
+					let recordedStatus: 'completed' | 'failed' = 'completed';
+					let recordedError: string | null = null;
+					try {
+						const res = await call(0, { ...ctx, key }, finalArgs);
+						await onPermissionComplete?.();
+						return res;
+					} catch (error) {
+						recordedStatus = 'failed';
+						recordedError =
+							error instanceof Error ? error.message : String(error);
+						throw error;
+					} finally {
+						// Record execution for audit trail
+						const duration = Date.now() - startTime;
+						await recordExecution({
+							database,
+							tenantId: tenantId ?? 'default',
+							pluginId,
+							operationPath,
+							finalArgs,
+							status: recordedStatus,
+							duration,
+							error: recordedError,
+						});
+					}
 				}
 
 				const ctxWithKey = { ...ctx, key };
-				const beforeResult = endpointHooks.before
-					? await endpointHooks.before(ctxWithKey, finalArgs)
-					: {
-							ctx: ctxWithKey,
-							args: finalArgs,
-							continue: true as const,
-							passToAfter: undefined,
-						};
-				if (beforeResult.continue === false) return;
-				const res = await call(0, beforeResult.ctx, beforeResult.args);
-				await endpointHooks.after?.(
-					beforeResult.ctx,
-					res,
-					beforeResult.passToAfter,
-				);
-				await onPermissionComplete?.();
-				return res;
+				const startTime = Date.now();
+				let recordedStatus: 'completed' | 'failed' = 'completed';
+				let recordedError: string | null = null;
+				try {
+					const beforeResult = endpointHooks.before
+						? await endpointHooks.before(ctxWithKey, finalArgs)
+						: {
+								ctx: ctxWithKey,
+								args: finalArgs,
+								continue: true as const,
+								passToAfter: undefined,
+							};
+					if (beforeResult.continue === false) {
+						recordedStatus = 'completed'; // Hook early exit is not a failure
+						return;
+					}
+					const res = await call(0, beforeResult.ctx, beforeResult.args);
+					await endpointHooks.after?.(
+						beforeResult.ctx,
+						res,
+						beforeResult.passToAfter,
+					);
+					await onPermissionComplete?.();
+					return res;
+				} catch (error) {
+					recordedStatus = 'failed';
+					recordedError =
+						error instanceof Error ? error.message : String(error);
+					throw error;
+				} finally {
+					// Record execution for audit trail
+					const duration = Date.now() - startTime;
+					await recordExecution({
+						database,
+						tenantId: tenantId ?? 'default',
+						pluginId,
+						operationPath,
+						finalArgs,
+						status: recordedStatus,
+						duration,
+						error: recordedError,
+					});
+				}
 			};
 
 			tree[key] = boundFn;

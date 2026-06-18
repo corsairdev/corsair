@@ -2,6 +2,12 @@ import { readJsonBody } from '../router';
 import type { HandlerFn } from '../types';
 
 type KyselyDb = {
+	/**
+	 * Using `any` because Kysely's query builder returns deeply nested generic types
+	 * that would require re-exporting internal Kysely generics. The query builder contract
+	 * is properly enforced by Kysely's runtime implementation and type checking at the
+	 * ORM client level (db/orm.ts).
+	 */
 	selectFrom: (table: string) => any;
 	introspection: {
 		getTables: () => Promise<Array<{ name: string }>>;
@@ -62,12 +68,16 @@ export const listExecutions: HandlerFn = async (ctx) => {
 		query = query.where('status', '=', status);
 	}
 
-	// Apply search filter - search in plugin, endpoint, or error fields
+	// Apply search filter - search in both endpoint and error fields
 	if (search) {
 		const searchPattern = `%${search}%`;
-		// Note: This is a simplified search. In production you'd use OR conditions
-		// For now, we'll just search in the endpoint field
-		query = query.where('endpoint', 'like', searchPattern);
+		// Using `any` because Kysely's where condition chaining returns complex generic types.
+		// The contract is enforced at the query execution layer, not the type system.
+		query = (query.where('endpoint', 'like', searchPattern) as any).orWhere(
+			'error',
+			'like',
+			searchPattern,
+		);
 	}
 
 	// Order by created_at desc (most recent first) and apply pagination
@@ -80,8 +90,13 @@ export const listExecutions: HandlerFn = async (ctx) => {
 	const hasMore = rows.length > limit;
 	const resultRows = hasMore ? rows.slice(0, limit) : rows;
 
-	// Count total matching rows
-	let countQuery = db.selectFrom('corsair_executions').select(['id']);
+	// Count total matching rows using COUNT(*)
+	let countQuery = db.selectFrom('corsair_executions').select([
+		(eb) =>
+			// Using `any` because Kysely's ExpressionBuilder returns complex generic types.
+			// Proper typing is enforced at the ORM client level.
+			(eb.fn.count('id') as any).as('count'),
+	]);
 	if (tenant) {
 		countQuery = countQuery.where('tenant_id', '=', tenant);
 	}
@@ -96,10 +111,15 @@ export const listExecutions: HandlerFn = async (ctx) => {
 	}
 	if (search) {
 		const searchPattern = `%${search}%`;
-		countQuery = countQuery.where('endpoint', 'like', searchPattern);
+		countQuery = (
+			countQuery.where('endpoint', 'like', searchPattern) as any
+		).orWhere('error', 'like', searchPattern);
 	}
-	const countRows = await countQuery.execute();
-	const total = countRows.length;
+	const countResult = await countQuery.executeTakeFirst();
+	const total =
+		typeof countResult?.count === 'number'
+			? countResult.count
+			: parseInt(String(countResult?.count ?? 0), 10);
 
 	// Obfuscate sensitive data in input/output
 	const safeRows = resultRows.map(obfuscateSensitiveData);
@@ -131,10 +151,27 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 		};
 	}
 
-	// Get counts by status
-	const allRows = await db
+	// Get total count using COUNT(*)
+	const totalCountResult = await db
 		.selectFrom('corsair_executions')
-		.select(['status', 'plugin', 'created_at', 'duration_ms'])
+		.select([
+			(eb) =>
+				// Using `any` because Kysely's ExpressionBuilder returns complex generic types
+				// that would require re-exporting internal Kysely generics to fully type.
+				// Proper typing is enforced at the ORM client level.
+				(eb.fn.count('id') as any).as('count'),
+		])
+		.executeTakeFirst();
+	const totalExecutions =
+		typeof totalCountResult?.count === 'number'
+			? totalCountResult.count
+			: parseInt(String(totalCountResult?.count ?? 0), 10);
+
+	// Get counts grouped by status
+	const byStatusResults = await db
+		.selectFrom('corsair_executions')
+		.select(['status', (eb) => (eb.fn.count('id') as any).as('count')])
+		.groupBy('status')
 		.execute();
 
 	const byStatus = {
@@ -143,15 +180,26 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 		failed: 0,
 	};
 
-	const byPlugin: Record<string, number> = {};
-
-	for (const row of allRows) {
+	for (const row of byStatusResults) {
 		const status = row.status as 'pending' | 'completed' | 'failed';
 		if (status in byStatus) {
-			byStatus[status]++;
+			const count = typeof row.count === 'number' ? row.count : 0;
+			byStatus[status] = parseInt(String(count), 10);
 		}
+	}
+
+	// Get counts grouped by plugin
+	const byPluginResults = await db
+		.selectFrom('corsair_executions')
+		.select(['plugin', (eb) => (eb.fn.count('id') as any).as('count')])
+		.groupBy('plugin')
+		.execute();
+
+	const byPlugin: Record<string, number> = {};
+	for (const row of byPluginResults) {
 		const plugin = String(row.plugin || 'unknown');
-		byPlugin[plugin] = (byPlugin[plugin] || 0) + 1;
+		const count = typeof row.count === 'number' ? row.count : 0;
+		byPlugin[plugin] = parseInt(String(count), 10);
 	}
 
 	// Get recent executions (last 10)
@@ -160,13 +208,12 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 		.selectAll()
 		.orderBy('created_at', 'desc')
 		.limit(10)
-		.offset(0)
 		.execute();
 
 	const recentExecutions = recentRows.map(obfuscateSensitiveData);
 
 	return {
-		totalExecutions: allRows.length,
+		totalExecutions,
 		byStatus,
 		byPlugin,
 		recentExecutions,

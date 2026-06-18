@@ -229,6 +229,11 @@ export type CorsairExecutionsClient = CorsairTableClient<CorsairExecution> & {
 		plugin?: string;
 		status?: 'pending' | 'completed' | 'failed';
 	}) => Promise<number>;
+	/**
+	 * Record a new execution for audit trail and compliance logging.
+	 * Use this to capture all endpoint invocations for debugging and compliance.
+	 */
+	insert: (data: CreateInput<CorsairExecution>) => Promise<CorsairExecution>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -712,6 +717,7 @@ function createExecutionsClient(
 			if (filters?.status) where.status = filters.status;
 			return base.count(where);
 		},
+		insert: (data) => base.create(data),
 	};
 }
 
