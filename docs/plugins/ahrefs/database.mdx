@@ -1,92 +1,354 @@
 ---
 title: Database
-description: Database entities and querying synced Ahrefs data.
+description: "Ahrefs database entities and queries"
 ---
 
-The Ahrefs plugin syncs SEO metrics and keyword data to your local database.
+Ahrefs syncs **7 entities** to your local database for fast queries without hitting the API.
 
-## Synced Entities
+## domainMetrics
 
-- **domainMetrics** - Domain-level SEO metrics
-- **keywords** - Keyword rankings and data
+Stores domain rating and backlink statistics for domains.
 
-## Database API
-
-```ts
-const metrics = await corsair.ahrefs.db.domainMetrics.search({
-    data: {},
-});
-```
-
----
-
-## Domain Metrics
-
-### Schema
-
+**Schema:**
 ```ts
 {
-    id: string;
-    target?: string;
-    domain_rating?: number;
-    ahrefs_rank?: number;
-    backlinks?: number;
-    referring_domains?: number;
-    organic_traffic?: number;
-    organic_keywords?: number;
-    date?: string;
+  target: string;                      // domain URL
+  domain_rating?: number | null;       // Ahrefs Domain Rating (0-100)
+  ahrefs_rank?: number | null;         // Global Ahrefs Rank
+  backlinks?: number | null;           // live backlinks count
+  referring_domains?: number | null;   // live referring domains count
+  all_time_backlinks?: number | null;  // all-time backlinks
+  all_time_referring_domains?: number | null; // all-time referring domains
+  date?: string;                       // Ahrefs report date (YYYY-MM-DD)
+  updatedAt?: Date;                    // local sync timestamp
 }
 ```
 
-### Querying Domain Metrics
+### Query Example
 
 ```ts
-// Get metrics for a domain
-const metrics = await corsair.ahrefs.db.domainMetrics.search({
-    data: { target: "example.com" },
+// Find high authority domains
+const highAuthority = await corsair.ahrefs.db.domainMetrics.search({
+  where: {
+    domain_rating: { gte: 70 },
+  },
+  orderBy: { domain_rating: 'desc' },
+  limit: 10,
 });
 ```
 
 ---
 
-## Keywords
+## keywords
 
-### Schema
+Stores organic keyword data for domains.
 
+**Schema:**
 ```ts
 {
-    id: string;
-    keyword?: string;
-    country?: string;
-    volume?: number;
-    difficulty?: number;
-    cpc?: number;
-    position?: number;
-    url?: string;
-    date?: string;
+  target?: string;                 // domain URL
+  country?: string;                // 2-letter country code
+  date?: string;                   // report date
+  keyword?: string | null;         // keyword phrase
+  volume?: number | null;          // monthly search volume
+  keyword_difficulty?: number | null; // keyword difficulty (0-100)
+  difficulty?: number | null;      // alternative difficulty field
+  cpc?: number | null;             // cost per click
+  best_position?: number | null;   // best ranking position
+  best_position_url?: string | null; // URL at best position
+  sum_traffic?: number | null;     // estimated traffic
+  traffic_potential?: number | null; // traffic potential
+  updatedAt?: Date;
 }
 ```
 
-### Querying Keywords
+### Query Example
 
 ```ts
-// Get all tracked keywords
-const keywords = await corsair.ahrefs.db.keywords.search({ data: {} });
-
-// Filter by country
-const usKeywords = await corsair.ahrefs.db.keywords.search({
-    data: { country: "us" },
+// Find high-volume keywords
+const topKeywords = await corsair.ahrefs.db.keywords.search({
+  where: {
+    volume: { gte: 1000 },
+    best_position: { lte: 10 },
+  },
+  orderBy: { volume: 'desc' },
+  limit: 50,
 });
 ```
 
 ---
 
-## Multi-Tenancy
+## refdomains
 
+Stores referring domain data.
+
+**Schema:**
 ```ts
-const tenant = corsair.withTenant("workspace-123");
-
-const metrics = await tenant.ahrefs.db.domainMetrics.search({ data: {} });
+{
+  target: string;                  // target domain
+  domain: string;                  // referring domain
+  domain_rating?: number | null;   // referring domain's DR
+  dofollow_links?: number | null;  // dofollow link count
+  dofollow_refdomains?: number | null; // dofollow referring domains
+  links?: number | null;           // total links
+  refdomains?: number | null;      // referring domains count
+  updatedAt?: Date;
+}
 ```
 
-See [Database](/concepts/database) for more information about querying patterns.
+### Query Example
+
+```ts
+// Find high-DR referring domains
+const qualityBacklinks = await corsair.ahrefs.db.refdomains.search({
+  where: {
+    domain_rating: { gte: 50 },
+    dofollow_links: { gte: 1 },
+  },
+  orderBy: { domain_rating: 'desc' },
+});
+```
+
+---
+
+## pages
+
+Stores top page data for domains.
+
+**Schema:**
+```ts
+{
+  target: string;                  // target domain
+  country?: string;                // country code
+  date?: string;                   // report date
+  raw_url: string;                 // page URL
+  keywords?: number | null;        // ranking keyword count
+  referring_domains?: number | null; // referring domains
+  sum_traffic?: number | null;     // estimated traffic
+  value?: number | null;           // traffic value
+  updatedAt?: Date;
+}
+```
+
+### Query Example
+
+```ts
+// Find top traffic pages
+const topPages = await corsair.ahrefs.db.pages.search({
+  where: {
+    sum_traffic: { gte: 1000 },
+  },
+  orderBy: { sum_traffic: 'desc' },
+  limit: 20,
+});
+```
+
+---
+
+## rankings
+
+Stores Rank Tracker data.
+
+**Schema:**
+```ts
+{
+  project_id: number;              // Ahrefs project ID
+  device: string;                  // 'desktop' | 'mobile'
+  date: string;                    // tracking date
+  keyword?: string | null;         // tracked keyword
+  country?: string;                // country code
+  position?: number | null;        // current position
+  previous_position?: number | null; // previous position
+  url?: string | null;             // ranking URL
+  updatedAt?: Date;
+}
+```
+
+### Query Example
+
+```ts
+// Find improved rankings
+const improvements = await corsair.ahrefs.db.rankings.search({
+  where: {
+    position: { lt: 10 },
+    // Custom logic: position < previous_position would need app-level filtering
+  },
+  orderBy: { position: 'asc' },
+});
+```
+
+---
+
+## serpPositions
+
+Stores SERP overview data.
+
+**Schema:**
+```ts
+{
+  country: string;                 // country code
+  keyword: string;                 // search keyword
+  requestedDate?: string;          // requested report date
+  position: number;                // SERP position
+  url?: string | null;             // ranking URL
+  title?: string | null;           // page title
+  domain_rating?: number | null;   // page's domain rating
+  backlinks?: number | null;       // backlinks to page
+  refdomains?: number | null;      // referring domains to page
+  traffic?: number | null;         // estimated traffic
+  updatedAt?: Date;
+}
+```
+
+### Query Example
+
+```ts
+// Analyze SERP for keyword
+const serpData = await corsair.ahrefs.db.serpPositions.search({
+  where: {
+    keyword: { eq: 'seo tools' },
+    country: { eq: 'us' },
+  },
+  orderBy: { position: 'asc' },
+});
+```
+
+---
+
+## subscriptionUsage
+
+Stores API usage and limits.
+
+**Schema:**
+```ts
+{
+  api_key_expiration_date: string;  // key expiration date
+  subscription: string;              // subscription tier
+  units_limit_api_key?: number | null; // API key unit limit
+  units_limit_workspace?: number | null; // workspace unit limit
+  units_usage_api_key: number;       // API key units used
+  units_usage_workspace?: number | null; // workspace units used
+  usage_reset_date: string;          // usage reset date
+  updatedAt?: Date;
+}
+```
+
+### Query Example
+
+```ts
+// Get current usage
+const usage = await corsair.ahrefs.db.subscriptionUsage.findByEntityId('current');
+console.log(usage?.data.units_usage_api_key);
+console.log(usage?.data.units_limit_api_key);
+```
+
+---
+
+## Query Methods
+
+All entities support these methods:
+
+### list()
+
+Get all records:
+
+```ts
+const all = await corsair.ahrefs.db.domainMetrics.list();
+```
+
+### search()
+
+Filter with operators:
+
+```ts
+const filtered = await corsair.ahrefs.db.keywords.search({
+  where: {
+    volume: { gte: 1000, lte: 10000 },
+    keyword: { contains: 'seo' },
+  },
+  orderBy: { volume: 'desc' },
+  limit: 50,
+});
+```
+
+**Filter Operators:**
+- `eq`: equals
+- `ne`: not equals
+- `gt`: greater than
+- `gte`: greater than or equal
+- `lt`: less than
+- `lte`: less than or equal
+- `in`: in array
+- `notIn`: not in array
+- `contains`: string contains (case-insensitive)
+- `startsWith`: string starts with
+- `endsWith`: string ends with
+
+### findByEntityId()
+
+Get by entity ID:
+
+```ts
+const domain = await corsair.ahrefs.db.domainMetrics.findByEntityId('example.com');
+```
+
+### findManyByEntityIds()
+
+Get multiple by entity IDs:
+
+```ts
+const domains = await corsair.ahrefs.db.domainMetrics.findManyByEntityIds([
+  'example.com',
+  'ahrefs.com',
+]);
+```
+
+### upsertByEntityId()
+
+Create or update:
+
+```ts
+await corsair.ahrefs.db.domainMetrics.upsertByEntityId('example.com', {
+  target: 'example.com',
+  domain_rating: 75,
+  backlinks: 50000,
+  updatedAt: new Date(),
+});
+```
+
+### deleteByEntityId()
+
+Delete by entity ID:
+
+```ts
+await corsair.ahrefs.db.keywords.deleteByEntityId('example.com:us:2024-01-01:seo');
+```
+
+### count()
+
+Count matching records:
+
+```ts
+const count = await corsair.ahrefs.db.refdomains.count({
+  where: { domain_rating: { gte: 50 } },
+});
+```
+
+---
+
+## Auto-sync
+
+Ahrefs automatically syncs data to your database when you make API calls:
+
+```ts
+// Fetch from API and auto-sync to DB
+const result = await corsair.ahrefs.api.siteExplorer.getDomainRating({
+  target: 'example.com',
+  date: '2024-01-01',
+});
+
+// Data is now queryable from DB
+const cached = await corsair.ahrefs.db.domainMetrics.findByEntityId('example.com');
+```
+
+If a database save fails, Ahrefs logs a warning but does not throw, allowing the API response to return successfully.
