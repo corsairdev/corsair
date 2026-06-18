@@ -92,7 +92,7 @@ export const listExecutions: HandlerFn = async (ctx) => {
 
 	// Count total matching rows using COUNT(*)
 	let countQuery = db.selectFrom('corsair_executions').select([
-		(eb) =>
+		(eb: any) =>
 			// Using `any` because Kysely's ExpressionBuilder returns complex generic types.
 			// Proper typing is enforced at the ORM client level.
 			(eb.fn.count('id') as any).as('count'),
@@ -155,7 +155,7 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 	const totalCountResult = await db
 		.selectFrom('corsair_executions')
 		.select([
-			(eb) =>
+			(eb: any) =>
 				// Using `any` because Kysely's ExpressionBuilder returns complex generic types
 				// that would require re-exporting internal Kysely generics to fully type.
 				// Proper typing is enforced at the ORM client level.
@@ -170,7 +170,7 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 	// Get counts grouped by status
 	const byStatusResults = await db
 		.selectFrom('corsair_executions')
-		.select(['status', (eb) => (eb.fn.count('id') as any).as('count')])
+		.select(['status', (eb: any) => (eb.fn.count('id') as any).as('count')])
 		.groupBy('status')
 		.execute();
 
@@ -191,7 +191,7 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 	// Get counts grouped by plugin
 	const byPluginResults = await db
 		.selectFrom('corsair_executions')
-		.select(['plugin', (eb) => (eb.fn.count('id') as any).as('count')])
+		.select(['plugin', (eb: any) => (eb.fn.count('id') as any).as('count')])
 		.groupBy('plugin')
 		.execute();
 
