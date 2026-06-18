@@ -100,6 +100,9 @@ const AhrefsIntentsSchema = z
 	})
 	.loose();
 
+// Using z.unknown() because Ahrefs returns monthly volume history as an
+// arbitrary key->value map whose value structure varies by select fields,
+// making a stricter type infeasible without tight coupling to API internals.
 const VolumeMonthlyHistorySchema = z.record(z.string(), z.unknown());
 
 export const KeywordOverviewSchema = z
@@ -221,7 +224,7 @@ export const RankTrackerOverviewResponseSchema = z.object({
 export const SerpOverviewInputSchema = z.object({
 	select: z.string().min(1),
 	top_positions: z.number().int().positive().optional(),
-	date: z.string().optional(),
+	date: isoDateString.optional(),
 	country: z.string().length(2),
 	keyword: z.string().min(1),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).default('json').optional(),

@@ -1,22 +1,22 @@
 import { z } from 'zod';
 
 export const DomainMetrics = z.object({
-	target: z.string(),
+	target: z.string(), // required for composite entityId (target:date)
+	date: z.string(), // required for composite entityId (target:date)
 	ahrefs_rank: z.number().int().nullable().optional(),
 	domain_rating: z.number().nullable().optional(),
 	backlinks: z.number().int().nullable().optional(),
 	referring_domains: z.number().int().nullable().optional(),
 	all_time_backlinks: z.number().int().nullable().optional(),
 	all_time_referring_domains: z.number().int().nullable().optional(),
-	date: z.string().optional(),
 	updatedAt: z.coerce.date().optional(),
 });
 
 export const KeywordMetrics = z
 	.object({
-		target: z.string().optional(),
-		country: z.string().optional(),
-		date: z.string().optional(),
+		target: z.string().optional(), // optional because keywords can be global
+		country: z.string(), // required for composite entityId
+		date: z.string().optional(), // optional for keywords-explorer (current data)
 		keyword: z.string().nullable().optional(),
 		volume: z.number().int().nullable().optional(),
 		keyword_difficulty: z.number().int().nullable().optional(),

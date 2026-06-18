@@ -197,6 +197,9 @@ export type InternalAhrefsPlugin = BaseAhrefsPlugin<AhrefsPluginOptions>;
 export type ExternalAhrefsPlugin<T extends AhrefsPluginOptions> =
 	BaseAhrefsPlugin<T>;
 
+// The assertion is safe: AhrefsPluginOptions has no required fields (all are
+// optional), so an empty object satisfies the constraint at runtime even
+// though TypeScript cannot verify it without the assertion.
 export function ahrefs<const T extends AhrefsPluginOptions>(
 	incomingOptions: AhrefsPluginOptions & T = {} as AhrefsPluginOptions & T,
 ): ExternalAhrefsPlugin<T> {

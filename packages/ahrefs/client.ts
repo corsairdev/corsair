@@ -8,6 +8,8 @@ import { ApiError, request } from 'corsair/http';
 export class AhrefsAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// Using unknown because Ahrefs API error response bodies vary by endpoint
+	// and error type, making a strict type infeasible without per-endpoint handling.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly rateLimitReset?: number;

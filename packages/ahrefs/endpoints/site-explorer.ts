@@ -20,10 +20,11 @@ export const getDomainRating: AhrefsEndpoints['getDomainRating'] = async (
 	);
 
 	try {
-		await ctx.db.domainMetrics.upsertByEntityId(input.target, {
+		const entityId = [input.target, input.date].join(':');
+		
+		await ctx.db.domainMetrics.upsertByEntityId(entityId, {
+			...response.domain_rating,
 			target: input.target,
-			ahrefs_rank: response.domain_rating.ahrefs_rank,
-			domain_rating: response.domain_rating.domain_rating,
 			date: input.date,
 			updatedAt: new Date(),
 		});
@@ -55,7 +56,9 @@ export const backlinksStats: AhrefsEndpoints['backlinksStats'] = async (
 	);
 
 	try {
-		await ctx.db.domainMetrics.upsertByEntityId(input.target, {
+		const entityId = [input.target, input.date].join(':');
+		
+		await ctx.db.domainMetrics.upsertByEntityId(entityId, {
 			target: input.target,
 			backlinks: response.metrics.live,
 			referring_domains: response.metrics.live_refdomains,

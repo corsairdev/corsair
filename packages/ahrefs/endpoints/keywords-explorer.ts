@@ -22,6 +22,32 @@ export const overview: AhrefsEndpoints['keywordsOverview'] = async (
 		},
 	);
 
+	// Sync keywords to database
+	for (const keyword of response.keywords) {
+		if (!keyword.keyword) continue;
+
+		try {
+			const entityId = [
+				input.target || 'global',
+				input.country,
+				keyword.keyword,
+			].join(':');
+
+			await ctx.db.keywords.upsertByEntityId(entityId, {
+				...keyword,
+				target: input.target,
+				country: input.country,
+				date: new Date().toISOString().split('T')[0], // current date
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn(
+				`[ahrefs] Failed to save keyword ${keyword.keyword}:`,
+				error,
+			);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'ahrefs.keywordsExplorer.overview',

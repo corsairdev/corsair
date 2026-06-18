@@ -1,6 +1,10 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import type { AhrefsAPIError } from './client';
 
+// Cast to Partial<AhrefsAPIError> because the error handler receives a base
+// Error type from the Corsair framework; AhrefsAPIError fields are optional
+// extras that may not be present on every Error subclass, so Partial is the
+// safest narrowing without introducing a separate runtime instanceof check.
 function getStatus(error: Error): number | undefined {
 	return (error as Partial<AhrefsAPIError>).status;
 }
