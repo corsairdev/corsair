@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'ahrefs',
 	'airtable',
 	'amplitude',
 	'asana',
@@ -78,6 +79,7 @@ export const BaseProviders = [
 ] as const;
 
 export type AllProviders =
+	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
