@@ -81,7 +81,9 @@ export const KeywordsOverviewInputSchema = z
 		target: z.string().min(1).optional(),
 		target_position: z.enum(AHREFS_TARGET_POSITIONS).optional(),
 		country: z.string().length(2),
-		keywords: z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]).optional(),
+		keywords: z
+			.union([z.string().min(1), z.array(z.string().min(1)).min(1)])
+			.optional(),
 		keyword_list_id: z.number().int().positive().optional(),
 		output: z.enum(AHREFS_OUTPUT_FORMATS).default('json').optional(),
 	})
@@ -271,7 +273,9 @@ export const LimitsAndUsageResponseSchema = z.object({
 export type DomainRatingInput = z.infer<typeof DomainRatingInputSchema>;
 export type DomainRatingResponse = z.infer<typeof DomainRatingResponseSchema>;
 export type BacklinksStatsInput = z.infer<typeof BacklinksStatsInputSchema>;
-export type BacklinksStatsResponse = z.infer<typeof BacklinksStatsResponseSchema>;
+export type BacklinksStatsResponse = z.infer<
+	typeof BacklinksStatsResponseSchema
+>;
 export type KeywordsOverviewInput = z.infer<typeof KeywordsOverviewInputSchema>;
 export type KeywordsOverviewResponse = z.infer<
 	typeof KeywordsOverviewResponseSchema

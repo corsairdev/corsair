@@ -88,8 +88,6 @@ const ahrefsEndpointsNested = {
 	},
 } as const;
 
-
-
 export const ahrefsEndpointSchemas = {
 	'siteExplorer.getDomainRating': {
 		input: AhrefsEndpointInputSchemas.getDomainRating,
