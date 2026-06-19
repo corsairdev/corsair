@@ -8,11 +8,6 @@ type HubCreateSessionErrorResponse = {
 	message?: string;
 };
 
-type HubTrpcCreateSessionResponse = {
-	result?: { data: HubConnectSessionResult };
-	error?: { message?: string };
-};
-
 type CreateSessionPayload = {
 	plugin: string;
 	tenantId: string;
@@ -33,21 +28,18 @@ function parseHubSessionPayload(payload: unknown): HubConnectSessionResult {
 		return payload as HubConnectSessionResult;
 	}
 
-	const trpcPayload = payload as HubTrpcCreateSessionResponse;
-	if (trpcPayload.result?.data?.connectUrl) {
-		return trpcPayload.result.data;
-	}
-
 	throw new Error('Hub API returned an empty connect session');
 }
 
 function parseHubSessionError(payload: unknown, status: number): string {
+	if (status === 404) {
+		return 'Hub REST API not found at /connect/sessions. Check HUB_API_URL and ensure the Hub API is deployed.';
+	}
+
 	if (payload && typeof payload === 'object') {
 		const direct = payload as HubCreateSessionErrorResponse;
 		if (direct.error) return direct.error;
-
-		const trpc = payload as HubTrpcCreateSessionResponse;
-		if (trpc.error?.message) return trpc.error.message;
+		if (direct.message) return direct.message;
 	}
 
 	return `Hub API returned HTTP ${status}`;
@@ -77,36 +69,6 @@ async function readHubJsonResponse(response: Response): Promise<unknown> {
 	}
 }
 
-async function createHubConnectSessionViaRest(
-	apiUrl: string,
-	projectApiKey: string,
-	payload: CreateSessionPayload,
-): Promise<Response> {
-	return fetch(`${apiUrl}/connect/sessions`, {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-			authorization: `Bearer ${projectApiKey}`,
-		},
-		body: JSON.stringify(payload),
-	});
-}
-
-async function createHubConnectSessionViaTrpc(
-	apiUrl: string,
-	projectApiKey: string,
-	payload: CreateSessionPayload,
-): Promise<Response> {
-	return fetch(`${apiUrl}/trpc/connect.createSession`, {
-		method: 'POST',
-		headers: { 'content-type': 'application/json' },
-		body: JSON.stringify({
-			apiKey: projectApiKey,
-			...payload,
-		}),
-	});
-}
-
 export async function createHubConnectSession(
 	corsair: unknown,
 	input: HubConnectSessionInput,
@@ -134,19 +96,14 @@ export async function createHubConnectSession(
 		source: input.source,
 	};
 
-	let response = await createHubConnectSessionViaRest(
-		apiUrl,
-		hub.projectApiKey,
-		payload,
-	);
-
-	if (response.status === 404) {
-		response = await createHubConnectSessionViaTrpc(
-			apiUrl,
-			hub.projectApiKey,
-			payload,
-		);
-	}
+	const response = await fetch(`${apiUrl}/connect/sessions`, {
+		method: 'POST',
+		headers: {
+			'content-type': 'application/json',
+			authorization: `Bearer ${hub.projectApiKey}`,
+		},
+		body: JSON.stringify(payload),
+	});
 
 	const responsePayload = await readHubJsonResponse(response);
 
