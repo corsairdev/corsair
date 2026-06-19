@@ -1,10 +1,7 @@
+import type { ProcessCorsairRequest } from '../tunnel';
 import { HubNotConfiguredError } from './config';
 import type { HubDeliveryResult } from './delivery';
-import {
-	handleHubDeliveryGet,
-	handleHubDeliveryPost,
-} from './delivery';
-import type { ProcessCorsairRequest } from '../tunnel';
+import { handleHubDeliveryGet, handleHubDeliveryPost } from './delivery';
 
 export type HubDeliveryRequest = {
 	method: 'GET' | 'POST';

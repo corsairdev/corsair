@@ -23,9 +23,7 @@ type CreateSessionPayload = {
 	source: HubConnectSessionInput['source'];
 };
 
-function parseHubSessionPayload(
-	payload: unknown,
-): HubConnectSessionResult {
+function parseHubSessionPayload(payload: unknown): HubConnectSessionResult {
 	if (
 		payload &&
 		typeof payload === 'object' &&
@@ -43,10 +41,7 @@ function parseHubSessionPayload(
 	throw new Error('Hub API returned an empty connect session');
 }
 
-function parseHubSessionError(
-	payload: unknown,
-	status: number,
-): string {
+function parseHubSessionError(payload: unknown, status: number): string {
 	if (payload && typeof payload === 'object') {
 		const direct = payload as HubCreateSessionErrorResponse;
 		if (direct.error) return direct.error;
@@ -78,9 +73,7 @@ async function readHubJsonResponse(response: Response): Promise<unknown> {
 	try {
 		return JSON.parse(bodyText) as unknown;
 	} catch {
-		throw new Error(
-			`Hub API returned invalid JSON (HTTP ${response.status})`,
-		);
+		throw new Error(`Hub API returned invalid JSON (HTTP ${response.status})`);
 	}
 }
 
@@ -134,8 +127,7 @@ export async function createHubConnectSession(
 	const payload: CreateSessionPayload = {
 		plugin: input.plugin,
 		tenantId: input.tenantId,
-		providerName:
-			input.providerName ?? formatProviderDisplayName(input.plugin),
+		providerName: input.providerName ?? formatProviderDisplayName(input.plugin),
 		oauthUrl,
 		state,
 		deliveryUrl: hub.deliveryUrl,
