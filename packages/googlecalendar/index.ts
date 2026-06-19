@@ -32,8 +32,8 @@ import type {
 	GoogleCalendarWebhookPayload,
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
-import type { PubSubNotification } from './webhooks/types';
 import { matchGoogleCalendarTenantWebhook } from './webhooks/tenant-matcher';
+import type { PubSubNotification } from './webhooks/types';
 import {
 	decodePubSubMessage,
 	GoogleCalendarWebhookEventSchema,

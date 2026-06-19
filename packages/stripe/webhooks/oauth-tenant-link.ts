@@ -7,7 +7,5 @@ export function resolveStripeOAuthWebhookTenantLink(
 	const accountId = toExternalId(
 		tokens.stripe_user_id ?? asRecord(tokens.stripe_user)?.id,
 	);
-	return accountId
-		? { linkType: 'account_id', externalId: accountId }
-		: null;
+	return accountId ? { linkType: 'account_id', externalId: accountId } : null;
 }

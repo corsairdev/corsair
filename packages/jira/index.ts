@@ -33,6 +33,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { JiraSchema } from './schema';
 import { IssueWebhooks, ProjectWebhooks } from './webhooks';
+import { matchJiraTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	JiraWebhookOutputs,
 	NewIssueEvent,
@@ -47,7 +48,6 @@ import {
 	NewProjectEventSchema,
 	UpdatedIssueEventSchema,
 } from './webhooks/types';
-import { matchJiraTenantWebhook } from './webhooks/tenant-matcher';
 
 export type JiraPluginOptions = {
 	authType?: PickAuth<'api_key'>;

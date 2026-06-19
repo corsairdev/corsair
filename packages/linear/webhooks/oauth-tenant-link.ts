@@ -22,9 +22,7 @@ export async function resolveLinearOAuthWebhookTenantLink(
 	const payload = (await response.json()) as {
 		data?: { viewer?: { organization?: { id?: string } } };
 	};
-	const organizationId = toExternalId(
-		payload.data?.viewer?.organization?.id,
-	);
+	const organizationId = toExternalId(payload.data?.viewer?.organization?.id);
 	return organizationId
 		? { linkType: 'organization_id', externalId: organizationId }
 		: null;

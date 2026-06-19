@@ -36,12 +36,9 @@ export async function setupGmailWatch(
 
 	watchSpin.stop('Watch started.');
 
-	const profileResponse = await fetch(
-		`${GMAIL_API_BASE}/users/me/profile`,
-		{
-			headers: { Authorization: `Bearer ${accessToken}` },
-		},
-	);
+	const profileResponse = await fetch(`${GMAIL_API_BASE}/users/me/profile`, {
+		headers: { Authorization: `Bearer ${accessToken}` },
+	});
 	const profile = profileResponse.ok
 		? ((await profileResponse.json()) as { emailAddress?: string })
 		: null;

@@ -36,6 +36,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { AsanaSchema } from './schema';
 import { ChallengeWebhooks, TaskWebhooks } from './webhooks';
+import { resolveAsanaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchAsanaTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	AsanaChallengePayload,
 	AsanaTaskWebhookPayload,
@@ -47,8 +49,6 @@ import {
 	AsanaTaskWebhookPayloadSchema,
 	AsanaWebhookEventSchema,
 } from './webhooks/types';
-import { matchAsanaTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveAsanaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type AsanaEndpoints = {
 	// Tasks

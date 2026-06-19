@@ -5,7 +5,11 @@ import {
 	promptTenantId,
 	promptWebhookUrl,
 } from '../../utils/prompts';
-import { resolveAccessToken, saveSubscriptionTenantLink, saveWebhookSignature } from './credentials';
+import {
+	resolveAccessToken,
+	saveSubscriptionTenantLink,
+	saveWebhookSignature,
+} from './credentials';
 import { createGraphSubscription } from './graph';
 
 type OutlookResourceType =

@@ -42,8 +42,8 @@ import {
 	PaymentIntentWebhooks,
 	PingWebhooks,
 } from './webhooks';
-import { matchStripeTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveStripeOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchStripeTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	StripeChargeFailedEvent,
 	StripeChargeRefundedEvent,

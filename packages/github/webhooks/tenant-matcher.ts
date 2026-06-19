@@ -1,10 +1,5 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import {
-	asRecord,
-	firstString,
-	getHeader,
-	readBodyRecord,
-} from 'corsair/core';
+import { asRecord, firstString, getHeader, readBodyRecord } from 'corsair/core';
 
 // GitHub App webhooks include installation.id on the payload envelope.
 // See https://docs.github.com/en/webhooks/webhook-events-and-payloads

@@ -41,11 +41,11 @@ import {
 import { errorHandlers } from './error-handlers';
 import { SharepointSchema } from './schema';
 import { ListWebhooks } from './webhooks';
+import { matchSharepointTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	SharepointListChangedPayload,
 	SharepointWebhookOutputs,
 } from './webhooks/types';
-import { matchSharepointTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	ListChangedEventSchema,
 	SharepointListChangedPayloadSchema,

@@ -47,6 +47,7 @@ import {
 	ErrorWebhooks,
 	IssueWebhooks,
 } from './webhooks';
+import { matchSentryTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CommentCreatedEventSchema,
 	CommentDeletedEventSchema,
@@ -58,7 +59,6 @@ import {
 	IssueResolvedEventSchema,
 	MetricAlertEventSchema,
 } from './webhooks/types';
-import { matchSentryTenantWebhook } from './webhooks/tenant-matcher';
 
 export type SentryPluginOptions = {
 	authType?: PickAuth<'api_key'>;

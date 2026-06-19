@@ -11,7 +11,9 @@ function cloudUrlFromSelf(self: unknown): string | undefined {
 	}
 }
 
-function extractJiraCloudUrl(body: Record<string, unknown>): string | undefined {
+function extractJiraCloudUrl(
+	body: Record<string, unknown>,
+): string | undefined {
 	const issue = asRecord(body.issue);
 	const project = asRecord(body.project);
 	const user = asRecord(body.user);

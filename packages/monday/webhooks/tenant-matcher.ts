@@ -1,10 +1,5 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import {
-	asRecord,
-	firstString,
-	getHeader,
-	readBodyRecord,
-} from 'corsair/core';
+import { asRecord, firstString, getHeader, readBodyRecord } from 'corsair/core';
 
 function readJwtPayload(
 	request: RawWebhookRequest,

@@ -39,6 +39,7 @@ import {
 	PreCheckoutQueryWebhooks,
 	ShippingQueryWebhooks,
 } from './webhooks';
+import { matchTelegramTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	CallbackQueryEvent,
 	ChannelPostEvent,
@@ -51,7 +52,6 @@ import type {
 	ShippingQueryEvent,
 	TelegramWebhookOutputs,
 } from './webhooks/types';
-import { matchTelegramTenantWebhook } from './webhooks/tenant-matcher';
 
 /**
  * Plugin options type - configure authentication and behavior

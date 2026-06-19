@@ -5,7 +5,11 @@ import {
 	promptTenantId,
 	promptWebhookUrl,
 } from '../../utils/prompts';
-import { resolveAccessToken, saveSubscriptionTenantLink, saveWebhookSignature } from './credentials';
+import {
+	resolveAccessToken,
+	saveSubscriptionTenantLink,
+	saveWebhookSignature,
+} from './credentials';
 import { GRAPH_API_BASE } from './graph';
 
 const SHAREPOINT_MAX_EXPIRY_DAYS = 180;
@@ -184,12 +188,12 @@ export async function runSharepointSubscribe({
 	subSpin.stop('Subscription created.');
 
 	await saveSubscriptionTenantLink(
-		{ pluginId: sharepointPlugin.id, tenantId, internal },
+		{ pluginId: (sharepointPlugin as any).id, tenantId, internal },
 		subscription.id,
 	);
 
 	await saveWebhookSignature(accountKm, clientState, {
-		pluginId: sharepointPlugin.id,
+		pluginId: (sharepointPlugin as any).id,
 		tenantId,
 		internal,
 	});

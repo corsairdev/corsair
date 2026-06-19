@@ -1,5 +1,7 @@
-import { logEventFromContext } from 'corsair/core';
-import { extractMicrosoftGraphValidationToken } from 'corsair/core';
+import {
+	extractMicrosoftGraphValidationToken,
+	logEventFromContext,
+} from 'corsair/core';
 import type { SharepointWebhooks } from '../index';
 import {
 	createSharepointMatch,

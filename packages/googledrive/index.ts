@@ -35,8 +35,8 @@ import type {
 	GoogleDriveWebhookPayload,
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
-import type { PubSubNotification } from './webhooks/types';
 import { matchGoogleDriveTenantWebhook } from './webhooks/tenant-matcher';
+import type { PubSubNotification } from './webhooks/types';
 import {
 	DriveChangedEventSchema,
 	decodePubSubMessage,

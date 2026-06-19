@@ -14,10 +14,10 @@ import type {
 } from '../endpoints';
 import type { CorsairErrorHandler } from '../errors';
 import type {
+	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
-	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhookTenantMatcher,
 	WebhookPathsOf,
 	WebhookRequest,

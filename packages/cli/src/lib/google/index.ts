@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts';
-import type { CorsairInternalConfig } from 'corsair/core';
 import { setWebhookTenantLink } from 'corsair';
+import type { CorsairInternalConfig } from 'corsair/core';
 import {
 	CORSAIR_INTERNAL,
 	createAccountKeyManager,

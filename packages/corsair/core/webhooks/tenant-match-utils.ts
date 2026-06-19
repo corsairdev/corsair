@@ -63,7 +63,9 @@ export function extractMicrosoftGraphValidationToken(
 		headers['ms-validation-token'],
 	];
 	for (const candidate of headerCandidates) {
-		const value = firstString(Array.isArray(candidate) ? candidate : [candidate]);
+		const value = firstString(
+			Array.isArray(candidate) ? candidate : [candidate],
+		);
 		if (value) return decodeURIComponent(value);
 	}
 

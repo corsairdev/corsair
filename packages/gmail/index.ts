@@ -35,9 +35,9 @@ import type {
 	MessageReceivedEvent,
 } from './webhooks';
 import { MessageWebhooks } from './webhooks';
-import type { PubSubNotification } from './webhooks/types';
-import { matchGmailTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveGmailOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchGmailTenantWebhook } from './webhooks/tenant-matcher';
+import type { PubSubNotification } from './webhooks/types';
 import {
 	decodePubSubMessage,
 	GmailWebhookEventSchema,

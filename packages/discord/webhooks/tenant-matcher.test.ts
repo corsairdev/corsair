@@ -1,6 +1,6 @@
 import type { RawWebhookRequest } from 'corsair/core';
-import { DiscordInteractionType } from './types';
 import { matchDiscordTenantWebhook } from './tenant-matcher';
+import { DiscordInteractionType } from './types';
 
 describe('matchDiscordTenantWebhook', () => {
 	it('returns guild_id for server interactions', () => {

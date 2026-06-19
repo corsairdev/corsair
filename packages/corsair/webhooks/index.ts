@@ -5,7 +5,6 @@ import type {
 	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookResponse,
-	WebhookTenantMatch,
 } from '../core/webhooks';
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -11,10 +11,7 @@ export function matchVercelTenantWebhook(
 	if (!body) return null;
 
 	const payload = asRecord(body.payload);
-	const teamId = firstString([
-		asRecord(payload?.team)?.id,
-		body.teamId,
-	]);
+	const teamId = firstString([asRecord(payload?.team)?.id, body.teamId]);
 	if (!teamId) return null;
 
 	return { linkType: 'team_id', externalId: teamId };

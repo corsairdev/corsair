@@ -1,4 +1,8 @@
-import { encryptConfig, encryptDEK, generateDEK } from '../core/auth/encryption';
+import {
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+} from '../core/auth/encryption';
 import {
 	resolveAccountFromWebhookLink,
 	resolveTenantFromWebhookLink,
@@ -11,10 +15,12 @@ const KEK = 'test-kek-with-at-least-32-characters!!';
 function createTestDatabase() {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const Database = require('better-sqlite3') as typeof import('better-sqlite3');
-	const { Kysely, SqliteDialect } = require('kysely') as typeof import('kysely');
-	const { SqliteDatePlugin } = require('../db/kysely/sqlite-date-plugin.js') as {
-		SqliteDatePlugin: new () => import('kysely').KyselyPlugin;
-	};
+	const { Kysely, SqliteDialect } =
+		require('kysely') as typeof import('kysely');
+	const { SqliteDatePlugin } =
+		require('../db/kysely/sqlite-date-plugin.js') as {
+			SqliteDatePlugin: new () => import('kysely').KyselyPlugin;
+		};
 
 	const sqlite = new Database(':memory:');
 	sqlite.exec(`

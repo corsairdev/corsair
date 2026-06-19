@@ -35,6 +35,7 @@ import {
 	MessageWebhooks,
 	ValidationWebhooks,
 } from './webhooks';
+import { matchOutlookTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ContactCreatedEvent,
 	EventChangedEvent,
@@ -45,7 +46,6 @@ import type {
 	OutlookWebhookPayload,
 	SubscriptionValidationPayload,
 } from './webhooks/types';
-import { matchOutlookTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	ContactCreatedEventSchema,
 	EventChangedEventSchema,

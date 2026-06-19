@@ -26,8 +26,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { DropboxSchema } from './schema';
 import { FileSystemWebhooks } from './webhooks';
-import { matchDropboxTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveDropboxOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchDropboxTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DropboxFileSystemChangedEvent,
 	DropboxWebhookOutputs,

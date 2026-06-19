@@ -31,9 +31,7 @@ export function matchSentryTenantWebhook(
 
 	const organizationSlug = firstString([
 		asRecord(asRecord(asRecord(body.data)?.installation)?.organization)?.slug,
-		extractOrganizationSlugFromIssueUrl(
-			asRecord(asRecord(body.data)?.issue),
-		),
+		extractOrganizationSlugFromIssueUrl(asRecord(asRecord(body.data)?.issue)),
 	]);
 	if (organizationSlug) {
 		return { linkType: 'organization_slug', externalId: organizationSlug };
