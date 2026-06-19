@@ -24,6 +24,8 @@ export function verifyBrowserDeliveryToken(
 	token: string,
 	signingSecret: string,
 ): BrowserDeliveryPayload | null {
+	if (!signingSecret.trim()) return null;
+
 	const parts = token.split('.');
 	if (parts.length !== 2) return null;
 

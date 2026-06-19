@@ -21,9 +21,18 @@ function getInternal(corsair: unknown): CorsairInternalConfig {
 	return internal;
 }
 
+function isHubConfigComplete(hub: HubConfig): boolean {
+	return (
+		hub.apiUrl.trim().length > 0 &&
+		hub.deliveryUrl.trim().length > 0 &&
+		hub.projectApiKey.trim().length > 0 &&
+		hub.signingSecret.trim().length > 0
+	);
+}
+
 export function getHubConfig(corsair: unknown): HubConfig {
 	const hub = getInternal(corsair).hub;
-	if (!hub) {
+	if (!hub || !isHubConfigComplete(hub)) {
 		throw new HubNotConfiguredError();
 	}
 	return hub;
