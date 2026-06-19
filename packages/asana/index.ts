@@ -47,6 +47,8 @@ import {
 	AsanaTaskWebhookPayloadSchema,
 	AsanaWebhookEventSchema,
 } from './webhooks/types';
+import { matchAsanaTenantWebhook } from './webhooks/tenant-matcher';
+import { resolveAsanaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type AsanaEndpoints = {
 	// Tasks
@@ -891,7 +893,10 @@ const defaultAuthType = 'api_key' as const;
 
 export const asanaAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['workspace_gid', 'project_gid'] as const,
+	},
+	oauth_2: {
+		account: ['workspace_gid', 'project_gid'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -992,6 +997,8 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			const headers = request.headers;
 			return 'x-hook-signature' in headers || 'x-hook-secret' in headers;
 		},
+		pluginTenantWebhookMatcher: matchAsanaTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveAsanaOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -5,7 +5,7 @@ import {
 	promptTenantId,
 	promptWebhookUrl,
 } from '../../utils/prompts';
-import { resolveAccessToken, saveWebhookSignature } from './credentials';
+import { resolveAccessToken, saveSubscriptionTenantLink, saveWebhookSignature } from './credentials';
 import { createGraphSubscription, GRAPH_API_BASE } from './graph';
 
 async function fetchJoinedTeams(
@@ -319,6 +319,10 @@ export async function runTeamsSubscribe({
 			results.push(
 				`${resourceType}\n  Resource: ${resource}\n  ID: ${subscription.id}\n  Expires: ${subscription.expirationDateTime}`,
 			);
+			await saveSubscriptionTenantLink(
+				{ pluginId: 'teams', tenantId, internal },
+				subscription.id,
+			);
 		} catch (error) {
 			subSpin.stop(`Failed: ${resourceType}`);
 			p.log.error(error instanceof Error ? error.message : String(error));
@@ -330,7 +334,11 @@ export async function runTeamsSubscribe({
 		p.note(results.join('\n\n'), 'Subscriptions created');
 	}
 
-	await saveWebhookSignature(accountKm, clientState);
+	await saveWebhookSignature(accountKm, clientState, {
+		pluginId: 'teams',
+		tenantId,
+		internal,
+	});
 
 	if (!hasError) {
 		p.log.success('Teams webhook subscriptions set up successfully.');

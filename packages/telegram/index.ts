@@ -51,6 +51,7 @@ import type {
 	ShippingQueryEvent,
 	TelegramWebhookOutputs,
 } from './webhooks/types';
+import { matchTelegramTenantWebhook } from './webhooks/tenant-matcher';
 
 /**
  * Plugin options type - configure authentication and behavior
@@ -281,7 +282,7 @@ const defaultAuthType: AuthTypes = 'bot_token';
 
 export const telegramAuthConfig = {
 	bot_token: {
-		account: ['one'] as const,
+		account: ['bot_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -335,6 +336,7 @@ export function telegram<const T extends TelegramPluginOptions>(
 
 			return hasSignature && 'update_id' in body;
 		},
+		pluginTenantWebhookMatcher: matchTelegramTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

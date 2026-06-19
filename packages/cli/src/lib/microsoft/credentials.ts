@@ -4,6 +4,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from 'corsair/core';
+import { setWebhookTenantLink } from 'corsair';
 
 const MICROSOFT_TOKEN_URL =
 	'https://login.microsoftonline.com/common/oauth2/v2.0/token';
@@ -149,9 +150,48 @@ export async function resolveAccessToken(
 export async function saveWebhookSignature(
 	accountKm: { set_webhook_signature(sig: string): Promise<void> },
 	clientState: string,
+	options?: {
+		pluginId: string;
+		tenantId: string;
+		internal: CorsairInternalConfig;
+	},
 ): Promise<void> {
 	const saveSpin = p.spinner();
 	saveSpin.start('Saving webhook secret...');
 	await accountKm.set_webhook_signature(clientState);
 	saveSpin.stop('Webhook secret saved.');
+
+	if (options?.internal.database) {
+		const linkSpin = p.spinner();
+		linkSpin.start('Saving webhook tenant link...');
+		await setWebhookTenantLink({
+			database: options.internal.database,
+			kek: options.internal.kek,
+			pluginId: options.pluginId,
+			tenantId: options.tenantId,
+			link: { linkType: 'client_state', externalId: clientState },
+			authType: 'oauth_2',
+		});
+		linkSpin.stop('Webhook tenant link saved.');
+	}
+}
+
+export async function saveSubscriptionTenantLink(
+	options: {
+		pluginId: string;
+		tenantId: string;
+		internal: CorsairInternalConfig;
+	},
+	subscriptionId: string,
+): Promise<void> {
+	if (!options.internal.database) return;
+
+	await setWebhookTenantLink({
+		database: options.internal.database,
+		kek: options.internal.kek,
+		pluginId: options.pluginId,
+		tenantId: options.tenantId,
+		link: { linkType: 'subscription_id', externalId: subscriptionId },
+		authType: 'oauth_2',
+	});
 }

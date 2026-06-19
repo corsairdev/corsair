@@ -40,6 +40,7 @@ import type {
 	OnedriveWebhookOutputs,
 	OnedriveWebhookPayload,
 } from './webhooks/types';
+import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	createOnedriveMatch,
 	createOnedriveValidationMatch,
@@ -742,7 +743,7 @@ const defaultAuthType = 'oauth_2' as const;
 
 export const onedriveAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -800,6 +801,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 			return createOnedriveMatch()(request);
 		},
+		pluginTenantWebhookMatcher: matchOnedriveTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
