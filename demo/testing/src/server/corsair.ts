@@ -16,7 +16,8 @@ import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
 const appUrl = process.env.APP_URL ?? 'http://localhost:3001';
-const hubApiUrl = process.env.HUB_API_URL ?? 'http://localhost:5001';
+const hubProjectApiKey = process.env.HUB_PROJECT_API_KEY!;
+const hubSigningSecret = process.env.CORSAIR_TUNNEL_SIGNING_SECRET!;
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -27,13 +28,9 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	hub: {
-		apiUrl: hubApiUrl,
-		projectApiKey: process.env.HUB_PROJECT_API_KEY ?? '',
-		signingSecret: process.env.CORSAIR_TUNNEL_SIGNING_SECRET ?? '',
+		projectApiKey: hubProjectApiKey,
+		signingSecret: hubSigningSecret,
 		deliveryUrl: `${appUrl}/api/corsair`,
-		oauthCallbackUrl:
-			process.env.HUB_OAUTH_CALLBACK_URL ??
-			`${hubApiUrl.replace(/\/$/, '')}/oauth/callback`,
 	},
 	plugins: [
 		github(),

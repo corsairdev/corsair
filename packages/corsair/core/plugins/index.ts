@@ -1,7 +1,7 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDatabaseInput } from '../../db/kysely/database';
 import type { CorsairPluginSchema } from '../../db/orm';
-import type { HubConfig } from '../../hub';
+import type { HubConfigInput } from '../../hub';
 import type { AccountKeyManagerFor, PluginAuthConfig } from '../auth/types';
 import type { ExtractAuthType, InferPluginEntities } from '../client';
 import type { AllProviders, AuthTypes } from '../constants';
@@ -718,5 +718,5 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 		}) => string;
 	};
 	/** Corsair Hub configuration for hosted OAuth connect flows. */
-	hub?: HubConfig;
+	hub?: HubConfigInput;
 };

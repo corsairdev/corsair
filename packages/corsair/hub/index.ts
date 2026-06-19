@@ -1,7 +1,9 @@
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	DEFAULT_HUB_API_URL,
 	getHubConfig,
 	HubNotConfiguredError,
+	normalizeHubConfig,
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
@@ -16,6 +18,7 @@ export {
 } from './delivery-response';
 export type {
 	HubConfig,
+	HubConfigInput,
 	HubConnectSessionInput,
 	HubConnectSessionResult,
 	HubConnectSource,

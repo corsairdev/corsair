@@ -79,6 +79,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
 	asana: 'Asana',

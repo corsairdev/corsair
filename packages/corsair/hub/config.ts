@@ -1,11 +1,14 @@
 import type { CorsairInternalConfig } from '../core';
 import { CORSAIR_INTERNAL } from '../core';
-import type { HubConfig } from './types';
+import { DEFAULT_HUB_API_URL } from './types';
+import type { HubConfig, HubConfigInput } from './types';
+
+export { DEFAULT_HUB_API_URL } from './types';
 
 export class HubNotConfiguredError extends Error {
 	constructor() {
 		super(
-			'Hub is not configured. Pass hub: { apiUrl, projectApiKey, signingSecret, deliveryUrl } to createCorsair().',
+			'Hub is not configured. Pass hub: { projectApiKey, signingSecret, deliveryUrl } to createCorsair().',
 		);
 		this.name = 'HubNotConfiguredError';
 	}
@@ -19,6 +22,21 @@ function getInternal(corsair: unknown): CorsairInternalConfig {
 		throw new Error('Invalid corsair instance');
 	}
 	return internal;
+}
+
+export function normalizeHubConfig(input: HubConfigInput): HubConfig {
+	const apiUrl = (input.apiUrl?.trim() || DEFAULT_HUB_API_URL).replace(
+		/\/$/,
+		'',
+	);
+
+	return {
+		apiUrl,
+		projectApiKey: input.projectApiKey.trim(),
+		signingSecret: input.signingSecret.trim(),
+		deliveryUrl: input.deliveryUrl.trim(),
+		oauthCallbackUrl: input.oauthCallbackUrl?.trim(),
+	};
 }
 
 function isHubConfigComplete(hub: HubConfig): boolean {

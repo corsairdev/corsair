@@ -1,8 +1,10 @@
 export {
 	createHubConnectSession,
+	DEFAULT_HUB_API_URL,
 	formatProviderDisplayName,
 	getHubConfig,
 	type HubConfig,
+	type HubConfigInput,
 	type HubConnectSessionInput,
 	type HubConnectSessionResult,
 	type HubConnectSource,
@@ -13,6 +15,7 @@ export {
 	handleHubDeliveryPost,
 	handleHubDeliveryRequest,
 	hubDeliveryToResponse,
+	normalizeHubConfig,
 	resolveHubOAuthCallbackUrl,
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,

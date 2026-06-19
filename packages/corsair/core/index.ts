@@ -1,6 +1,7 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 import type { HubConfig } from '../hub';
+import { normalizeHubConfig } from '../hub';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
@@ -104,7 +105,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		multiTenancy: !!config.multiTenancy,
 		approval: config.approval,
 		connect: config.connect,
-		hub: config.hub,
+		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
