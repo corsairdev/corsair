@@ -33,7 +33,10 @@ export const overview: AhrefsEndpoints['rankTrackerOverview'] = async (
 				updatedAt: new Date(),
 			});
 		} catch (error) {
-			console.warn(`[ahrefs] Failed to save rank tracker row ${keyword}:`, error);
+			console.warn(
+				`[ahrefs] Failed to save rank tracker row ${keyword}:`,
+				error,
+			);
 		}
 	}
 

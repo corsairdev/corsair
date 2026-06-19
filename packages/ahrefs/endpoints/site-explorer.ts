@@ -21,7 +21,7 @@ export const getDomainRating: AhrefsEndpoints['getDomainRating'] = async (
 
 	try {
 		const entityId = [input.target, input.date].join(':');
-		
+
 		await ctx.db.domainMetrics.upsertByEntityId(entityId, {
 			...response.domain_rating,
 			target: input.target,
@@ -57,7 +57,7 @@ export const backlinksStats: AhrefsEndpoints['backlinksStats'] = async (
 
 	try {
 		const entityId = [input.target, input.date].join(':');
-		
+
 		await ctx.db.domainMetrics.upsertByEntityId(entityId, {
 			target: input.target,
 			backlinks: response.metrics.live,
@@ -135,10 +135,7 @@ export const organicKeywords: AhrefsEndpoints['organicKeywords'] = async (
 	return response;
 };
 
-export const refdomains: AhrefsEndpoints['refdomains'] = async (
-	ctx,
-	input,
-) => {
+export const refdomains: AhrefsEndpoints['refdomains'] = async (ctx, input) => {
 	const response = await makeAhrefsRequest<RefdomainsResponse>(
 		'/site-explorer/refdomains',
 		ctx.key,
@@ -185,9 +182,12 @@ export const topPages: AhrefsEndpoints['topPages'] = async (ctx, input) => {
 
 	for (const page of response.pages) {
 		try {
-			const entityId = [input.target, input.country, input.date, page.raw_url].join(
-				':',
-			);
+			const entityId = [
+				input.target,
+				input.country,
+				input.date,
+				page.raw_url,
+			].join(':');
 
 			await ctx.db.pages.upsertByEntityId(entityId, {
 				...page,

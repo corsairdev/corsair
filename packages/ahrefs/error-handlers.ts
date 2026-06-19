@@ -71,7 +71,9 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			console.warn(`[AHREFS:${context.operation}] Bad request: ${error.message}`);
+			console.warn(
+				`[AHREFS:${context.operation}] Bad request: ${error.message}`,
+			);
 			return { maxRetries: 0 };
 		},
 	},
@@ -90,7 +92,9 @@ export const errorHandlers = {
 	DEFAULT: {
 		match: () => true,
 		handler: async (error, context) => {
-			console.error(`[AHREFS:${context.operation}] Unhandled error: ${error.message}`);
+			console.error(
+				`[AHREFS:${context.operation}] Unhandled error: ${error.message}`,
+			);
 			return { maxRetries: 0 };
 		},
 	},

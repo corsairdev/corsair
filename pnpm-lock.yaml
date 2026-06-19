@@ -94,9 +94,6 @@ importers:
 
   demo/minimal:
     dependencies:
-      '@corsair-dev/ahrefs':
-        specifier: workspace:*
-        version: link:../../packages/ahrefs
       corsair:
         specifier: ^0.1.4
         version: link:../../packages/corsair
