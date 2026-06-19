@@ -61,6 +61,8 @@ import {
 	WorkflowJobWebhooks,
 	WorkflowRunWebhooks,
 } from './webhooks';
+import { resolveGithubOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchGithubTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	BranchCreatedEvent,
 	BranchDeletedEvent,
@@ -268,8 +270,6 @@ import {
 	WorkflowRunInProgressEventSchema,
 	WorkflowRunRequestedEventSchema,
 } from './webhooks/types';
-import { matchGithubTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveGithubOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export {
 	createGithubEventMatch,

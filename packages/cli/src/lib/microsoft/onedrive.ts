@@ -5,7 +5,11 @@ import {
 	promptTenantId,
 	promptWebhookUrl,
 } from '../../utils/prompts';
-import { resolveAccessToken, saveSubscriptionTenantLink, saveWebhookSignature } from './credentials';
+import {
+	resolveAccessToken,
+	saveSubscriptionTenantLink,
+	saveWebhookSignature,
+} from './credentials';
 import { createGraphSubscription } from './graph';
 
 // Microsoft Graph max subscription lifetime for drive resources (minutes)

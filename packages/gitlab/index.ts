@@ -45,6 +45,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { GitlabSchema } from './schema';
 import { GitlabWebhooks as GitlabWebhookHandlers } from './webhooks';
+import { resolveGitlabOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchGitlabTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	GitlabWebhookOutputs,
 	IssueEvent,
@@ -60,8 +62,6 @@ import {
 	PipelineEventSchema,
 	PushEventSchema,
 } from './webhooks/types';
-import { matchGitlabTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveGitlabOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export const gitlabAuthConfig = {
 	oauth_2: {

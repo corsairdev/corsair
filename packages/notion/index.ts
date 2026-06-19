@@ -26,8 +26,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { NotionSchema } from './schema';
 import { NotionWebhooks } from './webhooks';
-import { matchNotionTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveNotionOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchNotionTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	NotionWebhookOutputs,
 	PageCreatedEvent,

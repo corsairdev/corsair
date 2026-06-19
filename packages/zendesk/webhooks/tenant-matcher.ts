@@ -1,9 +1,5 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import {
-	firstString,
-	getHeader,
-	readBodyRecord,
-} from 'corsair/core';
+import { firstString, getHeader, readBodyRecord } from 'corsair/core';
 
 // Zendesk event webhooks include account_id on the envelope and in
 // x-zendesk-account-id. Trigger/automation payloads are custom and may omit it.

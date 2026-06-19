@@ -2,6 +2,74 @@
 
 import { useState } from 'react';
 
+function HubConnectButton({
+	plugin,
+	label,
+}: {
+	plugin: string;
+	label: string;
+}) {
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const handleClick = async () => {
+		setLoading(true);
+		setError(null);
+
+		try {
+			const response = await fetch('/api/hub/create-link', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					plugin,
+					tenantId: 'demo-user',
+					source: 'client',
+				}),
+			});
+			const data = await response.json();
+
+			if (!response.ok || !data.connectUrl) {
+				throw new Error(data.error ?? 'Failed to create connect link');
+			}
+
+			window.open(data.connectUrl, '_blank', 'noopener,noreferrer');
+		} catch (connectError) {
+			setError(
+				connectError instanceof Error
+					? connectError.message
+					: 'Failed to create connect link',
+			);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return (
+		<div>
+			<button
+				type="button"
+				onClick={handleClick}
+				disabled={loading}
+				style={{
+					padding: '0.75rem 1.5rem',
+					backgroundColor: '#4285F4',
+					color: 'white',
+					border: 'none',
+					borderRadius: '4px',
+					fontSize: '1rem',
+					cursor: loading ? 'not-allowed' : 'pointer',
+					opacity: loading ? 0.6 : 1,
+				}}
+			>
+				{loading ? 'Creating link…' : label}
+			</button>
+			{error ? (
+				<p style={{ color: '#721c24', marginTop: '0.75rem' }}>{error}</p>
+			) : null}
+		</div>
+	);
+}
+
 export default function Home() {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -165,22 +233,12 @@ export default function Home() {
 			>
 				<h2>Connect Integrations</h2>
 				<p style={{ color: '#666', marginBottom: '1rem' }}>
-					Authorize a plugin using OAuth
+					Authorize a plugin using OAuth via the Corsair Hub
 				</p>
-				<a
-					href="/api/connect?plugin=googlecalendar&tenantId=demo-user"
-					style={{
-						display: 'inline-block',
-						padding: '0.75rem 1.5rem',
-						backgroundColor: '#4285F4',
-						color: 'white',
-						borderRadius: '4px',
-						textDecoration: 'none',
-						fontSize: '1rem',
-					}}
-				>
-					Connect Google Calendar
-				</a>
+				<HubConnectButton
+					plugin="googlecalendar"
+					label="Connect Google Calendar via Hub"
+				/>
 			</div>
 
 			<div style={{ marginTop: '2rem' }}>

@@ -35,12 +35,12 @@ import {
 import { errorHandlers } from './error-handlers';
 import { OnedriveSchema } from './schema';
 import { DriveWebhooks } from './webhooks';
+import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	OnedriveValidationPayload,
 	OnedriveWebhookOutputs,
 	OnedriveWebhookPayload,
 } from './webhooks/types';
-import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	createOnedriveMatch,
 	createOnedriveValidationMatch,

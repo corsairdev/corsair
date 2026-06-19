@@ -13,8 +13,6 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { matchSlackTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveSlackOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
@@ -45,6 +43,8 @@ import {
 	ReactionWebhooks,
 	UserWebhooks,
 } from './webhooks';
+import { resolveSlackOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchSlackTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ChallengeEvent,
 	ChannelCreatedEvent,

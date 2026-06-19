@@ -1,9 +1,5 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import {
-	asRecord,
-	decodePubSubData,
-	firstString,
-} from 'corsair/core';
+import { asRecord, decodePubSubData, firstString } from 'corsair/core';
 
 const CHANNEL_ID_PATTERN = /channel_id=([A-Za-z0-9_-]+)/;
 

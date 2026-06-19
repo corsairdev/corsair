@@ -1,10 +1,10 @@
 import * as p from '@clack/prompts';
+import { setWebhookTenantLink } from 'corsair';
 import type { CorsairInternalConfig } from 'corsair/core';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from 'corsair/core';
-import { setWebhookTenantLink } from 'corsair';
 
 const MICROSOFT_TOKEN_URL =
 	'https://login.microsoftonline.com/common/oauth2/v2.0/token';

@@ -56,8 +56,8 @@ import {
 	DealWebhooks,
 	TicketWebhooks,
 } from './webhooks';
-import { matchHubspotTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveHubspotOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchHubspotTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CompanyCreatedEventSchema,
 	CompanyDeletedEventSchema,

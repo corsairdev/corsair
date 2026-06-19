@@ -1,9 +1,5 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import {
-	asRecord,
-	firstString,
-	readBodyRecord,
-} from 'corsair/core';
+import { asRecord, firstString, readBodyRecord } from 'corsair/core';
 
 // GitLab project and group webhooks include project_id / project.id on the payload.
 // See https://docs.gitlab.com/user/project/integrations/webhook_events/

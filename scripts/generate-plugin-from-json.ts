@@ -1289,7 +1289,9 @@ export const errorHandlers = {
 	console.log(`  1. Read packages/${lowerName}/AGENT.md for full instructions`);
 	console.log(`  2. Fill in client.ts (API base URL + auth header)`);
 	console.log(`  3. Fill in each endpoint's path and method`);
-	console.log(`  4. Configure webhook tenant routing (tenant-matcher, oauth-tenant-link, authConfig)`);
+	console.log(
+		`  4. Configure webhook tenant routing (tenant-matcher, oauth-tenant-link, authConfig)`,
+	);
 	console.log(`  5. Run: cd packages/${lowerName} && pnpm typecheck`);
 }
 

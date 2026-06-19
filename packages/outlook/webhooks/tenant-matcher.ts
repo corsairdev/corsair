@@ -1,10 +1,5 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import {
-	asRecord,
-	firstString,
-	getHeader,
-	readBodyRecord,
-} from 'corsair/core';
+import { asRecord, firstString, getHeader, readBodyRecord } from 'corsair/core';
 
 function isOutlookValidationHandshake(request: RawWebhookRequest): boolean {
 	const body = readBodyRecord(request);

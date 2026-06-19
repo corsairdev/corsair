@@ -3,17 +3,11 @@ import 'dotenv/config';
 import { corsair } from '@/server/corsair';
 
 const main = async () => {
-	const res = await corsair.hubspot.api.contacts.search({
-		query: 'test',
-		limit: 5,
-	});
-
-	// Example: Test Twilio API endpoints
-	// const sms = await corsair.twilio.api.messages.send({
-	// 	To: '+1234567890',
-	// 	From: '+1098765432',
-	// 	Body: 'Hello from Corsair!',
-	// });
+	const res = await corsair.keys.gmail.get_client_id();
+	const res2 = await corsair.keys.gmail.get_client_secret();
+	console.log(
+		`pnpm corsair setup --gmail client_id=${res} client_secret=${res2} redirect_url=http://localhost:4318/oauth/callback/hk_CWWlqj1-VKJh2bckU6y5-bSqsAY3VK83noXwL7YCoDw`,
+	);
 };
 
 main().catch((err) => {
