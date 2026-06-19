@@ -47,6 +47,11 @@
       "types": "./dist/tunnel.d.ts",
       "default": "./dist/tunnel.js"
     },
+    "./hub": {
+      "dev-source": "./hub.ts",
+      "types": "./dist/hub.d.ts",
+      "default": "./dist/hub.js"
+    },
     "./tests": {
       "dev-source": "./tests.ts",
       "types": "./dist/tests.d.ts",

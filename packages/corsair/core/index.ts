@@ -1,5 +1,6 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
+import type { HubConfig } from '../hub';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
@@ -43,6 +44,7 @@ export type CorsairInternalConfig = {
 			state: string;
 		}) => string;
 	};
+	hub?: HubConfig;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -102,6 +104,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		multiTenancy: !!config.multiTenancy,
 		approval: config.approval,
 		connect: config.connect,
+		hub: config.hub,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
@@ -205,6 +208,7 @@ export type {
 	BaseProviders,
 	PickAuth,
 } from './constants';
+export { formatProviderDisplayName, ProviderDisplayNames } from './constants';
 // Endpoint types
 export type {
 	BindEndpoints,
@@ -273,10 +277,10 @@ export type {
 	BindWebhooks,
 	BoundWebhook,
 	BoundWebhookTree,
+	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
-	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookPathsOf,
@@ -286,9 +290,9 @@ export type {
 	WebhookTree,
 } from './webhooks';
 export {
+	collectPluginWebhookMatchers,
 	matchWebhookPlugin,
 	matchWebhookPluginAndTenant,
-	collectPluginWebhookMatchers,
 	type PluginWebhookMatchers,
 	type WebhookPluginTenantMatch,
 } from './webhooks/tenant-match';

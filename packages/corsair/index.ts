@@ -30,37 +30,6 @@ export {
 	toNextJsHandler,
 } from './core/management';
 export {
-	type AnyCorsairInstance,
-	type FormFieldSchema,
-	formatDocSchemaShape,
-	getSchema,
-	getStructuredSchema,
-	type ListOperationsOptions,
-	listOperations,
-} from './inspect';
-export type { PermissionExecuteResult } from './permissions';
-export { executePermission } from './permissions';
-export { type SetupCorsairOptions, setupCorsair } from './setup/index';
-export { processWebhook } from './webhooks';
-export {
-	setWebhookTenantLink,
-	resolveAccountFromWebhookLink,
-	resolveTenantIdFromWebhookLink,
-	resolveTenantFromWebhookLink,
-	type ResolveAccountFromWebhookLinkInput,
-	type WebhookTenantLink,
-} from './webhooks/tenant-links';
-export {
-	processCorsair,
-	type OAuthCallbackTunnelPayload,
-	type ProcessCorsairOptions,
-	type ProcessCorsairRequest,
-	type TunnelAck,
-	type TunnelEnvelope,
-	type TunnelType,
-	type WebhookTunnelPayload,
-} from './tunnel';
-export {
 	collectPluginWebhookMatchers,
 	matchWebhookPlugin,
 	matchWebhookPluginAndTenant,
@@ -75,3 +44,34 @@ export {
 	readBodyRecord,
 	toExternalId,
 } from './core/webhooks/tenant-match-utils';
+export {
+	type AnyCorsairInstance,
+	type FormFieldSchema,
+	formatDocSchemaShape,
+	getSchema,
+	getStructuredSchema,
+	type ListOperationsOptions,
+	listOperations,
+} from './inspect';
+export type { PermissionExecuteResult } from './permissions';
+export { executePermission } from './permissions';
+export { type SetupCorsairOptions, setupCorsair } from './setup/index';
+export {
+	type OAuthCallbackTunnelPayload,
+	type ProcessCorsairOptions,
+	type ProcessCorsairRequest,
+	processCorsair,
+	type TunnelAck,
+	type TunnelEnvelope,
+	type TunnelType,
+	type WebhookTunnelPayload,
+} from './tunnel';
+export { processWebhook } from './webhooks';
+export {
+	type ResolveAccountFromWebhookLinkInput,
+	resolveAccountFromWebhookLink,
+	resolveTenantFromWebhookLink,
+	resolveTenantIdFromWebhookLink,
+	setWebhookTenantLink,
+	type WebhookTenantLink,
+} from './webhooks/tenant-links';
