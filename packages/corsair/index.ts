@@ -42,3 +42,36 @@ export type { PermissionExecuteResult } from './permissions';
 export { executePermission } from './permissions';
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';
 export { processWebhook } from './webhooks';
+export {
+	setWebhookTenantLink,
+	resolveAccountFromWebhookLink,
+	resolveTenantIdFromWebhookLink,
+	resolveTenantFromWebhookLink,
+	type ResolveAccountFromWebhookLinkInput,
+	type WebhookTenantLink,
+} from './webhooks/tenant-links';
+export {
+	processCorsair,
+	type OAuthCallbackTunnelPayload,
+	type ProcessCorsairOptions,
+	type ProcessCorsairRequest,
+	type TunnelAck,
+	type TunnelEnvelope,
+	type TunnelType,
+	type WebhookTunnelPayload,
+} from './tunnel';
+export {
+	collectPluginWebhookMatchers,
+	matchWebhookPlugin,
+	matchWebhookPluginAndTenant,
+	type PluginWebhookMatchers,
+	type WebhookPluginTenantMatch,
+} from './core/webhooks/tenant-match';
+export {
+	asRecord,
+	decodePubSubData,
+	firstString,
+	getHeader,
+	readBodyRecord,
+	toExternalId,
+} from './core/webhooks/tenant-match-utils';

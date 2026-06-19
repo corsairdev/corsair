@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -29,6 +30,7 @@ import type {
 	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
+import { matchGoogleSheetsTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	GoogleAppsScriptWebhookPayloadSchema,
 	RangeUpdatedEventSchema,
@@ -241,6 +243,12 @@ const googleSheetsEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleSheetsEndpointsNested>;
 
+export const googlesheetsAuthConfig = {
+	oauth_2: {
+		account: ['spreadsheet_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
 	CorsairPlugin<
 		'googlesheets',
@@ -267,6 +275,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 	};
 	return {
 		id: 'googlesheets',
+		authConfig: googlesheetsAuthConfig,
 		schema: GoogleSheetsSchema,
 		options: options,
 		oauthConfig: {
@@ -359,6 +368,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			const hasSheetsEventType = body?.eventType === 'rangeUpdated';
 			return hasSpreadsheetId || hasSheetsEventType;
 		},
+		pluginTenantWebhookMatcher: matchGoogleSheetsTenantWebhook,
 	} satisfies InternalGoogleSheetsPlugin;
 }
 

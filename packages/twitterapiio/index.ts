@@ -33,6 +33,7 @@ import type {
 import { errorHandlers } from './error-handlers';
 import { TwitterApiIOSchema } from './schema';
 import { TweetWebhooks } from './webhooks';
+import { matchTwitterApiIOTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TweetCreatedEvent,
 	TweetFilterMatchEvent,
@@ -639,7 +640,7 @@ const twitterApiIOEndpointMeta = {
 
 export const twitterApiIOAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -676,6 +677,7 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 
 	return {
 		id: 'twitterapiio',
+		authConfig: twitterApiIOAuthConfig,
 		schema: TwitterApiIOSchema,
 		options,
 		hooks: options.hooks,
@@ -711,6 +713,7 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 				body?.type === 'tweet.created' || body?.type === 'tweet.filter_match';
 			return hasSignature || hasKnownType;
 		},
+		pluginTenantWebhookMatcher: matchTwitterApiIOTenantWebhook,
 		keyBuilder: async (ctx: TwitterApiIOKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

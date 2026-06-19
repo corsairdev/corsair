@@ -47,6 +47,7 @@ import {
 	NewProjectEventSchema,
 	UpdatedIssueEventSchema,
 } from './webhooks/types';
+import { matchJiraTenantWebhook } from './webhooks/tenant-matcher';
 
 export type JiraPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -521,6 +522,7 @@ export function jira<const T extends JiraPluginOptions>(
 			const headers = request.headers;
 			return 'x-atlassian-webhook-identifier' in headers;
 		},
+		pluginTenantWebhookMatcher: matchJiraTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

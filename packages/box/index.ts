@@ -29,6 +29,7 @@ import {
 	MetadataWebhooks,
 	SharedLinkWebhooks,
 } from './webhooks';
+import { matchBoxTenantWebhook } from './webhooks/tenant-matcher';
 import type { BoxWebhookOutputs, BoxWebhookPayload } from './webhooks/types';
 import {
 	CollaborationAcceptedPayloadSchema,
@@ -505,8 +506,8 @@ const boxWebhookSchemas = {
 const defaultAuthType = 'oauth_2' as const;
 
 export const boxAuthConfig = {
-	oauth_2: {
-		account: ['one'] as const,
+	api_key: {
+		account: ['webhook_id', 'user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -532,6 +533,7 @@ export function box<const T extends BoxPluginOptions>(
 	};
 	return {
 		id: 'box',
+		authConfig: boxAuthConfig,
 		schema: BoxSchema,
 		options: options,
 		hooks: options.hooks,
@@ -546,6 +548,7 @@ export function box<const T extends BoxPluginOptions>(
 			const hasTimestamp = 'box-delivery-timestamp' in headers;
 			return hasTimestamp;
 		},
+		pluginTenantWebhookMatcher: matchBoxTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

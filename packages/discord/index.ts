@@ -48,6 +48,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { DiscordSchema } from './schema';
 import { InteractionWebhooks } from './webhooks';
+import { matchDiscordTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DiscordApplicationCommandInteraction,
 	DiscordMessageComponentInteraction,
@@ -362,7 +363,11 @@ const discordEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof discordEndpointsNested>;
 
-export const discordAuthConfig = {} as const satisfies PluginAuthConfig;
+export const discordAuthConfig = {
+	api_key: {
+		account: ['guild_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 // ── Plugin Type Hierarchy ──────────────────────────────────────────────────────
 
@@ -392,6 +397,7 @@ export function discord<const T extends DiscordPluginOptions>(
 
 	return {
 		id: 'discord',
+		authConfig: discordAuthConfig,
 		schema: DiscordSchema,
 		options,
 		hooks: options.hooks,
@@ -436,6 +442,7 @@ export function discord<const T extends DiscordPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchDiscordTenantWebhook,
 
 		errorHandlers: {
 			...errorHandlers,

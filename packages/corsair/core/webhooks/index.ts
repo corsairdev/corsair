@@ -13,6 +13,8 @@ export type RawWebhookRequest = {
 	headers: Record<string, string | string[] | undefined>;
 	/** Raw request body (string or already parsed object) */
 	body: unknown;
+	/** Query string parameters when available (e.g. Microsoft Graph validationToken). */
+	query?: Record<string, string | string[] | undefined>;
 };
 
 /**
@@ -27,6 +29,8 @@ export type WebhookRequest<TPayload = unknown> = {
 	headers: Record<string, string | string[] | undefined>;
 	/** Raw request body string (for signature verification) */
 	rawBody?: string;
+	/** Query string parameters when available. */
+	query?: Record<string, string | string[] | undefined>;
 };
 
 /**
@@ -61,6 +65,33 @@ export type WebhookResponse<TData = unknown> = {
  * @returns True if this webhook should handle the request
  */
 export type CorsairWebhookMatcher = (request: RawWebhookRequest) => boolean;
+
+/**
+ * Identifies which external credential key should be used to resolve a tenant
+ * for an incoming webhook. The `linkType` names the field stored on
+ * `corsair_accounts` (for example `team_id`, `installation_id`).
+ */
+export type WebhookTenantMatch = {
+	linkType: string;
+	externalId: string;
+};
+
+/**
+ * Extracts the tenant lookup key from a webhook after the plugin has been
+ * identified. Return null when the payload does not contain a resolvable id
+ * (for example URL verification challenges).
+ */
+export type CorsairWebhookTenantMatcher = (
+	request: RawWebhookRequest,
+) => WebhookTenantMatch | null;
+
+/**
+ * Resolves the webhook tenant link field after OAuth completes.
+ * Return null when the provider does not expose a stable external id.
+ */
+export type CorsairOAuthWebhookTenantLinkResolver = (
+	tokens: import('../auth/exchange').TokenResponse,
+) => WebhookTenantMatch | null | Promise<WebhookTenantMatch | null>;
 
 /**
  * Bivariance hack for webhook function types to ensure proper type inference.

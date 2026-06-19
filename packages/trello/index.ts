@@ -30,6 +30,7 @@ import {
 	ListWebhooks,
 	MemberWebhooks,
 } from './webhooks';
+import { matchTrelloTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TrelloCardCreatedEvent,
 	TrelloCardUpdatedEvent,
@@ -377,7 +378,7 @@ const defaultAuthType = 'api_key' as const;
 
 export const trelloAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['idModel'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -406,6 +407,7 @@ export function trello<const T extends TrelloPluginOptions>(
 	};
 	return {
 		id: 'trello',
+		authConfig: trelloAuthConfig,
 		schema: TrelloSchema,
 		options: options,
 		hooks: options.hooks,
@@ -419,6 +421,7 @@ export function trello<const T extends TrelloPluginOptions>(
 			const headers = request.headers;
 			return 'x-trello-webhook' in headers;
 		},
+		pluginTenantWebhookMatcher: matchTrelloTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -35,6 +35,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { StravaSchema } from './schema';
+import { matchStravaTenantWebhook } from './webhooks/tenant-matcher';
 import type { StravaWebhookOutputs } from './webhooks/types';
 
 export type StravaPluginOptions = {
@@ -374,7 +375,7 @@ const stravaEndpointMeta = {
 
 export const stravaAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['owner_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -406,6 +407,7 @@ export function strava<const T extends StravaPluginOptions>(
 	};
 	return {
 		id: 'strava',
+		authConfig: stravaAuthConfig,
 		schema: StravaSchema,
 		options: options,
 		hooks: options.hooks,
@@ -419,6 +421,7 @@ export function strava<const T extends StravaPluginOptions>(
 			// Webhooks are not implemented yet
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchStravaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

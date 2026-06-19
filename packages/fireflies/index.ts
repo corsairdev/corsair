@@ -29,6 +29,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { FirefliesSchema } from './schema';
 import { MeetingWebhooks, TranscriptionWebhooks } from './webhooks';
+import { matchFirefliesTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	FirefliesWebhookOutputs,
 	InMeetingEvent,
@@ -329,9 +330,7 @@ type FirefliesWebhook<
 const defaultAuthType = 'api_key' as const;
 
 export const firefliesAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type FirefliesBoundEndpoints = BindEndpoints<
@@ -384,6 +383,7 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 	};
 	return {
 		id: 'fireflies',
+		authConfig: firefliesAuthConfig,
 		schema: FirefliesSchema,
 		options: options,
 		hooks: options.hooks,
@@ -397,6 +397,7 @@ export function fireflies<const T extends FirefliesPluginOptions>(
 			const headers = request.headers;
 			return 'x-fireflies-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchFirefliesTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

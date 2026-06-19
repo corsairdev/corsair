@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -267,6 +268,8 @@ import {
 	WorkflowRunInProgressEventSchema,
 	WorkflowRunRequestedEventSchema,
 } from './webhooks/types';
+import { matchGithubTenantWebhook } from './webhooks/tenant-matcher';
+import { resolveGithubOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export {
 	createGithubEventMatch,
@@ -1713,6 +1716,15 @@ export type InternalGithubPlugin = BaseGithubPlugin<GithubPluginOptions>;
 export type ExternalGithubPlugin<PluginOptions extends GithubPluginOptions> =
 	BaseGithubPlugin<PluginOptions>;
 
+export const githubAuthConfig = {
+	api_key: {
+		account: ['installation_id'] as const,
+	},
+	oauth_2: {
+		account: ['installation_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export function github<const PluginOptions extends GithubPluginOptions>(
 	incomingOptions: GithubPluginOptions &
 		PluginOptions = {} as GithubPluginOptions & PluginOptions,
@@ -1723,6 +1735,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 	};
 	return {
 		id: 'github',
+		authConfig: githubAuthConfig,
 		oauthConfig: {
 			providerName: 'GitHub',
 			authUrl: 'https://github.com/login/oauth/authorize',
@@ -1744,6 +1757,8 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 			const hasGithubSignature = headers['x-hub-signature-256'] !== undefined;
 			return hasGithubEvent && hasGithubSignature;
 		},
+		pluginTenantWebhookMatcher: matchGithubTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveGithubOAuthWebhookTenantLink,
 		keyBuilder: async (ctx: GithubKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

@@ -28,6 +28,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CloudflareSchema } from './schema';
+import { matchCloudflareTenantWebhook } from './webhooks/tenant-matcher';
 
 export type CloudflarePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -297,7 +298,7 @@ const cloudflareEndpointMeta = {
 
 export const cloudflareAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -327,6 +328,7 @@ export function cloudflare<const T extends CloudflarePluginOptions>(
 	};
 	return {
 		id: 'cloudflare',
+		authConfig: cloudflareAuthConfig,
 		schema: CloudflareSchema,
 		options: options,
 		hooks: options.hooks,
@@ -335,6 +337,7 @@ export function cloudflare<const T extends CloudflarePluginOptions>(
 		endpointMeta: cloudflareEndpointMeta,
 		endpointSchemas: cloudflareEndpointSchemas,
 		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: matchCloudflareTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

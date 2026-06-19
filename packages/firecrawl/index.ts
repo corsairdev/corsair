@@ -29,6 +29,7 @@ import { errorHandlers as defaultErrorHandlers } from './error-handlers';
 import type { FirecrawlContext } from './plugin-context';
 import { FirecrawlSchema } from './schema';
 import * as Wh from './webhooks';
+import { matchFirecrawlTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	AgentActionEventSchema,
 	AgentCancelledEventSchema,
@@ -329,6 +330,7 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 				'x-firecrawl-signature' in headers || 'X-Firecrawl-Signature' in headers
 			);
 		},
+		pluginTenantWebhookMatcher: matchFirecrawlTenantWebhook,
 		errorHandlers: {
 			...defaultErrorHandlers,
 			...options.errorHandlers,

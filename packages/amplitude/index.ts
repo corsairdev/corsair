@@ -40,6 +40,7 @@ import {
 	ExperimentWebhooks,
 	MonitorWebhooks,
 } from './webhooks';
+import { matchAmplitudeTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	AmplitudeAnnotationCreatedEvent,
 	AmplitudeAnnotationUpdatedEvent,
@@ -379,9 +380,7 @@ const amplitudeWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const amplitudeAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseAmplitudePlugin<T extends AmplitudePluginOptions> =
@@ -410,6 +409,7 @@ export function amplitude<const T extends AmplitudePluginOptions>(
 	};
 	return {
 		id: 'amplitude',
+		authConfig: amplitudeAuthConfig,
 		schema: AmplitudeSchema,
 		options: options,
 		hooks: options.hooks,
@@ -423,6 +423,7 @@ export function amplitude<const T extends AmplitudePluginOptions>(
 			const headers = request.headers;
 			return 'x-amplitude-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchAmplitudeTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

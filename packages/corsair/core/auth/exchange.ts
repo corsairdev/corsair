@@ -7,6 +7,9 @@ export type TokenResponse = {
 	refresh_token?: string;
 	expires_in?: number;
 	token_type?: string;
+	// Providers return extra fields (team_id, installation, hub_id, etc.) used by
+	// oauthWebhookTenantLinkResolver to populate webhook tenant routing keys.
+	[key: string]: unknown;
 };
 
 /**

@@ -7,7 +7,7 @@ export async function setupCalendarWatch(
 	accessToken: string,
 	webhookUrl: string,
 	calendarId: string,
-): Promise<void> {
+): Promise<{ channelId: string }> {
 	const watchSpin = p.spinner();
 	watchSpin.start('Starting Calendar watch...');
 
@@ -49,4 +49,6 @@ export async function setupCalendarWatch(
 		`Channel ID: ${channelId}\nResource ID: ${data.resourceId}\nExpiration: ${new Date(Number(data.expiration)).toISOString()}`,
 		'Watch Response',
 	);
+
+	return { channelId };
 }

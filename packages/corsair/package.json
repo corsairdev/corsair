@@ -42,6 +42,11 @@
       "types": "./dist/oauth.d.ts",
       "default": "./dist/oauth.js"
     },
+    "./tunnel": {
+      "dev-source": "./tunnel.ts",
+      "types": "./dist/tunnel.d.ts",
+      "default": "./dist/tunnel.js"
+    },
     "./tests": {
       "dev-source": "./tests.ts",
       "types": "./dist/tests.d.ts",

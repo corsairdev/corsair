@@ -276,9 +276,30 @@ export type {
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
+	CorsairOAuthWebhookTenantLinkResolver,
+	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
+	WebhookTenantMatch,
 	WebhookTree,
 } from './webhooks';
+export {
+	matchWebhookPlugin,
+	matchWebhookPluginAndTenant,
+	collectPluginWebhookMatchers,
+	type PluginWebhookMatchers,
+	type WebhookPluginTenantMatch,
+} from './webhooks/tenant-match';
+export {
+	asRecord,
+	decodePubSubData,
+	extractMicrosoftGraphValidationToken,
+	firstString,
+	getHeader,
+	isMicrosoftGraphValidationHandshake,
+	readBodyRecord,
+	readQueryParam,
+	toExternalId,
+} from './webhooks/tenant-match-utils';

@@ -29,7 +29,12 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
-import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
+import type {
+	BindWebhooks,
+	CorsairWebhookTenantMatcher,
+	RawWebhookRequest,
+	WebhookTree,
+} from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -139,6 +144,11 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							 * Use this as a first-level filter before checking individual webhook matchers.
 							 */
 							pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
+							/**
+							 * Extracts the external tenant lookup key for this plugin's webhook.
+							 * Only present if the plugin defines `pluginTenantWebhookMatcher`.
+							 */
+							pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 						}
 					: {}) &
 				// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
@@ -556,6 +566,10 @@ export function buildCorsairClient<
 			if (plugin.pluginWebhookMatcher) {
 				apiUnsafe[plugin.id]!.pluginWebhookMatcher =
 					plugin.pluginWebhookMatcher;
+			}
+			if (plugin.pluginTenantWebhookMatcher) {
+				apiUnsafe[plugin.id]!.pluginTenantWebhookMatcher =
+					plugin.pluginTenantWebhookMatcher;
 			}
 		}
 	}

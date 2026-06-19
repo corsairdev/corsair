@@ -156,9 +156,7 @@ const openWeatherMapEndpointMeta = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const openWeatherMapAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -200,6 +198,7 @@ export function openweathermap<const T extends OpenWeatherMapPluginOptions>(
 	};
 	return {
 		id: 'openweathermap',
+		authConfig: openWeatherMapAuthConfig,
 		schema: OpenWeatherMapSchema,
 		options: options,
 		hooks: options.hooks,

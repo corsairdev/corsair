@@ -18,6 +18,8 @@ import {
 	verifyAndDecodeState,
 } from '../core/auth/state';
 import { createCorsairOrm } from '../db/orm';
+import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
+import { setWebhookTenantLink } from '../webhooks/tenant-links';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
@@ -290,6 +292,38 @@ export async function processOAuthCallback(
 	if (tokens.expires_in) {
 		await accountKm.set_expires_at(
 			String(Math.floor(Date.now() / 1000) + tokens.expires_in),
+		);
+	}
+
+	try {
+		const tenantLink = await resolveOAuthWebhookTenantLink(
+			internal.plugins,
+			pluginId,
+			tokens,
+		);
+		if (tenantLink) {
+			try {
+				const extraAccountFields = plugin.authConfig?.oauth_2?.account ?? [];
+				await setWebhookTenantLink({
+					database: internal.database,
+					kek: internal.kek,
+					pluginId,
+					tenantId,
+					link: tenantLink,
+					authType: 'oauth_2',
+					extraAccountFields,
+				});
+			} catch (error) {
+				console.warn(
+					`[corsair:oauth] Failed to persist webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
+					error,
+				);
+			}
+		}
+	} catch (error) {
+		console.warn(
+			`[corsair:oauth] Failed to resolve webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
+			error,
 		);
 	}
 

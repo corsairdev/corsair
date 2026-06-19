@@ -34,6 +34,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TallySchema } from './schema';
 import { FormResponseWebhooks } from './webhooks';
+import { matchTallyTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TallyFormResponseEvent,
 	TallyWebhookOutputs,
@@ -411,7 +412,7 @@ const tallyWebhookSchemas = {
 
 export const tallyAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['form_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -448,6 +449,7 @@ export function tally<const T extends TallyPluginOptions>(
 	};
 	return {
 		id: 'tally',
+		authConfig: tallyAuthConfig,
 		schema: TallySchema,
 		options: options,
 		hooks: options.hooks,
@@ -460,6 +462,7 @@ export function tally<const T extends TallyPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'tally-signature' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchTallyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
