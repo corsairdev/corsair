@@ -36,6 +36,8 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
+import { resolveLinearOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchLinearTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CommentCreatedEventSchema,
 	CommentDeletedEventSchema,
@@ -47,8 +49,6 @@ import {
 	ProjectDeletedEventSchema,
 	ProjectUpdatedEventSchema,
 } from './webhooks/types';
-import { matchLinearTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveLinearOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type LinearPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;

@@ -273,10 +273,10 @@ export type {
 	BindWebhooks,
 	BoundWebhook,
 	BoundWebhookTree,
+	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
-	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookPathsOf,
@@ -286,9 +286,9 @@ export type {
 	WebhookTree,
 } from './webhooks';
 export {
+	collectPluginWebhookMatchers,
 	matchWebhookPlugin,
 	matchWebhookPluginAndTenant,
-	collectPluginWebhookMatchers,
 	type PluginWebhookMatchers,
 	type WebhookPluginTenantMatch,
 } from './webhooks/tenant-match';

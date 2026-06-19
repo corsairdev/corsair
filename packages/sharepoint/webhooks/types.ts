@@ -3,9 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
-import {
-	isMicrosoftGraphValidationHandshake,
-} from 'corsair/core';
+import { isMicrosoftGraphValidationHandshake } from 'corsair/core';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────

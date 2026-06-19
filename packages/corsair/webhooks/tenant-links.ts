@@ -1,14 +1,14 @@
-import type { AuthTypes } from '../core/constants';
-import { createAccountKeyManager } from '../core/auth/key-manager';
 import {
 	decryptConfig,
 	decryptDEK,
 	decryptWithDEK,
 	encryptConfig,
 } from '../core/auth/encryption';
+import { createAccountKeyManager } from '../core/auth/key-manager';
+import type { AuthTypes } from '../core/constants';
+import type { WebhookTenantMatch } from '../core/webhooks';
 import type { CorsairAccount } from '../db';
 import type { CorsairDatabase } from '../db/kysely/database';
-import type { WebhookTenantMatch } from '../core/webhooks';
 
 const parseConfig = (config: unknown): Record<string, unknown> => {
 	if (!config) return {};
@@ -191,7 +191,10 @@ export async function resolveAccountFromWebhookLink(
 
 		try {
 			const dek = await decryptDEK(account.dek, kek);
-			const storedConfig = parseConfig(account.config) as Record<string, string>;
+			const storedConfig = parseConfig(account.config) as Record<
+				string,
+				string
+			>;
 			const encryptedValue = storedConfig[linkType];
 			if (!encryptedValue) continue;
 

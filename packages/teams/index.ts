@@ -28,6 +28,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TeamsSchema } from './schema';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
+import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TeamsChannelCreatedEvent,
 	TeamsChannelMessageEvent,
@@ -35,7 +36,6 @@ import type {
 	TeamsMembershipChangedEvent,
 	TeamsWebhookOutputs,
 } from './webhooks/types';
-import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	TeamsChannelCreatedEventSchema,
 	TeamsChannelCreatedPayloadSchema,

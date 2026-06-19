@@ -36,12 +36,12 @@ import {
 import { errorHandlers } from './error-handlers';
 import { XquikSchema } from './schema';
 import { EventWebhooks } from './webhooks';
+import { matchXquikTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	XquikWebhookOutputs,
 	XquikWebhookPayload,
 } from './webhooks/types';
 import { hasXquikSignature } from './webhooks/types';
-import { matchXquikTenantWebhook } from './webhooks/tenant-matcher';
 
 export type XquikPluginOptions = {
 	authType?: PickAuth<'api_key'>;

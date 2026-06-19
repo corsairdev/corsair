@@ -736,7 +736,9 @@ export * from './oauth-tenant-link';
 	console.log(`\n📝 Next steps:`);
 	console.log(`   1. Run: pnpm install`);
 	console.log(`   2. Update the API base URL and auth in client.ts`);
-	console.log(`   3. Configure webhook tenant routing (tenant-matcher, oauth-tenant-link, authConfig)`);
+	console.log(
+		`   3. Configure webhook tenant routing (tenant-matcher, oauth-tenant-link, authConfig)`,
+	);
 	console.log(`   4. Replace the example endpoints/webhooks with real ones`);
 	console.log(`   5. Run: cd packages/${lowerName} && pnpm typecheck`);
 }

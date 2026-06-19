@@ -14,7 +14,6 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { matchVercelTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	aliases,
 	deployments,
@@ -42,6 +41,7 @@ import {
 	ProjectCreatedEventSchema,
 	WebhookHandlers,
 } from './webhooks';
+import { matchVercelTenantWebhook } from './webhooks/tenant-matcher';
 
 const defaultAuthType: AuthTypes = 'api_key';
 

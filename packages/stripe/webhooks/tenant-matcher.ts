@@ -1,5 +1,5 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import { asRecord, firstString, readBodyRecord } from 'corsair/core';
+import { firstString, readBodyRecord } from 'corsair/core';
 
 // Stripe Connect events include a top-level `account` field with the connected
 // account id (acct_...). Platform-only events omit it.
