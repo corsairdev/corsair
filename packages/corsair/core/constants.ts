@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'ahrefs',
 	'airtable',
 	'amplitude',
 	'asana',
@@ -150,6 +151,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
