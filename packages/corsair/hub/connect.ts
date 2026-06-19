@@ -18,17 +18,38 @@ type CreateSessionPayload = {
 	source: HubConnectSessionInput['source'];
 };
 
+function isNonEmptyString(value: unknown): value is string {
+	return typeof value === 'string' && value.length > 0;
+}
+
 function parseHubSessionPayload(payload: unknown): HubConnectSessionResult {
-	if (
-		payload &&
-		typeof payload === 'object' &&
-		'connectUrl' in payload &&
-		typeof payload.connectUrl === 'string'
-	) {
-		return payload as HubConnectSessionResult;
+	if (!payload || typeof payload !== 'object') {
+		throw new Error('Hub API returned an empty connect session');
 	}
 
-	throw new Error('Hub API returned an empty connect session');
+	const session = payload as Record<string, unknown>;
+
+	if (
+		!isNonEmptyString(session.connectUrl) ||
+		!isNonEmptyString(session.token) ||
+		!isNonEmptyString(session.projectId)
+	) {
+		throw new Error(
+			'Hub API returned an incomplete connect session (expected connectUrl, token, and projectId)',
+		);
+	}
+
+	const result: HubConnectSessionResult = {
+		connectUrl: session.connectUrl,
+		token: session.token,
+		projectId: session.projectId,
+	};
+
+	if (isNonEmptyString(session.expiresAt)) {
+		result.expiresAt = session.expiresAt;
+	}
+
+	return result;
 }
 
 function parseHubSessionError(payload: unknown, status: number): string {
