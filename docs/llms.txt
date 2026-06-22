@@ -54,6 +54,7 @@ Run Corsair in your own process with the open-source SDK — local MCP, plugins,
 
 - [SDK introduction](https://docs.corsair.dev/getting-started/introduction.md): Self-hosted Corsair overview.
 - [SDK quick start](https://docs.corsair.dev/getting-started/quick-start.md): Local setup.
+- [Next.js](https://docs.corsair.dev/getting-started/nextjs.md): App Router API and webhook routes with a Vercel deployment.
 - [SDK setup](https://docs.corsair.dev/getting-started/setup.md): Integrations, accounts, tenants, CLI, and setupCorsair.
 - [Tenant provisioning](https://docs.corsair.dev/production/tenant-provisioning.md): Provision tenants in production with setupCorsair.
 - [Plugins guide](https://docs.corsair.dev/guides/plugins.md): Self-hosted plugin catalog.
