@@ -20,15 +20,15 @@
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
-    "zod": "^4.1.13"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "corsair": "workspace:*",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
-    "zod": "^4.1.13",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.14"
+    "zod": "^4.4.3",
+    "jest": "^30.4.2",
+    "@types/jest": "^30.0.0"
   },
   "keywords": [
     "corsair",

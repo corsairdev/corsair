@@ -23,10 +23,10 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^30.0.0",
     "corsair": "workspace:*",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.4.9",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
     "zod": "catalog:"

@@ -20,32 +20,32 @@
     "build:watch": "tsup --watch"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.0.0",
-    "@ai-sdk/google": "^1.0.0",
-    "@ai-sdk/groq": "^1.0.0",
-    "@ai-sdk/openai": "^1.0.0",
+    "@ai-sdk/anthropic": "^3.0.85",
+    "@ai-sdk/google": "^3.0.83",
+    "@ai-sdk/groq": "^3.0.42",
+    "@ai-sdk/openai": "^3.0.74",
     "@corsair-dev/cli": "workspace:*",
     "@corsair-dev/mcp": "workspace:*",
-    "ai": "^4.0.0",
-    "better-sqlite3": "^12.0.0",
+    "ai": "^6.0.208",
+    "better-sqlite3": "^12.11.1",
     "corsair": "workspace:*",
-    "kysely": "^0.28.9",
-    "typescript": "^5.9.3",
-    "zod": "^4.1.13"
+    "kysely": "^0.29.2",
+    "typescript": "^6.0.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.0",
+    "@tailwindcss/vite": "^4.3.1",
     "@types/better-sqlite3": "^7.6.0",
-    "@types/node": "^24.10.1",
-    "@types/react": "^19.0.0",
+    "@types/node": "^26.0.0",
+    "@types/react": "^19.2.17",
     "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.0",
+    "@vitejs/plugin-react": "^6.0.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^4.3.1",
     "tsup": "^8.0.1",
-    "tsx": "^4.20.6",
-    "vite": "^6.0.0"
+    "tsx": "^4.22.4",
+    "vite": "^8.0.16"
   },
   "files": [
     "dist"

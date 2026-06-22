@@ -5,5 +5,5 @@ packages:
   - www
 
 catalog:
-  typescript: ^5.9.3
-  zod: ^4.1.13
+  typescript: ^6.0.3
+  zod: ^4.4.3
