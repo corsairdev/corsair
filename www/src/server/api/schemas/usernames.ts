@@ -21,8 +21,8 @@ export const discordUsernameSchema = z
 			.min(2, 'Discord username must be at least 2 characters')
 			.max(32, 'Discord username must be at most 32 characters')
 			.regex(
-				/^[a-z0-9._]+$/,
-				'Discord username can only contain letters, numbers, periods, and underscores',
+				/^[a-z0-9._-]+$/,
+				'Discord username can only contain letters, numbers, periods, underscores, and dashes',
 			)
 			.refine((value) => !value.includes('..'), {
 				message: 'Discord username cannot contain consecutive periods',
