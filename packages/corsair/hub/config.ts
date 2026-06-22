@@ -29,12 +29,21 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		/\/$/,
 		'',
 	);
+	const projectApiKey = input.projectApiKey.trim();
+	const signingSecret = input.signingSecret.trim();
+	const deliveryUrl = input.deliveryUrl.trim();
+
+	if (!projectApiKey || !signingSecret || !deliveryUrl) {
+		throw new Error(
+			'Hub config requires non-empty projectApiKey, signingSecret, and deliveryUrl',
+		);
+	}
 
 	return {
 		apiUrl,
-		projectApiKey: input.projectApiKey.trim(),
-		signingSecret: input.signingSecret.trim(),
-		deliveryUrl: input.deliveryUrl.trim(),
+		projectApiKey,
+		signingSecret,
+		deliveryUrl,
 		oauthCallbackUrl: input.oauthCallbackUrl?.trim(),
 	};
 }

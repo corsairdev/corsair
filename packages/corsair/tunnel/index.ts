@@ -101,9 +101,9 @@ function verifyTunnelSignature(
 	signature: string | undefined,
 	signingSecret: string,
 ): boolean {
-	if (!signature) return false;
+	if (!signingSecret.trim() || !signature) return false;
 
-	const expected = createHmac('sha256', signingSecret)
+	const expected = createHmac('sha256', signingSecret.trim())
 		.update(body)
 		.digest('hex');
 
@@ -234,7 +234,7 @@ export async function processCorsair(
 		normalizeHeader(request.headers, 'x-corsair-signature'),
 	);
 
-	if (!options.signingSecret) {
+	if (!options.signingSecret?.trim()) {
 		if (!options.allowUnsignedTunnel) {
 			return {
 				status: 'failed',

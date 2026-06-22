@@ -14,8 +14,18 @@ export type BrowserDeliveryPayload = {
 	iat: number;
 };
 
+function resolveSigningSecret(signingSecret: string): string | null {
+	const trimmed = signingSecret.trim();
+	return trimmed.length > 0 ? trimmed : null;
+}
+
 function signPayload(payloadBase64: string, signingSecret: string): string {
-	return createHmac('sha256', signingSecret)
+	const secret = resolveSigningSecret(signingSecret);
+	if (!secret) {
+		throw new Error('Signing secret is required for browser delivery tokens');
+	}
+
+	return createHmac('sha256', secret)
 		.update(payloadBase64)
 		.digest('base64url');
 }
@@ -24,7 +34,8 @@ export function verifyBrowserDeliveryToken(
 	token: string,
 	signingSecret: string,
 ): BrowserDeliveryPayload | null {
-	if (!signingSecret.trim()) return null;
+	const secret = resolveSigningSecret(signingSecret);
+	if (!secret) return null;
 
 	const parts = token.split('.');
 	if (parts.length !== 2) return null;
@@ -32,7 +43,7 @@ export function verifyBrowserDeliveryToken(
 	const [payloadBase64, signature] = parts;
 	if (!payloadBase64 || !signature) return null;
 
-	const expected = signPayload(payloadBase64, signingSecret);
+	const expected = signPayload(payloadBase64, secret);
 	try {
 		if (
 			!timingSafeEqual(
