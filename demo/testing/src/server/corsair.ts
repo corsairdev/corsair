@@ -1,16 +1,6 @@
 import 'dotenv/config';
 
-import { github } from '@corsair-dev/github';
-import { gmail } from '@corsair-dev/gmail';
-import { googlecalendar } from '@corsair-dev/googlecalendar';
-import { googlesheets } from '@corsair-dev/googlesheets';
-import { hubspot } from '@corsair-dev/hubspot';
-import { linear } from '@corsair-dev/linear';
-import { onedrive } from '@corsair-dev/onedrive';
-import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
-import { twilio } from '@corsair-dev/twilio';
-import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
 
 import { sqlite } from '../db';

@@ -3,7 +3,15 @@ import { encodeOAuthState, signState } from '../core/auth/state';
 import { formatProviderDisplayName } from '../core/constants';
 import { generateOAuthUrl } from '../oauth';
 import { getHubConfig, resolveHubOAuthCallbackUrl } from './config';
-import type { HubConnectSessionInput, HubConnectSessionResult } from './types';
+import {
+	resolveConnectSourceFromDeliveryUrl,
+	validateExplicitConnectSource,
+} from './delivery-url';
+import type {
+	HubConnectSessionInput,
+	HubConnectSessionResult,
+	HubConnectSource,
+} from './types';
 
 type HubCreateSessionErrorResponse = {
 	error?: string;
@@ -17,7 +25,7 @@ type ByoCreateSessionPayload = {
 	oauthUrl: string;
 	state: string;
 	deliveryUrl: string;
-	source: HubConnectSessionInput['source'];
+	source: HubConnectSource;
 	oauthMode: 'byo';
 };
 
@@ -27,7 +35,7 @@ type ManagedCreateSessionPayload = {
 	providerName?: string;
 	state: string;
 	deliveryUrl: string;
-	source: HubConnectSessionInput['source'];
+	source: HubConnectSource;
 	oauthMode: 'managed';
 };
 
@@ -122,8 +130,22 @@ export async function createHubConnectSession(
 	const hub = getHubConfig(corsair);
 	const apiUrl = hub.apiUrl.replace(/\/$/, '');
 	const oauthMode = input.oauthMode ?? 'byo';
+
+	if (input.source) {
+		const sourceValidation = validateExplicitConnectSource({
+			source: input.source,
+			deliveryUrl: hub.deliveryUrl,
+			oauthMode,
+		});
+		if (sourceValidation) {
+			throw new Error(sourceValidation.error);
+		}
+	}
+
 	const providerName =
 		input.providerName ?? formatProviderDisplayName(input.plugin);
+	const source =
+		input.source ?? resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl);
 
 	let payload: ByoCreateSessionPayload | ManagedCreateSessionPayload;
 
@@ -140,7 +162,7 @@ export async function createHubConnectSession(
 			providerName,
 			state,
 			deliveryUrl: hub.deliveryUrl,
-			source: input.source,
+			source,
 			oauthMode: 'managed',
 		};
 	} else {
@@ -161,7 +183,7 @@ export async function createHubConnectSession(
 			oauthUrl,
 			state,
 			deliveryUrl: hub.deliveryUrl,
-			source: input.source,
+			source,
 			oauthMode: 'byo',
 		};
 	}

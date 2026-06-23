@@ -379,5 +379,11 @@ export async function enforcePermission(
 		return pollUntilResolved(opts.db, id, timeoutMs);
 	}
 
-	return { result: 'blocked', reason: 'pending', id, token, expiresAt: expiresAt };
+	return {
+		result: 'blocked',
+		reason: 'pending',
+		id,
+		token,
+		expiresAt: expiresAt,
+	};
 }

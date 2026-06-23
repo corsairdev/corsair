@@ -1,6 +1,8 @@
 export {
+	applyPermissionDecision,
 	type BrowserDeliveryPayload,
 	isManagedBrowserDelivery,
+	isPermissionBrowserDelivery,
 	type OAuthCallbackTunnelPayload,
 	type OAuthTokensTunnelPayload,
 	type ProcessCorsairOptions,

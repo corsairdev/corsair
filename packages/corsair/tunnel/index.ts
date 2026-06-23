@@ -21,6 +21,7 @@ export {
 export {
 	type BrowserDeliveryPayload,
 	isManagedBrowserDelivery,
+	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,
 } from './browser-delivery';
 
@@ -246,6 +247,21 @@ async function handleOAuthTokensTunnel(
 		scope: payload.scope,
 	});
 	return { status: 'ok' };
+}
+
+export async function applyPermissionDecision(
+	corsair: unknown,
+	token: string,
+	decision: 'approved' | 'denied',
+): Promise<void> {
+	const ack = await handlePermissionDecisionTunnel(
+		corsair,
+		{ token },
+		decision,
+	);
+	if (ack.status !== 'ok') {
+		throw new Error(ack.error ?? 'Permission decision failed');
+	}
 }
 
 async function handlePermissionDecisionTunnel(

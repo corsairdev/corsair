@@ -1,7 +1,9 @@
 import { processOAuthCallback } from '../oauth';
 import type { ProcessCorsairRequest } from '../tunnel';
 import {
+	applyPermissionDecision,
 	isManagedBrowserDelivery,
+	isPermissionBrowserDelivery,
 	processCorsair,
 	verifyBrowserDeliveryToken,
 } from '../tunnel';
@@ -53,7 +55,20 @@ export async function handleHubDeliveryGet(
 	}
 
 	try {
-		if (isManagedBrowserDelivery(payload)) {
+		if (isPermissionBrowserDelivery(payload)) {
+			if (!payload.permissionToken) {
+				return {
+					type: 'json',
+					status: 400,
+					body: { error: 'Permission delivery missing permission token' },
+				};
+			}
+			await applyPermissionDecision(
+				corsair,
+				payload.permissionToken,
+				payload.deliveryMode === 'permission.approve' ? 'approved' : 'denied',
+			);
+		} else if (isManagedBrowserDelivery(payload)) {
 			if (!payload.accessToken) {
 				return {
 					type: 'json',
@@ -85,7 +100,7 @@ export async function handleHubDeliveryGet(
 		}
 	} catch (error) {
 		const message =
-			error instanceof Error ? error.message : 'OAuth callback failed';
+			error instanceof Error ? error.message : 'Hub delivery failed';
 		return {
 			type: 'json',
 			status: 400,
