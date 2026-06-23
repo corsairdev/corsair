@@ -55,7 +55,7 @@ export async function createHubConnectSession(
 			tenantId: input.tenantId,
 			deliveryUrl: hub.deliveryUrl,
 			source,
-			plugins,
+			plugins: pendingPlugins,
 		},
 		parseResponse: parseConnectSessionResponse,
 	});
