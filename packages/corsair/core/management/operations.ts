@@ -5,6 +5,7 @@ import { BASE_AUTH_FIELDS } from '../auth/types';
 import { ConnectError, resolveConnectLink } from '../connect';
 import type { AuthTypes } from '../constants';
 import type { CorsairPlugin, OAuthConfig } from '../plugins';
+import { requireCorsairPlugin } from '../utils/corsair-instance';
 import { badRequest, ManagementApiError, notFound } from './errors';
 import type {
 	ConnectionStatus,
@@ -35,9 +36,9 @@ function findPlugin(
 	internal: CorsairInternalConfig,
 	pluginId: string,
 ): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) throw notFound(`Plugin '${pluginId}' not found`);
-	return plugin;
+	return requireCorsairPlugin(internal, pluginId, (message) =>
+		notFound(message),
+	);
 }
 
 type PluginCredState = {

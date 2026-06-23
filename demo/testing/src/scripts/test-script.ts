@@ -3,17 +3,10 @@ import 'dotenv/config';
 import { corsair } from '@/server/corsair';
 
 const main = async () => {
-	const res = await corsair.hubspot.api.contacts.search({
-		query: 'test',
-		limit: 5,
+	const res = await corsair.slack.api.messages.delete({
+		channel: '1',
+		ts: '2',
 	});
-
-	// Example: Test Twilio API endpoints
-	// const sms = await corsair.twilio.api.messages.send({
-	// 	To: '+1234567890',
-	// 	From: '+1098765432',
-	// 	Body: 'Hello from Corsair!',
-	// });
 };
 
 main().catch((err) => {

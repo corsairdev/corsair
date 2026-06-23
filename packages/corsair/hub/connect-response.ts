@@ -3,20 +3,12 @@ import { createHubConnectSession } from './connect';
 import {
 	resolveConnectSourceFromDeliveryUrl,
 	validateExplicitConnectSource,
-} from './delivery-url';
+} from './contracts/delivery-mode';
 import type {
 	HubConnectSessionInput,
 	HubConnectSource,
 	HubOAuthMode,
 } from './types';
-
-export type { ConnectSourceValidationError } from './delivery-url';
-export {
-	isLoopbackDeliveryUrl,
-	resolveConnectSourceFromDeliveryUrl,
-	shouldUseBrowserConnectDelivery,
-	validateExplicitConnectSource,
-} from './delivery-url';
 
 export type HubConnectSessionRequestBody = {
 	plugin?: string;
@@ -76,10 +68,6 @@ export function parseHubConnectSessionBody(
 	const oauthMode = parseOAuthMode(body.oauthMode);
 	const providerName = body.providerName?.trim();
 
-	if (!plugin) {
-		return { error: 'plugin is required', status: 400 };
-	}
-
 	if (
 		body.source !== undefined &&
 		body.source !== null &&
@@ -97,10 +85,13 @@ export function parseHubConnectSessionBody(
 	}
 
 	const input: HubConnectSessionInput = {
-		plugin,
 		tenantId,
 		oauthMode,
 	};
+
+	if (plugin) {
+		input.plugin = plugin;
+	}
 
 	if (source) {
 		input.source = source;

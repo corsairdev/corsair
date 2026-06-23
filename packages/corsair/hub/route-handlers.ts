@@ -1,6 +1,6 @@
 import type { HubConnectSessionResponseOptions } from './connect-response';
 import { respondToHubConnectSessionFromRequest } from './connect-response';
-import { respondToHubDeliveryFromRequest } from './delivery-response';
+import { respondToHubDeliveryFromRequest } from './delivery';
 
 export type HubRouteHandlersOptions = HubConnectSessionResponseOptions;
 

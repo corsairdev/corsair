@@ -1,6 +1,10 @@
-export type { ConnectSourceValidationError } from './hub/delivery-url';
 export {
 	attachManagedRefreshAuth,
+	type ConnectAuthKind,
+	type ConnectPluginManifestEntry,
+	type ConnectSourceValidationError,
+	type CreateConnectSessionRequestBody,
+	type CreatePermissionSessionRequestBody,
 	createHubConnectSession,
 	createHubRouteHandlers,
 	DEFAULT_HUB_API_URL,
@@ -20,6 +24,9 @@ export {
 	type HubDeliveryResult,
 	HubNotConfiguredError,
 	type HubOAuthMode,
+	type HubOAuthRefreshResponse,
+	type HubPermissionSessionInput,
+	type HubPermissionSessionResult,
 	type HubRouteHandlersOptions,
 	handleHubConnectSessionRequest,
 	handleHubDeliveryGet,
@@ -44,5 +51,7 @@ export {
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,
 	shouldUseBrowserConnectDelivery,
+	type TunnelEnvelope,
+	type TunnelType,
 	validateExplicitConnectSource,
 } from './hub/index';
