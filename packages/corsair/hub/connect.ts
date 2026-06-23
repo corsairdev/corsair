@@ -1,3 +1,5 @@
+import { CORSAIR_INTERNAL } from '../core';
+import { encodeOAuthState, signState } from '../core/auth/state';
 import { formatProviderDisplayName } from '../core/constants';
 import { generateOAuthUrl } from '../oauth';
 import { getHubConfig, resolveHubOAuthCallbackUrl } from './config';
@@ -8,7 +10,7 @@ type HubCreateSessionErrorResponse = {
 	message?: string;
 };
 
-type CreateSessionPayload = {
+type ByoCreateSessionPayload = {
 	plugin: string;
 	tenantId: string;
 	providerName: string;
@@ -16,6 +18,17 @@ type CreateSessionPayload = {
 	state: string;
 	deliveryUrl: string;
 	source: HubConnectSessionInput['source'];
+	oauthMode: 'byo';
+};
+
+type ManagedCreateSessionPayload = {
+	plugin: string;
+	tenantId: string;
+	providerName?: string;
+	state: string;
+	deliveryUrl: string;
+	source: HubConnectSessionInput['source'];
+	oauthMode: 'managed';
 };
 
 function isNonEmptyString(value: unknown): value is string {
@@ -90,32 +103,68 @@ async function readHubJsonResponse(response: Response): Promise<unknown> {
 	}
 }
 
+function getInternalKek(corsair: unknown): string {
+	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
+		| { kek?: string }
+		| undefined;
+	if (!internal?.kek) {
+		throw new Error(
+			'Corsair KEK is required to create a managed connect session',
+		);
+	}
+	return internal.kek;
+}
+
 export async function createHubConnectSession(
 	corsair: unknown,
 	input: HubConnectSessionInput,
 ): Promise<HubConnectSessionResult> {
 	const hub = getHubConfig(corsair);
 	const apiUrl = hub.apiUrl.replace(/\/$/, '');
-	const oauthCallbackUrl = resolveHubOAuthCallbackUrl(hub);
+	const oauthMode = input.oauthMode ?? 'byo';
+	const providerName =
+		input.providerName ?? formatProviderDisplayName(input.plugin);
 
-	const { url: oauthUrl, state } = await generateOAuthUrl(
-		corsair,
-		input.plugin,
-		{
+	let payload: ByoCreateSessionPayload | ManagedCreateSessionPayload;
+
+	if (oauthMode === 'managed') {
+		const kek = getInternalKek(corsair);
+		const state = signState(
+			encodeOAuthState(input.plugin, input.tenantId),
+			kek,
+		);
+
+		payload = {
+			plugin: input.plugin,
 			tenantId: input.tenantId,
-			redirectUri: oauthCallbackUrl,
-		},
-	);
+			providerName,
+			state,
+			deliveryUrl: hub.deliveryUrl,
+			source: input.source,
+			oauthMode: 'managed',
+		};
+	} else {
+		const oauthCallbackUrl = resolveHubOAuthCallbackUrl(hub);
+		const { url: oauthUrl, state } = await generateOAuthUrl(
+			corsair,
+			input.plugin,
+			{
+				tenantId: input.tenantId,
+				redirectUri: oauthCallbackUrl,
+			},
+		);
 
-	const payload: CreateSessionPayload = {
-		plugin: input.plugin,
-		tenantId: input.tenantId,
-		providerName: input.providerName ?? formatProviderDisplayName(input.plugin),
-		oauthUrl,
-		state,
-		deliveryUrl: hub.deliveryUrl,
-		source: input.source,
-	};
+		payload = {
+			plugin: input.plugin,
+			tenantId: input.tenantId,
+			providerName,
+			oauthUrl,
+			state,
+			deliveryUrl: hub.deliveryUrl,
+			source: input.source,
+			oauthMode: 'byo',
+		};
+	}
 
 	const response = await fetch(`${apiUrl}/connect/sessions`, {
 		method: 'POST',

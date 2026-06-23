@@ -25,9 +25,7 @@ function signPayload(payloadBase64: string, signingSecret: string): string {
 		throw new Error('Signing secret is required for browser delivery tokens');
 	}
 
-	return createHmac('sha256', secret)
-		.update(payloadBase64)
-		.digest('base64url');
+	return createHmac('sha256', secret).update(payloadBase64).digest('base64url');
 }
 
 export function verifyBrowserDeliveryToken(

@@ -1,7 +1,7 @@
 import type { CorsairInternalConfig } from '../core';
 import { CORSAIR_INTERNAL } from '../core';
-import { DEFAULT_HUB_API_URL } from './types';
 import type { HubConfig, HubConfigInput } from './types';
+import { DEFAULT_HUB_API_URL } from './types';
 
 export { DEFAULT_HUB_API_URL } from './types';
 

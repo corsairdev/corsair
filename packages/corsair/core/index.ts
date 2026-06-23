@@ -127,6 +127,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						rootErrorHandlers: config.errorHandlers,
 						approvalConfig: config.approval,
 						connectConfig: config.connect,
+						hubConfig: internalConfig.hub,
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,
@@ -147,6 +148,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		rootErrorHandlers: config.errorHandlers,
 		approvalConfig: config.approval,
 		connectConfig: config.connect,
+		hubConfig: internalConfig.hub,
 	});
 
 	return Object.assign({}, client, {

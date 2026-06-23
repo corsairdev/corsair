@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { CorsairInternalConfig } from '../core';
 import { CORSAIR_INTERNAL } from '../core';
+import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { processOAuthCallback } from '../oauth';
 import { processWebhook } from '../webhooks';
 import {
@@ -24,6 +25,7 @@ export {
 
 export type TunnelType =
 	| 'oauth.callback'
+	| 'oauth.tokens'
 	| 'webhook'
 	| 'permission.approve'
 	| 'permission.deny'
@@ -62,6 +64,15 @@ export type OAuthCallbackTunnelPayload = {
 	code: string;
 	state: string;
 	redirectUri: string;
+};
+
+export type OAuthTokensTunnelPayload = {
+	plugin: string;
+	tenantId: string;
+	accessToken: string;
+	refreshToken?: string;
+	expiresIn?: number;
+	scope?: string;
 };
 
 export type ProcessCorsairRequest = {
@@ -217,6 +228,21 @@ async function handleOAuthCallbackTunnel(
 	return { status: 'ok' };
 }
 
+async function handleOAuthTokensTunnel(
+	corsair: unknown,
+	payload: OAuthTokensTunnelPayload,
+): Promise<TunnelAck> {
+	await processManagedOAuthDelivery(corsair, {
+		plugin: payload.plugin,
+		tenantId: payload.tenantId,
+		accessToken: payload.accessToken,
+		refreshToken: payload.refreshToken,
+		expiresIn: payload.expiresIn,
+		scope: payload.scope,
+	});
+	return { status: 'ok' };
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
@@ -279,6 +305,11 @@ export async function processCorsair(
 			return handleOAuthCallbackTunnel(
 				corsair,
 				envelope.payload as OAuthCallbackTunnelPayload,
+			);
+		case 'oauth.tokens':
+			return handleOAuthTokensTunnel(
+				corsair,
+				envelope.payload as OAuthTokensTunnelPayload,
 			);
 		default:
 			return {

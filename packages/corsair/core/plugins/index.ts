@@ -1,7 +1,7 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDatabaseInput } from '../../db/kysely/database';
 import type { CorsairPluginSchema } from '../../db/orm';
-import type { HubConfigInput } from '../../hub';
+import type { HubConfig, HubConfigInput } from '../../hub';
 import type { AccountKeyManagerFor, PluginAuthConfig } from '../auth/types';
 import type { ExtractAuthType, InferPluginEntities } from '../client';
 import type { AllProviders, AuthTypes } from '../constants';
@@ -377,6 +377,8 @@ type ExtractAllAuthTypes<Options> = 'authType' extends keyof Options
  *     return await ctx.keys.get_access_token();
  *   } else if (ctx.authType === 'bot_token') {
  *     return await ctx.keys.get_bot_token();
+ *   } else if (ctx.authType === 'managed') {
+ *     return await ctx.keys.get_access_token();
  *   }
  *   return '';
  * }
@@ -394,6 +396,10 @@ export type KeyBuilderContext<
 				options: Options;
 				/** Account-level key manager - type narrows based on authType check */
 				keys: AccountKeyManagerFor<A, AuthConfig>;
+				/** Tenant ID for this request (always set; defaults to 'default' in single-tenant) */
+				tenantId: string;
+				/** Hub config when createCorsair({ hub: ... }) is configured */
+				hub?: HubConfig;
 			}
 		: never
 	: never;

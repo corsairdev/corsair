@@ -217,6 +217,6 @@ export type AllProviders =
 	| 'zoom'
 	| (string & {});
 
-export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';
+export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
 
 export type PickAuth<T extends AuthTypes> = T;

@@ -16,10 +16,23 @@ export {
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,
 } from './delivery-response';
+export {
+	attachManagedRefreshAuth,
+	getManagedAccessToken,
+	type ManagedAccessTokenResult,
+	type ManagedAuthContext,
+} from './managed-auth';
+export {
+	ManagedOAuthDeliveryError,
+	type ProcessManagedOAuthDeliveryOptions,
+	type ProcessManagedOAuthDeliveryResult,
+	processManagedOAuthDelivery,
+} from './managed-oauth';
 export type {
 	HubConfig,
 	HubConfigInput,
 	HubConnectSessionInput,
 	HubConnectSessionResult,
 	HubConnectSource,
+	HubOAuthMode,
 } from './types';

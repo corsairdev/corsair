@@ -1,5 +1,7 @@
 export type HubConnectSource = 'client' | 'server';
 
+export type HubOAuthMode = 'byo' | 'managed';
+
 export const DEFAULT_HUB_API_URL = 'https://auth.corsair.dev';
 
 export type HubConfigInput = {
@@ -23,6 +25,7 @@ export type HubConnectSessionInput = {
 	tenantId: string;
 	source: HubConnectSource;
 	providerName?: string;
+	oauthMode?: HubOAuthMode;
 };
 
 export type HubConnectSessionResult = {

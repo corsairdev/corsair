@@ -1,6 +1,7 @@
 export {
 	type BrowserDeliveryPayload,
 	type OAuthCallbackTunnelPayload,
+	type OAuthTokensTunnelPayload,
 	type ProcessCorsairOptions,
 	type ProcessCorsairRequest,
 	processCorsair,
