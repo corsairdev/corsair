@@ -18,6 +18,8 @@ import { sqlite } from '../db';
 const appUrl = process.env.APP_URL ?? 'http://localhost:3001';
 const hubProjectApiKey = process.env.HUB_PROJECT_API_KEY!;
 const hubSigningSecret = process.env.CORSAIR_TUNNEL_SIGNING_SECRET!;
+const hubApiUrl = process.env.HUB_API_URL;
+const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -28,12 +30,14 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	hub: {
+		apiUrl: hubApiUrl,
+		oauthCallbackUrl: hubOAuthCallbackUrl,
 		projectApiKey: hubProjectApiKey,
 		signingSecret: hubSigningSecret,
 		deliveryUrl: `${appUrl}/api/corsair`,
 	},
 	plugins: [
-		github(),
+		github({ authType: 'managed' }),
 		slack(),
 		googlesheets(),
 		googlecalendar(),

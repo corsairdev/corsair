@@ -12,7 +12,7 @@ export type HubDeliveryRequest = {
 
 export function hubDeliveryToResponse(result: HubDeliveryResult): Response {
 	if (result.type === 'redirect') {
-		return Response.redirect(result.url);
+		return Response.redirect(result.url, 302);
 	}
 
 	const headers = new Headers();

@@ -1,9 +1,8 @@
-import { respondToHubDeliveryFromRequest } from 'corsair/hub';
+import { createHubRouteHandlers } from 'corsair/hub';
 
 import { corsair } from '@/server/corsair';
 
-export const GET = (request: Request) =>
-	respondToHubDeliveryFromRequest(corsair, request);
+const hub = createHubRouteHandlers(corsair);
 
-export const POST = (request: Request) =>
-	respondToHubDeliveryFromRequest(corsair, request);
+export const GET = hub.delivery;
+export const POST = hub.delivery;

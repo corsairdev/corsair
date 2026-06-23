@@ -4,15 +4,27 @@ export type BrowserDeliveryPayload = {
 	jti: string;
 	connectJti: string;
 	projectId: string;
-	code: string;
-	state: string;
-	redirectUri: string;
 	plugin: string;
 	tenantId: string;
 	hubSuccessUrl: string;
 	exp: number;
 	iat: number;
+	deliveryMode?: 'oauth.callback' | 'oauth.tokens';
+	code?: string;
+	state?: string;
+	redirectUri?: string;
+	accessToken?: string;
+	refreshToken?: string;
+	expiresIn?: number;
+	scope?: string;
 };
+
+export function isManagedBrowserDelivery(payload: BrowserDeliveryPayload): boolean {
+	return (
+		payload.deliveryMode === 'oauth.tokens' ||
+		(typeof payload.accessToken === 'string' && payload.accessToken.length > 0)
+	);
+}
 
 function resolveSigningSecret(signingSecret: string): string | null {
 	const trimmed = signingSecret.trim();

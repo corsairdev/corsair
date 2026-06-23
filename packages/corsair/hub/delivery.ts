@@ -1,7 +1,12 @@
 import { processOAuthCallback } from '../oauth';
 import type { ProcessCorsairRequest } from '../tunnel';
-import { processCorsair, verifyBrowserDeliveryToken } from '../tunnel';
+import {
+	isManagedBrowserDelivery,
+	processCorsair,
+	verifyBrowserDeliveryToken,
+} from '../tunnel';
 import { getHubConfig } from './config';
+import { processManagedOAuthDelivery } from './managed-oauth';
 
 export type HubDeliveryResult =
 	| { type: 'redirect'; url: string }
@@ -48,11 +53,36 @@ export async function handleHubDeliveryGet(
 	}
 
 	try {
-		await processOAuthCallback(corsair, {
-			code: payload.code,
-			state: payload.state,
-			redirectUri: payload.redirectUri,
-		});
+		if (isManagedBrowserDelivery(payload)) {
+			if (!payload.accessToken) {
+				return {
+					type: 'json',
+					status: 400,
+					body: { error: 'Managed OAuth delivery missing access_token' },
+				};
+			}
+			await processManagedOAuthDelivery(corsair, {
+				plugin: payload.plugin,
+				tenantId: payload.tenantId,
+				accessToken: payload.accessToken,
+				refreshToken: payload.refreshToken,
+				expiresIn: payload.expiresIn,
+				scope: payload.scope,
+			});
+		} else {
+			if (!payload.code || !payload.state || !payload.redirectUri) {
+				return {
+					type: 'json',
+					status: 400,
+					body: { error: 'Invalid BYO OAuth delivery token' },
+				};
+			}
+			await processOAuthCallback(corsair, {
+				code: payload.code,
+				state: payload.state,
+				redirectUri: payload.redirectUri,
+			});
+		}
 	} catch (error) {
 		const message =
 			error instanceof Error ? error.message : 'OAuth callback failed';

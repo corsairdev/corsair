@@ -20,6 +20,7 @@ export {
 
 export {
 	type BrowserDeliveryPayload,
+	isManagedBrowserDelivery,
 	verifyBrowserDeliveryToken,
 } from './browser-delivery';
 

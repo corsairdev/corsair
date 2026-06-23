@@ -7,6 +7,20 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export {
+	type HubConnectSessionParseError,
+	type HubConnectSessionRequestBody,
+	type HubConnectSessionResponseOptions,
+	type HubConnectSessionSuccessBody,
+	handleHubConnectSessionRequest,
+	isLoopbackDeliveryUrl,
+	parseHubConnectSessionBody,
+	parseHubConnectSessionSearchParams,
+	type ResolveHubConnectTenantId,
+	respondToHubConnectSession,
+	respondToHubConnectSessionFromRequest,
+	validateManagedOAuthLoopback,
+} from './connect-response';
 export type { HubDeliveryResult } from './delivery';
 export { handleHubDeliveryGet, handleHubDeliveryPost } from './delivery';
 export {
@@ -28,6 +42,7 @@ export {
 	type ProcessManagedOAuthDeliveryResult,
 	processManagedOAuthDelivery,
 } from './managed-oauth';
+export { createHubRouteHandlers, type HubRouteHandlersOptions } from './route-handlers';
 export type {
 	HubConfig,
 	HubConfigInput,

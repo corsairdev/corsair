@@ -5,9 +5,15 @@ import { useState } from 'react';
 function HubConnectButton({
 	plugin,
 	label,
+	oauthMode,
+	source = 'client',
+	buttonColor = '#4285F4',
 }: {
 	plugin: string;
 	label: string;
+	oauthMode?: 'byo' | 'managed';
+	source?: 'client' | 'server';
+	buttonColor?: string;
 }) {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -22,8 +28,9 @@ function HubConnectButton({
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					plugin,
-					tenantId: 'demo-user',
-					source: 'client',
+					tenantId: 'default',
+					source,
+					oauthMode,
 				}),
 			});
 			const data = await response.json();
@@ -52,7 +59,7 @@ function HubConnectButton({
 				disabled={loading}
 				style={{
 					padding: '0.75rem 1.5rem',
-					backgroundColor: '#4285F4',
+					backgroundColor: buttonColor,
 					color: 'white',
 					border: 'none',
 					borderRadius: '4px',
@@ -233,12 +240,25 @@ export default function Home() {
 			>
 				<h2>Connect Integrations</h2>
 				<p style={{ color: '#666', marginBottom: '1rem' }}>
-					Authorize a plugin using OAuth via the Corsair Hub
+					Connect via the Corsair Hub. Google Calendar uses BYO OAuth (your app
+					stores client credentials). GitHub uses managed OAuth (Corsair-owned
+					app, tokens refreshed via the hub).
 				</p>
 				<HubConnectButton
 					plugin="googlecalendar"
 					label="Connect Google Calendar via Hub"
+					oauthMode="byo"
+					source="client"
 				/>
+				<div style={{ marginTop: '1rem' }}>
+					<HubConnectButton
+						plugin="github"
+						label="Connect GitHub via Hub (Managed OAuth)"
+						oauthMode="managed"
+						source="client"
+						buttonColor="#24292f"
+					/>
+				</div>
 			</div>
 
 			<div style={{ marginTop: '2rem' }}>
