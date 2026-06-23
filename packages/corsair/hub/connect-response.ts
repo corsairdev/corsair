@@ -1,10 +1,22 @@
 import { getHubConfig, HubNotConfiguredError } from './config';
 import { createHubConnectSession } from './connect';
+import {
+	resolveConnectSourceFromDeliveryUrl,
+	validateExplicitConnectSource,
+} from './delivery-url';
 import type {
 	HubConnectSessionInput,
 	HubConnectSource,
 	HubOAuthMode,
 } from './types';
+
+export type { ConnectSourceValidationError } from './delivery-url';
+export {
+	isLoopbackDeliveryUrl,
+	resolveConnectSourceFromDeliveryUrl,
+	shouldUseBrowserConnectDelivery,
+	validateExplicitConnectSource,
+} from './delivery-url';
 
 export type HubConnectSessionRequestBody = {
 	plugin?: string;
@@ -41,13 +53,6 @@ export type HubConnectSessionResponseOptions = {
 	defaultTenantId?: string;
 };
 
-const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
-
-export function isLoopbackDeliveryUrl(deliveryUrl: string): boolean {
-	const hostname = new URL(deliveryUrl).hostname;
-	return LOOPBACK_HOSTS.has(hostname);
-}
-
 function parseOAuthMode(value: unknown): HubOAuthMode | undefined {
 	if (value === 'byo' || value === 'managed') {
 		return value;
@@ -75,9 +80,14 @@ export function parseHubConnectSessionBody(
 		return { error: 'plugin is required', status: 400 };
 	}
 
-	if (!source) {
+	if (
+		body.source !== undefined &&
+		body.source !== null &&
+		String(body.source).trim() !== '' &&
+		!source
+	) {
 		return {
-			error: 'source is required and must be "client" or "server"',
+			error: 'source must be "client" or "server"',
 			status: 400,
 		};
 	}
@@ -89,9 +99,12 @@ export function parseHubConnectSessionBody(
 	const input: HubConnectSessionInput = {
 		plugin,
 		tenantId,
-		source,
 		oauthMode,
 	};
+
+	if (source) {
+		input.source = source;
+	}
 
 	if (providerName) {
 		input.providerName = providerName;
@@ -113,25 +126,6 @@ export function parseHubConnectSessionSearchParams(
 		oauthMode: oauthMode ?? undefined,
 		providerName: searchParams.get('providerName') ?? undefined,
 	};
-}
-
-export function validateManagedOAuthLoopback(
-	input: HubConnectSessionInput,
-	deliveryUrl: string,
-): HubConnectSessionParseError | null {
-	if (input.oauthMode !== 'managed' || input.source !== 'server') {
-		return null;
-	}
-
-	if (isLoopbackDeliveryUrl(deliveryUrl)) {
-		return {
-			error:
-				'managed OAuth with a loopback delivery URL requires source: "client"',
-			status: 400,
-		};
-	}
-
-	return null;
 }
 
 function connectSessionToResponseBody(
@@ -190,12 +184,25 @@ export async function handleHubConnectSessionRequest(
 	}
 
 	const hub = getHubConfig(corsair);
-	const loopbackError = validateManagedOAuthLoopback(parsed, hub.deliveryUrl);
-	if (loopbackError) {
-		return loopbackError;
+
+	if (parsed.source) {
+		const sourceValidation = validateExplicitConnectSource({
+			source: parsed.source,
+			deliveryUrl: hub.deliveryUrl,
+			oauthMode: parsed.oauthMode,
+		});
+		if (sourceValidation) {
+			return sourceValidation;
+		}
 	}
 
-	const session = await createHubConnectSession(corsair, parsed);
+	const connectInput: HubConnectSessionInput = {
+		...parsed,
+		source:
+			parsed.source ?? resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl),
+	};
+
+	const session = await createHubConnectSession(corsair, connectInput);
 	return connectSessionToResponseBody(session);
 }
 

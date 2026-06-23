@@ -1,13 +1,13 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
-import { AuthMissingError } from '../auth/errors/auth-missing';
-import { encodeOAuthState, signState } from '../auth/state';
-import type { CorsairErrorHandler } from '../errors';
-import { handleCorsairError } from '../errors/handler';
 import type { HubConfig } from '../../hub';
 import {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from '../../hub/permission';
+import { AuthMissingError } from '../auth/errors/auth-missing';
+import { encodeOAuthState, signState } from '../auth/state';
+import type { CorsairErrorHandler } from '../errors';
+import { handleCorsairError } from '../errors/handler';
 import { enforcePermission, parseDurationMs } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,

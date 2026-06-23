@@ -1,3 +1,4 @@
+export type { ConnectSourceValidationError } from './hub/delivery-url';
 export {
 	attachManagedRefreshAuth,
 	createHubConnectSession,
@@ -36,10 +37,12 @@ export {
 	parseHubConnectSessionSearchParams,
 	processManagedOAuthDelivery,
 	type ResolveHubConnectTenantId,
+	resolveConnectSourceFromDeliveryUrl,
 	resolveHubOAuthCallbackUrl,
 	respondToHubConnectSession,
 	respondToHubConnectSessionFromRequest,
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,
-	validateManagedOAuthLoopback,
+	shouldUseBrowserConnectDelivery,
+	validateExplicitConnectSource,
 } from './hub/index';
