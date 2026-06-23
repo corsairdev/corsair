@@ -16,8 +16,8 @@ import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
 const appUrl = process.env.APP_URL ?? 'http://localhost:3001';
-const hubProjectApiKey = process.env.HUB_PROJECT_API_KEY!;
-const hubSigningSecret = process.env.CORSAIR_TUNNEL_SIGNING_SECRET!;
+const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
+const hubSigningSecret = process.env.CORSAIR_SIGNING_SECRET!;
 const hubApiUrl = process.env.HUB_API_URL;
 const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
@@ -37,19 +37,26 @@ export const corsair = createCorsair({
 		deliveryUrl: `${appUrl}/api/corsair`,
 	},
 	plugins: [
-		github({ authType: 'managed' }),
-		slack(),
-		googlesheets(),
-		googlecalendar(),
-		gmail(),
-		linear(),
-		sharepoint(),
-		onedrive(),
-		hubspot(),
-		twilio(),
-		vapi({
-			key: process.env.VAPI_API_KEY,
-			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		// github({ authType: 'managed' }),
+		slack({
+			permissions: {
+				mode: 'cautious',
+				overrides: {
+					'messages.delete': 'require_approval',
+				},
+			},
 		}),
+		// googlesheets(),
+		// googlecalendar(),
+		// gmail(),
+		// linear(),
+		// sharepoint(),
+		// onedrive(),
+		// hubspot(),
+		// twilio(),
+		// vapi({
+		// 	key: process.env.VAPI_API_KEY,
+		// 	webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		// }),
 	],
 });

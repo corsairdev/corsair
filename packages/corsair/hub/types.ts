@@ -34,3 +34,20 @@ export type HubConnectSessionResult = {
 	projectId: string;
 	expiresAt?: string;
 };
+
+export type HubPermissionSessionInput = {
+	permissionId: string;
+	permissionToken: string;
+	plugin: string;
+	endpoint: string;
+	args: unknown;
+	tenantId: string;
+	expiresAt: string;
+};
+
+export type HubPermissionSessionResult = {
+	approvalUrl: string;
+	token: string;
+	projectId: string;
+	expiresAt: string;
+};

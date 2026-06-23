@@ -76,6 +76,10 @@ export type OAuthTokensTunnelPayload = {
 	scope?: string;
 };
 
+export type PermissionDecisionTunnelPayload = {
+	token: string;
+};
+
 export type ProcessCorsairRequest = {
 	headers: Headers | Record<string, string | string[] | undefined>;
 	body: string;
@@ -244,6 +248,70 @@ async function handleOAuthTokensTunnel(
 	return { status: 'ok' };
 }
 
+async function handlePermissionDecisionTunnel(
+	corsair: unknown,
+	payload: PermissionDecisionTunnelPayload,
+	decision: 'approved' | 'denied',
+): Promise<TunnelAck> {
+	const internal = getInternal(corsair);
+	const token = payload.token?.trim();
+	if (!token) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Permission token is required',
+		};
+	}
+
+	if (!internal.database) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Database not configured',
+		};
+	}
+
+	const now = new Date().toISOString();
+	const record = await internal.database.db
+		.selectFrom('corsair_permissions')
+		.selectAll()
+		.where('token', '=', token)
+		.executeTakeFirst();
+
+	if (!record) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Permission not found',
+		};
+	}
+
+	if (record.status !== 'pending') {
+		return { status: 'ok' };
+	}
+
+	if (record.expires_at < now) {
+		await internal.database.db
+			.updateTable('corsair_permissions')
+			.set({ status: 'expired', updated_at: new Date() })
+			.where('id', '=', record.id)
+			.execute();
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Permission has expired',
+		};
+	}
+
+	await internal.database.db
+		.updateTable('corsair_permissions')
+		.set({ status: decision, updated_at: new Date() })
+		.where('id', '=', record.id)
+		.execute();
+
+	return { status: 'ok' };
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
@@ -311,6 +379,18 @@ export async function processCorsair(
 			return handleOAuthTokensTunnel(
 				corsair,
 				envelope.payload as OAuthTokensTunnelPayload,
+			);
+		case 'permission.approve':
+			return handlePermissionDecisionTunnel(
+				corsair,
+				envelope.payload as PermissionDecisionTunnelPayload,
+				'approved',
+			);
+		case 'permission.deny':
+			return handlePermissionDecisionTunnel(
+				corsair,
+				envelope.payload as PermissionDecisionTunnelPayload,
+				'denied',
 			);
 		default:
 			return {
