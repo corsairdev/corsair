@@ -2,6 +2,81 @@
 
 import { useState } from 'react';
 
+function HubConnectButton({
+	plugin,
+	label,
+	oauthMode,
+	source = 'client',
+	buttonColor = '#4285F4',
+}: {
+	plugin: string;
+	label: string;
+	oauthMode?: 'byo' | 'managed';
+	source?: 'client' | 'server';
+	buttonColor?: string;
+}) {
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+
+	const handleClick = async () => {
+		setLoading(true);
+		setError(null);
+
+		try {
+			const response = await fetch('/api/hub/create-link', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					plugin,
+					tenantId: 'default',
+					source,
+					oauthMode,
+				}),
+			});
+			const data = await response.json();
+
+			if (!response.ok || !data.connectUrl) {
+				throw new Error(data.error ?? 'Failed to create connect link');
+			}
+
+			window.open(data.connectUrl, '_blank', 'noopener,noreferrer');
+		} catch (connectError) {
+			setError(
+				connectError instanceof Error
+					? connectError.message
+					: 'Failed to create connect link',
+			);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return (
+		<div>
+			<button
+				type="button"
+				onClick={handleClick}
+				disabled={loading}
+				style={{
+					padding: '0.75rem 1.5rem',
+					backgroundColor: buttonColor,
+					color: 'white',
+					border: 'none',
+					borderRadius: '4px',
+					fontSize: '1rem',
+					cursor: loading ? 'not-allowed' : 'pointer',
+					opacity: loading ? 0.6 : 1,
+				}}
+			>
+				{loading ? 'Creating link…' : label}
+			</button>
+			{error ? (
+				<p style={{ color: '#721c24', marginTop: '0.75rem' }}>{error}</p>
+			) : null}
+		</div>
+	);
+}
+
 export default function Home() {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -165,22 +240,25 @@ export default function Home() {
 			>
 				<h2>Connect Integrations</h2>
 				<p style={{ color: '#666', marginBottom: '1rem' }}>
-					Authorize a plugin using OAuth
+					Connect via the Corsair Hub. Google Calendar uses BYO OAuth (your app
+					stores client credentials). GitHub uses managed OAuth (Corsair-owned
+					app, tokens refreshed via the hub).
 				</p>
-				<a
-					href="/api/connect?plugin=googlecalendar&tenantId=demo-user"
-					style={{
-						display: 'inline-block',
-						padding: '0.75rem 1.5rem',
-						backgroundColor: '#4285F4',
-						color: 'white',
-						borderRadius: '4px',
-						textDecoration: 'none',
-						fontSize: '1rem',
-					}}
-				>
-					Connect Google Calendar
-				</a>
+				<HubConnectButton
+					plugin="googlecalendar"
+					label="Connect Google Calendar via Hub"
+					oauthMode="byo"
+					source="client"
+				/>
+				<div style={{ marginTop: '1rem' }}>
+					<HubConnectButton
+						plugin="github"
+						label="Connect GitHub via Hub (Managed OAuth)"
+						oauthMode="managed"
+						source="client"
+						buttonColor="#24292f"
+					/>
+				</div>
 			</div>
 
 			<div style={{ marginTop: '2rem' }}>

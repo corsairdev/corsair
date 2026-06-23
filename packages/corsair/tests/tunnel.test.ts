@@ -32,6 +32,24 @@ describe('processCorsair', () => {
 		expect(ack.error).toBe('Tunnel signing secret is required');
 	});
 
+	it('rejects tunnel requests when signingSecret is empty or whitespace', async () => {
+		const body = JSON.stringify({
+			type: 'webhook',
+			payload: { headers: {}, body: '{}' },
+		});
+
+		for (const signingSecret of ['', '   ']) {
+			const ack = await processCorsair(
+				createMockCorsair(),
+				{ headers: {}, body },
+				{ signingSecret },
+			);
+
+			expect(ack.status).toBe('failed');
+			expect(ack.error).toBe('Tunnel signing secret is required');
+		}
+	});
+
 	it('accepts signed tunnel requests when signingSecret is provided', async () => {
 		const secret = 'tunnel-signing-secret';
 		const body = JSON.stringify({

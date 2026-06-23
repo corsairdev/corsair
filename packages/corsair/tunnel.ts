@@ -1,5 +1,8 @@
 export {
+	type BrowserDeliveryPayload,
+	isManagedBrowserDelivery,
 	type OAuthCallbackTunnelPayload,
+	type OAuthTokensTunnelPayload,
 	type ProcessCorsairOptions,
 	type ProcessCorsairRequest,
 	processCorsair,
@@ -10,5 +13,6 @@ export {
 	type TunnelAck,
 	type TunnelEnvelope,
 	type TunnelType,
+	verifyBrowserDeliveryToken,
 	type WebhookTunnelPayload,
 } from './tunnel/index';
