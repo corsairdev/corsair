@@ -1,4 +1,4 @@
-import type { HubConnectSource, HubOAuthMode } from './types';
+import type { HubConnectSource, HubOAuthMode } from '../types';
 
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
 

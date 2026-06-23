@@ -21,7 +21,8 @@ export type HubConfig = {
 };
 
 export type HubConnectSessionInput = {
-	plugin: string;
+	/** When omitted, the connect link covers all configured plugins. */
+	plugin?: string;
 	tenantId: string;
 	/** Inferred from hub deliveryUrl when omitted (loopback → client, else server). */
 	source?: HubConnectSource;
@@ -52,3 +53,17 @@ export type HubPermissionSessionResult = {
 	projectId: string;
 	expiresAt: string;
 };
+
+export type {
+	ConnectAuthKind,
+	ConnectPluginManifestEntry,
+	CreateConnectSessionRequestBody,
+	CreatePermissionSessionRequestBody,
+	HubOAuthRefreshResponse,
+} from './contracts/connect-api';
+export type { ConnectSourceValidationError } from './contracts/delivery-mode';
+export type {
+	BrowserDeliveryMode,
+	TunnelEnvelope,
+	TunnelType,
+} from './contracts/tunnel';

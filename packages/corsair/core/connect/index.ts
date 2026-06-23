@@ -1,7 +1,11 @@
 import * as querystring from 'node:querystring';
-import type { CorsairInternalConfig, CorsairPlugin, OAuthConfig } from '..';
-import { CORSAIR_INTERNAL, createIntegrationKeyManager } from '..';
+import type { CorsairPlugin, OAuthConfig } from '..';
+import { createIntegrationKeyManager } from '..';
 import { verifyAndDecodeState } from '../auth/state';
+import {
+	getCorsairInternal,
+	requireCorsairPlugin,
+} from '../utils/corsair-instance';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured errors
@@ -34,33 +38,6 @@ export class ConnectError extends Error {
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new ConnectError(
-			'invalid_corsair_instance',
-			'Invalid corsair instance',
-		);
-	}
-	return internal;
-}
-
-function findPlugin(
-	internal: CorsairInternalConfig,
-	pluginId: string,
-): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) {
-		throw new ConnectError(
-			'plugin_not_found',
-			`Plugin '${pluginId}' not found`,
-		);
-	}
-	return plugin;
-}
 
 function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
 	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
@@ -116,7 +93,11 @@ export async function resolveConnectLink(
 	corsair: unknown,
 	state: string,
 ): Promise<ResolveConnectLinkResult> {
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new ConnectError('invalid_corsair_instance', 'Invalid corsair instance'),
+	);
 
 	if (!internal.database) {
 		throw new ConnectError(
@@ -142,7 +123,11 @@ export async function resolveConnectLink(
 	}
 
 	const { plugin: pluginId, tenantId } = decoded;
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new ConnectError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({

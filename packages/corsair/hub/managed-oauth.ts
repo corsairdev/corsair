@@ -1,13 +1,11 @@
-import type { CorsairInternalConfig, CorsairPlugin } from '../core';
+import { createAccountKeyManager } from '../core';
 import {
-	CORSAIR_INTERNAL,
-	createAccountKeyManager,
-	encryptDEK,
-	generateDEK,
-} from '../core';
-import { createCorsairOrm } from '../db/orm';
+	getCorsairInternal,
+	requireCorsairPlugin,
+} from '../core/utils/corsair-instance';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
+import { ensureCorsairProvisionedForTenant } from './internal/provision';
 
 export type ManagedOAuthDeliveryErrorCode =
 	| 'invalid_corsair_instance'
@@ -39,67 +37,7 @@ export type ProcessManagedOAuthDeliveryResult = {
 	tenantId: string;
 };
 
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new ManagedOAuthDeliveryError(
-			'invalid_corsair_instance',
-			'Invalid corsair instance',
-		);
-	}
-	return internal;
-}
-
-function findPlugin(
-	internal: CorsairInternalConfig,
-	pluginId: string,
-): CorsairPlugin {
-	const plugin = internal.plugins.find((plugin) => plugin.id === pluginId);
-	if (!plugin) {
-		throw new ManagedOAuthDeliveryError(
-			'plugin_not_found',
-			`Plugin '${pluginId}' not found`,
-		);
-	}
-	return plugin;
-}
-
-async function ensureAccount(
-	database: NonNullable<CorsairInternalConfig['database']>,
-	pluginId: string,
-	tenantId: string,
-	kek: string,
-): Promise<void> {
-	const orm = createCorsairOrm(database);
-
-	const integration = await orm.integrations.findByName(pluginId);
-	if (!integration) {
-		throw new Error(
-			`Integration '${pluginId}' not found. Run setupCorsair first.`,
-		);
-	}
-
-	const existing = await orm.accounts.findOne({
-		tenant_id: tenantId,
-		integration_id: integration.id,
-	});
-	if (existing) return;
-
-	const dek = generateDEK();
-	const encryptedDek = await encryptDEK(dek, kek);
-	await orm.accounts.create({
-		tenant_id: tenantId,
-		integration_id: integration.id,
-		config: {},
-		dek: encryptedDek,
-	});
-}
-
-/**
- * Stores managed OAuth tokens delivered from the hub after a successful connect.
- */
+// Stores managed OAuth tokens delivered from the hub after a successful connect.
 export async function processManagedOAuthDelivery(
 	corsair: unknown,
 	options: ProcessManagedOAuthDeliveryOptions,
@@ -120,7 +58,14 @@ export async function processManagedOAuthDelivery(
 		);
 	}
 
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new ManagedOAuthDeliveryError(
+				'invalid_corsair_instance',
+				'Invalid corsair instance',
+			),
+	);
 
 	if (!internal.database) {
 		throw new ManagedOAuthDeliveryError(
@@ -129,9 +74,13 @@ export async function processManagedOAuthDelivery(
 		);
 	}
 
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new ManagedOAuthDeliveryError('plugin_not_found', message),
+	);
 
-	await ensureAccount(internal.database, pluginId, tenantId, internal.kek);
+	await ensureCorsairProvisionedForTenant(corsair, tenantId);
 
 	const accountKm = createAccountKeyManager({
 		authType: 'managed',

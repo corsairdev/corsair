@@ -1,6 +1,7 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { CorsairInternalConfig } from '../core';
-import { CORSAIR_INTERNAL } from '../core';
+import { getCorsairInternal } from '../core/utils/corsair-instance';
+import type { TunnelEnvelope } from '../hub/contracts/tunnel';
+import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { processOAuthCallback } from '../oauth';
 import { processWebhook } from '../webhooks';
@@ -10,6 +11,7 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
+import { verifySignedTunnelDelivery } from './verify-signed-delivery';
 
 export {
 	resolveAccountFromWebhookLink,
@@ -18,26 +20,14 @@ export {
 	setWebhookTenantLink,
 };
 
+export type { TunnelEnvelope, TunnelType } from '../hub/contracts/tunnel';
 export {
 	type BrowserDeliveryPayload,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,
 } from './browser-delivery';
-
-export type TunnelType =
-	| 'oauth.callback'
-	| 'oauth.tokens'
-	| 'webhook'
-	| 'permission.approve'
-	| 'permission.deny'
-	| 'auth.credentials'
-	| 'run';
-
-export type TunnelEnvelope<TPayload = unknown> = {
-	type: TunnelType;
-	payload: TPayload;
-};
+export { verifySignedTunnelDelivery } from './verify-signed-delivery';
 
 export type TunnelAck = {
 	status: 'ok' | 'failed';
@@ -81,20 +71,16 @@ export type PermissionDecisionTunnelPayload = {
 	token: string;
 };
 
+export type AuthCredentialsTunnelPayload = {
+	plugin: string;
+	tenantId: string;
+	credentials: Record<string, string>;
+};
+
 export type ProcessCorsairRequest = {
 	headers: Headers | Record<string, string | string[] | undefined>;
 	body: string;
 };
-
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new Error('Invalid corsair instance');
-	}
-	return internal;
-}
 
 function normalizeHeader(
 	headers: ProcessCorsairRequest['headers'],
@@ -106,32 +92,6 @@ function normalizeHeader(
 	const value = headers[name] ?? headers[name.toLowerCase()];
 	if (Array.isArray(value)) return value[0];
 	return typeof value === 'string' ? value : undefined;
-}
-
-function parseSignatureHeader(value: string | undefined): string | undefined {
-	if (!value) return undefined;
-	return value.startsWith('sha256=') ? value.slice('sha256='.length) : value;
-}
-
-function verifyTunnelSignature(
-	body: string,
-	signature: string | undefined,
-	signingSecret: string,
-): boolean {
-	if (!signingSecret.trim() || !signature) return false;
-
-	const expected = createHmac('sha256', signingSecret.trim())
-		.update(body)
-		.digest('hex');
-
-	try {
-		return timingSafeEqual(
-			Buffer.from(expected, 'utf8'),
-			Buffer.from(signature, 'utf8'),
-		);
-	} catch {
-		return false;
-	}
 }
 
 async function resolveWebhookTenantId(
@@ -269,7 +229,7 @@ async function handlePermissionDecisionTunnel(
 	payload: PermissionDecisionTunnelPayload,
 	decision: 'approved' | 'denied',
 ): Promise<TunnelAck> {
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(corsair);
 	const token = payload.token?.trim();
 	if (!token) {
 		return {
@@ -328,6 +288,23 @@ async function handlePermissionDecisionTunnel(
 	return { status: 'ok' };
 }
 
+async function handleAuthCredentialsTunnel(
+	corsair: unknown,
+	payload: AuthCredentialsTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		await processAuthCredentialsDelivery(corsair, payload);
+		return { status: 'ok' };
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				error instanceof Error ? error.message : 'Credential delivery failed',
+		};
+	}
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
@@ -340,9 +317,14 @@ export async function processCorsair(
 	request: ProcessCorsairRequest,
 	options: ProcessCorsairOptions = {},
 ): Promise<TunnelAck> {
-	const internal = getInternal(corsair);
-	const signature = parseSignatureHeader(
-		normalizeHeader(request.headers, 'x-corsair-signature'),
+	const internal = getCorsairInternal(corsair);
+	const signatureHeader = normalizeHeader(
+		request.headers,
+		'x-corsair-signature',
+	);
+	const timestampHeader = normalizeHeader(
+		request.headers,
+		'x-corsair-timestamp',
 	);
 
 	if (!options.signingSecret?.trim()) {
@@ -354,16 +336,17 @@ export async function processCorsair(
 			};
 		}
 	} else {
-		const valid = verifyTunnelSignature(
-			request.body,
-			signature,
-			options.signingSecret,
-		);
-		if (!valid) {
+		const verification = verifySignedTunnelDelivery({
+			body: request.body,
+			signatureHeader,
+			timestampHeader,
+			signingSecret: options.signingSecret,
+		});
+		if (!verification.ok) {
 			return {
 				status: 'failed',
 				retryable: false,
-				error: 'Invalid tunnel signature',
+				error: verification.error,
 			};
 		}
 	}
@@ -407,6 +390,11 @@ export async function processCorsair(
 				corsair,
 				envelope.payload as PermissionDecisionTunnelPayload,
 				'denied',
+			);
+		case 'auth.credentials':
+			return handleAuthCredentialsTunnel(
+				corsair,
+				envelope.payload as AuthCredentialsTunnelPayload,
 			);
 		default:
 			return {
