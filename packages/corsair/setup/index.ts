@@ -39,15 +39,13 @@ import type {
 } from '../db/kysely/database';
 import { TABLE_SCHEMAS } from '../db/orm';
 
-// Inlined at build time by the esbuild YAML plugin in tsup.config.ts.
-// Edit setup/backfill.yaml to add or change plugin backfill steps.
-import backfillConfig from './backfill.yaml';
+import backfillConfig from './backfill.config';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-// backfill.yaml shape: { [pluginId]: { [group]: { [method]: params } } }
+// Edit setup/backfill.config.ts to add or change plugin backfill steps.
 type BackfillYaml = Record<
 	string,
 	Record<string, Record<string, Record<string, unknown>>>
@@ -73,7 +71,7 @@ export interface SetupCorsairOptions {
 
 	/**
 	 * When true, calls list endpoints for every plugin defined in
-	 * setup/backfill.yaml to seed the local database with initial data.
+	 * setup/backfill.config.ts to seed the local database with initial data.
 	 */
 	backfill?: boolean;
 
@@ -123,7 +121,7 @@ type SetupTenantScope = {
  * 3. Checks auth status for each plugin and logs guidance for any missing credentials.
  *    When `caller` is 'cli', guidance is printed as CLI flags instead of JS calls.
  * 4. If `{ backfill: true }`, calls the list endpoints defined in
- *    `setup/backfill.yaml` for each plugin that has auth configured.
+ *    `setup/backfill.config.ts` for each plugin that has auth configured.
  *
  * To set credentials, use the corsair client API directly after setup:
  *   - Integration-level (shared across all tenants): `corsair.keys.plugin.set_*(value)`
