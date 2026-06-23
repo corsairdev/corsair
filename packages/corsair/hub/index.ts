@@ -42,7 +42,10 @@ export {
 	type ProcessManagedOAuthDeliveryResult,
 	processManagedOAuthDelivery,
 } from './managed-oauth';
-export { createHubRouteHandlers, type HubRouteHandlersOptions } from './route-handlers';
+export {
+	createHubRouteHandlers,
+	type HubRouteHandlersOptions,
+} from './route-handlers';
 export type {
 	HubConfig,
 	HubConfigInput,

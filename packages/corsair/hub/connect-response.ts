@@ -29,11 +29,7 @@ export type HubConnectSessionSuccessBody = {
 
 export type ResolveHubConnectTenantId = (
 	request: Request,
-) =>
-	| Promise<string | null | undefined>
-	| string
-	| null
-	| undefined;
+) => Promise<string | null | undefined> | string | null | undefined;
 
 export type HubConnectSessionResponseOptions = {
 	/**
@@ -175,19 +171,15 @@ export async function handleHubConnectSessionRequest(
 	const body =
 		method === 'GET'
 			? parseHubConnectSessionSearchParams(request.url)
-			: ((await request.json().catch(() => null)) as
-					| HubConnectSessionRequestBody
-					| null);
+			: ((await request
+					.json()
+					.catch(() => null)) as HubConnectSessionRequestBody | null);
 
 	if (!body) {
 		return { error: 'Invalid JSON body', status: 400 };
 	}
 
-	const tenantId = await resolveConnectSessionTenantId(
-		request,
-		body,
-		options,
-	);
+	const tenantId = await resolveConnectSessionTenantId(request, body, options);
 	if (typeof tenantId !== 'string') {
 		return tenantId;
 	}

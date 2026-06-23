@@ -19,7 +19,9 @@ export type BrowserDeliveryPayload = {
 	scope?: string;
 };
 
-export function isManagedBrowserDelivery(payload: BrowserDeliveryPayload): boolean {
+export function isManagedBrowserDelivery(
+	payload: BrowserDeliveryPayload,
+): boolean {
 	return (
 		payload.deliveryMode === 'oauth.tokens' ||
 		(typeof payload.accessToken === 'string' && payload.accessToken.length > 0)

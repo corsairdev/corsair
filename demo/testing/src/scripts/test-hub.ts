@@ -1,12 +1,12 @@
 import 'dotenv/config';
 
+import { setupCorsair } from 'corsair';
 import {
 	createHubConnectSession,
 	getHubConfig,
 	getManagedAccessToken,
 	processManagedOAuthDelivery,
 } from 'corsair/hub';
-import { setupCorsair } from 'corsair';
 
 import { sqlite } from '@/db';
 import { corsair } from '@/server/corsair';
@@ -293,7 +293,8 @@ async function testManagedTokenRefresh(): Promise<void> {
 			return;
 		}
 
-		const message = payload.error ?? payload.message ?? `HTTP ${response.status}`;
+		const message =
+			payload.error ?? payload.message ?? `HTTP ${response.status}`;
 		if (
 			message.includes('Managed OAuth is not configured') ||
 			message.includes('not configured for plugin')
