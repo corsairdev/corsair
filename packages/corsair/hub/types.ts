@@ -23,7 +23,8 @@ export type HubConfig = {
 export type HubConnectSessionInput = {
 	plugin: string;
 	tenantId: string;
-	source: HubConnectSource;
+	/** Inferred from hub deliveryUrl when omitted (loopback → client, else server). */
+	source?: HubConnectSource;
 	providerName?: string;
 	oauthMode?: HubOAuthMode;
 };

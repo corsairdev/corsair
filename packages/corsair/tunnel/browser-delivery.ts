@@ -9,7 +9,11 @@ export type BrowserDeliveryPayload = {
 	hubSuccessUrl: string;
 	exp: number;
 	iat: number;
-	deliveryMode?: 'oauth.callback' | 'oauth.tokens';
+	deliveryMode?:
+		| 'oauth.callback'
+		| 'oauth.tokens'
+		| 'permission.approve'
+		| 'permission.deny';
 	code?: string;
 	state?: string;
 	redirectUri?: string;
@@ -17,7 +21,17 @@ export type BrowserDeliveryPayload = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
+	permissionToken?: string;
 };
+
+export function isPermissionBrowserDelivery(
+	payload: BrowserDeliveryPayload,
+): boolean {
+	return (
+		payload.deliveryMode === 'permission.approve' ||
+		payload.deliveryMode === 'permission.deny'
+	);
+}
 
 export function isManagedBrowserDelivery(
 	payload: BrowserDeliveryPayload,

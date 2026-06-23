@@ -41,5 +41,5 @@ export {
 	respondToHubConnectSessionFromRequest,
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,
-	validateManagedOAuthLoopback,
+	resolveConnectSourceFromDeliveryUrl,
 } from './hub/index';

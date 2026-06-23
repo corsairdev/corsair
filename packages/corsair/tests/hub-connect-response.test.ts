@@ -2,8 +2,8 @@ import { createCorsair } from '../core';
 import {
 	isLoopbackDeliveryUrl,
 	parseHubConnectSessionBody,
+	resolveConnectSourceFromDeliveryUrl,
 	respondToHubConnectSessionFromRequest,
-	validateManagedOAuthLoopback,
 } from '../hub/connect-response';
 
 describe('hub connect-response', () => {
@@ -42,13 +42,23 @@ describe('hub connect-response', () => {
 			expect(
 				parseHubConnectSessionBody({
 					plugin: 'github',
-					source: 'server',
 				}),
 			).toEqual({
 				plugin: 'github',
 				tenantId: 'default',
-				source: 'server',
 				oauthMode: undefined,
+			});
+		});
+
+		it('rejects invalid source', () => {
+			expect(
+				parseHubConnectSessionBody({
+					plugin: 'github',
+					source: 'invalid',
+				}),
+			).toEqual({
+				error: 'source must be "client" or "server"',
+				status: 400,
 			});
 		});
 
@@ -65,37 +75,24 @@ describe('hub connect-response', () => {
 		});
 	});
 
-	describe('validateManagedOAuthLoopback', () => {
-		it('blocks managed server delivery on loopback', () => {
+	describe('resolveConnectSourceFromDeliveryUrl', () => {
+		it('uses client delivery for loopback URLs', () => {
 			expect(
-				validateManagedOAuthLoopback(
-					{
-						plugin: 'github',
-						tenantId: 'default',
-						source: 'server',
-						oauthMode: 'managed',
-					},
+				resolveConnectSourceFromDeliveryUrl(
 					'http://localhost:3001/api/corsair',
 				),
-			).toEqual({
-				error:
-					'managed OAuth with a loopback delivery URL requires source: "client"',
-				status: 400,
-			});
+			).toBe('client');
+			expect(
+				resolveConnectSourceFromDeliveryUrl('http://127.0.0.1:3001/api/corsair'),
+			).toBe('client');
 		});
 
-		it('allows managed client delivery on loopback', () => {
+		it('uses server delivery for public URLs', () => {
 			expect(
-				validateManagedOAuthLoopback(
-					{
-						plugin: 'github',
-						tenantId: 'default',
-						source: 'client',
-						oauthMode: 'managed',
-					},
-					'http://localhost:3001/api/corsair',
+				resolveConnectSourceFromDeliveryUrl(
+					'https://app.example.com/api/corsair',
 				),
-			).toBeNull();
+			).toBe('server');
 		});
 	});
 

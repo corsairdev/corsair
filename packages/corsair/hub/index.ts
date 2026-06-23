@@ -21,9 +21,9 @@ export {
 	parseHubConnectSessionBody,
 	parseHubConnectSessionSearchParams,
 	type ResolveHubConnectTenantId,
+	resolveConnectSourceFromDeliveryUrl,
 	respondToHubConnectSession,
 	respondToHubConnectSessionFromRequest,
-	validateManagedOAuthLoopback,
 } from './connect-response';
 export type { HubDeliveryResult } from './delivery';
 export { handleHubDeliveryGet, handleHubDeliveryPost } from './delivery';
