@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
 	CommentsEndpoints,
@@ -1673,7 +1674,7 @@ const githubEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof githubEndpointsNested>;
 
 export type GithubPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	credentials?: GithubCredentials;
 	webhookSecret?: string;
 	hooks?: InternalGithubPlugin['hooks'];
@@ -1721,6 +1722,9 @@ export const githubAuthConfig = {
 		account: ['installation_id'] as const,
 	},
 	oauth_2: {
+		account: ['installation_id'] as const,
+	},
+	managed: {
 		account: ['installation_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -1795,10 +1799,27 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					}
 
 					return res;
+				} else if (ctx.authType === 'managed') {
+					if (!ctx.hub) {
+						throw new Error(
+							'[auth-missing:github:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+						);
+					}
+
+					const managedContext = {
+						keys: ctx.keys,
+						hub: ctx.hub,
+						plugin: 'github',
+						tenantId: ctx.tenantId,
+					};
+
+					const result = await getManagedAccessToken(managedContext);
+					await attachManagedRefreshAuth(ctx, managedContext);
+					return result.accessToken;
 				}
 			}
 
-			throw new AuthMissingError('github', 'oauth_2');
+			throw new AuthMissingError('github', authType ?? 'oauth_2');
 		},
 	} satisfies InternalGithubPlugin;
 }

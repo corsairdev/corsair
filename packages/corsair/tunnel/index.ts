@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { CorsairInternalConfig } from '../core';
 import { CORSAIR_INTERNAL } from '../core';
+import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { processOAuthCallback } from '../oauth';
 import { processWebhook } from '../webhooks';
 import {
@@ -17,8 +18,15 @@ export {
 	setWebhookTenantLink,
 };
 
+export {
+	type BrowserDeliveryPayload,
+	isManagedBrowserDelivery,
+	verifyBrowserDeliveryToken,
+} from './browser-delivery';
+
 export type TunnelType =
 	| 'oauth.callback'
+	| 'oauth.tokens'
 	| 'webhook'
 	| 'permission.approve'
 	| 'permission.deny'
@@ -59,6 +67,15 @@ export type OAuthCallbackTunnelPayload = {
 	redirectUri: string;
 };
 
+export type OAuthTokensTunnelPayload = {
+	plugin: string;
+	tenantId: string;
+	accessToken: string;
+	refreshToken?: string;
+	expiresIn?: number;
+	scope?: string;
+};
+
 export type ProcessCorsairRequest = {
 	headers: Headers | Record<string, string | string[] | undefined>;
 	body: string;
@@ -96,9 +113,9 @@ function verifyTunnelSignature(
 	signature: string | undefined,
 	signingSecret: string,
 ): boolean {
-	if (!signature) return false;
+	if (!signingSecret.trim() || !signature) return false;
 
-	const expected = createHmac('sha256', signingSecret)
+	const expected = createHmac('sha256', signingSecret.trim())
 		.update(body)
 		.digest('hex');
 
@@ -212,6 +229,21 @@ async function handleOAuthCallbackTunnel(
 	return { status: 'ok' };
 }
 
+async function handleOAuthTokensTunnel(
+	corsair: unknown,
+	payload: OAuthTokensTunnelPayload,
+): Promise<TunnelAck> {
+	await processManagedOAuthDelivery(corsair, {
+		plugin: payload.plugin,
+		tenantId: payload.tenantId,
+		accessToken: payload.accessToken,
+		refreshToken: payload.refreshToken,
+		expiresIn: payload.expiresIn,
+		scope: payload.scope,
+	});
+	return { status: 'ok' };
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
@@ -229,7 +261,7 @@ export async function processCorsair(
 		normalizeHeader(request.headers, 'x-corsair-signature'),
 	);
 
-	if (!options.signingSecret) {
+	if (!options.signingSecret?.trim()) {
 		if (!options.allowUnsignedTunnel) {
 			return {
 				status: 'failed',
@@ -274,6 +306,11 @@ export async function processCorsair(
 			return handleOAuthCallbackTunnel(
 				corsair,
 				envelope.payload as OAuthCallbackTunnelPayload,
+			);
+		case 'oauth.tokens':
+			return handleOAuthTokensTunnel(
+				corsair,
+				envelope.payload as OAuthTokensTunnelPayload,
 			);
 		default:
 			return {

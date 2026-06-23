@@ -6,6 +6,7 @@ import type {
 	PluginEntityClient,
 	PluginEntityClients,
 } from '../../db/orm';
+import type { HubConfig } from '../../hub';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -382,6 +383,8 @@ export type BuildCorsairClientOptions = {
 			state: string;
 		}) => string;
 	};
+	/** Hub config from createCorsair({ hub: ... }). Forwarded to keyBuilder context. */
+	hubConfig?: HubConfig;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -407,6 +410,7 @@ export function buildCorsairClient<
 		rootErrorHandlers,
 		approvalConfig,
 		connectConfig,
+		hubConfig,
 	} = options;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
@@ -487,8 +491,9 @@ export function buildCorsairClient<
 			...(accountKeyManager
 				? { keys: accountKeyManager, authType: pluginOptions?.authType }
 				: {}),
-			// Include tenantId in context so it's available in webhook hooks
-			...(tenantId ? { tenantId } : {}),
+			// Include tenantId in context for keyBuilder and webhook hooks
+			tenantId: effectiveTenantId,
+			...(hubConfig ? { hub: hubConfig } : {}),
 		};
 
 		const endpoints = plugin.endpoints ?? {};

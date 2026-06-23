@@ -17864,7 +17864,7 @@ snapshots:
 
   zod-from-json-schema@0.5.2:
     dependencies:
-      zod: 4.1.13
+      zod: 4.4.3
 
   zod-to-json-schema@3.25.1(zod@3.25.76):
     dependencies:
