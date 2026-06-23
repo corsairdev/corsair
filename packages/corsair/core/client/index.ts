@@ -541,6 +541,7 @@ export function buildCorsairClient<
 						tenantId: effectiveTenantId,
 					}
 				: undefined,
+			hubConfig,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
