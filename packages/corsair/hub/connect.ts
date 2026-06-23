@@ -3,7 +3,10 @@ import { encodeOAuthState, signState } from '../core/auth/state';
 import { formatProviderDisplayName } from '../core/constants';
 import { generateOAuthUrl } from '../oauth';
 import { getHubConfig, resolveHubOAuthCallbackUrl } from './config';
-import { resolveConnectSourceFromDeliveryUrl } from './delivery-url';
+import {
+	resolveConnectSourceFromDeliveryUrl,
+	validateExplicitConnectSource,
+} from './delivery-url';
 import type {
 	HubConnectSessionInput,
 	HubConnectSessionResult,
@@ -127,6 +130,18 @@ export async function createHubConnectSession(
 	const hub = getHubConfig(corsair);
 	const apiUrl = hub.apiUrl.replace(/\/$/, '');
 	const oauthMode = input.oauthMode ?? 'byo';
+
+	if (input.source) {
+		const sourceValidation = validateExplicitConnectSource({
+			source: input.source,
+			deliveryUrl: hub.deliveryUrl,
+			oauthMode,
+		});
+		if (sourceValidation) {
+			throw new Error(sourceValidation.error);
+		}
+	}
+
 	const providerName =
 		input.providerName ?? formatProviderDisplayName(input.plugin);
 	const source =

@@ -1,13 +1,22 @@
 import { getHubConfig, HubNotConfiguredError } from './config';
 import { createHubConnectSession } from './connect';
-import { resolveConnectSourceFromDeliveryUrl } from './delivery-url';
+import {
+	resolveConnectSourceFromDeliveryUrl,
+	validateExplicitConnectSource,
+} from './delivery-url';
 import type {
 	HubConnectSessionInput,
 	HubConnectSource,
 	HubOAuthMode,
 } from './types';
 
-export { isLoopbackDeliveryUrl, resolveConnectSourceFromDeliveryUrl } from './delivery-url';
+export type { ConnectSourceValidationError } from './delivery-url';
+export {
+	isLoopbackDeliveryUrl,
+	resolveConnectSourceFromDeliveryUrl,
+	shouldUseBrowserConnectDelivery,
+	validateExplicitConnectSource,
+} from './delivery-url';
 
 export type HubConnectSessionRequestBody = {
 	plugin?: string;
@@ -175,11 +184,22 @@ export async function handleHubConnectSessionRequest(
 	}
 
 	const hub = getHubConfig(corsair);
+
+	if (parsed.source) {
+		const sourceValidation = validateExplicitConnectSource({
+			source: parsed.source,
+			deliveryUrl: hub.deliveryUrl,
+			oauthMode: parsed.oauthMode,
+		});
+		if (sourceValidation) {
+			return sourceValidation;
+		}
+	}
+
 	const connectInput: HubConnectSessionInput = {
 		...parsed,
 		source:
-			parsed.source ??
-			resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl),
+			parsed.source ?? resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl),
 	};
 
 	const session = await createHubConnectSession(corsair, connectInput);

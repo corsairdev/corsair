@@ -8,10 +8,6 @@ export {
 } from './config';
 export { createHubConnectSession } from './connect';
 export {
-	createHubPermissionSession,
-	formatHubApprovalMessage,
-} from './permission';
-export {
 	type HubConnectSessionParseError,
 	type HubConnectSessionRequestBody,
 	type HubConnectSessionResponseOptions,
@@ -24,6 +20,8 @@ export {
 	resolveConnectSourceFromDeliveryUrl,
 	respondToHubConnectSession,
 	respondToHubConnectSessionFromRequest,
+	shouldUseBrowserConnectDelivery,
+	validateExplicitConnectSource,
 } from './connect-response';
 export type { HubDeliveryResult } from './delivery';
 export { handleHubDeliveryGet, handleHubDeliveryPost } from './delivery';
@@ -34,6 +32,7 @@ export {
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,
 } from './delivery-response';
+export type { ConnectSourceValidationError } from './delivery-url';
 export {
 	attachManagedRefreshAuth,
 	getManagedAccessToken,
@@ -46,6 +45,10 @@ export {
 	type ProcessManagedOAuthDeliveryResult,
 	processManagedOAuthDelivery,
 } from './managed-oauth';
+export {
+	createHubPermissionSession,
+	formatHubApprovalMessage,
+} from './permission';
 export {
 	createHubRouteHandlers,
 	type HubRouteHandlersOptions,

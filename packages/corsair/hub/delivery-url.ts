@@ -1,6 +1,11 @@
-import type { HubConnectSource } from './types';
+import type { HubConnectSource, HubOAuthMode } from './types';
 
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
+
+export type ConnectSourceValidationError = {
+	error: string;
+	status: number;
+};
 
 export function isLoopbackDeliveryUrl(deliveryUrl: string): boolean {
 	try {
@@ -16,4 +21,41 @@ export function resolveConnectSourceFromDeliveryUrl(
 	deliveryUrl: string,
 ): HubConnectSource {
 	return isLoopbackDeliveryUrl(deliveryUrl) ? 'client' : 'server';
+}
+
+export function shouldUseBrowserConnectDelivery(
+	source: HubConnectSource,
+	deliveryUrl: string,
+): boolean {
+	return source === 'client' || isLoopbackDeliveryUrl(deliveryUrl);
+}
+
+export function validateExplicitConnectSource(input: {
+	source?: HubConnectSource;
+	deliveryUrl: string;
+	oauthMode?: HubOAuthMode;
+}): ConnectSourceValidationError | null {
+	if (!input.source) {
+		return null;
+	}
+
+	const loopback = isLoopbackDeliveryUrl(input.deliveryUrl);
+
+	if (input.source === 'server' && loopback) {
+		return {
+			error:
+				'source "server" cannot be used with a loopback delivery URL — omit source to auto-detect or use "client"',
+			status: 400,
+		};
+	}
+
+	if (input.oauthMode === 'managed' && input.source === 'client' && !loopback) {
+		return {
+			error:
+				'managed OAuth with source "client" requires a loopback delivery URL — omit source for production server delivery',
+			status: 400,
+		};
+	}
+
+	return null;
 }
