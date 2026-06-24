@@ -1,4 +1,3 @@
-import * as querystring from 'node:querystring';
 import type {
 	CorsairInternalConfig,
 	CorsairPlugin,
@@ -23,9 +22,14 @@ import {
 import { createCorsairOrm } from '../db/orm';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
+import { buildOAuthAuthorizeUrl } from './authorize-url';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
+export {
+	type BuildOAuthAuthorizeUrlInput,
+	buildOAuthAuthorizeUrl,
+} from './authorize-url';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured errors
@@ -166,17 +170,13 @@ export async function generateOAuthUrl(
 
 	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
 
-	const params: Record<string, string> = {
-		...oauthCfg.authParams,
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: 'code',
-		scope: oauthCfg.scopes.join(' '),
-		state,
-	};
-
 	return {
-		url: `${oauthCfg.authUrl}?${querystring.stringify(params)}`,
+		url: buildOAuthAuthorizeUrl({
+			oauthConfig: oauthCfg,
+			clientId,
+			redirectUri,
+			state,
+		}),
 		state,
 	};
 }

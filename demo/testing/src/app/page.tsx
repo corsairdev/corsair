@@ -23,7 +23,7 @@ function HubConnectButton({
 		setError(null);
 
 		try {
-			const response = await fetch('/api/hub/create-link', {
+			const response = await fetch('/api/corsair/connect/links', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -270,6 +270,12 @@ export default function Home() {
 			<div style={{ marginTop: '2rem' }}>
 				<h2>API Endpoints</h2>
 				<ul>
+					<li>
+						<code>/api/corsair</code> - Hub delivery endpoint
+					</li>
+					<li>
+						<code>/api/corsair/connect/links</code> - Create connect links
+					</li>
 					<li>
 						<code>/api/webhook</code> - Webhook handler for
 						Slack/Linear/GitHub/Resend events

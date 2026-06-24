@@ -6,6 +6,7 @@ import type {
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginInfo,
 	ResolvedConnectLink,
@@ -40,8 +41,7 @@ export type CorsairManagementClient = {
 		get: (query?: { tenantId?: string }) => Promise<ConnectionStatus>;
 	};
 	permissions: {
-		get: (id: string) => Promise<PermissionRecord>;
-		getByToken: (token: string) => Promise<PermissionRecord>;
+		get: (input: PermissionLookupInput) => Promise<PermissionRecord>;
 	};
 	connect: {
 		createLink: (input: CreateConnectLinkInput) => Promise<ConnectLink>;

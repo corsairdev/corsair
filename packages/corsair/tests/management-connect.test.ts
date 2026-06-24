@@ -27,7 +27,7 @@ const apiKeyPlugin = {
 } as unknown as CorsairPlugin;
 
 const KEK = 'test-kek-management-connect';
-const CONNECT = {
+const MANUAL = {
 	baseUrl: 'https://app.example.com/connect',
 	redirectUri: 'https://app.example.com/oauth/callback',
 };
@@ -41,7 +41,7 @@ function makeCorsair(env: ReturnType<typeof createTestDatabase>) {
 		plugins: [slackOAuth],
 		database: env.db,
 		kek: KEK,
-		connect: CONNECT,
+		manual: MANUAL,
 	} as any);
 }
 
@@ -65,11 +65,14 @@ describe('managementHandler — POST /connect/links', () => {
 			}),
 		);
 		expect(res.status).toBe(200);
-		const body = await readJson<{ connectUrl: string; state: string }>(res);
-		expect(body.state).toMatch(/\./); // signed (payload.signature)
+		const body = await readJson<{ connectUrl: string; expiresAt?: string }>(
+			res,
+		);
+		expect(body.expiresAt).toBeDefined();
 		const url = new URL(body.connectUrl);
-		expect(url.origin + url.pathname).toBe(CONNECT.baseUrl);
-		expect(url.searchParams.get('state')).toBe(body.state);
+		expect(url.origin + url.pathname).toBe(MANUAL.baseUrl);
+		const state = url.searchParams.get('state');
+		expect(state).toMatch(/\./); // signed (payload.signature)
 	});
 
 	it('returns 400 missing_credentials when client creds are unset', async () => {
@@ -118,7 +121,7 @@ describe('managementHandler — POST /connect/links', () => {
 			plugins: [apiKeyPlugin],
 			database: env.db,
 			kek: KEK,
-			connect: CONNECT,
+			manual: MANUAL,
 		} as any);
 
 		const handler = managementHandler(corsair);
@@ -159,7 +162,7 @@ describe('managementHandler — POST /connect/links', () => {
 			plugins: [slackOAuth],
 			database: env.db,
 			kek: KEK,
-			connect: { baseUrl: 'not-a-url', redirectUri: CONNECT.redirectUri },
+			manual: { baseUrl: 'not-a-url', redirectUri: MANUAL.redirectUri },
 		} as any);
 		await setupCorsair(corsair);
 		await (corsair as any).keys.slack.set_client_id('cid');
@@ -211,7 +214,7 @@ describe('managementHandler — GET /connect/resolve', () => {
 		expect(body.oauthUrl).toContain('slack.com/oauth/v2/authorize');
 		expect(body.oauthUrl).toContain('client_id=cid');
 		expect(body.oauthUrl).toContain(
-			`redirect_uri=${encodeURIComponent(CONNECT.redirectUri)}`,
+			`redirect_uri=${encodeURIComponent(MANUAL.redirectUri)}`,
 		);
 	});
 
@@ -354,8 +357,8 @@ describe('corsair.manage.connect — in-process parity', () => {
 			plugin: 'slack',
 			tenantId: 'team-x',
 		});
-		expect(link.state).toMatch(/\./);
-		expect(link.connectUrl).toContain(CONNECT.baseUrl);
+		expect(link.connectUrl).toContain(MANUAL.baseUrl);
+		expect(link.expiresAt).toBeDefined();
 	});
 
 	it('resolve decodes a state without hitting HTTP', async () => {
@@ -368,8 +371,80 @@ describe('corsair.manage.connect — in-process parity', () => {
 		const link = await (corsair as any).manage.connect.createLink({
 			plugin: 'slack',
 		});
-		const resolved = await (corsair as any).manage.connect.resolve(link.state);
+		const state = new URL(link.connectUrl).searchParams.get('state')!;
+		const resolved = await (corsair as any).manage.connect.resolve(state);
 		expect(resolved.plugin).toBe('slack');
 		expect(resolved.tenantId).toBe('default');
+	});
+});
+
+describe('corsair.manage.connect — hub mode', () => {
+	let env: ReturnType<typeof createTestDatabase>;
+	afterEach(() => env?.cleanup?.());
+
+	it('createLink delegates to hub when hub config is set', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [slackOAuth],
+			database: env.db,
+			kek: KEK,
+			hub: {
+				projectApiKey: 'project-key',
+				signingSecret: 'signing-secret',
+				deliveryUrl: 'http://localhost:3001/api/corsair',
+			},
+		} as any);
+		await setupCorsair(corsair);
+		await (corsair as any).keys.slack.set_client_id('cid');
+		await (corsair as any).keys.slack.set_client_secret('csec');
+
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 200,
+			headers: new Headers({ 'content-type': 'application/json' }),
+			text: async () =>
+				JSON.stringify({
+					connectUrl: 'https://auth.corsair.dev/connect/signed-token',
+					token: 'signed-token',
+					projectId: 'proj-1',
+					expiresAt: '2026-06-24T12:00:00.000Z',
+				}),
+		}) as typeof fetch;
+
+		try {
+			const link = await (corsair as any).manage.connect.createLink({
+				plugin: 'slack',
+				source: 'client',
+			});
+			expect(link).toEqual({
+				connectUrl: 'https://auth.corsair.dev/connect/signed-token',
+				expiresAt: '2026-06-24T12:00:00.000Z',
+			});
+			expect(global.fetch).toHaveBeenCalledWith(
+				expect.stringContaining('/connect/sessions'),
+				expect.any(Object),
+			);
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('resolve returns hub_mode when only hub config is set', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [slackOAuth],
+			database: env.db,
+			kek: KEK,
+			hub: {
+				projectApiKey: 'project-key',
+				signingSecret: 'signing-secret',
+				deliveryUrl: 'http://localhost:3001/api/corsair',
+			},
+		} as any);
+
+		await expect(
+			(corsair as any).manage.connect.resolve('some-state'),
+		).rejects.toMatchObject({ code: 'hub_mode' });
 	});
 });

@@ -26,8 +26,8 @@ await client.connectionStatus.get({               // GET /connection-status
   tenantId: "acme",
 });
 
-await client.permissions.get("perm_123");         // GET /permissions/perm_123
-await client.permissions.getByToken("tok_abc");   // POST /permissions/lookup-by-token
+await client.permissions.get({ id: "perm_123" });   // GET /permissions/perm_123
+await client.permissions.get({ token: "tok_abc" }); // POST /permissions/lookup-by-token
 
 await client.ok();                                // GET /ok
 ```
