@@ -244,22 +244,18 @@ export function createCorsairReactClient(opts: CorsairReactClientOptions) {
 
 	// ── permissions ───────────────────────────────────────────────────────────
 
-	/** Fetch a permission record by id. Re-fetches when `id` changes. */
-	function usePermission(id: string) {
-		return useAsync(() => client.permissions.get(id), [id]);
-	}
-
-	/** Fetch a permission record by its email-link token. */
-	function usePermissionByToken(token: string) {
-		return useAsync(() => client.permissions.getByToken(token), [token]);
+	/** Fetch a permission record by id or token. Re-fetches when the lookup key changes. */
+	function usePermission(input: { id: string } | { token: string }) {
+		const key = 'id' in input ? input.id : input.token;
+		return useAsync(() => client.permissions.get(input), [key]);
 	}
 
 	// ── connect / OAuth ───────────────────────────────────────────────────────
 
 	/**
-	 * Generate a signed connect URL for a plugin + tenant.
-	 * Call `mutate({ plugin: 'github', tenantId: 'acme' })` to get the URL,
-	 * then redirect the user to `data.connectUrl`.
+	 * Create a connect URL for a plugin + tenant.
+	 * With `hub` config, redirects to Corsair Hub. With `manual` config, redirects
+	 * to your self-hosted connect page. Redirect the user to `data.connectUrl`.
 	 *
 	 * @example
 	 * const { mutate: createLink, data, loading } = useCreateConnectLink();
@@ -300,7 +296,6 @@ export function createCorsairReactClient(opts: CorsairReactClientOptions) {
 		useConnectionStatus,
 		// permission hooks
 		usePermission,
-		usePermissionByToken,
 		// connect / OAuth hooks
 		useCreateConnectLink,
 		useOAuthCallback,
@@ -316,6 +311,7 @@ export type {
 	CreateTenantInput,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginInfo,
 	Tenant,

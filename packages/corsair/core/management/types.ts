@@ -1,4 +1,5 @@
 import type { CorsairPermission } from '../../db';
+import { enrichPermissionWithApprovalUrl } from '../permissions';
 import type { AuthTypes } from '../constants';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -39,18 +40,30 @@ export type ConnectionStatus = Record<string, PluginConnectionState>;
 
 export type ManagementOk = { ok: true };
 
-export type PermissionRecord = CorsairPermission;
+export type PermissionRecord = CorsairPermission & {
+	/** Resolved review URL for pending/approved records. Null when not actionable or not configured. */
+	approvalUrl: string | null;
+};
+
+export type PermissionLookupInput = { id: string } | { token: string };
 
 // ── connect / OAuth ────────────────────────────────────────────────────────
 
 export type CreateConnectLinkInput = {
-	plugin: string;
+	/** Required in manual mode. Optional in hub mode (omit to connect all plugins). */
+	plugin?: string;
 	tenantId?: string;
+	/** Hub mode only — BYO uses your OAuth app; managed uses Corsair's. */
+	oauthMode?: 'byo' | 'managed';
+	/** Hub mode only — inferred from deliveryUrl when omitted. */
+	source?: 'client' | 'server';
+	/** Hub mode only — override the provider display name. */
+	providerName?: string;
 };
 
 export type ConnectLink = {
 	connectUrl: string;
-	state: string;
+	expiresAt?: string;
 };
 
 export type ResolvedConnectLink = {

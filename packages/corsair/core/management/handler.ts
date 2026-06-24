@@ -1,4 +1,5 @@
 import type { CorsairInternalConfig } from '..';
+import type { CreateConnectLinkInput } from './types';
 import { getCorsairInternal } from '../utils/corsair-instance';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
@@ -119,12 +120,13 @@ const ROUTES: Route[] = [
 	{
 		method: 'POST',
 		pattern: '/connect/links',
-		handler: async ({ internal, body }) =>
+		handler: async ({ corsair, internal, body }) =>
 			json(
 				200,
 				await createConnectLink(
+					corsair,
 					internal,
-					body as { plugin: string; tenantId?: string },
+					body as CreateConnectLinkInput,
 				),
 			),
 	},

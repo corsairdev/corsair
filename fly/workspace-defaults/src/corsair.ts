@@ -15,16 +15,9 @@ export const corsair = createCorsair({
 		timeout: '1h',
 		onTimeout: 'deny',
 		mode: 'asynchronous',
-		formatAsyncMessage: ({
-			token,
-		}: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) =>
-			`Approval required. Visit ${PUBLIC_URL}/approve/${token} to approve or deny, then retry.`,
+	},
+	manual: {
+		approvalBaseUrl: `${PUBLIC_URL}/approve`,
 	},
 	plugins: [],
 });

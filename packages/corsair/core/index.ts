@@ -7,7 +7,11 @@ import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
-import type { CorsairIntegration, CorsairPlugin } from './plugins';
+import type {
+	CorsairIntegration,
+	CorsairManualConfig,
+	CorsairPlugin,
+} from './plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal access for CLI tooling
@@ -27,7 +31,7 @@ export type CorsairInternalConfig = {
 			| 'synchronous'
 			| 'asynchronous'
 			| (() => 'synchronous' | 'asynchronous');
-		/** Called when a permission is blocked in async mode. Return the message surfaced to the LLM. */
+		/** @deprecated Use manual.onApprovalRequired. TODO: delete ~April 2026. */
 		formatAsyncMessage?: (opts: {
 			token: string;
 			id: string;
@@ -36,15 +40,7 @@ export type CorsairInternalConfig = {
 			args: unknown;
 		}) => string;
 	};
-	connect?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-	};
+	manual?: CorsairManualConfig;
 	hub?: HubConfig;
 };
 
@@ -104,7 +100,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		kek: config.kek,
 		multiTenancy: !!config.multiTenancy,
 		approval: config.approval,
-		connect: config.connect,
+		manual: config.manual,
 		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
 	};
 
@@ -126,7 +122,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
 						approvalConfig: config.approval,
-						connectConfig: config.connect,
+						manualConfig: config.manual,
 						hubConfig: internalConfig.hub,
 					});
 					return Object.assign(client as object, {
@@ -147,7 +143,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		kek: config.kek,
 		rootErrorHandlers: config.errorHandlers,
 		approvalConfig: config.approval,
-		connectConfig: config.connect,
+		manualConfig: config.manual,
 		hubConfig: internalConfig.hub,
 	});
 

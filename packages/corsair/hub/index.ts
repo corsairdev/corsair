@@ -21,8 +21,9 @@
  *
  * ## Framework helpers
  *
- * `createHubRouteHandlers(corsair)` returns `{ delivery, createConnectSession }` for
- * Next.js App Router route exports.
+ * `createHubRouteHandlers(corsair)` returns `{ delivery }` for Next.js App Router
+ * route exports. Connect links are created via `client.connect.createLink()` on the
+ * management handler when `hub: {}` is configured on the Corsair instance.
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
@@ -33,18 +34,6 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
-export {
-	type HubConnectSessionParseError,
-	type HubConnectSessionRequestBody,
-	type HubConnectSessionResponseOptions,
-	type HubConnectSessionSuccessBody,
-	handleHubConnectSessionRequest,
-	parseHubConnectSessionBody,
-	parseHubConnectSessionSearchParams,
-	type ResolveHubConnectTenantId,
-	respondToHubConnectSession,
-	respondToHubConnectSessionFromRequest,
-} from './connect-response';
 export {
 	type ConnectStatusPluginEntry,
 	type ConnectStatusResponse,
@@ -84,7 +73,6 @@ export {
 } from './permission';
 export {
 	createHubRouteHandlers,
-	type HubRouteHandlersOptions,
 } from './route-handlers';
 export type {
 	ConnectAuthKind,

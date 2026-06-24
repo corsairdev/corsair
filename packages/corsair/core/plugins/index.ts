@@ -648,6 +648,36 @@ export type CorsairPluginContext<
 		: {});
 
 /**
+ * Self-hosted connect pages and/or permission review URLs.
+ * Can coexist with `hub` — use hub for hosted connect while pointing permission
+ * review links at your app via `approvalBaseUrl`.
+ */
+export type CorsairManualConfig = {
+	/** Required for manual OAuth connect (`createLink`, connect page, callback). Omit if connect uses hub. */
+	baseUrl?: string;
+	/** OAuth callback URL registered with the provider. Required with `baseUrl` for manual connect. */
+	redirectUri?: string;
+	/**
+	 * Base URL for permission review links, e.g. `https://app.example.com/approve`.
+	 * Corsair appends `/{token}` when a gated operation blocks so agents receive
+	 * an actionable link. Optional — set this or use hub for hosted approval UI.
+	 */
+	approvalBaseUrl?: string;
+	/** Customize the agent-facing message when OAuth is missing (manual connect only). */
+	onAuthMissing?: (opts: {
+		plugin: string;
+		connectUrl: string;
+		state: string;
+	}) => string;
+	/**
+	 * Customize the message returned to agents when an operation requires approval.
+	 * Receives the resolved approval URL. When omitted and a URL is available,
+	 * Corsair uses a default message instructing the user to visit the link.
+	 */
+	onApprovalRequired?: (opts: { approvalUrl: string }) => string;
+};
+
+/**
  * Configuration for creating a Corsair integration with plugins.
  * @template Plugins - Array of plugin definitions
  */
@@ -696,9 +726,7 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 			| 'asynchronous'
 			| (() => 'synchronous' | 'asynchronous');
 		/**
-		 * Called when a permission is blocked in async mode. Return the string that the LLM receives
-		 * as the tool result — this is what gets surfaced to the user in the chat.
-		 * Receives the permission token, record ID, plugin name, endpoint path, and args.
+		 * @deprecated Use `manual.onApprovalRequired` instead. TODO: delete ~April 2026.
 		 */
 		formatAsyncMessage?: (opts: {
 			token: string;
@@ -708,21 +736,8 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 			args: unknown;
 		}) => string;
 	};
-	/**
-	 * Connect link configuration for non-authenticated users.
-	 * When a plugin endpoint is called but the user hasn't authenticated,
-	 * Corsair generates a connect link the agent can present to the user.
-	 * Only applies to plugins with an `oauthConfig`.
-	 */
-	connect?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-	};
+	/** Self-hosted connect and/or permission review configuration. Can coexist with `hub`. */
+	manual?: CorsairManualConfig;
 	/** Corsair Hub configuration for hosted OAuth connect flows. */
 	hub?: HubConfigInput;
 };

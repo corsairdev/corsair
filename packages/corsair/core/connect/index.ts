@@ -1,4 +1,3 @@
-import * as querystring from 'node:querystring';
 import type { CorsairPlugin, OAuthConfig } from '..';
 import { createIntegrationKeyManager } from '..';
 import { verifyAndDecodeState } from '../auth/state';
@@ -6,6 +5,7 @@ import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../utils/corsair-instance';
+import { buildOAuthAuthorizeUrl } from '../../oauth/authorize-url';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured errors
@@ -75,7 +75,7 @@ export type ResolveConnectLinkResult = {
  * and returns the full OAuth authorization URL so you just have to render
  * a "Connect" button linking to `result.oauthUrl`.
  *
- * Uses the `redirectUri` from `createCorsair({ connect: { redirectUri } })`.
+ * Uses the `redirectUri` from `createCorsair({ manual: { redirectUri } })`.
  *
  * @param corsair - The corsair instance
  * @param state - The `state` query parameter from the connect URL
@@ -106,11 +106,11 @@ export async function resolveConnectLink(
 		);
 	}
 
-	const redirectUri = internal.connect?.redirectUri;
+	const redirectUri = internal.manual?.redirectUri;
 	if (!redirectUri) {
 		throw new ConnectError(
 			'no_redirect_uri',
-			'No redirectUri configured. Set connect.redirectUri in createCorsair().',
+			'No redirectUri configured. Set manual.redirectUri in createCorsair().',
 		);
 	}
 
@@ -145,16 +145,12 @@ export async function resolveConnectLink(
 		);
 	}
 
-	const params: Record<string, string> = {
-		...oauthCfg.authParams,
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: 'code',
-		scope: oauthCfg.scopes.join(' '),
+	const oauthUrl = buildOAuthAuthorizeUrl({
+		oauthConfig: oauthCfg,
+		clientId,
+		redirectUri,
 		state,
-	};
-
-	const oauthUrl = `${oauthCfg.authUrl}?${querystring.stringify(params)}`;
+	});
 
 	return {
 		plugin: pluginId,
