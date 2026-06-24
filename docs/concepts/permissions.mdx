@@ -14,7 +14,7 @@ import { github } from "@corsair-dev/github";
 export const corsair = createCorsair({
     database: db,
     kek: process.env.CORSAIR_KEK!,
-    approval: {
+    permissions: {
         timeout: "30m",
         onTimeout: "deny",
         mode: "asynchronous",
@@ -261,11 +261,15 @@ Corsair deduplicates pending requests. If the same plugin, endpoint, args, and t
 
 ## Timeout
 
-Configure the approval window at the root with `createCorsair({ approval: ... })`:
+Configure timeouts and blocking behavior at the root with `createCorsair({ permissions: ... })`:
+
+<Note>
+The old `approval: { ... }` key still works but is **deprecated** — rename it to `permissions`. TypeScript will strike through `approval` in your editor. A runtime warning is logged on startup if you still use it.
+</Note>
 
 ```ts corsair.ts
 export const corsair = createCorsair({
-    approval: {
+    permissions: {
         timeout: "30m",      // duration string: '30s', '10m', '1h', '2h30m', '1d'
         onTimeout: "deny",   // 'deny' (recommended) or 'approve'
     },
@@ -282,7 +286,7 @@ After `expires_at`, the record is no longer actionable. Synchronous mode returns
 
 ## Synchronous vs asynchronous
 
-Control how blocked calls behave with `approval.mode`. Agent-facing messages come from **hub** (hosted, automatic) or **`manual.onApprovalRequired`** (self-hosted review URLs).
+Control how blocked calls behave with `permissions.mode`. Agent-facing messages come from **hub** (hosted, automatic) or **`manual.onApprovalRequired`** (self-hosted review URLs).
 
 ### Asynchronous (default)
 
@@ -315,7 +319,7 @@ Best when:
 - You want approval to feel seamless — approve in the UI, the agent continues automatically
 
 ```ts corsair.ts
-approval: {
+permissions: {
     timeout: "10m",
     onTimeout: "deny",
     mode: "synchronous",
@@ -327,7 +331,7 @@ approval: {
 Pass a function to switch modes per request — useful when approval behavior depends on runtime context:
 
 ```ts corsair.ts
-approval: {
+permissions: {
     timeout: "30m",
     onTimeout: "deny",
     mode: () => (process.env.NODE_ENV === "production" ? "asynchronous" : "synchronous"),
@@ -402,14 +406,14 @@ Once `status` is `approved`, either the original agent retries the call or you i
 
 ### MCP / coding agents
 
-When using [MCP adapters](/mcp-adapters/mcp-adapters), permissions gate `run_script` calls automatically. Configure `permissions` on each plugin and `approval` on `createCorsair`.
+When using [MCP adapters](/mcp-adapters/mcp-adapters), permissions gate `run_script` calls automatically. Configure per-plugin `permissions: { mode, overrides }` and global `permissions: { timeout, mode }` on `createCorsair`.
 
 With **hub** config, blocked calls automatically include a hosted approval URL for the agent. With **manual** config, set `manual.approvalBaseUrl` (and optionally `manual.onApprovalRequired`) so agents receive a review link:
 
 ```ts corsair.ts
 export const corsair = createCorsair({
     hub: { /* connect via hosted UI */ },
-    approval: {
+    permissions: {
         timeout: "1h",
         onTimeout: "deny",
         mode: "asynchronous",

@@ -390,7 +390,7 @@ export async function enforcePermission(
 
 export type {
 	ApprovalConfigForMessage,
-	DeprecatedFormatAsyncMessage,
+	CorsairPermissionsOptions,
 } from './approval-message';
 export {
 	APPROVAL_SETUP_HINT,

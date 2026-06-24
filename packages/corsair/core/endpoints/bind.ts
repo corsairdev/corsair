@@ -4,7 +4,6 @@ import { AuthMissingError } from '../auth/errors/auth-missing';
 import { encodeOAuthState, signState } from '../auth/state';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
-import type { ApprovalConfigForMessage } from '../permissions';
 import {
 	enforcePermission,
 	parseDurationMs,
@@ -13,6 +12,7 @@ import {
 import type {
 	CorsairKeyBuilderBase,
 	CorsairManualConfig,
+	CorsairPermissionsOptions,
 	EndpointHooks,
 	EndpointMetaEntry,
 	OAuthConfig,
@@ -87,7 +87,7 @@ export function bindEndpointsRecursively({
 	permissionsConfig,
 	endpointMeta,
 	database,
-	approvalConfig,
+	permissionsOptions,
 	tenantId,
 	manualConfig,
 	hubConfig,
@@ -109,8 +109,8 @@ export function bindEndpointsRecursively({
 	endpointMeta?: Record<string, EndpointMetaEntry>;
 	/** Required for 'require_approval' to persist the approval record to the DB. */
 	database?: CorsairDatabase;
-	/** Approval timeout config from createCorsair({ approval: ... }). */
-	approvalConfig?: ApprovalConfigForMessage;
+	/** Global permissions config from createCorsair({ permissions: ... }). */
+	permissionsOptions?: CorsairPermissionsOptions;
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
 	/** Manual config — connect pages and/or permission review URLs. */
@@ -153,11 +153,11 @@ export function bindEndpointsRecursively({
 						riskLevel: meta?.riskLevel ?? 'write',
 						meta,
 						db: database,
-						timeoutMs: approvalConfig
-							? parseDurationMs(approvalConfig.timeout)
+						timeoutMs: permissionsOptions
+							? parseDurationMs(permissionsOptions.timeout)
 							: undefined,
 						tenantId,
-						approvalMode: approvalConfig?.mode,
+						approvalMode: permissionsOptions?.mode,
 					});
 					if (permResult === 'blocked') {
 						let msg: string;
@@ -169,7 +169,7 @@ export function bindEndpointsRecursively({
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
 						} else if (permToken && permId) {
 							msg = await resolveAsyncApprovalMessage({
-								approvalConfig,
+								permissionsOptions,
 								manual: manualConfig,
 								hub: hubConfig,
 								permissionId: permId,
@@ -182,8 +182,8 @@ export function bindEndpointsRecursively({
 									permExpiresAt ??
 									new Date(
 										Date.now() +
-											(approvalConfig
-												? parseDurationMs(approvalConfig.timeout)
+											(permissionsOptions
+												? parseDurationMs(permissionsOptions.timeout)
 												: 10 * 60 * 1_000),
 									).toISOString(),
 								operationPath,
@@ -325,7 +325,7 @@ export function bindEndpointsRecursively({
 				permissionsConfig,
 				endpointMeta,
 				database,
-				approvalConfig,
+				permissionsOptions,
 				tenantId,
 				manualConfig,
 				hubConfig,

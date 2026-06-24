@@ -7,6 +7,8 @@ import { authClient } from '@/lib/auth-client';
 
 import { FramedPanel } from '../framed-panel';
 
+import { HACKATHON_DATE_RANGE } from './waitlist-constants';
+
 const inputClassName =
 	'w-full rounded-lg border border-[#1c1c1c1a] bg-white px-3 py-2.5 text-sm text-[#1c1c1c] shadow-sm transition-all focus:border-[#1c1c1c66] focus:ring-2 focus:ring-[#4a38f514] focus:outline-none';
 
@@ -75,7 +77,8 @@ export function WaitlistEmailForm() {
 				</h2>
 				<p className="mt-2 text-[13px] leading-[1.65] text-[#1c1c1c99]">
 					Enter your email and we&apos;ll send a confirmation link. Once
-					verified, you can add your GitHub and Discord handles.
+					verified, add your GitHub and Discord handles before the sprint (
+					{HACKATHON_DATE_RANGE}).
 				</p>
 
 				<div className="mt-6">
