@@ -1,0 +1,131 @@
+---
+title: Connect / OAuth
+description: How users connect their own Slack, GitHub, Notion, etc. accounts to a tenant — signed connect links, OAuth redirect, callback.
+---
+
+When a user clicks "Connect GitHub" in your dashboard, three things happen:
+
+1. Your backend asks Corsair for a **signed connect link**.
+2. The user is redirected to the provider's OAuth screen.
+3. The provider redirects back, and your backend **exchanges the code** for tokens, which Corsair encrypts and stores.
+
+The management API exposes three routes for this. The vanilla and React clients wrap them.
+
+## Server setup
+
+Connect routes require `connect` config on your Corsair instance — without it the routes return `connect_not_configured` (500):
+
+```ts server.ts
+export const corsair = createCorsair({
+  plugins: [github(), slack()],
+  database,
+  kek,
+  connect: {
+    baseUrl: "https://app.example.com/connect", // where users land after clicking the link
+    redirectUri: "https://app.example.com/api/oauth/callback",
+  },
+});
+```
+
+## The three routes
+
+| Method | Path                                | Purpose                                          |
+| ------ | ----------------------------------- | ------------------------------------------------ |
+| POST   | `/connect/links`                    | Create a signed connect link                     |
+| GET    | `/connect/resolve?state=…`          | Verify the signed state, return the OAuth URL    |
+| POST   | `/connect/oauth/callback`           | Exchange the OAuth code for tokens               |
+
+The signed `state` is an HMAC over `{ plugin, tenantId, iat }` using the KEK. The `iat` gives the link an expiry, so a leaked link goes stale quickly.
+
+## Step 1 — Create the connect link
+
+```ts backend.ts
+const { connectUrl, state } = await client.connect.createLink({
+  plugin: "github",
+  tenantId: "acme", // optional — omit for single-tenant deployments
+});
+// redirect the user's browser to connectUrl
+```
+
+`connectUrl` already points at your `/connect/resolve` route. You don't have to build it.
+
+In React:
+
+```tsx connect-button.tsx
+function ConnectGithub({ tenantId }: { tenantId: string }) {
+  const { mutate, loading } = useCreateConnectLink();
+
+  return (
+    <button
+      disabled={loading}
+      onClick={async () => {
+        const link = await mutate({ plugin: "github", tenantId });
+        if (link) window.location.href = link.connectUrl;
+      }}
+    >
+      Connect GitHub
+    </button>
+  );
+}
+```
+
+## Step 2 — Resolve
+
+The browser hits `/connect/resolve?state=…`. The handler:
+
+- verifies the HMAC,
+- checks the `iat` against the link TTL,
+- looks up the plugin's OAuth config (client ID, scopes, redirect URI),
+- responds with the provider authorize URL plus the original `plugin`, `tenantId`, and `providerName`.
+
+You normally don't call this manually — `connectUrl` from step 1 already targets it. The route exists as its own step so a frontend can `fetch` the resolved URL instead of doing a full redirect, if that fits your UX better.
+
+## Step 3 — OAuth callback
+
+The provider redirects back to your app with `?code=…&state=…`. Your callback route forwards both to Corsair:
+
+```ts app/api/oauth/callback/route.ts
+import { corsair } from "@/server";
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const code = url.searchParams.get("code")!;
+  const state = url.searchParams.get("state")!;
+
+  await corsair.manage.connect.oauthCallback({ code, state });
+
+  return Response.redirect("/dashboard?connected=1");
+}
+```
+
+Or, from a frontend with the client:
+
+```ts
+await client.connect.oauthCallback({ code, state });
+```
+
+Corsair re-verifies the `state`, exchanges the `code` with the provider, encrypts the resulting tokens with the tenant DEK, and stores them. From this point on, `corsair.withTenant(tenantId).github.api.*` works against the connected account.
+
+## Checking connection status
+
+After a successful callback, `useConnectionStatus({ tenantId })` reflects the new state:
+
+```tsx status.tsx
+const { data, refetch } = useConnectionStatus({ tenantId: "acme" });
+// data: { github: 'connected', slack: 'not_connected', ... }
+```
+
+Call `refetch()` after the callback resolves to update the dashboard without a full reload.
+
+## Errors
+
+| Status | `error`                  | When                                                          |
+| ------ | ------------------------ | ------------------------------------------------------------- |
+| 500    | `connect_not_configured` | `connect` config wasn't passed to `createCorsair`             |
+| 500    | `database_not_configured`| `database` and `kek` are required to issue connect links      |
+| 500    | `connect_misconfigured`  | `connect.baseUrl` isn't a valid full URL                      |
+| 400    | `missing_credentials`    | Plugin OAuth client id / secret aren't configured             |
+| 500    | `resolve_failed`         | State invalid or expired                                      |
+| 502    | `oauth_callback_failed`  | Provider rejected the code — usually means it was already used |
+
+All come back as `CorsairClientError` with these `code` values, so you can branch on them in your UI.
