@@ -14,7 +14,7 @@ const handler = managementHandler(corsair, { basePath: "/api/corsair" });
 
 ## Routes
 
-The handler dispatches 9 read/write routes plus 3 connect routes (see [Connect / OAuth](/management/connect)).
+The handler dispatches 9 read/write routes. Connect/OAuth is covered separately on the [Connect page](/management/connect).
 
 | Method | Path                                | Purpose                                       |
 | ------ | ----------------------------------- | --------------------------------------------- |
@@ -39,7 +39,7 @@ managementHandler(corsair, {
 });
 ```
 
-`basePath` defaults to `""`. Set it to whatever prefix your framework mounts the handler under. The handler strips it before matching routes, so `/api/corsair/tenants` → `/tenants`.
+`basePath` defaults to `"/api/corsair"`. Set it to whatever prefix your framework mounts the handler under. The handler strips it before matching routes, so `/api/corsair/tenants` → `/tenants`.
 
 `onError` lets you log or rewrite errors. Return a `Response` to take over, or `undefined` to fall through to the default JSON error.
 
@@ -94,7 +94,7 @@ Sometimes you don't want HTTP — you want to call the same operations directly 
 await corsair.manage.tenants.list();
 await corsair.manage.tenants.create({ id: "acme" });
 await corsair.manage.plugins.get("github");
-await corsair.manage.connectionStatus.get("acme");
+await corsair.manage.connectionStatus.get({ tenantId: "acme" });
 ```
 
 Every route on the HTTP handler has a matching `manage.*` method with the same shape.
@@ -110,7 +110,7 @@ Errors come back as JSON in this flat shape:
 }
 ```
 
-The TypeScript class is `ManagementApiError` (exported from `corsair`). Common codes you'll see from the management routes:
+In-process `corsair.manage.*` calls throw errors with `status`, `code`, `message`, and `extra` fields — the same shape HTTP clients surface as [`CorsairClientError`](/management/client#error-handling). Common codes you'll see from the management routes:
 
 | Status | `error`                 | When                                              |
 | ------ | ----------------------- | ------------------------------------------------- |
