@@ -53,7 +53,6 @@ export {
 export {
 	isLoopbackDeliveryUrl,
 	resolveConnectSourceFromDeliveryUrl,
-	shouldUseBrowserConnectDelivery,
 	shouldUseBrowserDelivery,
 	validateExplicitConnectSource,
 } from './contracts/delivery-mode';

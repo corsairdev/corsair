@@ -76,7 +76,6 @@ export {
 	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
 	type SignedDeliveryHeaders,
 	type SignedEnvelopeDeliveryResult,
-	shouldUseBrowserConnectDelivery,
 	shouldUseBrowserDelivery,
 	signBrowserDeliveryToken,
 	signConnectSessionToken,
