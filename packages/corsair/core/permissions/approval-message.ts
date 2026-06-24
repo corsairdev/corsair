@@ -4,7 +4,10 @@ import {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from '../../hub/permission';
-import type { CorsairManualConfig } from '../plugins';
+import type {
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
+} from '../plugins';
 
 type ApprovalRoutingConfig = {
 	manual?: CorsairManualConfig;
@@ -14,25 +17,10 @@ type ApprovalRoutingConfig = {
 export const APPROVAL_SETUP_HINT =
 	'Permission approval required. Set manual.approvalBaseUrl (or use hub for hosted approval) so an approval URL can be generated. Optionally set manual.onApprovalRequired to customize the agent message.';
 
-/** @deprecated Remove ~April 2026 — use manual.onApprovalRequired instead. */
-export type DeprecatedFormatAsyncMessage = (opts: {
-	token: string;
-	id: string;
-	plugin: string;
-	endpoint: string;
-	args: unknown;
-}) => string;
+/** @deprecated Use CorsairPermissionsOptions */
+export type ApprovalConfigForMessage = CorsairPermissionsOptions;
 
-export type ApprovalConfigForMessage = {
-	timeout: string;
-	onTimeout: 'deny' | 'approve';
-	mode?:
-		| 'synchronous'
-		| 'asynchronous'
-		| (() => 'synchronous' | 'asynchronous');
-	/** @deprecated Use manual.onApprovalRequired. TODO: delete ~April 2026. */
-	formatAsyncMessage?: DeprecatedFormatAsyncMessage;
-};
+export type { CorsairPermissionsOptions };
 
 export type ResolveApprovalUrlInput = Pick<
 	CorsairPermission,
@@ -115,7 +103,7 @@ export async function enrichPermissionWithApprovalUrl<
 }
 
 export type ResolveAsyncApprovalMessageInput = {
-	approvalConfig?: ApprovalConfigForMessage;
+	permissionsOptions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
 	permissionId: string;
@@ -132,7 +120,7 @@ export async function resolveAsyncApprovalMessage(
 	input: ResolveAsyncApprovalMessageInput,
 ): Promise<string> {
 	const {
-		approvalConfig,
+		permissionsOptions,
 		manual,
 		hub,
 		permissionId,
@@ -145,9 +133,9 @@ export async function resolveAsyncApprovalMessage(
 		operationPath,
 	} = input;
 
-	// TODO: delete formatAsyncMessage ~April 2026 (deprecated on approval config).
-	if (approvalConfig?.formatAsyncMessage) {
-		return approvalConfig.formatAsyncMessage({
+	// TODO: delete formatAsyncMessage ~April 2026 (deprecated on permissions config).
+	if (permissionsOptions?.formatAsyncMessage) {
+		return permissionsOptions.formatAsyncMessage({
 			token: permissionToken,
 			id: permissionId,
 			plugin,

@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { joinWaitlist } from '@/server/actions/join-waitlist';
 
 import { FramedPanel } from '../framed-panel';
+import { HACKATHON_DATE_RANGE } from './waitlist-constants';
 
 type WaitlistProfileFormProps = {
 	email: string;
@@ -130,8 +131,8 @@ export function WaitlistProfileForm({
 					</h2>
 					<p className="mx-auto mt-3 max-w-md text-[14px] leading-[1.65] text-[#1c1c1c99]">
 						We&apos;ll email you at{' '}
-						<span className="font-medium text-[#1c1c1c]">{email}</span> when the
-						OSS hackathon opens.
+						<span className="font-medium text-[#1c1c1c]">{email}</span> before
+						the sprint ({HACKATHON_DATE_RANGE}).
 					</p>
 					<dl className="mx-auto mt-6 max-w-sm space-y-3 border-t border-[#1c1c1c1a] pt-6 text-left">
 						<div className="flex items-center justify-between gap-4 text-[13px]">

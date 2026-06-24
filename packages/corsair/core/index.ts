@@ -5,11 +5,13 @@ import { normalizeHubConfig } from '../hub';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
 import type {
 	CorsairIntegration,
 	CorsairManualConfig,
+	CorsairPermissionsOptions,
 	CorsairPlugin,
 } from './plugins';
 
@@ -24,22 +26,7 @@ export type CorsairInternalConfig = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
-	approval?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		/** @deprecated Use manual.onApprovalRequired. TODO: delete ~April 2026. */
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
+	permissions?: CorsairPermissionsOptions;
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
 };
@@ -94,12 +81,14 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 					!!config.kek,
 				);
 
+	const rootPermissions = resolveRootPermissionsConfig(config);
+
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
 		database: resolvedDatabase,
 		kek: config.kek,
 		multiTenancy: !!config.multiTenancy,
-		approval: config.approval,
+		permissions: rootPermissions,
 		manual: config.manual,
 		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
 	};
@@ -121,7 +110,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						tenantId,
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
-						approvalConfig: config.approval,
+						permissionsOptions: rootPermissions,
 						manualConfig: config.manual,
 						hubConfig: internalConfig.hub,
 					});
@@ -142,7 +131,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		tenantId: undefined,
 		kek: config.kek,
 		rootErrorHandlers: config.errorHandlers,
-		approvalConfig: config.approval,
+		permissionsOptions: rootPermissions,
 		manualConfig: config.manual,
 		hubConfig: internalConfig.hub,
 	});

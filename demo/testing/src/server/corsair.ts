@@ -24,7 +24,7 @@ export const corsair = createCorsair({
 	multiTenancy: false,
 	database: sqlite,
 	kek: process.env.CORSAIR_KEK!,
-	approval: {
+	permissions: {
 		timeout: '10m',
 		onTimeout: 'deny',
 	},

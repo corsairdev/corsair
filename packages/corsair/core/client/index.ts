@@ -21,13 +21,11 @@ import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairManageNamespace } from '../management';
-import type {
-	ApprovalConfigForMessage,
-	CorsairPermissionsNamespace,
-} from '../permissions';
+import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairManualConfig,
+	CorsairPermissionsOptions,
 	CorsairPlugin,
 	EndpointMetaEntry,
 	OAuthConfig,
@@ -361,8 +359,8 @@ export type BuildCorsairClientOptions = {
 	tenantId: string | undefined;
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
-	/** Approval timeout from createCorsair({ approval: ... }). Forwarded to the permission guard. */
-	approvalConfig?: ApprovalConfigForMessage;
+	/** Global permissions config from createCorsair({ permissions: ... }). */
+	permissionsOptions?: CorsairPermissionsOptions;
 	/** Manual config from createCorsair({ manual: ... }). Forwarded to endpoint binding. */
 	manualConfig?: CorsairManualConfig;
 	/** Hub config from createCorsair({ hub: ... }). Forwarded to keyBuilder context. */
@@ -390,7 +388,7 @@ export function buildCorsairClient<
 		tenantId,
 		kek,
 		rootErrorHandlers,
-		approvalConfig,
+		permissionsOptions,
 		manualConfig,
 		hubConfig,
 	} = options;
@@ -513,7 +511,7 @@ export function buildCorsairClient<
 				| Record<string, EndpointMetaEntry>
 				| undefined,
 			database,
-			approvalConfig,
+			permissionsOptions,
 			tenantId,
 			manualConfig: manualConfig
 				? {

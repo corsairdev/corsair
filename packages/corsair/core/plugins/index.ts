@@ -678,6 +678,47 @@ export type CorsairManualConfig = {
 };
 
 /**
+ * Global permissions configuration on `createCorsair({ permissions: ... })`.
+ * Controls approval timeouts and sync/async blocking behavior.
+ * Distinct from per-plugin `permissions: { mode, overrides }` on each plugin.
+ */
+export type CorsairPermissionsOptions = {
+	/**
+	 * How long a pending permission request remains valid before expiring.
+	 * Accepts duration strings: '10m', '1h', '30s', '2h30m'.
+	 * Defaults to '10m' if not specified.
+	 */
+	timeout: string;
+	/**
+	 * What to do when a permission request expires without a response.
+	 * - `'deny'`    → the action is automatically denied (recommended)
+	 * - `'approve'` → the action is automatically approved (use only in low-risk setups)
+	 */
+	onTimeout: 'deny' | 'approve';
+	/**
+	 * How blocked permission requests are handled.
+	 * - `'synchronous'`  → the tool call blocks (polls the DB) until the user approves or denies.
+	 * - `'asynchronous'` → the tool call returns immediately with a blocked result.
+	 * - A no-arg function → called per-request, return value selects the mode dynamically.
+	 * Defaults to `'asynchronous'` if not specified.
+	 */
+	mode?:
+		| 'synchronous'
+		| 'asynchronous'
+		| (() => 'synchronous' | 'asynchronous');
+	/**
+	 * @deprecated Use `manual.onApprovalRequired` instead. TODO: delete ~April 2026.
+	 */
+	formatAsyncMessage?: (opts: {
+		token: string;
+		id: string;
+		plugin: string;
+		endpoint: string;
+		args: unknown;
+	}) => string;
+};
+
+/**
  * Configuration for creating a Corsair integration with plugins.
  * @template Plugins - Array of plugin definitions
  */
@@ -693,51 +734,23 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	/** Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt Data Encryption Keys (DEK) stored in the database. */
 	kek: string;
 	/**
-	 * Global approval configuration for the permission system.
-	 * Controls how long approval requests stay active and what happens when they expire.
-	 * Only relevant when the MCP server is used and a plugin is in `cautious` or `strict` mode.
+	 * Global permissions configuration — approval timeouts and sync/async blocking.
+	 * Pair with per-plugin `permissions: { mode, overrides }` on each plugin.
 	 */
-	approval?: {
-		/**
-		 * How long an approval request remains valid before expiring.
-		 * Accepts duration strings: '10m', '1h', '30s', '2h30m'.
-		 * Defaults to '10m' if not specified.
-		 */
-		timeout: string;
-		/**
-		 * What to do when an approval request expires without a response.
-		 * - `'deny'`    → the action is automatically denied (recommended)
-		 * - `'approve'` → the action is automatically approved (use only in low-risk setups)
-		 */
-		onTimeout: 'deny' | 'approve';
-		/**
-		 * How approval requests are handled when execution is blocked.
-		 * - `'synchronous'`  → the tool call blocks (polls the DB) until the user approves or denies.
-		 *                      The model is unaware anything happened — it just sees a slow tool call.
-		 *                      On denial, the tool returns an error and the model stops.
-		 * - `'asynchronous'` → the tool call returns immediately with a blocked result.
-		 *                      The model must handle the denial and stop on its own.
-		 * - A no-arg function → called per-request, return value selects the mode dynamically.
-		 *                       Use this to switch modes based on runtime context (e.g. auth type).
-		 * Defaults to `'asynchronous'` if not specified.
-		 */
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		/**
-		 * @deprecated Use `manual.onApprovalRequired` instead. TODO: delete ~April 2026.
-		 */
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
+	permissions?: CorsairPermissionsOptions;
 	/** Self-hosted connect and/or permission review configuration. Can coexist with `hub`. */
 	manual?: CorsairManualConfig;
 	/** Corsair Hub configuration for hosted OAuth connect flows. */
 	hub?: HubConfigInput;
+} & CorsairDeprecatedApprovalConfig;
+
+/**
+ * @deprecated `approval` was renamed to `permissions` on createCorsair.
+ * Prefer `permissions: { timeout, onTimeout, mode }`. Removed ~May 2026.
+ */
+export type CorsairDeprecatedApprovalConfig = {
+	/**
+	 * @deprecated Renamed to `permissions`. Use `createCorsair({ permissions: { ... } })` instead.
+	 */
+	approval?: CorsairPermissionsOptions;
 };
