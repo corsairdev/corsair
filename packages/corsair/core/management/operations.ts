@@ -13,6 +13,7 @@ import {
 	signState,
 } from '../auth/state';
 import { BASE_AUTH_FIELDS } from '../auth/types';
+import { hasManualConnectConfig } from '../config/manual-connect';
 import { ConnectError, resolveConnectLink } from '../connect';
 import type { AuthTypes } from '../constants';
 import { enrichPermissionWithApprovalUrl } from '../permissions';
@@ -321,12 +322,6 @@ function requireManualConfig(
 		);
 	}
 	return internal.manual;
-}
-
-function hasManualConnectConfig(
-	manual: CorsairInternalConfig['manual'],
-): boolean {
-	return Boolean(manual?.baseUrl?.trim() && manual?.redirectUri?.trim());
 }
 
 function requireManualConnectConfig(
