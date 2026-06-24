@@ -337,7 +337,9 @@ async function handleConnectStatusTunnel(
 			status: 'failed',
 			retryable: false,
 			error:
-				error instanceof Error ? error.message : 'Connect status introspection failed',
+				error instanceof Error
+					? error.message
+					: 'Connect status introspection failed',
 		};
 	}
 }

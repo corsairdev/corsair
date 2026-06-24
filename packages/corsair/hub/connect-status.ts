@@ -1,6 +1,4 @@
-import type {
-	ConnectStatusResponse,
-} from './contracts/connect-api';
+import type { ConnectStatusResponse } from './contracts/connect-api';
 import type {
 	BuildConnectPluginManifestOptions,
 	ConnectPluginManifestEntry,

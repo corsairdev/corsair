@@ -1,9 +1,7 @@
 import { createHmac, randomBytes } from 'node:crypto';
 import { createCorsair } from '../core';
 import { handleHubDeliveryGet } from '../hub/delivery';
-import {
-	resetDeliveryReplayGuardForTests,
-} from '../hub/internal/delivery-replay-guard';
+import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
 import { setupCorsair } from '../setup';
 import { createTestDatabase } from './setup-db';
 
