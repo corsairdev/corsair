@@ -1,28 +1,20 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import type { BrowserDeliveryPayload } from '../hub/contracts/tunnel';
+import { BROWSER_DELIVERY_TTL_MS } from '../hub/contracts/tunnel';
 
-export type BrowserDeliveryPayload = {
-	jti: string;
-	connectJti: string;
-	projectId: string;
-	plugin: string;
-	tenantId: string;
-	hubSuccessUrl: string;
-	exp: number;
-	iat: number;
-	deliveryMode?:
-		| 'oauth.callback'
-		| 'oauth.tokens'
-		| 'permission.approve'
-		| 'permission.deny';
-	code?: string;
-	state?: string;
-	redirectUri?: string;
-	accessToken?: string;
-	refreshToken?: string;
-	expiresIn?: number;
-	scope?: string;
-	permissionToken?: string;
-};
+export type { BrowserDeliveryPayload } from '../hub/contracts/tunnel';
+
+export function isConnectStatusBrowserDelivery(
+	payload: BrowserDeliveryPayload,
+): boolean {
+	return payload.deliveryMode === 'connect.status';
+}
+
+export function isAuthCredentialsBrowserDelivery(
+	payload: BrowserDeliveryPayload,
+): boolean {
+	return payload.deliveryMode === 'auth.credentials';
+}
 
 export function isPermissionBrowserDelivery(
 	payload: BrowserDeliveryPayload,
@@ -36,9 +28,19 @@ export function isPermissionBrowserDelivery(
 export function isManagedBrowserDelivery(
 	payload: BrowserDeliveryPayload,
 ): boolean {
+	return payload.deliveryMode === 'oauth.tokens';
+}
+
+export function isByoOAuthBrowserDelivery(
+	payload: BrowserDeliveryPayload,
+): boolean {
 	return (
-		payload.deliveryMode === 'oauth.tokens' ||
-		(typeof payload.accessToken === 'string' && payload.accessToken.length > 0)
+		payload.deliveryMode === 'oauth.callback' ||
+		(payload.deliveryMode === undefined &&
+			!isConnectStatusBrowserDelivery(payload) &&
+			!isAuthCredentialsBrowserDelivery(payload) &&
+			!isPermissionBrowserDelivery(payload) &&
+			!isManagedBrowserDelivery(payload))
 	);
 }
 
@@ -95,3 +97,5 @@ export function verifyBrowserDeliveryToken(
 	if (payload.exp * 1000 < Date.now()) return null;
 	return payload;
 }
+
+export { BROWSER_DELIVERY_TTL_MS };

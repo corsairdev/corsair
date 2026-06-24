@@ -16,6 +16,19 @@ export type ConnectPluginManifestEntry = {
 	oauthMode?: HubOAuthMode;
 	oauthUrl?: string;
 	state?: string;
+	setupError?: string;
+};
+
+export type ConnectStatusPluginEntry = {
+	plugin: string;
+	providerName: string;
+	authKind: ConnectAuthKind;
+	connected: boolean;
+};
+
+export type ConnectStatusResponse = {
+	tenantId: string;
+	plugins: ConnectStatusPluginEntry[];
 };
 
 export type CreateConnectSessionRequestBody = {
@@ -132,6 +145,52 @@ export function parseOAuthRefreshResponse(
 		expires_in:
 			typeof record.expires_in === 'number' ? record.expires_in : undefined,
 		scope: isNonEmptyString(record.scope) ? record.scope : undefined,
+	};
+}
+
+export function parseConnectStatusResponse(
+	payload: unknown,
+): ConnectStatusResponse {
+	if (!payload || typeof payload !== 'object') {
+		throw new Error('Connect status response was empty');
+	}
+
+	const record = payload as Record<string, unknown>;
+	if (!isNonEmptyString(record.tenantId) || !Array.isArray(record.plugins)) {
+		throw new Error(
+			'Connect status response was incomplete (expected tenantId and plugins)',
+		);
+	}
+
+	const plugins: ConnectStatusPluginEntry[] = [];
+	for (const item of record.plugins) {
+		if (!item || typeof item !== 'object') continue;
+		const pluginRecord = item as Record<string, unknown>;
+		if (
+			!isNonEmptyString(pluginRecord.plugin) ||
+			typeof pluginRecord.connected !== 'boolean'
+		) {
+			continue;
+		}
+
+		plugins.push({
+			plugin: pluginRecord.plugin,
+			providerName: isNonEmptyString(pluginRecord.providerName)
+				? pluginRecord.providerName
+				: pluginRecord.plugin,
+			authKind:
+				pluginRecord.authKind === 'oauth' ||
+				pluginRecord.authKind === 'api_key' ||
+				pluginRecord.authKind === 'bot_token'
+					? pluginRecord.authKind
+					: 'api_key',
+			connected: pluginRecord.connected,
+		});
+	}
+
+	return {
+		tenantId: record.tenantId,
+		plugins,
 	};
 }
 

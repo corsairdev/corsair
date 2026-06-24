@@ -1,7 +1,10 @@
 import type { CorsairInternalConfig } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { getConnectStatusForTenant } from '../hub/connect-status';
 import type { TunnelEnvelope } from '../hub/contracts/tunnel';
+import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
+import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { processOAuthCallback } from '../oauth';
 import { processWebhook } from '../webhooks';
@@ -23,6 +26,9 @@ export {
 export type { TunnelEnvelope, TunnelType } from '../hub/contracts/tunnel';
 export {
 	type BrowserDeliveryPayload,
+	isAuthCredentialsBrowserDelivery,
+	isByoOAuthBrowserDelivery,
+	isConnectStatusBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,
@@ -75,6 +81,11 @@ export type AuthCredentialsTunnelPayload = {
 	plugin: string;
 	tenantId: string;
 	credentials: Record<string, string>;
+};
+
+export type ConnectStatusTunnelPayload = {
+	tenantId: string;
+	plugins?: string[];
 };
 
 export type ProcessCorsairRequest = {
@@ -305,6 +316,32 @@ async function handleAuthCredentialsTunnel(
 	}
 }
 
+async function handleConnectStatusTunnel(
+	corsair: unknown,
+	payload: ConnectStatusTunnelPayload,
+): Promise<TunnelAck> {
+	const tenantId = payload.tenantId?.trim() || 'default';
+	try {
+		const status = await getConnectStatusForTenant(corsair, tenantId, {
+			pluginIds: payload.plugins,
+		});
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: status,
+			},
+		};
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				error instanceof Error ? error.message : 'Connect status introspection failed',
+		};
+	}
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
@@ -326,6 +363,7 @@ export async function processCorsair(
 		request.headers,
 		'x-corsair-timestamp',
 	);
+	const nonceHeader = normalizeHeader(request.headers, 'x-corsair-nonce');
 
 	if (!options.signingSecret?.trim()) {
 		if (!options.allowUnsignedTunnel) {
@@ -347,6 +385,26 @@ export async function processCorsair(
 				status: 'failed',
 				retryable: false,
 				error: verification.error,
+			};
+		}
+
+		if (!nonceHeader?.trim()) {
+			return {
+				status: 'failed',
+				retryable: false,
+				error: 'Missing tunnel nonce',
+			};
+		}
+
+		const replayCheck = consumeDeliveryReplayKey(
+			`nonce:${nonceHeader.trim()}`,
+			SIGNED_TUNNEL_REPLAY_WINDOW_MS,
+		);
+		if (!replayCheck.ok) {
+			return {
+				status: 'failed',
+				retryable: false,
+				error: replayCheck.error,
 			};
 		}
 	}
@@ -395,6 +453,11 @@ export async function processCorsair(
 			return handleAuthCredentialsTunnel(
 				corsair,
 				envelope.payload as AuthCredentialsTunnelPayload,
+			);
+		case 'connect.status':
+			return handleConnectStatusTunnel(
+				corsair,
+				envelope.payload as ConnectStatusTunnelPayload,
 			);
 		default:
 			return {

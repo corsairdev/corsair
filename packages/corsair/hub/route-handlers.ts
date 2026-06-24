@@ -11,6 +11,8 @@ export function createHubRouteHandlers(
 	return {
 		delivery: (request: Request) =>
 			respondToHubDeliveryFromRequest(corsair, request),
+		deliveryOptions: (request: Request) =>
+			respondToHubDeliveryFromRequest(corsair, request),
 		createConnectSession: (request: Request) =>
 			respondToHubConnectSessionFromRequest(corsair, request, options),
 	};

@@ -1,11 +1,27 @@
 import { createCorsair } from '../core';
+import type { CorsairPlugin } from '../core/plugins';
 import {
 	isLoopbackDeliveryUrl,
-	parseHubConnectSessionBody,
 	resolveConnectSourceFromDeliveryUrl,
-	respondToHubConnectSessionFromRequest,
 	validateExplicitConnectSource,
+} from '../hub/contracts/delivery-mode';
+import {
+	parseHubConnectSessionBody,
+	respondToHubConnectSessionFromRequest,
 } from '../hub/connect-response';
+import { setupCorsair } from '../setup';
+import { createTestDatabase } from './setup-db';
+
+const githubOAuth = {
+	id: 'github',
+	options: { authType: 'oauth_2' as const },
+	oauthConfig: {
+		providerName: 'GitHub',
+		authUrl: 'https://github.com/login/oauth/authorize',
+		tokenUrl: 'https://github.com/login/oauth/access_token',
+		scopes: ['repo'],
+	},
+} as unknown as CorsairPlugin;
 
 describe('hub connect-response', () => {
 	describe('isLoopbackDeliveryUrl', () => {
@@ -163,15 +179,38 @@ describe('hub connect-response', () => {
 	});
 
 	describe('respondToHubConnectSessionFromRequest', () => {
-		const corsair = createCorsair({
-			plugins: [],
-			kek: 'test-kek-for-hub-connect-response-tests',
-			hub: {
-				projectApiKey: 'project-key',
-				signingSecret: 'signing-secret',
-				deliveryUrl: 'http://localhost:3001/api/corsair',
-			},
-		} as any);
+		let env: ReturnType<typeof createTestDatabase>;
+
+		beforeEach(async () => {
+			env = createTestDatabase();
+			await setupCorsair(
+				createCorsair({
+					plugins: [githubOAuth],
+					database: env.db,
+					kek: 'test-kek-for-hub-connect-response-tests',
+					hub: {
+						projectApiKey: 'project-key',
+						signingSecret: 'signing-secret',
+						deliveryUrl: 'http://localhost:3001/api/corsair',
+					},
+				} as any),
+				{ tenantId: 'default' },
+			);
+		});
+
+		afterEach(() => env.cleanup());
+
+		const corsair = () =>
+			createCorsair({
+				plugins: [githubOAuth],
+				database: env.db,
+				kek: 'test-kek-for-hub-connect-response-tests',
+				hub: {
+					projectApiKey: 'project-key',
+					signingSecret: 'signing-secret',
+					deliveryUrl: 'http://localhost:3001/api/corsair',
+				},
+			} as any);
 
 		it('returns 401 when resolveTenantId returns null', async () => {
 			const request = new Request('http://localhost/api/hub/create-link', {
@@ -184,13 +223,9 @@ describe('hub connect-response', () => {
 				}),
 			});
 
-			const response = await respondToHubConnectSessionFromRequest(
-				corsair,
-				request,
-				{
-					resolveTenantId: async () => null,
-				},
-			);
+			const response = await respondToHubConnectSessionFromRequest(corsair(), request, {
+				resolveTenantId: async () => null,
+			});
 
 			expect(response.status).toBe(401);
 			await expect(response.json()).resolves.toEqual({
@@ -219,7 +254,7 @@ describe('hub connect-response', () => {
 					}),
 				});
 
-				await respondToHubConnectSessionFromRequest(corsair, request, {
+				await respondToHubConnectSessionFromRequest(corsair(), request, {
 					resolveTenantId: async () => 'from-session',
 				});
 
@@ -240,15 +275,52 @@ describe('hub connect-response', () => {
 			}
 		});
 
+		it('ignores body tenantId unless allowClientProvidedTenantId is true', async () => {
+			const originalFetch = global.fetch;
+			global.fetch = jest.fn().mockResolvedValue({
+				ok: false,
+				status: 502,
+				headers: new Headers({ 'content-type': 'application/json' }),
+				text: async () => JSON.stringify({ error: 'upstream failed' }),
+			}) as typeof fetch;
+
+			try {
+				const request = new Request('http://localhost/api/hub/create-link', {
+					method: 'POST',
+					headers: { 'content-type': 'application/json' },
+					body: JSON.stringify({
+						plugin: 'github',
+						tenantId: 'from-body',
+						source: 'client',
+						oauthMode: 'managed',
+					}),
+				});
+
+				await respondToHubConnectSessionFromRequest(corsair(), request);
+
+				expect(global.fetch).toHaveBeenCalledWith(
+					expect.any(String),
+					expect.objectContaining({
+						body: expect.stringContaining('"tenantId":"default"'),
+					}),
+				);
+				expect(global.fetch).toHaveBeenCalledWith(
+					expect.any(String),
+					expect.objectContaining({
+						body: expect.not.stringContaining('"tenantId":"from-body"'),
+					}),
+				);
+			} finally {
+				global.fetch = originalFetch;
+			}
+		});
+
 		it('returns 405 for unsupported methods', async () => {
 			const request = new Request('http://localhost/api/hub/create-link', {
 				method: 'PUT',
 			});
 
-			const response = await respondToHubConnectSessionFromRequest(
-				corsair,
-				request,
-			);
+			const response = await respondToHubConnectSessionFromRequest(corsair(), request);
 			expect(response.status).toBe(405);
 		});
 
@@ -263,10 +335,7 @@ describe('hub connect-response', () => {
 				}),
 			});
 
-			const response = await respondToHubConnectSessionFromRequest(
-				corsair,
-				request,
-			);
+			const response = await respondToHubConnectSessionFromRequest(corsair(), request);
 
 			expect(response.status).toBe(400);
 			await expect(response.json()).resolves.toEqual({

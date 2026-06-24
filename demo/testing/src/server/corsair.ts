@@ -17,8 +17,8 @@ import { sqlite } from '../db';
 const appUrl = process.env.APP_URL ?? 'http://localhost:3001';
 const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
 const hubSigningSecret = process.env.CORSAIR_SIGNING_SECRET!;
-const hubApiUrl = process.env.HUB_API_URL;
-const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
+// const hubApiUrl = process.env.HUB_API_URL;
+// const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
 export const corsair = createCorsair({
 	multiTenancy: false,
@@ -29,8 +29,8 @@ export const corsair = createCorsair({
 		onTimeout: 'deny',
 	},
 	hub: {
-		apiUrl: hubApiUrl,
-		oauthCallbackUrl: hubOAuthCallbackUrl,
+		// apiUrl: hubApiUrl,
+		// oauthCallbackUrl: hubOAuthCallbackUrl,
 		projectApiKey: hubProjectApiKey,
 		signingSecret: hubSigningSecret,
 		deliveryUrl: `${appUrl}/api/corsair`,
@@ -41,7 +41,7 @@ export const corsair = createCorsair({
 			permissions: {
 				mode: 'cautious',
 				overrides: {
-					'messages.delete': 'require_approval',
+					'messages.post': 'require_approval',
 				},
 			},
 		}),

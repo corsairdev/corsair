@@ -1,4 +1,5 @@
-import type { AuthTypes, CorsairPlugin } from '../core';
+import type { AuthTypes } from '../core/constants';
+import type { CorsairPlugin } from '../core/plugins';
 import { encodeOAuthState, signState } from '../core/auth/state';
 import { formatProviderDisplayName } from '../core/constants';
 import { getCallableProperty } from '../core/utils/callable';
@@ -6,7 +7,7 @@ import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getAccountFields, getPluginAuthType } from '../core/utils/plugin-auth';
 import { generateOAuthUrl } from '../oauth';
 import { getHubConfig, resolveHubOAuthCallbackUrl } from './config';
-import type { ConnectPluginManifestEntry } from './contracts/connect-api';
+import type { ConnectAuthKind, ConnectPluginManifestEntry } from './contracts/connect-api';
 import {
 	resolveConnectSourceFromDeliveryUrl,
 	validateExplicitConnectSource,
@@ -20,19 +21,23 @@ const OPTIONAL_ACCOUNT_FIELDS = new Set([
 	'scope',
 ]);
 
-export type SetupAuthKind = 'oauth' | 'api_key' | 'bot_token';
-
-export type { ConnectPluginManifestEntry };
+export type { ConnectPluginManifestEntry } from './contracts/connect-api';
 
 export type BuildConnectPluginManifestOptions = {
 	pluginIds?: string[];
 	oauthModeOverrides?: Partial<Record<string, HubOAuthMode>>;
+	providerNameOverrides?: Partial<Record<string, string>>;
+	// Status introspection only needs auth kind + configured flag.
+	skipOAuthUrlGeneration?: boolean;
 };
 
 /** @deprecated Use ConnectPluginManifestEntry */
 export type SetupPluginManifestEntry = ConnectPluginManifestEntry;
 
-function toSetupAuthKind(authType: AuthTypes): SetupAuthKind {
+/** @deprecated Use ConnectAuthKind */
+export type SetupAuthKind = ConnectAuthKind;
+
+function toConnectAuthKind(authType: AuthTypes): ConnectAuthKind {
 	if (authType === 'oauth_2' || authType === 'managed') {
 		return 'oauth';
 	}
@@ -42,15 +47,26 @@ function toSetupAuthKind(authType: AuthTypes): SetupAuthKind {
 	return 'api_key';
 }
 
+function getConfiguredAccountFields(authType: AuthTypes): readonly string[] {
+	if (authType === 'oauth_2' || authType === 'managed') {
+		return ['access_token'];
+	}
+	if (authType === 'api_key') {
+		return ['api_key'];
+	}
+	if (authType === 'bot_token') {
+		return ['bot_token'];
+	}
+	return [];
+}
+
 async function isAccountConfigured(
 	corsair: unknown,
 	plugin: CorsairPlugin,
 	authType: AuthTypes,
 	tenantId: string,
 ): Promise<boolean> {
-	const accountFields = getAccountFields(plugin, authType).filter(
-		(field) => !OPTIONAL_ACCOUNT_FIELDS.has(field),
-	);
+	const accountFields = getConfiguredAccountFields(authType);
 
 	if (accountFields.length === 0) {
 		return true;
@@ -131,8 +147,10 @@ export async function buildConnectPluginManifest(
 		const authType = getPluginAuthType(plugin);
 		if (!authType) continue;
 
-		const authKind = toSetupAuthKind(authType);
-		const providerName = formatProviderDisplayName(plugin.id);
+		const authKind = toConnectAuthKind(authType);
+		const providerName =
+			options.providerNameOverrides?.[plugin.id] ??
+			formatProviderDisplayName(plugin.id);
 		const alreadyConfigured = await isAccountConfigured(
 			corsair,
 			plugin,
@@ -154,7 +172,7 @@ export async function buildConnectPluginManifest(
 				oauthModeOverride ?? (authType === 'managed' ? 'managed' : 'byo');
 			entry.oauthMode = oauthMode;
 
-			if (!alreadyConfigured) {
+			if (!options.skipOAuthUrlGeneration) {
 				if (oauthMode === 'managed') {
 					entry.state = signState(
 						encodeOAuthState(plugin.id, tenantId),
@@ -168,8 +186,11 @@ export async function buildConnectPluginManifest(
 						});
 						entry.oauthUrl = oauth.url;
 						entry.state = oauth.state;
-					} catch {
-						continue;
+					} catch (error) {
+						entry.setupError =
+							error instanceof Error
+								? error.message
+								: `Could not prepare OAuth for ${plugin.id}`;
 					}
 				}
 			}

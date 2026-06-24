@@ -21,10 +21,15 @@ export async function createHubConnectSession(
 		input.plugin && input.oauthMode
 			? { [input.plugin]: input.oauthMode }
 			: undefined;
+	const providerNameOverrides =
+		input.plugin && input.providerName
+			? { [input.plugin]: input.providerName }
+			: undefined;
 
 	const plugins = await buildConnectPluginManifest(corsair, input.tenantId, {
 		pluginIds,
 		oauthModeOverrides,
+		providerNameOverrides,
 	});
 
 	if (plugins.length === 0) {
@@ -32,15 +37,6 @@ export async function createHubConnectSession(
 			input.plugin
 				? `Plugin '${input.plugin}' is not configured on this Corsair instance`
 				: 'No plugins are configured on this Corsair instance',
-		);
-	}
-
-	const pendingPlugins = plugins.filter((entry) => !entry.alreadyConfigured);
-	if (pendingPlugins.length === 0) {
-		throw new Error(
-			input.plugin
-				? `Plugin '${input.plugin}' is already configured for this tenant`
-				: 'All plugins are already configured for this tenant',
 		);
 	}
 
@@ -55,7 +51,7 @@ export async function createHubConnectSession(
 			tenantId: input.tenantId,
 			deliveryUrl: hub.deliveryUrl,
 			source,
-			plugins: pendingPlugins,
+			plugins,
 		},
 		parseResponse: parseConnectSessionResponse,
 	});
