@@ -43,6 +43,11 @@ export type HubConnectSessionResponseOptions = {
 	resolveTenantId?: ResolveHubConnectTenantId;
 	/** Used when resolveTenantId is not provided. Defaults to "default". */
 	defaultTenantId?: string;
+	/**
+	 * When false (default), tenantId from the request body/query is ignored unless
+	 * resolveTenantId is provided. Set true only for trusted local/dev flows.
+	 */
+	allowClientProvidedTenantId?: boolean;
 };
 
 function parseOAuthMode(value: unknown): HubOAuthMode | undefined {
@@ -144,7 +149,11 @@ async function resolveConnectSessionTenantId(
 		return tenantId.trim();
 	}
 
-	return body.tenantId?.trim() || options?.defaultTenantId?.trim() || 'default';
+	if (options?.allowClientProvidedTenantId && body.tenantId?.trim()) {
+		return body.tenantId.trim();
+	}
+
+	return options?.defaultTenantId?.trim() || 'default';
 }
 
 export async function handleHubConnectSessionRequest(

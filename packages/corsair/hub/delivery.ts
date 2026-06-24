@@ -2,12 +2,28 @@ import { processOAuthCallback } from '../oauth';
 import type { ProcessCorsairRequest } from '../tunnel';
 import {
 	applyPermissionDecision,
+	isAuthCredentialsBrowserDelivery,
+	isByoOAuthBrowserDelivery,
+	isConnectStatusBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	processCorsair,
 	verifyBrowserDeliveryToken,
 } from '../tunnel';
 import { getHubConfig, HubNotConfiguredError } from './config';
+import { processAuthCredentialsDelivery } from './credentials-delivery';
+import { getConnectStatusForTenant } from './connect-status';
+import { buildClientBridgePostMessageHtml } from './browser-delivery-html';
+import {
+	BROWSER_DELIVERY_TTL_MS,
+} from './contracts/tunnel';
+import {
+	applyHubBrowserDeliveryCors,
+	resolveHubBrowserDeliveryCorsHeaders,
+} from './delivery-browser-cors';
+import {
+	consumeDeliveryReplayKey,
+} from './internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from './managed-oauth';
 
 export type HubDeliveryResult =
@@ -31,6 +47,28 @@ export type HubDeliveryRequest = {
 	headers: ProcessCorsairRequest['headers'];
 	body?: string;
 };
+
+function buildBrowserDeliveryReturnUrl(
+	hubSuccessUrl: string,
+	input: { status?: unknown; error?: string; connectedPlugin?: string },
+): string {
+	const url = new URL(hubSuccessUrl);
+	if (input.error) {
+		url.searchParams.set('error', input.error);
+		return url.toString();
+	}
+	if (input.connectedPlugin) {
+		url.searchParams.set('connected', input.connectedPlugin);
+		return url.toString();
+	}
+	if (input.status !== undefined) {
+		url.searchParams.set(
+			'status',
+			Buffer.from(JSON.stringify(input.status)).toString('base64url'),
+		);
+	}
+	return url.toString();
+}
 
 export async function handleHubDeliveryGet(
 	corsair: unknown,
@@ -61,7 +99,73 @@ export async function handleHubDeliveryGet(
 		};
 	}
 
+	const replayCheck = consumeDeliveryReplayKey(
+		`browser:${payload.jti}`,
+		BROWSER_DELIVERY_TTL_MS,
+	);
+	if (!replayCheck.ok) {
+		return {
+			type: 'json',
+			status: 400,
+			body: { error: replayCheck.error },
+		};
+	}
+
 	try {
+		if (isConnectStatusBrowserDelivery(payload)) {
+			if (!payload.hubSuccessUrl) {
+				return {
+					type: 'json',
+					status: 400,
+					body: { error: 'Connect status delivery missing hubSuccessUrl' },
+				};
+			}
+
+			const tenantId = payload.tenantId?.trim() || 'default';
+			const status = await getConnectStatusForTenant(corsair, tenantId, {
+				pluginIds: payload.statusPlugins,
+			});
+
+			return {
+				type: 'redirect',
+				url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
+					status,
+				}),
+			};
+		}
+
+		if (isAuthCredentialsBrowserDelivery(payload)) {
+			if (!payload.hubSuccessUrl) {
+				return {
+					type: 'json',
+					status: 400,
+					body: { error: 'Credential delivery missing hubSuccessUrl' },
+				};
+			}
+
+			if (!payload.credentials) {
+				return {
+					type: 'redirect',
+					url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
+						error: 'Credential delivery missing credentials',
+					}),
+				};
+			}
+
+			await processAuthCredentialsDelivery(corsair, {
+				plugin: payload.plugin,
+				tenantId: payload.tenantId,
+				credentials: payload.credentials,
+			});
+
+			return {
+				type: 'redirect',
+				url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
+					connectedPlugin: payload.plugin,
+				}),
+			};
+		}
+
 		if (isPermissionBrowserDelivery(payload)) {
 			if (!payload.permissionToken) {
 				return {
@@ -92,7 +196,12 @@ export async function handleHubDeliveryGet(
 				scope: payload.scope,
 			});
 		} else {
-			if (!payload.code || !payload.state || !payload.redirectUri) {
+			if (
+				!isByoOAuthBrowserDelivery(payload) ||
+				!payload.code ||
+				!payload.state ||
+				!payload.redirectUri
+			) {
 				return {
 					type: 'json',
 					status: 400,
@@ -108,6 +217,39 @@ export async function handleHubDeliveryGet(
 	} catch (error) {
 		const message =
 			error instanceof Error ? error.message : 'Hub delivery failed';
+
+		if (
+			(isConnectStatusBrowserDelivery(payload) ||
+				isAuthCredentialsBrowserDelivery(payload)) &&
+			payload.hubSuccessUrl
+		) {
+			return {
+				type: 'redirect',
+				url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
+					error: message,
+				}),
+			};
+		}
+
+		if (
+			(isConnectStatusBrowserDelivery(payload) ||
+				isAuthCredentialsBrowserDelivery(payload)) &&
+			payload.hubOrigin &&
+			payload.requestId
+		) {
+			return {
+				type: 'text',
+				status: 400,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: false,
+					error: message,
+				}),
+			};
+		}
+
 		return {
 			type: 'json',
 			status: 400,
@@ -232,14 +374,27 @@ export async function respondToHubDeliveryFromRequest(
 	request: Request,
 ): Promise<Response> {
 	const method = request.method.toUpperCase();
+	const corsHeaders = resolveHubBrowserDeliveryCorsHeaders(
+		request.headers.get('origin'),
+	);
+
+	if (method === 'OPTIONS') {
+		if (!corsHeaders) {
+			return Response.json({ error: 'Method not allowed' }, { status: 405 });
+		}
+		return new Response(null, { status: 204, headers: corsHeaders });
+	}
+
 	if (method !== 'GET' && method !== 'POST') {
 		return Response.json({ error: 'Method not allowed' }, { status: 405 });
 	}
 
-	return respondToHubDelivery(corsair, {
+	const response = await respondToHubDelivery(corsair, {
 		method,
 		url: request.url,
 		headers: request.headers,
 		body: method === 'POST' ? await request.text() : undefined,
 	});
+
+	return applyHubBrowserDeliveryCors(response, corsHeaders);
 }

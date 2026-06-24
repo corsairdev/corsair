@@ -90,6 +90,8 @@ export async function processAuthCredentialsDelivery(
 		extraAccountFields,
 	});
 
+	let fieldsUpdated = 0;
+
 	for (const [field, value] of Object.entries(options.credentials)) {
 		if (!value.trim()) continue;
 		if (!accountFields.has(field)) {
@@ -108,6 +110,14 @@ export async function processAuthCredentialsDelivery(
 		}
 
 		await setter(value.trim());
+		fieldsUpdated += 1;
+	}
+
+	if (fieldsUpdated === 0) {
+		throw new AuthCredentialsDeliveryError(
+			'invalid_credentials',
+			'Provide at least one credential field to save',
+		);
 	}
 
 	return {

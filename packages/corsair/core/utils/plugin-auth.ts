@@ -4,7 +4,12 @@ import type { AuthTypes } from '../constants';
 import type { CorsairPlugin } from '../plugins';
 
 export function isAuthType(value: unknown): value is AuthTypes {
-	return value === 'oauth_2' || value === 'api_key' || value === 'bot_token';
+	return (
+		value === 'oauth_2' ||
+		value === 'api_key' ||
+		value === 'bot_token' ||
+		value === 'managed'
+	);
 }
 
 export function getPluginAuthType(

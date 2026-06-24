@@ -6,3 +6,4 @@ const hub = createHubRouteHandlers(corsair);
 
 export const GET = hub.delivery;
 export const POST = hub.delivery;
+export const OPTIONS = hub.deliveryOptions;

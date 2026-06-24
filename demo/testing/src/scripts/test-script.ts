@@ -3,9 +3,9 @@ import 'dotenv/config';
 import { corsair } from '@/server/corsair';
 
 const main = async () => {
-	const res = await corsair.slack.api.messages.delete({
-		channel: '1',
-		ts: '2',
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
 	});
 };
 
