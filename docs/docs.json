@@ -25,6 +25,7 @@
             "group": "Get Started",
             "pages": [
               "getting-started/introduction",
+              "getting-started/comparison",
               "getting-started/quick-start",
               "getting-started/setup"
             ]
@@ -153,6 +154,7 @@
                 "pages": [
                   "plugins/ahrefs/overview",
                   "plugins/ahrefs/get-credentials",
+                  "plugins/ahrefs/api",
                   "plugins/ahrefs/database"
                 ]
               },
@@ -703,6 +705,16 @@
                 ]
               },
               {
+                "group": "Vercel",
+                "pages": [
+                  "plugins/vercel/overview",
+                  "plugins/vercel/get-credentials",
+                  "plugins/vercel/api",
+                  "plugins/vercel/database",
+                  "plugins/vercel/webhooks"
+                ]
+              },
+              {
                 "group": "Xquik",
                 "pages": [
                   "plugins/xquik/overview",
@@ -758,7 +770,12 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": ["guides/webhooks", "guides/workflows", "guides/dashboard"]
+            "pages": [
+              "guides/webhooks",
+              "guides/workflows",
+              "guides/dashboard",
+              "guides/plugin-credentials"
+            ]
           }
         ]
       }
