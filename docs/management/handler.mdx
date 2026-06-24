@@ -1,0 +1,120 @@
+---
+title: Handler
+description: managementHandler() turns a Corsair instance into a framework-agnostic fetch handler exposing the management routes.
+---
+
+`managementHandler(corsair, opts)` returns a single function: `(req: Request) => Promise<Response>`. Mount it anywhere that speaks the Fetch API. For Next.js, Express, and Hono there are one-line adapters.
+
+```ts
+import { managementHandler } from "corsair";
+
+const handler = managementHandler(corsair, { basePath: "/api/corsair" });
+// handler: (req: Request) => Promise<Response>
+```
+
+## Routes
+
+The handler dispatches 9 read/write routes. Connect/OAuth is covered separately on the [Connect page](/management/connect).
+
+| Method | Path                                | Purpose                                       |
+| ------ | ----------------------------------- | --------------------------------------------- |
+| GET    | `/ok`                               | Health check → `{ ok: true }`                 |
+| GET    | `/tenants`                          | List tenants                                  |
+| POST   | `/tenants`                          | Create a tenant                               |
+| GET    | `/tenants/:id`                      | Get one tenant                                |
+| GET    | `/plugins`                          | List plugins + whether each is configured     |
+| GET    | `/plugins/:id`                      | Get one plugin                                |
+| GET    | `/connection-status`                | Per-plugin OAuth status for a tenant          |
+| GET    | `/permissions/:id`                  | Get a permission record                       |
+| POST   | `/permissions/lookup-by-token`      | Resolve a permission by email-link token      |
+
+All routes return JSON. Errors return `{ error, message, …extra }` with a non-2xx status — see [Errors](#errors).
+
+## Options
+
+```ts
+managementHandler(corsair, {
+  basePath: "/api/corsair", // optional — stripped before route matching
+  onError: (err, req) => undefined, // optional — return a Response to override, or undefined to fall through
+});
+```
+
+`basePath` defaults to `"/api/corsair"`. Set it to whatever prefix your framework mounts the handler under. The handler strips it before matching routes, so `/api/corsair/tenants` → `/tenants`.
+
+`onError` lets you log or rewrite errors. Return a `Response` to take over, or `undefined` to fall through to the default JSON error.
+
+## Framework adapters
+
+Each adapter is a thin wrapper around `managementHandler`. All three are exported from the `corsair` root.
+
+### Next.js
+
+```ts app/api/corsair/[...path]/route.ts
+import { toNextJsHandler } from "corsair";
+import { corsair } from "@/server";
+
+export const { GET, POST } = toNextJsHandler(corsair, {
+  basePath: "/api/corsair",
+});
+```
+
+Works in App Router. Both `GET` and `POST` exports point at the same handler.
+
+### Express
+
+```ts server.ts
+import express from "express";
+import { toExpressHandler } from "corsair";
+import { corsair } from "./corsair";
+
+const app = express();
+app.all("/api/corsair/*", toExpressHandler(corsair, { basePath: "/api/corsair" }));
+```
+
+The adapter bridges Express's `(req, res)` to a Fetch `Request` and back.
+
+### Hono
+
+```ts server.ts
+import { Hono } from "hono";
+import { toHonoHandler } from "corsair";
+import { corsair } from "./corsair";
+
+const app = new Hono();
+app.all("/api/corsair/*", toHonoHandler(corsair, { basePath: "/api/corsair" }));
+```
+
+The Hono context is mapped to the underlying `Request`/`Response`.
+
+## In-process API
+
+Sometimes you don't want HTTP — you want to call the same operations directly from server code (e.g. inside a server action, a job, or a CLI). The handler is built on top of `corsair.manage.*`, available without going through the handler:
+
+```ts in-process.ts
+await corsair.manage.tenants.list();
+await corsair.manage.tenants.create({ id: "acme" });
+await corsair.manage.plugins.get("github");
+await corsair.manage.connectionStatus.get({ tenantId: "acme" });
+```
+
+Every route on the HTTP handler has a matching `manage.*` method with the same shape.
+
+## Errors
+
+Errors come back as JSON in this flat shape:
+
+```json
+{
+  "error": "not_found",
+  "message": "No tenant with id acme"
+}
+```
+
+In-process `corsair.manage.*` calls throw errors with `status`, `code`, `message`, and `extra` fields — the same shape HTTP clients surface as [`CorsairClientError`](/management/client#error-handling). Common codes you'll see from the management routes:
+
+| Status | `error`                 | When                                              |
+| ------ | ----------------------- | ------------------------------------------------- |
+| 400    | `bad_request`           | Missing or invalid request body / params          |
+| 404    | `not_found`             | Tenant / plugin / permission lookup misses        |
+
+Connect-route codes are documented on the [Connect page](/management/connect#errors).

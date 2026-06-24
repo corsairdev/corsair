@@ -73,6 +73,16 @@
             "pages": ["concepts/api-key", "concepts/oauth"]
           },
           {
+            "group": "Management API",
+            "pages": [
+              "management/overview",
+              "management/handler",
+              "management/client",
+              "management/react",
+              "management/connect"
+            ]
+          },
+          {
             "group": "Production",
             "pages": [
               "production/oauth-process",
