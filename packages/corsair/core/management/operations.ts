@@ -8,6 +8,10 @@ import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
 import { createIntegrationKeyManager } from '../auth/key-manager';
 import {
+	getPluginAuthStatusForTenant,
+	mapPluginAuthStatusToConnectionState,
+} from '../auth/plugin-auth-status';
+import {
 	DEFAULT_CONNECT_LINK_TTL_MS,
 	encodeOAuthState,
 	signState,
@@ -29,7 +33,6 @@ import type {
 	OAuthCallbackInput,
 	OAuthCallbackResult,
 	PermissionRecord,
-	PluginConnectionState,
 	PluginInfo,
 	ResolvedConnectLink,
 	Tenant,
@@ -260,25 +263,25 @@ export async function getConnectionStatus(
 	const effectiveTenantId = tenantId?.trim() || 'default';
 	const result: ConnectionStatus = {};
 
-	const accounts = internal.database
-		? await listAccountSummariesForTenant(internal, effectiveTenantId)
-		: [];
-	const accountsByPlugin = new Map(accounts.map((a) => [a.integrationName, a]));
+	const authStatuses = await getPluginAuthStatusForTenant(
+		internal,
+		effectiveTenantId,
+	);
+
+	for (const status of authStatuses) {
+		result[status.plugin] = mapPluginAuthStatusToConnectionState(status);
+	}
 
 	for (const plugin of internal.plugins) {
-		const cred = await getIntegrationCredState(plugin, internal);
-		if (!cred.configured) {
-			result[plugin.id] = 'missing_credentials';
-			continue;
+		if (!(plugin.id in result)) {
+			const authType = (plugin.options as { authType?: AuthTypes } | undefined)
+				?.authType;
+			if (!authType || !internal.database || !internal.kek) {
+				result[plugin.id] = 'missing_credentials';
+			} else {
+				result[plugin.id] = 'not_connected';
+			}
 		}
-		const account = accountsByPlugin.get(plugin.id);
-		let state: PluginConnectionState;
-		if (account && account.hasCredentials) {
-			state = 'connected';
-		} else {
-			state = 'not_connected';
-		}
-		result[plugin.id] = state;
 	}
 
 	return result;
