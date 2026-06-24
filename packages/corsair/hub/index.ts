@@ -71,9 +71,7 @@ export {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from './permission';
-export {
-	createHubRouteHandlers,
-} from './route-handlers';
+export { createHubRouteHandlers } from './route-handlers';
 export type {
 	ConnectAuthKind,
 	ConnectPluginManifestEntry,

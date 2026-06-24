@@ -1,3 +1,4 @@
+import { buildOAuthAuthorizeUrl } from '../../oauth/authorize-url';
 import type { CorsairPlugin, OAuthConfig } from '..';
 import { createIntegrationKeyManager } from '..';
 import { verifyAndDecodeState } from '../auth/state';
@@ -5,7 +6,6 @@ import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../utils/corsair-instance';
-import { buildOAuthAuthorizeUrl } from '../../oauth/authorize-url';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured errors

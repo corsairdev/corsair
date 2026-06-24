@@ -1,3 +1,10 @@
+import { getHubConfig } from '../../hub/config';
+import { createHubConnectSession } from '../../hub/connect';
+import {
+	resolveConnectSourceFromDeliveryUrl,
+	validateExplicitConnectSource,
+} from '../../hub/contracts/delivery-mode';
+import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
 import { createIntegrationKeyManager } from '../auth/key-manager';
 import {
@@ -5,17 +12,10 @@ import {
 	encodeOAuthState,
 	signState,
 } from '../auth/state';
-import { createHubConnectSession } from '../../hub/connect';
-import {
-	resolveConnectSourceFromDeliveryUrl,
-	validateExplicitConnectSource,
-} from '../../hub/contracts/delivery-mode';
-import { getHubConfig } from '../../hub/config';
-import type { HubConnectSessionInput } from '../../hub/types';
 import { BASE_AUTH_FIELDS } from '../auth/types';
 import { ConnectError, resolveConnectLink } from '../connect';
-import { enrichPermissionWithApprovalUrl } from '../permissions';
 import type { AuthTypes } from '../constants';
+import { enrichPermissionWithApprovalUrl } from '../permissions';
 import type { CorsairPlugin, OAuthConfig } from '../plugins';
 import { requireCorsairPlugin } from '../utils/corsair-instance';
 import { badRequest, ManagementApiError, notFound } from './errors';
@@ -27,7 +27,6 @@ import type {
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
-	PermissionLookupInput,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
@@ -362,9 +361,7 @@ function assertConnectModeConfigured(internal: CorsairInternalConfig): void {
 	}
 }
 
-function requireDatabaseForConnect(
-	internal: CorsairInternalConfig,
-): void {
+function requireDatabaseForConnect(internal: CorsairInternalConfig): void {
 	if (!internal.database || !internal.kek) {
 		throw new ManagementApiError(
 			500,

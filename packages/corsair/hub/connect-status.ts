@@ -1,11 +1,13 @@
-import { formatProviderDisplayName } from '../core/constants';
 import type { AuthTypes } from '../core/constants';
+import { formatProviderDisplayName } from '../core/constants';
 import { getConnectionStatus } from '../core/management/operations';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
-import type { ConnectStatusResponse } from './contracts/connect-api';
-import type { ConnectAuthKind } from './contracts/connect-api';
+import type {
+	ConnectAuthKind,
+	ConnectStatusResponse,
+} from './contracts/connect-api';
 
 export type {
 	ConnectAuthKind,

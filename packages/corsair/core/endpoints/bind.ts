@@ -4,11 +4,11 @@ import { AuthMissingError } from '../auth/errors/auth-missing';
 import { encodeOAuthState, signState } from '../auth/state';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
+import type { ApprovalConfigForMessage } from '../permissions';
 import {
 	enforcePermission,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
-	type ApprovalConfigForMessage,
 } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,

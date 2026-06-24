@@ -1,8 +1,8 @@
 import {
 	APPROVAL_SETUP_HINT,
 	buildManualApprovalUrl,
-	resolveAsyncApprovalMessage,
 	resolveApprovalUrl,
+	resolveAsyncApprovalMessage,
 	usesManualApprovalConfig,
 } from '../core/permissions/approval-message';
 

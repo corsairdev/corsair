@@ -1,5 +1,4 @@
 import type { CorsairPermission } from '../../db';
-import { enrichPermissionWithApprovalUrl } from '../permissions';
 import type { AuthTypes } from '../constants';
 
 // ─────────────────────────────────────────────────────────────────────────────

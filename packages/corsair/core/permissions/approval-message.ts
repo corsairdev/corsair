@@ -1,9 +1,9 @@
 import type { CorsairPermission } from '../../db';
+import type { HubConfig } from '../../hub';
 import {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from '../../hub/permission';
-import type { HubConfig } from '../../hub';
 import type { CorsairManualConfig } from '../plugins';
 
 type ApprovalRoutingConfig = {

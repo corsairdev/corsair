@@ -27,8 +27,8 @@ import { buildOAuthAuthorizeUrl } from './authorize-url';
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
 export {
-	buildOAuthAuthorizeUrl,
 	type BuildOAuthAuthorizeUrlInput,
+	buildOAuthAuthorizeUrl,
 } from './authorize-url';
 
 // ─────────────────────────────────────────────────────────────────────────────

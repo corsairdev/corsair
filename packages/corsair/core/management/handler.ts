@@ -1,5 +1,4 @@
 import type { CorsairInternalConfig } from '..';
-import type { CreateConnectLinkInput } from './types';
 import { getCorsairInternal } from '../utils/corsair-instance';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
@@ -16,6 +15,7 @@ import {
 	ok,
 	resolveConnect,
 } from './operations';
+import type { CreateConnectLinkInput } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Management HTTP handler — framework-agnostic (Request) => Promise<Response>.

@@ -21,8 +21,10 @@ import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairManageNamespace } from '../management';
-import type { CorsairPermissionsNamespace } from '../permissions';
-import type { ApprovalConfigForMessage } from '../permissions';
+import type {
+	ApprovalConfigForMessage,
+	CorsairPermissionsNamespace,
+} from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairManualConfig,
