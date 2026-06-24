@@ -2,6 +2,7 @@ import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { encodeOAuthState, signState } from '../auth/state';
+import type { EndpointManualConfig } from '../config/manual-connect';
 import { hasManualConnectConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
@@ -12,11 +13,9 @@ import {
 } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
-	CorsairManualConfig,
 	CorsairPermissionsOptions,
 	EndpointHooks,
 	EndpointMetaEntry,
-	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
@@ -115,11 +114,7 @@ export function bindEndpointsRecursively({
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
 	/** Manual config from createCorsair({ manual: ... }) — connect + permission review. */
-	manualConfig?: CorsairManualConfig & {
-		oauthConfig?: OAuthConfig;
-		kek?: string | undefined;
-		tenantId?: string;
-	};
+	manualConfig?: EndpointManualConfig;
 	hubConfig?: HubConfig;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {

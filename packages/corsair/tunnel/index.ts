@@ -6,6 +6,7 @@ import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
+import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 import { processOAuthCallback } from '../oauth';
 import { processWebhook } from '../webhooks';
 import {
@@ -14,7 +15,6 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
-import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 
 export {
 	resolveAccountFromWebhookLink,
@@ -24,6 +24,7 @@ export {
 };
 
 export type { TunnelEnvelope, TunnelType } from '../hub/contracts/tunnel';
+export { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 export {
 	type BrowserDeliveryPayload,
 	isAuthCredentialsBrowserDelivery,
@@ -33,7 +34,6 @@ export {
 	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,
 } from './browser-delivery';
-export { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 
 export type TunnelAck = {
 	status: 'ok' | 'failed';
