@@ -23,12 +23,15 @@ export function resolveConnectSourceFromDeliveryUrl(
 	return isLoopbackDeliveryUrl(deliveryUrl) ? 'client' : 'server';
 }
 
-export function shouldUseBrowserConnectDelivery(
+export function shouldUseBrowserDelivery(
 	source: HubConnectSource,
 	deliveryUrl: string,
 ): boolean {
 	return source === 'client' || isLoopbackDeliveryUrl(deliveryUrl);
 }
+
+/** @deprecated Use {@link shouldUseBrowserDelivery} */
+export const shouldUseBrowserConnectDelivery = shouldUseBrowserDelivery;
 
 export function validateExplicitConnectSource(input: {
 	source?: HubConnectSource;

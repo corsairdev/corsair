@@ -40,11 +40,25 @@ export {
 	getConnectStatusForTenant,
 } from './connect-status';
 export {
+	type ConnectAuthKind,
+	type ConnectPluginManifestEntry,
+	parseConnectSessionResponse,
+	parseConnectStatusResponse,
+	parseHubApiErrorBody,
+	parseOAuthRefreshResponse,
+	parsePermissionSessionResponse,
+} from './contracts/connect-api';
+export {
 	isLoopbackDeliveryUrl,
 	resolveConnectSourceFromDeliveryUrl,
 	shouldUseBrowserConnectDelivery,
+	shouldUseBrowserDelivery,
 	validateExplicitConnectSource,
 } from './contracts/delivery-mode';
+export {
+	type BrowserDeliveryMode,
+	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
+} from './contracts/tunnel';
 export {
 	type HubDeliveryRequest,
 	type HubDeliveryResult,
@@ -72,9 +86,45 @@ export {
 	formatHubApprovalMessage,
 } from './permission';
 export { createHubRouteHandlers } from './route-handlers';
+export {
+	BROWSER_DELIVERY_TTL_MS,
+	type BrowserDeliveryPayload,
+	buildBrowserDeliveryRedirectUrl,
+	type ConnectSessionTokenPayload,
+	type ConnectTokenPayload,
+	createConnectSessionJti,
+	createConnectTokenJti,
+	createPermissionSessionJti,
+	createSignedTokenJti,
+	decodeConnectSessionTokenFromPath,
+	decodeConnectTokenFromPath,
+	decodePermissionTokenFromPath,
+	deliverSignedEnvelope,
+	type ExpiringTokenPayload,
+	encodeConnectTokenForPath,
+	formatServerDeliveryError,
+	getConnectSessionExpiryMs,
+	getConnectTokenExpiryMs,
+	isServerDeliveryAckSuccessful,
+	type PermissionTokenPayload,
+	parseServerDeliveryAckBody,
+	type ServerDeliveryAckBody,
+	type SignedDeliveryHeaders,
+	type SignedEnvelopeDeliveryResult,
+	signBrowserDeliveryToken,
+	signConnectSessionToken,
+	signConnectToken,
+	signDeliveryEnvelope,
+	signPermissionToken,
+	verifyBrowserDeliveryToken,
+	verifyConnectSessionToken,
+	verifyConnectToken,
+	verifyDeliveryEnvelope,
+	verifyPermissionToken,
+	verifySignedToken,
+	verifySignedTunnelDelivery,
+} from './signing';
 export type {
-	ConnectAuthKind,
-	ConnectPluginManifestEntry,
 	ConnectSourceValidationError,
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
