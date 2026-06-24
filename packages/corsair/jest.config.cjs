@@ -75,4 +75,5 @@ module.exports = {
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
+	setupFilesAfterEnv: ['<rootDir>/tests/setup-jsdom-fetch.cjs'],
 };
