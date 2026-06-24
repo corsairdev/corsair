@@ -8,8 +8,18 @@ import { IntroFeatures } from '/snippets/intro-features.mdx';
 
 Corsair is the go-to way to add any integration to your app or agent. Auth, token refresh, data storage, webhooks, rate limits — all handled. You write the part that's unique to your use case, not the plumbing you've already written a hundred times.
 
+Install Corsair and the plugins you need:
+
+```bash
+pnpm add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+
 ```ts corsair.ts
-import { createCorsair, slack, github, gmail, linear } from 'corsair';
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+import { github } from '@corsair-dev/github';
+import { gmail } from '@corsair-dev/gmail';
+import { linear } from '@corsair-dev/linear';
 
 export const corsair = createCorsair({
     plugins: [slack(), github(), gmail(), linear()],
