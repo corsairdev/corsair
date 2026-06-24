@@ -35,6 +35,8 @@ export {
 } from './config';
 export { createHubConnectSession } from './connect';
 export {
+	type ConnectAuthFieldStatus,
+	type ConnectAuthStatusLevel,
 	type ConnectStatusPluginEntry,
 	type ConnectStatusResponse,
 	getConnectStatusForTenant,

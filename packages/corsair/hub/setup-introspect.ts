@@ -1,8 +1,11 @@
+import {
+	getPluginAuthStatus,
+	isOptionalAuthField,
+} from '../core/auth/plugin-auth-status';
 import { encodeOAuthState, signState } from '../core/auth/state';
 import type { AuthTypes } from '../core/constants';
 import { formatProviderDisplayName } from '../core/constants';
 import type { CorsairPlugin } from '../core/plugins';
-import { getCallableProperty } from '../core/utils/callable';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getAccountFields, getPluginAuthType } from '../core/utils/plugin-auth';
 import { generateOAuthUrl } from '../oauth';
@@ -18,8 +21,9 @@ import {
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
 import type { HubConnectSource, HubOAuthMode } from './types';
 
-const OPTIONAL_ACCOUNT_FIELDS = new Set([
-	'webhook_signature',
+const OAUTH_SYSTEM_ACCOUNT_FIELDS = new Set([
+	'access_token',
+	'refresh_token',
 	'expires_at',
 	'scope',
 ]);
@@ -34,12 +38,6 @@ export type BuildConnectPluginManifestOptions = {
 	skipOAuthUrlGeneration?: boolean;
 };
 
-/** @deprecated Use ConnectPluginManifestEntry */
-export type SetupPluginManifestEntry = ConnectPluginManifestEntry;
-
-/** @deprecated Use ConnectAuthKind */
-export type SetupAuthKind = ConnectAuthKind;
-
 function toConnectAuthKind(authType: AuthTypes): ConnectAuthKind {
 	if (authType === 'oauth_2' || authType === 'managed') {
 		return 'oauth';
@@ -50,85 +48,18 @@ function toConnectAuthKind(authType: AuthTypes): ConnectAuthKind {
 	return 'api_key';
 }
 
-function getConfiguredAccountFields(authType: AuthTypes): readonly string[] {
-	if (authType === 'oauth_2' || authType === 'managed') {
-		return ['access_token'];
-	}
-	if (authType === 'api_key') {
-		return ['api_key'];
-	}
-	if (authType === 'bot_token') {
-		return ['bot_token'];
-	}
-	return [];
-}
-
-async function isAccountConfigured(
-	corsair: unknown,
-	plugin: CorsairPlugin,
-	authType: AuthTypes,
-	tenantId: string,
-): Promise<boolean> {
-	const accountFields = getConfiguredAccountFields(authType);
-
-	if (accountFields.length === 0) {
-		return true;
-	}
-
-	const tenantClient: Record<string, unknown> =
-		typeof (corsair as { withTenant?: unknown }).withTenant === 'function'
-			? (
-					corsair as {
-						withTenant: (tenantId: string) => Record<string, unknown>;
-					}
-				).withTenant(tenantId)
-			: (corsair as Record<string, unknown>);
-
-	const pluginNamespace = tenantClient[plugin.id];
-	const accountKeys =
-		pluginNamespace &&
-		typeof pluginNamespace === 'object' &&
-		'keys' in pluginNamespace
-			? (pluginNamespace as { keys: unknown }).keys
-			: null;
-
-	if (!accountKeys) {
-		return false;
-	}
-
-	for (const field of accountFields) {
-		if (authType === 'oauth_2' || authType === 'managed') {
-			if (field === 'refresh_token') continue;
-		}
-
-		const getter = getCallableProperty(accountKeys, `get_${field}`);
-		if (!getter) continue;
-
-		let value: string | null = null;
-		try {
-			const result = await getter();
-			value = typeof result === 'string' ? result : null;
-		} catch {
-			value = null;
-		}
-
-		if (!value) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-function getCredentialFieldsForAuthType(
+function getEditableAccountFields(
 	authType: AuthTypes,
 	accountFields: readonly string[],
 ): string[] {
 	if (authType === 'oauth_2' || authType === 'managed') {
-		return [];
+		return accountFields.filter(
+			(field) =>
+				!isOptionalAuthField(field) && !OAUTH_SYSTEM_ACCOUNT_FIELDS.has(field),
+		);
 	}
 
-	return accountFields.filter((field) => !OPTIONAL_ACCOUNT_FIELDS.has(field));
+	return accountFields.filter((field) => !isOptionalAuthField(field));
 }
 
 export async function buildConnectPluginManifest(
@@ -154,20 +85,20 @@ export async function buildConnectPluginManifest(
 		const providerName =
 			options.providerNameOverrides?.[plugin.id] ??
 			formatProviderDisplayName(plugin.id);
-		const alreadyConfigured = await isAccountConfigured(
-			corsair,
-			plugin,
-			authType,
-			tenantId,
-		);
+		const authStatus = await getPluginAuthStatus(internal, plugin, tenantId);
 		const accountFields = getAccountFields(plugin, authType);
+		const credentialFields = getEditableAccountFields(authType, accountFields);
 
 		const entry: ConnectPluginManifestEntry = {
 			plugin: plugin.id,
 			providerName,
 			authKind,
-			alreadyConfigured,
+			alreadyConfigured: authStatus?.connected ?? false,
 		};
+
+		if (credentialFields.length > 0) {
+			entry.credentialFields = credentialFields;
+		}
 
 		if (authKind === 'oauth') {
 			const oauthModeOverride = options.oauthModeOverrides?.[plugin.id];
@@ -197,14 +128,6 @@ export async function buildConnectPluginManifest(
 					}
 				}
 			}
-		} else {
-			const credentialFields = getCredentialFieldsForAuthType(
-				authType,
-				accountFields,
-			);
-			if (credentialFields.length > 0) {
-				entry.credentialFields = credentialFields;
-			}
 		}
 
 		manifest.push(entry);
@@ -212,9 +135,6 @@ export async function buildConnectPluginManifest(
 
 	return manifest;
 }
-
-/** @deprecated Use buildConnectPluginManifest */
-export const buildSetupPluginManifest = buildConnectPluginManifest;
 
 export function resolveConnectSessionSource(
 	corsair: unknown,
@@ -234,9 +154,6 @@ export function resolveConnectSessionSource(
 
 	return resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl);
 }
-
-/** @deprecated Use resolveConnectSessionSource */
-export const resolveSetupConnectSource = resolveConnectSessionSource;
 
 export async function ensureConnectAccountRows(
 	corsair: unknown,

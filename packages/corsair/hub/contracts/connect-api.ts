@@ -19,11 +19,27 @@ export type ConnectPluginManifestEntry = {
 	setupError?: string;
 };
 
+export type ConnectAuthFieldStatus = {
+	name: string;
+	level: 'integration' | 'account';
+	required: boolean;
+	configured: boolean;
+};
+
+export type ConnectAuthStatusLevel =
+	| 'ready'
+	| 'partial'
+	| 'not_started'
+	| 'missing_integration';
+
 export type ConnectStatusPluginEntry = {
 	plugin: string;
 	providerName: string;
 	authKind: ConnectAuthKind;
+	status: ConnectAuthStatusLevel;
 	connected: boolean;
+	fields: ConnectAuthFieldStatus[];
+	missingRequiredFields: string[];
 };
 
 export type ConnectStatusResponse = {
@@ -148,6 +164,83 @@ export function parseOAuthRefreshResponse(
 	};
 }
 
+function parseStringArray(value: unknown): string[] {
+	if (!Array.isArray(value)) {
+		return [];
+	}
+	return value.filter((entry): entry is string => typeof entry === 'string');
+}
+
+function parseConnectAuthFieldStatuses(
+	value: unknown,
+): ConnectAuthFieldStatus[] {
+	if (!Array.isArray(value)) {
+		return [];
+	}
+
+	const fields: ConnectAuthFieldStatus[] = [];
+	for (const item of value) {
+		if (!item || typeof item !== 'object') continue;
+		const fieldRecord = item as Record<string, unknown>;
+		if (!isNonEmptyString(fieldRecord.name)) continue;
+
+		fields.push({
+			name: fieldRecord.name,
+			level:
+				fieldRecord.level === 'integration' || fieldRecord.level === 'account'
+					? fieldRecord.level
+					: 'account',
+			required: fieldRecord.required === true,
+			configured: fieldRecord.configured === true,
+		});
+	}
+
+	return fields;
+}
+
+function parseConnectAuthStatusLevel(
+	value: unknown,
+	connected: boolean,
+	fields: ConnectAuthFieldStatus[],
+	missingRequiredFields: string[],
+): ConnectAuthStatusLevel {
+	if (
+		value === 'ready' ||
+		value === 'partial' ||
+		value === 'not_started' ||
+		value === 'missing_integration'
+	) {
+		return value;
+	}
+
+	if (connected) {
+		return 'ready';
+	}
+
+	const missingIntegration = fields.some(
+		(field) =>
+			field.level === 'integration' && field.required && !field.configured,
+	);
+	if (missingIntegration) {
+		return 'missing_integration';
+	}
+
+	if (
+		fields.some(
+			(field) =>
+				field.level === 'account' && field.required && field.configured,
+		)
+	) {
+		return 'partial';
+	}
+
+	if (missingRequiredFields.length > 0) {
+		return 'not_started';
+	}
+
+	return 'not_started';
+}
+
 export function parseConnectStatusResponse(
 	payload: unknown,
 ): ConnectStatusResponse {
@@ -173,18 +266,34 @@ export function parseConnectStatusResponse(
 			continue;
 		}
 
+		const authKind =
+			pluginRecord.authKind === 'oauth' ||
+			pluginRecord.authKind === 'api_key' ||
+			pluginRecord.authKind === 'bot_token'
+				? pluginRecord.authKind
+				: 'api_key';
+
+		const fields = parseConnectAuthFieldStatuses(pluginRecord.fields);
+		const missingRequiredFields = parseStringArray(
+			pluginRecord.missingRequiredFields,
+		);
+		const status = parseConnectAuthStatusLevel(
+			pluginRecord.status,
+			pluginRecord.connected,
+			fields,
+			missingRequiredFields,
+		);
+
 		plugins.push({
 			plugin: pluginRecord.plugin,
 			providerName: isNonEmptyString(pluginRecord.providerName)
 				? pluginRecord.providerName
 				: pluginRecord.plugin,
-			authKind:
-				pluginRecord.authKind === 'oauth' ||
-				pluginRecord.authKind === 'api_key' ||
-				pluginRecord.authKind === 'bot_token'
-					? pluginRecord.authKind
-					: 'api_key',
+			authKind,
+			status,
 			connected: pluginRecord.connected,
+			fields,
+			missingRequiredFields,
 		});
 	}
 
