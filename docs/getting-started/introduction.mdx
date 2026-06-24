@@ -10,9 +10,20 @@ Corsair is the go-to way to add any integration to your app or agent. Auth, toke
 
 Install Corsair and the plugins you need:
 
-```bash
-pnpm add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
 ```
+```bash yarn
+yarn add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+```bash bun
+bun add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+</CodeGroup>
 
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
