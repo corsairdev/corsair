@@ -18,8 +18,11 @@ export const corsair = createCorsair({
         timeout: "30m",
         onTimeout: "deny",
         mode: "asynchronous",
-        formatAsyncMessage: ({ token }) =>
-            `Approval required. Visit https://your-app.com/approve/${token} to approve or deny, then retry.`,
+    },
+    manual: {
+        approvalBaseUrl: "https://your-app.com/approve",
+        onApprovalRequired: ({ approvalUrl }) =>
+            `Approval required. Visit ${approvalUrl} to approve or deny, then retry.`,
     },
     plugins: [
         github({
@@ -279,7 +282,7 @@ After `expires_at`, the record is no longer actionable. Synchronous mode returns
 
 ## Synchronous vs asynchronous
 
-Control how blocked calls behave with `approval.mode`:
+Control how blocked calls behave with `approval.mode`. Agent-facing messages come from **hub** (hosted, automatic) or **`manual.onApprovalRequired`** (self-hosted review URLs).
 
 ### Asynchronous (default)
 
@@ -289,13 +292,13 @@ Best when:
 - The agent should explicitly tell the user to visit a review page
 - You want the model to handle denial gracefully and not burn tokens polling
 
+With **hub** config, Corsair automatically returns a hosted approval URL in the agent message. With **manual** config, set `approvalBaseUrl` and optionally customize via `onApprovalRequired`:
+
 ```ts corsair.ts
-approval: {
-    timeout: "1h",
-    onTimeout: "deny",
-    mode: "asynchronous",
-    formatAsyncMessage: ({ token, plugin, endpoint }) =>
-        `Action ${plugin}.${endpoint} requires approval. Visit https://your-app.com/approve/${token} then retry.`,
+manual: {
+    approvalBaseUrl: `${PUBLIC_URL}/approve`,
+    onApprovalRequired: ({ approvalUrl }) =>
+        `Action requires approval. Visit ${approvalUrl} then retry.`,
 },
 ```
 
@@ -399,22 +402,22 @@ Once `status` is `approved`, either the original agent retries the call or you i
 
 ### MCP / coding agents
 
-When using [MCP adapters](/mcp-adapters/mcp-adapters), permissions gate `run_script` calls automatically. No extra wiring — configure `permissions` on each plugin and `approval` on `createCorsair`.
+When using [MCP adapters](/mcp-adapters/mcp-adapters), permissions gate `run_script` calls automatically. Configure `permissions` on each plugin and `approval` on `createCorsair`.
 
-In **asynchronous** mode, customize the error the LLM sees with `formatAsyncMessage`. Point the agent (and the user) at your review page:
+With **hub** config, blocked calls automatically include a hosted approval URL for the agent. With **manual** config, set `manual.approvalBaseUrl` (and optionally `manual.onApprovalRequired`) so agents receive a review link:
 
 ```ts corsair.ts
-const PUBLIC_URL = process.env.PUBLIC_URL ?? "http://localhost:3000";
-
 export const corsair = createCorsair({
+    hub: { /* connect via hosted UI */ },
     approval: {
         timeout: "1h",
         onTimeout: "deny",
         mode: "asynchronous",
-        formatAsyncMessage: ({ token }) =>
-            `Approval required. Visit ${PUBLIC_URL}/approve/${token} to approve or deny, then retry.`,
     },
-    // ...
+    // manual approval only — connect can stay on hub
+    manual: {
+        approvalBaseUrl: `${PUBLIC_URL}/approve`,
+    },
 });
 ```
 

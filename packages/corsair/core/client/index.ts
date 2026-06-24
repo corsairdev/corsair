@@ -21,9 +21,13 @@ import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
 import type { CorsairManageNamespace } from '../management';
-import type { CorsairPermissionsNamespace } from '../permissions';
+import type {
+	ApprovalConfigForMessage,
+	CorsairPermissionsNamespace,
+} from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
+	CorsairManualConfig,
 	CorsairPlugin,
 	EndpointMetaEntry,
 	OAuthConfig,
@@ -358,31 +362,9 @@ export type BuildCorsairClientOptions = {
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
 	/** Approval timeout from createCorsair({ approval: ... }). Forwarded to the permission guard. */
-	approvalConfig?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
-	/** Connect link config from createCorsair({ connect: ... }). Forwarded to endpoint binding. */
-	connectConfig?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-	};
+	approvalConfig?: ApprovalConfigForMessage;
+	/** Manual config from createCorsair({ manual: ... }). Forwarded to endpoint binding. */
+	manualConfig?: CorsairManualConfig;
 	/** Hub config from createCorsair({ hub: ... }). Forwarded to keyBuilder context. */
 	hubConfig?: HubConfig;
 };
@@ -409,7 +391,7 @@ export function buildCorsairClient<
 		kek,
 		rootErrorHandlers,
 		approvalConfig,
-		connectConfig,
+		manualConfig,
 		hubConfig,
 	} = options;
 
@@ -533,9 +515,9 @@ export function buildCorsairClient<
 			database,
 			approvalConfig,
 			tenantId,
-			connectConfig: connectConfig
+			manualConfig: manualConfig
 				? {
-						...connectConfig,
+						...manualConfig,
 						oauthConfig: (plugin as { oauthConfig?: OAuthConfig }).oauthConfig,
 						kek,
 						tenantId: effectiveTenantId,

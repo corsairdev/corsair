@@ -13,7 +13,7 @@ export const {
   useTenants, useTenant, useCreateTenant,
   usePlugins, usePlugin,
   useConnectionStatus,
-  usePermission, usePermissionByToken,
+  usePermission,
   useCreateConnectLink, useOAuthCallback,
   client, // escape hatch — the underlying vanilla client
 } = createCorsairReactClient({ baseURL: "/api/corsair" });
@@ -47,7 +47,7 @@ function TenantDetail({ id }: { id: string }) {
 }
 ```
 
-Available read hooks: `useTenants`, `useTenant(id)`, `usePlugins`, `usePlugin(id)`, `useConnectionStatus({ tenantId })`, `usePermission(id)`, `usePermissionByToken(token)`.
+Available read hooks: `useTenants`, `useTenant(id)`, `usePlugins`, `usePlugin(id)`, `useConnectionStatus({ tenantId })`, `usePermission({ id })` or `usePermission({ token })`.
 
 ## Mutation hooks
 

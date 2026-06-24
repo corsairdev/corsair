@@ -56,7 +56,6 @@ function makeMockClient(): MockClient {
 		},
 		permissions: {
 			get: jest.fn(),
-			getByToken: jest.fn(),
 		},
 		connect: {
 			createLink: jest.fn(),
@@ -322,26 +321,29 @@ describe('usePermission', () => {
 			id: 'perm-1',
 		});
 
-		const { result } = renderHook(() => makeHooks().usePermission('perm-1'));
-		await waitFor(() => expect(result.current.loading).toBe(false));
-
-		expect(result.current.data).toEqual({ id: 'perm-1' });
-	});
-});
-
-describe('usePermissionByToken', () => {
-	it('fetches permission by token', async () => {
-		(mockClient.permissions.getByToken as jest.Mock).mockResolvedValue({
-			id: 'perm-1',
-		});
-
 		const { result } = renderHook(() =>
-			makeHooks().usePermissionByToken('tok_abc'),
+			makeHooks().usePermission({ id: 'perm-1' }),
 		);
 		await waitFor(() => expect(result.current.loading).toBe(false));
 
 		expect(result.current.data).toEqual({ id: 'perm-1' });
-		expect(mockClient.permissions.getByToken).toHaveBeenCalledWith('tok_abc');
+		expect(mockClient.permissions.get).toHaveBeenCalledWith({ id: 'perm-1' });
+	});
+
+	it('fetches permission by token', async () => {
+		(mockClient.permissions.get as jest.Mock).mockResolvedValue({
+			id: 'perm-1',
+		});
+
+		const { result } = renderHook(() =>
+			makeHooks().usePermission({ token: 'tok_abc' }),
+		);
+		await waitFor(() => expect(result.current.loading).toBe(false));
+
+		expect(result.current.data).toEqual({ id: 'perm-1' });
+		expect(mockClient.permissions.get).toHaveBeenCalledWith({
+			token: 'tok_abc',
+		});
 	});
 });
 
@@ -358,7 +360,7 @@ describe('useCreateConnectLink', () => {
 	it('mutate returns connect link', async () => {
 		const link = {
 			connectUrl: 'https://github.com/login/oauth/authorize?...',
-			state: 'hmac_signed',
+			expiresAt: '2026-01-01T00:00:00.000Z',
 		};
 		(mockClient.connect.createLink as jest.Mock).mockResolvedValue(link);
 

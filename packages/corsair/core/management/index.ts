@@ -5,12 +5,11 @@ import {
 	createConnectLink,
 	createTenant,
 	getConnectionStatus,
-	getPermission,
-	getPermissionByToken,
 	getPlugin,
 	getTenant,
 	listPlugins,
 	listTenants,
+	lookupPermission,
 	ok,
 	resolveConnect,
 } from './operations';
@@ -22,6 +21,7 @@ import type {
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginInfo,
 	ResolvedConnectLink,
@@ -49,8 +49,7 @@ export type CorsairManageNamespace = {
 		get: (query?: { tenantId?: string }) => Promise<ConnectionStatus>;
 	};
 	permissions: {
-		get: (id: string) => Promise<PermissionRecord>;
-		getByToken: (token: string) => Promise<PermissionRecord>;
+		get: (input: PermissionLookupInput) => Promise<PermissionRecord>;
 	};
 	connect: {
 		createLink: (input: CreateConnectLinkInput) => Promise<ConnectLink>;
@@ -82,11 +81,10 @@ export function buildManagementNamespace(
 			get: (q) => getConnectionStatus(internal, q?.tenantId),
 		},
 		permissions: {
-			get: (id) => getPermission(internal, id),
-			getByToken: (token) => getPermissionByToken(internal, token),
+			get: (input) => lookupPermission(internal, input),
 		},
 		connect: {
-			createLink: (input) => createConnectLink(internal, input),
+			createLink: (input) => createConnectLink(corsairShim, internal, input),
 			resolve: (state) => resolveConnect(corsairShim, internal, state),
 			oauthCallback: (input) =>
 				completeOAuthCallback(corsairShim, internal, input),
@@ -110,6 +108,7 @@ export type {
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,

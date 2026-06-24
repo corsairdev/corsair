@@ -1,53 +1,121 @@
 ---
 title: Connect / OAuth
-description: How users connect their own Slack, GitHub, Notion, etc. accounts to a tenant — signed connect links, OAuth redirect, callback.
+description: Connect users to Slack, GitHub, and other plugins — one createLink API, config-driven hub or manual mode.
 ---
 
-When a user clicks "Connect GitHub" in your dashboard, three things happen:
+When a user clicks "Connect GitHub" in your dashboard, your backend calls `client.connect.createLink()`, redirects them to the returned `connectUrl`, and Corsair handles the rest.
 
-1. Your backend asks Corsair for a **signed connect link**.
-2. The user is redirected to the provider's OAuth screen.
-3. The provider redirects back, and your backend **exchanges the code** for tokens, which Corsair encrypts and stores.
+The same API works in both modes — **`hub`** or **`manual`** config on `createCorsair` picks the backend:
 
-The management API exposes three routes for this. The vanilla and React clients wrap them.
+| Config | Where `connectUrl` points | What you build |
+| ------ | --------------------------- | -------------- |
+| `hub: { ... }` | Corsair Hub hosted UI | Delivery endpoint only |
+| `manual: { baseUrl, redirectUri }` | Your app's connect page | Connect page + OAuth callback |
 
-## Server setup
+## Response shape
 
-Connect routes require `connect` config on your Corsair instance — without it the routes return `connect_not_configured` (500):
+Every `createLink` call returns:
+
+```ts
+type ConnectLink = {
+  connectUrl: string;   // redirect the user's browser here
+  expiresAt?: string;   // ISO timestamp — always set in practice
+};
+```
+
+Redirect to `connectUrl`. That is the entire client-side contract.
+
+## Hub mode (hosted connect UI)
+
+Use this when you want Corsair Hub to handle the connect pages, OAuth redirects, and token delivery.
 
 ```ts server.ts
 export const corsair = createCorsair({
   plugins: [github(), slack()],
   database,
   kek,
-  connect: {
-    baseUrl: "https://app.example.com/connect", // where users land after clicking the link
+  hub: {
+    projectApiKey: process.env.CORSAIR_API_KEY!,
+    signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+    deliveryUrl: `${appUrl}/api/corsair`,
+  },
+});
+```
+
+Mount two routes:
+
+```ts app/api/corsair/route.ts
+// Hub delivery — OAuth results land here
+import { createHubRouteHandlers } from "corsair/hub";
+import { corsair } from "@/server";
+
+const hub = createHubRouteHandlers(corsair);
+export const GET = hub.delivery;
+export const POST = hub.delivery;
+export const OPTIONS = hub.deliveryOptions;
+```
+
+```ts app/api/corsair/[...path]/route.ts
+// Management API — createLink and the rest
+import { toNextJsHandler } from "corsair";
+import { corsair } from "@/server";
+
+export const { GET, POST } = toNextJsHandler(corsair, {
+  basePath: "/api/corsair",
+});
+```
+
+Create a connect link and redirect:
+
+```ts backend.ts
+const { connectUrl } = await client.connect.createLink({
+  plugin: "github",
+  tenantId: "acme",
+  oauthMode: "managed", // or "byo"
+});
+window.location.href = connectUrl;
+```
+
+Hub-specific input fields (ignored in manual mode):
+
+| Field | Purpose |
+| ----- | ------- |
+| `plugin` | Optional — omit to show all configured plugins |
+| `oauthMode` | `"byo"` (your OAuth app) or `"managed"` (Corsair's) |
+| `source` | `"client"` or `"server"` — inferred from `deliveryUrl` when omitted |
+
+Hub delivers tokens to your `deliveryUrl`. You do **not** call `resolve` or `oauthCallback`.
+
+## Manual mode (self-hosted)
+
+Use this when you want full control over connect pages and OAuth callbacks.
+
+```ts server.ts
+export const corsair = createCorsair({
+  plugins: [github(), slack()],
+  database,
+  kek,
+  manual: {
+    baseUrl: "https://app.example.com/connect",
     redirectUri: "https://app.example.com/api/oauth/callback",
   },
 });
 ```
 
-## The three routes
+Mount the management handler and build two pages:
 
-| Method | Path                                | Purpose                                          |
-| ------ | ----------------------------------- | ------------------------------------------------ |
-| POST   | `/connect/links`                    | Create a signed connect link                     |
-| GET    | `/connect/resolve?state=…`          | Verify the signed state, return the OAuth URL    |
-| POST   | `/connect/oauth/callback`           | Exchange the OAuth code for tokens               |
+1. **Connect page** at `manual.baseUrl` — receives `?state=…`, resolves to the provider OAuth URL
+2. **OAuth callback** at `manual.redirectUri` — receives `?code=…&state=…`, exchanges for tokens
 
-The signed `state` is an HMAC over `{ plugin, tenantId, iat }` using the KEK. The `iat` gives the link an expiry, so a leaked link goes stale quickly.
-
-## Step 1 — Create the connect link
+### Step 1 — Create the connect link
 
 ```ts backend.ts
-const { connectUrl, state } = await client.connect.createLink({
+const { connectUrl } = await client.connect.createLink({
   plugin: "github",
-  tenantId: "acme", // optional — omit for single-tenant deployments
+  tenantId: "acme",
 });
-// redirect the user's browser to connectUrl
+window.location.href = connectUrl;
 ```
-
-`connectUrl` already points at your `/connect/resolve` route. You don't have to build it.
 
 In React:
 
@@ -69,20 +137,22 @@ function ConnectGithub({ tenantId }: { tenantId: string }) {
 }
 ```
 
-## Step 2 — Resolve
+The signed `state` is embedded in `connectUrl` as a query parameter — you do not need to handle it separately.
 
-The browser hits `/connect/resolve?state=…`. The handler:
+### Step 2 — Resolve
 
-- verifies the HMAC,
-- checks the `iat` against the link TTL,
-- looks up the plugin's OAuth config (client ID, scopes, redirect URI),
-- responds with the provider authorize URL plus the original `plugin`, `tenantId`, and `providerName`.
+The browser hits your connect page with `?state=…`. Call resolve to get the provider OAuth URL:
 
-You normally don't call this manually — `connectUrl` from step 1 already targets it. The route exists as its own step so a frontend can `fetch` the resolved URL instead of doing a full redirect, if that fits your UX better.
+```ts
+const resolved = await client.connect.resolve(state);
+// redirect to resolved.oauthUrl
+```
 
-## Step 3 — OAuth callback
+Or use `corsair.manage.connect.resolve(state)` in-process.
 
-The provider redirects back to your app with `?code=…&state=…`. Your callback route forwards both to Corsair:
+### Step 3 — OAuth callback
+
+The provider redirects back with `?code=…&state=…`:
 
 ```ts app/api/oauth/callback/route.ts
 import { corsair } from "@/server";
@@ -98,34 +168,29 @@ export async function GET(req: Request) {
 }
 ```
 
-Or, from a frontend with the client:
-
-```ts
-await client.connect.oauthCallback({ code, state });
-```
-
-Corsair re-verifies the `state`, exchanges the `code` with the provider, encrypts the resulting tokens with the tenant DEK, and stores them. From this point on, `corsair.withTenant(tenantId).github.api.*` works against the connected account.
+Corsair re-verifies the state, exchanges the code, encrypts tokens, and stores them.
 
 ## Checking connection status
 
-After a successful callback, `useConnectionStatus({ tenantId })` reflects the new state:
+After a successful connect, `useConnectionStatus({ tenantId })` reflects the new state:
 
 ```tsx status.tsx
 const { data, refetch } = useConnectionStatus({ tenantId: "acme" });
 // data: { github: 'connected', slack: 'not_connected', ... }
 ```
 
-Call `refetch()` after the callback resolves to update the dashboard without a full reload.
+Call `refetch()` after connect completes to update the dashboard.
 
 ## Errors
 
-| Status | `error`                  | When                                                          |
-| ------ | ------------------------ | ------------------------------------------------------------- |
-| 500    | `connect_not_configured` | `connect` config wasn't passed to `createCorsair`             |
-| 500    | `database_not_configured`| `database` and `kek` are required to issue connect links      |
-| 500    | `connect_misconfigured`  | `connect.baseUrl` isn't a valid full URL                      |
-| 400    | `missing_credentials`    | Plugin OAuth client id / secret aren't configured             |
-| 500    | `resolve_failed`         | State invalid or expired                                      |
-| 502    | `oauth_callback_failed`  | Provider rejected the code — usually means it was already used |
+| Status | `error` | When |
+| ------ | ------- | ---- |
+| 500 | `connect_not_configured` | Neither `hub` nor `manual` config was passed |
+| 500 | `connect_misconfigured` | Invalid `manual.baseUrl`, or missing connect URLs for manual connect |
+| 500 | `database_not_configured` | `database` and `kek` required to issue connect links |
+| 400 | `missing_credentials` | Plugin OAuth client id / secret not configured (manual mode BYO) |
+| 400 | `hub_mode` | `resolve` or `oauthCallback` called when only `hub` is configured |
+| 500 | `resolve_failed` | State invalid or expired (manual mode) |
+| 502 | `oauth_callback_failed` | Provider rejected the code (manual mode) |
 
-All come back as `CorsairClientError` with these `code` values, so you can branch on them in your UI.
+All client errors surface as `CorsairClientError` with these `code` values.

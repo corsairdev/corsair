@@ -1,11 +1,10 @@
 import 'dotenv/config';
 
-import { setupCorsair } from 'corsair';
 import {
-	createHubConnectSession,
 	getHubConfig,
 	processManagedOAuthDelivery,
-} from 'corsair/hub';
+	setupCorsair,
+} from 'corsair';
 
 import { sqlite } from '@/db';
 import { corsair } from '@/server/corsair';
@@ -74,7 +73,7 @@ async function testDeliveryEndpointHealth(): Promise<void> {
 
 async function testByoConnectSession(): Promise<void> {
 	try {
-		const session = await createHubConnectSession(corsair, {
+		const session = await corsair.manage.connect.createLink({
 			plugin: 'googlecalendar',
 			tenantId: TENANT_ID,
 			source: 'client',
@@ -108,7 +107,7 @@ async function testByoConnectSession(): Promise<void> {
 
 async function testManagedConnectSession(): Promise<void> {
 	try {
-		const session = await createHubConnectSession(corsair, {
+		const session = await corsair.manage.connect.createLink({
 			plugin: 'github',
 			tenantId: TENANT_ID,
 			source: 'client',

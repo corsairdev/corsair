@@ -17,6 +17,7 @@ export type {
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
