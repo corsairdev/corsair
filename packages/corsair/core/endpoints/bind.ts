@@ -2,6 +2,7 @@ import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { encodeOAuthState, signState } from '../auth/state';
+import { hasManualConnectConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
@@ -113,7 +114,7 @@ export function bindEndpointsRecursively({
 	permissionsOptions?: CorsairPermissionsOptions;
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
-	/** Manual config — connect pages and/or permission review URLs. */
+	/** Manual config from createCorsair({ manual: ... }) — connect + permission review. */
 	manualConfig?: CorsairManualConfig & {
 		oauthConfig?: OAuthConfig;
 		kek?: string | undefined;
@@ -270,9 +271,12 @@ export function bindEndpointsRecursively({
 				try {
 					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 				} catch (err) {
+					// manual may be permissions-only (approvalBaseUrl) without connect URLs —
+					// only rewrite AuthMissingError when manual connect is configured.
 					if (
-						manualConfig?.baseUrl &&
-						manualConfig?.oauthConfig &&
+						manualConfig &&
+						hasManualConnectConfig(manualConfig) &&
+						manualConfig.oauthConfig &&
 						manualConfig.kek &&
 						err instanceof AuthMissingError &&
 						err.authType === 'oauth_2'
