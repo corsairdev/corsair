@@ -43,7 +43,11 @@ export function createCorsairClient(
 	opts: CorsairClientOptions,
 ): CorsairManagementClient {
 	const baseURL = trimBase(opts.baseURL);
-	const fetchImpl = opts.fetch ?? globalThis.fetch.bind(globalThis);
+	// Defer globalThis.fetch binding to call time so environments that inject
+	// fetch after module load (e.g. jsdom test environments) work correctly.
+	// An explicit opts.fetch always wins.
+	const fetchImpl: typeof fetch =
+		opts.fetch ?? ((...args) => globalThis.fetch(...args));
 
 	async function getJson<T>(
 		path: string,
