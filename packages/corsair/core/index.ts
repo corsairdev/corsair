@@ -1,5 +1,7 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
+import type { HubConfig } from '../hub';
+import { normalizeHubConfig } from '../hub';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
@@ -43,6 +45,7 @@ export type CorsairInternalConfig = {
 			state: string;
 		}) => string;
 	};
+	hub?: HubConfig;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -102,6 +105,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		multiTenancy: !!config.multiTenancy,
 		approval: config.approval,
 		connect: config.connect,
+		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
@@ -123,6 +127,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						rootErrorHandlers: config.errorHandlers,
 						approvalConfig: config.approval,
 						connectConfig: config.connect,
+						hubConfig: internalConfig.hub,
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,
@@ -143,6 +148,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		rootErrorHandlers: config.errorHandlers,
 		approvalConfig: config.approval,
 		connectConfig: config.connect,
+		hubConfig: internalConfig.hub,
 	});
 
 	return Object.assign({}, client, {
@@ -205,6 +211,7 @@ export type {
 	BaseProviders,
 	PickAuth,
 } from './constants';
+export { formatProviderDisplayName, ProviderDisplayNames } from './constants';
 // Endpoint types
 export type {
 	BindEndpoints,

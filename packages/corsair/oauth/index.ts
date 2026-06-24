@@ -5,7 +5,6 @@ import type {
 	OAuthConfig,
 } from '../core';
 import {
-	CORSAIR_INTERNAL,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 	encryptDEK,
@@ -17,6 +16,10 @@ import {
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
+import {
+	getCorsairInternal,
+	requireCorsairPlugin,
+} from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
@@ -54,33 +57,6 @@ export class OAuthCallbackError extends Error {
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new OAuthCallbackError(
-			'invalid_corsair_instance',
-			'Invalid corsair instance',
-		);
-	}
-	return internal;
-}
-
-function findPlugin(
-	internal: CorsairInternalConfig,
-	pluginId: string,
-): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) {
-		throw new OAuthCallbackError(
-			'plugin_not_found',
-			`Plugin '${pluginId}' not found`,
-		);
-	}
-	return plugin;
-}
 
 function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
 	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
@@ -156,13 +132,24 @@ export async function generateOAuthUrl(
 	options: GenerateOAuthUrlOptions,
 ): Promise<GenerateOAuthUrlResult> {
 	const { tenantId, redirectUri } = options;
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new OAuthCallbackError(
+				'invalid_corsair_instance',
+				'Invalid corsair instance',
+			),
+	);
 
 	if (!internal.database) {
 		throw new Error('No database configured on corsair instance');
 	}
 
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new OAuthCallbackError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({
@@ -221,7 +208,14 @@ export async function processOAuthCallback(
 ): Promise<ProcessOAuthCallbackResult> {
 	const { code, state, redirectUri } = options;
 
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new OAuthCallbackError(
+				'invalid_corsair_instance',
+				'Invalid corsair instance',
+			),
+	);
 
 	const decoded = verifyAndDecodeState(state, internal.kek);
 	if (!decoded) {
@@ -240,7 +234,11 @@ export async function processOAuthCallback(
 		);
 	}
 
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new OAuthCallbackError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({

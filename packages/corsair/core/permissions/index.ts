@@ -180,6 +180,8 @@ export type EnforcePermissionResult = {
 	id?: string;
 	/** Permission token (the value embedded in review URLs). Present when a pending approval record exists. */
 	token?: string;
+	/** ISO8601 expiry for pending approval records. Present when token is present. */
+	expiresAt?: string;
 	/**
 	 * Called by the endpoint binding layer after the endpoint executes successfully.
 	 * Marks the permission record as 'completed' (single-use approval consumed).
@@ -334,6 +336,7 @@ export async function enforcePermission(
 			reason: 'pending',
 			id: existing.id,
 			token: existing.token,
+			expiresAt: existing.expires_at,
 		};
 	}
 
@@ -376,5 +379,11 @@ export async function enforcePermission(
 		return pollUntilResolved(opts.db, id, timeoutMs);
 	}
 
-	return { result: 'blocked', reason: 'pending', id, token };
+	return {
+		result: 'blocked',
+		reason: 'pending',
+		id,
+		token,
+		expiresAt: expiresAt,
+	};
 }

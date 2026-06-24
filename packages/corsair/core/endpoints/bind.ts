@@ -1,4 +1,9 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
+import type { HubConfig } from '../../hub';
+import {
+	createHubPermissionSession,
+	formatHubApprovalMessage,
+} from '../../hub/permission';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { encodeOAuthState, signState } from '../auth/state';
 import type { CorsairErrorHandler } from '../errors';
@@ -83,6 +88,7 @@ export function bindEndpointsRecursively({
 	approvalConfig,
 	tenantId,
 	connectConfig,
+	hubConfig,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -133,6 +139,7 @@ export function bindEndpointsRecursively({
 		kek?: string | undefined;
 		tenantId?: string;
 	};
+	hubConfig?: HubConfig;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -155,6 +162,7 @@ export function bindEndpointsRecursively({
 						onComplete,
 						token: permToken,
 						id: permId,
+						expiresAt: permExpiresAt,
 					} = await enforcePermission({
 						pluginId,
 						endpointPath: operationPath,
@@ -179,18 +187,40 @@ export function bindEndpointsRecursively({
 							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
-						} else if (
-							approvalConfig?.formatAsyncMessage &&
-							permToken &&
-							permId
-						) {
-							msg = approvalConfig.formatAsyncMessage({
-								token: permToken,
-								id: permId,
-								plugin: pluginId,
-								endpoint: operationPath,
-								args,
-							});
+						} else if (permToken && permId) {
+							if (approvalConfig?.formatAsyncMessage) {
+								msg = approvalConfig.formatAsyncMessage({
+									token: permToken,
+									id: permId,
+									plugin: pluginId,
+									endpoint: operationPath,
+									args,
+								});
+							} else if (hubConfig) {
+								try {
+									const timeoutMs = approvalConfig
+										? parseDurationMs(approvalConfig.timeout)
+										: 10 * 60 * 1_000;
+									const session = await createHubPermissionSession(hubConfig, {
+										permissionId: permId,
+										permissionToken: permToken,
+										plugin: pluginId,
+										endpoint: operationPath,
+										args,
+										tenantId: tenantId ?? 'default',
+										expiresAt:
+											permExpiresAt ??
+											new Date(Date.now() + timeoutMs).toISOString(),
+									});
+									msg = formatHubApprovalMessage(session.approvalUrl);
+								} catch (error) {
+									const detail =
+										error instanceof Error ? error.message : String(error);
+									msg = `Action '${operationPath}' requires user approval before it can run. Could not create approval link: ${detail}`;
+								}
+							} else {
+								msg = `Action '${operationPath}' requires user approval before it can run.`;
+							}
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}
@@ -330,6 +360,7 @@ export function bindEndpointsRecursively({
 				approvalConfig,
 				tenantId,
 				connectConfig,
+				hubConfig,
 			});
 
 			tree[key] = nestedTree;

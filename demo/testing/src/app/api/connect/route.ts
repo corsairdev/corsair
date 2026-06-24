@@ -3,7 +3,10 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
 
-const REDIRECT_URI = `${process.env.APP_URL ?? 'http://localhost:3001'}/api/auth`;
+// Hub relay OAuth callback (preferred). Falls back to direct /api/auth for local-only flows.
+const REDIRECT_URI =
+	process.env.CORSAIR_OAUTH_REDIRECT_URL ??
+	`${process.env.APP_URL ?? 'http://localhost:3001'}/api/auth`;
 
 export async function GET(request: NextRequest) {
 	const { searchParams } = new URL(request.url);

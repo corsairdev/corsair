@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.76",
+  "version": "0.1.81",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -46,6 +46,11 @@
       "dev-source": "./tunnel.ts",
       "types": "./dist/tunnel.d.ts",
       "default": "./dist/tunnel.js"
+    },
+    "./hub": {
+      "dev-source": "./hub.ts",
+      "types": "./dist/hub.d.ts",
+      "default": "./dist/hub.js"
     },
     "./tests": {
       "dev-source": "./tests.ts",
