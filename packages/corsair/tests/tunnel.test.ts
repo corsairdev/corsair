@@ -1,7 +1,7 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { CORSAIR_INTERNAL } from '../core';
-import { processCorsair } from '../tunnel/index';
 import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
+import { processCorsair } from '../tunnel/index';
 import { createTestDatabase } from './setup-db';
 
 function createMockCorsair() {
@@ -18,7 +18,11 @@ function signBody(body: string, secret: string): string {
 	return createHmac('sha256', secret).update(body).digest('hex');
 }
 
-function signedTunnelHeaders(body: string, secret: string, nonce = randomUUID()) {
+function signedTunnelHeaders(
+	body: string,
+	secret: string,
+	nonce = randomUUID(),
+) {
 	return {
 		'x-corsair-signature': `sha256=${signBody(body, secret)}`,
 		'x-corsair-timestamp': String(Math.floor(Date.now() / 1000)),

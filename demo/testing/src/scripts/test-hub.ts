@@ -4,7 +4,6 @@ import { setupCorsair } from 'corsair';
 import {
 	createHubConnectSession,
 	getHubConfig,
-	getManagedAccessToken,
 	processManagedOAuthDelivery,
 } from 'corsair/hub';
 

@@ -34,11 +34,6 @@ export {
 } from './config';
 export { createHubConnectSession } from './connect';
 export {
-	getConnectStatusForTenant,
-	type ConnectStatusPluginEntry,
-	type ConnectStatusResponse,
-} from './connect-status';
-export {
 	type HubConnectSessionParseError,
 	type HubConnectSessionRequestBody,
 	type HubConnectSessionResponseOptions,
@@ -50,6 +45,11 @@ export {
 	respondToHubConnectSession,
 	respondToHubConnectSessionFromRequest,
 } from './connect-response';
+export {
+	type ConnectStatusPluginEntry,
+	type ConnectStatusResponse,
+	getConnectStatusForTenant,
+} from './connect-status';
 export {
 	isLoopbackDeliveryUrl,
 	resolveConnectSourceFromDeliveryUrl,

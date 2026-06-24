@@ -1,13 +1,16 @@
-import type { AuthTypes } from '../core/constants';
-import type { CorsairPlugin } from '../core/plugins';
 import { encodeOAuthState, signState } from '../core/auth/state';
+import type { AuthTypes } from '../core/constants';
 import { formatProviderDisplayName } from '../core/constants';
+import type { CorsairPlugin } from '../core/plugins';
 import { getCallableProperty } from '../core/utils/callable';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getAccountFields, getPluginAuthType } from '../core/utils/plugin-auth';
 import { generateOAuthUrl } from '../oauth';
 import { getHubConfig, resolveHubOAuthCallbackUrl } from './config';
-import type { ConnectAuthKind, ConnectPluginManifestEntry } from './contracts/connect-api';
+import type {
+	ConnectAuthKind,
+	ConnectPluginManifestEntry,
+} from './contracts/connect-api';
 import {
 	resolveConnectSourceFromDeliveryUrl,
 	validateExplicitConnectSource,

@@ -1,14 +1,14 @@
 import { createCorsair } from '../core';
 import type { CorsairPlugin } from '../core/plugins';
 import {
+	parseHubConnectSessionBody,
+	respondToHubConnectSessionFromRequest,
+} from '../hub/connect-response';
+import {
 	isLoopbackDeliveryUrl,
 	resolveConnectSourceFromDeliveryUrl,
 	validateExplicitConnectSource,
 } from '../hub/contracts/delivery-mode';
-import {
-	parseHubConnectSessionBody,
-	respondToHubConnectSessionFromRequest,
-} from '../hub/connect-response';
 import { setupCorsair } from '../setup';
 import { createTestDatabase } from './setup-db';
 
@@ -223,9 +223,13 @@ describe('hub connect-response', () => {
 				}),
 			});
 
-			const response = await respondToHubConnectSessionFromRequest(corsair(), request, {
-				resolveTenantId: async () => null,
-			});
+			const response = await respondToHubConnectSessionFromRequest(
+				corsair(),
+				request,
+				{
+					resolveTenantId: async () => null,
+				},
+			);
 
 			expect(response.status).toBe(401);
 			await expect(response.json()).resolves.toEqual({
@@ -320,7 +324,10 @@ describe('hub connect-response', () => {
 				method: 'PUT',
 			});
 
-			const response = await respondToHubConnectSessionFromRequest(corsair(), request);
+			const response = await respondToHubConnectSessionFromRequest(
+				corsair(),
+				request,
+			);
 			expect(response.status).toBe(405);
 		});
 
@@ -335,7 +342,10 @@ describe('hub connect-response', () => {
 				}),
 			});
 
-			const response = await respondToHubConnectSessionFromRequest(corsair(), request);
+			const response = await respondToHubConnectSessionFromRequest(
+				corsair(),
+				request,
+			);
 
 			expect(response.status).toBe(400);
 			await expect(response.json()).resolves.toEqual({

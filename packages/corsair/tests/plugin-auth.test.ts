@@ -1,5 +1,5 @@
-import { getPluginAuthType, isAuthType } from '../core/utils/plugin-auth';
 import type { CorsairPlugin } from '../core/plugins';
+import { getPluginAuthType, isAuthType } from '../core/utils/plugin-auth';
 
 describe('plugin-auth', () => {
 	it('recognizes managed as a valid auth type', () => {
