@@ -14,7 +14,7 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
-import { verifySignedTunnelDelivery } from './verify-signed-delivery';
+import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 
 export {
 	resolveAccountFromWebhookLink,
@@ -33,7 +33,7 @@ export {
 	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,
 } from './browser-delivery';
-export { verifySignedTunnelDelivery } from './verify-signed-delivery';
+export { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 
 export type TunnelAck = {
 	status: 'ok' | 'failed';
