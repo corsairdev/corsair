@@ -65,6 +65,7 @@ export type CreatePermissionSessionRequestBody = {
 	expiresAt: string;
 };
 
+// Mirrors hub/packages/api/src/managed/oauth-tokens.ts ManagedOAuthTokenPayload.
 export type HubOAuthRefreshResponse = {
 	access_token: string;
 	refresh_token?: string;
@@ -141,6 +142,10 @@ export function parsePermissionSessionResponse(
 	};
 }
 
+// Validates the JSON body from hub POST /oauth/refresh before the SDK persists
+// tokens locally. Hub error responses use { error, error_description } instead of
+// token fields — we propagate that message rather than a generic missing-token error.
+// Also coerces expires_in when the hub serializes it as a string.
 export function parseOAuthRefreshResponse(
 	payload: unknown,
 ): HubOAuthRefreshResponse {
@@ -149,19 +154,36 @@ export function parseOAuthRefreshResponse(
 	}
 
 	const record = payload as Record<string, unknown>;
-	if (!isNonEmptyString(record.access_token)) {
-		throw new Error('Hub token refresh returned no access_token');
+	if (isNonEmptyString(record.access_token)) {
+		return {
+			access_token: record.access_token,
+			refresh_token: isNonEmptyString(record.refresh_token)
+				? record.refresh_token
+				: undefined,
+			expires_in: (() => {
+				if (typeof record.expires_in === 'number') {
+					return record.expires_in;
+				}
+				if (
+					typeof record.expires_in === 'string' &&
+					record.expires_in.trim().length > 0
+				) {
+					const parsed = Number(record.expires_in);
+					return Number.isFinite(parsed) ? parsed : undefined;
+				}
+				return undefined;
+			})(),
+			scope: isNonEmptyString(record.scope) ? record.scope : undefined,
+		};
 	}
 
-	return {
-		access_token: record.access_token,
-		refresh_token: isNonEmptyString(record.refresh_token)
-			? record.refresh_token
-			: undefined,
-		expires_in:
-			typeof record.expires_in === 'number' ? record.expires_in : undefined,
-		scope: isNonEmptyString(record.scope) ? record.scope : undefined,
-	};
+	throw new Error(
+		isNonEmptyString(record.error)
+			? (isNonEmptyString(record.error_description)
+					? record.error_description
+					: record.error)
+			: 'Hub token refresh returned no access_token',
+	);
 }
 
 function parseStringArray(value: unknown): string[] {
