@@ -54,7 +54,7 @@ async function saveEvents(
 }
 
 export const list: GithubEndpoints['eventsList'] = async (ctx, input) => {
-	const result = await makeGithubRequest<EventsListResponse>('/events', ctx.key, {
+	const result = await makeGithubRequest<EventsListResponse>('/events', ctx, {
 		query: input,
 	});
 
@@ -70,7 +70,7 @@ export const listForNetwork: GithubEndpoints['eventsListForNetwork'] = async (
 ) => {
 	const { owner, repo, ...queryParams } = input;
 	const endpoint = `/networks/${owner}/${repo}/events`;
-	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx.key, {
+	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
 		query: queryParams,
 	});
 
@@ -94,7 +94,7 @@ export const listForOrg: GithubEndpoints['eventsListForOrg'] = async (
 ) => {
 	const { org, ...queryParams } = input;
 	const endpoint = `/orgs/${org}/events`;
-	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx.key, {
+	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
 		query: queryParams,
 	});
 
@@ -118,7 +118,7 @@ export const listForRepository: GithubEndpoints['eventsListForRepository'] =
 		const endpoint = `/repos/${owner}/${repo}/events`;
 		const result = await makeGithubRequest<EventsListResponse>(
 			endpoint,
-			ctx.key,
+			ctx,
 			{ query: queryParams },
 		);
 
@@ -142,7 +142,7 @@ export const listForUser: GithubEndpoints['eventsListForUser'] = async (
 ) => {
 	const { username, ...queryParams } = input;
 	const endpoint = `/users/${username}/events`;
-	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx.key, {
+	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
 		query: queryParams,
 	});
 
@@ -166,7 +166,7 @@ export const listForUserOrg: GithubEndpoints['eventsListForUserOrg'] = async (
 ) => {
 	const { username, org, ...queryParams } = input;
 	const endpoint = `/users/${username}/events/orgs/${org}`;
-	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx.key, {
+	const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
 		query: queryParams,
 	});
 
@@ -191,7 +191,7 @@ export const listPublicForUser: GithubEndpoints['eventsListPublicForUser'] =
 		const endpoint = `/users/${username}/events/public`;
 		const result = await makeGithubRequest<EventsListResponse>(
 			endpoint,
-			ctx.key,
+			ctx,
 			{ query: queryParams },
 		);
 
@@ -215,7 +215,7 @@ export const listReceivedForUser: GithubEndpoints['eventsListReceivedForUser'] =
 		const endpoint = `/users/${username}/received_events`;
 		const result = await makeGithubRequest<EventsListResponse>(
 			endpoint,
-			ctx.key,
+			ctx,
 			{ query: queryParams },
 		);
 
@@ -239,7 +239,7 @@ export const listPublicReceivedForUser: GithubEndpoints['eventsListPublicReceive
 		const endpoint = `/users/${username}/received_events/public`;
 		const result = await makeGithubRequest<EventsListResponse>(
 			endpoint,
-			ctx.key,
+			ctx,
 			{ query: queryParams },
 		);
 

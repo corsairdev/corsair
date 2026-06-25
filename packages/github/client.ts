@@ -13,14 +13,29 @@ export class GithubAPIError extends Error {
 
 const GITHUB_API_BASE = 'https://api.github.com';
 
-export async function makeGithubRequest<T>(
+type GithubRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+};
+
+export type GithubAuthContext = {
+	key: string;
+	_refreshAuth?: () => Promise<string>;
+};
+
+function isUnauthorizedError(error: unknown): boolean {
+	return (
+		error instanceof GithubAPIError &&
+		typeof error.code === 'number' &&
+		error.code === 401
+	);
+}
+
+async function makeGithubRequestWithToken<T>(
 	endpoint: string,
 	token: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: GithubRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
@@ -65,5 +80,28 @@ export async function makeGithubRequest<T>(
 		throw new GithubAPIError(
 			error instanceof Error ? error.message : 'Unknown error',
 		);
+	}
+}
+
+export async function makeGithubRequest<T>(
+	endpoint: string,
+	auth: string | GithubAuthContext,
+	options: GithubRequestOptions = {},
+): Promise<T> {
+	const token = typeof auth === 'string' ? auth : auth.key;
+	const refreshAuth = typeof auth === 'string' ? undefined : auth._refreshAuth;
+
+	try {
+		return await makeGithubRequestWithToken<T>(endpoint, token, options);
+	} catch (error) {
+		if (isUnauthorizedError(error) && refreshAuth) {
+			const freshToken = await refreshAuth();
+			return await makeGithubRequestWithToken<T>(
+				endpoint,
+				freshToken,
+				options,
+			);
+		}
+		throw error;
 	}
 }

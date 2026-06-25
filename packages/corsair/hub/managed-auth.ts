@@ -52,12 +52,22 @@ export async function getManagedAccessToken(
 		};
 	}
 
+	// Non-expiring tokens may have no refresh token — keep using the access token
+	// while it is still valid. If it is expired (or due for refresh), fall through
+	// to the hub, which may still hold a refresh token even when local storage does not.
 	if (!refreshToken && accessToken && !forceRefresh) {
-		return {
-			accessToken,
-			expiresAt: expiresAt ? Number(expiresAt) : now + 3600,
-			refreshed: false,
-		};
+		const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
+		const tokenStillUsable =
+			expiresAtSeconds === null ||
+			expiresAtSeconds > now + TOKEN_REFRESH_BUFFER_SECONDS;
+
+		if (tokenStillUsable) {
+			return {
+				accessToken,
+				expiresAt: expiresAtSeconds ?? now + 3600,
+				refreshed: false,
+			};
+		}
 	}
 
 	const tokens = await hubApiPost({
