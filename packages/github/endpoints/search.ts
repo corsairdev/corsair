@@ -17,7 +17,9 @@ export const issues: GithubEndpoints['searchIssues'] = async (ctx, input) => {
 	if (result.items && ctx.db.issues) {
 		try {
 			for (const issue of result.items) {
-				await ctx.db.issues.upsertByEntityId(issue.id.toString(), issue);
+				// Remove search-specific fields before persisting
+				const { score, pull_request, repository, ...issueData } = issue;
+				await ctx.db.issues.upsertByEntityId(issue.id.toString(), issueData);
 			}
 		} catch (error) {
 			console.warn('Failed to save searched issues to database:', error);
@@ -46,9 +48,11 @@ export const repositories: GithubEndpoints['searchRepositories'] = async (
 	if (result.items && ctx.db.repositories) {
 		try {
 			for (const repository of result.items) {
+				// Remove search-specific fields before persisting
+				const { score, watchers, ...repoData } = repository;
 				await ctx.db.repositories.upsertByEntityId(
 					repository.id.toString(),
-					repository,
+					repoData,
 				);
 			}
 		} catch (error) {
@@ -75,8 +79,10 @@ export const users: GithubEndpoints['searchUsers'] = async (ctx, input) => {
 	if (result.items && ctx.db.users) {
 		try {
 			for (const user of result.items) {
+				// Remove search-specific fields before persisting
+				const { score, ...userData } = user;
 				await ctx.db.users.upsertByEntityId(user.id.toString(), {
-					...user,
+					...userData,
 					lowercaseUsername: user.login.toLowerCase(),
 				});
 			}

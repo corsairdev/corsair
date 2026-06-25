@@ -389,7 +389,7 @@ const SearchIssuesInputSchema = z.object({
 	order: z.enum(['asc', 'desc']).optional(),
 	per_page: z.number().int().min(1).max(100).optional(),
 	page: z.number().int().min(1).optional(),
-	advanced_search: z.literal('true').optional(),
+	advanced_search: z.boolean().optional(),
 	search_type: z.enum(['semantic', 'hybrid']).optional(),
 });
 
