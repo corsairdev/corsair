@@ -6,6 +6,7 @@ import type {
 	PluginEntityClient,
 	PluginEntityClients,
 } from '../../db/orm';
+import type { HubConfig } from '../../hub';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -19,16 +20,24 @@ import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
+import type { CorsairManageNamespace } from '../management';
 import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
 	CorsairPlugin,
 	EndpointMetaEntry,
 	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
-import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
+import type {
+	BindWebhooks,
+	CorsairWebhookTenantMatcher,
+	RawWebhookRequest,
+	WebhookTree,
+} from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -138,6 +147,11 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							 * Use this as a first-level filter before checking individual webhook matchers.
 							 */
 							pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
+							/**
+							 * Extracts the external tenant lookup key for this plugin's webhook.
+							 * Only present if the plugin defines `pluginTenantWebhookMatcher`.
+							 */
+							pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 						}
 					: {}) &
 				// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
@@ -208,6 +222,12 @@ export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	 * Available at the root regardless of multi-tenancy setting.
 	 */
 	permissions: CorsairPermissionsNamespace;
+	/**
+	 * Management control plane namespace — in-process equivalent of the HTTP
+	 * `managementHandler`. Lists tenants, plugins, connection status, and
+	 * permission records without going through HTTP.
+	 */
+	manage: CorsairManageNamespace;
 };
 
 /**
@@ -226,6 +246,12 @@ export type CorsairSingleTenantClient<
 	 * Available at the root regardless of multi-tenancy setting.
 	 */
 	permissions: CorsairPermissionsNamespace;
+	/**
+	 * Management control plane namespace — in-process equivalent of the HTTP
+	 * `managementHandler`. Lists tenants, plugins, connection status, and
+	 * permission records without going through HTTP.
+	 */
+	manage: CorsairManageNamespace;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -333,32 +359,12 @@ export type BuildCorsairClientOptions = {
 	tenantId: string | undefined;
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
-	/** Approval timeout from createCorsair({ approval: ... }). Forwarded to the permission guard. */
-	approvalConfig?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
-	/** Connect link config from createCorsair({ connect: ... }). Forwarded to endpoint binding. */
-	connectConfig?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-	};
+	/** Global permissions config from createCorsair({ permissions: ... }). */
+	permissionsOptions?: CorsairPermissionsOptions;
+	/** Manual config from createCorsair({ manual: ... }). Forwarded to endpoint binding. */
+	manualConfig?: CorsairManualConfig;
+	/** Hub config from createCorsair({ hub: ... }). Forwarded to keyBuilder context. */
+	hubConfig?: HubConfig;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -382,8 +388,9 @@ export function buildCorsairClient<
 		tenantId,
 		kek,
 		rootErrorHandlers,
-		approvalConfig,
-		connectConfig,
+		permissionsOptions,
+		manualConfig,
+		hubConfig,
 	} = options;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
@@ -464,8 +471,9 @@ export function buildCorsairClient<
 			...(accountKeyManager
 				? { keys: accountKeyManager, authType: pluginOptions?.authType }
 				: {}),
-			// Include tenantId in context so it's available in webhook hooks
-			...(tenantId ? { tenantId } : {}),
+			// Include tenantId in context for keyBuilder and webhook hooks
+			tenantId: effectiveTenantId,
+			...(hubConfig ? { hub: hubConfig } : {}),
 		};
 
 		const endpoints = plugin.endpoints ?? {};
@@ -503,16 +511,17 @@ export function buildCorsairClient<
 				| Record<string, EndpointMetaEntry>
 				| undefined,
 			database,
-			approvalConfig,
+			permissionsOptions,
 			tenantId,
-			connectConfig: connectConfig
+			manualConfig: manualConfig
 				? {
-						...connectConfig,
+						...manualConfig,
 						oauthConfig: (plugin as { oauthConfig?: OAuthConfig }).oauthConfig,
 						kek,
 						tenantId: effectiveTenantId,
 					}
 				: undefined,
+			hubConfig,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
@@ -543,6 +552,10 @@ export function buildCorsairClient<
 			if (plugin.pluginWebhookMatcher) {
 				apiUnsafe[plugin.id]!.pluginWebhookMatcher =
 					plugin.pluginWebhookMatcher;
+			}
+			if (plugin.pluginTenantWebhookMatcher) {
+				apiUnsafe[plugin.id]!.pluginTenantWebhookMatcher =
+					plugin.pluginTenantWebhookMatcher;
 			}
 		}
 	}

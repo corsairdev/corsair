@@ -1,10 +1,12 @@
 import * as Comments from './comments';
 import * as Discussions from './discussions';
+import * as Events from './events';
 import * as Forks from './forks';
 import * as Issues from './issues';
 import * as PullRequests from './pull-requests';
 import * as Releases from './releases';
 import * as Repositories from './repositories';
+import * as Users from './users';
 import * as Workflows from './workflows';
 
 export const IssuesEndpoints = {
@@ -62,6 +64,27 @@ export const CommentsEndpoints = {
 	get: Comments.get,
 	update: Comments.update,
 	delete: Comments.deleteComment,
+};
+
+export const EventsEndpoints = {
+	list: Events.list,
+	listForNetwork: Events.listForNetwork,
+	listForOrg: Events.listForOrg,
+	listForRepository: Events.listForRepository,
+	listForUser: Events.listForUser,
+	listForUserOrg: Events.listForUserOrg,
+	listPublicForUser: Events.listPublicForUser,
+	listReceivedForUser: Events.listReceivedForUser,
+	listPublicReceivedForUser: Events.listPublicReceivedForUser,
+};
+
+export const UsersEndpoints = {
+	list: Users.list,
+	get: Users.get,
+	getById: Users.getById,
+	getAuthenticated: Users.getAuthenticated,
+	update: Users.update,
+	getHovercard: Users.getHovercard,
 };
 
 export * from './types';

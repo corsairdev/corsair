@@ -606,3 +606,5 @@
 // 		);
 // 	});
 // });
+
+it.skip('todo: fix these rate limit integration tests after slack plugin extraction', () => {});

@@ -1,4 +1,4 @@
-import { Kysely } from 'kysely';
+import type { Kysely } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import {
 	ZodBoolean,
@@ -22,26 +22,30 @@ import type {
 } from '../core';
 import {
 	BASE_AUTH_FIELDS,
-	CORSAIR_INTERNAL,
 	createAccountKeyManager,
 	createCorsair,
 	createIntegrationKeyManager,
 } from '../core';
+import {
+	getCallableProperty,
+	isMultiTenantInstance,
+	isObjectRecord,
+	tryGetCorsairInternal,
+} from '../core/utils';
+import { getPluginAuthType } from '../core/utils/plugin-auth';
 import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
 import { TABLE_SCHEMAS } from '../db/orm';
 
-// Inlined at build time by the esbuild YAML plugin in tsup.config.ts.
-// Edit setup/backfill.yaml to add or change plugin backfill steps.
-import backfillConfig from './backfill.yaml';
+import backfillConfig from './backfill.config';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-// backfill.yaml shape: { [pluginId]: { [group]: { [method]: params } } }
+// Edit setup/backfill.config.ts to add or change plugin backfill steps.
 type BackfillYaml = Record<
 	string,
 	Record<string, Record<string, Record<string, unknown>>>
@@ -67,7 +71,7 @@ export interface SetupCorsairOptions {
 
 	/**
 	 * When true, calls list endpoints for every plugin defined in
-	 * setup/backfill.yaml to seed the local database with initial data.
+	 * setup/backfill.config.ts to seed the local database with initial data.
 	 */
 	backfill?: boolean;
 
@@ -91,8 +95,6 @@ type SetupCorsairInstance<Plugins extends readonly CorsairPlugin[]> =
 type SetupInternalConfig = CorsairInternalConfig & {
 	database: CorsairDatabase;
 };
-
-type CallableProperty = (...args: readonly unknown[]) => unknown;
 
 type PluginSetupAuth = {
 	pluginId: string;
@@ -119,7 +121,7 @@ type SetupTenantScope = {
  * 3. Checks auth status for each plugin and logs guidance for any missing credentials.
  *    When `caller` is 'cli', guidance is printed as CLI flags instead of JS calls.
  * 4. If `{ backfill: true }`, calls the list endpoints defined in
- *    `setup/backfill.yaml` for each plugin that has auth configured.
+ *    `setup/backfill.config.ts` for each plugin that has auth configured.
  *
  * To set credentials, use the corsair client API directly after setup:
  *   - Integration-level (shared across all tenants): `corsair.keys.plugin.set_*(value)`
@@ -148,7 +150,7 @@ export async function setupCorsair<
 
 	const caller = options?.caller ?? 'script';
 
-	const internal = getCorsairInternal(corsair);
+	const internal = tryGetCorsairInternal(corsair);
 
 	if (!internal) {
 		throw new Error('setupCorsair: invalid corsair instance');
@@ -218,48 +220,6 @@ export async function setupCorsair<
 	return messages.join('\n');
 }
 
-function isObjectRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null;
-}
-
-function isCorsairInternalConfig(
-	value: unknown,
-): value is CorsairInternalConfig {
-	if (!isObjectRecord(value)) return false;
-	if (!Array.isArray(value.plugins)) return false;
-	if (typeof value.kek !== 'string') return false;
-	if (typeof value.multiTenancy !== 'boolean') return false;
-	if (value.database === undefined) return true;
-	if (!isObjectRecord(value.database)) return false;
-	return value.database.db instanceof Kysely;
-}
-
-function getCorsairInternal(
-	corsair: object,
-): CorsairInternalConfig | undefined {
-	const descriptor = Object.getOwnPropertyDescriptor(corsair, CORSAIR_INTERNAL);
-	if (!descriptor) return undefined;
-	return isCorsairInternalConfig(descriptor.value)
-		? descriptor.value
-		: undefined;
-}
-
-function isAuthType(value: unknown): value is AuthTypes {
-	return value === 'oauth_2' || value === 'api_key' || value === 'bot_token';
-}
-
-function getPluginAuthType(plugin: CorsairPlugin): AuthTypes | undefined {
-	const authType = plugin.options?.authType;
-	return isAuthType(authType) ? authType : undefined;
-}
-
-function isMultiTenantInstance(corsair: object): boolean {
-	return (
-		'withTenant' in corsair &&
-		typeof (corsair as { withTenant?: unknown }).withTenant === 'function'
-	);
-}
-
 function getFieldNamesForPlugin(
 	plugin: CorsairPlugin,
 	authType: AuthTypes,
@@ -269,10 +229,7 @@ function getFieldNamesForPlugin(
 		level === 'integration'
 			? (plugin.authConfig?.[authType]?.integration ?? [])
 			: (plugin.authConfig?.[authType]?.account ?? []);
-	return new Set([
-		...BASE_AUTH_FIELDS[authType][level],
-		...extra,
-	]);
+	return new Set([...BASE_AUTH_FIELDS[authType][level], ...extra]);
 }
 
 function credentialsIncludeAccountFields(
@@ -327,17 +284,6 @@ function resolveSetupTenantScope(
 	const provisionAccounts = !multiTenant || tenantIdProvided;
 
 	return { multiTenant, tenantIdProvided, tenantId, provisionAccounts };
-}
-
-function getCallableProperty(
-	value: unknown,
-	key: string,
-): CallableProperty | undefined {
-	if (!isObjectRecord(value)) return undefined;
-	const property = value[key];
-	return typeof property === 'function'
-		? (...args) => Reflect.apply(property, value, args)
-		: undefined;
 }
 
 function isNestedRecord(value: unknown, depth: number): boolean {
@@ -554,10 +500,7 @@ function getTenantClient<const Plugins extends readonly CorsairPlugin[]>(
 	corsair: SetupCorsairInstance<Plugins>,
 	tenantId: string,
 ): Record<string, unknown> {
-	if (
-		'withTenant' in corsair &&
-		typeof corsair.withTenant === 'function'
-	) {
+	if ('withTenant' in corsair && typeof corsair.withTenant === 'function') {
 		return corsair.withTenant(tenantId) as Record<string, unknown>;
 	}
 	return corsair as Record<string, unknown>;
@@ -581,7 +524,9 @@ export async function applySetupCredentials<
 	for (const [pluginId, fields] of Object.entries(credentials)) {
 		const plugin = internal.plugins.find((p) => p.id === pluginId);
 		if (!plugin) {
-			warn(`[corsair:setup] Unknown plugin '${pluginId}' — skipping credentials.`);
+			warn(
+				`[corsair:setup] Unknown plugin '${pluginId}' — skipping credentials.`,
+			);
 			continue;
 		}
 
@@ -617,7 +562,10 @@ export async function applySetupCredentials<
 							'Run setup without --tenant if you intend to change this credential globally.',
 					);
 				}
-				const setter = getCallableProperty(integrationNamespace, `set_${field}`);
+				const setter = getCallableProperty(
+					integrationNamespace,
+					`set_${field}`,
+				);
 				if (!setter) {
 					warn(
 						`[corsair:setup] Cannot set integration field '${field}' for '${pluginId}'.`,
@@ -717,6 +665,10 @@ async function checkAuthStatus(
 
 	if (isReady) {
 		log(`[corsair:setup] '${pluginId}' (${authType}) is configured ✓`);
+	} else if (authType === 'managed') {
+		log(
+			`[corsair:setup] '${pluginId}' (managed) is not connected yet. Use Connect in your app — Corsair Hub delivers OAuth tokens after authorization.`,
+		);
 	} else {
 		const allMissing = [...missingIntegration, ...missingAccount];
 

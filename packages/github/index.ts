@@ -7,20 +7,24 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
 	CommentsEndpoints,
 	DiscussionsEndpoints,
+	EventsEndpoints,
 	ForksEndpoints,
 	IssuesEndpoints,
 	PullRequestsEndpoints,
 	ReleasesEndpoints,
 	RepositoriesEndpoints,
+	UsersEndpoints,
 	WorkflowsEndpoints,
 } from './endpoints';
 import {
@@ -59,6 +63,8 @@ import {
 	WorkflowJobWebhooks,
 	WorkflowRunWebhooks,
 } from './webhooks';
+import { resolveGithubOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchGithubTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	BranchCreatedEvent,
 	BranchDeletedEvent,
@@ -302,6 +308,15 @@ export type GithubEndpoints = {
 	repositoriesListBranches: GithubEndpoint<'repositoriesListBranches'>;
 	repositoriesListCommits: GithubEndpoint<'repositoriesListCommits'>;
 	repositoriesGetContent: GithubEndpoint<'repositoriesGetContent'>;
+	eventsList: GithubEndpoint<'eventsList'>;
+	eventsListForNetwork: GithubEndpoint<'eventsListForNetwork'>;
+	eventsListForOrg: GithubEndpoint<'eventsListForOrg'>;
+	eventsListForRepository: GithubEndpoint<'eventsListForRepository'>;
+	eventsListForUser: GithubEndpoint<'eventsListForUser'>;
+	eventsListForUserOrg: GithubEndpoint<'eventsListForUserOrg'>;
+	eventsListPublicForUser: GithubEndpoint<'eventsListPublicForUser'>;
+	eventsListReceivedForUser: GithubEndpoint<'eventsListReceivedForUser'>;
+	eventsListPublicReceivedForUser: GithubEndpoint<'eventsListPublicReceivedForUser'>;
 	repositoriesStar: GithubEndpoint<'repositoriesStar'>;
 	repositoriesUnstar: GithubEndpoint<'repositoriesUnstar'>;
 	repositoriesCheckStarred: GithubEndpoint<'repositoriesCheckStarred'>;
@@ -321,6 +336,12 @@ export type GithubEndpoints = {
 	commentsGet: GithubEndpoint<'commentsGet'>;
 	commentsUpdate: GithubEndpoint<'commentsUpdate'>;
 	commentsDelete: GithubEndpoint<'commentsDelete'>;
+	usersList: GithubEndpoint<'usersList'>;
+	usersGet: GithubEndpoint<'usersGet'>;
+	usersGetById: GithubEndpoint<'usersGetById'>;
+	usersGetAuthenticated: GithubEndpoint<'usersGetAuthenticated'>;
+	usersUpdate: GithubEndpoint<'usersUpdate'>;
+	usersGetHovercard: GithubEndpoint<'usersGetHovercard'>;
 };
 
 export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;
@@ -641,6 +662,25 @@ const githubEndpointsNested = {
 		update: CommentsEndpoints.update,
 		delete: CommentsEndpoints.delete,
 	},
+	events: {
+		list: EventsEndpoints.list,
+		listForNetwork: EventsEndpoints.listForNetwork,
+		listForOrg: EventsEndpoints.listForOrg,
+		listForRepository: EventsEndpoints.listForRepository,
+		listForUser: EventsEndpoints.listForUser,
+		listForUserOrg: EventsEndpoints.listForUserOrg,
+		listPublicForUser: EventsEndpoints.listPublicForUser,
+		listReceivedForUser: EventsEndpoints.listReceivedForUser,
+		listPublicReceivedForUser: EventsEndpoints.listPublicReceivedForUser,
+	},
+	users: {
+		list: UsersEndpoints.list,
+		get: UsersEndpoints.get,
+		getById: UsersEndpoints.getById,
+		getAuthenticated: UsersEndpoints.getAuthenticated,
+		update: UsersEndpoints.update,
+		getHovercard: UsersEndpoints.getHovercard,
+	},
 } as const;
 
 export const githubEndpointSchemas = {
@@ -699,6 +739,42 @@ export const githubEndpointSchemas = {
 	'repositories.getContent': {
 		input: GithubEndpointInputSchemas.repositoriesGetContent,
 		output: GithubEndpointOutputSchemas.repositoriesGetContent,
+	},
+	'events.list': {
+		input: GithubEndpointInputSchemas.eventsList,
+		output: GithubEndpointOutputSchemas.eventsList,
+	},
+	'events.listForNetwork': {
+		input: GithubEndpointInputSchemas.eventsListForNetwork,
+		output: GithubEndpointOutputSchemas.eventsListForNetwork,
+	},
+	'events.listForOrg': {
+		input: GithubEndpointInputSchemas.eventsListForOrg,
+		output: GithubEndpointOutputSchemas.eventsListForOrg,
+	},
+	'events.listForRepository': {
+		input: GithubEndpointInputSchemas.eventsListForRepository,
+		output: GithubEndpointOutputSchemas.eventsListForRepository,
+	},
+	'events.listForUser': {
+		input: GithubEndpointInputSchemas.eventsListForUser,
+		output: GithubEndpointOutputSchemas.eventsListForUser,
+	},
+	'events.listForUserOrg': {
+		input: GithubEndpointInputSchemas.eventsListForUserOrg,
+		output: GithubEndpointOutputSchemas.eventsListForUserOrg,
+	},
+	'events.listPublicForUser': {
+		input: GithubEndpointInputSchemas.eventsListPublicForUser,
+		output: GithubEndpointOutputSchemas.eventsListPublicForUser,
+	},
+	'events.listReceivedForUser': {
+		input: GithubEndpointInputSchemas.eventsListReceivedForUser,
+		output: GithubEndpointOutputSchemas.eventsListReceivedForUser,
+	},
+	'events.listPublicReceivedForUser': {
+		input: GithubEndpointInputSchemas.eventsListPublicReceivedForUser,
+		output: GithubEndpointOutputSchemas.eventsListPublicReceivedForUser,
 	},
 	'repositories.star': {
 		input: GithubEndpointInputSchemas.repositoriesStar,
@@ -775,6 +851,30 @@ export const githubEndpointSchemas = {
 	'comments.delete': {
 		input: GithubEndpointInputSchemas.commentsDelete,
 		output: GithubEndpointOutputSchemas.commentsDelete,
+	},
+	'users.list': {
+		input: GithubEndpointInputSchemas.usersList,
+		output: GithubEndpointOutputSchemas.usersList,
+	},
+	'users.get': {
+		input: GithubEndpointInputSchemas.usersGet,
+		output: GithubEndpointOutputSchemas.usersGet,
+	},
+	'users.getById': {
+		input: GithubEndpointInputSchemas.usersGetById,
+		output: GithubEndpointOutputSchemas.usersGetById,
+	},
+	'users.getAuthenticated': {
+		input: GithubEndpointInputSchemas.usersGetAuthenticated,
+		output: GithubEndpointOutputSchemas.usersGetAuthenticated,
+	},
+	'users.update': {
+		input: GithubEndpointInputSchemas.usersUpdate,
+		output: GithubEndpointOutputSchemas.usersUpdate,
+	},
+	'users.getHovercard': {
+		input: GithubEndpointInputSchemas.usersGetHovercard,
+		output: GithubEndpointOutputSchemas.usersGetHovercard,
 	},
 } as const;
 
@@ -1530,6 +1630,42 @@ const githubEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get file or directory content from a repository',
 	},
+	'events.list': {
+		riskLevel: 'read',
+		description: 'List public GitHub events',
+	},
+	'events.listForNetwork': {
+		riskLevel: 'read',
+		description: 'List public events for a repository network',
+	},
+	'events.listForOrg': {
+		riskLevel: 'read',
+		description: 'List public events for an organization',
+	},
+	'events.listForRepository': {
+		riskLevel: 'read',
+		description: 'List events for a repository',
+	},
+	'events.listForUser': {
+		riskLevel: 'read',
+		description: 'List events for a user',
+	},
+	'events.listForUserOrg': {
+		riskLevel: 'read',
+		description: 'List organization events for a user',
+	},
+	'events.listPublicForUser': {
+		riskLevel: 'read',
+		description: 'List public events for a user',
+	},
+	'events.listReceivedForUser': {
+		riskLevel: 'read',
+		description: 'List events received by a user',
+	},
+	'events.listPublicReceivedForUser': {
+		riskLevel: 'read',
+		description: 'List public events received by a user',
+	},
 	'repositories.star': {
 		riskLevel: 'write',
 		description: 'Star a repository for the authenticated user',
@@ -1604,10 +1740,34 @@ const githubEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Delete a comment',
 	},
+	'users.list': {
+		riskLevel: 'read',
+		description: 'List all GitHub users',
+	},
+	'users.get': {
+		riskLevel: 'read',
+		description: 'Get a user by username',
+	},
+	'users.getById': {
+		riskLevel: 'read',
+		description: 'Get a user by account ID',
+	},
+	'users.getAuthenticated': {
+		riskLevel: 'read',
+		description: 'Get the authenticated user',
+	},
+	'users.update': {
+		riskLevel: 'write',
+		description: 'Update the authenticated user profile',
+	},
+	'users.getHovercard': {
+		riskLevel: 'read',
+		description: 'Get contextual hovercard information for a user',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof githubEndpointsNested>;
 
 export type GithubPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	credentials?: GithubCredentials;
 	webhookSecret?: string;
 	hooks?: InternalGithubPlugin['hooks'];
@@ -1650,6 +1810,18 @@ export type InternalGithubPlugin = BaseGithubPlugin<GithubPluginOptions>;
 export type ExternalGithubPlugin<PluginOptions extends GithubPluginOptions> =
 	BaseGithubPlugin<PluginOptions>;
 
+export const githubAuthConfig = {
+	api_key: {
+		account: ['installation_id'] as const,
+	},
+	oauth_2: {
+		account: ['installation_id'] as const,
+	},
+	managed: {
+		account: ['installation_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export function github<const PluginOptions extends GithubPluginOptions>(
 	incomingOptions: GithubPluginOptions &
 		PluginOptions = {} as GithubPluginOptions & PluginOptions,
@@ -1660,6 +1832,7 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 	};
 	return {
 		id: 'github',
+		authConfig: githubAuthConfig,
 		oauthConfig: {
 			providerName: 'GitHub',
 			authUrl: 'https://github.com/login/oauth/authorize',
@@ -1681,6 +1854,8 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 			const hasGithubSignature = headers['x-hub-signature-256'] !== undefined;
 			return hasGithubEvent && hasGithubSignature;
 		},
+		pluginTenantWebhookMatcher: matchGithubTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveGithubOAuthWebhookTenantLink,
 		keyBuilder: async (ctx: GithubKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 
@@ -1717,10 +1892,27 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					}
 
 					return res;
+				} else if (ctx.authType === 'managed') {
+					if (!ctx.hub) {
+						throw new Error(
+							'[auth-missing:github:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+						);
+					}
+
+					const managedContext = {
+						keys: ctx.keys,
+						hub: ctx.hub,
+						plugin: 'github',
+						tenantId: ctx.tenantId,
+					};
+
+					const result = await getManagedAccessToken(managedContext);
+					await attachManagedRefreshAuth(ctx, managedContext);
+					return result.accessToken;
 				}
 			}
 
-			throw new AuthMissingError('github', 'oauth_2');
+			throw new AuthMissingError('github', authType ?? 'oauth_2');
 		},
 	} satisfies InternalGithubPlugin;
 }

@@ -1,0 +1,73 @@
+const calloutStyle = {
+  marginTop: '0.75rem',
+  display: 'flex',
+  gap: '0.625rem',
+  alignItems: 'flex-start',
+  padding: '0.75rem 0.875rem',
+  borderRadius: '0.5rem',
+  border: '1px solid rgba(77, 163, 224, 0.2)',
+  background: 'linear-gradient(135deg, rgba(0, 120, 212, 0.1) 0%, rgba(0, 120, 212, 0.04) 100%)',
+  fontSize: '0.8125rem',
+  lineHeight: '1.55',
+};
+
+const titleStyle = {
+  fontWeight: 600,
+  color: 'var(--foreground, rgba(255,255,255,0.92))',
+  marginBottom: '0.2rem',
+};
+
+const bodyStyle = {
+  color: 'var(--muted-foreground, rgba(255,255,255,0.62))',
+};
+
+const codeStyle = {
+  fontFamily: 'var(--font-mono, ui-monospace, monospace)',
+  fontSize: '0.78rem',
+  padding: '0.1rem 0.35rem',
+  borderRadius: '0.25rem',
+  backgroundColor: 'rgba(0, 120, 212, 0.12)',
+  color: 'var(--foreground, rgba(255,255,255,0.88))',
+};
+
+const WindowsIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    style={{ flexShrink: 0, marginTop: '0.125rem' }}
+    aria-hidden="true"
+  >
+    <rect x="1" y="1" width="6.25" height="6.25" fill="#4da3e0" />
+    <rect x="8.75" y="1" width="6.25" height="6.25" fill="#4da3e0" />
+    <rect x="1" y="8.75" width="6.25" height="6.25" fill="#4da3e0" />
+    <rect x="8.75" y="8.75" width="6.25" height="6.25" fill="#4da3e0" />
+  </svg>
+);
+
+export const WindowsEnvVarsNote = () => (
+  <div className="not-prose" style={calloutStyle}>
+    <WindowsIcon />
+    <div>
+      <div style={titleStyle}>PowerShell syntax</div>
+      <div style={bodyStyle}>
+        Use <span style={codeStyle}>$env:VAR_NAME = "value"</span> to set variables and{' '}
+        <span style={codeStyle}>$env:VAR_NAME</span> wherever docs show <span style={codeStyle}>$VAR</span>.
+      </div>
+    </div>
+  </div>
+);
+
+export const WindowsMigrationNote = () => (
+  <div className="not-prose" style={calloutStyle}>
+    <WindowsIcon />
+    <div>
+      <div style={titleStyle}>PowerShell syntax</div>
+      <div style={bodyStyle}>
+        Bash redirection and <span style={codeStyle}>$VAR</span> env vars do not work in PowerShell.
+        Use the Windows commands shown in this tab instead.
+      </div>
+    </div>
+  </div>
+);

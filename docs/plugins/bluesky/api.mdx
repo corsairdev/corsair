@@ -1,0 +1,176 @@
+---
+title: API
+description: "API reference for Bluesky: every `bluesky.api.*` operation with input and output types."
+---
+
+Every `bluesky.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Feeds
+
+### getTimeline
+
+`feeds.getTimeline`
+
+Get the home timeline feed of the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.bluesky.api.feeds.getTimeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `algorithm` | `string` | No | Algorithm to use for the feed |
+| `limit` | `number` | No | Maximum number of items to return (1-100) |
+| `cursor` | `string` | No | Pagination cursor |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feed` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="feed full type">
+
+```ts
+{
+  post: {
+    uri: string,
+    cid: string,
+    author: {
+      did: string,
+      handle: string,
+      displayName?: string,
+      avatar?: string
+    },
+    record: {
+      text: string,
+      createdAt: string
+    },
+    replyCount?: number,
+    repostCount?: number,
+    likeCount?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### create
+
+`posts.create`
+
+Create/publish a new post (skeet) on Bluesky
+
+**Risk:** `write`
+
+```ts
+await corsair.bluesky.api.posts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The text content of the post (max 300 characters) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uri` | `string` | Yes | — |
+| `cid` | `string` | Yes | — |
+
+
+
+---
+
+### deleteRecord
+
+`posts.deleteRecord`
+
+Delete a post on Bluesky [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bluesky.api.posts.deleteRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uri` | `string` | Yes | The AT Protocol URI (at://did:plc:...) of the post to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Profiles
+
+### get
+
+`profiles.get`
+
+Get profile information for a Bluesky actor/user
+
+**Risk:** `read`
+
+```ts
+await corsair.bluesky.api.profiles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actor` | `string` | Yes | The handle or DID of the user profile to fetch |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `did` | `string` | Yes | — |
+| `handle` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `banner` | `string` | No | — |
+| `followersCount` | `number` | No | — |
+| `followsCount` | `number` | No | — |
+| `postsCount` | `number` | No | — |
+
+
+
+---
+

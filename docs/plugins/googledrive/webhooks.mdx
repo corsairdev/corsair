@@ -71,22 +71,22 @@ A file or folder in Google Drive was created, updated, or deleted
   fileId?: string,
   folderId?: string,
   changeType: created | updated | deleted | trashed | untrashed,
-  file?: any,
-  folder?: any,
+  file?: custom,
+  folder?: custom,
   filePath?: string,
-  change?: any,
+  change?: custom,
   binaryData?: string | null,
   allFiles: {
-    file: any,
+    file: custom,
     filePath: string,
-    change: any,
+    change: custom,
     changeType: created | updated | deleted | trashed | untrashed,
     binaryData?: string | null
   }[],
   allFolders: {
-    folder: any,
+    folder: custom,
     filePath: string,
-    change: any,
+    change: custom,
     changeType: created | updated | deleted | trashed | untrashed
   }[]
 }

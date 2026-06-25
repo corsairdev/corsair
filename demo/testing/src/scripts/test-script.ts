@@ -3,9 +3,9 @@ import 'dotenv/config';
 import { corsair } from '@/server/corsair';
 
 const main = async () => {
-	const res = await corsair.hubspot.api.contacts.search({
-		query: 'test',
-		limit: 5,
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
 	});
 };
 

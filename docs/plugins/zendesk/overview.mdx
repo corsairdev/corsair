@@ -110,21 +110,14 @@ Synced entities support `corsair.zendesk.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `comments.list`
 
 ```ts
-await corsair.zendesk.api.comments.list({
-  ticket_id: 12345
-});
+await corsair.zendesk.api.comments.list({});
 ```
 
 
 **Write-style (write):** `tickets.create`
 
 ```ts
-await corsair.zendesk.api.tickets.create({
-  subject: "Support request",
-  comment: {
-    body: "Please help with my account access."
-  }
-});
+await corsair.zendesk.api.tickets.create({});
 ```
 
 

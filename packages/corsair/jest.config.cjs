@@ -22,12 +22,17 @@ module.exports = {
 			'ts-jest',
 			{
 				useESM: true,
+				isolatedModules: true,
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					paths: {
+						'@corsair-dev/slack': ['../slack/index.ts'],
+						'@corsair-dev/linear': ['../linear/index.ts'],
+					},
 				},
 			},
 		],
@@ -38,6 +43,13 @@ module.exports = {
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+					paths: {
+						'@corsair-dev/slack': ['../slack/index.ts'],
+						'@corsair-dev/linear': ['../linear/index.ts'],
+					},
 				},
 			},
 		],
@@ -50,11 +62,18 @@ module.exports = {
 		'^corsair/setup$': '<rootDir>/setup.ts',
 		'^corsair/tests$': '<rootDir>/tests.ts',
 		'^corsair$': '<rootDir>/index.ts',
+		'^@corsair-dev/linear$': '<rootDir>/../linear/index.ts',
+		'^@corsair-dev/linear/error-handlers$':
+			'<rootDir>/../linear/error-handlers.ts',
 		'^@corsair-dev/slack$': '<rootDir>/../slack/index.ts',
+		'^@corsair-dev/slack/client$': '<rootDir>/../slack/client.ts',
+		'^@corsair-dev/slack/error-handlers$':
+			'<rootDir>/../slack/error-handlers.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
+	setupFilesAfterEnv: ['<rootDir>/tests/setup-jsdom-fetch.cjs'],
 };

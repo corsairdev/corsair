@@ -1,20 +1,63 @@
 import { z } from 'zod';
+import { convertKeysToCamelCase } from '../utils';
 
-export const GithubUser = z.object({
-	id: z.number(),
-	login: z.string(),
-	nodeId: z.string().optional(),
-	avatarUrl: z.string().optional(),
-	gravatarId: z.string().nullable().optional(),
-	url: z.string().optional(),
-	htmlUrl: z.string().optional(),
-	type: z.string().optional(),
-	siteAdmin: z.boolean().optional(),
-	name: z.string().nullable().optional(),
-	email: z.string().nullable().optional(),
-	createdAt: z.coerce.date().nullable().optional(),
-	updatedAt: z.coerce.date().nullable().optional(),
+const GithubUserPlan = z.object({
+	collaborators: z.number().optional(),
+	name: z.string().optional(),
+	space: z.number().optional(),
+	privateRepos: z.number().optional(),
 });
+
+export const GithubUser = z.preprocess(
+	convertKeysToCamelCase,
+	z.object({
+		id: z.number(),
+		login: z.string(),
+		lowercaseUsername: z.string().optional(),
+		nodeId: z.string().optional(),
+		avatarUrl: z.string().optional(),
+		gravatarId: z.string().nullable().optional(),
+		url: z.string().optional(),
+		htmlUrl: z.string().optional(),
+		followersUrl: z.string().optional(),
+		followingUrl: z.string().optional(),
+		gistsUrl: z.string().optional(),
+		starredUrl: z.string().optional(),
+		subscriptionsUrl: z.string().optional(),
+		organizationsUrl: z.string().optional(),
+		reposUrl: z.string().optional(),
+		eventsUrl: z.string().optional(),
+		receivedEventsUrl: z.string().optional(),
+		type: z.string().optional(),
+		siteAdmin: z.boolean().optional(),
+		userViewType: z.string().optional(),
+		name: z.string().nullable().optional(),
+		company: z.string().nullable().optional(),
+		blog: z.string().nullable().optional(),
+		location: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		notificationEmail: z.string().nullable().optional(),
+		hireable: z.boolean().nullable().optional(),
+		bio: z.string().nullable().optional(),
+		twitterUsername: z.string().nullable().optional(),
+		publicRepos: z.number().optional(),
+		publicGists: z.number().optional(),
+		followers: z.number().optional(),
+		following: z.number().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		updatedAt: z.coerce.date().nullable().optional(),
+		privateGists: z.number().optional(),
+		totalPrivateRepos: z.number().optional(),
+		ownedPrivateRepos: z.number().optional(),
+		diskUsage: z.number().optional(),
+		collaborators: z.number().optional(),
+		twoFactorAuthentication: z.boolean().optional(),
+		plan: GithubUserPlan.optional(),
+		businessPlus: z.boolean().optional(),
+		ldapDn: z.string().optional(),
+		starredAt: z.coerce.date().nullable().optional(),
+	}),
+);
 
 export const GithubRepository = z.object({
 	id: z.number(),
@@ -214,3 +257,48 @@ export type GithubDiscussion = z.infer<typeof GithubDiscussion>;
 export type GithubBranch = z.infer<typeof GithubBranch>;
 export type GithubFork = z.infer<typeof GithubFork>;
 export type GithubComment = z.infer<typeof GithubComment>;
+
+export const GithubEvent = z.preprocess(
+	convertKeysToCamelCase,
+	z.object({
+		id: z.string(),
+		type: z.string(),
+		source: z
+			.enum([
+				'public',
+				'network',
+				'organization',
+				'repository',
+				'user',
+				'userOrganization',
+				'userPublic',
+				'received',
+				'receivedPublic',
+			])
+			.optional(),
+		actor: GithubUser.optional(),
+		repo: z
+			.object({
+				id: z.number(),
+				name: z.string(),
+				url: z.string().optional(),
+			})
+			.optional(),
+		org: GithubUser.optional(),
+		payload: z.record(z.string(), z.unknown()).optional(),
+		public: z.boolean().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		repositoryFullName: z.string().optional(),
+		networkRepositoryFullName: z.string().optional(),
+		organization: z.string().optional(),
+		username: z.string().optional(),
+		deletedAt: z.coerce.date().nullable().optional(),
+	}),
+);
+
+export type GithubEvent = z.infer<typeof GithubEvent>;
+
+/** @deprecated Use GithubEvent instead */
+export const GithubRepositoryEvent = GithubEvent;
+/** @deprecated Use GithubEvent instead */
+export type GithubRepositoryEvent = GithubEvent;

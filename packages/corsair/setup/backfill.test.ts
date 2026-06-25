@@ -9,6 +9,8 @@
  * The test is skipped automatically when any of these are absent.
  */
 
+import { linear } from '@corsair-dev/linear';
+import { slack } from '@corsair-dev/slack';
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
 import dotenv from 'dotenv';
@@ -16,8 +18,6 @@ import { Kysely, SqliteDialect } from 'kysely';
 import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
-import { linear } from '../plugins/linear';
-import { slack } from '../plugins/slack';
 import { setupCorsair } from './index';
 
 dotenv.config();

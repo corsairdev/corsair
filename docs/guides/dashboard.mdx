@@ -4,6 +4,7 @@ description: Scaffold a T3 app, wire in Google Calendar with Corsair, then let a
 ---
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 
 By the end of this guide you'll have a working Next.js app with a live Google Calendar dashboard — and you'll have written almost none of the UI yourself.
 
@@ -180,9 +181,24 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 sqlite3 corsair.db < migration.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content migration.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
 
 </Step>
 

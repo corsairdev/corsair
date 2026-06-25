@@ -3,6 +3,8 @@ title: Permissions
 description: Gate destructive agent actions behind human approval before they execute.
 ---
 
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+
 When an AI agent calls Corsair, you need guardrails. Permissions let you set a policy per integration — reads go through, writes may need sign-off, destructive actions can be blocked entirely.
 
 ```ts corsair.ts
@@ -12,12 +14,15 @@ import { github } from "@corsair-dev/github";
 export const corsair = createCorsair({
     database: db,
     kek: process.env.CORSAIR_KEK!,
-    approval: {
+    permissions: {
         timeout: "30m",
         onTimeout: "deny",
         mode: "asynchronous",
-        formatAsyncMessage: ({ token }) =>
-            `Approval required. Visit https://your-app.com/approve/${token} to approve or deny, then retry.`,
+    },
+    manual: {
+        approvalBaseUrl: "https://your-app.com/approve",
+        onApprovalRequired: ({ approvalUrl }) =>
+            `Approval required. Visit ${approvalUrl} to approve or deny, then retry.`,
     },
     plugins: [
         github({
@@ -99,9 +104,24 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 sqlite3 corsair.db < permissions.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+Get-Content permissions.sql | sqlite3 corsair.db
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
   <Tab title="PostgreSQL">
@@ -128,9 +148,24 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
 </Accordion>
 </AccordionGroup>
 
+<Tabs>
+  <Tab title="macOS / Linux">
+
 ```bash
 psql $DATABASE_URL -f permissions.sql
 ```
+
+  </Tab>
+  <Tab title="Windows (PowerShell)">
+
+<WindowsMigrationNote />
+
+```powershell
+psql $env:DATABASE_URL -f permissions.sql
+```
+
+  </Tab>
+</Tabs>
 
   </Tab>
 </Tabs>
@@ -226,11 +261,15 @@ Corsair deduplicates pending requests. If the same plugin, endpoint, args, and t
 
 ## Timeout
 
-Configure the approval window at the root with `createCorsair({ approval: ... })`:
+Configure timeouts and blocking behavior at the root with `createCorsair({ permissions: ... })`:
+
+<Note>
+The old `approval: { ... }` key still works but is **deprecated** — rename it to `permissions`. TypeScript will strike through `approval` in your editor. A runtime warning is logged on startup if you still use it.
+</Note>
 
 ```ts corsair.ts
 export const corsair = createCorsair({
-    approval: {
+    permissions: {
         timeout: "30m",      // duration string: '30s', '10m', '1h', '2h30m', '1d'
         onTimeout: "deny",   // 'deny' (recommended) or 'approve'
     },
@@ -247,7 +286,7 @@ After `expires_at`, the record is no longer actionable. Synchronous mode returns
 
 ## Synchronous vs asynchronous
 
-Control how blocked calls behave with `approval.mode`:
+Control how blocked calls behave with `permissions.mode`. Agent-facing messages come from **hub** (hosted, automatic) or **`manual.onApprovalRequired`** (self-hosted review URLs).
 
 ### Asynchronous (default)
 
@@ -257,13 +296,13 @@ Best when:
 - The agent should explicitly tell the user to visit a review page
 - You want the model to handle denial gracefully and not burn tokens polling
 
+With **hub** config, Corsair automatically returns a hosted approval URL in the agent message. With **manual** config, set `approvalBaseUrl` and optionally customize via `onApprovalRequired`:
+
 ```ts corsair.ts
-approval: {
-    timeout: "1h",
-    onTimeout: "deny",
-    mode: "asynchronous",
-    formatAsyncMessage: ({ token, plugin, endpoint }) =>
-        `Action ${plugin}.${endpoint} requires approval. Visit https://your-app.com/approve/${token} then retry.`,
+manual: {
+    approvalBaseUrl: `${PUBLIC_URL}/approve`,
+    onApprovalRequired: ({ approvalUrl }) =>
+        `Action requires approval. Visit ${approvalUrl} then retry.`,
 },
 ```
 
@@ -280,7 +319,7 @@ Best when:
 - You want approval to feel seamless — approve in the UI, the agent continues automatically
 
 ```ts corsair.ts
-approval: {
+permissions: {
     timeout: "10m",
     onTimeout: "deny",
     mode: "synchronous",
@@ -292,7 +331,7 @@ approval: {
 Pass a function to switch modes per request — useful when approval behavior depends on runtime context:
 
 ```ts corsair.ts
-approval: {
+permissions: {
     timeout: "30m",
     onTimeout: "deny",
     mode: () => (process.env.NODE_ENV === "production" ? "asynchronous" : "synchronous"),
@@ -367,22 +406,22 @@ Once `status` is `approved`, either the original agent retries the call or you i
 
 ### MCP / coding agents
 
-When using [MCP adapters](/mcp-adapters/mcp-adapters), permissions gate `run_script` calls automatically. No extra wiring — configure `permissions` on each plugin and `approval` on `createCorsair`.
+When using [MCP adapters](/mcp-adapters/mcp-adapters), permissions gate `run_script` calls automatically. Configure per-plugin `permissions: { mode, overrides }` and global `permissions: { timeout, mode }` on `createCorsair`.
 
-In **asynchronous** mode, customize the error the LLM sees with `formatAsyncMessage`. Point the agent (and the user) at your review page:
+With **hub** config, blocked calls automatically include a hosted approval URL for the agent. With **manual** config, set `manual.approvalBaseUrl` (and optionally `manual.onApprovalRequired`) so agents receive a review link:
 
 ```ts corsair.ts
-const PUBLIC_URL = process.env.PUBLIC_URL ?? "http://localhost:3000";
-
 export const corsair = createCorsair({
-    approval: {
+    hub: { /* connect via hosted UI */ },
+    permissions: {
         timeout: "1h",
         onTimeout: "deny",
         mode: "asynchronous",
-        formatAsyncMessage: ({ token }) =>
-            `Approval required. Visit ${PUBLIC_URL}/approve/${token} to approve or deny, then retry.`,
     },
-    // ...
+    // manual approval only — connect can stay on hub
+    manual: {
+        approvalBaseUrl: `${PUBLIC_URL}/approve`,
+    },
 });
 ```
 

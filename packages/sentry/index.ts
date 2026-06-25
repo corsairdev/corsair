@@ -47,6 +47,7 @@ import {
 	ErrorWebhooks,
 	IssueWebhooks,
 } from './webhooks';
+import { matchSentryTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CommentCreatedEventSchema,
 	CommentDeletedEventSchema,
@@ -457,7 +458,7 @@ const sentryEndpointMeta = {
 
 export const sentryAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['installation_id', 'organization_slug'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -484,6 +485,7 @@ export function sentry<const T extends SentryPluginOptions>(
 	};
 	return {
 		id: 'sentry',
+		authConfig: sentryAuthConfig,
 		schema: SentrySchema,
 		options: options,
 		hooks: options.hooks,
@@ -499,6 +501,7 @@ export function sentry<const T extends SentryPluginOptions>(
 				'sentry-hook-signature' in headers && 'sentry-hook-resource' in headers
 			);
 		},
+		pluginTenantWebhookMatcher: matchSentryTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

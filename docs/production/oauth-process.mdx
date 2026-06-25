@@ -3,24 +3,36 @@ title: OAuth Process
 description: A production-ready OAuth implementation with security best practices for Corsair.
 ---
 
-OAuth lets your users connect their own accounts to your app. Corsair handles state signing, token exchange, and encrypted storage — you just wire up two routes.
+OAuth lets your users connect their own accounts to your app. Corsair handles state signing, token exchange, and encrypted storage — you wire up the connect flow.
+
+Corsair supports two connect modes:
+
+| Mode | Config | What you build |
+| ---- | ------ | -------------- |
+| **Hub** | `hub: { ... }` | Mint a link, redirect to Corsair Hub — see [Connect / OAuth](/management/connect) |
+| **Manual** | `manual: { baseUrl, redirectUri }` | Connect page + OAuth callback (this guide) |
+
+This page covers **manual mode** in production. The flow uses `client.connect.createLink()` — one API for minting connect URLs.
 
 ```mermaid
 sequenceDiagram
     actor User
     participant App as Your App
+    participant Connect as /connect page
     participant Provider as OAuth Provider
 
     User->>App: Click "Connect"
-    App->>User: Redirect to provider
+    App->>App: createLink (authenticated)
+    App->>User: Redirect to connectUrl
+    User->>Connect: Land with ?state=
+    Connect->>Provider: Redirect to OAuth URL
     User->>Provider: Approve access
-    Provider->>App: Redirect back with auth code
-    App->>Provider: Exchange code for tokens
-    Provider->>App: Access + refresh tokens
+    Provider->>App: Redirect to callback with code
+    App->>App: oauthCallback
     App->>User: Connected!
 ```
 
-Corsair handles security details automatically — CSRF protection, HMAC state verification, and token encryption. Tokens are refreshed automatically before every API call.
+Corsair handles CSRF protection via HMAC-signed state, token encryption, and automatic refresh before API calls.
 
 ---
 
@@ -30,11 +42,7 @@ Corsair handles security details automatically — CSRF protection, HMAC state v
 
 ## Configure your app
 
-Add an OAuth plugin to your corsair instance. Make sure `database` and `kek` are set — both are required for token storage.
-
-<Info>
-OAuth is supported by plugins like Gmail, Google Calendar, Notion, Spotify, Dropbox, and others.
-</Info>
+Add OAuth plugins, `database`, `kek`, and **manual** connect config. Mount the [management handler](/management/handler) so `createLink` is available over HTTP.
 
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
@@ -44,66 +52,168 @@ export const corsair = createCorsair({
     plugins: [gmail()],
     kek: process.env.CORSAIR_KEK!,
     database: db,
+    manual: {
+        baseUrl: `${process.env.APP_URL}/connect`,
+        redirectUri: `${process.env.APP_URL}/api/oauth/callback`,
+    },
 });
 ```
 
-Then store your OAuth app credentials once:
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from 'corsair';
+import { corsair } from '@/server/corsair';
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+    basePath: '/api/corsair',
+});
+```
+
+Store your OAuth app credentials once:
 
 ```bash
 pnpm corsair setup --plugin=gmail client_id=YOUR_CLIENT_ID client_secret=YOUR_CLIENT_SECRET
 ```
 
+<Info>
+OAuth is supported by plugins like Gmail, Google Calendar, Notion, Spotify, Dropbox, and others.
+</Info>
+
 </Step>
 
 <Step>
 
-## The connect route
+## Create the connect link
 
-`/api/connect` generates the provider's authorization URL and stores the HMAC-signed state in a cookie. The user is then redirected to the provider to approve access.
+When a user clicks "Connect", call `createLink` on your **authenticated** backend. Read `tenantId` from your session — never from the request body alone in production.
 
 <Warning>
-**This route must be authenticated.** 
-
-If left open, anyone can call `/api/connect?plugin=gmail&tenantId=victim-id` and bind *their* OAuth grant to your victim's account, silently overwriting that tenant's stored tokens. Always read `tenantId` from your own session, never from a query parameter.
+**This step must be authenticated.** If left open, anyone could mint connect links for arbitrary tenants. Always resolve `tenantId` from your session before calling `createLink`.
 </Warning>
 
 <Tabs>
 
-<Tab title="Next.js">
+<Tab title="Next.js (server action)">
 
-```ts app/api/connect/route.ts
-import { generateOAuthUrl } from 'corsair/oauth';
-import type { NextRequest } from 'next/server';
+```ts app/actions/connect.ts
+'use server';
+
+import { corsair } from '@/server/corsair';
+import { getSessionTenantId } from '@/server/auth';
+
+export async function createConnectLink(plugin: string) {
+    const tenantId = await getSessionTenantId();
+    if (!tenantId) throw new Error('Unauthorized');
+
+    return corsair.manage.connect.createLink({ plugin, tenantId });
+}
+```
+
+```tsx connect-button.tsx
+'use client';
+
+import { createConnectLink } from '@/app/actions/connect';
+
+export function ConnectGmail() {
+    return (
+        <button
+            onClick={async () => {
+                const { connectUrl } = await createConnectLink('gmail');
+                window.location.href = connectUrl;
+            }}
+        >
+            Connect Gmail
+        </button>
+    );
+}
+```
+
+</Tab>
+
+<Tab title="Next.js (API route)">
+
+```ts app/api/corsair/connect/links/route.ts
 import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
-import { getSessionTenantId } from '@/server/auth'; // your auth logic
+import { getSessionTenantId } from '@/server/auth';
 
-const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
-
-export async function GET(request: NextRequest) {
+export async function POST(request: Request) {
     const tenantId = await getSessionTenantId(request);
     if (!tenantId) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const plugin = new URL(request.url).searchParams.get('plugin');
+    const { plugin } = (await request.json()) as { plugin?: string };
     if (!plugin) {
-        return NextResponse.json({ error: 'Missing plugin param' }, { status: 400 });
+        return NextResponse.json({ error: 'plugin is required' }, { status: 400 });
     }
 
-    const { url, state } = await generateOAuthUrl(corsair, plugin, {
-        tenantId,
-        redirectUri: REDIRECT_URI,
-    });
+    const link = await corsair.manage.connect.createLink({ plugin, tenantId });
+    return NextResponse.json(link);
+}
+```
 
-    const response = NextResponse.redirect(url);
-    response.cookies.set('oauth_state', state, {
-        httpOnly: true,   // not readable by JavaScript
-        sameSite: 'lax',  // safe for provider redirects
-        secure: process.env.NODE_ENV === 'production', // HTTPS only in prod
-        maxAge: 60 * 10,  // expires in 10 minutes
-    });
-    return response;
+Or proxy the full management handler at `/api/corsair/[...path]` and POST to `/api/corsair/connect/links` from the client with your auth middleware in front.
+
+</Tab>
+
+<Tab title="Express">
+
+```ts routes/connect-link.ts
+import type { Request, Response } from 'express';
+import { corsair } from '../corsair';
+
+export async function createConnectLinkHandler(req: Request, res: Response) {
+    const tenantId = req.session?.userId;
+    if (!tenantId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+    }
+
+    const plugin = req.body?.plugin as string | undefined;
+    if (!plugin) {
+        res.status(400).json({ error: 'plugin is required' });
+        return;
+    }
+
+    const link = await corsair.manage.connect.createLink({ plugin, tenantId });
+    res.json(link);
+}
+```
+
+</Tab>
+
+</Tabs>
+
+`createLink` returns `{ connectUrl, expiresAt }`. Redirect the user's browser to `connectUrl`. The signed `state` is already embedded in that URL.
+
+</Step>
+
+<Step>
+
+## The connect page
+
+`connectUrl` points at your `manual.baseUrl` with `?state=…`. This page verifies the state and redirects the user to the provider's OAuth screen.
+
+<Tabs>
+
+<Tab title="Next.js">
+
+```ts app/connect/page.tsx
+import { redirect } from 'next/navigation';
+import { corsair } from '@/server/corsair';
+
+export default async function ConnectPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ state?: string }>;
+}) {
+    const { state } = await searchParams;
+    if (!state) {
+        return <p>Missing state.</p>;
+    }
+
+    const { oauthUrl } = await corsair.manage.connect.resolve(state);
+    redirect(oauthUrl);
 }
 ```
 
@@ -111,46 +221,24 @@ export async function GET(request: NextRequest) {
 
 <Tab title="Express">
 
-<Warning>
-The `pendingStates` set below is in-memory. It works for a single-instance local setup but will break across restarts or multiple servers. Replace it with Redis or a DB-backed store before going to production.
-</Warning>
-
-```ts routes/connect.ts
-import { generateOAuthUrl } from 'corsair/oauth';
+```ts routes/connect-page.ts
 import type { Request, Response } from 'express';
 import { corsair } from '../corsair';
 
-const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
-
-// Replace with Redis or DB-backed store in production
-export const pendingStates = new Set<string>();
-
-export async function connectHandler(req: Request, res: Response) {
-    const tenantId = req.session?.userId; // from your session middleware
-    if (!tenantId) {
-        res.status(401).json({ error: 'Unauthorized' });
+export async function connectPageHandler(req: Request, res: Response) {
+    const state = req.query.state as string | undefined;
+    if (!state) {
+        res.status(400).send('Missing state.');
         return;
     }
 
-    const plugin = req.query.plugin as string | undefined;
-    if (!plugin) {
-        res.status(400).json({ error: 'Missing plugin param' });
-        return;
+    try {
+        const { oauthUrl } = await corsair.manage.connect.resolve(state);
+        res.redirect(oauthUrl);
+    } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        res.status(400).send(message);
     }
-
-    const { url, state } = await generateOAuthUrl(corsair, plugin, {
-        tenantId,
-        redirectUri: REDIRECT_URI,
-    });
-
-    pendingStates.add(state);
-    res.cookie('oauth_state', state, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 10 * 60 * 1000, // 10 minutes in ms
-    });
-    res.redirect(url);
 }
 ```
 
@@ -164,23 +252,20 @@ export async function connectHandler(req: Request, res: Response) {
 
 ## The callback route
 
-After the user approves, the provider redirects to `/api/auth` with `?code=` and `?state=`. This route verifies the state, exchanges the code for tokens, and stores them encrypted for the tenant.
+After the user approves, the provider redirects to `manual.redirectUri` with `?code=` and `?state=`. Exchange the code for tokens and store them encrypted for the tenant.
 
 <Warning>
-**This route must be authenticated.** Verify the `oauth_state` cookie matches the query param before calling `processOAuthCallback`. Always clear the cookie on both success *and* failure — a stale state cookie is a security risk.
+Corsair re-verifies the HMAC-signed `state` inside `oauthCallback`. The `tenantId` and `plugin` are extracted from state — do not trust query parameters for tenant identity.
 </Warning>
 
 <Tabs>
 
 <Tab title="Next.js">
 
-```ts app/api/auth/route.ts
-import { processOAuthCallback } from 'corsair/oauth';
+```ts app/api/oauth/callback/route.ts
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
-
-const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
 
 function escapeHtml(value: string): string {
     return value
@@ -197,61 +282,29 @@ export async function GET(request: NextRequest) {
     const state = searchParams.get('state');
     const error = searchParams.get('error');
 
-    // Always clear the cookie — every exit path below must do this
-    const clearCookie = {
-        'Set-Cookie': 'oauth_state=; HttpOnly; Path=/; Max-Age=0',
-        'Content-Type': 'text/html',
-    };
-
     if (error) {
         return new NextResponse(
             `<html><body><h2>Authorization failed</h2><p>${escapeHtml(error)}</p></body></html>`,
-            { status: 400, headers: clearCookie },
+            { status: 400, headers: { 'Content-Type': 'text/html' } },
         );
     }
 
     if (!code || !state) {
-        return new NextResponse('<p>Missing code or state.</p>', {
-            status: 400,
-            headers: clearCookie,
-        });
-    }
-
-    const storedState = request.cookies.get('oauth_state')?.value;
-
-    if (!storedState || storedState !== state) {
-        return new NextResponse('<p>Invalid state. Possible CSRF attempt.</p>', {
-            status: 400,
-            headers: clearCookie,
-        });
+        return new NextResponse('<p>Missing code or state.</p>', { status: 400 });
     }
 
     try {
-        const result = await processOAuthCallback(corsair, {
-            code,
-            state,
-            redirectUri: REDIRECT_URI,
-        });
+        const result = await corsair.manage.connect.oauthCallback({ code, state });
 
-        const response = new NextResponse(
-            `<html><body>
-                <h2>Connected!</h2>
-                <p><strong>${escapeHtml(result.plugin)}</strong> authorized for tenant
-                <strong>${escapeHtml(result.tenantId)}</strong>.</p>
-                <p><a href="/">Back to home</a></p>
-            </body></html>`,
-            { status: 200, headers: { 'Content-Type': 'text/html' } },
+        return NextResponse.redirect(
+            `/dashboard?connected=${encodeURIComponent(result.plugin)}`,
         );
-        response.cookies.delete('oauth_state');
-        return response;
     } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        const response = new NextResponse(
+        return new NextResponse(
             `<html><body><h2>OAuth error</h2><p>${escapeHtml(message)}</p></body></html>`,
             { status: 500, headers: { 'Content-Type': 'text/html' } },
         );
-        response.cookies.delete('oauth_state');
-        return response;
     }
 }
 ```
@@ -260,13 +313,9 @@ export async function GET(request: NextRequest) {
 
 <Tab title="Express">
 
-```ts routes/auth.ts
-import { processOAuthCallback } from 'corsair/oauth';
+```ts routes/oauth-callback.ts
 import type { Request, Response } from 'express';
 import { corsair } from '../corsair';
-import { pendingStates } from './connect';
-
-const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
 
 function escapeHtml(value: string): string {
     return value
@@ -277,12 +326,10 @@ function escapeHtml(value: string): string {
         .replace(/'/g, '&#x27;');
 }
 
-export async function authCallbackHandler(req: Request, res: Response) {
+export async function oauthCallbackHandler(req: Request, res: Response) {
     const code = req.query.code as string | undefined;
     const state = req.query.state as string | undefined;
     const error = req.query.error as string | undefined;
-
-    res.clearCookie('oauth_state'); // always clear — success or failure
 
     if (error) {
         res.status(400).send(
@@ -296,25 +343,9 @@ export async function authCallbackHandler(req: Request, res: Response) {
         return;
     }
 
-    if (!pendingStates.has(state)) {
-        res.status(400).send('<p>Invalid state. Possible CSRF attempt.</p>');
-        return;
-    }
-    pendingStates.delete(state);
-
     try {
-        const result = await processOAuthCallback(corsair, {
-            code,
-            state,
-            redirectUri: REDIRECT_URI,
-        });
-
-        res.send(
-            `<html><body><h2>Connected!</h2>` +
-            `<p>Plugin <strong>${escapeHtml(result.plugin)}</strong> ` +
-            `authorized for tenant <strong>${escapeHtml(result.tenantId)}</strong>.</p>` +
-            `<p><a href="/">Back to home</a></p></body></html>`,
-        );
+        const result = await corsair.manage.connect.oauthCallback({ code, state });
+        res.redirect(`/dashboard?connected=${encodeURIComponent(result.plugin)}`);
     } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         res.status(500).send(
@@ -339,26 +370,36 @@ export async function authCallbackHandler(req: Request, res: Response) {
 | Variable | Description |
 |---|---|
 | `CORSAIR_KEK` | Key-encryption key — generate with `openssl rand -hex 32`. Never rotate without re-encrypting stored DEKs. |
-| `APP_URL` | Your app's public base URL (e.g. `https://myapp.com`). Used to build `REDIRECT_URI`. |
-| `NODE_ENV` | Set to `production` to enable the `secure` flag on cookies and other hardening. |
+| `APP_URL` | Your app's public base URL (e.g. `https://myapp.com`). Used to build `manual.baseUrl` and `manual.redirectUri`. |
+| `NODE_ENV` | Set to `production` to enable HTTPS-only cookies and other hardening elsewhere in your app. |
 
 ---
 
 ## Security checklist
 
-<Check>Both `/api/connect` and `/api/auth` are authenticated routes</Check>
-<Check>`tenantId` is read from your session — never from a query parameter</Check>
-<Check>`oauth_state` cookie uses `httpOnly`, `sameSite: 'lax'`, and `secure` in production</Check>
-<Check>`oauth_state` cookie is cleared on every exit path — success, failure, and CSRF mismatch</Check>
-<Check>All user-controlled values are HTML-escaped before rendering</Check>
-<Check>`APP_URL` points to your HTTPS domain in production</Check>
-<Check>State store is Redis or DB-backed for multi-instance deployments</Check>
+<Check>`createLink` is behind authentication — `tenantId` comes from your session, not user input</Check>
+<Check>`manual.baseUrl` and `manual.redirectUri` use your HTTPS domain in production</Check>
+<Check>The connect page calls `resolve(state)` — Corsair verifies the HMAC before returning the OAuth URL</Check>
+<Check>The callback calls `oauthCallback({ code, state })` — Corsair re-verifies state and exchanges the code</Check>
+<Check>All user-controlled values are HTML-escaped before rendering error pages</Check>
+<Check>OAuth redirect URI registered with the provider matches `manual.redirectUri` exactly</Check>
+
+---
+
+## Hub mode
+
+If you prefer Corsair to host the connect UI, use `hub: { ... }` instead of `manual`. You only mint a link and mount a delivery endpoint — no connect page or callback route needed.
+
+See [Connect / OAuth](/management/connect) for the full hub setup.
 
 ---
 
 ## What's next
 
 <CardGroup cols={2}>
+  <Card title="Connect / OAuth" href="/management/connect">
+    Unified createLink API — hub and manual modes.
+  </Card>
   <Card title="OAuth 2.0 Concepts" href="/concepts/oauth">
     How Corsair encrypts and stores tokens, and handles automatic refresh.
   </Card>
@@ -367,8 +408,5 @@ export async function authCallbackHandler(req: Request, res: Response) {
   </Card>
   <Card title="Gmail Plugin" href="/plugins/gmail/overview">
     Set up Gmail OAuth — a common starting point.
-  </Card>
-  <Card title="Google Calendar Plugin" href="/plugins/googlecalendar/overview">
-    Another popular OAuth plugin to connect.
   </Card>
 </CardGroup>

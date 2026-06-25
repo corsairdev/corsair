@@ -23,6 +23,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TavilySchema } from './schema';
+import { matchTavilyTenantWebhook } from './webhooks/tenant-matcher';
 
 export type TavilyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -141,6 +142,7 @@ export function tavily<const T extends TavilyPluginOptions>(
 		endpointMeta: tavilyEndpointMeta,
 		endpointSchemas: tavilyEndpointSchemas,
 		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: matchTavilyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
