@@ -42,28 +42,18 @@ export const corsair = createCorsair({
 });
 ```
 
-Mount two routes:
+Mount one route (optional catch-all so bare `/api/corsair` hits hub delivery too):
 
-```ts app/api/corsair/route.ts
-// Hub delivery — OAuth results land here
-import { createHubRouteHandlers } from "corsair/hub";
-import { corsair } from "@/server";
-
-const hub = createHubRouteHandlers(corsair);
-export const GET = hub.delivery;
-export const POST = hub.delivery;
-export const OPTIONS = hub.deliveryOptions;
-```
-
-```ts app/api/corsair/[...path]/route.ts
-// Management API — createLink and the rest
+```ts app/api/corsair/[[...path]]/route.ts
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server";
 
-export const { GET, POST } = toNextJsHandler(corsair, {
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
   basePath: "/api/corsair",
 });
 ```
+
+`toNextJsHandler` serves hub delivery at the base path (GET `?d=…`, signed POST, OPTIONS CORS) and the management API on subpaths (`/ok`, `/connect/links`, etc.).
 
 Create a connect link and redirect:
 
