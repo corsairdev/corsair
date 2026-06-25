@@ -1,13 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAgentQLRequest } from '../client';
 import type { AgentQLEndpoints } from '../index';
-import { buildQueryDocumentCacheKey } from './cache-keys';
+import {
+	buildQueryDocumentCacheKey,
+	hashFileContent,
+} from './cache-keys';
 import type { AgentQLQueryDocumentResponse } from './types';
 
 export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 	ctx,
 	input,
 ) => {
+	const fileHash = await hashFileContent(input.file);
+
 	const body = JSON.stringify({
 		query: input.query,
 		prompt: input.prompt,
@@ -29,7 +34,8 @@ export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
 	if (ctx.db.documentQueryResults) {
 		try {
 			const entityId =
-				response.metadata?.request_id ?? buildQueryDocumentCacheKey(input);
+				response.metadata?.request_id ??
+				buildQueryDocumentCacheKey(input, fileHash);
 
 			await ctx.db.documentQueryResults.upsertByEntityId(entityId, {
 				fileName: input.fileName,
