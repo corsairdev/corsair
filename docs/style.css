@@ -1,0 +1,28 @@
+/*
+ * Custom CSS for the Corsair docs (auto-loaded by Mintlify).
+ *
+ * Goal: reduce the horizontal gap between the left sidebar and the main
+ * content. Mintlify centers the article in a max-width column, which leaves
+ * extra whitespace to the right of the nav on wide screens. The rules below
+ * widen the content column and trim its left padding so text starts closer
+ * to the sidebar.
+ *
+ * These target Mintlify's content containers. Preview with `mintlify dev` and
+ * tweak the max-width / padding values to taste.
+ */
+
+@media (min-width: 1024px) {
+  /* Main article column: let it use more of the available width. */
+  #content-area,
+  #content-container,
+  main #content-area {
+    max-width: 56rem; /* was ~48rem; raise/lower to taste */
+    margin-left: 0;
+  }
+
+  /* Trim the left padding that pushes text away from the nav rail. */
+  #content-area > div,
+  .mdx-content {
+    padding-left: 1.5rem;
+  }
+}

@@ -31,27 +31,32 @@
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Concepts",
             "pages": [
-              "concepts/integrations",
-              "concepts/auth",
-              "concepts/permissions",
-              "concepts/multi-tenancy",
-              "concepts/database",
-              "concepts/webhooks",
-              "concepts/hooks",
-              "concepts/api",
-              "concepts/error-handling",
-              "concepts/typescript"
-            ]
-          },
-          {
-            "group": "Authentication",
-            "pages": [
-              "concepts/api-key",
-              "concepts/oauth",
-              "production/oauth-process",
-              "production/tenant-provisioning"
+              {
+                "group": "Core Concepts",
+                "pages": [
+                  "concepts/integrations",
+                  "concepts/auth",
+                  "concepts/permissions",
+                  "concepts/multi-tenancy",
+                  "concepts/database",
+                  "concepts/webhooks",
+                  "concepts/hooks",
+                  "concepts/api",
+                  "concepts/error-handling",
+                  "concepts/typescript"
+                ]
+              },
+              {
+                "group": "Authentication",
+                "pages": [
+                  "concepts/api-key",
+                  "concepts/oauth",
+                  "production/oauth-process",
+                  "production/tenant-provisioning"
+                ]
+              }
             ]
           },
           {
