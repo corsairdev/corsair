@@ -47,6 +47,8 @@ async function refreshFacebookToken(
         );
     }
 
+    // Facebook Graph API returns { access_token, expires_in } for fb_exchange_token grants.
+    // fetch().json() returns `any`; we assert the known shape rather than introduce a runtime validator.
     return (await response.json()) as {
         access_token: string;
         expires_in: number;
@@ -118,6 +120,7 @@ export async function makeInstagramRequest<T>(
         VERSION: '1.0.0',
         WITH_CREDENTIALS: false,
         CREDENTIALS: 'omit',
+        TOKEN: credentials,
         HEADERS: {
             'Content-Type': 'application/json',
         },
@@ -129,24 +132,29 @@ export async function makeInstagramRequest<T>(
         body:
             method === 'POST' ? body : undefined,
         mediaType: 'application/json',
-        query: {
-            access_token: credentials, // for every request FACEBOOK take access_token in query
-            ...(query || {})
-        }
+        // query: {
+        //     access_token: credentials, // for every request FACEBOOK take access_token in query
+        //     ...(query || {})
+        // }
+        query: method === 'GET' ? query : undefined
     }
 
     try {
         return await request<T>(config, requestOptions);
-    } catch (error: any) {
+    } catch (error: unknown) {
+        // The corsair HTTP client throws a loosely-typed error object whose shape
+        // varies by transport. We inspect known Graph API error paths defensively
+        // rather than introducing a full runtime schema validator here.
+        const err = error as { body?: { error?: { message?: string; code?: number } }; response?: { body?: { error?: { message?: string; code?: number } }; data?: { error?: { message?: string; code?: number } } } };
 
         const graphError =
-        error?.body?.error ??
-        error?.response?.body?.error ??
-        error?.response?.data?.error;
+        err?.body?.error ??
+        err?.response?.body?.error ??
+        err?.response?.data?.error;
 
         if (graphError) {
             throw new InstagramAPIError(
-                graphError.message,
+                graphError.message ?? 'Unknown error',
                 graphError.code
             );
         }

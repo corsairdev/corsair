@@ -1,12 +1,6 @@
 import 'dotenv/config';
 
 import {
-    describe,
-    it,
-    expect,
-} from 'vitest';
-
-import {
     createCorsair,
 } from 'corsair/core';
 
@@ -67,18 +61,12 @@ describe(
                     kek:
                         process.env.CORSAIR_KEK!,
                 });
-
-            // Integration Keys
-            await corsair.keys.instagram
-                .issue_new_dek();
-
+            
+            await corsair.keys.instagram.issue_new_dek();
             await corsair.keys.instagram
                 .set_client_id(appId);
-
             await corsair.keys.instagram
                 .set_client_secret(appSecret);
-
-            // User Keys
 
             await corsair.instagram.keys
                 .issue_new_dek();
@@ -124,11 +112,6 @@ describe(
                         }
                     );
 
-                // console.log(
-                //     'User Data:',
-                //     me
-                // );
-
                 expect(me)
                     .toBeDefined();
 
@@ -147,8 +130,7 @@ describe(
                     await createInstagramClient();
 
                 const appId =
-                    await corsair.keys.instagram
-                        .get_client_id();
+                    process.env.FACEBOOK_APP_ID;
                 if (!appId) {
                     throw new Error(
                         'Missing app id'
@@ -156,11 +138,10 @@ describe(
                 }
 
                 const appSecret =
-                    await corsair.keys.instagram
-                        .get_client_secret();
+                    process.env.FACEBOOK_APP_SECRET;
                 if (!appSecret) {
                     throw new Error(
-                        'Missing access token'
+                        'Missing app secret'
                     );
                 }
 
@@ -173,11 +154,6 @@ describe(
                     );
                 }
 
-                // console.log(
-                //     'Old Token:',
-                //     accessToken
-                // );
-
                 const refreshed =
                     await getValidFacebookAccessToken({
                         appId,
@@ -185,11 +161,6 @@ describe(
                         accessToken,
                         forceRefresh: true,
                     });
-
-                // console.log(
-                //     'New Token:',
-                //     refreshed.accessToken
-                // );
 
                 expect(
                     refreshed.accessToken
@@ -210,20 +181,18 @@ describe(
                     await createInstagramClient();
 
                 const appId =
-                    await corsair.keys.instagram
-                        .get_client_id();
+                    process.env.FACEBOOK_APP_ID;
                 if (!appId) {
                     throw new Error(
-                        'Missing access token'
+                        'Missing app id'
                     );
                 }
 
                 const appSecret =
-                    await corsair.keys.instagram
-                        .get_client_secret();
+                    process.env.FACEBOOK_APP_SECRET;
                 if (!appSecret) {
                     throw new Error(
-                        'Missing access token'
+                        'Missing app secret'
                     );
                 }
 
@@ -240,48 +209,27 @@ describe(
                     await makeAuthenticatedInstagramRequest(
                         '/me',
                         {
-                            key:
-                                'INVALID_TOKEN',
-
-                            _refreshAuth:
-                                async () => {
-
-                                    console.log(
-                                        '\nRefreshing Token...'
-                                    );
-
-                                    const refreshed =
-                                        await getValidFacebookAccessToken({
-                                            appId,
-                                            appSecret,
-                                            accessToken,
-                                            forceRefresh: true,
-                                        });
-
-                                    // console.log(
-                                    //     'Refreshed Token:',
-                                    //     refreshed.accessToken
-                                    // );
-
-                                    return refreshed.accessToken;
-                                },
+                            key: 'INVALID_TOKEN',
+                            _refreshAuth: async () => {
+                                console.log('\nRefreshing Token...');
+                                const refreshed =
+                                    await getValidFacebookAccessToken({
+                                        appId,
+                                        appSecret,
+                                        accessToken,
+                                        forceRefresh: true,
+                                    });
+                                return refreshed.accessToken;
+                            },
                         },
-
                         {
                             query: {
-                                fields:
-                                    'id,name',
+                                fields: 'id,name',
                             },
                         }
                     );
 
-                // console.log(
-                //     'Final Response:',
-                //     result
-                // );
-
-                expect(result)
-                    .toBeDefined();
+                expect(result).toBeDefined();
 
                 testDb.cleanup();
             }
@@ -296,8 +244,11 @@ describe(
                 q: 'id,biography,follows_count,followers_count,username,ig_id'
             });
 
+            console.log(result)
+
             testDb.cleanup();
         });
+
         it('Get Instagram Media List', async () => {
             const { corsair, testDb } =
                 await createInstagramClient();
@@ -307,10 +258,9 @@ describe(
                 q: 'username, media_url'
             });
 
-            // console.log(result);
-
             testDb.cleanup();
         });
+
         it('Get Instagram Media', async () => {
             const { corsair, testDb } =
                 await createInstagramClient();
@@ -320,176 +270,135 @@ describe(
                 q: 'id,username,media_url,is_comment_enabled,caption'
             });
 
-            // console.log(result);
-
             testDb.cleanup();
         });
 
-        it('Post Instagram Image container', async () => {
+        // it('Post Instagram Image container', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     const result = await corsair.instagram.api.image.post({
+        //         ig_id: '17841434848107311',
+        //         image_url: 'https://res.cloudinary.com/dwdikaeeq/image/upload/v1760890818/wanderlust_DEV/rkc0ctqoddiu8jpzdfey.jpg',
+        //         caption: 'Tesing From Corsair',
+        //         alt_text: 'Hiii'
+        //     });
 
-            
-            const result = await corsair.instagram.api.image.post({
-                ig_id: '17841434848107311',
-                image_url: 'https://res.cloudinary.com/dwdikaeeq/image/upload/v1760890818/wanderlust_DEV/rkc0ctqoddiu8jpzdfey.jpg',
-                caption: 'Tesing From Corsair',
-                alt_text: 'Hiii'
-            });
+        //     console.log('Post Instagram Image container: ', result.id);
 
-            console.log('Post Instagram Image container: ', result.id);
+        //     testDb.cleanup();
+        // }, 60000);
 
-            console.log(result.id);
+        // it('Post Instagram Reel container', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            
+        //     const result = await corsair.instagram.api.reel.post({
+        //         ig_id: '17841434848107311',
+        //         video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780329988/ILWIS_Software_Installation_Demo_iebgx7.mp4',
+        //         media_type: 'REELS',
+        //         caption: 'From Corsair',
+        //         audio_name: 'Original Audio'
+        //     });
 
-            testDb.cleanup();
-        }, 60000);
+        //     console.log('Post Instagram Reel container: ', result.id);
 
-        it('Post Instagram Reel container', async () => {
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        // it('Post Instagram Image Story container', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            
-            const result = await corsair.instagram.api.reel.post({
-                ig_id: '17841434848107311',
-                video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780329988/ILWIS_Software_Installation_Demo_iebgx7.mp4',
-                media_type: 'REELS',
-                caption: 'From Corsair',
-                audio_name: 'Original Audio'
-            });
+        //     const result = await corsair.instagram.api.image.story({
+        //         ig_id: '17841434848107311',
+        //         image_url: 'https://res.cloudinary.com/dwdikaeeq/image/upload/v1760890818/wanderlust_DEV/rkc0ctqoddiu8jpzdfey.jpg',
+        //     });
 
-            console.log('Post Instagram Reel container: ', result.id);
+        //     console.log('Post Instagram Image Story container: ', result.id);
 
-            
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            testDb.cleanup();
-        }, 1200000);
+        // it('Post Instagram Video Story Container', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-        it('Post Instagram Image Story contaoiner', async () => {
+        //     const result = await corsair.instagram.api.video.story({
+        //         ig_id: '17841434848107311',
+        //         video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
+        //     });
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     console.log('Post Instagram Video Story Container: ', result.id);
 
-            
-            const result = await corsair.instagram.api.image.story({
-                ig_id: '17841434848107311',
-                image_url: 'https://res.cloudinary.com/dwdikaeeq/image/upload/v1760890818/wanderlust_DEV/rkc0ctqoddiu8jpzdfey.jpg',
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            });
+        // it('Post Instagram CAROUSEL', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            console.log('Post Instagram Image Story contaoiner: ', result.id);
+        //     const result = await corsair.instagram.api.carousel.post({
+        //         ig_id: '17841434848107311',
+        //         media_type: 'CAROUSEL',
+        //         children: ['18085207022161604', '18085206977161604'],
+        //         caption: 'Hello! From Corsair'
+        //     });
 
-            
+        //     console.log(result.id);
 
-            testDb.cleanup();
-        }, 1200000);
-        it('Post Instagram Video Story Container', async () => {
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        // it('Create Instagram Video Container', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-           
-            const result = await corsair.instagram.api.video.story({
-                ig_id: '17841434848107311',
-                video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
-            });
+        //     const result = await corsair.instagram.api.video.container({
+        //         ig_id: '17841434848107311',
+        //         video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
+        //         caption: 'Hello! From Corsair'
+        //     });
 
-            console.log('Post Instagram Video Story Container: ', result.id);
+        //     console.log('createVideoContainer: ', result.id);
 
-            
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            console.log(result);
+        // it('Get Instagram Media Insights', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            testDb.cleanup();
-        }, 1200000);
+        //     const result = await corsair.instagram.api.media.insights({
+        //         media_id: '18116571484771229',
+        //         type: 'REELS'
+        //     });
 
-        it('Post Instagram CAROUSEL', async () => {
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        // it('Get Instagram Account Insights', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            console.time('instagram-post');
-            const result = await corsair.instagram.api.carousel.post({
-                ig_id: '17841434848107311',
-                media_type: 'CAROUSEL',
-                children: ['18085207022161604', '18085206977161604'], // image or video container-id was allowed
-                caption: 'Hello! From Corsair'
-            });
+        //     const result = await corsair.instagram.api.profile.insights({
+        //         ig_id: '17841434848107311',
+        //         metric: 'accounts_engaged, comments',
+        //         period: 'day',
+        //         metric_type: 'total_value'
+        //     });
 
-            console.log(result.id);
+        //     if (result.data) {
+        //         console.log(result);
+        //     }
 
-            console.timeEnd('instagram-post');
-
-            testDb.cleanup();
-        }, 1200000);
-
-        it('Create Instagram Video Container', async () => {
-
-            const { corsair, testDb } =
-                await createInstagramClient();
-
-            
-            const result = await corsair.instagram.api.video.container({
-                ig_id: '17841434848107311',
-                video_url: 'https://res.cloudinary.com/dgj2pjcxm/video/upload/v1780374435/nisarg_rtlcvq.mp4',
-                caption: 'Hello! From Corsair'
-            });
-
-            console.log('createCarouselContainer: ', result.id)
-
-            
-
-            testDb.cleanup();
-        }, 1200000);
-
-        it('Get Instagram Media Insights', async () => {
-
-            const { corsair, testDb } =
-                await createInstagramClient();
-
-            
-            const result = await corsair.instagram.api.media.insights({
-                media_id: '18116571484771229',
-                type: 'REELS'
-            });
-
-
-            
-
-            testDb.cleanup();
-        }, 1200000);
-
-        it('Get Instagram Account Insights', async () => {
-
-            const { corsair, testDb } =
-                await createInstagramClient();
-
-            
-            const result = await corsair.instagram.api.profile.insights({
-                ig_id: '17841434848107311',
-                metric: 'accounts_engaged, comments',
-                period: 'day',
-                metric_type: 'total_value'
-            });
-
-            if (result.data) {
-                console.log(result);
-            }
-
-            
-
-            testDb.cleanup();
-        }, 1200000);
+        //     testDb.cleanup();
+        // }, 1200000);
 
         it('List Instagram Conversations', async () => {
-
             const { corsair, testDb } =
                 await createInstagramClient();
 
-            
             const result = await corsair.instagram.api.conversations.list({
                 page_id: '1198094130045031',
                 q: 'id,updated_time,messages'
@@ -499,230 +408,191 @@ describe(
                 console.log(result);
             }
 
-            
-
             testDb.cleanup();
         }, 1200000);
 
-        it('Get Instagram Conversations', async () => {
+        // it('Get Instagram Conversations', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     const result = await corsair.instagram.api.conversations.get({
+        //         page_id: '1198094130045031',
+        //         q: 'id,message,created_time,from,attachments',
+        //         conversation_id: 'aWdfZAG06MTpJR01lc3NhZA2VUaHJlYWQ6MTc4NDE0MzQ4NDgxMDczMTE6MzQwMjgyMzY2ODQxNzEwMzAxMjQ0MjU5Njc5NjQyMjA4MjM3Mzc1'
+        //     });
 
-            
-            const result = await corsair.instagram.api.conversations.get({
-                page_id: '1198094130045031',
-                q: 'id,message,created_time,from,attachments',
-                conversation_id: 'aWdfZAG06MTpJR01lc3NhZA2VUaHJlYWQ6MTc4NDE0MzQ4NDgxMDczMTE6MzQwMjgyMzY2ODQxNzEwMzAxMjQ0MjU5Njc5NjQyMjA4MjM3Mzc1'
-            });
+        //     if (result.data) {
+        //         console.log(result);
+        //     }
 
-            if (result.data) {
-                console.log(result);
-            }
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            
+        // it('Get Instagram Message Details', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            testDb.cleanup();
-        }, 1200000);
+        //     const result = await corsair.instagram.api.messages.get({
+        //         page_id: '1198094130045031',
+        //         q: 'id,message,created_time,from',
+        //         message_id: 'aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDM0ODQ4MTA3MzExOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI1OTY3OTY0MjIwODIzNzM3NTozMjg0MzY1NTgxNTM4MjU1NzE0OTY5ODM3MzY2MzU4ODM1MgZDZD'
+        //     });
 
-        it('Get Instagram Message Details', async () => {
+        //     if (result.id) {
+        //         console.log(result);
+        //     }
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            
-            const result = await corsair.instagram.api.messages.get({
-                page_id: '1198094130045031',
-                q: 'id,message,created_time,from',
-                message_id: 'aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDM0ODQ4MTA3MzExOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI1OTY3OTY0MjIwODIzNzM3NTozMjg0MzY1NTgxNTM4MjU1NzE0OTY5ODM3MzY2MzU4ODM1MgZDZD'
-            });
+        // it('Send Instagram Message', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            if (result.id) {
-                console.log(result);
-            }
+        //     const result = await corsair.instagram.api.messages.send({
+        //         page_id: '1198094130045031',
+        //         recipient: '1315250483912523',
+        //         messaging_type: 'RESPONSE',
+        //         message: {
+        //             attachment: {
+        //                 type: 'template',
+        //                 payload: {
+        //                     template_type: 'generic',
+        //                     elements: [
+        //                         {
+        //                             title: 'Corsair Test Card',
+        //                             subtitle: 'Testing Generic Template',
+        //                             image_url: 'https://picsum.photos/800/400',
+        //                             buttons: [
+        //                                 {
+        //                                     type: 'web_url',
+        //                                     url: 'https://github.com',
+        //                                     title: 'Open GitHub'
+        //                                 }
+        //                             ]
+        //                         }
+        //                     ]
+        //                 }
+        //             }
+        //         }
+        //     });
 
-          
+        //     if (result.message_id) {
+        //         console.log(result);
+        //     }
 
-            testDb.cleanup();
-        }, 1200000);
+        //     testDb.cleanup();
+        // }, 1200000);
 
-        it('Send Instagram Message', async () => {
+        // it('Get Instagram Comments', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     const result = await corsair.instagram.api.comments.list({
+        //         media_id: '17949779841178404',
+        //         q: 'id,text,username,timestamp'
+        //     });
 
-            
-            // const result = await corsair.instagram.api.messages.send({
-            //     page_id: '1198094130045031',
-            //     recipient: '1315250483912523',
-            //     message: {
-            //         attachments: [
-            //             {
-            //                 type: 'image',
-            //                 payload: {
-            //                     url: 'https://scontent.cdninstagram.com/v/t51.82787-15/708468999_18082194101161604_3462304361651356345_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=vpz-N-HLOwEQ7kNvwFw_1Jg&_nc_oc=AdrB7aF-cnmrbaQnhlU1PTS4i5-X4iDBGjuWcu-MieRuAuu8s22Dx3OQkF8QufgtAg0Z2XX_AlkuXFo9J3br5RSS&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=xlfqVKrJ4lLVycs84MBUrQ&oh=00_Af_KZgFi7fihqoGJIltdB4OjAbnJ6oHHSWZ0fS8rg3GnlQ&oe=6A236717',
-            //                     is_resuable: true,
-            //                 }
-            //             },
-            //             {
-            //                 type: 'image',
-            //                 payload: {
-            //                     url: 'https://scontent.cdninstagram.com/v/t51.82787-15/708468999_18082194101161604_3462304361651356345_n.jpg?stp=dst-jpg_e35_tt6&_nc_cat=108&ccb=7-5&_nc_sid=18de74&efg=eyJlZmdfdGFnIjoiRkVFRC5iZXN0X2ltYWdlX3VybGdlbi5DMyJ9&_nc_ohc=vpz-N-HLOwEQ7kNvwFw_1Jg&_nc_oc=AdrB7aF-cnmrbaQnhlU1PTS4i5-X4iDBGjuWcu-MieRuAuu8s22Dx3OQkF8QufgtAg0Z2XX_AlkuXFo9J3br5RSS&_nc_zt=23&_nc_ht=scontent.cdninstagram.com&edm=AM6HXa8EAAAA&_nc_gid=xlfqVKrJ4lLVycs84MBUrQ&oh=00_Af_KZgFi7fihqoGJIltdB4OjAbnJ6oHHSWZ0fS8rg3GnlQ&oe=6A236717',
-            //                     is_resuable: true,
-            //                 }
-            //             },
-            //         ]
-            //     }
-            // });
+        //     if (result.data) {
+        //         console.log(result);
+        //     }
 
-            const result = await corsair.instagram.api.messages.send({
-                page_id: '1198094130045031',
-                recipient: '1315250483912523',
-                messaging_type: 'RESPONSE',
-                message: {
-                    attachment: {
-                        type: 'template',
-                        payload: {
-                            template_type: 'generic',
-                            elements: [
-                                {
-                                    title: 'Corsair Test Card',
-                                    subtitle: 'Testing Generic Template',
-                                    image_url: 'https://picsum.photos/800/400',
-                                    buttons: [
-                                        {
-                                            type: 'web_url',
-                                            url: 'https://github.com',
-                                            title: 'Open GitHub'
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                }
-            });
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            if (result.message_id) {
-                console.log(result);
-            }
+        // it('Reply Instagram Comments', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            testDb.cleanup();
-        }, 1200000);
+        //     const result = await corsair.instagram.api.comments.reply({
+        //         comment_id: '17891967168518693',
+        //         message: 'This is a test reply'
+        //     });
 
-        it('Get Instagram Comments', async () => {
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     if (result.id) {
+        //         console.log(result);
+        //     }
 
-            const result = await corsair.instagram.api.comments.list({
-                media_id: '17949779841178404',
-                q: 'id,text,username,timestamp'
-            });
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            if (result.data) {
-                console.log(result);
-            }
+        // it('Send Instagram Comment to media', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            testDb.cleanup();
-        }, 1200000
-        )
+        //     const result = await corsair.instagram.api.comments.send({
+        //         media_id: '17949779841178404',
+        //         message: 'This is a test comment From instagram plugin'
+        //     });
 
-        it('Reply Instagram Comments', async () => {
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     if (result.id) {
+        //         console.log(result);
+        //     }
 
-            const result = await corsair.instagram.api.comments.reply({
-                comment_id: '17891967168518693',
-                message: 'This is a test reply'
-            });
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            if (result.id) {
-                console.log(result);
-            }
+        // it('Get Instagram Comment Details', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            testDb.cleanup();
-        }, 1200000
-        )
-        it('Send Instagram Comment to media', async () => {
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     const result = await corsair.instagram.api.comments.get({
+        //         comment_id: '17891967168518693',
+        //         q: 'id,text,username,timestamp,hidden,legacy_instagram_comment_id,media,parent_id,replies,user'
+        //     });
 
-            const result = await corsair.instagram.api.comments.send({
-                media_id: '17949779841178404',
-                message: 'This is a test comment From instagram plugin'
-            });
+        //     if (result.id) {
+        //         console.log(result);
+        //     }
 
-            if (result.id) {
-                console.log(result);
-            }
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            testDb.cleanup();
-        }, 1200000
-        )
+        // it('Update Instagram Comment', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-        it('Get Instagram Comment Details', async () => {
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     const result = await corsair.instagram.api.comments.update({
+        //         comment_id: '17891967168518693',
+        //         hide: false
+        //     });
 
-            const result = await corsair.instagram.api.comments.get({
-                comment_id: '17891967168518693',
-                q: 'id,text,username,timestamp,hidden,legacy_instagram_comment_id,media,parent_id,replies,user'
-            });
+        //     if (result.success) {
+        //         console.log(result);
+        //     }
 
-            if (result.id) {
-                console.log(result);
-            }
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            testDb.cleanup();
-        }, 1200000
-        )
-        it('Update Instagram Comment', async () => {
-            const { corsair, testDb } =
-                await createInstagramClient();
+        // it('Delete Instagram Comment', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            const result = await corsair.instagram.api.comments.update({
-                comment_id: '17891967168518693',
-                hide: false
-            });
+        //     const result = await corsair.instagram.api.comments.remove({
+        //         comment_id: '17891967168518693'
+        //     });
 
-            if (result.success) {
-                console.log(result);
-            }
+        //     if (result.success) {
+        //         console.log(result);
+        //     }
 
-            testDb.cleanup();
-        }, 1200000
-        )
-        it('Delete Instagram Comment', async () => {
-            const { corsair, testDb } =
-                await createInstagramClient();
+        //     testDb.cleanup();
+        // }, 1200000);
 
-            const result = await corsair.instagram.api.comments.remove({
-                comment_id: '17891967168518693'
-            });
+        // it('Publish Instagram Media', async () => {
+        //     const { corsair, testDb } =
+        //         await createInstagramClient();
 
-            if (result.success) {
-                console.log(result);
-            }
+        //     const result = await corsair.instagram.api.publish.publish_media({
+        //         creation_id: '18087115838161604',
+        //         ig_id: '17841434848107311'
+        //     });
 
-            testDb.cleanup();
-        }, 1200000
-        )
+        //     if (result.id) {
+        //         console.log(result);
+        //     }
 
-        it('Publish Instagram Media', async () => {
-            const { corsair, testDb } =
-                await createInstagramClient();
-
-            const result = await corsair.instagram.api.publish.publish_media({
-                creation_id: '18085207439161604',
-                ig_id: '17841434848107311'
-            });
-
-            if (result.id) {
-                console.log(result);
-            }
-
-            testDb.cleanup();
-            }, 1200000
-        );
+        //     testDb.cleanup();
+        // }, 1200000);
     }
 );

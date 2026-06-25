@@ -199,8 +199,8 @@ export const InstagramEndpointSchemas = {
         output: InstagramEndpointOutputSchemas.CreateVideoStoryContainer,
     },
     'video.container': {
-        input: InstagramEndpointInputSchemas.CreateCarouselContainer,
-        output: InstagramEndpointOutputSchemas.CreateCarouselContainer,
+        input: InstagramEndpointInputSchemas.CreateVideoContainer,
+        output: InstagramEndpointOutputSchemas.CreateVideoContainer,
     },
     'carousel.post': {
         input: InstagramEndpointInputSchemas.CreateCarouselContainer,

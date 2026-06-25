@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
 import { logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
 import { createInstagramWebhookMatcher } from './types';
