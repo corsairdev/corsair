@@ -68,6 +68,8 @@ export type GoogleMeetEndpoints = {
 
 export type GoogleMeetBoundEndpoints = BindEndpoints<typeof googleMeetEndpointsNested>;
 
+const googleMeetWebhooksNested = {} as const;
+
 export const googleMeetEndpointsNested = {
 	spaces: {
 		create: SpacesEndpoints.create,
@@ -105,7 +107,7 @@ export const googleMeetEndpointsNested = {
 	},
 } as const;
 
-export const googleMeetEndpointSchemas = {
+export const googlemeetEndpointSchemas = {
 	'spaces.create': {
 		input: GoogleMeetEndpointInputSchemas.spacesCreate,
 		output: GoogleMeetEndpointOutputSchemas.spacesCreate,
@@ -205,7 +207,7 @@ const googleMeetEndpointMeta = {
 	'transcriptEntries.list': { riskLevel: 'read', description: 'List transcript entries' },
 	'smartNotes.get': { riskLevel: 'read', description: 'Get smart notes' },
 	'smartNotes.list': { riskLevel: 'read', description: 'List smart notes' },
-} as const satisfies RequiredPluginEndpointMeta<typeof googleMeetEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof googleMeetEndpointsNested>;
 
 export type GoogleMeetPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -225,7 +227,7 @@ export type BaseGoogleMeetPlugin<T extends GoogleMeetPluginOptions> = CorsairPlu
 	'googlemeet',
 	typeof GoogleMeetSchema,
 	typeof googleMeetEndpointsNested,
-	Record<string, never>,
+	typeof googleMeetWebhooksNested,
 	T,
 	typeof defaultAuthType,
 	typeof googleMeetAuthConfig
@@ -261,8 +263,10 @@ export function googlemeet<const T extends GoogleMeetPluginOptions>(
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: googleMeetEndpointsNested,
+		webhooks: googleMeetWebhooksNested,
 		endpointMeta: googleMeetEndpointMeta,
-		endpointSchemas: googleMeetEndpointSchemas,
+		endpointSchemas: googlemeetEndpointSchemas,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -344,6 +348,5 @@ export type {
 	GoogleMeetEndpointOutputs,
 } from './endpoints/types';
 
-export type {} from './endpoints/types';
-
+export * from './error-handlers';
 export { GoogleMeetSchema } from './schema';

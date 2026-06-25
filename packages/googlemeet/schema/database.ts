@@ -1,9 +1,33 @@
 import { z } from 'zod';
 
 const DocsDestination = z.object({
-	documentUrl: z.string().optional(),
+	document: z.string().optional(),
 	exportUri: z.string().optional(),
 });
+
+const DriveDestination = z.object({
+	file: z.string().optional(),
+	exportUri: z.string().optional(),
+});
+
+const AutoGenerationType = z.enum([
+	'AUTO_GENERATION_TYPE_UNSPECIFIED',
+	'ON',
+	'OFF',
+]);
+
+const ArtifactState = z.enum([
+	'STATE_UNSPECIFIED',
+	'STARTED',
+	'ENDED',
+	'FILE_GENERATED',
+]);
+
+const RestrictionType = z.enum([
+	'RESTRICTION_TYPE_UNSPECIFIED',
+	'HOSTS_ONLY',
+	'NO_RESTRICTION',
+]);
 
 const PhoneAccess = z.object({
 	languageCode: z.string().optional(),
@@ -13,33 +37,49 @@ const PhoneAccess = z.object({
 });
 
 const GatewaySipAccess = z.object({
-	sipAccessUri: z.string().optional(),
+	uri: z.string().optional(),
+	sipAccessCode: z.string().optional(),
 });
 
 const ArtifactConfig = z.object({
 	recordingConfig: z
 		.object({
-			autoRecordingGeneration: z.enum(['AUTO_RECORDING_GENERATION_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
+			autoRecordingGeneration: AutoGenerationType.optional(),
 		})
 		.optional(),
 	transcriptionConfig: z
 		.object({
-			autoTranscriptionGeneration: z.enum(['AUTO_TRANSCRIPTION_GENERATION_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
+			autoTranscriptionGeneration: AutoGenerationType.optional(),
 		})
 		.optional(),
 	smartNotesConfig: z
 		.object({
-			autoSmartNotesGeneration: z.enum(['AUTO_SMART_NOTES_GENERATION_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
+			autoSmartNotesGeneration: AutoGenerationType.optional(),
 		})
+		.optional(),
+});
+
+const ModerationRestrictions = z.object({
+	chatRestriction: RestrictionType.optional(),
+	reactionRestriction: RestrictionType.optional(),
+	presentRestriction: RestrictionType.optional(),
+	defaultJoinAsViewerType: z
+		.enum(['DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED', 'ON', 'OFF'])
 		.optional(),
 });
 
 const SpaceConfig = z.object({
 	accessType: z.enum(['ACCESS_TYPE_UNSPECIFIED', 'OPEN', 'TRUSTED', 'RESTRICTED']).optional(),
 	entryPointAccess: z.enum(['ENTRY_POINT_ACCESS_UNSPECIFIED', 'CREATOR_APP_ONLY', 'ALL']).optional(),
-	autoRecordingType: z.enum(['AUTO_RECORDING_TYPE_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
 	moderation: z.enum(['MODERATION_UNSPECIFIED', 'OFF', 'ON']).optional(),
-	attendanceReportGenerationType: z.enum(['ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED', 'DO_NOT_GENERATE', 'GENERATE']).optional(),
+	moderationRestrictions: ModerationRestrictions.optional(),
+	attendanceReportGenerationType: z
+		.enum([
+			'ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED',
+			'DO_NOT_GENERATE',
+			'GENERATE_REPORT',
+		])
+		.optional(),
 	artifactConfig: ArtifactConfig.optional(),
 });
 
@@ -95,8 +135,8 @@ export const GoogleMeetRecording = z.object({
 	name: z.string().optional(),
 	startTime: z.string().optional(),
 	endTime: z.string().optional(),
-	state: z.enum(['STATE_UNSPECIFIED', 'STARTED', 'ENDED', 'FAILED']).optional(),
-	driveDestination: DocsDestination.optional(),
+	state: ArtifactState.optional(),
+	driveDestination: DriveDestination.optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
 
@@ -104,8 +144,8 @@ export const GoogleMeetTranscript = z.object({
 	name: z.string().optional(),
 	startTime: z.string().optional(),
 	endTime: z.string().optional(),
-	state: z.enum(['STATE_UNSPECIFIED', 'STARTED', 'ENDED', 'FAILED']).optional(),
-	driveDestination: DocsDestination.optional(),
+	state: ArtifactState.optional(),
+	docsDestination: DocsDestination.optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
 
@@ -113,8 +153,8 @@ export const GoogleMeetSmartNote = z.object({
 	name: z.string().optional(),
 	startTime: z.string().optional(),
 	endTime: z.string().optional(),
-	state: z.enum(['STATE_UNSPECIFIED', 'STARTED', 'ENDED', 'FAILED']).optional(),
-	driveDestination: DocsDestination.optional(),
+	state: ArtifactState.optional(),
+	docsDestination: DocsDestination.optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
 

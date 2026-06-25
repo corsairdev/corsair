@@ -106,6 +106,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledrive: 'Google Drive',
 	googlesheets: 'Google Sheets',
+	googlemeet: 'Google Meet',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',

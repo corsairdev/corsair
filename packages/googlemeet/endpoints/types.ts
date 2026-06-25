@@ -5,9 +5,33 @@ import { z } from 'zod';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DocsDestinationSchema = z.object({
-	documentUrl: z.string().optional(),
+	document: z.string().optional(),
 	exportUri: z.string().optional(),
 });
+
+const DriveDestinationSchema = z.object({
+	file: z.string().optional(),
+	exportUri: z.string().optional(),
+});
+
+const AutoGenerationTypeSchema = z.enum([
+	'AUTO_GENERATION_TYPE_UNSPECIFIED',
+	'ON',
+	'OFF',
+]);
+
+const ArtifactStateSchema = z.enum([
+	'STATE_UNSPECIFIED',
+	'STARTED',
+	'ENDED',
+	'FILE_GENERATED',
+]);
+
+const RestrictionTypeSchema = z.enum([
+	'RESTRICTION_TYPE_UNSPECIFIED',
+	'HOSTS_ONLY',
+	'NO_RESTRICTION',
+]);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Spaces
@@ -21,33 +45,49 @@ const PhoneAccessSchema = z.object({
 });
 
 const GatewaySipAccessSchema = z.object({
-	sipAccessUri: z.string().optional(),
+	uri: z.string().optional(),
+	sipAccessCode: z.string().optional(),
 });
 
 const ArtifactConfigSchema = z.object({
 	recordingConfig: z
 		.object({
-			autoRecordingGeneration: z.enum(['AUTO_RECORDING_GENERATION_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
+			autoRecordingGeneration: AutoGenerationTypeSchema.optional(),
 		})
 		.optional(),
 	transcriptionConfig: z
 		.object({
-			autoTranscriptionGeneration: z.enum(['AUTO_TRANSCRIPTION_GENERATION_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
+			autoTranscriptionGeneration: AutoGenerationTypeSchema.optional(),
 		})
 		.optional(),
 	smartNotesConfig: z
 		.object({
-			autoSmartNotesGeneration: z.enum(['AUTO_SMART_NOTES_GENERATION_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
+			autoSmartNotesGeneration: AutoGenerationTypeSchema.optional(),
 		})
+		.optional(),
+});
+
+const ModerationRestrictionsSchema = z.object({
+	chatRestriction: RestrictionTypeSchema.optional(),
+	reactionRestriction: RestrictionTypeSchema.optional(),
+	presentRestriction: RestrictionTypeSchema.optional(),
+	defaultJoinAsViewerType: z
+		.enum(['DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED', 'ON', 'OFF'])
 		.optional(),
 });
 
 const SpaceConfigSchema = z.object({
 	accessType: z.enum(['ACCESS_TYPE_UNSPECIFIED', 'OPEN', 'TRUSTED', 'RESTRICTED']).optional(),
 	entryPointAccess: z.enum(['ENTRY_POINT_ACCESS_UNSPECIFIED', 'CREATOR_APP_ONLY', 'ALL']).optional(),
-	autoRecordingType: z.enum(['AUTO_RECORDING_TYPE_UNSPECIFIED', 'OFF', 'ACTIVE_CONFERENCE']).optional(),
 	moderation: z.enum(['MODERATION_UNSPECIFIED', 'OFF', 'ON']).optional(),
-	attendanceReportGenerationType: z.enum(['ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED', 'DO_NOT_GENERATE', 'GENERATE']).optional(),
+	moderationRestrictions: ModerationRestrictionsSchema.optional(),
+	attendanceReportGenerationType: z
+		.enum([
+			'ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED',
+			'DO_NOT_GENERATE',
+			'GENERATE_REPORT',
+		])
+		.optional(),
 	artifactConfig: ArtifactConfigSchema.optional(),
 });
 
@@ -167,9 +207,6 @@ const ListParticipantsResponseSchema = z.object({
 
 const ParticipantSessionSchema = z.object({
 	name: z.string().optional(),
-	signedInUser: SignedInUserSchema.optional(),
-	anonymousUser: AnonymousUserSchema.optional(),
-	phoneUser: PhoneUserSchema.optional(),
 	startTime: z.string().optional(),
 	endTime: z.string().optional(),
 });
@@ -197,8 +234,8 @@ const RecordingSchema = z.object({
 	name: z.string().optional(),
 	startTime: z.string().optional(),
 	endTime: z.string().optional(),
-	state: z.enum(['STATE_UNSPECIFIED', 'STARTED', 'ENDED', 'FAILED']).optional(),
-	driveDestination: DocsDestinationSchema.optional(),
+	state: ArtifactStateSchema.optional(),
+	driveDestination: DriveDestinationSchema.optional(),
 });
 
 const GetRecordingInputSchema = z.object({
@@ -224,8 +261,8 @@ const TranscriptSchema = z.object({
 	name: z.string().optional(),
 	startTime: z.string().optional(),
 	endTime: z.string().optional(),
-	state: z.enum(['STATE_UNSPECIFIED', 'STARTED', 'ENDED', 'FAILED']).optional(),
-	driveDestination: DocsDestinationSchema.optional(),
+	state: ArtifactStateSchema.optional(),
+	docsDestination: DocsDestinationSchema.optional(),
 });
 
 const GetTranscriptInputSchema = z.object({
@@ -249,10 +286,11 @@ const ListTranscriptsResponseSchema = z.object({
 
 const TranscriptEntrySchema = z.object({
 	name: z.string().optional(),
-	user: SignedInUserSchema.optional(),
-	speechOffset: z.string().optional(),
-	speechDuration: z.string().optional(),
-	formattedText: z.string().optional(),
+	participant: z.string().optional(),
+	text: z.string().optional(),
+	languageCode: z.string().optional(),
+	startTime: z.string().optional(),
+	endTime: z.string().optional(),
 });
 
 const GetTranscriptEntryInputSchema = z.object({
@@ -278,8 +316,8 @@ const SmartNoteSchema = z.object({
 	name: z.string().optional(),
 	startTime: z.string().optional(),
 	endTime: z.string().optional(),
-	state: z.enum(['STATE_UNSPECIFIED', 'STARTED', 'ENDED', 'FAILED']).optional(),
-	driveDestination: DocsDestinationSchema.optional(),
+	state: ArtifactStateSchema.optional(),
+	docsDestination: DocsDestinationSchema.optional(),
 });
 
 const GetSmartNoteInputSchema = z.object({
