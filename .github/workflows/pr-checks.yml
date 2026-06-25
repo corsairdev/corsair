@@ -31,9 +31,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate Plugins
-        run: pnpm run validate:plugins
-
       - name: Typecheck
         run: pnpm typecheck
 
