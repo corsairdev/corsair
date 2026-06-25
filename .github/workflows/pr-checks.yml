@@ -31,14 +31,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Lint
+        run: pnpm lint
+
+      - name: Validate Plugins
+        run: pnpm run validate:plugins
+
       - name: Typecheck
         run: pnpm typecheck
 
       - name: Build
-        run: pnpm turbo run build --filter='!@corsair-dev/twilio' --filter='@corsair-dev/zohomail'
+        run: pnpm build
 
       - name: Run tests
         run: npx turbo test -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
         env:
           CI: true
           SKIP_PG_TESTS: 1
+          
