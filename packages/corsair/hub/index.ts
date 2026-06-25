@@ -21,9 +21,9 @@
  *
  * ## Framework helpers
  *
- * `createHubRouteHandlers(corsair)` returns `{ delivery }` for Next.js App Router
- * route exports. Connect links are created via `client.connect.createLink()` on the
- * management handler when `hub: {}` is configured on the Corsair instance.
+ * `createHubRouteHandlers(corsair)` is optional when using `toNextJsHandler` — hub
+ * delivery at the base path is handled automatically. Use it only for custom
+ * routing or non-Next.js setups that mount delivery separately.
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {

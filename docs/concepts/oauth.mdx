@@ -76,11 +76,11 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts app/api/corsair/[...path]/route.ts
+```ts app/api/corsair/[[...path]]/route.ts
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server/corsair";
 
-export const { GET, POST } = toNextJsHandler(corsair, {
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
     basePath: "/api/corsair",
 });
 ```

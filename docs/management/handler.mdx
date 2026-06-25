@@ -49,16 +49,16 @@ Each adapter is a thin wrapper around `managementHandler`. All three are exporte
 
 ### Next.js
 
-```ts app/api/corsair/[...path]/route.ts
+```ts app/api/corsair/[[...path]]/route.ts
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server";
 
-export const { GET, POST } = toNextJsHandler(corsair, {
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
   basePath: "/api/corsair",
 });
 ```
 
-Works in App Router. Both `GET` and `POST` exports point at the same handler.
+Works in App Router. `GET`, `POST`, and `OPTIONS` share one handler — hub delivery at the base path plus management subpaths.
 
 ### Express
 

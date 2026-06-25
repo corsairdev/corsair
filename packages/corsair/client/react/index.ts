@@ -6,6 +6,7 @@ import type {
 	CreateTenantInput,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginInfo,
 	Tenant,
