@@ -3,15 +3,17 @@ title: OAuth 2.0 Authentication
 description: Connect user accounts with OAuth 2.0 flows in Corsair plugins.
 ---
 
-OAuth 2.0 lets users authorize your application to act on their behalf. Corsair handles the entire flow — generating authorization URLs, processing callbacks, storing tokens encrypted, and refreshing them automatically when they expire.
+OAuth 2.0 lets users authorize your application to act on their behalf. Corsair handles the entire flow — minting connect links, processing callbacks, storing tokens encrypted, and refreshing them automatically when they expire.
 
 ## How it works
 
 1. You register an OAuth app with the service and get a `client_id` and `client_secret`
-2. Corsair generates an authorization URL for the user to visit
+2. Your app calls `client.connect.createLink()` and redirects the user to the returned URL
 3. After the user approves, the service redirects back with an authorization code
 4. Corsair exchanges the code for access and refresh tokens and stores them encrypted
 5. On every API call, Corsair checks token expiry and refreshes automatically
+
+Corsair supports two connect modes — **`hub`** (Corsair hosts the UI) or **`manual`** (you host connect pages). Both use the same `createLink` API. See [Connect / OAuth](/management/connect) for the full reference.
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
@@ -20,6 +22,7 @@ import { gmail } from "@corsair-dev/gmail";
 export const corsair = createCorsair({
     plugins: [gmail({ authType: "oauth_2" })],
     kek: process.env.CORSAIR_KEK!,
+    database: db,
 });
 ```
 
@@ -33,6 +36,7 @@ Solo mode connects a single account to your application. Use this for scripts, i
 export const corsair = createCorsair({
     plugins: [gmail({ authType: "oauth_2" })],
     kek: process.env.CORSAIR_KEK!,
+    database: db,
 });
 ```
 
@@ -57,13 +61,27 @@ Tokens are refreshed automatically when they expire — no intervention needed.
 
 ## Multi-tenant setup
 
-In multi-tenant mode, each user connects their own account. You need an OAuth callback route in your application that Corsair processes.
+In multi-tenant mode, each user connects their own account. Configure **manual** connect mode and mount the [management handler](/management/handler).
 
 ```ts corsair.ts
 export const corsair = createCorsair({
     multiTenancy: true,
     plugins: [gmail({ authType: "oauth_2" })],
     kek: process.env.CORSAIR_KEK!,
+    database: db,
+    manual: {
+        baseUrl: `${process.env.APP_URL}/connect`,
+        redirectUri: `${process.env.APP_URL}/api/oauth/callback`,
+    },
+});
+```
+
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+    basePath: "/api/corsair",
 });
 ```
 
@@ -75,49 +93,88 @@ Store your client credentials once — these are shared across all tenants:
 pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
 ```
 
-### 2. Generate the authorization URL
+### 2. Create a connect link
 
-When a user wants to connect their account, redirect them to the authorization URL:
+When a user wants to connect, mint a link from your authenticated backend and redirect them:
 
-```ts app/api/connect/route.ts
-import { generateOAuthUrl } from "corsair/oauth";
+```ts app/actions/connect.ts
+"use server";
+
 import { corsair } from "@/server/corsair";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { getSessionTenantId } from "@/server/auth";
 
-const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
+export async function startOAuthConnect(plugin: string) {
+    const tenantId = await getSessionTenantId();
+    if (!tenantId) throw new Error("Unauthorized");
 
-export async function GET(request: NextRequest) {
-    const tenantId = getUserIdFromSession(request); // your auth logic
-    const plugin = new URL(request.url).searchParams.get("plugin")!;
-
-    const { url, state } = await generateOAuthUrl(corsair, plugin, {
+    const { connectUrl } = await corsair.manage.connect.createLink({
+        plugin,
         tenantId,
-        redirectUri: REDIRECT_URI,
     });
 
-    const response = NextResponse.redirect(url);
-    response.cookies.set("oauth_state", state, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 10,
-    });
-    return response;
+    return connectUrl;
 }
 ```
 
-### 3. Handle the callback
+Or from the client via the [management client](/management/client):
 
-After the user approves, the service redirects to your callback URL. Process it with Corsair:
+```tsx connect-button.tsx
+"use client";
 
-```ts app/api/auth/route.ts
-import { processOAuthCallback } from "corsair/oauth";
+import { createCorsairReactClient } from "corsair/client/react";
+
+const { useCreateConnectLink } = createCorsairReactClient({
+    baseURL: "/api/corsair",
+});
+
+function ConnectGmail({ tenantId }: { tenantId: string }) {
+    const { mutate, loading } = useCreateConnectLink();
+
+    return (
+        <button
+            disabled={loading}
+            onClick={async () => {
+                const link = await mutate({ plugin: "gmail", tenantId });
+                if (link) window.location.href = link.connectUrl;
+            }}
+        >
+            Connect Gmail
+        </button>
+    );
+}
+```
+
+The signed `state` is embedded in `connectUrl` — you do not store it separately.
+
+### 3. Resolve on your connect page
+
+The user lands on `/connect?state=…`. Resolve the state and redirect to the provider:
+
+```ts app/connect/page.tsx
+import { redirect } from "next/navigation";
+import { corsair } from "@/server/corsair";
+
+export default async function ConnectPage({
+    searchParams,
+}: {
+    searchParams: Promise<{ state?: string }>;
+}) {
+    const { state } = await searchParams;
+    if (!state) return <p>Missing state.</p>;
+
+    const { oauthUrl } = await corsair.manage.connect.resolve(state);
+    redirect(oauthUrl);
+}
+```
+
+### 4. Handle the callback
+
+After the user approves, the provider redirects to your callback URL:
+
+```ts app/api/oauth/callback/route.ts
 import { corsair } from "@/server/corsair";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-
-const REDIRECT_URI = `${process.env.APP_URL}/api/auth`;
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -125,38 +182,23 @@ export async function GET(request: NextRequest) {
     const state = searchParams.get("state");
 
     if (!code || !state) {
-        const response = new NextResponse("Missing code or state.", { status: 400 });
-        response.cookies.delete("oauth_state");
-        return response;
+        return new NextResponse("Missing code or state.", { status: 400 });
     }
 
-    const storedState = request.cookies.get("oauth_state")?.value;
-    if (!storedState || storedState !== state) {
-        const response = new NextResponse("Invalid state.", { status: 400 });
-        response.cookies.delete("oauth_state");
-        return response;
-    }
-
-    try {
-        const result = await processOAuthCallback(corsair, { code, state, redirectUri: REDIRECT_URI });
-        const response = NextResponse.redirect("/dashboard?connected=" + result.plugin);
-        response.cookies.delete("oauth_state");
-        return response;
-    } catch {
-        const response = new NextResponse("OAuth failed.", { status: 500 });
-        response.cookies.delete("oauth_state");
-        return response;
-    }
+    const result = await corsair.manage.connect.oauthCallback({ code, state });
+    return NextResponse.redirect(
+        `/dashboard?connected=${encodeURIComponent(result.plugin)}`,
+    );
 }
 ```
 
 Corsair extracts the `tenantId` from the HMAC-signed state, exchanges the code for tokens, and stores them encrypted for that tenant.
 
 <Info>
-See [Production: OAuth Process](/production/oauth-process) for a full implementation with security best practices — authenticated routes, cookie hardening, CSRF protection, and HTML escaping.
+See [Production: OAuth Process](/production/oauth-process) for a full implementation with security best practices — authenticated link creation, HTML escaping, and production checklists.
 </Info>
 
-### 4. Make API calls per tenant
+### 5. Make API calls per tenant
 
 ```ts usage.ts
 const tenant = corsair.withTenant("user_abc123");
@@ -164,6 +206,10 @@ const tenant = corsair.withTenant("user_abc123");
 // Uses user_abc123's connected account
 const messages = await tenant.gmail.api.messages.list({ maxResults: 10 });
 ```
+
+### Hub mode alternative
+
+If you don't want to build connect pages, use `hub: { ... }` instead of `manual`. Call the same `createLink` API — the URL points to Corsair Hub's hosted UI. See [Connect / OAuth](/management/connect#hub-mode-hosted-connect-ui).
 
 ---
 

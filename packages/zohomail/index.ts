@@ -32,6 +32,7 @@ import { errorHandlers } from './error-handlers';
 import type { ZohoMailCredentials } from './schema';
 import { ZohoMailSchema } from './schema';
 import { ChallengeWebhooks, MessageWebhooks } from './webhooks';
+import { matchZohoMailTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ZohoMailChallengePayload,
 	ZohoMailWebhookEvent,
@@ -46,7 +47,11 @@ import {
 } from './webhooks/types';
 
 /** Zoho Mail uses standard OAuth2; no plugin-specific integration fields. */
-export const zohoMailAuthConfig = {} as const satisfies PluginAuthConfig;
+export const zohoMailAuthConfig = {
+	oauth_2: {
+		account: ['zuid'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 export type ZohoMailContext = CorsairPluginContext<
 	typeof ZohoMailSchema,
@@ -325,6 +330,7 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 				getZohoWebhookSecretFromRequest(headers) !== undefined
 			);
 		},
+		pluginTenantWebhookMatcher: matchZohoMailTenantWebhook,
 		keyBuilder: async (ctx: ZohoMailKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

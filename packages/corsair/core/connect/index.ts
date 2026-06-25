@@ -1,32 +1,52 @@
-import * as querystring from 'node:querystring';
-import type { CorsairInternalConfig, CorsairPlugin, OAuthConfig } from '..';
-import { CORSAIR_INTERNAL, createIntegrationKeyManager } from '..';
+import { buildOAuthAuthorizeUrl } from '../../oauth/authorize-url';
+import type { CorsairPlugin, OAuthConfig } from '..';
+import { createIntegrationKeyManager } from '..';
 import { verifyAndDecodeState } from '../auth/state';
+import {
+	getCorsairInternal,
+	requireCorsairPlugin,
+} from '../utils/corsair-instance';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Structured errors
+//
+// Callers (e.g. the management handler) need to map specific failure modes to
+// distinct HTTP responses. Matching on free-form `error.message` strings is
+// brittle: a future copy-edit silently changes the classification. The `code`
+// field is the contract — `message` is for humans.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type ConnectErrorCode =
+	| 'invalid_corsair_instance'
+	| 'no_database'
+	| 'no_redirect_uri'
+	| 'invalid_state'
+	| 'plugin_not_found'
+	| 'plugin_has_no_oauth_config'
+	| 'client_id_not_configured';
+
+export class ConnectError extends Error {
+	readonly code: ConnectErrorCode;
+
+	constructor(code: ConnectErrorCode, message: string) {
+		super(message);
+		this.name = 'ConnectError';
+		this.code = code;
+	}
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) throw new Error('Invalid corsair instance');
-	return internal;
-}
-
-function findPlugin(
-	internal: CorsairInternalConfig,
-	pluginId: string,
-): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) throw new Error(`Plugin '${pluginId}' not found`);
-	return plugin;
-}
-
 function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
 	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
-	if (!cfg) throw new Error(`Plugin '${plugin.id}' has no oauthConfig`);
+	if (!cfg) {
+		throw new ConnectError(
+			'plugin_has_no_oauth_config',
+			`Plugin '${plugin.id}' has no oauthConfig`,
+		);
+	}
 	return cfg;
 }
 
@@ -55,7 +75,7 @@ export type ResolveConnectLinkResult = {
  * and returns the full OAuth authorization URL so you just have to render
  * a "Connect" button linking to `result.oauthUrl`.
  *
- * Uses the `redirectUri` from `createCorsair({ connect: { redirectUri } })`.
+ * Uses the `redirectUri` from `createCorsair({ manual: { redirectUri } })`.
  *
  * @param corsair - The corsair instance
  * @param state - The `state` query parameter from the connect URL
@@ -73,24 +93,41 @@ export async function resolveConnectLink(
 	corsair: unknown,
 	state: string,
 ): Promise<ResolveConnectLinkResult> {
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new ConnectError('invalid_corsair_instance', 'Invalid corsair instance'),
+	);
 
 	if (!internal.database) {
-		throw new Error('No database configured on corsair instance');
+		throw new ConnectError(
+			'no_database',
+			'No database configured on corsair instance',
+		);
 	}
 
-	const redirectUri = internal.connect?.redirectUri;
+	const redirectUri = internal.manual?.redirectUri;
 	if (!redirectUri) {
-		throw new Error(
-			'No redirectUri configured. Set connect.redirectUri in createCorsair().',
+		throw new ConnectError(
+			'no_redirect_uri',
+			'No redirectUri configured. Set manual.redirectUri in createCorsair().',
 		);
 	}
 
 	const decoded = verifyAndDecodeState(state, internal.kek);
-	if (!decoded) throw new Error('Invalid or tampered state parameter');
+	if (!decoded) {
+		throw new ConnectError(
+			'invalid_state',
+			'Invalid or tampered state parameter',
+		);
+	}
 
 	const { plugin: pluginId, tenantId } = decoded;
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new ConnectError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({
@@ -102,19 +139,18 @@ export async function resolveConnectLink(
 
 	const clientId = await integrationKm.get_client_id();
 	if (!clientId) {
-		throw new Error(`client_id not configured for '${pluginId}'`);
+		throw new ConnectError(
+			'client_id_not_configured',
+			`client_id not configured for '${pluginId}'`,
+		);
 	}
 
-	const params: Record<string, string> = {
-		...oauthCfg.authParams,
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: 'code',
-		scope: oauthCfg.scopes.join(' '),
+	const oauthUrl = buildOAuthAuthorizeUrl({
+		oauthConfig: oauthCfg,
+		clientId,
+		redirectUri,
 		state,
-	};
-
-	const oauthUrl = `${oauthCfg.authUrl}?${querystring.stringify(params)}`;
+	});
 
 	return {
 		plugin: pluginId,

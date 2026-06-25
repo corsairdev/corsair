@@ -1,0 +1,471 @@
+import type { CorsairInternalConfig } from '../core';
+import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { getConnectStatusForTenant } from '../hub/connect-status';
+import type { TunnelEnvelope } from '../hub/contracts/tunnel';
+import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
+import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
+import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
+import { processManagedOAuthDelivery } from '../hub/managed-oauth';
+import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
+import { processOAuthCallback } from '../oauth';
+import { processWebhook } from '../webhooks';
+import {
+	resolveAccountFromWebhookLink,
+	resolveTenantFromWebhookLink,
+	resolveTenantIdFromWebhookLink,
+	setWebhookTenantLink,
+} from '../webhooks/tenant-links';
+
+export {
+	resolveAccountFromWebhookLink,
+	resolveTenantFromWebhookLink,
+	resolveTenantIdFromWebhookLink,
+	setWebhookTenantLink,
+};
+
+export type { TunnelEnvelope, TunnelType } from '../hub/contracts/tunnel';
+export { verifySignedTunnelDelivery } from '../hub/signing/envelope';
+export {
+	type BrowserDeliveryPayload,
+	isAuthCredentialsBrowserDelivery,
+	isByoOAuthBrowserDelivery,
+	isConnectStatusBrowserDelivery,
+	isManagedBrowserDelivery,
+	isPermissionBrowserDelivery,
+	verifyBrowserDeliveryToken,
+} from './browser-delivery';
+
+export type TunnelAck = {
+	status: 'ok' | 'failed';
+	retryable?: boolean;
+	error?: string;
+	webhookResponse?: {
+		status?: number;
+		body?: unknown;
+		headers?: Record<string, string>;
+	};
+};
+
+export type WebhookTunnelPayload = {
+	headers: Record<string, string>;
+	body: string;
+	bodyBase64?: string;
+	bodyEncoding?: string;
+	query?: Record<string, string | string[] | undefined>;
+	plugin?: string;
+	linkType?: string;
+	externalId?: string;
+	tenantId?: string;
+};
+
+export type OAuthCallbackTunnelPayload = {
+	code: string;
+	state: string;
+	redirectUri: string;
+};
+
+export type OAuthTokensTunnelPayload = {
+	plugin: string;
+	tenantId: string;
+	accessToken: string;
+	refreshToken?: string;
+	expiresIn?: number;
+	scope?: string;
+};
+
+export type PermissionDecisionTunnelPayload = {
+	token: string;
+};
+
+export type AuthCredentialsTunnelPayload = {
+	plugin: string;
+	tenantId: string;
+	credentials: Record<string, string>;
+};
+
+export type ConnectStatusTunnelPayload = {
+	tenantId: string;
+	plugins?: string[];
+};
+
+export type ProcessCorsairRequest = {
+	headers: Headers | Record<string, string | string[] | undefined>;
+	body: string;
+};
+
+function normalizeHeader(
+	headers: ProcessCorsairRequest['headers'],
+	name: string,
+): string | undefined {
+	if (headers instanceof Headers) {
+		return headers.get(name) ?? undefined;
+	}
+	const value = headers[name] ?? headers[name.toLowerCase()];
+	if (Array.isArray(value)) return value[0];
+	return typeof value === 'string' ? value : undefined;
+}
+
+async function resolveWebhookTenantId(
+	corsair: unknown,
+	internal: CorsairInternalConfig,
+	payload: WebhookTunnelPayload,
+): Promise<string | undefined> {
+	const explicitTenantId =
+		typeof payload.tenantId === 'string'
+			? payload.tenantId
+			: typeof payload.query?.tenantId === 'string'
+				? payload.query.tenantId
+				: undefined;
+
+	if (explicitTenantId) return explicitTenantId;
+
+	if (
+		!internal.database ||
+		!payload.plugin ||
+		!payload.linkType ||
+		!payload.externalId
+	) {
+		return undefined;
+	}
+
+	const resolved = await resolveTenantIdFromWebhookLink({
+		database: internal.database,
+		kek: internal.kek,
+		pluginId: payload.plugin,
+		linkType: payload.linkType,
+		externalId: payload.externalId,
+	});
+
+	return resolved ?? undefined;
+}
+
+async function handleWebhookTunnel(
+	corsair: unknown,
+	internal: CorsairInternalConfig,
+	payload: WebhookTunnelPayload,
+): Promise<TunnelAck> {
+	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
+	const query = {
+		...(payload.query ?? {}),
+		...(tenantId ? { tenantId } : {}),
+	};
+
+	const result = await processWebhook(
+		corsair as Parameters<typeof processWebhook>[0],
+		payload.headers,
+		payload.body,
+		query,
+	);
+
+	if (!result.plugin) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'No matching webhook handler found',
+		};
+	}
+
+	if (result.response && result.response.success === false) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				typeof result.response.error === 'string'
+					? result.response.error
+					: 'Webhook handler failed',
+		};
+	}
+
+	const returnToSender = result.response?.returnToSender;
+	const responseBody =
+		returnToSender &&
+		typeof returnToSender === 'object' &&
+		typeof returnToSender.validationToken === 'string' &&
+		Object.keys(returnToSender).length === 1
+			? returnToSender.validationToken
+			: returnToSender
+				? returnToSender
+				: (result.response?.data ?? result.response);
+
+	return {
+		status: 'ok',
+		webhookResponse: {
+			status: result.response?.statusCode ?? 200,
+			body: responseBody,
+			headers: result.responseHeaders,
+		},
+	};
+}
+
+async function handleOAuthCallbackTunnel(
+	corsair: unknown,
+	payload: OAuthCallbackTunnelPayload,
+): Promise<TunnelAck> {
+	await processOAuthCallback(corsair, payload);
+	return { status: 'ok' };
+}
+
+async function handleOAuthTokensTunnel(
+	corsair: unknown,
+	payload: OAuthTokensTunnelPayload,
+): Promise<TunnelAck> {
+	await processManagedOAuthDelivery(corsair, {
+		plugin: payload.plugin,
+		tenantId: payload.tenantId,
+		accessToken: payload.accessToken,
+		refreshToken: payload.refreshToken,
+		expiresIn: payload.expiresIn,
+		scope: payload.scope,
+	});
+	return { status: 'ok' };
+}
+
+export async function applyPermissionDecision(
+	corsair: unknown,
+	token: string,
+	decision: 'approved' | 'denied',
+): Promise<void> {
+	const ack = await handlePermissionDecisionTunnel(
+		corsair,
+		{ token },
+		decision,
+	);
+	if (ack.status !== 'ok') {
+		throw new Error(ack.error ?? 'Permission decision failed');
+	}
+}
+
+async function handlePermissionDecisionTunnel(
+	corsair: unknown,
+	payload: PermissionDecisionTunnelPayload,
+	decision: 'approved' | 'denied',
+): Promise<TunnelAck> {
+	const internal = getCorsairInternal(corsair);
+	const token = payload.token?.trim();
+	if (!token) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Permission token is required',
+		};
+	}
+
+	if (!internal.database) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Database not configured',
+		};
+	}
+
+	const now = new Date().toISOString();
+	const record = await internal.database.db
+		.selectFrom('corsair_permissions')
+		.selectAll()
+		.where('token', '=', token)
+		.executeTakeFirst();
+
+	if (!record) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Permission not found',
+		};
+	}
+
+	if (record.status !== 'pending') {
+		return { status: 'ok' };
+	}
+
+	if (record.expires_at < now) {
+		await internal.database.db
+			.updateTable('corsair_permissions')
+			.set({ status: 'expired', updated_at: new Date() })
+			.where('id', '=', record.id)
+			.execute();
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Permission has expired',
+		};
+	}
+
+	await internal.database.db
+		.updateTable('corsair_permissions')
+		.set({ status: decision, updated_at: new Date() })
+		.where('id', '=', record.id)
+		.execute();
+
+	return { status: 'ok' };
+}
+
+async function handleAuthCredentialsTunnel(
+	corsair: unknown,
+	payload: AuthCredentialsTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		await processAuthCredentialsDelivery(corsair, payload);
+		return { status: 'ok' };
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				error instanceof Error ? error.message : 'Credential delivery failed',
+		};
+	}
+}
+
+async function handleConnectStatusTunnel(
+	corsair: unknown,
+	payload: ConnectStatusTunnelPayload,
+): Promise<TunnelAck> {
+	const tenantId = payload.tenantId?.trim() || 'default';
+	try {
+		const status = await getConnectStatusForTenant(corsair, tenantId, {
+			pluginIds: payload.plugins,
+		});
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: status,
+			},
+		};
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				error instanceof Error
+					? error.message
+					: 'Connect status introspection failed',
+		};
+	}
+}
+
+export type ProcessCorsairOptions = {
+	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
+	signingSecret?: string;
+	/** Local development only. Skips signature verification when signingSecret is omitted. */
+	allowUnsignedTunnel?: boolean;
+};
+
+export async function processCorsair(
+	corsair: unknown,
+	request: ProcessCorsairRequest,
+	options: ProcessCorsairOptions = {},
+): Promise<TunnelAck> {
+	const internal = getCorsairInternal(corsair);
+	const signatureHeader = normalizeHeader(
+		request.headers,
+		'x-corsair-signature',
+	);
+	const timestampHeader = normalizeHeader(
+		request.headers,
+		'x-corsair-timestamp',
+	);
+	const nonceHeader = normalizeHeader(request.headers, 'x-corsair-nonce');
+
+	if (!options.signingSecret?.trim()) {
+		if (!options.allowUnsignedTunnel) {
+			return {
+				status: 'failed',
+				retryable: false,
+				error: 'Tunnel signing secret is required',
+			};
+		}
+	} else {
+		const verification = verifySignedTunnelDelivery({
+			body: request.body,
+			signatureHeader,
+			timestampHeader,
+			signingSecret: options.signingSecret,
+		});
+		if (!verification.ok) {
+			return {
+				status: 'failed',
+				retryable: false,
+				error: verification.error,
+			};
+		}
+
+		if (!nonceHeader?.trim()) {
+			return {
+				status: 'failed',
+				retryable: false,
+				error: 'Missing tunnel nonce',
+			};
+		}
+
+		const replayCheck = consumeDeliveryReplayKey(
+			`nonce:${nonceHeader.trim()}`,
+			SIGNED_TUNNEL_REPLAY_WINDOW_MS,
+		);
+		if (!replayCheck.ok) {
+			return {
+				status: 'failed',
+				retryable: false,
+				error: replayCheck.error,
+			};
+		}
+	}
+
+	let envelope: TunnelEnvelope;
+	try {
+		envelope = JSON.parse(request.body) as TunnelEnvelope;
+	} catch {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: 'Invalid tunnel envelope JSON',
+		};
+	}
+
+	switch (envelope.type) {
+		case 'webhook':
+			return handleWebhookTunnel(
+				corsair,
+				internal,
+				envelope.payload as WebhookTunnelPayload,
+			);
+		case 'oauth.callback':
+			return handleOAuthCallbackTunnel(
+				corsair,
+				envelope.payload as OAuthCallbackTunnelPayload,
+			);
+		case 'oauth.tokens':
+			return handleOAuthTokensTunnel(
+				corsair,
+				envelope.payload as OAuthTokensTunnelPayload,
+			);
+		case 'permission.approve':
+			return handlePermissionDecisionTunnel(
+				corsair,
+				envelope.payload as PermissionDecisionTunnelPayload,
+				'approved',
+			);
+		case 'permission.deny':
+			return handlePermissionDecisionTunnel(
+				corsair,
+				envelope.payload as PermissionDecisionTunnelPayload,
+				'denied',
+			);
+		case 'auth.credentials':
+			return handleAuthCredentialsTunnel(
+				corsair,
+				envelope.payload as AuthCredentialsTunnelPayload,
+			);
+		case 'connect.status':
+			return handleConnectStatusTunnel(
+				corsair,
+				envelope.payload as ConnectStatusTunnelPayload,
+			);
+		default:
+			return {
+				status: 'failed',
+				retryable: false,
+				error: `Unsupported tunnel type: ${envelope.type}`,
+			};
+	}
+}

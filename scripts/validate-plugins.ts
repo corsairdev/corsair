@@ -13,8 +13,11 @@ const plugins = fs
 
 let hasErrors = false;
 
-function logError(plugin: string, message: string) {
+function logError(plugin: string, message: string, fix?: string) {
 	console.error(`[ERROR] [${plugin}] ${message}`);
+	console.error(
+		`  -> Fix/Reference: ${fix || 'See packages/slack for a compliant example'}`,
+	);
 	hasErrors = true;
 }
 
@@ -56,9 +59,30 @@ for (const plugin of plugins) {
 		logError(plugin, 'Must have "@types/jest" in devDependencies');
 	}
 
-	// 3. Check for index.ts
-	if (!fs.existsSync(path.join(pluginPath, 'index.ts'))) {
+	// 3. Check for index.ts and its contents
+	const indexTsPath = path.join(pluginPath, 'index.ts');
+	if (!fs.existsSync(indexTsPath)) {
 		logError(plugin, 'Missing index.ts');
+	} else {
+		const indexTsContent = fs.readFileSync(indexTsPath, 'utf8');
+
+		// 3.1 Check for database schema import
+		if (!/from\s+['"]\.\/schema\/?['"]/.test(indexTsContent)) {
+			logError(
+				plugin,
+				'Missing database schema import in index.ts',
+				'Add `import ... from "./schema"`',
+			);
+		}
+
+		// 3.2 Check for RequiredPluginEndpointMeta validation
+		if (!/satisfies\s+RequiredPluginEndpointMeta\s*</.test(indexTsContent)) {
+			logError(
+				plugin,
+				'endpointMeta missing RequiredPluginEndpointMeta validation',
+				'Add `satisfies RequiredPluginEndpointMeta<typeof yourEndpointsNested>` to endpointMeta',
+			);
+		}
 	}
 
 	// 4. Check for endpoints directory or endpoints.ts file
@@ -71,17 +95,68 @@ for (const plugin of plugins) {
 		logError(plugin, 'Missing endpoints/ directory or endpoints.ts file');
 	}
 
+	if (hasEndpointsDir) {
+		const endpointsPath = path.join(pluginPath, 'endpoints');
+
+		// 4.1 Check for operation-groups directory (not allowed)
+		if (fs.existsSync(path.join(endpointsPath, 'operation-groups'))) {
+			logError(
+				plugin,
+				'Forbidden directory: endpoints/operation-groups',
+				'Define endpoints as individual exported functions instead of operation-groups',
+			);
+		}
+
+		// 4.2 Recursively check all files in endpoints/
+		const checkEndpointFiles = (dir: string) => {
+			const items = fs.readdirSync(dir, { withFileTypes: true });
+			for (const item of items) {
+				const fullPath = path.join(dir, item.name);
+				if (item.isDirectory()) {
+					checkEndpointFiles(fullPath);
+				} else if (item.isFile() && fullPath.endsWith('.ts')) {
+					const content = fs.readFileSync(fullPath, 'utf8');
+					if (/satisfies\s+(?:readonly\s+)?\w*Operation\[\]/.test(content)) {
+						logError(
+							plugin,
+							`Invalid endpoint array syntax in ${item.name}`,
+							'Export individual endpoint functions instead of an array of Operations',
+						);
+					}
+				}
+			}
+		};
+		checkEndpointFiles(endpointsPath);
+
+		// 4.3 Check for types.ts and schemas
+		const typesTsPath = path.join(endpointsPath, 'types.ts');
+		if (!fs.existsSync(typesTsPath)) {
+			logError(
+				plugin,
+				'Missing endpoints/types.ts file',
+				'Create endpoints/types.ts to hold Zod schema definitions for this plugin',
+			);
+		} else {
+			const typesContent = fs.readFileSync(typesTsPath, 'utf8');
+			if (
+				!/EndpointInputSchemas/.test(typesContent) ||
+				!/EndpointOutputSchemas/.test(typesContent)
+			) {
+				logError(
+					plugin,
+					'Missing schema exports in endpoints/types.ts',
+					'Export EndpointInputSchemas and EndpointOutputSchemas',
+				);
+			}
+		}
+	}
+
 	// 5. Check for test files (must have api.test.ts, integration.test.ts, or be inside a tests/ dir)
 	const files = fs.readdirSync(pluginPath);
 	const hasTestFile = files.some((f) => f.endsWith('.test.ts'));
 	const hasTestsDir = fs.existsSync(path.join(pluginPath, 'tests'));
 
-	const PLUGINS_WITHOUT_TESTS_YET = ['bitwarden', 'dodopayments'];
-	if (
-		!hasTestFile &&
-		!hasTestsDir &&
-		!PLUGINS_WITHOUT_TESTS_YET.includes(plugin)
-	) {
+	if (!hasTestFile && !hasTestsDir) {
 		logError(
 			plugin,
 			'Must have at least one test file (*.test.ts) or a tests/ directory',

@@ -3,6 +3,7 @@ packages:
   - docs
   - demo/*
   - www
+  - hub
 
 catalog:
   typescript: ^5.9.3

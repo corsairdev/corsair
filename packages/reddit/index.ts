@@ -22,6 +22,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { RedditSchema } from './schema';
+import { matchRedditTenantWebhook } from './webhooks/tenant-matcher';
 
 export type RedditPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -335,7 +336,7 @@ const redditEndpointMeta = {
 
 export const redditAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['subreddit_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -362,6 +363,7 @@ export function reddit<const T extends RedditPluginOptions>(
 	};
 	return {
 		id: 'reddit',
+		authConfig: redditAuthConfig,
 		schema: RedditSchema,
 		options,
 		hooks: options.hooks,
@@ -371,6 +373,7 @@ export function reddit<const T extends RedditPluginOptions>(
 		endpointMeta: redditEndpointMeta,
 		endpointSchemas: redditEndpointSchemas,
 		pluginWebhookMatcher: (_request) => false,
+		pluginTenantWebhookMatcher: matchRedditTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

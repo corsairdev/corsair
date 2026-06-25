@@ -35,6 +35,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TypeformSchema } from './schema';
 import { FormWebhooks } from './webhooks';
+import { matchTypeformTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TypeformFormResponseEvent,
 	TypeformWebhookOutputs,
@@ -480,7 +481,7 @@ const typeformWebhookSchemas = {
 
 export const typeformAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['form_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -512,6 +513,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 
 	return {
 		id: 'typeform',
+		authConfig: typeformAuthConfig,
 		schema: TypeformSchema,
 		options: options,
 		hooks: options.hooks,
@@ -525,6 +527,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 			const headers = request.headers;
 			return 'typeform-signature' in headers || 'Typeform-Signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchTypeformTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

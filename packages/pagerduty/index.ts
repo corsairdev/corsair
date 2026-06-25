@@ -25,6 +25,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { PagerdutySchema } from './schema';
 import { IncidentWebhooks } from './webhooks';
+import { matchPagerdutyTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	IncidentAcknowledgedEvent,
 	IncidentAssignedEvent,
@@ -224,7 +225,7 @@ const pagerdutyEndpointMeta = {
 
 export const pagerdutyAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['subdomain'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -291,6 +292,7 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 	};
 	return {
 		id: 'pagerduty',
+		authConfig: pagerdutyAuthConfig,
 		schema: PagerdutySchema,
 		options: options,
 		hooks: options.hooks,
@@ -304,6 +306,7 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 			const headers = request.headers;
 			return 'x-pagerduty-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchPagerdutyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
