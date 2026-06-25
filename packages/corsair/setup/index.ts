@@ -665,6 +665,10 @@ async function checkAuthStatus(
 
 	if (isReady) {
 		log(`[corsair:setup] '${pluginId}' (${authType}) is configured ✓`);
+	} else if (authType === 'managed') {
+		log(
+			`[corsair:setup] '${pluginId}' (managed) is not connected yet. Use Connect in your app — Corsair Hub delivers OAuth tokens after authorization.`,
+		);
 	} else {
 		const allMissing = [...missingIntegration, ...missingAccount];
 

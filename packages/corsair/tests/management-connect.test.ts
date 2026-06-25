@@ -415,7 +415,6 @@ describe('corsair.manage.connect — hub mode', () => {
 		try {
 			const link = await (corsair as any).manage.connect.createLink({
 				plugin: 'slack',
-				source: 'client',
 			});
 			expect(link).toEqual({
 				connectUrl: 'https://auth.corsair.dev/connect/signed-token',

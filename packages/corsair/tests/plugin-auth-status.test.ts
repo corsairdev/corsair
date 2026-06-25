@@ -22,11 +22,21 @@ const slackApiKey = {
 	},
 } as unknown as CorsairPlugin;
 
+const githubManaged = {
+	id: 'github',
+	options: { authType: 'managed' as const },
+	authConfig: {
+		managed: {
+			account: ['installation_id'] as const,
+		},
+	},
+} as unknown as CorsairPlugin;
+
 describe('getPluginAuthStatus', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => env?.cleanup?.());
 
-	it('reports partial when only some required account fields are set', async () => {
+	it('reports partial but connected when core api_key is set', async () => {
 		env = createTestDatabase();
 		const corsair = createCorsair({
 			plugins: [slackApiKey],
@@ -44,7 +54,7 @@ describe('getPluginAuthStatus', () => {
 		);
 
 		expect(status?.status).toBe('partial');
-		expect(status?.connected).toBe(false);
+		expect(status?.connected).toBe(true);
 		expect(status?.missingRequiredFields).toEqual(['team_id']);
 		expect(
 			status?.fields.find((field) => field.name === 'api_key')?.configured,
@@ -73,6 +83,29 @@ describe('getPluginAuthStatus', () => {
 
 		expect(statuses[0]?.status).toBe('ready');
 		expect(statuses[0]?.connected).toBe(true);
+	});
+
+	it('reports partial but connected when oauth tokens are set without extras', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [githubManaged],
+			database: env.db,
+			kek: KEK,
+		} as any);
+
+		await setupCorsair(corsair);
+		await (corsair as any).github.keys.set_access_token('gho_test');
+		await (corsair as any).github.keys.set_refresh_token('ghr_test');
+
+		const status = await getPluginAuthStatus(
+			getCorsairInternal(corsair),
+			githubManaged,
+			'default',
+		);
+
+		expect(status?.status).toBe('partial');
+		expect(status?.connected).toBe(true);
+		expect(status?.missingRequiredFields).toEqual(['installation_id']);
 	});
 
 	it('does not treat provisioned DEKs alone as connected', async () => {

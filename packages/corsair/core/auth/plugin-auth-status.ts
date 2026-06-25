@@ -62,6 +62,35 @@ function isRequiredAccountField(field: string): boolean {
 	return !isOptionalAuthField(field);
 }
 
+// Core account fields that mean "connected" for connection-status APIs.
+// Plugin-specific extras (team_id, installation_id, …) can still be missing.
+function getConnectionCredentialFields(
+	authType: AuthTypes,
+): readonly string[] {
+	switch (authType) {
+		case 'oauth_2':
+		case 'managed':
+			return ['access_token', 'refresh_token'];
+		case 'api_key':
+			return ['api_key'];
+		case 'bot_token':
+			return ['bot_token'];
+	}
+}
+
+function isAuthTypeConnected(
+	authType: AuthTypes,
+	fields: AuthFieldStatus[],
+): boolean {
+	const connectionFields = getConnectionCredentialFields(authType);
+	return connectionFields.every((fieldName) => {
+		const field = fields.find(
+			(entry) => entry.level === 'account' && entry.name === fieldName,
+		);
+		return field?.configured ?? false;
+	});
+}
+
 async function readFieldConfigured(
 	keyManager: BaseKeyManager | undefined,
 	field: string,
@@ -134,7 +163,7 @@ function derivePluginAuthStatus(
 		plugin: pluginId,
 		authType,
 		status,
-		connected: status === 'ready',
+		connected: isAuthTypeConnected(authType, fields),
 		fields,
 		missingRequiredFields,
 	};
@@ -228,7 +257,7 @@ export async function getPluginAuthStatusForTenant(
 export function mapPluginAuthStatusToConnectionState(
 	status: PluginAuthStatus,
 ): 'connected' | 'missing_credentials' | 'not_connected' {
-	if (status.status === 'ready') {
+	if (status.connected) {
 		return 'connected';
 	}
 	if (status.status === 'missing_integration') {

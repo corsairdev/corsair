@@ -61,18 +61,18 @@ Create a connect link and redirect:
 const { connectUrl } = await client.connect.createLink({
   plugin: "github",
   tenantId: "acme",
-  oauthMode: "managed", // or "byo"
 });
 window.location.href = connectUrl;
 ```
 
-Hub-specific input fields (ignored in manual mode):
+Hub-specific optional overrides (ignored in manual mode):
 
 | Field | Purpose |
 | ----- | ------- |
 | `plugin` | Optional — omit to show all configured plugins |
-| `oauthMode` | `"byo"` (your OAuth app) or `"managed"` (Corsair's) |
-| `source` | `"client"` or `"server"` — inferred from `deliveryUrl` when omitted |
+| `oauthMode` | Optional — inferred from plugin `authType` when omitted |
+| `source` | Optional — inferred from `deliveryUrl` when omitted |
+| `providerName` | Optional — override provider display name in Hub UI |
 
 Hub delivers tokens to your `deliveryUrl`. You do **not** call `resolve` or `oauthCallback`.
 

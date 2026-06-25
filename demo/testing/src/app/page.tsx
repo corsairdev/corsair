@@ -5,14 +5,10 @@ import { useState } from 'react';
 function HubConnectButton({
 	plugin,
 	label,
-	oauthMode,
-	source = 'client',
 	buttonColor = '#4285F4',
 }: {
 	plugin?: string;
 	label: string;
-	oauthMode?: 'byo' | 'managed';
-	source?: 'client' | 'server';
 	buttonColor?: string;
 }) {
 	const [loading, setLoading] = useState(false);
@@ -29,8 +25,6 @@ function HubConnectButton({
 				body: JSON.stringify({
 					...(plugin ? { plugin } : {}),
 					tenantId: 'default',
-					source,
-					oauthMode,
 				}),
 			});
 			const data = await response.json();
@@ -245,23 +239,18 @@ export default function Home() {
 				</p>
 				<HubConnectButton
 					label="Connect all configured plugins"
-					source="client"
 					buttonColor="#6366f1"
 				/>
 				<div style={{ marginTop: '1rem' }}>
 					<HubConnectButton
 						plugin="googlecalendar"
 						label="Connect Google Calendar"
-						oauthMode="byo"
-						source="client"
 					/>
 				</div>
 				<div style={{ marginTop: '1rem' }}>
 					<HubConnectButton
 						plugin="github"
 						label="Connect GitHub"
-						oauthMode="managed"
-						source="client"
 						buttonColor="#24292f"
 					/>
 				</div>
