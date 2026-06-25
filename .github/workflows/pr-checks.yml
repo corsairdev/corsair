@@ -16,8 +16,16 @@ jobs:
   ci:
     name: CI Checks
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+      CI: true
+      SKIP_PG_TESTS: 1
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - uses: pnpm/action-setup@v4
         with:
@@ -27,3 +35,41 @@ jobs:
         with:
           node-version: '24.x'
           cache: 'pnpm'
+
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Build
+        run: pnpm turbo run build --filter='...[origin/main]' --concurrency=100%
+
+      - name: Lint
+        run: pnpm turbo run lint --filter='...[origin/main]'
+
+      - name: Validate Plugins
+        run: pnpm run validate:plugins
+
+      - name: Typecheck
+        run: pnpm turbo run typecheck --filter='...[origin/main]'
+
+      - name: Run tests
+        run: pnpm turbo run test --filter='...[origin/main]' -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
+
+      - name: Generate Dependency Graph
+        if: always()
+        run: pnpm turbo run build --filter='...[origin/main]' --graph=dependency-graph.html
+
+      - name: Upload Dependency Graph
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: turbo-dependency-graph
+          path: dependency-graph.html
+          retention-days: 7
