@@ -567,6 +567,11 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				modified: historyModified,
 			} = extractMessageIds(history);
 
+			const historyHadChanges =
+				historyModified.length > 0 ||
+				historyAdded.length > 0 ||
+				deleted.length > 0;
+
 			if (
 				historyModified.length > 0 &&
 				isWebhookEventEnabled(ctx, 'messageLabelChanged')
@@ -657,6 +662,14 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 					success: true,
 					corsairEntityId: result.corsairEntityId,
 					data: eventData,
+				};
+			}
+
+			if (historyHadChanges) {
+				return {
+					success: true,
+					corsairEntityId: '',
+					data: undefined,
 				};
 			}
 
