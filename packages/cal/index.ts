@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Bookings } from './endpoints';
 import type { CalEndpointInputs, CalEndpointOutputs } from './endpoints/types';
 import {
@@ -22,6 +23,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { CalSchema } from './schema';
 import { BookingWebhooks, PingWebhooks } from './webhooks';
+import { matchCalTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	BookingCancelledEvent,
 	BookingCreatedEvent,
@@ -222,7 +224,7 @@ const calWebhookSchemas = {
 
 export const calAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['organization_id', 'user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -248,6 +250,7 @@ export function cal<const T extends CalPluginOptions>(
 	};
 	return {
 		id: 'cal',
+		authConfig: calAuthConfig,
 		schema: CalSchema,
 		options: options,
 		hooks: options.hooks,
@@ -261,8 +264,8 @@ export function cal<const T extends CalPluginOptions>(
 			const headers = request.headers;
 			const hasSignature = 'x-cal-signature-256' in headers;
 			return hasSignature;
-			return hasSignature;
 		},
+		pluginTenantWebhookMatcher: matchCalTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -294,13 +297,13 @@ export function cal<const T extends CalPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error('[auth-missing:cal:api_key]: Cal API Key is missing');
+					throw new AuthMissingError('cal', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:cal:${authType}]: Cal key is missing`);
+			throw new AuthMissingError('cal', 'api_key');
 		},
 	} satisfies InternalCalPlugin;
 }

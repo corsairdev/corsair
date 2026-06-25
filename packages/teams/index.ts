@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import { Channels, Chats, Members, Messages, Teams } from './endpoints';
 import type {
@@ -27,6 +28,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TeamsSchema } from './schema';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
+import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TeamsChannelCreatedEvent,
 	TeamsChannelMessageEvent,
@@ -390,7 +392,7 @@ const teamsWebhookSchemas = {
 
 export const teamsAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -451,6 +453,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				headers['content-type']?.includes('application/json') ?? false;
 			return hasTeamsHeader && isJsonPost;
 		},
+		pluginTenantWebhookMatcher: matchTeamsTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -484,7 +487,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error('No refresh token. Cannot get access token.');
+					throw new AuthMissingError('teams', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -509,7 +512,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(`[auth-missing:teams:${authType}]: Teams key is missing`);
+			throw new AuthMissingError('teams', 'oauth_2');
 		},
 	} satisfies InternalTeamsPlugin;
 }

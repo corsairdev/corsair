@@ -1,6 +1,7 @@
 import type { ZodTypeAny } from 'zod';
 import type { CorsairDatabaseInput } from '../../db/kysely/database';
 import type { CorsairPluginSchema } from '../../db/orm';
+import type { HubConfig, HubConfigInput } from '../../hub';
 import type { AccountKeyManagerFor, PluginAuthConfig } from '../auth/types';
 import type { ExtractAuthType, InferPluginEntities } from '../client';
 import type { AllProviders, AuthTypes } from '../constants';
@@ -14,9 +15,11 @@ import type {
 } from '../endpoints';
 import type { CorsairErrorHandler } from '../errors';
 import type {
+	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
+	CorsairWebhookTenantMatcher,
 	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
@@ -374,6 +377,8 @@ type ExtractAllAuthTypes<Options> = 'authType' extends keyof Options
  *     return await ctx.keys.get_access_token();
  *   } else if (ctx.authType === 'bot_token') {
  *     return await ctx.keys.get_bot_token();
+ *   } else if (ctx.authType === 'managed') {
+ *     return await ctx.keys.get_access_token();
  *   }
  *   return '';
  * }
@@ -391,6 +396,10 @@ export type KeyBuilderContext<
 				options: Options;
 				/** Account-level key manager - type narrows based on authType check */
 				keys: AccountKeyManagerFor<A, AuthConfig>;
+				/** Tenant ID for this request (always set; defaults to 'default' in single-tenant) */
+				tenantId: string;
+				/** Hub config when createCorsair({ hub: ... }) is configured */
+				hub?: HubConfig;
 			}
 		: never
 	: never;
@@ -464,6 +473,17 @@ export type CorsairPlugin<
 	 * should handle an incoming request. Acts as a first-level filter.
 	 */
 	pluginWebhookMatcher?: CorsairWebhookMatcher;
+	/**
+	 * Extracts the external identifier used to resolve a tenant for this webhook
+	 * (for example Slack `team_id`, GitHub `installation.id`). Return null when
+	 * the request cannot be mapped to a tenant.
+	 */
+	pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
+	/**
+	 * Resolves the external id to store on the account after OAuth so incoming
+	 * webhooks can be routed to the correct tenant. Return null when unavailable.
+	 */
+	oauthWebhookTenantLinkResolver?: CorsairOAuthWebhookTenantLinkResolver;
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
 	/**
@@ -628,6 +648,77 @@ export type CorsairPluginContext<
 		: {});
 
 /**
+ * Self-hosted connect pages and/or permission review URLs.
+ * Can coexist with `hub` — use hub for hosted connect while pointing permission
+ * review links at your app via `approvalBaseUrl`.
+ */
+export type CorsairManualConfig = {
+	/** Required for manual OAuth connect (`createLink`, connect page, callback). Omit if connect uses hub. */
+	baseUrl?: string;
+	/** OAuth callback URL registered with the provider. Required with `baseUrl` for manual connect. */
+	redirectUri?: string;
+	/**
+	 * Base URL for permission review links, e.g. `https://app.example.com/approve`.
+	 * Corsair appends `/{token}` when a gated operation blocks so agents receive
+	 * an actionable link. Optional — set this or use hub for hosted approval UI.
+	 */
+	approvalBaseUrl?: string;
+	/** Customize the agent-facing message when OAuth is missing (manual connect only). */
+	onAuthMissing?: (opts: {
+		plugin: string;
+		connectUrl: string;
+		state: string;
+	}) => string;
+	/**
+	 * Customize the message returned to agents when an operation requires approval.
+	 * Receives the resolved approval URL. When omitted and a URL is available,
+	 * Corsair uses a default message instructing the user to visit the link.
+	 */
+	onApprovalRequired?: (opts: { approvalUrl: string }) => string;
+};
+
+/**
+ * Global permissions configuration on `createCorsair({ permissions: ... })`.
+ * Controls approval timeouts and sync/async blocking behavior.
+ * Distinct from per-plugin `permissions: { mode, overrides }` on each plugin.
+ */
+export type CorsairPermissionsOptions = {
+	/**
+	 * How long a pending permission request remains valid before expiring.
+	 * Accepts duration strings: '10m', '1h', '30s', '2h30m'.
+	 * Defaults to '10m' if not specified.
+	 */
+	timeout: string;
+	/**
+	 * What to do when a permission request expires without a response.
+	 * - `'deny'`    → the action is automatically denied (recommended)
+	 * - `'approve'` → the action is automatically approved (use only in low-risk setups)
+	 */
+	onTimeout: 'deny' | 'approve';
+	/**
+	 * How blocked permission requests are handled.
+	 * - `'synchronous'`  → the tool call blocks (polls the DB) until the user approves or denies.
+	 * - `'asynchronous'` → the tool call returns immediately with a blocked result.
+	 * - A no-arg function → called per-request, return value selects the mode dynamically.
+	 * Defaults to `'asynchronous'` if not specified.
+	 */
+	mode?:
+		| 'synchronous'
+		| 'asynchronous'
+		| (() => 'synchronous' | 'asynchronous');
+	/**
+	 * @deprecated Use `manual.onApprovalRequired` instead. TODO: delete ~April 2026.
+	 */
+	formatAsyncMessage?: (opts: {
+		token: string;
+		id: string;
+		plugin: string;
+		endpoint: string;
+		args: unknown;
+	}) => string;
+};
+
+/**
  * Configuration for creating a Corsair integration with plugins.
  * @template Plugins - Array of plugin definitions
  */
@@ -643,49 +734,23 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	/** Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt Data Encryption Keys (DEK) stored in the database. */
 	kek: string;
 	/**
-	 * Global approval configuration for the permission system.
-	 * Controls how long approval requests stay active and what happens when they expire.
-	 * Only relevant when the MCP server is used and a plugin is in `cautious` or `strict` mode.
+	 * Global permissions configuration — approval timeouts and sync/async blocking.
+	 * Pair with per-plugin `permissions: { mode, overrides }` on each plugin.
 	 */
-	approval?: {
-		/**
-		 * How long an approval request remains valid before expiring.
-		 * Accepts duration strings: '10m', '1h', '30s', '2h30m'.
-		 * Defaults to '10m' if not specified.
-		 */
-		timeout: string;
-		/**
-		 * What to do when an approval request expires without a response.
-		 * - `'deny'`    → the action is automatically denied (recommended)
-		 * - `'approve'` → the action is automatically approved (use only in low-risk setups)
-		 */
-		onTimeout: 'deny' | 'approve';
-		/**
-		 * How approval requests are handled when execution is blocked.
-		 * - `'synchronous'`  → the tool call blocks (polls the DB) until the user approves or denies.
-		 *                      The model is unaware anything happened — it just sees a slow tool call.
-		 *                      On denial, the tool returns an error and the model stops.
-		 * - `'asynchronous'` → the tool call returns immediately with a blocked result.
-		 *                      The model must handle the denial and stop on its own.
-		 * - A no-arg function → called per-request, return value selects the mode dynamically.
-		 *                       Use this to switch modes based on runtime context (e.g. auth type).
-		 * Defaults to `'asynchronous'` if not specified.
-		 */
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		/**
-		 * Called when a permission is blocked in async mode. Return the string that the LLM receives
-		 * as the tool result — this is what gets surfaced to the user in the chat.
-		 * Receives the permission token, record ID, plugin name, endpoint path, and args.
-		 */
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
+	permissions?: CorsairPermissionsOptions;
+	/** Self-hosted connect and/or permission review configuration. Can coexist with `hub`. */
+	manual?: CorsairManualConfig;
+	/** Corsair Hub configuration for hosted OAuth connect flows. */
+	hub?: HubConfigInput;
+} & CorsairDeprecatedApprovalConfig;
+
+/**
+ * @deprecated `approval` was renamed to `permissions` on createCorsair.
+ * Prefer `permissions: { timeout, onTimeout, mode }`. Removed ~May 2026.
+ */
+export type CorsairDeprecatedApprovalConfig = {
+	/**
+	 * @deprecated Renamed to `permissions`. Use `createCorsair({ permissions: { ... } })` instead.
+	 */
+	approval?: CorsairPermissionsOptions;
 };

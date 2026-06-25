@@ -7,10 +7,12 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleDriveEndpointInputs,
@@ -33,6 +35,7 @@ import type {
 	GoogleDriveWebhookPayload,
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
+import { matchGoogleDriveTenantWebhook } from './webhooks/tenant-matcher';
 import type { PubSubNotification } from './webhooks/types';
 import {
 	DriveChangedEventSchema,
@@ -337,6 +340,12 @@ const googleDriveEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleDriveEndpointsNested>;
 
+export const googledriveAuthConfig = {
+	oauth_2: {
+		account: ['channel_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
 	CorsairPlugin<
 		'googledrive',
@@ -363,6 +372,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 	};
 	return {
 		id: 'googledrive',
+		authConfig: googledriveAuthConfig,
 		schema: GoogleDriveSchema,
 		options: options,
 		oauthConfig: {
@@ -394,9 +404,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:googledrive:refresh_token]: Google Drive refresh token is missing',
-					);
+					throw new AuthMissingError('googledrive', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -445,9 +453,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:googledrive:${authType}]: Google Drive key is missing`,
-			);
+			throw new AuthMissingError('googledrive', 'oauth_2');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
@@ -469,6 +475,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGoogleDriveTenantWebhook,
 	} satisfies InternalGoogleDrivePlugin;
 }
 

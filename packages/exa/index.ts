@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Answer,
 	Contents,
@@ -30,6 +31,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { ExaSchema } from './schema';
 import { ContentWebhooks, SearchWebhooks, WebsetWebhooks } from './webhooks';
+import { matchExaTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ContentIndexedEvent,
 	ExaWebhookOutputs,
@@ -268,9 +270,7 @@ const exaEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof exaEndpointsNested>;
 
 export const exaAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type ExaBoundEndpoints = BindEndpoints<typeof exaEndpointsNested>;
@@ -328,6 +328,7 @@ export function exa<const T extends ExaPluginOptions>(
 	};
 	return {
 		id: 'exa',
+		authConfig: exaAuthConfig,
 		schema: ExaSchema,
 		options: options,
 		hooks: options.hooks,
@@ -341,6 +342,7 @@ export function exa<const T extends ExaPluginOptions>(
 			const headers = request.headers;
 			return 'x-exa-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchExaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -372,13 +374,13 @@ export function exa<const T extends ExaPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error('[auth-missing:exa:api_key]: Exa API Key is missing');
+					throw new AuthMissingError('exa', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:exa:${authType}]: Exa key is missing`);
+			throw new AuthMissingError('exa', 'api_key');
 		},
 	} satisfies InternalExaPlugin;
 }

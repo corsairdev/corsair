@@ -3,12 +3,12 @@ title: Overview
 description: "Cloudflare plugin for Corsair"
 ---
 
-Use **Cloudflare** through Corsair: one client, typed API calls against Cloudflare API v4, and optional local DB sync for zones, DNS, Workers, and rulesets.
+Use **Cloudflare** through Corsair: one client, typed API calls, optional local DB sync.
 
 **What you get:**
 
 - 24 typed API operations
-- Local search via `corsair.cloudflare.db.*` (synced on API calls when a database is configured)
+- 5 database entities synced for fast `.search()` / `.list()` queries
 
 ## Setup
 
@@ -66,7 +66,7 @@ Follow [Get Credentials](/plugins/cloudflare/get-credentials) if you need help g
 pnpm corsair setup --plugin=cloudflare
 ```
 
-Use the key names documented in [Get Credentials](/plugins/cloudflare/get-credentials) (for example `api_key=`).
+Use the key names documented in [Get Credentials](/plugins/cloudflare/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
@@ -92,7 +92,7 @@ Each tab shows how to register the plugin for that authentication method. The de
 cloudflare()
 ```
 
-Store credentials with `pnpm corsair setup --plugin=cloudflare` (see [Get Credentials](/plugins/cloudflare/get-credentials) for field names).
+Store credentials with `pnpm corsair setup --plugin=cloudflare` (see [Get Credentials](/plugins/cloudflare/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
@@ -100,28 +100,24 @@ More: [API Key](/concepts/api-key)
 </Tabs>
 
 
+## Query synced data
+
+Synced entities support `corsair.cloudflare.db.<entity>.search()` and `.list()`. See [Database](/plugins/cloudflare/database) for filters and operators.
+
 
 ## Example API calls
 
 **Read-style (read):** `dns.get`
 
 ```ts
-await corsair.cloudflare.api.dns.get({
-	zone_id: 'your-zone-id',
-	dns_record_id: 'your-record-id',
-});
+await corsair.cloudflare.api.dns.get({});
 ```
 
 
 **Write-style (write):** `dns.create`
 
 ```ts
-await corsair.cloudflare.api.dns.create({
-	zone_id: 'your-zone-id',
-	type: 'A',
-	name: 'www.example.com',
-	content: '192.0.2.1',
-});
+await corsair.cloudflare.api.dns.create({});
 ```
 
 
@@ -131,7 +127,7 @@ See the full list on the [API](/plugins/cloudflare/api) page. Use `pnpm corsair 
 
 ## Hooks
 
-Use `hooks` on API calls to add logging, approvals, or side effects. See [Hooks](/concepts/hooks).
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
 
 ---
 
@@ -140,5 +136,6 @@ Use `hooks` on API calls to add logging, approvals, or side effects. See [Hooks]
 | Topic | Link |
 |-------|------|
 | API | [API](/plugins/cloudflare/api) |
+| Database | [Database](/plugins/cloudflare/database) |
 | Credentials | [Get credentials](/plugins/cloudflare/get-credentials) |
 

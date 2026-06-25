@@ -134,7 +134,9 @@ export const RoutingFormSubmissionCreatedPayloadSchema =
 			uri: z.string(),
 			routing_form: z.string(),
 			// Each Q&A entry differs by question type; no fixed schema in Calendly's docs
-			questions_and_answers: z.array(z.record(z.string(), z.unknown())).optional(),
+			questions_and_answers: z
+				.array(z.record(z.string(), z.unknown()))
+				.optional(),
 			// UTM/source tracking fields vary by integration and campaign
 			tracking: z.record(z.string(), z.unknown()).optional(),
 			// Routing result structure depends on the form's routing rules configuration

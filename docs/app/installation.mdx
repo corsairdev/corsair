@@ -1,0 +1,49 @@
+---
+title: Installation
+description: Install @corsair-dev/app and create your first instance, plugin, and tenant.
+---
+
+<Note>
+  **Coding agents:** follow [Agent setup](/app/agent-setup) first (SDK provisioning; ask the user when instance, tenant, or plugins are unclear). This page is API reference for the SDK methods.
+</Note>
+
+```bash
+npm install @corsair-dev/app
+```
+
+## Client
+
+```ts
+import { createClient } from "@corsair-dev/app";
+
+const corsair = createClient({
+  apiKey: process.env.CORSAIR_DEV_KEY!,
+  // baseUrl: "http://localhost:3000",  // self-hosted
+});
+```
+
+## Minimal provisioning
+
+```ts
+const { id } = await corsair.instances.create({ name: "my-app" });
+const inst = corsair.instance(id);
+
+await inst.plugins.upsert("slack", { mode: "cautious" });
+
+const tenant = await inst.tenants.create("user-abc");
+const t = inst.tenant(tenant.id);
+
+// Send the user a link to connect their accounts (OAuth + API keys)
+const { url } = await t.connectLink.create();
+
+// Or set credentials directly if you already have them:
+// await t.plugins.credentials.set("slack", "api_key", "xoxb-...");
+```
+
+## Next
+
+- [Instances and plugins](/app/instances-and-plugins) — permissions, root credentials, runtime
+- [Tenants and auth](/app/tenants-and-auth) — connect links, OAuth, per-tenant credentials
+- [Types and errors](/app/types-and-errors) — generated types, `CorsairApiError`
+
+For agents and UI actions, see [Coding agents](/app/coding-agents), [Agent SDKs](/app/agent-sdks), and [Direct execution](/app/direct-execution).

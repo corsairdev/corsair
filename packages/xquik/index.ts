@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Media,
 	Trends,
@@ -35,6 +36,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { XquikSchema } from './schema';
 import { EventWebhooks } from './webhooks';
+import { matchXquikTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	XquikWebhookOutputs,
 	XquikWebhookPayload,
@@ -386,9 +388,7 @@ const xquikEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof xquikEndpointsNested>;
 
 export const xquikAuthConfig = {
-	api_key: {
-		account: ['one', 'webhook_signature'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type XquikKeyBuilderContext = KeyBuilderContext<
@@ -420,6 +420,7 @@ export function xquik<const T extends XquikPluginOptions>(
 	};
 
 	return {
+		id: 'xquik',
 		authConfig: xquikAuthConfig,
 		endpointMeta: xquikEndpointMeta,
 		endpointSchemas: xquikEndpointSchemas,
@@ -429,7 +430,6 @@ export function xquik<const T extends XquikPluginOptions>(
 			...options.errorHandlers,
 		},
 		hooks: options.hooks,
-		id: 'xquik',
 		keyBuilder: async (ctx: XquikKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
@@ -449,12 +449,11 @@ export function xquik<const T extends XquikPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:xquik:${ctx.authType}]: Xquik key is missing`,
-			);
+			throw new AuthMissingError('xquik', 'api_key');
 		},
 		options,
 		pluginWebhookMatcher: hasXquikSignature,
+		pluginTenantWebhookMatcher: matchXquikTenantWebhook,
 		schema: XquikSchema,
 		webhookHooks: options.webhookHooks,
 		webhookSchemas: xquikWebhookSchemas,

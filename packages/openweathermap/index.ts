@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { History, Summary, Weather } from './endpoints';
 import type {
 	OpenWeatherMapEndpointInputs,
@@ -155,9 +156,7 @@ const openWeatherMapEndpointMeta = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const openWeatherMapAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -199,6 +198,7 @@ export function openweathermap<const T extends OpenWeatherMapPluginOptions>(
 	};
 	return {
 		id: 'openweathermap',
+		authConfig: openWeatherMapAuthConfig,
 		schema: OpenWeatherMapSchema,
 		options: options,
 		hooks: options.hooks,
@@ -227,9 +227,7 @@ export function openweathermap<const T extends OpenWeatherMapPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:openweathermap:${authType}]: OpenWeatherMap key is missing`,
-			);
+			throw new AuthMissingError('openweathermap', 'api_key');
 		},
 	} satisfies InternalOpenWeatherMapPlugin;
 }

@@ -54,7 +54,10 @@ export function useDemoChatSend(userPrompt: string, assistantReply: string) {
 
 	useEffect(() => {
 		if (phase !== 'thinking') return;
-		const id = window.setTimeout(() => setPhase('assistant'), THINKING_DELAY_MS);
+		const id = window.setTimeout(
+			() => setPhase('assistant'),
+			THINKING_DELAY_MS,
+		);
 		return () => window.clearTimeout(id);
 	}, [phase]);
 

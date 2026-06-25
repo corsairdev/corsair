@@ -5,8 +5,8 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { HubSpotAPIError } from './client';
 import type {
 	CreateCompanyResponse,
-	CreateDealResponse,
 	CreateContactResponse,
+	CreateDealResponse,
 } from './endpoints/types';
 import { hubspot } from './index';
 

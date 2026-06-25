@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Comments, Tickets, Users } from './endpoints';
 import type {
 	ZendeskEndpointInputs,
@@ -27,6 +28,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { ZendeskSchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
+import { matchZendeskTenantWebhook } from './webhooks/tenant-matcher';
 import type { ExampleEvent, ZendeskWebhookOutputs } from './webhooks/types';
 import { ExampleEventSchema } from './webhooks/types';
 
@@ -43,7 +45,7 @@ export type ZendeskPluginOptions = {
 
 export const zendeskAuthConfig = {
 	api_key: {
-		account: ['subdomain'] as const,
+		account: ['subdomain', 'account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -264,6 +266,7 @@ export function zendesk<const T extends ZendeskPluginOptions>(
 			const headers = request.headers;
 			return 'x-zendesk-webhook-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchZendeskTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -292,16 +295,12 @@ export function zendesk<const T extends ZendeskPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:zendesk:api_key]: Zendesk API Key is missing',
-					);
+					throw new AuthMissingError('zendesk', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:zendesk:${authType}]: Zendesk key is missing`,
-			);
+			throw new AuthMissingError('zendesk', 'api_key');
 		},
 	} satisfies InternalZendeskPlugin;
 }

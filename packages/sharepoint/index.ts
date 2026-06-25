@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidSharepointAccessToken } from './client';
 import {
 	ContentTypes,
@@ -40,6 +41,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { SharepointSchema } from './schema';
 import { ListWebhooks } from './webhooks';
+import { matchSharepointTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	SharepointListChangedPayload,
 	SharepointWebhookOutputs,
@@ -60,7 +62,7 @@ const defaultAuthType = 'oauth_2' as const;
 export const sharepointAuthConfig = {
 	oauth_2: {
 		// site_id is the Graph API site identifier e.g. "tenant.sharepoint.com:/sites/MySite"
-		account: ['site_id'] as const,
+		account: ['site_id', 'subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -1360,6 +1362,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				contentType.includes('application/json')
 			);
 		},
+		pluginTenantWebhookMatcher: matchSharepointTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -1383,9 +1386,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:sharepoint:refresh_token]: SharePoint refresh token is missing',
-					);
+					throw new AuthMissingError('sharepoint', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -1448,9 +1449,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:sharepoint:${authType}]: SharePoint key is missing`,
-			);
+			throw new AuthMissingError('sharepoint', 'oauth_2');
 		},
 	} satisfies InternalSharepointPlugin;
 }

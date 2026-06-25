@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Dashboards,
 	Health,
@@ -32,6 +33,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { GrafanaSchema } from './schema';
+import { matchGrafanaTenantWebhook } from './webhooks/tenant-matcher';
 
 export type GrafanaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -56,7 +58,7 @@ export type GrafanaPluginOptions = {
  */
 export const grafanaAuthConfig = {
 	api_key: {
-		account: ['grafana_url'] as const,
+		account: ['grafana_url', 'org_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -261,6 +263,7 @@ export function grafana<const T extends GrafanaPluginOptions>(
 		endpointSchemas: grafanaEndpointSchemas,
 		// Grafana has no webhooks — no incoming webhook requests to match
 		pluginWebhookMatcher: (_request) => false,
+		pluginTenantWebhookMatcher: matchGrafanaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -280,16 +283,12 @@ export function grafana<const T extends GrafanaPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:grafana:api_key]: Grafana API Key is missing',
-					);
+					throw new AuthMissingError('grafana', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:grafana:${authType}]: Grafana key is missing`,
-			);
+			throw new AuthMissingError('grafana', 'api_key');
 		},
 	} satisfies InternalGrafanaPlugin;
 }

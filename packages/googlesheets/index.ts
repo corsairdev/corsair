@@ -7,10 +7,12 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleSheetsEndpointInputs,
@@ -28,6 +30,7 @@ import type {
 	RangeUpdatedEvent,
 } from './webhooks';
 import { RowWebhooks } from './webhooks';
+import { matchGoogleSheetsTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	GoogleAppsScriptWebhookPayloadSchema,
 	RangeUpdatedEventSchema,
@@ -240,6 +243,12 @@ const googleSheetsEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleSheetsEndpointsNested>;
 
+export const googlesheetsAuthConfig = {
+	oauth_2: {
+		account: ['spreadsheet_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
 	CorsairPlugin<
 		'googlesheets',
@@ -266,6 +275,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 	};
 	return {
 		id: 'googlesheets',
+		authConfig: googlesheetsAuthConfig,
 		schema: GoogleSheetsSchema,
 		options: options,
 		oauthConfig: {
@@ -300,9 +310,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:googlesheets:refresh_token]: Google Sheets refresh token is missing',
-					);
+					throw new AuthMissingError('googlesheets', 'oauth_2');
 				}
 
 				const res = await ctx.keys.get_integration_credentials();
@@ -351,9 +359,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:googlesheets:${authType}]: Google Sheets key is missing`,
-			);
+			throw new AuthMissingError('googlesheets', 'oauth_2');
 		},
 		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const body = request.body as RangeUpdatedEvent;
@@ -362,6 +368,7 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			const hasSheetsEventType = body?.eventType === 'rangeUpdated';
 			return hasSpreadsheetId || hasSheetsEventType;
 		},
+		pluginTenantWebhookMatcher: matchGoogleSheetsTenantWebhook,
 	} satisfies InternalGoogleSheetsPlugin;
 }
 

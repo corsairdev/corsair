@@ -9,9 +9,8 @@ export {
 	generateDEK,
 	reEncryptConfig,
 } from './encryption';
-
 // Auth error utilities
-export { createMissingConfigProxy } from './errors';
+export { AuthMissingError, createMissingConfigProxy } from './errors';
 export type { TokenResponse } from './exchange';
 // Token exchange utility
 export { exchangeCodeForTokens } from './exchange';
@@ -24,6 +23,16 @@ export {
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 } from './key-manager';
+export {
+	type AuthFieldLevel,
+	type AuthFieldStatus,
+	getPluginAuthStatus,
+	getPluginAuthStatusForTenant,
+	isOptionalAuthField,
+	mapPluginAuthStatusToConnectionState,
+	type PluginAuthStatus,
+	type PluginAuthStatusLevel,
+} from './plugin-auth-status';
 // Types
 export type {
 	AccountFieldNames,

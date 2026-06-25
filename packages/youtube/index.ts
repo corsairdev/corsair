@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	CaptionsEndpoints,
 	ChannelsEndpoints,
@@ -37,6 +38,7 @@ import type {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { YoutubeSchema } from './schema';
+import { matchYoutubeTenantWebhook } from './webhooks/tenant-matcher';
 import type { YoutubeWebhookOutputs } from './webhooks/types';
 
 // ── Context & Key Builder ─────────────────────────────────────────────────────
@@ -651,7 +653,7 @@ const youtubeEndpointMeta = {
 
 export const youtubeAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['channel_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -686,6 +688,7 @@ export function youtube<const T extends YoutubePluginOptions>(
 
 	return {
 		id: 'youtube',
+		authConfig: youtubeAuthConfig,
 		schema: YoutubeSchema,
 		options,
 		hooks: options.hooks,
@@ -702,6 +705,7 @@ export function youtube<const T extends YoutubePluginOptions>(
 			// Webhooks not implemented yet
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchYoutubeTenantWebhook,
 		keyBuilder: async (ctx: YoutubeKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 
@@ -721,16 +725,12 @@ export function youtube<const T extends YoutubePluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:youtube:oauth_2]: Youtube access token is missing',
-					);
+					throw new AuthMissingError('youtube', 'oauth_2');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:youtube:${authType}]: Youtube key is missing`,
-			);
+			throw new AuthMissingError('youtube', 'oauth_2');
 		},
 	} satisfies InternalYoutubePlugin;
 }

@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Admins,
 	Articles,
@@ -37,6 +38,7 @@ import {
 	ConversationWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { matchIntercomTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ContactCreatedEvent,
 	ContactDeletedEvent,
@@ -660,7 +662,7 @@ const intercomEndpointMeta = {
 
 export const intercomAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['app_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -727,6 +729,7 @@ export function intercom<const T extends IntercomPluginOptions>(
 	};
 	return {
 		id: 'intercom',
+		authConfig: intercomAuthConfig,
 		schema: IntercomSchema,
 		options: options,
 		hooks: options.hooks,
@@ -742,6 +745,7 @@ export function intercom<const T extends IntercomPluginOptions>(
 			const hasSubscriptionId = 'intercom-webhook-subscription-id' in headers;
 			return hasSignature && hasSubscriptionId;
 		},
+		pluginTenantWebhookMatcher: matchIntercomTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -770,16 +774,12 @@ export function intercom<const T extends IntercomPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:intercom:api_key]: Intercom API Key is missing',
-					);
+					throw new AuthMissingError('intercom', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:intercom:${authType}]: Intercom key is missing`,
-			);
+			throw new AuthMissingError('intercom', 'api_key');
 		},
 	} satisfies InternalIntercomPlugin;
 }

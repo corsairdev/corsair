@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Forms,
 	Images,
@@ -34,6 +35,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TypeformSchema } from './schema';
 import { FormWebhooks } from './webhooks';
+import { matchTypeformTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TypeformFormResponseEvent,
 	TypeformWebhookOutputs,
@@ -479,7 +481,7 @@ const typeformWebhookSchemas = {
 
 export const typeformAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['form_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -511,6 +513,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 
 	return {
 		id: 'typeform',
+		authConfig: typeformAuthConfig,
 		schema: TypeformSchema,
 		options: options,
 		hooks: options.hooks,
@@ -524,6 +527,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 			const headers = request.headers;
 			return 'typeform-signature' in headers || 'Typeform-Signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchTypeformTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -552,16 +556,12 @@ export function typeform<const T extends TypeformPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:typeform:oauth_2]: Typeform access token is missing',
-					);
+					throw new AuthMissingError('typeform', 'oauth_2');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:typeform:${authType}]: Typeform key is missing`,
-			);
+			throw new AuthMissingError('typeform', 'oauth_2');
 		},
 	} satisfies InternalTypeformPlugin;
 }

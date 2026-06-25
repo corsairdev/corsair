@@ -1,10 +1,19 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
+import type { HubConfig } from '../hub';
+import { normalizeHubConfig } from '../hub';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
+import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
-import type { CorsairIntegration, CorsairPlugin } from './plugins';
+import type {
+	CorsairIntegration,
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
+	CorsairPlugin,
+} from './plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal access for CLI tooling
@@ -17,22 +26,9 @@ export type CorsairInternalConfig = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
-	approval?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		/** Called when a permission is blocked in async mode. Return the message surfaced to the LLM. */
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
+	permissions?: CorsairPermissionsOptions;
+	manual?: CorsairManualConfig;
+	hub?: HubConfig;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -85,15 +81,20 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 					!!config.kek,
 				);
 
+	const rootPermissions = resolveRootPermissionsConfig(config);
+
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
 		database: resolvedDatabase,
 		kek: config.kek,
 		multiTenancy: !!config.multiTenancy,
-		approval: config.approval,
+		permissions: rootPermissions,
+		manual: config.manual,
+		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
+	const manage = buildManagementNamespace(internalConfig);
 
 	if (config.multiTenancy) {
 		return Object.assign(
@@ -109,7 +110,9 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						tenantId,
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
-						approvalConfig: config.approval,
+						permissionsOptions: rootPermissions,
+						manualConfig: config.manual,
+						hubConfig: internalConfig.hub,
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,
@@ -117,6 +120,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 				},
 				keys: integrationKeys,
 				permissions,
+				manage,
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
 		);
@@ -127,12 +131,15 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		tenantId: undefined,
 		kek: config.kek,
 		rootErrorHandlers: config.errorHandlers,
-		approvalConfig: config.approval,
+		permissionsOptions: rootPermissions,
+		manualConfig: config.manual,
+		hubConfig: internalConfig.hub,
 	});
 
 	return Object.assign({}, client, {
 		keys: integrationKeys,
 		permissions,
+		manage,
 		[CORSAIR_INTERNAL]: internalConfig,
 	}) as CorsairSingleTenantClient<Plugins>;
 }
@@ -157,6 +164,7 @@ export type {
 } from './auth';
 // Auth utilities and types
 export {
+	AuthMissingError,
 	BASE_AUTH_FIELDS,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -178,6 +186,9 @@ export type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
 } from './client';
+// Connect link utilities
+export type { ResolveConnectLinkResult } from './connect';
+export { resolveConnectLink } from './connect';
 // Constants
 export type {
 	AllProviders,
@@ -185,6 +196,7 @@ export type {
 	BaseProviders,
 	PickAuth,
 } from './constants';
+export { formatProviderDisplayName, ProviderDisplayNames } from './constants';
 // Endpoint types
 export type {
 	BindEndpoints,
@@ -218,7 +230,7 @@ export type {
 	ListOperationsOptions,
 	PluginDocsIntrospection,
 } from './inspect';
-export { introspectPluginForDocs, formatDocSchemaShape } from './inspect';
+export { formatDocSchemaShape, introspectPluginForDocs } from './inspect';
 export type {
 	CorsairPermissionsNamespace,
 	EnforcePermissionOptions,
@@ -253,12 +265,33 @@ export type {
 	BindWebhooks,
 	BoundWebhook,
 	BoundWebhookTree,
+	CorsairOAuthWebhookTenantLinkResolver,
 	CorsairWebhook,
 	CorsairWebhookHandler,
 	CorsairWebhookMatcher,
+	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
+	WebhookTenantMatch,
 	WebhookTree,
 } from './webhooks';
+export {
+	collectPluginWebhookMatchers,
+	matchWebhookPlugin,
+	matchWebhookPluginAndTenant,
+	type PluginWebhookMatchers,
+	type WebhookPluginTenantMatch,
+} from './webhooks/tenant-match';
+export {
+	asRecord,
+	decodePubSubData,
+	extractMicrosoftGraphValidationToken,
+	firstString,
+	getHeader,
+	isMicrosoftGraphValidationHandshake,
+	readBodyRecord,
+	readQueryParam,
+	toExternalId,
+} from './webhooks/tenant-match-utils';

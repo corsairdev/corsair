@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Activities,
 	Athletes,
@@ -34,6 +35,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { StravaSchema } from './schema';
+import { matchStravaTenantWebhook } from './webhooks/tenant-matcher';
 import type { StravaWebhookOutputs } from './webhooks/types';
 
 export type StravaPluginOptions = {
@@ -373,7 +375,7 @@ const stravaEndpointMeta = {
 
 export const stravaAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['owner_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -405,6 +407,7 @@ export function strava<const T extends StravaPluginOptions>(
 	};
 	return {
 		id: 'strava',
+		authConfig: stravaAuthConfig,
 		schema: StravaSchema,
 		options: options,
 		hooks: options.hooks,
@@ -418,6 +421,7 @@ export function strava<const T extends StravaPluginOptions>(
 			// Webhooks are not implemented yet
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchStravaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -433,17 +437,13 @@ export function strava<const T extends StravaPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:strava:oauth_2]: Strava access token is missing',
-					);
+					throw new AuthMissingError('strava', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:strava:${authType}]: Strava key is missing`,
-			);
+			throw new AuthMissingError('strava', 'oauth_2');
 		},
 	} satisfies InternalStravaPlugin;
 }

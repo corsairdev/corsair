@@ -8,9 +8,11 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Events } from './endpoints';
 import type {
 	PostHogEndpointInputs,
@@ -23,6 +25,7 @@ import {
 import { PostHogSchema } from './schema';
 import type { EventCapturedEvent, PostHogWebhookOutputs } from './webhooks';
 import { EventWebhooks } from './webhooks';
+import { matchPostHogTenantWebhook } from './webhooks/tenant-matcher';
 import { EventCapturedEventSchema } from './webhooks/types';
 
 export type PostHogPluginOptions = {
@@ -124,6 +127,10 @@ const posthogWebhookSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+export const posthogAuthConfig = {
+	api_key: { account: ['project_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 /**
  * Risk-level metadata for each PostHog endpoint.
  * Used by the MCP server permission system to decide allow / deny / require_approval.
@@ -179,6 +186,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 	};
 	return {
 		id: 'posthog',
+		authConfig: posthogAuthConfig,
 		schema: PostHogSchema,
 		options: options,
 		hooks: options.hooks,
@@ -203,6 +211,7 @@ export function posthog<const T extends PostHogPluginOptions>(
 				'distinct_id' in parsedBody;
 			return hasPostHogSignature || hasPostHogPayload;
 		},
+		pluginTenantWebhookMatcher: matchPostHogTenantWebhook,
 		errorHandlers: options.errorHandlers,
 		keyBuilder: async (ctx: PostHogKeyBuilderContext, source) => {
 			const authType = ctx.authType;
@@ -231,17 +240,13 @@ export function posthog<const T extends PostHogPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:posthog:api_key]: PostHog API Key is missing',
-					);
+					throw new AuthMissingError('posthog', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:posthog:${authType}]: PostHog key is missing`,
-			);
+			throw new AuthMissingError('posthog', 'api_key');
 		},
 	} satisfies InternalPostHogPlugin;
 }

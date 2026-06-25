@@ -1,7 +1,7 @@
 'use client';
 
-import { useLayoutEffect, useRef, useState } from 'react';
 import type { ComponentType } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { WindowOrderProvider } from '../hooks/use-window-order';
 import {
 	DESKTOP_HEIGHT,
@@ -82,7 +82,7 @@ function TerminalTrioGrid() {
 	const { isOpen } = useTrioModal();
 
 	return (
-		<div className="grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-8">
+		<div className="grid grid-cols-1 gap-10 sm:gap-12 md:grid-cols-2 md:gap-10 md:[&>div:nth-child(3)]:col-span-2 lg:grid-cols-3 lg:gap-8 lg:[&>div:nth-child(3)]:col-span-1">
 			{TRIO_COLUMNS.map(({ id, title, Window }) => (
 				<TerminalTrioColumn
 					key={id}
@@ -99,10 +99,10 @@ export function TerminalTrioSection() {
 	return (
 		<section
 			id="terminal-trio"
-			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-20 md:py-28 lg:py-32"
+			className="relative w-full scroll-mt-16 bg-[#f4f4f4] py-16 sm:py-20 md:py-28 lg:py-32"
 			aria-labelledby="terminal-trio-heading"
 		>
-			<div className="mx-auto max-w-[1440px] px-4 md:px-10">
+			<div className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-10">
 				<div className="mx-auto mb-14 flex max-w-[720px] flex-col items-center gap-6 text-center md:mb-20 md:max-w-[800px] md:gap-8">
 					<h2
 						id="terminal-trio-heading"

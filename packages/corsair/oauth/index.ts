@@ -1,107 +1,75 @@
-import * as crypto from 'node:crypto';
-import * as querystring from 'node:querystring';
 import type {
 	CorsairInternalConfig,
 	CorsairPlugin,
 	OAuthConfig,
 } from '../core';
 import {
-	CORSAIR_INTERNAL,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 	encryptDEK,
 	exchangeCodeForTokens,
 	generateDEK,
 } from '../core';
+import {
+	encodeOAuthState,
+	signState,
+	verifyAndDecodeState,
+} from '../core/auth/state';
+import {
+	getCorsairInternal,
+	requireCorsairPlugin,
+} from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
+import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
+import { setWebhookTenantLink } from '../webhooks/tenant-links';
+import { buildOAuthAuthorizeUrl } from './authorize-url';
+
+// Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
+export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
+export {
+	type BuildOAuthAuthorizeUrlInput,
+	buildOAuthAuthorizeUrl,
+} from './authorize-url';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// State encoding — HMAC-signed to prevent forged callbacks
+// Structured errors
+//
+// Callers (e.g. the management handler) need to map specific failure modes to
+// distinct HTTP responses. Matching on free-form `error.message` strings is
+// brittle; the `code` field is the contract — `message` is for humans.
 // ─────────────────────────────────────────────────────────────────────────────
 
-type OAuthState = { plugin: string; tenantId: string };
+export type OAuthCallbackErrorCode =
+	| 'invalid_corsair_instance'
+	| 'no_database'
+	| 'invalid_state'
+	| 'plugin_not_found'
+	| 'plugin_has_no_oauth_config'
+	| 'credentials_not_configured'
+	| 'no_access_token';
 
-export function encodeOAuthState(plugin: string, tenantId: string): string {
-	return Buffer.from(JSON.stringify({ plugin, tenantId })).toString(
-		'base64url',
-	);
-}
+export class OAuthCallbackError extends Error {
+	readonly code: OAuthCallbackErrorCode;
 
-export function decodeOAuthState(state: string): OAuthState | null {
-	try {
-		// Accepts both raw payload (for tests/utilities) and signed `payload.sig` format
-		const payload = state.includes('.') ? state.split('.')[0] : state;
-		const decoded = JSON.parse(
-			Buffer.from(payload!, 'base64url').toString('utf-8'),
-		) as unknown;
-		if (
-			decoded !== null &&
-			typeof decoded === 'object' &&
-			'plugin' in decoded &&
-			'tenantId' in decoded &&
-			typeof (decoded as OAuthState).plugin === 'string' &&
-			typeof (decoded as OAuthState).tenantId === 'string'
-		) {
-			return decoded as OAuthState;
-		}
-		return null;
-	} catch {
-		return null;
+	constructor(code: OAuthCallbackErrorCode, message: string) {
+		super(message);
+		this.name = 'OAuthCallbackError';
+		this.code = code;
 	}
-}
-
-function signState(payload: string, kek: string): string {
-	const sig = crypto
-		.createHmac('sha256', kek)
-		.update(payload)
-		.digest('base64url');
-	return `${payload}.${sig}`;
-}
-
-function verifyAndDecodeState(signed: string, kek: string): OAuthState | null {
-	const dotIdx = signed.lastIndexOf('.');
-	if (dotIdx === -1) return null;
-	const payload = signed.slice(0, dotIdx);
-	const sig = signed.slice(dotIdx + 1);
-	const expected = crypto
-		.createHmac('sha256', kek)
-		.update(payload)
-		.digest('base64url');
-	const sigBuf = Buffer.from(sig, 'base64url');
-	const expectedBuf = Buffer.from(expected, 'base64url');
-	if (
-		sigBuf.length !== expectedBuf.length ||
-		!crypto.timingSafeEqual(sigBuf, expectedBuf)
-	) {
-		return null;
-	}
-	return decodeOAuthState(payload);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) throw new Error('Invalid corsair instance');
-	return internal;
-}
-
-function findPlugin(
-	internal: CorsairInternalConfig,
-	pluginId: string,
-): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) throw new Error(`Plugin '${pluginId}' not found`);
-	return plugin;
-}
-
 function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
 	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
-	if (!cfg) throw new Error(`Plugin '${plugin.id}' has no oauthConfig`);
+	if (!cfg) {
+		throw new OAuthCallbackError(
+			'plugin_has_no_oauth_config',
+			`Plugin '${plugin.id}' has no oauthConfig`,
+		);
+	}
 	return cfg;
 }
 
@@ -168,13 +136,24 @@ export async function generateOAuthUrl(
 	options: GenerateOAuthUrlOptions,
 ): Promise<GenerateOAuthUrlResult> {
 	const { tenantId, redirectUri } = options;
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new OAuthCallbackError(
+				'invalid_corsair_instance',
+				'Invalid corsair instance',
+			),
+	);
 
 	if (!internal.database) {
 		throw new Error('No database configured on corsair instance');
 	}
 
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new OAuthCallbackError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({
@@ -191,17 +170,13 @@ export async function generateOAuthUrl(
 
 	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
 
-	const params: Record<string, string> = {
-		...oauthCfg.authParams,
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: 'code',
-		scope: oauthCfg.scopes.join(' '),
-		state,
-	};
-
 	return {
-		url: `${oauthCfg.authUrl}?${querystring.stringify(params)}`,
+		url: buildOAuthAuthorizeUrl({
+			oauthConfig: oauthCfg,
+			clientId,
+			redirectUri,
+			state,
+		}),
 		state,
 	};
 }
@@ -233,18 +208,37 @@ export async function processOAuthCallback(
 ): Promise<ProcessOAuthCallbackResult> {
 	const { code, state, redirectUri } = options;
 
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new OAuthCallbackError(
+				'invalid_corsair_instance',
+				'Invalid corsair instance',
+			),
+	);
 
 	const decoded = verifyAndDecodeState(state, internal.kek);
-	if (!decoded) throw new Error('Invalid or tampered state parameter');
+	if (!decoded) {
+		throw new OAuthCallbackError(
+			'invalid_state',
+			'Invalid or tampered state parameter',
+		);
+	}
 
 	const { plugin: pluginId, tenantId } = decoded;
 
 	if (!internal.database) {
-		throw new Error('No database configured on corsair instance');
+		throw new OAuthCallbackError(
+			'no_database',
+			'No database configured on corsair instance',
+		);
 	}
 
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new OAuthCallbackError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({
@@ -257,7 +251,10 @@ export async function processOAuthCallback(
 	const clientId = await integrationKm.get_client_id();
 	const clientSecret = await integrationKm.get_client_secret();
 	if (!clientId || !clientSecret) {
-		throw new Error(`Credentials not configured for '${pluginId}'`);
+		throw new OAuthCallbackError(
+			'credentials_not_configured',
+			`Credentials not configured for '${pluginId}'`,
+		);
 	}
 
 	// Ensure tenant account row exists before writing tokens
@@ -272,7 +269,10 @@ export async function processOAuthCallback(
 	);
 
 	if (!tokens.access_token) {
-		throw new Error(`No access_token returned from ${oauthCfg.providerName}`);
+		throw new OAuthCallbackError(
+			'no_access_token',
+			`No access_token returned from ${oauthCfg.providerName}`,
+		);
 	}
 
 	const accountKm = createAccountKeyManager({
@@ -290,6 +290,38 @@ export async function processOAuthCallback(
 	if (tokens.expires_in) {
 		await accountKm.set_expires_at(
 			String(Math.floor(Date.now() / 1000) + tokens.expires_in),
+		);
+	}
+
+	try {
+		const tenantLink = await resolveOAuthWebhookTenantLink(
+			internal.plugins,
+			pluginId,
+			tokens,
+		);
+		if (tenantLink) {
+			try {
+				const extraAccountFields = plugin.authConfig?.oauth_2?.account ?? [];
+				await setWebhookTenantLink({
+					database: internal.database,
+					kek: internal.kek,
+					pluginId,
+					tenantId,
+					link: tenantLink,
+					authType: 'oauth_2',
+					extraAccountFields,
+				});
+			} catch (error) {
+				console.warn(
+					`[corsair:oauth] Failed to persist webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
+					error,
+				);
+			}
+		}
+	} catch (error) {
+		console.warn(
+			`[corsair:oauth] Failed to resolve webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
+			error,
 		);
 	}
 

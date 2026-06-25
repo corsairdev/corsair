@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Account, Agents, Models, Repositories } from './endpoints';
 import type {
 	AccountGetMeInput,
@@ -28,6 +29,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CursorSchema } from './schema';
+import { matchCursorTenantWebhook } from './webhooks/tenant-matcher';
 
 export type CursorPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -148,9 +150,7 @@ const cursorEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof cursorEndpointsNested>;
 
 export const cursorAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseCursorPlugin<T extends CursorPluginOptions> = CorsairPlugin<
@@ -176,6 +176,7 @@ export function cursor<const T extends CursorPluginOptions>(
 	};
 	return {
 		id: 'cursor',
+		authConfig: cursorAuthConfig,
 		schema: CursorSchema,
 		options: options,
 		hooks: options.hooks,
@@ -186,6 +187,7 @@ export function cursor<const T extends CursorPluginOptions>(
 		endpointSchemas: cursorEndpointSchemas,
 		// Cursor defines no webhook triggers; always returns false.
 		pluginWebhookMatcher: (_request) => false,
+		pluginTenantWebhookMatcher: matchCursorTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -214,16 +216,12 @@ export function cursor<const T extends CursorPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:cursor:api_key]: Cursor API Key is missing',
-					);
+					throw new AuthMissingError('cursor', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:cursor:${authType}]: Cursor key is missing`,
-			);
+			throw new AuthMissingError('cursor', 'api_key');
 		},
 	} satisfies InternalCursorPlugin;
 }

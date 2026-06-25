@@ -8,10 +8,12 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { z } from 'zod';
 import type {
 	HubSpotEndpointInputs,
@@ -54,6 +56,8 @@ import {
 	DealWebhooks,
 	TicketWebhooks,
 } from './webhooks';
+import { resolveHubspotOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchHubspotTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CompanyCreatedEventSchema,
 	CompanyDeletedEventSchema,
@@ -423,6 +427,11 @@ const hubspotWebhookSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+export const hubspotAuthConfig = {
+	api_key: { account: ['portal_id'] as const },
+	oauth_2: { account: ['portal_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 /**
  * Risk-level metadata for each HubSpot endpoint.
  * Used by the MCP server permission system to decide allow / deny / require_approval.
@@ -594,6 +603,7 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 	};
 	return {
 		id: 'hubspot',
+		authConfig: hubspotAuthConfig,
 		oauthConfig: {
 			providerName: 'HubSpot',
 			authUrl: 'https://app.hubspot.com/oauth/authorize',
@@ -630,6 +640,8 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 			);
 			return hasHubSpotSignature || hasHubSpotPayload;
 		},
+		pluginTenantWebhookMatcher: matchHubspotTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveHubspotOAuthWebhookTenantLink,
 		errorHandlers: options.errorHandlers || errorHandlers,
 		keyBuilder: async (ctx: HubSpotKeyBuilderContext, source) => {
 			const authType = ctx.authType;
@@ -655,9 +667,7 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_api_key();
 
 					if (!res) {
-						throw new Error(
-							'[auth-missing:hubspot:api_key]: HubSpot API Key is missing',
-						);
+						throw new AuthMissingError('hubspot', 'api_key');
 					}
 
 					return res;
@@ -665,18 +675,14 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 					const res = await ctx.keys.get_access_token();
 
 					if (!res) {
-						throw new Error(
-							'[auth-missing:hubspot:oauth_2]: HubSpot access token is missing',
-						);
+						throw new AuthMissingError('hubspot', 'oauth_2');
 					}
 
 					return res;
 				}
 			}
 
-			throw new Error(
-				`[auth-missing:hubspot:${authType}]: HubSpot key is missing`,
-			);
+			throw new AuthMissingError('hubspot', 'oauth_2');
 		},
 	} satisfies InternalHubSpotPlugin;
 }

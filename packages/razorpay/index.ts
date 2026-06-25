@@ -9,11 +9,13 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Customers,
 	Orders,
@@ -58,6 +60,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { RazorpaySchema } from './schema';
 import { OrderWebhooks, PaymentWebhooks, RefundWebhooks } from './webhooks';
+import { matchRazorpayTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	RazorpayOrderPaidEvent,
 	RazorpayPaymentCapturedEvent,
@@ -353,6 +356,10 @@ const razorpayWebhookSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+export const razorpayAuthConfig = {
+	api_key: { account: ['account_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 const razorpayEndpointMeta = {
 	'orders.create': {
 		riskLevel: 'write',
@@ -480,6 +487,7 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 	};
 	return {
 		id: 'razorpay',
+		authConfig: razorpayAuthConfig,
 		schema: RazorpaySchema,
 		options: options,
 		hooks: options.hooks,
@@ -492,6 +500,7 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'x-razorpay-signature' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchRazorpayTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -517,9 +526,7 @@ export function razorpay<const T extends RazorpayPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:razorpay:${authType}]: Razorpay key is missing`,
-			);
+			throw new AuthMissingError('razorpay', 'api_key');
 		},
 	} satisfies InternalRazorpayPlugin;
 }

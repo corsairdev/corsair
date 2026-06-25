@@ -1,6 +1,6 @@
 import type { Tool } from '@anthropic-ai/sdk/resources';
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { shapeToJsonSchema } from '../core/json-schema.js';
 import { BaseProvider } from '../core/provider.js';
 import type { CorsairToolDef } from '../core/tools.js';
 
@@ -16,7 +16,7 @@ export class AnthropicProvider extends BaseProvider<CorsairAnthropicTool> {
 	readonly name = 'anthropic';
 
 	wrapTool(def: CorsairToolDef): CorsairAnthropicTool {
-		const schema = zodToJsonSchema(z.object(def.shape) as never, { target: 'openApi3' });
+		const schema = shapeToJsonSchema(def.shape);
 		return {
 			type: 'custom',
 			name: def.name,

@@ -8,6 +8,7 @@ import {
 	GithubPullRequest,
 	GithubRelease,
 	GithubRepository,
+	GithubEvent,
 	GithubUser,
 	GithubWorkflow,
 } from './database';
@@ -31,5 +32,6 @@ export const GithubSchema = {
 		branches: GithubBranch,
 		forks: GithubFork,
 		comments: GithubComment,
+		events: GithubEvent,
 	},
 } as const;

@@ -11,7 +11,9 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Bases, Records, Webhooks } from './endpoints';
 import type {
 	AirtableEndpointInputs,
@@ -24,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { AirtableSchema } from './schema';
 import { EventWebhooks } from './webhooks';
+import { matchAirtableTenantWebhook } from './webhooks/tenant-matcher';
 import type { AirtableEvent, AirtableWebhookOutputs } from './webhooks/types';
 import {
 	AirtableEventPayloadSchema,
@@ -183,11 +186,15 @@ const airtableEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update fields on an existing record',
 	},
-} as const;
+	'webhooks.getPayloads': {
+		riskLevel: 'read',
+		description: 'Get webhook payloads',
+	},
+} as const satisfies RequiredPluginEndpointMeta<typeof airtableEndpointsNested>;
 
 export const airtableAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['base_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -214,6 +221,7 @@ export function airtable<const T extends AirtablePluginOptions>(
 	};
 	return {
 		id: 'airtable',
+		authConfig: airtableAuthConfig,
 		oauthConfig: {
 			providerName: 'Airtable',
 			authUrl: 'https://airtable.com/oauth2/v1/authorize',
@@ -235,6 +243,7 @@ export function airtable<const T extends AirtablePluginOptions>(
 			const hasMac = 'x-airtable-content-mac' in headers;
 			return hasMac;
 		},
+		pluginTenantWebhookMatcher: matchAirtableTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -266,17 +275,13 @@ export function airtable<const T extends AirtablePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:airtable:api_key]: Airtable API Key is missing',
-					);
+					throw new AuthMissingError('airtable', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:airtable:${authType}]: Airtable key is missing`,
-			);
+			throw new AuthMissingError('airtable', 'api_key');
 		},
 	} satisfies InternalAirtablePlugin;
 }

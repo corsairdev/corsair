@@ -1,0 +1,161 @@
+---
+title: Overview
+description: "Zoho Mail plugin for Corsair — send and read emails, manage folders"
+---
+
+Use **Zoho Mail** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+
+Zoho Mail runs region-specific datacenters. Pass `region` to the plugin factory
+(`'us'` default, plus `'eu'`, `'in'`, `'au'`, `'jp'`, `'cn'`) so the correct
+`accounts.zoho.*` and `mail.zoho.*` hosts are used:
+
+```ts
+zohomail({ region: 'eu' })
+```
+
+Every Zoho Mail call is scoped to an `accountId`. Pass it explicitly, or omit it
+and the plugin resolves the first account on the authenticated user automatically
+(cached for the rest of the session).
+
+**What you get:**
+
+- 12 typed API operations
+- 2 database entities synced for fast `.search()` / `.list()` queries
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/zohomail
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { zohomail } from '@corsair-dev/zohomail';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [zohomail()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { zohomail } from '@corsair-dev/zohomail';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [zohomail()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/zohomail/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=zohomail
+```
+
+Use the key names documented in [Get Credentials](/plugins/zohomail/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=zohomail --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="OAuth 2.0 (Default)">
+
+```ts corsair.ts
+zohomail()
+```
+
+Store credentials with `pnpm corsair setup --plugin=zohomail` (see [Get Credentials](/plugins/zohomail/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+## Webhooks
+
+This plugin registers **1** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/zohomail/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.zohomail.db.<entity>.search()` and `.list()`. See [Database](/plugins/zohomail/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `folders.get`
+
+```ts
+await corsair.zohomail.api.folders.get({});
+```
+
+
+**Write-style (write):** `folders.create`
+
+```ts
+await corsair.zohomail.api.folders.create({});
+```
+
+
+See the full list on the [API](/plugins/zohomail/api) page. Use `pnpm corsair list --plugin=zohomail` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/zohomail/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/zohomail/api) |
+| Database | [Database](/plugins/zohomail/database) |
+| Webhooks | [Webhooks](/plugins/zohomail/webhooks) |
+| Credentials | [Get credentials](/plugins/zohomail/get-credentials) |
+

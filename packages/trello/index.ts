@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Boards, Cards, Checklists, Labels, Lists, Members } from './endpoints';
 import type {
 	TrelloEndpointInputs,
@@ -29,6 +30,7 @@ import {
 	ListWebhooks,
 	MemberWebhooks,
 } from './webhooks';
+import { matchTrelloTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TrelloCardCreatedEvent,
 	TrelloCardUpdatedEvent,
@@ -376,7 +378,7 @@ const defaultAuthType = 'api_key' as const;
 
 export const trelloAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['idModel'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -405,6 +407,7 @@ export function trello<const T extends TrelloPluginOptions>(
 	};
 	return {
 		id: 'trello',
+		authConfig: trelloAuthConfig,
 		schema: TrelloSchema,
 		options: options,
 		hooks: options.hooks,
@@ -418,6 +421,7 @@ export function trello<const T extends TrelloPluginOptions>(
 			const headers = request.headers;
 			return 'x-trello-webhook' in headers;
 		},
+		pluginTenantWebhookMatcher: matchTrelloTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -446,16 +450,12 @@ export function trello<const T extends TrelloPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:trello:api_key]: Trello API Key is missing',
-					);
+					throw new AuthMissingError('trello', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:trello:${authType}]: Trello key is missing`,
-			);
+			throw new AuthMissingError('trello', 'api_key');
 		},
 	} satisfies InternalTrelloPlugin;
 }

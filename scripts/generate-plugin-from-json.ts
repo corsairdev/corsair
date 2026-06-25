@@ -1,5 +1,13 @@
+import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
+import {
+	buildAuthConfigTs,
+	buildOAuthTenantLinkTs,
+	buildTenantMatcherTs,
+	formatTenantRoutingPluginFields,
+	TENANT_ROUTING_AGENT_CHECKLIST,
+} from './plugin-tenant-routing-scaffold.ts';
 
 // ── JSON shape ────────────────────────────────────────────────────────────────
 
@@ -168,7 +176,7 @@ function pickAuthType(schemes: AuthScheme[]): string {
 		case 'OAUTH2':
 		case 'DCR_OAUTH':
 		case 'S2S_OAUTH2':
-			return 'oauth2';
+			return 'oauth_2';
 		case 'BASIC':
 		case 'BASIC_WITH_JWT':
 			return 'basic';
@@ -505,12 +513,10 @@ export function verify${pascal}WebhookSignature(
 `;
 }
 
-function buildWebhooksIndex(): string {
-	return `// TODO: Add webhook event handlers here once you've identified the event types.
-// See webhooks/types.ts for the base payload and helper functions.
-// Follow the pattern in packages/resend/webhooks/emails.ts as a reference.
-
-export * from './types';
+function buildWebhooksIndex(_pascal: string): string {
+	return `export * from './types';
+export * from './tenant-matcher';
+export * from './oauth-tenant-link';
 `;
 }
 
@@ -565,7 +571,8 @@ function buildIndexTs(
 	});
 
 	const authTypeLiteral = `'${authType}'`;
-	const hasWebhooks = false; // placeholder — filled by agent
+	const authConfigBlock = buildAuthConfigTs(camel, [authType]);
+	const tenantRoutingPluginFields = formatTenantRoutingPluginFields(pascal);
 
 	return `import type {
 \tBindEndpoints,
@@ -589,6 +596,8 @@ import type { ${pascal}WebhookOutputs } from './webhooks/types';
 import { ${groupImports} } from './endpoints';
 import { ${pascal}Schema } from './schema';
 import { errorHandlers } from './error-handlers';
+import { match${pascal}TenantWebhook } from './webhooks/tenant-matcher';
+import { resolve${pascal}OAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type ${pascal}PluginOptions = {
 \t/** ${description} */
@@ -635,11 +644,7 @@ const ${camel}EndpointMeta = {
 ${metaLines.join('\n')}
 } satisfies RequiredPluginEndpointMeta<typeof ${camel}EndpointsNested>;
 
-export const ${camel}AuthConfig = {
-\t${authType}: {
-\t\taccount: ['one'] as const,
-\t},
-} as const satisfies PluginAuthConfig;
+${authConfigBlock}
 
 export type Base${pascal}Plugin<T extends ${pascal}PluginOptions> = CorsairPlugin<
 \t'${lower}',
@@ -662,6 +667,7 @@ export function ${lower}<const T extends ${pascal}PluginOptions>(
 \t};
 \treturn {
 \t\tid: '${lower}',
+\t\tauthConfig: ${camel}AuthConfig,
 \t\tschema: ${pascal}Schema,
 \t\toptions,
 \t\thooks: options.hooks,
@@ -674,6 +680,7 @@ export function ${lower}<const T extends ${pascal}PluginOptions>(
 \t\t\t// TODO: Update to match ${pascal} webhook signature headers
 \t\t\treturn 'x-${lower}-signature' in request.headers;
 \t\t},
+${tenantRoutingPluginFields}
 \t\terrorHandlers: {
 \t\t\t...errorHandlers,
 \t\t\t...options.errorHandlers,
@@ -687,6 +694,10 @@ export function ${lower}<const T extends ${pascal}PluginOptions>(
 \t\t\tif (source === 'endpoint' && options.key) return options.key;
 \t\t\tif (source === 'endpoint' && ctx.authType === 'api_key') {
 \t\t\t\tconst res = await ctx.keys.get_api_key();
+\t\t\t\treturn res ?? '';
+\t\t\t}
+\t\t\tif (source === 'endpoint' && ctx.authType === 'oauth_2') {
+\t\t\t\tconst res = await ctx.keys.get_access_token();
 \t\t\t\treturn res ?? '';
 \t\t\t}
 \t\t\treturn '';
@@ -875,6 +886,7 @@ This integration has webhook-related operations. Check the docs for:
 - [ ] Update \`pluginWebhookMatcher\` in \`index.ts\` to check the correct header
 - [ ] Add event-specific schemas to \`webhooks/types.ts\`
 - [ ] Implement webhook handlers in \`webhooks/\`
+${TENANT_ROUTING_AGENT_CHECKLIST}
 `
 		: `
 This integration does not have documented webhook triggers in the scraped spec.
@@ -882,6 +894,7 @@ This integration does not have documented webhook triggers in the scraped spec.
 Check the docs to confirm:
 - [ ] Does ${def.name} support webhooks? If yes, add them following the Resend plugin as a reference (\`packages/resend/webhooks/\`).
 - [ ] If no webhooks, the empty \`webhooksNested\` in \`index.ts\` is correct.
+${TENANT_ROUTING_AGENT_CHECKLIST}
 `
 }
 
@@ -1182,8 +1195,20 @@ export const errorHandlers = {
 		buildWebhooksTypes(pascalName, lowerName),
 	);
 
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'tenant-matcher.ts'),
+		buildTenantMatcherTs(pascalName, lowerName),
+	);
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'oauth-tenant-link.ts'),
+		buildOAuthTenantLinkTs(pascalName),
+	);
+
 	// ── webhooks/index.ts ──
-	writeFileSync(join(pluginDir, 'webhooks', 'index.ts'), buildWebhooksIndex());
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'index.ts'),
+		buildWebhooksIndex(pascalName),
+	);
 
 	// ── index.ts ──
 	writeFileSync(
@@ -1248,6 +1273,11 @@ export const errorHandlers = {
 		}
 	}
 
+	execSync('node scripts/generate-labeler-config.mjs', {
+		cwd: join(import.meta.dirname, '..'),
+		stdio: 'inherit',
+	});
+
 	const opCount = apiOps.length;
 	const groupCount = groupedOps.size;
 	console.log(`\nPlugin generated: packages/${lowerName}/`);
@@ -1259,7 +1289,10 @@ export const errorHandlers = {
 	console.log(`  1. Read packages/${lowerName}/AGENT.md for full instructions`);
 	console.log(`  2. Fill in client.ts (API base URL + auth header)`);
 	console.log(`  3. Fill in each endpoint's path and method`);
-	console.log(`  4. Run: cd packages/${lowerName} && pnpm typecheck`);
+	console.log(
+		`  4. Configure webhook tenant routing (tenant-matcher, oauth-tenant-link, authConfig)`,
+	);
+	console.log(`  5. Run: cd packages/${lowerName} && pnpm typecheck`);
 }
 
 // ── Entry ─────────────────────────────────────────────────────────────────────

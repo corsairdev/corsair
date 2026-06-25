@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { CompaniesTable } from './companies-table';
 import { RecordNavbar } from './record-navbar';
 import { PreviewSidebar } from './sidebar';
-import { TableDetailSidebar } from './table-detail-sidebar';
 import type { TableCellSelection } from './table-detail-sidebar';
+import { TableDetailSidebar } from './table-detail-sidebar';
 
 export function CrmShell() {
 	const [selection, setSelection] = useState<TableCellSelection | null>(null);

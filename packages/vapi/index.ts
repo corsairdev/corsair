@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { z } from 'zod';
 import type { VapiEndpointInputs, VapiEndpointOutputs } from './endpoints';
 import {
@@ -49,6 +50,7 @@ import {
 	VapiTransferDestinationRequestEventSchema,
 	VapiWorkflowNodeStartedEventSchema,
 } from './webhooks';
+import { matchVapiTenantWebhook } from './webhooks/tenant-matcher';
 
 export type VapiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -551,7 +553,9 @@ const vapiEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof vapiEndpointsNested>;
 
 export const vapiAuthConfig = {
-	api_key: {},
+	api_key: {
+		account: ['org_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseVapiPlugin<T extends VapiPluginOptions> = CorsairPlugin<
@@ -576,6 +580,7 @@ export function vapi<const T extends VapiPluginOptions>(
 	};
 	return {
 		id: 'vapi',
+		authConfig: vapiAuthConfig,
 		schema: VapiSchema,
 		options: options,
 		hooks: options.hooks,
@@ -588,6 +593,7 @@ export function vapi<const T extends VapiPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'x-vapi-secret' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchVapiTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -616,14 +622,12 @@ export function vapi<const T extends VapiPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:vapi:api_key]: Vapi API Key is missing',
-					);
+					throw new AuthMissingError('vapi', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(`[auth-missing:vapi:${authType}]: Vapi key is missing`);
+			throw new AuthMissingError('vapi', 'api_key');
 		},
 	} satisfies InternalVapiPlugin;
 }

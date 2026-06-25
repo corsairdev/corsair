@@ -10,7 +10,7 @@ export default defineConfig({
 	splitting: false,
 	outDir: 'dist',
 	external: ['dotenv'],
-	entry: ['index.ts'],
+	entry: ['src/index.ts'],
 	banner: {
 		js: '#!/usr/bin/env node',
 	},

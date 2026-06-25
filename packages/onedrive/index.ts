@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
 import {
 	Drive,
@@ -34,6 +35,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { OnedriveSchema } from './schema';
 import { DriveWebhooks } from './webhooks';
+import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	OnedriveValidationPayload,
 	OnedriveWebhookOutputs,
@@ -741,7 +743,7 @@ const defaultAuthType = 'oauth_2' as const;
 
 export const onedriveAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -799,6 +801,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 			return createOnedriveMatch()(request);
 		},
+		pluginTenantWebhookMatcher: matchOnedriveTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -832,9 +835,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:onedrive:refresh_token]: OneDrive refresh token is missing',
-					);
+					throw new AuthMissingError('onedrive', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -902,9 +903,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:onedrive:${authType}]: OneDrive key is missing`,
-			);
+			throw new AuthMissingError('onedrive', 'oauth_2');
 		},
 	} satisfies InternalOnedrivePlugin;
 }

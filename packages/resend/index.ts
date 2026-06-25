@@ -11,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Domains, Emails } from './endpoints';
 import type {
 	ResendEndpointInputs,
@@ -35,6 +36,7 @@ import type {
 	ResendWebhookOutputs,
 } from './webhooks';
 import { DomainWebhooks, EmailWebhooks } from './webhooks';
+import { matchResendTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	DomainCreatedEventSchema,
 	DomainUpdatedEventSchema,
@@ -310,6 +312,7 @@ export function resend<const T extends ResendPluginOptions>(
 				'svix-signature' in headers || 'x-resend-signature' in headers;
 			return hasResendSignature;
 		},
+		pluginTenantWebhookMatcher: matchResendTenantWebhook,
 		errorHandlers: options.errorHandlers,
 		keyBuilder: async (ctx: ResendKeyBuilderContext, source) => {
 			const authType = ctx.authType;
@@ -338,17 +341,13 @@ export function resend<const T extends ResendPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:resend:api_key]: Resend API Key is missing',
-					);
+					throw new AuthMissingError('resend', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:resend:${authType}]: Resend key is missing`,
-			);
+			throw new AuthMissingError('resend', 'api_key');
 		},
 	} satisfies InternalResendPlugin;
 }

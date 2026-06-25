@@ -21,11 +21,10 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	await setInstagramCredentials();
-
-	const res = await corsair.instagram.api.profile.GetFacebookPages({});
-
-	console.log('Facebook Pages:', res);
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
+	});
 };
 
 main().catch((err) => {

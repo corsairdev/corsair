@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Profile, Summary } from './endpoints';
 import type {
 	OuraEndpointInputs,
@@ -25,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { OuraSchema } from './schema';
 import { SummaryWebhooks } from './webhooks';
+import { matchOuraTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DailyActivityWebhookEvent,
 	DailyReadinessWebhookEvent,
@@ -153,7 +155,7 @@ const ouraEndpointMeta = {
 
 export const ouraAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -179,6 +181,7 @@ export function oura<const T extends OuraPluginOptions>(
 	};
 	return {
 		id: 'oura',
+		authConfig: ouraAuthConfig,
 		schema: OuraSchema,
 		options: options,
 		hooks: options.hooks,
@@ -191,6 +194,7 @@ export function oura<const T extends OuraPluginOptions>(
 			const headers = request.headers;
 			return 'x-oura-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchOuraTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -219,14 +223,12 @@ export function oura<const T extends OuraPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:oura:api_key]: Oura API Key is missing',
-					);
+					throw new AuthMissingError('oura', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(`[auth-missing:oura:${authType}]: Oura key is missing`);
+			throw new AuthMissingError('oura', 'api_key');
 		},
 	} satisfies InternalOuraPlugin;
 }

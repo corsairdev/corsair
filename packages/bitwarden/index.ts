@@ -9,7 +9,9 @@ import type {
 	KeyBuilderContext,
 	PickAuth,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidBitwardenAccessToken } from './client';
 import { Collections, Members, Organizations } from './endpoints';
 import type {
@@ -161,7 +163,9 @@ const bitwardenEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get details for a specific organization member',
 	},
-} as const;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof bitwardenEndpointsNested
+>;
 
 export type BaseBitwardenPlugin<T extends BitwardenPluginOptions> =
 	CorsairPlugin<
@@ -261,9 +265,7 @@ export function bitwarden<const T extends BitwardenPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:bitwarden:${authType}]: Bitwarden key is missing`,
-			);
+			throw new AuthMissingError('bitwarden', 'oauth_2');
 		},
 	} satisfies InternalBitwardenPlugin;
 }

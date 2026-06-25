@@ -40,7 +40,10 @@ export async function persistZone(
 	);
 }
 
-export async function deleteZone(zoneId: string, db: CloudflareDb): Promise<void> {
+export async function deleteZone(
+	zoneId: string,
+	db: CloudflareDb,
+): Promise<void> {
 	if (!db.zones?.deleteByEntityId) return;
 	await persist('zone deletion', () => db.zones!.deleteByEntityId!(zoneId));
 }

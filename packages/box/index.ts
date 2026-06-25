@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Files, Folders } from './endpoints';
 import type { BoxEndpointInputs, BoxEndpointOutputs } from './endpoints/types';
 import {
@@ -28,6 +29,7 @@ import {
 	MetadataWebhooks,
 	SharedLinkWebhooks,
 } from './webhooks';
+import { matchBoxTenantWebhook } from './webhooks/tenant-matcher';
 import type { BoxWebhookOutputs, BoxWebhookPayload } from './webhooks/types';
 import {
 	CollaborationAcceptedPayloadSchema,
@@ -504,8 +506,8 @@ const boxWebhookSchemas = {
 const defaultAuthType = 'oauth_2' as const;
 
 export const boxAuthConfig = {
-	oauth_2: {
-		account: ['one'] as const,
+	api_key: {
+		account: ['webhook_id', 'user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -531,6 +533,7 @@ export function box<const T extends BoxPluginOptions>(
 	};
 	return {
 		id: 'box',
+		authConfig: boxAuthConfig,
 		schema: BoxSchema,
 		options: options,
 		hooks: options.hooks,
@@ -545,6 +548,7 @@ export function box<const T extends BoxPluginOptions>(
 			const hasTimestamp = 'box-delivery-timestamp' in headers;
 			return hasTimestamp;
 		},
+		pluginTenantWebhookMatcher: matchBoxTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -573,14 +577,12 @@ export function box<const T extends BoxPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:box:oauth_2]: Box access token is missing',
-					);
+					throw new AuthMissingError('box', 'oauth_2');
 				}
 				return res;
 			}
 
-			throw new Error(`[auth-missing:box:${authType}]: Box key is missing`);
+			throw new AuthMissingError('box', 'oauth_2');
 		},
 	} satisfies InternalBoxPlugin;
 }

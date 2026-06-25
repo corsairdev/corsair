@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Crawl, Extract, Map, Search } from './endpoints';
 import type {
 	TavilyEndpointInputs,
@@ -22,6 +23,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TavilySchema } from './schema';
+import { matchTavilyTenantWebhook } from './webhooks/tenant-matcher';
 
 export type TavilyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -140,6 +142,7 @@ export function tavily<const T extends TavilyPluginOptions>(
 		endpointMeta: tavilyEndpointMeta,
 		endpointSchemas: tavilyEndpointSchemas,
 		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: matchTavilyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -156,9 +159,7 @@ export function tavily<const T extends TavilyPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:tavily:${authType}]: Tavily key is missing`,
-			);
+			throw new AuthMissingError('tavily', 'api_key');
 		},
 	} satisfies InternalTavilyPlugin;
 }

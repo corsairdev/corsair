@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	ActivityLog,
 	EventTypes,
@@ -41,6 +42,7 @@ import {
 	RoutingFormWebhooks,
 	UserWebhooks,
 } from './webhooks';
+import { matchCalendlyTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	CalendlyWebhookOutputs,
 	EventTypeUpdatedPayload,
@@ -678,7 +680,7 @@ const calendlyEndpointMeta = {
 
 export const calendlyAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['organization', 'user_uri'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -739,6 +741,7 @@ export function calendly<const T extends CalendlyPluginOptions>(
 	};
 	return {
 		id: 'calendly',
+		authConfig: calendlyAuthConfig,
 		schema: CalendlySchema,
 		options: options,
 		hooks: options.hooks,
@@ -752,6 +755,7 @@ export function calendly<const T extends CalendlyPluginOptions>(
 			const headers = request.headers;
 			return 'calendly-webhook-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchCalendlyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -780,16 +784,12 @@ export function calendly<const T extends CalendlyPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:calendly:api_key]: Calendly API Key is missing',
-					);
+					throw new AuthMissingError('calendly', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:calendly:${authType}]: Calendly key is missing`,
-			);
+			throw new AuthMissingError('calendly', 'api_key');
 		},
 	} satisfies InternalCalendlyPlugin;
 }

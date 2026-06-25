@@ -8,9 +8,12 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { getValidLinearAccessToken } from './client';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
 import {
@@ -18,7 +21,6 @@ import {
 	LinearEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { getValidLinearAccessToken } from './client';
 import { LinearSchema } from './schema';
 import type {
 	CommentCreatedEvent,
@@ -34,6 +36,8 @@ import type {
 	ProjectUpdatedEvent,
 } from './webhooks';
 import { CommentWebhooks, IssueWebhooks, ProjectWebhooks } from './webhooks';
+import { resolveLinearOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchLinearTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CommentCreatedEventSchema,
 	CommentDeletedEventSchema,
@@ -293,6 +297,11 @@ const linearWebhookSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+export const linearAuthConfig = {
+	api_key: { account: ['organization_id'] as const },
+	oauth_2: { account: ['organization_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 /**
  * Risk-level metadata for each Linear endpoint.
  * Used by the MCP server permission system to decide allow / deny / require_approval.
@@ -382,6 +391,7 @@ export function linear<const T extends LinearPluginOptions>(
 	};
 	return {
 		id: 'linear',
+		authConfig: linearAuthConfig,
 		oauthConfig: {
 			providerName: 'Linear',
 			authUrl: 'https://linear.app/oauth/authorize',
@@ -403,6 +413,8 @@ export function linear<const T extends LinearPluginOptions>(
 			const hasLinearSignature = 'linear-signature' in headers;
 			return hasLinearSignature;
 		},
+		pluginTenantWebhookMatcher: matchLinearTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveLinearOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -434,9 +446,7 @@ export function linear<const T extends LinearPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:linear:api_key]: Linear API Key is missing',
-					);
+					throw new AuthMissingError('linear', 'api_key');
 				}
 
 				return res;
@@ -450,9 +460,7 @@ export function linear<const T extends LinearPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:linear:refresh_token]: Linear refresh token is missing',
-					);
+					throw new AuthMissingError('linear', 'oauth_2');
 				}
 
 				const credentials = await ctx.keys.get_integration_credentials();
@@ -510,9 +518,7 @@ export function linear<const T extends LinearPluginOptions>(
 				return `Bearer ${result.accessToken}`;
 			}
 
-			throw new Error(
-				`[auth-missing:linear:${authType}]: Linear key is missing`,
-			);
+			throw new AuthMissingError('linear', 'oauth_2');
 		},
 	} satisfies InternalLinearPlugin;
 }
@@ -589,3 +595,4 @@ export type {
 	WorkflowState,
 	WorkflowStateType,
 } from './endpoints/types';
+export * from './error-handlers';

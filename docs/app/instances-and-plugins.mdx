@@ -1,0 +1,65 @@
+---
+title: Instances and plugins
+description: Create instances, install plugins, set permissions, and manage root credentials.
+---
+
+An **instance** is a hosted Corsair environment (e.g. production). Use the instance `id` — not the display `name` — in API calls.
+
+```ts
+const { id } = await corsair.instances.create({ name: "prod" });
+const inst = corsair.instance(id);
+```
+
+## Instances
+
+```ts
+const { instances } = await corsair.instances.list();
+const detail = await inst.get();
+await inst.update({ name: "prod-v2" });
+await inst.delete(); // permanent
+```
+
+## Plugins
+
+```ts
+await inst.plugins.upsert("slack", { mode: "cautious" });
+await inst.plugins.upsert("github", { authType: "oauth_2" });
+await inst.plugins.delete("slack");
+
+const { plugins } = await inst.plugins.list();
+```
+
+Plugin IDs autocomplete (`slack`, `github`, `gmail`, …). See [integrations](https://api.corsair.dev/md/integrations).
+
+## Permissions
+
+```ts
+await inst.plugins.permissions.setMode("slack", "strict");
+await inst.plugins.permissions.setOverride("slack", "api.channels.archive", "deny");
+await inst.plugins.permissions.deleteOverride("slack", "api.channels.archive");
+```
+
+Modes: `permissive`, `cautious`, `strict`.
+
+## Root credentials (shared)
+
+OAuth app credentials and other instance-level fields:
+
+```ts
+await inst.plugins.credentials.setRoot("github", "client_id", "Iv1...");
+await inst.plugins.credentials.setRoot("github", "client_secret", "...");
+await inst.plugins.credentials.clearRoot("github", "client_id");
+```
+
+## Runtime
+
+```ts
+await inst.runtime.refresh();
+const status = await inst.runtime.status();
+```
+
+## Catalog
+
+```ts
+const { plugins } = await corsair.catalog.plugins.list();
+```

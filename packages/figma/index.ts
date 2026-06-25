@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	ActivityLogs,
 	Comments,
@@ -46,6 +47,7 @@ import {
 	LibraryPublishWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { matchFigmaTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	FigmaFileCommentEvent,
 	FigmaFileDeleteEvent,
@@ -704,8 +706,8 @@ const figmaWebhookSchemas = {
 } as const;
 
 export const figmaAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
+	oauth_2: {
+		account: ['webhook_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -733,6 +735,7 @@ export function figma<const T extends FigmaPluginOptions>(
 	};
 	return {
 		id: 'figma',
+		authConfig: figmaAuthConfig,
 		schema: FigmaSchema,
 		options: options,
 		hooks: options.hooks,
@@ -746,6 +749,7 @@ export function figma<const T extends FigmaPluginOptions>(
 			const hasSignature = 'x-figma-signature' in headers;
 			return hasSignature;
 		},
+		pluginTenantWebhookMatcher: matchFigmaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -777,15 +781,13 @@ export function figma<const T extends FigmaPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:figma:api_key]: Figma API Key is missing',
-					);
+					throw new AuthMissingError('figma', 'api_key');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:figma:${authType}]: Figma key is missing`);
+			throw new AuthMissingError('figma', 'api_key');
 		},
 	} satisfies InternalFigmaPlugin;
 }

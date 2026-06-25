@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { getValidStripeAccessToken } from './client';
 import {
 	Balance,
@@ -41,6 +42,8 @@ import {
 	PaymentIntentWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { resolveStripeOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchStripeTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	StripeChargeFailedEvent,
 	StripeChargeRefundedEvent,
@@ -422,7 +425,10 @@ const stripeWebhookSchemas = {
 
 export const stripeAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['account_id'] as const,
+	},
+	oauth_2: {
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -450,6 +456,7 @@ export function stripe<const T extends StripePluginOptions>(
 	};
 	return {
 		id: 'stripe',
+		authConfig: stripeAuthConfig,
 		schema: StripeSchema,
 		options: options,
 		oauthConfig: {
@@ -470,6 +477,8 @@ export function stripe<const T extends StripePluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'stripe-signature' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchStripeTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveStripeOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -501,9 +510,7 @@ export function stripe<const T extends StripePluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:stripe:api_key]: Stripe API Key is missing',
-					);
+					throw new AuthMissingError('stripe', 'api_key');
 				}
 
 				return res;
@@ -517,9 +524,7 @@ export function stripe<const T extends StripePluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:stripe:refresh_token]: Stripe refresh token is missing',
-					);
+					throw new AuthMissingError('stripe', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -576,9 +581,7 @@ export function stripe<const T extends StripePluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:stripe:${authType}]: Stripe key is missing`,
-			);
+			throw new AuthMissingError('stripe', 'oauth_2');
 		},
 	} satisfies InternalStripePlugin;
 }

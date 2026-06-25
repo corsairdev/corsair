@@ -12,6 +12,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	ArchiveFiles,
 	Devices,
@@ -36,6 +37,7 @@ import {
 	RecordingWebhooks,
 	WebinarWebhooks,
 } from './webhooks';
+import { matchZoomTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	MeetingCancelledEvent,
 	MeetingCreatedEvent,
@@ -369,7 +371,7 @@ const zoomEndpointMeta = {
 
 export const zoomAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -401,6 +403,7 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 	};
 	return {
 		id: 'zoom',
+		authConfig: zoomAuthConfig,
 		schema: ZoomSchema,
 		options: options,
 		hooks: options.hooks,
@@ -414,6 +417,7 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 			const headers = request.headers;
 			return 'x-zm-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchZoomTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -445,15 +449,13 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 				const res = await ctx.keys.get_access_token();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:zoom:oauth_2]: Zoom access token is missing',
-					);
+					throw new AuthMissingError('zoom', 'oauth_2');
 				}
 
 				return res;
 			}
 
-			throw new Error(`[auth-missing:zoom:${authType}]: Zoom key is missing`);
+			throw new AuthMissingError('zoom', 'oauth_2');
 		},
 	} satisfies InternalZoomPlugin;
 }

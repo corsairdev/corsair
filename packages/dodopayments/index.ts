@@ -9,11 +9,13 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Customers, Payments, Refunds, Subscriptions } from './endpoints';
 import type {
 	CustomersCreateInput,
@@ -38,6 +40,7 @@ import {
 	RefundWebhooks,
 	SubscriptionWebhooks,
 } from './webhooks';
+import { matchDodoPaymentsTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DodoPaymentFailedEvent,
 	DodoPaymentSucceededEvent,
@@ -284,9 +287,9 @@ const dodoPaymentsEndpointMeta = {
 
 export const dodoPaymentsAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['business_id'] as const,
 	},
-} as const;
+} as const satisfies PluginAuthConfig;
 
 export type BaseDodoPaymentsPlugin<T extends DodoPaymentsPluginOptions> =
 	CorsairPlugin<
@@ -314,6 +317,7 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 	};
 	return {
 		id: 'dodopayments',
+		authConfig: dodoPaymentsAuthConfig,
 		schema: DodoPaymentsSchema,
 		options: options,
 		hooks: options.hooks,
@@ -352,6 +356,7 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 				typeof body.timestamp === 'string'
 			);
 		},
+		pluginTenantWebhookMatcher: matchDodoPaymentsTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -377,9 +382,7 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:dodopayments:${authType}]: Dodo Payments key is missing`,
-			);
+			throw new AuthMissingError('dodopayments', 'api_key');
 		},
 	} satisfies InternalDodoPaymentsPlugin;
 }

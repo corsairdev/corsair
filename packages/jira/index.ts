@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Comments,
 	Groups,
@@ -32,6 +33,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { JiraSchema } from './schema';
 import { IssueWebhooks, ProjectWebhooks } from './webhooks';
+import { matchJiraTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	JiraWebhookOutputs,
 	NewIssueEvent,
@@ -520,6 +522,7 @@ export function jira<const T extends JiraPluginOptions>(
 			const headers = request.headers;
 			return 'x-atlassian-webhook-identifier' in headers;
 		},
+		pluginTenantWebhookMatcher: matchJiraTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -548,14 +551,12 @@ export function jira<const T extends JiraPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:jira:api_key]: Jira API Key is missing',
-					);
+					throw new AuthMissingError('jira', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(`[auth-missing:jira:${authType}]: Jira key is missing`);
+			throw new AuthMissingError('jira', 'api_key');
 		},
 	} satisfies InternalJiraPlugin;
 }

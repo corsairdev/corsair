@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Boards,
 	Columns,
@@ -39,6 +40,7 @@ import {
 	ItemWebhooks,
 	StatusWebhooks,
 } from './webhooks';
+import { matchMondayTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ColumnValueChangedEvent,
 	ItemCreatedEvent,
@@ -482,7 +484,7 @@ const mondayEndpointMeta = {
 
 export const mondayAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['accountId'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -509,6 +511,7 @@ export function monday<const T extends MondayPluginOptions>(
 	};
 	return {
 		id: 'monday',
+		authConfig: mondayAuthConfig,
 		schema: MondaySchema,
 		options: options,
 		hooks: options.hooks,
@@ -539,6 +542,7 @@ export function monday<const T extends MondayPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchMondayTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -567,16 +571,12 @@ export function monday<const T extends MondayPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:monday:api_key]: Monday API Key is missing',
-					);
+					throw new AuthMissingError('monday', 'api_key');
 				}
 				return res;
 			}
 
-			throw new Error(
-				`[auth-missing:monday:${authType}]: Monday key is missing`,
-			);
+			throw new AuthMissingError('monday', 'api_key');
 		},
 	} satisfies InternalMondayPlugin;
 }

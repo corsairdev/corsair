@@ -13,6 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Blocks, DatabasePages, Databases, Pages, Users } from './endpoints';
 import type {
 	NotionEndpointInputs,
@@ -25,6 +26,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { NotionSchema } from './schema';
 import { NotionWebhooks } from './webhooks';
+import { resolveNotionOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchNotionTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	NotionWebhookOutputs,
 	PageCreatedEvent,
@@ -283,9 +286,11 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const notionAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['workspace_id'] as const,
 	},
-	oauth_2: {},
+	oauth_2: {
+		account: ['workspace_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseNotionPlugin<T extends NotionPluginOptions> = CorsairPlugin<
@@ -343,6 +348,8 @@ export function notion<const T extends NotionPluginOptions>(
 			const hasSignature = 'x-notion-signature' in headers;
 			return hasSignature;
 		},
+		pluginTenantWebhookMatcher: matchNotionTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveNotionOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -374,9 +381,7 @@ export function notion<const T extends NotionPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 
 				if (!res) {
-					throw new Error(
-						'[auth-missing:notion:api_key]: Notion API Key is missing',
-					);
+					throw new AuthMissingError('notion', 'api_key');
 				}
 
 				return res;
@@ -386,17 +391,13 @@ export function notion<const T extends NotionPluginOptions>(
 				const accessToken = await ctx.keys.get_access_token();
 
 				if (!accessToken) {
-					throw new Error(
-						'[auth-missing:notion:oauth_2]: Notion access token is missing',
-					);
+					throw new AuthMissingError('notion', 'oauth_2');
 				}
 
 				return accessToken;
 			}
 
-			throw new Error(
-				`[auth-missing:notion:${authType}]: Notion key is missing`,
-			);
+			throw new AuthMissingError('notion', 'oauth_2');
 		},
 	} satisfies InternalNotionPlugin;
 }

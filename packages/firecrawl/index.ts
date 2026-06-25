@@ -9,6 +9,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	AgentEndpoints,
 	CrawlEndpoints,
@@ -28,6 +29,7 @@ import { errorHandlers as defaultErrorHandlers } from './error-handlers';
 import type { FirecrawlContext } from './plugin-context';
 import { FirecrawlSchema } from './schema';
 import * as Wh from './webhooks';
+import { matchFirecrawlTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	AgentActionEventSchema,
 	AgentCancelledEventSchema,
@@ -328,6 +330,7 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 				'x-firecrawl-signature' in headers || 'X-Firecrawl-Signature' in headers
 			);
 		},
+		pluginTenantWebhookMatcher: matchFirecrawlTenantWebhook,
 		errorHandlers: {
 			...defaultErrorHandlers,
 			...options.errorHandlers,
@@ -353,9 +356,7 @@ export function firecrawl<const T extends FirecrawlPluginOptions>(
 				return res ?? '';
 			}
 
-			throw new Error(
-				`[auth-missing:firecrawl:${authType}]: Firecrawl key is missing`,
-			);
+			throw new AuthMissingError('firecrawl', 'api_key');
 		},
 	} satisfies InternalFirecrawlPlugin;
 }

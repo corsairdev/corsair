@@ -1,15 +1,39 @@
 ---
 title: Introduction
-description: The integration layer for AI agents.
+description: The go-to integration layer for AI agents and apps. Connect anything, anywhere, in seconds.
+mode: "wide"
 ---
 
-Corsair gives your agent safe access to hundreds of integrations. It handles all of the plumbing — auth, data storage, webhooks, token refresh, rate limiting — so the only code you write is the part specific to your use case.
+import { IntroFeatures } from '/snippets/intro-features.mdx';
+
+Corsair is the go-to way to add any integration to your app or agent. Auth, token refresh, data storage, webhooks, rate limits are all handled. You write the part that's unique to your use case, not the plumbing you've already written a hundred times.
+
+Install Corsair and the plugins you need:
+
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+```bash yarn
+yarn add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+```bash bun
+bun add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
+```
+</CodeGroup>
 
 ```ts corsair.ts
-import { createCorsair, slack, github, gmail, linear, googlecalendar } from 'corsair';
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+import { gmail } from '@corsair-dev/gmail';
+import { linear } from '@corsair-dev/linear';
+import { slack } from '@corsair-dev/slack';
 
 export const corsair = createCorsair({
-    plugins: [slack(), github(), gmail(), linear(), googlecalendar()],
+    plugins: [slack(), github(), gmail(), linear()],
     database: db,
     kek: process.env.CORSAIR_KEK!,
 });
@@ -22,56 +46,23 @@ Invite Jim to next Thursday's sales call. Tell him over Slack too so he
 can accept it. Let me know when he does.
 ```
 
-Corsair exposes four MCP tools to your agent — no matter how many plugins you have:
+One prompt, four integrations, and Corsair handles the rest.
 
-- **`corsair_setup`** — check auth and get credential instructions
-- **`list_operations`** — discover every available API endpoint
-- **`get_schema`** — inspect the parameters for a specific endpoint
-- **`run_script`** — execute a script with `corsair` in scope
-
-## What your agent can do
-
-Once connected, your agent can reason across all your integrations at once:
-
-> *"Summarize my unread emails from customers, open a Linear issue for anything that looks urgent, and post the digest to #standup."*
-
-> *"When a new GitHub issue is labeled `bug`, create a matching Linear ticket and notify the on-call engineer in Slack."*
-
-The second one is a live webhook workflow. Corsair handles the event routing and your agent handles the logic.
-
-## Why Corsair?
-
-### Integrations are 95% plumbing
-
-If you look at any codebase with integrations, 95% of the code is identical across every project. OAuth flows, token refresh, webhook verification, data normalization — it's all the same. Corsair handles the 95% so you write only the part that's actually unique to your use case.
-
-### Your data, your database
-
-Everything stays in your own database. No data leaving to a third-party service, no vendor lock-in, no per-seat pricing on your users' data.
-
-### Built for agents
-
-Corsair is designed around how agents actually work — discover, inspect, execute. The four MCP tools work the same way regardless of which framework you use.
-
-### Scales to multi-tenant SaaS
-
-The same setup works for building products. Set `multiTenancy: true`, call `corsair.withTenant(teamId)`, and every API call is automatically scoped to the right credentials.
-
-```ts
-const tenant = corsair.withTenant("team_abc");
-await tenant.slack.api.messages.post({ channel: "C01234567", text: "Hello!" });
-```
-
-## Supported integrations
-
-Slack · Linear · HubSpot · Gmail · Google Calendar · GitHub · Google Drive · Google Sheets · PostHog · Resend · and more
-
-## Supported frameworks
-
-Claude Agent SDK · Anthropic SDK · OpenAI Agents · Vercel AI SDK · Mastra · OpenAI · and more
+<IntroFeatures />
 
 ## Get started
 
-- [Installation](/installation) — Install, migrate, and run your first prompt
-- [MCP Adapters](/mcp-adapters/claude-sdk) — Connect your agent framework
-- [Plugins](/plugins/slack) — Available integrations and their endpoints
+<CardGroup cols={2}>
+  <Card title="Quick start" icon="rocket" href="/getting-started/quick-start">
+    Install, migrate, and run your first integration in minutes.
+  </Card>
+  <Card title="Setup" icon="wrench" href="/getting-started/setup">
+    Integrations, accounts, tenants, CLI, and setupCorsair.
+  </Card>
+  <Card title="MCP adapters" icon="robot" href="/mcp-adapters/mcp-adapters">
+    Connect your agent framework and start prompting across every plugin.
+  </Card>
+  <Card title="Browse plugins" icon="grid" href="/guides/plugins">
+    Slack, Linear, Gmail, GitHub, HubSpot, Stripe, and hundreds more.
+  </Card>
+</CardGroup>

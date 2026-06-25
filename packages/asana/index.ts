@@ -12,6 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { getValidAccessToken } from './client';
 import {
 	Projects,
 	Sections,
@@ -31,10 +33,11 @@ import {
 	AsanaEndpointInputSchemas,
 	AsanaEndpointOutputSchemas,
 } from './endpoints/types';
-import { getValidAccessToken } from './client';
 import { errorHandlers } from './error-handlers';
 import { AsanaSchema } from './schema';
 import { ChallengeWebhooks, TaskWebhooks } from './webhooks';
+import { resolveAsanaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchAsanaTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	AsanaChallengePayload,
 	AsanaTaskWebhookPayload,
@@ -890,7 +893,10 @@ const defaultAuthType = 'api_key' as const;
 
 export const asanaAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['workspace_gid', 'project_gid'] as const,
+	},
+	oauth_2: {
+		account: ['workspace_gid', 'project_gid'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -991,6 +997,8 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			const headers = request.headers;
 			return 'x-hook-signature' in headers || 'x-hook-secret' in headers;
 		},
+		pluginTenantWebhookMatcher: matchAsanaTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveAsanaOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -1019,9 +1027,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:asana:api_key]: Asana API Key is missing',
-					);
+					throw new AuthMissingError('asana', 'api_key');
 				}
 				return res;
 			}
@@ -1034,9 +1040,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 				]);
 
 				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:asana:refresh_token]: Asana refresh token is missing',
-					);
+					throw new AuthMissingError('asana', 'oauth_2');
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
@@ -1093,7 +1097,7 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 				return result.accessToken;
 			}
 
-			throw new Error(`[auth-missing:asana:${authType}]: Asana key is missing`);
+			throw new AuthMissingError('asana', 'oauth_2');
 		},
 	} satisfies InternalAsanaPlugin;
 }
