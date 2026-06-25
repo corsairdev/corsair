@@ -28,6 +28,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TeamsSchema } from './schema';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
+import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	TeamsChannelCreatedEvent,
 	TeamsChannelMessageEvent,
@@ -391,7 +392,7 @@ const teamsWebhookSchemas = {
 
 export const teamsAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -452,6 +453,7 @@ export function teams<const T extends TeamsPluginOptions>(
 				headers['content-type']?.includes('application/json') ?? false;
 			return hasTeamsHeader && isJsonPost;
 		},
+		pluginTenantWebhookMatcher: matchTeamsTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

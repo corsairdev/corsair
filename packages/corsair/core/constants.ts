@@ -14,6 +14,7 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
+	'ahrefs',
 	'airtable',
 	'amplitude',
 	'asana',
@@ -66,6 +67,7 @@ export const BaseProviders = [
 	'telegram',
 	'todoist',
 	'trello',
+	'twilio',
 	'twitter',
 	'twitterapiio',
 	'typeform',
@@ -73,11 +75,87 @@ export const BaseProviders = [
 	'xquik',
 	'youtube',
 	'zendesk',
+	'zohomail',
 	'zoom',
 ] as const;
 
+export const ProviderDisplayNames = {
+	agentql: 'AgentQL',
+	ahrefs: 'Ahrefs',
+	airtable: 'Airtable',
+	amplitude: 'Amplitude',
+	asana: 'Asana',
+	bitwarden: 'Bitwarden',
+	bluesky: 'Bluesky',
+	box: 'Box',
+	cal: 'Cal',
+	calendly: 'Calendly',
+	cloudflare: 'Cloudflare',
+	cursor: 'Cursor',
+	discord: 'Discord',
+	dodopayments: 'Dodo Payments',
+	dropbox: 'Dropbox',
+	exa: 'Exa',
+	figma: 'Figma',
+	firecrawl: 'Firecrawl',
+	fireflies: 'Fireflies',
+	github: 'GitHub',
+	gitlab: 'GitLab',
+	gmail: 'Gmail',
+	googlecalendar: 'Google Calendar',
+	googledrive: 'Google Drive',
+	googlesheets: 'Google Sheets',
+	grafana: 'Grafana',
+	hackernews: 'Hacker News',
+	hubspot: 'HubSpot',
+	intercom: 'Intercom',
+	jira: 'Jira',
+	linear: 'Linear',
+	monday: 'Monday',
+	notion: 'Notion',
+	onedrive: 'OneDrive',
+	openweathermap: 'OpenWeatherMap',
+	oura: 'Oura',
+	outlook: 'Outlook',
+	pagerduty: 'PagerDuty',
+	posthog: 'PostHog',
+	razorpay: 'Razorpay',
+	reddit: 'Reddit',
+	resend: 'Resend',
+	sentry: 'Sentry',
+	sharepoint: 'SharePoint',
+	slack: 'Slack',
+	spotify: 'Spotify',
+	strava: 'Strava',
+	stripe: 'Stripe',
+	tally: 'Tally',
+	tavily: 'Tavily',
+	teams: 'Teams',
+	telegram: 'Telegram',
+	todoist: 'Todoist',
+	trello: 'Trello',
+	twilio: 'Twilio',
+	twitter: 'Twitter',
+	twitterapiio: 'Twitter API IO',
+	typeform: 'Typeform',
+	vapi: 'Vapi',
+	xquik: 'XQuik',
+	youtube: 'YouTube',
+	zendesk: 'Zendesk',
+	zohomail: 'Zoho Mail',
+	zoom: 'Zoom',
+} as const satisfies Record<(typeof BaseProviders)[number], string>;
+
+export function formatProviderDisplayName(plugin: string): string {
+	const knownName =
+		ProviderDisplayNames[plugin as keyof typeof ProviderDisplayNames];
+	if (knownName) return knownName;
+	return plugin.charAt(0).toUpperCase() + plugin.slice(1);
+}
+
 export type AllProviders =
 	| 'agentql'
+	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
 	| 'asana'
@@ -130,6 +208,7 @@ export type AllProviders =
 	| 'telegram'
 	| 'todoist'
 	| 'trello'
+	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
 	| 'typeform'
@@ -137,9 +216,10 @@ export type AllProviders =
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
+	| 'zohomail'
 	| 'zoom'
 	| (string & {});
 
-export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token';
+export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
 
 export type PickAuth<T extends AuthTypes> = T;

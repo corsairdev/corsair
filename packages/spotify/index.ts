@@ -34,6 +34,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { SpotifySchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
+import { matchSpotifyTenantWebhook } from './webhooks/tenant-matcher';
 import type { ExampleEvent, SpotifyWebhookOutputs } from './webhooks/types';
 import { ExampleEventSchema } from './webhooks/types';
 
@@ -497,6 +498,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 			const headers = request.headers;
 			return 'x-spotify-signature' in headers || 'spotify-webhook' in headers;
 		},
+		pluginTenantWebhookMatcher: matchSpotifyTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

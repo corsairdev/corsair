@@ -8,6 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
@@ -25,6 +26,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { DropboxSchema } from './schema';
 import { FileSystemWebhooks } from './webhooks';
+import { resolveDropboxOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchDropboxTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DropboxFileSystemChangedEvent,
 	DropboxWebhookOutputs,
@@ -223,6 +226,12 @@ type DropboxWebhook<
 
 export type DropboxBoundWebhooks = BindWebhooks<DropboxWebhooks>;
 
+export const dropboxAuthConfig = {
+	oauth_2: {
+		account: ['account_id', 'user_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseDropboxPlugin<T extends DropboxPluginOptions> = CorsairPlugin<
 	'dropbox',
 	typeof DropboxSchema,
@@ -246,6 +255,7 @@ export function dropbox<const T extends DropboxPluginOptions>(
 	};
 	return {
 		id: 'dropbox',
+		authConfig: dropboxAuthConfig,
 		schema: DropboxSchema,
 		options: options,
 		// https://developers.dropbox.com/oauth-guide — authorize & token endpoints.
@@ -274,6 +284,8 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			const headers = request.headers;
 			return 'x-dropbox-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchDropboxTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveDropboxOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

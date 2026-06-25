@@ -17,7 +17,8 @@
     "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
-    "test": "tsx src/scripts/test-script.ts",
+    "test:hub": "tsx src/scripts/test-hub.ts",
+    "test:manual": "tsx src/scripts/test-script.ts",
     "rebuild:sqlite": "pnpm rebuild better-sqlite3",
     "inngest:dev": "npx inngest-cli@latest dev",
     "agent": "tsx src/scripts/agent.ts"
@@ -43,6 +44,7 @@
     "@corsair-dev/sharepoint": "workspace:*",
     "@corsair-dev/slack": "workspace:*",
     "@corsair-dev/teams": "workspace:*",
+    "@corsair-dev/twilio": "workspace:*",
     "@corsair-dev/vapi": "workspace:*",
     "@corsair-dev/xquik": "workspace:*",
     "@tanstack/react-query": "^5.62.14",

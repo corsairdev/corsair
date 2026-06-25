@@ -50,6 +50,7 @@ import {
 	VapiTransferDestinationRequestEventSchema,
 	VapiWorkflowNodeStartedEventSchema,
 } from './webhooks';
+import { matchVapiTenantWebhook } from './webhooks/tenant-matcher';
 
 export type VapiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -552,7 +553,9 @@ const vapiEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof vapiEndpointsNested>;
 
 export const vapiAuthConfig = {
-	api_key: {},
+	api_key: {
+		account: ['org_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseVapiPlugin<T extends VapiPluginOptions> = CorsairPlugin<
@@ -577,6 +580,7 @@ export function vapi<const T extends VapiPluginOptions>(
 	};
 	return {
 		id: 'vapi',
+		authConfig: vapiAuthConfig,
 		schema: VapiSchema,
 		options: options,
 		hooks: options.hooks,
@@ -589,6 +593,7 @@ export function vapi<const T extends VapiPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'x-vapi-secret' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchVapiTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

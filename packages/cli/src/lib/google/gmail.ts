@@ -5,7 +5,7 @@ const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1';
 export async function setupGmailWatch(
 	accessToken: string,
 	topicName: string,
-): Promise<void> {
+): Promise<{ emailAddress: string | null }> {
 	const watchSpin = p.spinner();
 	watchSpin.start('Starting Gmail watch...');
 
@@ -36,8 +36,17 @@ export async function setupGmailWatch(
 
 	watchSpin.stop('Watch started.');
 
+	const profileResponse = await fetch(`${GMAIL_API_BASE}/users/me/profile`, {
+		headers: { Authorization: `Bearer ${accessToken}` },
+	});
+	const profile = profileResponse.ok
+		? ((await profileResponse.json()) as { emailAddress?: string })
+		: null;
+
 	p.note(
-		`History ID: ${data.historyId}\nExpiration: ${new Date(Number(data.expiration)).toISOString()}`,
+		`History ID: ${data.historyId}\nExpiration: ${new Date(Number(data.expiration)).toISOString()}${profile?.emailAddress ? `\nEmail: ${profile.emailAddress}` : ''}`,
 		'Watch Response',
 	);
+
+	return { emailAddress: profile?.emailAddress ?? null };
 }

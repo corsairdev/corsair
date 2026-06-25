@@ -30,6 +30,11 @@
     },
     "//#format": {},
     "lint": {},
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"],
+      "env": ["SKIP_PG_TESTS"]
+    },
     "deploy": {
       "cache": false
     },

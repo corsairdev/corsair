@@ -1,146 +1,218 @@
 ---
 title: Overview
-description: Access Ahrefs SEO data including backlinks, keyword rankings, and site audits from your app or agent.
+description: "Ahrefs plugin for Corsair"
 ---
 
-## Quick Start
+Use **Ahrefs** through Corsair: one client, typed API calls, optional local DB sync for SEO metrics.
 
-Install the plugin:
+**What you get:**
 
+- 9 typed API operations
+- 7 database entities synced for fast `.search()` / `.list()` queries
+- 0 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
 ```bash
 pnpm install @corsair-dev/ahrefs
 ```
 
-Add the Ahrefs plugin to your Corsair instance:
+</Step>
 
+<Step title="Add the plugin">
 <Tabs>
 <Tab title="Solo">
 ```ts corsair.ts
-import { createCorsair } from "corsair";
-import { ahrefs } from "@corsair-dev/ahrefs";
+import { createCorsair } from 'corsair';
+import { ahrefs } from '@corsair-dev/ahrefs';
 
 export const corsair = createCorsair({
-    plugins: [ahrefs()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
+	// ... other config options,
+	multiTenancy: false,
+	plugins: [ahrefs()],
 });
 ```
 </Tab>
 <Tab title="Multi-Tenant">
 ```ts corsair.ts
-import { createCorsair } from "corsair";
-import { ahrefs } from "@corsair-dev/ahrefs";
+import { createCorsair } from 'corsair';
+import { ahrefs } from '@corsair-dev/ahrefs';
 
 export const corsair = createCorsair({
-    multiTenancy: true,
-    plugins: [ahrefs()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
+	// ... other config options,
+	multiTenancy: true,
+	plugins: [ahrefs()],
 });
 ```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
 </Tab>
 </Tabs>
 
-## Authentication
+</Step>
 
-### Supported Auth Types
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/ahrefs/get-credentials) if you need help getting keys.
 
-- **[`api_key`](/concepts/api-key)** (default) - Ahrefs API key
+</Step>
 
-### API Key Setup
-
+<Step title="Store credentials">
 <Tabs>
 <Tab title="Solo">
 ```bash
 pnpm corsair setup --plugin=ahrefs api_key=your-api-key
 ```
 
-See [Get Credentials](/plugins/ahrefs/get-credentials) for step-by-step instructions.
+Use the `api_key` credential documented in [Get Credentials](/plugins/ahrefs/get-credentials).
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --plugin=ahrefs api_key=their-api-key --tenant=user_abc123
+pnpm corsair setup --plugin=ahrefs api_key=their-api-key --tenant=<tenantId>
 ```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
 </Tab>
 </Tabs>
 
-See [API Key Authentication](/concepts/api-key) for full setup details.
+</Step>
 
-## Options
+</Steps>
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `authType` | `'api_key'` | Authentication method |
-| `key` | `string` | API key (optional, uses database if not provided) |
-| `hooks` | `object` | Endpoint hooks for custom logic |
-| `errorHandlers` | `object` | Custom error handlers |
+## Authentication
 
-## Usage
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
 
 <Tabs>
-<Tab title="Solo">
-```ts
-// Get domain rating
-const rating = await corsair.ahrefs.api.siteExplorer.getDomainRating({
-    target: "example.com",
-    date: "2024-01-01",
-});
+<Tab title="API Key (Default)">
 
-// Get backlinks stats
-const stats = await corsair.ahrefs.api.siteExplorer.backlinksStats({
-    target: "example.com",
-    date: "2024-01-01",
-    mode: "domain",
-});
-
-// Get organic keywords
-const keywords = await corsair.ahrefs.api.siteExplorer.organicKeywords({
-    target: "example.com",
-    select: "keyword,volume,position",
-});
-
-// Keyword overview
-const overview = await corsair.ahrefs.api.keywordsExplorer.overview({
-    keywords: ["seo tools", "backlink checker"],
-    country: "us",
-    select: "keyword,volume,difficulty",
-});
-
-// Rank tracker overview
-const ranks = await corsair.ahrefs.api.rankTracker.overview({
-    campaign_id: 123,
-});
-
-// SERP overview
-const serp = await corsair.ahrefs.api.serp.overview({
-    keyword: "best seo tools",
-    country: "us",
-    select: "url,domain_rating,traffic",
-});
+```ts corsair.ts
+ahrefs()
 ```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts
-const tenant = corsair.withTenant("workspace-123");
 
-// Get domain rating
-const rating = await tenant.ahrefs.api.siteExplorer.getDomainRating({
-    target: "example.com",
-    date: "2024-01-01",
-});
+Store credentials with `pnpm corsair setup --plugin=ahrefs api_key=your-api-key` (see [Get Credentials](/plugins/ahrefs/get-credentials) for details).
 
-// Get backlinks stats
-const stats = await tenant.ahrefs.api.siteExplorer.backlinksStats({
-    target: "example.com",
-    date: "2024-01-01",
-    mode: "domain",
-});
+More: [API Key](/concepts/api-key)
 
-// Get organic keywords
-const keywords = await tenant.ahrefs.api.siteExplorer.organicKeywords({
-    target: "example.com",
-    select: "keyword,volume,position",
-});
-```
 </Tab>
 </Tabs>
+
+## Query synced data
+
+Synced entities support `corsair.ahrefs.db.<entity>.search()` and `.list()`. See [Database](/plugins/ahrefs/database) for filters and operators.
+
+
+## Example API calls
+
+**Site Explorer - Domain Rating:**
+
+```ts
+await corsair.ahrefs.api.siteExplorer.getDomainRating({
+  target: 'example.com',
+  date: '2024-01-01',
+});
+```
+
+**Site Explorer - Backlinks Stats:**
+
+```ts
+await corsair.ahrefs.api.siteExplorer.backlinksStats({
+  target: 'example.com',
+  date: '2024-01-01',
+  mode: 'domain',
+});
+```
+
+**Site Explorer - Organic Keywords:**
+
+```ts
+await corsair.ahrefs.api.siteExplorer.organicKeywords({
+  target: 'example.com',
+  country: 'us',
+  date: '2024-01-01',
+  select: 'keyword,volume,best_position',
+  limit: 100,
+});
+```
+
+**Site Explorer - Referring Domains:**
+
+```ts
+await corsair.ahrefs.api.siteExplorer.refdomains({
+  target: 'example.com',
+  date: '2024-01-01',
+  select: 'domain,domain_rating,links',
+  limit: 100,
+});
+```
+
+**Site Explorer - Top Pages:**
+
+```ts
+await corsair.ahrefs.api.siteExplorer.topPages({
+  target: 'example.com',
+  country: 'us',
+  date: '2024-01-01',
+  select: 'raw_url,sum_traffic,keywords',
+  limit: 100,
+});
+```
+
+**Keywords Explorer - Overview:**
+
+```ts
+await corsair.ahrefs.api.keywordsExplorer.overview({
+  select: 'keyword,volume,difficulty,cpc',
+  keywords: 'seo tools',
+  country: 'us',
+});
+```
+
+**Rank Tracker - Overview:**
+
+```ts
+await corsair.ahrefs.api.rankTracker.overview({
+  project_id: 123456,
+  device: 'desktop',
+  date: '2024-01-01',
+  select: 'keyword,position,url',
+});
+```
+
+**SERP Overview:**
+
+```ts
+await corsair.ahrefs.api.serp.overview({
+  keyword: 'seo tools',
+  country: 'us',
+  select: 'position,url,title,domain_rating',
+});
+```
+
+**Subscription Info - Limits and Usage:**
+
+```ts
+await corsair.ahrefs.api.subscriptionInfo.limitsAndUsage({});
+```
+
+
+See the full list on the [API](/plugins/ahrefs/api) page. Use `pnpm corsair list --plugin=ahrefs` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls for logging, approvals, or side effects. See [Hooks](/concepts/hooks).
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/ahrefs/api) |
+| Database | [Database](/plugins/ahrefs/database) |
+| Credentials | [Get credentials](/plugins/ahrefs/get-credentials) |

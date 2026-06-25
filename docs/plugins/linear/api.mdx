@@ -42,10 +42,10 @@ await corsair.linear.api.comments.create({});
 | `issue` | `object` | Yes | — |
 | `user` | `object` | Yes | — |
 | `parent` | `object` | No | — |
-| `editedAt` | `date` | No | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
-| `archivedAt` | `date` | No | — |
+| `editedAt` | `Date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
+| `archivedAt` | `Date` | No | — |
 
 <AccordionGroup>
 <Accordion title="issue full type">
@@ -169,12 +169,12 @@ await corsair.linear.api.comments.list({});
         icon?: string | null,
         color?: string | null,
         private: boolean,
-        createdAt?: date | null,
-        updatedAt?: date | null,
-        archivedAt?: date | null
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
       },
-      createdAt?: date | null,
-      updatedAt?: date | null
+      createdAt?: Date | null,
+      updatedAt?: Date | null
     },
     team: {
       id: string,
@@ -184,9 +184,9 @@ await corsair.linear.api.comments.list({});
       icon?: string | null,
       color?: string | null,
       private: boolean,
-      createdAt?: date | null,
-      updatedAt?: date | null,
-      archivedAt?: date | null
+      createdAt?: Date | null,
+      updatedAt?: Date | null,
+      archivedAt?: Date | null
     },
     assignee?: {
       id: string,
@@ -196,8 +196,8 @@ await corsair.linear.api.comments.list({});
       avatarUrl?: string | null,
       active: boolean,
       admin: boolean,
-      createdAt?: date | null,
-      updatedAt?: date | null
+      createdAt?: Date | null,
+      updatedAt?: Date | null
     } | null,
     creator: {
       id: string,
@@ -207,8 +207,8 @@ await corsair.linear.api.comments.list({});
       avatarUrl?: string | null,
       active: boolean,
       admin: boolean,
-      createdAt?: date | null,
-      updatedAt?: date | null
+      createdAt?: Date | null,
+      updatedAt?: Date | null
     },
     project?: {
       id: string,
@@ -219,10 +219,10 @@ await corsair.linear.api.comments.list({});
       state: backlog | planned | started | paused | completed | canceled,
       priority: number,
       sortOrder: number,
-      startDate?: date | null,
-      targetDate?: date | null,
-      completedAt?: date | null,
-      canceledAt?: date | null,
+      startDate?: Date | null,
+      targetDate?: Date | null,
+      completedAt?: Date | null,
+      canceledAt?: Date | null,
       lead?: {
         id: string,
         name: string,
@@ -231,8 +231,8 @@ await corsair.linear.api.comments.list({});
         avatarUrl?: string | null,
         active: boolean,
         admin: boolean,
-        createdAt?: date | null,
-        updatedAt?: date | null
+        createdAt?: Date | null,
+        updatedAt?: Date | null
       } | null,
       teams: {
         id: string,
@@ -242,22 +242,22 @@ await corsair.linear.api.comments.list({});
         icon?: string | null,
         color?: string | null,
         private: boolean,
-        createdAt?: date | null,
-        updatedAt?: date | null,
-        archivedAt?: date | null
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
       }[],
-      createdAt?: date | null,
-      updatedAt?: date | null,
-      archivedAt?: date | null
+      createdAt?: Date | null,
+      updatedAt?: Date | null,
+      archivedAt?: Date | null
     } | null,
     cycle?: {
       id: string,
       number: number,
       name?: string | null,
       description?: string | null,
-      startsAt?: date | null,
-      endsAt?: date | null,
-      completedAt?: date | null,
+      startsAt?: Date | null,
+      endsAt?: Date | null,
+      completedAt?: Date | null,
       team: {
         id: string,
         name: string,
@@ -266,13 +266,13 @@ await corsair.linear.api.comments.list({});
         icon?: string | null,
         color?: string | null,
         private: boolean,
-        createdAt?: date | null,
-        updatedAt?: date | null,
-        archivedAt?: date | null
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
       },
-      createdAt?: date | null,
-      updatedAt?: date | null,
-      archivedAt?: date | null
+      createdAt?: Date | null,
+      updatedAt?: Date | null,
+      archivedAt?: Date | null
     } | null,
     labels: {
       id: string,
@@ -287,12 +287,12 @@ await corsair.linear.api.comments.list({});
         icon?: string | null,
         color?: string | null,
         private: boolean,
-        createdAt?: date | null,
-        updatedAt?: date | null,
-        archivedAt?: date | null
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
       } | null,
-      createdAt?: date | null,
-      updatedAt?: date | null,
+      createdAt?: Date | null,
+      updatedAt?: Date | null,
       parent: lazy
     }[],
     subscribers: {
@@ -303,18 +303,18 @@ await corsair.linear.api.comments.list({});
       avatarUrl?: string | null,
       active: boolean,
       admin: boolean,
-      createdAt?: date | null,
-      updatedAt?: date | null
+      createdAt?: Date | null,
+      updatedAt?: Date | null
     }[],
-    dueDate?: date | null,
-    startedAt?: date | null,
-    completedAt?: date | null,
-    canceledAt?: date | null,
-    triagedAt?: date | null,
-    snoozedUntilAt?: date | null,
-    createdAt?: date | null,
-    updatedAt?: date | null,
-    archivedAt?: date | null,
+    dueDate?: Date | null,
+    startedAt?: Date | null,
+    completedAt?: Date | null,
+    canceledAt?: Date | null,
+    triagedAt?: Date | null,
+    snoozedUntilAt?: Date | null,
+    createdAt?: Date | null,
+    updatedAt?: Date | null,
+    archivedAt?: Date | null,
     parent: lazy
   },
   user: {
@@ -325,13 +325,13 @@ await corsair.linear.api.comments.list({});
     avatarUrl?: string | null,
     active: boolean,
     admin: boolean,
-    createdAt?: date | null,
-    updatedAt?: date | null
+    createdAt?: Date | null,
+    updatedAt?: Date | null
   },
-  editedAt?: date | null,
-  createdAt?: date | null,
-  updatedAt?: date | null,
-  archivedAt?: date | null,
+  editedAt?: Date | null,
+  createdAt?: Date | null,
+  updatedAt?: Date | null,
+  archivedAt?: Date | null,
   parent: lazy
 }[]
 ```
@@ -395,10 +395,10 @@ await corsair.linear.api.comments.update({});
 | `issue` | `object` | Yes | — |
 | `user` | `object` | Yes | — |
 | `parent` | `object` | No | — |
-| `editedAt` | `date` | No | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
-| `archivedAt` | `date` | No | — |
+| `editedAt` | `Date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
+| `archivedAt` | `Date` | No | — |
 
 <AccordionGroup>
 <Accordion title="issue full type">
@@ -487,8 +487,8 @@ await corsair.linear.api.issues.create({});
 | `team` | `object` | No | — |
 | `assignee` | `object` | No | — |
 | `creator` | `object` | No | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
 
 <AccordionGroup>
 <Accordion title="state full type">
@@ -610,15 +610,15 @@ await corsair.linear.api.issues.get({});
 | `cycle` | `object` | No | — |
 | `labels` | `object` | No | — |
 | `subscribers` | `object` | No | — |
-| `dueDate` | `date` | No | — |
-| `startedAt` | `date` | No | — |
-| `completedAt` | `date` | No | — |
-| `canceledAt` | `date` | No | — |
-| `triagedAt` | `date` | No | — |
-| `snoozedUntilAt` | `date` | No | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
-| `archivedAt` | `date` | No | — |
+| `dueDate` | `Date` | No | — |
+| `startedAt` | `Date` | No | — |
+| `completedAt` | `Date` | No | — |
+| `canceledAt` | `Date` | No | — |
+| `triagedAt` | `Date` | No | — |
+| `snoozedUntilAt` | `Date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
+| `archivedAt` | `Date` | No | — |
 | `parent` | `lazy` | Yes | — |
 
 <AccordionGroup>
@@ -816,15 +816,15 @@ await corsair.linear.api.issues.list({});
       email?: string | null
     }[]
   } | null,
-  dueDate?: date | null,
-  startedAt?: date | null,
-  completedAt?: date | null,
-  canceledAt?: date | null,
-  triagedAt?: date | null,
-  snoozedUntilAt?: date | null,
-  createdAt?: date | null,
-  updatedAt?: date | null,
-  archivedAt?: date | null,
+  dueDate?: Date | null,
+  startedAt?: Date | null,
+  completedAt?: Date | null,
+  canceledAt?: Date | null,
+  triagedAt?: Date | null,
+  snoozedUntilAt?: Date | null,
+  createdAt?: Date | null,
+  updatedAt?: Date | null,
+  archivedAt?: Date | null,
   parent: lazy
 }[]
 ```
@@ -907,8 +907,8 @@ await corsair.linear.api.issues.update({});
 | `team` | `object` | No | — |
 | `assignee` | `object` | No | — |
 | `creator` | `object` | No | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
 
 <AccordionGroup>
 <Accordion title="state full type">
@@ -1007,15 +1007,15 @@ await corsair.linear.api.projects.create({});
 | `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
 | `priority` | `number` | Yes | — |
 | `sortOrder` | `number` | No | — |
-| `startDate` | `date` | No | — |
-| `targetDate` | `date` | No | — |
-| `completedAt` | `date` | No | — |
-| `canceledAt` | `date` | No | — |
+| `startDate` | `Date` | No | — |
+| `targetDate` | `Date` | No | — |
+| `completedAt` | `Date` | No | — |
+| `canceledAt` | `Date` | No | — |
 | `lead` | `object` | No | — |
 | `teams` | `object` | Yes | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
-| `archivedAt` | `date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
+| `archivedAt` | `Date` | No | — |
 
 <AccordionGroup>
 <Accordion title="lead full type">
@@ -1105,14 +1105,14 @@ await corsair.linear.api.projects.get({});
 | `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
 | `priority` | `number` | Yes | — |
 | `sortOrder` | `number` | Yes | — |
-| `startDate` | `date` | No | — |
-| `targetDate` | `date` | No | — |
-| `completedAt` | `date` | No | — |
-| `canceledAt` | `date` | No | — |
+| `startDate` | `Date` | No | — |
+| `targetDate` | `Date` | No | — |
+| `completedAt` | `Date` | No | — |
+| `canceledAt` | `Date` | No | — |
 | `lead` | `object` | No | — |
 | `teams` | `object` | Yes | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
 
 <AccordionGroup>
 <Accordion title="lead full type">
@@ -1186,10 +1186,10 @@ await corsair.linear.api.projects.list({});
   state: backlog | planned | started | paused | completed | canceled,
   priority: number,
   sortOrder: number,
-  startDate?: date | null,
-  targetDate?: date | null,
-  completedAt?: date | null,
-  canceledAt?: date | null,
+  startDate?: Date | null,
+  targetDate?: Date | null,
+  completedAt?: Date | null,
+  canceledAt?: Date | null,
   lead?: {
     id: string,
     name: string,
@@ -1203,8 +1203,8 @@ await corsair.linear.api.projects.list({});
       key: string
     }[]
   },
-  createdAt?: date | null,
-  updatedAt?: date | null
+  createdAt?: Date | null,
+  updatedAt?: Date | null
 }[]
 ```
 </Accordion>
@@ -1279,15 +1279,15 @@ await corsair.linear.api.projects.update({});
 | `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
 | `priority` | `number` | Yes | — |
 | `sortOrder` | `number` | No | — |
-| `startDate` | `date` | No | — |
-| `targetDate` | `date` | No | — |
-| `completedAt` | `date` | No | — |
-| `canceledAt` | `date` | No | — |
+| `startDate` | `Date` | No | — |
+| `targetDate` | `Date` | No | — |
+| `completedAt` | `Date` | No | — |
+| `canceledAt` | `Date` | No | — |
 | `lead` | `object` | No | — |
 | `teams` | `object` | No | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
-| `archivedAt` | `date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
+| `archivedAt` | `Date` | No | — |
 
 <AccordionGroup>
 <Accordion title="lead full type">
@@ -1353,9 +1353,9 @@ await corsair.linear.api.teams.get({});
 | `icon` | `string` | No | — |
 | `color` | `string` | No | — |
 | `private` | `boolean` | Yes | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
-| `archivedAt` | `date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
+| `archivedAt` | `Date` | No | — |
 
 
 
@@ -1401,9 +1401,9 @@ await corsair.linear.api.teams.list({});
   icon?: string | null,
   color?: string | null,
   private: boolean,
-  createdAt?: date | null,
-  updatedAt?: date | null,
-  archivedAt?: date | null
+  createdAt?: Date | null,
+  updatedAt?: Date | null,
+  archivedAt?: Date | null
 }[]
 ```
 </Accordion>
@@ -1458,8 +1458,8 @@ await corsair.linear.api.users.get({});
 | `avatarUrl` | `string` | No | — |
 | `active` | `boolean` | Yes | — |
 | `admin` | `boolean` | Yes | — |
-| `createdAt` | `date` | No | — |
-| `updatedAt` | `date` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
 
 
 
@@ -1505,8 +1505,8 @@ await corsair.linear.api.users.list({});
   avatarUrl?: string | null,
   active: boolean,
   admin: boolean,
-  createdAt?: date | null,
-  updatedAt?: date | null
+  createdAt?: Date | null,
+  updatedAt?: Date | null
 }[]
 ```
 </Accordion>

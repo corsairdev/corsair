@@ -5,7 +5,11 @@ import {
 	promptTenantId,
 	promptWebhookUrl,
 } from '../../utils/prompts';
-import { resolveAccessToken, saveWebhookSignature } from './credentials';
+import {
+	resolveAccessToken,
+	saveSubscriptionTenantLink,
+	saveWebhookSignature,
+} from './credentials';
 import { createGraphSubscription } from './graph';
 
 // Microsoft Graph max subscription lifetime for drive resources (minutes)
@@ -145,6 +149,10 @@ export async function runOnedriveSubscribe({
 			results.push(
 				`${resourceType}\n  Resource: ${resource}\n  ID: ${subscription.id}\n  Expires: ${subscription.expirationDateTime}`,
 			);
+			await saveSubscriptionTenantLink(
+				{ pluginId: 'onedrive', tenantId, internal },
+				subscription.id,
+			);
 		} catch (error) {
 			subSpin.stop(`Failed: ${resourceType}`);
 			p.log.error(error instanceof Error ? error.message : String(error));
@@ -156,7 +164,11 @@ export async function runOnedriveSubscribe({
 		p.note(results.join('\n\n'), 'Subscriptions created');
 	}
 
-	await saveWebhookSignature(accountKm, clientState);
+	await saveWebhookSignature(accountKm, clientState, {
+		pluginId: 'onedrive',
+		tenantId,
+		internal,
+	});
 
 	if (!hasError) {
 		p.log.success('OneDrive webhook subscriptions set up successfully.');

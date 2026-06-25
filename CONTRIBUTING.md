@@ -6,9 +6,12 @@ Thanks for contributing to Corsair. We welcome improvements to the core library,
 
 Please create an issue before starting work on anything significant. This helps us avoid duplicate work, align on scope, and catch design constraints early.
 
+If you want to contribute a new integration, check the [OSS Integrations page](https://corsair.dev/oss) first. It shows which integrations are available, which are already claimed, and who is working on them. Claim an integration there before you start so two people do not work on the same plugin.
+
 Before opening a new issue:
 
-- Search existing issues first.
+- Check [corsair.dev/oss](https://corsair.dev/oss) for new integrations.
+- Check [open issues](https://github.com/corsairdev/corsair/issues).
 - Use the right template in `.github/ISSUE_TEMPLATE/`.
 - For a new integration, start with the integration request template.
 - For bugs, use the bug report template.
@@ -39,7 +42,11 @@ Useful commands from the repo root:
 ```bash
 pnpm typecheck
 pnpm lint
+pnpm lint:fix
+pnpm format
+pnpm run validate:plugins
 pnpm build
+pnpm test
 ```
 
 If your change needs credentials or local environment setup, follow the package-specific docs or examples in the repo before running tests.
@@ -132,11 +139,12 @@ If you are adding a new plugin, follow the official guide:
 
 That guide covers the expected scaffold and generator flow. In practice, the normal path is:
 
-1. Open an issue first and align on the integration.
-2. Generate the plugin scaffold from the repo root.
-3. Implement endpoints, auth, schemas, and webhooks.
-4. Register the plugin in `demo/testing/src/server/corsair.ts`.
-5. Test the plugin through `demo/testing/src/scripts/test-script.ts`.
+1. Check [corsair.dev/oss](https://corsair.dev/oss) to make sure the integration is not already claimed or in progress, then claim it if it is available.
+2. Open an issue first and align on the integration.
+3. Generate the plugin scaffold from the repo root.
+4. Implement endpoints, auth, schemas, and webhooks.
+5. Register the plugin in `demo/testing/src/server/corsair.ts`.
+6. Test the plugin through `demo/testing/src/scripts/test-script.ts`.
 
 The repo includes a generator:
 

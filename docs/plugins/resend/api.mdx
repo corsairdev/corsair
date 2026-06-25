@@ -39,7 +39,7 @@ await corsair.resend.api.domains.create({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed` | Yes | — |
-| `created_at` | `date` | No | — |
+| `created_at` | `Date` | No | — |
 | `region` | `string` | No | — |
 
 
@@ -105,7 +105,7 @@ await corsair.resend.api.domains.get({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed` | Yes | — |
-| `created_at` | `date` | No | — |
+| `created_at` | `Date` | No | — |
 | `region` | `string` | No | — |
 
 
@@ -147,7 +147,7 @@ await corsair.resend.api.domains.list({});
   id: string,
   name: string,
   status: not_started | validation | scheduled | ready | error | verified | pending | failed,
-  created_at?: date | null,
+  created_at?: Date | null,
   region?: string
 }[]
 ```
@@ -185,7 +185,7 @@ await corsair.resend.api.domains.verify({});
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending` | No | — |
-| `created_at` | `date` | No | — |
+| `created_at` | `Date` | No | — |
 | `region` | `string` | No | — |
 
 
@@ -221,7 +221,7 @@ await corsair.resend.api.emails.get({});
 | `id` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `to` | `string[]` | Yes | — |
-| `created_at` | `date` | No | — |
+| `created_at` | `Date` | No | — |
 | `subject` | `string` | No | — |
 
 
@@ -263,7 +263,7 @@ await corsair.resend.api.emails.list({});
   id: string,
   from: string,
   to: string[],
-  created_at?: date | null,
+  created_at?: Date | null,
   subject?: string
 }[]
 ```
@@ -308,7 +308,7 @@ await corsair.resend.api.emails.send({});
 ```ts
 {
   filename: string,
-  content: string | any,
+  content: string | custom,
   path?: string
 }[]
 ```
