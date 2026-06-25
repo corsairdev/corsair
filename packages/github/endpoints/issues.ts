@@ -14,7 +14,7 @@ export const list: GithubEndpoints['issuesList'] = async (ctx, input) => {
 	const endpoint = repo ? `/repos/${owner}/${repo}/issues` : '/user/issues';
 	const result = await makeGithubRequest<IssuesListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{
 			query: queryParams,
 		},
@@ -42,7 +42,7 @@ export const list: GithubEndpoints['issuesList'] = async (ctx, input) => {
 export const get: GithubEndpoints['issuesGet'] = async (ctx, input) => {
 	const { owner, repo, issueNumber } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}`;
-	const result = await makeGithubRequest<IssueGetResponse>(endpoint, ctx.key);
+	const result = await makeGithubRequest<IssueGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.issues) {
 		try {
@@ -68,7 +68,7 @@ export const create: GithubEndpoints['issuesCreate'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/issues`;
 	const result = await makeGithubRequest<IssueCreateResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{
 			method: 'POST',
 			body,
@@ -97,7 +97,7 @@ export const update: GithubEndpoints['issuesUpdate'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}`;
 	const result = await makeGithubRequest<IssueUpdateResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{
 			method: 'PATCH',
 			body,
@@ -129,7 +129,7 @@ export const createComment: GithubEndpoints['issuesCreateComment'] = async (
 	const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}/comments`;
 	const result = await makeGithubRequest<CommentCreateResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ method: 'POST', body: { body } },
 	);
 

@@ -9,7 +9,7 @@ import type {
 } from './types';
 
 export const list: GithubEndpoints['usersList'] = async (ctx, input) => {
-	const result = await makeGithubRequest<UsersListResponse>('/users', ctx.key, {
+	const result = await makeGithubRequest<UsersListResponse>('/users', ctx, {
 		query: input,
 	});
 
@@ -38,7 +38,7 @@ export const list: GithubEndpoints['usersList'] = async (ctx, input) => {
 export const get: GithubEndpoints['usersGet'] = async (ctx, input) => {
 	const { username } = input;
 	const endpoint = `/users/${username}`;
-	const result = await makeGithubRequest<UserGetResponse>(endpoint, ctx.key);
+	const result = await makeGithubRequest<UserGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.users) {
 		try {
@@ -58,7 +58,7 @@ export const get: GithubEndpoints['usersGet'] = async (ctx, input) => {
 export const getById: GithubEndpoints['usersGetById'] = async (ctx, input) => {
 	const { accountId } = input;
 	const endpoint = `/user/${accountId}`;
-	const result = await makeGithubRequest<UserGetResponse>(endpoint, ctx.key);
+	const result = await makeGithubRequest<UserGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.users) {
 		try {
@@ -82,7 +82,7 @@ export const getById: GithubEndpoints['usersGetById'] = async (ctx, input) => {
 
 export const getAuthenticated: GithubEndpoints['usersGetAuthenticated'] =
 	async (ctx, input) => {
-		const result = await makeGithubRequest<UserGetResponse>('/user', ctx.key);
+		const result = await makeGithubRequest<UserGetResponse>('/user', ctx);
 
 		if (result && ctx.db.users) {
 			try {
@@ -106,7 +106,7 @@ export const getAuthenticated: GithubEndpoints['usersGetAuthenticated'] =
 
 export const update: GithubEndpoints['usersUpdate'] = async (ctx, input) => {
 	const { ...body } = input;
-	const result = await makeGithubRequest<UserUpdateResponse>('/user', ctx.key, {
+	const result = await makeGithubRequest<UserUpdateResponse>('/user', ctx, {
 		method: 'PATCH',
 		body,
 	});
@@ -139,7 +139,7 @@ export const getHovercard: GithubEndpoints['usersGetHovercard'] = async (
 	const endpoint = `/users/${username}/hovercard`;
 	const result = await makeGithubRequest<UserHovercardGetResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
