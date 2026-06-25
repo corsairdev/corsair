@@ -1,12 +1,71 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGmailRequest } from '../client';
 import type { GmailWebhooks } from '../index';
+import type { GmailWebhookEventType } from './types';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
 import { createGmailWebhookMatcher, decodePubSubMessage } from './types';
 
 const HISTORY_MAX_RESULTS = 100;
 const RECENT_MESSAGES_LIMIT = 10;
 const HISTORY_ID_MATCH_THRESHOLD = 10;
+
+function isWebhookEventEnabled(
+	ctx: MessageChangedContext,
+	eventType: GmailWebhookEventType,
+): boolean {
+	const configured = ctx.options?.webhookEvents;
+	if (!configured) {
+		return true;
+	}
+	return configured.includes(eventType);
+}
+
+async function fetchHistory(
+	credentials: string,
+	emailAddress: string,
+	startHistoryId: string,
+): Promise<NonNullable<HistoryListResponse['history']>> {
+	const allHistory: NonNullable<HistoryListResponse['history']> = [];
+	let pageToken: string | undefined;
+
+	do {
+		const historyResponse = await makeGmailRequest<HistoryListResponse>(
+			`/users/${emailAddress}/history`,
+			credentials,
+			{
+				method: 'GET',
+				query: {
+					startHistoryId,
+					maxResults: HISTORY_MAX_RESULTS,
+					...(pageToken ? { pageToken } : {}),
+				},
+			},
+		);
+
+		if (historyResponse.history) {
+			allHistory.push(...historyResponse.history);
+		}
+
+		pageToken = historyResponse.nextPageToken;
+	} while (pageToken);
+
+	return allHistory;
+}
+
+async function fetchMessageMetadata(
+	credentials: string,
+	userId: string,
+	messageId: string,
+): Promise<Message> {
+	return makeGmailRequest<Message>(
+		`/users/${userId}/messages/${messageId}`,
+		credentials,
+		{
+			method: 'GET',
+			query: { format: 'minimal' },
+		},
+	);
+}
 
 function getHeaderValue(
 	part: MessagePart | undefined,
@@ -292,13 +351,13 @@ async function resolveAndCategorizeMessageIds(
 		if (!msg.id) continue;
 
 		try {
-			const fullMessage = await fetchFullMessage(
+			const minimalMessage = await fetchMessageMetadata(
 				credentials,
 				emailAddress,
 				msg.id,
 			);
-			const messageHistoryIdNum = fullMessage.historyId
-				? Number(fullMessage.historyId)
+			const messageHistoryIdNum = minimalMessage.historyId
+				? Number(minimalMessage.historyId)
 				: 0;
 
 			if (
@@ -306,8 +365,8 @@ async function resolveAndCategorizeMessageIds(
 				targetHistoryIdNum - HISTORY_ID_MATCH_THRESHOLD
 			) {
 				if (ctx.db?.messages) {
-					const existingEntity = await ctx.db.messages.findByEntityId(msg.id);
-					if (existingEntity) {
+					const exists = await ctx.db.messages.existsByEntityId(msg.id);
+					if (exists) {
 						modified.push(msg.id);
 					} else {
 						added.push(msg.id);
@@ -406,9 +465,9 @@ async function processDeletedMessages(
 			}
 
 			if (!corsairEntityId) {
-				const entity = await ctx.db.messages.findByEntityId(messageId);
-				if (entity) {
-					corsairEntityId = entity.id;
+				const entityId = await ctx.db.messages.findIdByEntityId(messageId);
+				if (entityId) {
+					corsairEntityId = entityId;
 				}
 			}
 
@@ -496,25 +555,27 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 		try {
 			const previousHistoryId = computePreviousHistoryId(historyId);
 
-			const historyResponse = await makeGmailRequest<HistoryListResponse>(
-				`/users/${emailAddress}/history`,
+			const history = await fetchHistory(
 				credentials,
-				{
-					method: 'GET',
-					query: {
-						startHistoryId: previousHistoryId,
-						maxResults: HISTORY_MAX_RESULTS,
-					},
-				},
+				emailAddress,
+				previousHistoryId,
 			);
 
 			const {
 				added: historyAdded,
 				deleted,
 				modified: historyModified,
-			} = extractMessageIds(historyResponse.history);
+			} = extractMessageIds(history);
 
-			if (historyModified.length > 0) {
+			const historyHadChanges =
+				historyModified.length > 0 ||
+				historyAdded.length > 0 ||
+				deleted.length > 0;
+
+			if (
+				historyModified.length > 0 &&
+				isWebhookEventEnabled(ctx, 'messageLabelChanged')
+			) {
 				const result = await processModifiedMessages(
 					ctx,
 					credentials,
@@ -543,7 +604,10 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				};
 			}
 
-			if (historyAdded.length > 0) {
+			if (
+				historyAdded.length > 0 &&
+				isWebhookEventEnabled(ctx, 'messageReceived')
+			) {
 				const result = await processAddedMessages(
 					ctx,
 					credentials,
@@ -572,7 +636,7 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				};
 			}
 
-			if (deleted.length > 0) {
+			if (deleted.length > 0 && isWebhookEventEnabled(ctx, 'messageDeleted')) {
 				const result = await processDeletedMessages(
 					ctx,
 					credentials,
@@ -601,6 +665,14 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				};
 			}
 
+			if (historyHadChanges) {
+				return {
+					success: true,
+					corsairEntityId: '',
+					data: undefined,
+				};
+			}
+
 			const { added, modified } = await resolveAndCategorizeMessageIds(
 				ctx,
 				credentials,
@@ -608,7 +680,10 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				historyId,
 			);
 
-			if (modified.length > 0) {
+			if (
+				modified.length > 0 &&
+				isWebhookEventEnabled(ctx, 'messageLabelChanged')
+			) {
 				const result = await processModifiedMessages(
 					ctx,
 					credentials,
@@ -637,7 +712,7 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 				};
 			}
 
-			if (added.length > 0) {
+			if (added.length > 0 && isWebhookEventEnabled(ctx, 'messageReceived')) {
 				const result = await processAddedMessages(
 					ctx,
 					credentials,
@@ -669,12 +744,7 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 			return {
 				success: true,
 				corsairEntityId: '',
-				data: {
-					type: 'messageReceived' as const,
-					emailAddress,
-					historyId,
-					message: {},
-				},
+				data: undefined,
 			};
 		} catch (error) {
 			console.error('Failed to process Gmail webhook:', error);

@@ -1098,6 +1098,12 @@ export type PluginEntityClient<DataSchema extends ZodTypeAny> = {
 	/** Find by external entity ID (e.g., Slack message ts). */
 	findByEntityId: (entityId: string) => Promise<TypedEntity<DataSchema> | null>;
 
+	/** Check if an entity exists by external entity ID without loading payload data. */
+	existsByEntityId: (entityId: string) => Promise<boolean>;
+
+	/** Find internal UUID by external entity ID without loading payload data. */
+	findIdByEntityId: (entityId: string) => Promise<string | null>;
+
 	/** Find by internal UUID. */
 	findById: (id: string) => Promise<TypedEntity<DataSchema> | null>;
 

@@ -70,6 +70,11 @@ export type GmailWebhookEvent = z.infer<typeof GmailWebhookEventSchema>;
 
 export type GmailEventName = 'messageChanged';
 
+export type GmailWebhookEventType =
+	| 'messageReceived'
+	| 'messageDeleted'
+	| 'messageLabelChanged';
+
 export type GmailWebhookPayload<TEvent = unknown> = PubSubNotification<TEvent>;
 
 export type GmailWebhookOutputs = {
