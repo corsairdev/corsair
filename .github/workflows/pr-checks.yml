@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
@@ -48,23 +48,23 @@ jobs:
         run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Build
-        run: pnpm turbo run build --filter='...[origin/main]' --concurrency=100%
+        run: pnpm turbo run build --filter='...[HEAD^1]' --concurrency=100%
 
       - name: Lint
-        run: pnpm turbo run lint --filter='...[origin/main]'
+        run: pnpm turbo run lint --filter='...[HEAD^1]'
 
       - name: Validate Plugins
         run: pnpm run validate:plugins
 
       - name: Typecheck
-        run: pnpm turbo run typecheck --filter='...[origin/main]'
+        run: pnpm turbo run typecheck --filter='...[HEAD^1]'
 
       - name: Run tests
-        run: pnpm turbo run test --filter='...[origin/main]' -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
+        run: pnpm turbo run test --filter='...[HEAD^1]' -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
 
       - name: Generate Dependency Graph
         if: always()
-        run: pnpm turbo run build --filter='...[origin/main]' --graph=dependency-graph.html
+        run: pnpm turbo run build --filter='...[HEAD^1]' --graph=dependency-graph.html
 
       - name: Upload Dependency Graph
         if: always()
