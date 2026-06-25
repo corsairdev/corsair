@@ -35,7 +35,7 @@ jobs:
         run: pnpm typecheck
 
       - name: Build
-        run: npx turbo run build --filter='!@corsair-dev/twilio'
+        run: pnpm turbo run build --filter='!@corsair-dev/twilio' --filter='@corsair-dev/zohomail'
 
       - name: Run tests
         run: npx turbo test -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
