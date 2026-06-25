@@ -76,8 +76,6 @@ async function testByoConnectSession(): Promise<void> {
 		const session = await corsair.manage.connect.createLink({
 			plugin: 'googlecalendar',
 			tenantId: TENANT_ID,
-			source: 'client',
-			oauthMode: 'byo',
 		});
 
 		const connectUrl = session.connectUrl;
@@ -110,8 +108,6 @@ async function testManagedConnectSession(): Promise<void> {
 		const session = await corsair.manage.connect.createLink({
 			plugin: 'github',
 			tenantId: TENANT_ID,
-			source: 'client',
-			oauthMode: 'managed',
 		});
 
 		if (!session.connectUrl.includes('/connect/')) {
