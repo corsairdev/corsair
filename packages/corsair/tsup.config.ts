@@ -32,6 +32,7 @@ export default defineConfig({
 		'kysely',
 		'zod',
 		'dotenv',
+		'react',
 		'@modelcontextprotocol/sdk',
 		'@ngrok/ngrok',
 		'jiti',
@@ -51,5 +52,6 @@ export default defineConfig({
 		'setup.ts',
 		'http.ts',
 		'tests.ts',
+		'client/react/index.ts',
 	],
 });
