@@ -2,6 +2,7 @@ import { BaseProviders } from '../core/constants';
 import type {
 	BoundWebhook,
 	BoundWebhookTree,
+	CorsairWebhookTenantMatcher,
 	RawWebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
@@ -38,6 +39,8 @@ type PluginWithWebhooks = {
 	webhooks?: BoundWebhookTree;
 	/** Plugin-level matcher to quickly check if a webhook is for this plugin */
 	pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
+	/** Extracts the external tenant lookup key for this plugin's webhook */
+	pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 };
 
 /**
@@ -198,6 +201,7 @@ export async function processWebhook(
 	const rawRequest = {
 		headers: normalizedHeaders,
 		body: parsedBody,
+		...(query ? { query } : {}),
 	} satisfies RawWebhookRequest;
 
 	const tenantId = query?.tenantId || 'default';
@@ -238,6 +242,7 @@ export async function processWebhook(
 			payload: parsedBody,
 			headers: normalizedHeaders,
 			rawBody: typeof body === 'string' ? body : JSON.stringify(body),
+			...(query ? { query } : {}),
 		};
 
 		try {

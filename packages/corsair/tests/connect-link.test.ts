@@ -74,7 +74,7 @@ describe('connect-link generation in endpoint binding', () => {
 
 	function createBoundEndpoint(opts: {
 		keyBuilder?: (ctx: any, source: string) => Promise<string>;
-		connectConfig?: any;
+		manualConfig?: any;
 	}) {
 		const endpoints = {
 			sendEmail: async (_ctx: any, _args: any) => 'sent',
@@ -90,7 +90,7 @@ describe('connect-link generation in endpoint binding', () => {
 			errorHandlers: {},
 			currentPath: [],
 			keyBuilder: opts.keyBuilder,
-			connectConfig: opts.connectConfig,
+			manualConfig: opts.manualConfig,
 		});
 
 		return tree.sendEmail as (args?: unknown) => Promise<unknown>;
@@ -99,7 +99,7 @@ describe('connect-link generation in endpoint binding', () => {
 	it('does not generate connect link when keyBuilder returns empty string', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => '',
-			connectConfig: {
+			manualConfig: {
 				baseUrl: 'https://myapp.com/connect',
 				redirectUri: 'https://myapp.com/api/callback',
 				oauthConfig: {
@@ -121,7 +121,7 @@ describe('connect-link generation in endpoint binding', () => {
 			keyBuilder: async () => {
 				throw new AuthMissingError('gmail', 'oauth_2');
 			},
-			connectConfig: {
+			manualConfig: {
 				baseUrl: 'https://myapp.com/connect',
 				redirectUri: 'https://myapp.com/api/callback',
 				oauthConfig: {
@@ -142,12 +142,12 @@ describe('connect-link generation in endpoint binding', () => {
 		}
 	});
 
-	it('propagates non-AuthMissingError from keyBuilder even with connectConfig', async () => {
+	it('propagates non-AuthMissingError from keyBuilder even with manualConfig', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new Error('Account not found for tenant "tenant-1"');
 			},
-			connectConfig: {
+			manualConfig: {
 				baseUrl: 'https://myapp.com/connect',
 				redirectUri: 'https://myapp.com/api/callback',
 				oauthConfig: {
@@ -167,7 +167,7 @@ describe('connect-link generation in endpoint binding', () => {
 			keyBuilder: async () => {
 				throw new AuthMissingError('gmail', 'oauth_2');
 			},
-			connectConfig: {
+			manualConfig: {
 				baseUrl: 'https://myapp.com/connect',
 				redirectUri: 'https://myapp.com/api/callback',
 				oauthConfig: {
@@ -196,7 +196,7 @@ describe('connect-link generation in endpoint binding', () => {
 		}
 	});
 
-	it('does not intercept errors when connectConfig is not set', async () => {
+	it('does not intercept errors when manualConfig is not set', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new Error('Account not found');
@@ -211,7 +211,7 @@ describe('connect-link generation in endpoint binding', () => {
 			keyBuilder: async () => {
 				throw new Error('Account not found');
 			},
-			connectConfig: {
+			manualConfig: {
 				baseUrl: 'https://myapp.com/connect',
 				redirectUri: 'https://myapp.com/api/callback',
 				oauthConfig: undefined,
@@ -223,12 +223,12 @@ describe('connect-link generation in endpoint binding', () => {
 		await expect(boundFn()).rejects.toThrow('Account not found');
 	});
 
-	it('does not intercept unrelated errors when connectConfig is set', async () => {
+	it('does not intercept unrelated errors when manualConfig is set', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new Error('Network timeout');
 			},
-			connectConfig: {
+			manualConfig: {
 				baseUrl: 'https://myapp.com/connect',
 				redirectUri: 'https://myapp.com/api/callback',
 				oauthConfig: {
@@ -248,7 +248,7 @@ describe('connect-link generation in endpoint binding', () => {
 			keyBuilder: async () => {
 				throw new AuthMissingError('slack', 'api_key');
 			},
-			connectConfig: {
+			manualConfig: {
 				baseUrl: 'https://myapp.com/connect',
 				redirectUri: 'https://myapp.com/api/callback',
 				oauthConfig: {

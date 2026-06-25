@@ -30,7 +30,7 @@ export const list: GithubEndpoints['commentsList'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/issues/comments`;
 	const result = await makeGithubRequest<CommentsListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -61,7 +61,7 @@ export const listForIssue: GithubEndpoints['commentsListForIssue'] = async (
 	const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}/comments`;
 	const result = await makeGithubRequest<CommentsListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -87,7 +87,7 @@ export const listForIssue: GithubEndpoints['commentsListForIssue'] = async (
 export const get: GithubEndpoints['commentsGet'] = async (ctx, input) => {
 	const { owner, repo, commentId } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/comments/${commentId}`;
-	const result = await makeGithubRequest<CommentGetResponse>(endpoint, ctx.key);
+	const result = await makeGithubRequest<CommentGetResponse>(endpoint, ctx);
 
 	if (result) {
 		try {
@@ -111,7 +111,7 @@ export const update: GithubEndpoints['commentsUpdate'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/issues/comments/${commentId}`;
 	const result = await makeGithubRequest<CommentUpdateResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ method: 'PATCH', body: { body } },
 	);
 
@@ -144,13 +144,13 @@ export const deleteComment: GithubEndpoints['commentsDelete'] = async (
 	try {
 		existing = await makeGithubRequest<CommentGetResponse>(
 			commentEndpoint,
-			ctx.key,
+			ctx,
 		);
 	} catch {
 		// Comment may already be gone; proceed with deletion regardless
 	}
 
-	await makeGithubRequest<void>(commentEndpoint, ctx.key, { method: 'DELETE' });
+	await makeGithubRequest<void>(commentEndpoint, ctx, { method: 'DELETE' });
 
 	if (ctx.db.comments) {
 		try {

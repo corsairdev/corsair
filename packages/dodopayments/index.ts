@@ -9,6 +9,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
@@ -39,6 +40,7 @@ import {
 	RefundWebhooks,
 	SubscriptionWebhooks,
 } from './webhooks';
+import { matchDodoPaymentsTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DodoPaymentFailedEvent,
 	DodoPaymentSucceededEvent,
@@ -285,9 +287,9 @@ const dodoPaymentsEndpointMeta = {
 
 export const dodoPaymentsAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['business_id'] as const,
 	},
-} as const;
+} as const satisfies PluginAuthConfig;
 
 export type BaseDodoPaymentsPlugin<T extends DodoPaymentsPluginOptions> =
 	CorsairPlugin<
@@ -315,6 +317,7 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 	};
 	return {
 		id: 'dodopayments',
+		authConfig: dodoPaymentsAuthConfig,
 		schema: DodoPaymentsSchema,
 		options: options,
 		hooks: options.hooks,
@@ -353,6 +356,7 @@ export function dodopayments<const T extends DodoPaymentsPluginOptions>(
 				typeof body.timestamp === 'string'
 			);
 		},
+		pluginTenantWebhookMatcher: matchDodoPaymentsTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

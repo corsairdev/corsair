@@ -40,6 +40,7 @@ import {
 	ItemWebhooks,
 	StatusWebhooks,
 } from './webhooks';
+import { matchMondayTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ColumnValueChangedEvent,
 	ItemCreatedEvent,
@@ -483,7 +484,7 @@ const mondayEndpointMeta = {
 
 export const mondayAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['accountId'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -510,6 +511,7 @@ export function monday<const T extends MondayPluginOptions>(
 	};
 	return {
 		id: 'monday',
+		authConfig: mondayAuthConfig,
 		schema: MondaySchema,
 		options: options,
 		hooks: options.hooks,
@@ -540,6 +542,7 @@ export function monday<const T extends MondayPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchMondayTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

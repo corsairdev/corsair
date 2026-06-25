@@ -182,6 +182,8 @@ export type EnforcePermissionResult = {
 	token?: string;
 	/** Modified payload from human review, if applicable. */
 	args?: unknown;
+	/** ISO8601 expiry for pending approval records. Present when token is present. */
+	expiresAt?: string;
 	/**
 	 * Called by the endpoint binding layer after the endpoint executes successfully.
 	 * Marks the permission record as 'completed' (single-use approval consumed).
@@ -365,6 +367,7 @@ export async function enforcePermission(
 			reason: 'pending',
 			id: existing.id,
 			token: existing.token,
+			expiresAt: existing.expires_at,
 		};
 	}
 
@@ -407,5 +410,25 @@ export async function enforcePermission(
 		return pollUntilResolved(opts.db, id, timeoutMs);
 	}
 
-	return { result: 'blocked', reason: 'pending', id, token };
+	return {
+		result: 'blocked',
+		reason: 'pending',
+		id,
+		token,
+		expiresAt: expiresAt,
+	};
 }
+
+export type {
+	ApprovalConfigForMessage,
+	CorsairPermissionsOptions,
+} from './approval-message';
+export {
+	APPROVAL_SETUP_HINT,
+	buildManualApprovalUrl,
+	enrichPermissionWithApprovalUrl,
+	formatDefaultApprovalMessage,
+	resolveApprovalUrl,
+	resolveAsyncApprovalMessage,
+	usesManualApprovalConfig,
+} from './approval-message';

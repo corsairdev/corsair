@@ -9,6 +9,11 @@ import { createTestDatabase } from './setup-db';
 // the client's `fetch` to invoke the handler directly with a Request. That
 // exercises the full URL building, body serialization, and error parsing path
 // without the cost of an HTTP socket.
+//
+// Casts: `as unknown as CorsairPlugin` on the fixture, `as any` on the
+// createCorsair calls — see management-handler.test.ts for the rationale.
+// The full CorsairPlugin interface is generic over runtime context that
+// would require re-implementing half the library to satisfy in a unit test.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const slackOAuth = {
@@ -129,7 +134,7 @@ describe('createCorsairClient — round-trip', () => {
 		// 404 because the underlying lookup throws ManagementApiError(404) when
 		// the DB call fails. We verify the client surfaces it cleanly.
 		const client = makeClient(corsair);
-		await expect(client.permissions.get('nope')).rejects.toBeInstanceOf(
+		await expect(client.permissions.get({ id: 'nope' })).rejects.toBeInstanceOf(
 			CorsairClientError,
 		);
 	});

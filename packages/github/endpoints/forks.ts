@@ -6,7 +6,7 @@ import type { ForksListResponse } from './types';
 export const list: GithubEndpoints['forksList'] = async (ctx, input) => {
 	const { owner, repo, ...queryParams } = input;
 	const endpoint = `/repos/${owner}/${repo}/forks`;
-	const result = await makeGithubRequest<ForksListResponse>(endpoint, ctx.key, {
+	const result = await makeGithubRequest<ForksListResponse>(endpoint, ctx, {
 		query: queryParams,
 	});
 

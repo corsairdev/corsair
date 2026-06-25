@@ -29,6 +29,16 @@ export const BASE_AUTH_FIELDS = {
 		integration: [] as const,
 		account: ['bot_token', 'webhook_signature'] as const,
 	},
+	managed: {
+		integration: [] as const,
+		account: [
+			'access_token',
+			'refresh_token',
+			'expires_at',
+			'scope',
+			'webhook_signature',
+		] as const,
+	},
 } as const satisfies Record<
 	AuthTypes,
 	{

@@ -1,7 +1,10 @@
 import type { CorsairInternalConfig } from '..';
-import { CORSAIR_INTERNAL } from '..';
+import { respondToHubDeliveryFromRequest } from '../../hub/delivery';
+import { getCorsairInternal } from '../utils/corsair-instance';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
+	completeOAuthCallback,
+	createConnectLink,
 	createTenant,
 	getConnectionStatus,
 	getPermission,
@@ -11,7 +14,9 @@ import {
 	listPlugins,
 	listTenants,
 	ok,
+	resolveConnect,
 } from './operations';
+import type { CreateConnectLinkInput } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Management HTTP handler — framework-agnostic (Request) => Promise<Response>.
@@ -31,6 +36,7 @@ export type ManagementHandlerOptions = {
 };
 
 type RouteCtx = {
+	corsair: unknown;
 	internal: CorsairInternalConfig;
 	req: Request;
 	params: Record<string, string>;
@@ -112,6 +118,38 @@ const ROUTES: Route[] = [
 			return json(200, await getPermissionByToken(internal, token));
 		},
 	},
+	{
+		method: 'POST',
+		pattern: '/connect/links',
+		handler: async ({ corsair, internal, body }) =>
+			json(
+				200,
+				await createConnectLink(
+					corsair,
+					internal,
+					body as CreateConnectLinkInput,
+				),
+			),
+	},
+	{
+		method: 'GET',
+		pattern: '/connect/resolve',
+		handler: async ({ corsair, internal, query }) =>
+			json(200, await resolveConnect(corsair, internal, query.state ?? '')),
+	},
+	{
+		method: 'POST',
+		pattern: '/connect/oauth/callback',
+		handler: async ({ corsair, internal, body }) =>
+			json(
+				200,
+				await completeOAuthCallback(
+					corsair,
+					internal,
+					body as { code: string; state: string },
+				),
+			),
+	},
 ];
 
 // ── pre-flight route conflict check ─────────────────────────────────────────
@@ -156,22 +194,6 @@ function stripBasePath(pathname: string, basePath: string): string {
 	return pathname;
 }
 
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	// CORSAIR_INTERNAL is a private Symbol attached to every corsair instance
-	// by createCorsair(). TypeScript cannot represent symbol-keyed properties
-	// on `unknown`, so an `unknown → Record<symbol, unknown>` cast is required
-	// to access it. The presence check below guards the typed return.
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new Error(
-			'managementHandler: invalid corsair instance (missing internal config)',
-		);
-	}
-	return internal;
-}
-
 async function parseBody(req: Request): Promise<unknown> {
 	if (req.method === 'GET' || req.method === 'HEAD') return undefined;
 	const ct = req.headers.get('content-type') ?? '';
@@ -202,13 +224,37 @@ export function managementHandler(
 	opts: ManagementHandlerOptions = {},
 ): (req: Request) => Promise<Response> {
 	const basePath = opts.basePath ?? DEFAULT_BASE_PATH;
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new Error(
+				'managementHandler: invalid corsair instance (missing internal config)',
+			),
+	);
 
 	return async (req: Request): Promise<Response> => {
 		try {
 			const url = new URL(req.url);
 			const pathname = stripBasePath(url.pathname, basePath);
-			const method = req.method.toUpperCase() as 'GET' | 'POST';
+			const method = req.method.toUpperCase();
+
+			// Hub delivery is mounted at the base path (e.g. GET /api/corsair?d=…,
+			// POST signed envelopes). OPTIONS supports browser-delivery CORS preflight.
+			if (
+				method === 'OPTIONS' ||
+				pathname === '/' ||
+				pathname === ''
+			) {
+				return await respondToHubDeliveryFromRequest(corsair, req);
+			}
+
+			if (method !== 'GET' && method !== 'POST') {
+				return json(405, {
+					error: 'method_not_allowed',
+					message: `Method ${method} not allowed`,
+				});
+			}
+
 			const query = Object.fromEntries(url.searchParams);
 
 			for (const route of ROUTES) {
@@ -216,7 +262,14 @@ export function managementHandler(
 				const params = matchPattern(route.pattern, pathname);
 				if (!params) continue;
 				const body = await parseBody(req);
-				return await route.handler({ internal, req, params, query, body });
+				return await route.handler({
+					corsair,
+					internal,
+					req,
+					params,
+					query,
+					body,
+				});
 			}
 
 			throw notFound(`No route for ${method} ${pathname}`);
