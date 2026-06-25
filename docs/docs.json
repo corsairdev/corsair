@@ -25,7 +25,6 @@
             "group": "Get Started",
             "pages": [
               "getting-started/introduction",
-              "getting-started/comparison",
               "getting-started/quick-start",
               "getting-started/setup"
             ]
