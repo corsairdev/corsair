@@ -1,26 +1,34 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import type { AgentQLAPIError } from './client';
+
+// Cast to Partial<AgentQLAPIError> because the error handler receives a base
+// Error type from the Corsair framework; AgentQLAPIError fields are optional
+// extras that may not be present on every Error subclass.
+function getStatus(error: Error): number | undefined {
+	return (error as Partial<AgentQLAPIError>).status;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<AgentQLAPIError>).retryAfter;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			if (getStatus(error) === 429) return true;
+			const message = error.message.toLowerCase();
+			return message.includes('rate_limited') || message.includes('429');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			if (getStatus(error) === 401) return true;
+			const message = error.message.toLowerCase();
+			return message.includes('unauthorized') || message.includes('invalid_auth');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

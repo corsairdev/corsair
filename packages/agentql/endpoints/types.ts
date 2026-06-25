@@ -6,11 +6,7 @@ export const AGENTQL_BROWSER_PROFILE = [
 	'stealth',
 	'tf-browser',
 ] as const;
-export const AGENTQL_BROWSER_UA_PRESET = [
-	'windows',
-	'macos',
-	'linux',
-] as const;
+export const AGENTQL_BROWSER_UA_PRESET = ['windows', 'macos', 'linux'] as const;
 export const AGENTQL_SHUTDOWN_MODE = [
 	'on_disconnect',
 	'on_inactivity_timeout',
@@ -64,9 +60,7 @@ const AgentQLQueryDataInputSchema = z
 		path: ['url'],
 	});
 
-export type AgentQLQueryDataInput = z.infer<
-	typeof AgentQLQueryDataInputSchema
->;
+export type AgentQLQueryDataInput = z.infer<typeof AgentQLQueryDataInputSchema>;
 
 const AgentQLQueryDataMetadataSchema = z
 	.object({
@@ -85,16 +79,51 @@ export type AgentQLQueryDataResponse = z.infer<
 	typeof AgentQLQueryDataResponseSchema
 >;
 
+const AgentQLQueryDocumentParamsSchema = z
+	.object({
+		mode: z.enum(AGENTQL_QUERY_MODE).optional(),
+	})
+	.strict();
+
+const AgentQLQueryDocumentInputSchema = z
+	.object({
+		file: z.instanceof(Blob),
+		fileName: z.string().optional(),
+		query: z.string().min(1).optional(),
+		prompt: z.string().min(1).optional(),
+		params: AgentQLQueryDocumentParamsSchema.optional(),
+	})
+	.strict()
+	.refine((input) => Boolean(input.query || input.prompt), {
+		message: 'Either query or prompt is required',
+		path: ['query'],
+	});
+
+export type AgentQLQueryDocumentInput = z.infer<
+	typeof AgentQLQueryDocumentInputSchema
+>;
+
+const AgentQLQueryDocumentMetadataSchema = z
+	.object({
+		request_id: z.string().optional(),
+		generated_query: z.string().nullable().optional(),
+	})
+	.loose();
+
+const AgentQLQueryDocumentResponseSchema = z.object({
+	data: z.record(z.string(), z.unknown()),
+	metadata: AgentQLQueryDocumentMetadataSchema.nullable().optional(),
+});
+
+export type AgentQLQueryDocumentResponse = z.infer<
+	typeof AgentQLQueryDocumentResponseSchema
+>;
+
 const AgentQLCreateRemoteBrowserSessionInputSchema = z
 	.object({
 		browser_ua_preset: z.enum(AGENTQL_BROWSER_UA_PRESET).optional(),
 		browser_profile: z.enum(AGENTQL_BROWSER_PROFILE).optional(),
-		inactivity_timeout_seconds: z
-			.number()
-			.int()
-			.min(5)
-			.max(86400)
-			.optional(),
+		inactivity_timeout_seconds: z.number().int().min(5).max(86400).optional(),
 		proxy: z
 			.union([AgentQLTetraProxySchema, AgentQLCustomProxySchema])
 			.nullable()
@@ -138,11 +167,7 @@ const AgentQLUsageInfoSchema = z
 const AgentQLSubscriptionStatusSchema = z
 	.object({
 		lifetime_usage_limit: z.number().int().nullable().optional(),
-		current_cycle_free_usage_limit: z
-			.number()
-			.int()
-			.nullable()
-			.optional(),
+		current_cycle_free_usage_limit: z.number().int().nullable().optional(),
 		current_cycle_start: z.string().optional(),
 		current_cycle_end: z.string().optional(),
 	})
@@ -171,25 +196,28 @@ export type AgentQLGetUsageResponse = z.infer<
 
 export type AgentQLEndpointInputs = {
 	queryData: AgentQLQueryDataInput;
+	queryDocument: AgentQLQueryDocumentInput;
 	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionInput;
 	getUsage: AgentQLGetUsageInput;
 };
 
 export type AgentQLEndpointOutputs = {
 	queryData: AgentQLQueryDataResponse;
+	queryDocument: AgentQLQueryDocumentResponse;
 	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionResponse;
 	getUsage: AgentQLGetUsageResponse;
 };
 
 export const AgentQLEndpointInputSchemas = {
 	queryData: AgentQLQueryDataInputSchema,
+	queryDocument: AgentQLQueryDocumentInputSchema,
 	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionInputSchema,
 	getUsage: AgentQLGetUsageInputSchema,
 } as const;
 
 export const AgentQLEndpointOutputSchemas = {
 	queryData: AgentQLQueryDataResponseSchema,
-	createRemoteBrowserSession:
-		AgentQLCreateRemoteBrowserSessionResponseSchema,
+	queryDocument: AgentQLQueryDocumentResponseSchema,
+	createRemoteBrowserSession: AgentQLCreateRemoteBrowserSessionResponseSchema,
 	getUsage: AgentQLGetUsageResponseSchema,
 } as const;

@@ -40,7 +40,9 @@ export type AgentQLContext = CorsairPluginContext<
 
 export type AgentQLKeyBuilderContext = KeyBuilderContext<AgentQLPluginOptions>;
 
-export type AgentQLBoundEndpoints = BindEndpoints<typeof agentQLEndpointsNested>;
+export type AgentQLBoundEndpoints = BindEndpoints<
+	typeof agentQLEndpointsNested
+>;
 
 type AgentQLEndpoint<K extends keyof AgentQLEndpointOutputs> = CorsairEndpoint<
 	AgentQLContext,
@@ -52,15 +54,16 @@ export type AgentQLEndpoints = {
 	createRemoteBrowserSession: AgentQLEndpoint<'createRemoteBrowserSession'>;
 	getUsage: AgentQLEndpoint<'getUsage'>;
 	queryData: AgentQLEndpoint<'queryData'>;
+	queryDocument: AgentQLEndpoint<'queryDocument'>;
 };
 
 const agentQLEndpointsNested = {
 	browserSessions: {
-		createRemoteBrowserSession:
-			BrowserSessions.createRemoteBrowserSession,
+		createRemoteBrowserSession: BrowserSessions.createRemoteBrowserSession,
 	},
 	data: {
 		query: Data.query,
+		queryDocument: Data.queryDocument,
 	},
 	usage: {
 		get: Usage.get,
@@ -78,11 +81,17 @@ export const agentQLEndpointSchemas = {
 		input: AgentQLEndpointInputSchemas.queryData,
 		output: AgentQLEndpointOutputSchemas.queryData,
 	},
+	'data.queryDocument': {
+		input: AgentQLEndpointInputSchemas.queryDocument,
+		output: AgentQLEndpointOutputSchemas.queryDocument,
+	},
 	'usage.get': {
 		input: AgentQLEndpointInputSchemas.getUsage,
 		output: AgentQLEndpointOutputSchemas.getUsage,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof agentQLEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof agentQLEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -96,6 +105,11 @@ const agentQLEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Tool to query structured data as JSON from a web page using an AgentQL query or natural language prompt. Use after defining your query or prompt and a URL or HTML.',
+	},
+	'data.queryDocument': {
+		riskLevel: 'read',
+		description:
+			'Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file upload plus query or prompt.',
 	},
 	'usage.get': {
 		riskLevel: 'read',
@@ -169,4 +183,6 @@ export type {
 	AgentQLGetUsageResponse,
 	AgentQLQueryDataInput,
 	AgentQLQueryDataResponse,
+	AgentQLQueryDocumentInput,
+	AgentQLQueryDocumentResponse,
 } from './endpoints/types';

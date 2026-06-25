@@ -12,12 +12,23 @@ export const get: AgentQLEndpoints['getUsage'] = async (ctx) => {
 		},
 	);
 
-	await logEventFromContext(
-		ctx,
-		'agentql.usage.get',
-		{},
-		'completed',
-	);
+	if (ctx.db.accountUsage) {
+		try {
+			await ctx.db.accountUsage.upsertByEntityId('current', {
+				currentSubscription: response.data.current_subscription ?? null,
+				apiKeyUsage: response.data.api_key_usage,
+				totalAccountUsage: response.data.total_account_usage,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn(
+				'[agentql] Failed to save account usage to database:',
+				error,
+			);
+		}
+	}
+
+	await logEventFromContext(ctx, 'agentql.usage.get', {}, 'completed');
 
 	return response;
 };
