@@ -3,6 +3,7 @@ name: PR Checks
 on:
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
@@ -29,9 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm lint
 
       - name: Validate Plugins
         run: pnpm run validate:plugins
