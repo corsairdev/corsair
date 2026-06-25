@@ -1125,7 +1125,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       zod:
-        specifier: 'catalog:'
+        specifier: '^4.1.13'
         version: 4.1.13
 
   packages/intercom:
