@@ -1,6 +1,6 @@
 import { and, eq, inArray } from 'drizzle-orm';
 import type { DB } from '@/db';
-import type { IntegrationUrlType, IntegrationUrls } from '@/db/schema';
+import type { IntegrationUrls, IntegrationUrlType } from '@/db/schema';
 import { integrationUrls } from '@/db/schema';
 
 const URL_TYPE_TO_FIELD = {
@@ -80,7 +80,9 @@ export async function upsertIntegrationUrls(
 	integrationId: string,
 	urls: IntegrationUrls,
 ) {
-	for (const field of Object.keys(FIELD_TO_URL_TYPE) as (keyof IntegrationUrls)[]) {
+	for (const field of Object.keys(
+		FIELD_TO_URL_TYPE,
+	) as (keyof IntegrationUrls)[]) {
 		const type = FIELD_TO_URL_TYPE[field];
 		const url = urls[field];
 

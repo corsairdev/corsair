@@ -41,6 +41,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { SharepointSchema } from './schema';
 import { ListWebhooks } from './webhooks';
+import { matchSharepointTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	SharepointListChangedPayload,
 	SharepointWebhookOutputs,
@@ -61,7 +62,7 @@ const defaultAuthType = 'oauth_2' as const;
 export const sharepointAuthConfig = {
 	oauth_2: {
 		// site_id is the Graph API site identifier e.g. "tenant.sharepoint.com:/sites/MySite"
-		account: ['site_id'] as const,
+		account: ['site_id', 'subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -1361,6 +1362,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				contentType.includes('application/json')
 			);
 		},
+		pluginTenantWebhookMatcher: matchSharepointTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

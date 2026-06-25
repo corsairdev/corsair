@@ -4,14 +4,17 @@ import { managementHandler } from '../handler';
 // ─────────────────────────────────────────────────────────────────────────────
 // Next.js App Router adapter.
 //
-// Mount in app/api/corsair/[...all]/route.ts:
+// Mount in app/api/corsair/[[...path]]/route.ts (optional catch-all so bare
+// /api/corsair hits hub delivery as well as management subpaths):
 //
 //   import { toNextJsHandler } from 'corsair';
 //   import { corsair } from '@/lib/corsair';
-//   export const { GET, POST } = toNextJsHandler(corsair);
+//   export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+//     basePath: '/api/corsair',
+//   });
 //
-// Next's Route Handlers already speak the fetch API, so the adapter just
-// returns the handler twice — once per method we serve.
+// Next's Route Handlers already speak the fetch API, so the adapter fans the
+// same handler out per exported method.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function toNextJsHandler(
@@ -23,7 +26,8 @@ export function toNextJsHandler(
 ): {
 	GET: (req: Request) => Promise<Response>;
 	POST: (req: Request) => Promise<Response>;
+	OPTIONS: (req: Request) => Promise<Response>;
 } {
 	const handler = managementHandler(corsair, opts);
-	return { GET: handler, POST: handler };
+	return { GET: handler, POST: handler, OPTIONS: handler };
 }

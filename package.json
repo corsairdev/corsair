@@ -10,6 +10,7 @@
     "format": "biome format . --write",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe",
+    "test": "turbo --filter \"./packages/*\" test",
     "release": "turbo --filter \"./packages/*\" build && bumpp && pnpm -r publish --access public --no-git-checks",
     "release:no-build": "bumpp && pnpm -r publish --access public --no-git-checks --tag next",
     "release:canary": "turbo --filter \"./packages/*\" build && bumpp && pnpm -r publish --access public --tag canary --no-git-checks",
@@ -17,15 +18,20 @@
     "typecheck": "tsc --build",
     "generate:plugin": "node --experimental-strip-types scripts/generate-plugin.ts",
     "generate:plugin-from-json": "node --experimental-strip-types scripts/generate-plugin-from-json.ts",
+    "generate:labeler-config": "node scripts/generate-labeler-config.mjs",
     "generate:docs": "tsx scripts/generate-plugin-docs.ts",
     "generate:docs:all": "tsx scripts/generate-plugin-docs.ts --all",
-    "build:explorer-catalog": "tsx scripts/build-explorer-catalog.ts"
+    "build:explorer-catalog": "tsx scripts/build-explorer-catalog.ts",
+    "validate:plugins": "tsx scripts/validate-plugins.ts"
   },
   "pnpm": {
     "overrides": {
       "@types/react": "^19",
       "@types/react-dom": "^19"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "better-sqlite3"
+    ]
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.5",

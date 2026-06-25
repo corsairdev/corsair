@@ -62,6 +62,50 @@ const EventRemindersSchema = z.object({
 });
 
 // Writable event fields used for create / update requests
+const AttachmentSchema = z.object({
+	fileUrl: z.string().optional(),
+	title: z.string().optional(),
+	mimeType: z.string().optional(),
+	iconLink: z.string().optional(),
+	fileId: z.string().optional(),
+});
+
+const ConferenceDataSchema = z.object({
+	createRequest: z
+		.object({
+			requestId: z.string().optional(),
+			conferenceSolutionKey: z
+				.object({ type: z.string().optional() })
+				.optional(),
+			status: z.object({ statusCode: z.string().optional() }).optional(),
+		})
+		.optional(),
+	entryPoints: z
+		.array(
+			z.object({
+				entryPointType: z.string().optional(),
+				uri: z.string().optional(),
+				label: z.string().optional(),
+				pin: z.string().optional(),
+				accessCode: z.string().optional(),
+				meetingCode: z.string().optional(),
+				passcode: z.string().optional(),
+				password: z.string().optional(),
+			}),
+		)
+		.optional(),
+	conferenceSolution: z
+		.object({
+			key: z.object({ type: z.string().optional() }).optional(),
+			name: z.string().optional(),
+			iconUri: z.string().optional(),
+		})
+		.optional(),
+	conferenceId: z.string().optional(),
+	signature: z.string().optional(),
+	notes: z.string().optional(),
+});
+
 const EventInputSchema = z.object({
 	summary: z.string().optional().describe('Title of the event'),
 	description: z
@@ -257,6 +301,26 @@ const EventSchema = z.object({
 	guestsCanSeeOtherGuests: z.boolean().optional(),
 	privateCopy: z.boolean().optional(),
 	locked: z.boolean().optional(),
+	conferenceData: ConferenceDataSchema.optional(),
+	attachments: z.array(AttachmentSchema).optional(),
+	source: z
+		.object({
+			url: z.string().optional(),
+			title: z.string().optional(),
+		})
+		.optional(),
+	gadget: z
+		.object({
+			type: z.string().optional(),
+			title: z.string().optional(),
+			link: z.string().optional(),
+			iconLink: z.string().optional(),
+			width: z.number().optional(),
+			height: z.number().optional(),
+			display: z.string().optional(),
+			preferences: z.record(z.string(), z.string()).optional(),
+		})
+		.optional(),
 	eventType: z
 		.enum([
 			'default',

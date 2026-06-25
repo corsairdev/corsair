@@ -1,0 +1,24 @@
+'use server';
+
+import { revalidatePath, revalidateTag } from 'next/cache';
+
+import { getActionErrorMessage } from '@/lib/action-errors';
+import { getApi } from '@/server/api/caller';
+import { integrationCacheTag } from '@/server/integration-cache';
+import { revalidateOssWriteSurface } from '@/server/oss-public-cache';
+
+export async function claimIntegration(integrationId: string) {
+	try {
+		const api = await getApi();
+		const result = await api.integrations.claim({ integrationId });
+		revalidatePath('/oss');
+		revalidatePath(`/oss/${result.slug}`);
+		revalidateOssWriteSurface();
+		revalidateTag(integrationCacheTag(result.slug));
+		return result;
+	} catch (error) {
+		throw new Error(
+			getActionErrorMessage(error, 'Failed to claim integration'),
+		);
+	}
+}
