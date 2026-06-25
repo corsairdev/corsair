@@ -132,10 +132,6 @@ export async function makeInstagramRequest<T>(
         body:
             method === 'POST' ? body : undefined,
         mediaType: 'application/json',
-        // query: {
-        //     access_token: credentials, // for every request FACEBOOK take access_token in query
-        //     ...(query || {})
-        // }
         query: method === 'GET' ? query : undefined
     }
 
