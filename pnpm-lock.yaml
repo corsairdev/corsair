@@ -1125,8 +1125,8 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       zod:
-        specifier: ^4.1.13
-        version: 4.4.3
+        specifier: 'catalog:'
+        version: 4.1.13
 
   packages/intercom:
     devDependencies:
