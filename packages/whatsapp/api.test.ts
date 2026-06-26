@@ -82,7 +82,10 @@ describe('WhatsApp API Endpoints', () => {
 				messaging_product: 'whatsapp',
 				to: '1234567890',
 				type: 'image',
-				image: { link: 'https://example.com/image.png', caption: 'Look at this!' },
+				image: {
+					link: 'https://example.com/image.png',
+					caption: 'Look at this!',
+				},
 			});
 
 			expect(mockedMakeWhatsappRequest).toHaveBeenCalledWith(
@@ -94,7 +97,10 @@ describe('WhatsApp API Endpoints', () => {
 						messaging_product: 'whatsapp',
 						to: '1234567890',
 						type: 'image',
-						image: { link: 'https://example.com/image.png', caption: 'Look at this!' },
+						image: {
+							link: 'https://example.com/image.png',
+							caption: 'Look at this!',
+						},
 					},
 				},
 			);

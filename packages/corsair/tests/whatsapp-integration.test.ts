@@ -1,9 +1,9 @@
-import { createCorsair } from '../core';
 import { whatsapp } from '@corsair-dev/whatsapp';
-import { createTestDatabase } from './setup-db';
-import { createIntegrationAndAccount } from './plugins-test-utils';
-import { processWebhook } from '../webhooks';
 import * as crypto from 'crypto';
+import { createCorsair } from '../core';
+import { processWebhook } from '../webhooks';
+import { createIntegrationAndAccount } from './plugins-test-utils';
+import { createTestDatabase } from './setup-db';
 
 const whatsappOptions = {
 	key: 'test-wa-token',

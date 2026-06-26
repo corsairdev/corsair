@@ -5,8 +5,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { htmlToBlocks } from '@portabletext/block-tools';
-import { Schema } from '@sanity/schema';
 import { createClient } from '@sanity/client';
+import { Schema } from '@sanity/schema';
 import matter from 'gray-matter';
 import { JSDOM } from 'jsdom';
 import { marked } from 'marked';
@@ -82,9 +82,13 @@ async function uploadImageFromPublicPath(
 	}
 
 	try {
-		const asset = await client.assets.upload('image', fs.createReadStream(filePath), {
-			filename: path.basename(filePath),
-		});
+		const asset = await client.assets.upload(
+			'image',
+			fs.createReadStream(filePath),
+			{
+				filename: path.basename(filePath),
+			},
+		);
 
 		return {
 			assetId: asset._id,

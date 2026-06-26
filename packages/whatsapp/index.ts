@@ -16,9 +16,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import * as Account from './endpoints/account';
-import * as Messages from './endpoints/messages';
 import * as Media from './endpoints/media';
 import * as MessageTemplates from './endpoints/message-templates';
+import * as Messages from './endpoints/messages';
 import type {
 	WhatsappEndpointInputs,
 	WhatsappEndpointOutputs,

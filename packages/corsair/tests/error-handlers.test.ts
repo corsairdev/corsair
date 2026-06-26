@@ -1,10 +1,10 @@
 import { errorHandlers as linearErrorHandlers } from '@corsair-dev/linear';
 import { errorHandlers as slackErrorHandlers } from '@corsair-dev/slack';
+import { errorHandlers as whatsappErrorHandlers } from '@corsair-dev/whatsapp/error-handlers';
 import { ApiError } from '../async-core/ApiError';
 import type { ApiRequestOptions } from '../async-core/ApiRequestOptions';
 import type { ApiResult } from '../async-core/ApiResult';
 import { handleCorsairError } from '../core/errors/handler';
-import { errorHandlers as whatsappErrorHandlers } from '@corsair-dev/whatsapp/error-handlers';
 
 function createMockApiError(
 	status: number,

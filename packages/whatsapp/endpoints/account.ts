@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { WhatsappEndpoints } from '../index';
 import { makeWhatsappRequest } from '../client';
+import type { WhatsappEndpoints } from '../index';
 import { resolvePhoneNumberId } from './messages';
 import type { WhatsappEndpointOutputs } from './types';
 

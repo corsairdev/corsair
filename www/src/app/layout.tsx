@@ -140,9 +140,7 @@ export default function RootLayout({
 				/>
 				{children}
 			</body>
-			{googleAnalyticsId ? (
-				<GoogleAnalytics gaId={googleAnalyticsId} />
-			) : null}
+			{googleAnalyticsId ? <GoogleAnalytics gaId={googleAnalyticsId} /> : null}
 		</html>
 	);
 }
