@@ -49,6 +49,7 @@ export const InstagramWebhooksNested = {
 
 export const instagramAuthConfig = {
     oauth_2: {
+        //OAuth2 plugins, client_id and client_secret are always provided by the base framework and must not be declared in the integration array
         integration: [] as const,
     },
 } as const satisfies PluginAuthConfig;
