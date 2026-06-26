@@ -67,8 +67,11 @@ export const listPhoneNumbers: WhatsappEndpoints['phoneNumbersList'] = async (
 	input,
 ) => {
 	const { resolveBusinessAccountId } = await import('./message-templates');
-	const businessAccountId = await resolveBusinessAccountId(ctx, input.businessAccountId);
-	
+	const businessAccountId = await resolveBusinessAccountId(
+		ctx,
+		input.businessAccountId,
+	);
+
 	const result = await makeWhatsappRequest<
 		WhatsappEndpointOutputs['phoneNumbersList']
 	>(`${businessAccountId}/phone_numbers`, ctx.key, {

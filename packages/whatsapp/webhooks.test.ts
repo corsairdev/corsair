@@ -67,7 +67,11 @@ describe('WhatsApp Webhooks', () => {
 					contacts: { upsertByEntityId: jest.fn() },
 					messages: {
 						findByEntityId: jest.fn().mockResolvedValue(null),
-						upsertByEntityId: jest.fn().mockImplementation((id: string, data: any) => Promise.resolve({ id, ...data })),
+						upsertByEntityId: jest
+							.fn()
+							.mockImplementation((id: string, data: any) =>
+								Promise.resolve({ id, ...data }),
+							),
 					},
 				},
 				$getAccountId: jest.fn(),
@@ -87,7 +91,10 @@ describe('WhatsApp Webhooks', () => {
 									field: 'messages',
 									value: {
 										messaging_product: 'whatsapp',
-										metadata: { phone_number_id: 'phone-123', display_phone_number: '123' },
+										metadata: {
+											phone_number_id: 'phone-123',
+											display_phone_number: '123',
+										},
 										contacts: [],
 										messages: [
 											{
@@ -108,13 +115,13 @@ describe('WhatsApp Webhooks', () => {
 
 			// We need to import 'messages' hook handler inside the file, so we do it dynamically or statically.
 			const { messages } = await import('./webhooks/messages');
-			
+
 			// Mock logEventFromContext using jest
 			const core = await import('corsair/core');
 			jest.spyOn(core, 'logEventFromContext').mockResolvedValue(null as any);
 
 			const result = await messages.handler(mockCtx, mockRequest);
-			
+
 			expect(result.success).toBe(true);
 			expect(mockCtx.db.messages.upsertByEntityId).toHaveBeenCalledWith(
 				'msg-img',

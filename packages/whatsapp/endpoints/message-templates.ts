@@ -19,94 +19,98 @@ export async function resolveBusinessAccountId(
 	return businessAccountId;
 }
 
-export const createMessageTemplate: WhatsappEndpoints['messageTemplatesCreate'] = async (
-	ctx,
-	input,
-) => {
-	const businessAccountId = await resolveBusinessAccountId(ctx, input.businessAccountId);
-	
-	const result = await makeWhatsappRequest<
-		WhatsappEndpointOutputs['messageTemplatesCreate']
-	>(`${businessAccountId}/message_templates`, ctx.key, {
-		method: 'POST',
-		body: {
-			name: input.name,
-			language: input.language,
-			category: input.category,
-			components: input.components,
-		},
-	});
+export const createMessageTemplate: WhatsappEndpoints['messageTemplatesCreate'] =
+	async (ctx, input) => {
+		const businessAccountId = await resolveBusinessAccountId(
+			ctx,
+			input.businessAccountId,
+		);
 
-	await logEventFromContext(
-		ctx,
-		'whatsapp.messageTemplates.create',
-		{ businessAccountId, templateName: input.name },
-		'completed',
-	);
-	return result;
-};
+		const result = await makeWhatsappRequest<
+			WhatsappEndpointOutputs['messageTemplatesCreate']
+		>(`${businessAccountId}/message_templates`, ctx.key, {
+			method: 'POST',
+			body: {
+				name: input.name,
+				language: input.language,
+				category: input.category,
+				components: input.components,
+			},
+		});
 
-export const deleteMessageTemplate: WhatsappEndpoints['messageTemplatesDelete'] = async (
-	ctx,
-	input,
-) => {
-	const businessAccountId = await resolveBusinessAccountId(ctx, input.businessAccountId);
-	
-	const result = await makeWhatsappRequest<
-		WhatsappEndpointOutputs['messageTemplatesDelete']
-	>(`${businessAccountId}/message_templates`, ctx.key, {
-		method: 'DELETE',
-		query: { name: input.name },
-	});
+		await logEventFromContext(
+			ctx,
+			'whatsapp.messageTemplates.create',
+			{ businessAccountId, templateName: input.name },
+			'completed',
+		);
+		return result;
+	};
 
-	await logEventFromContext(
-		ctx,
-		'whatsapp.messageTemplates.delete',
-		{ businessAccountId, templateName: input.name },
-		'completed',
-	);
-	return result;
-};
+export const deleteMessageTemplate: WhatsappEndpoints['messageTemplatesDelete'] =
+	async (ctx, input) => {
+		const businessAccountId = await resolveBusinessAccountId(
+			ctx,
+			input.businessAccountId,
+		);
 
-export const listMessageTemplates: WhatsappEndpoints['messageTemplatesList'] = async (
-	ctx,
-	input,
-) => {
-	const businessAccountId = await resolveBusinessAccountId(ctx, input.businessAccountId);
-	
-	const result = await makeWhatsappRequest<
-		WhatsappEndpointOutputs['messageTemplatesList']
-	>(`${businessAccountId}/message_templates`, ctx.key, {
-		method: 'GET',
-	});
+		const result = await makeWhatsappRequest<
+			WhatsappEndpointOutputs['messageTemplatesDelete']
+		>(`${businessAccountId}/message_templates`, ctx.key, {
+			method: 'DELETE',
+			query: { name: input.name },
+		});
 
-	await logEventFromContext(
-		ctx,
-		'whatsapp.messageTemplates.list',
-		{ businessAccountId },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'whatsapp.messageTemplates.delete',
+			{ businessAccountId, templateName: input.name },
+			'completed',
+		);
+		return result;
+	};
 
-export const getTemplateStatus: WhatsappEndpoints['messageTemplatesGetStatus'] = async (
-	ctx,
-	input,
-) => {
-	const businessAccountId = await resolveBusinessAccountId(ctx, input.businessAccountId);
-	
-	const result = await makeWhatsappRequest<
-		WhatsappEndpointOutputs['messageTemplatesGetStatus']
-	>(`${businessAccountId}/message_templates`, ctx.key, {
-		method: 'GET',
-		query: { name: input.name },
-	});
+export const listMessageTemplates: WhatsappEndpoints['messageTemplatesList'] =
+	async (ctx, input) => {
+		const businessAccountId = await resolveBusinessAccountId(
+			ctx,
+			input.businessAccountId,
+		);
 
-	await logEventFromContext(
-		ctx,
-		'whatsapp.messageTemplates.getStatus',
-		{ businessAccountId, templateName: input.name },
-		'completed',
-	);
-	return result;
-};
+		const result = await makeWhatsappRequest<
+			WhatsappEndpointOutputs['messageTemplatesList']
+		>(`${businessAccountId}/message_templates`, ctx.key, {
+			method: 'GET',
+		});
+
+		await logEventFromContext(
+			ctx,
+			'whatsapp.messageTemplates.list',
+			{ businessAccountId },
+			'completed',
+		);
+		return result;
+	};
+
+export const getTemplateStatus: WhatsappEndpoints['messageTemplatesGetStatus'] =
+	async (ctx, input) => {
+		const businessAccountId = await resolveBusinessAccountId(
+			ctx,
+			input.businessAccountId,
+		);
+
+		const result = await makeWhatsappRequest<
+			WhatsappEndpointOutputs['messageTemplatesGetStatus']
+		>(`${businessAccountId}/message_templates`, ctx.key, {
+			method: 'GET',
+			query: { name: input.name },
+		});
+
+		await logEventFromContext(
+			ctx,
+			'whatsapp.messageTemplates.getStatus',
+			{ businessAccountId, templateName: input.name },
+			'completed',
+		);
+		return result;
+	};

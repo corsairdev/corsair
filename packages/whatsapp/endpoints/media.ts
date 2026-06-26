@@ -9,7 +9,7 @@ export const uploadMedia: WhatsappEndpoints['mediaUpload'] = async (
 	input,
 ) => {
 	const phoneNumberId = await resolvePhoneNumberId(ctx, input.phoneNumberId);
-	
+
 	const result = await makeWhatsappRequest<
 		WhatsappEndpointOutputs['mediaUpload']
 	>(`${phoneNumberId}/media`, ctx.key, {

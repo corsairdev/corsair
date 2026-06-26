@@ -140,6 +140,7 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	whatsapp: 'WhatsApp',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
