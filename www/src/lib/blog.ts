@@ -1,9 +1,12 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import type { PortableTextBlock } from '@portabletext/types';
 
-import matter from 'gray-matter';
-
-const BLOG_DIR = path.join(process.cwd(), 'src/content/blog');
+import { sanityProjectId } from '../../sanity/env';
+import { getSanityClient } from '@/lib/sanity/client';
+import {
+	allPostSlugsQuery,
+	allPostsQuery,
+	postBySlugQuery,
+} from '@/lib/sanity/queries';
 
 export type BlogPostMeta = {
 	slug: string;
@@ -14,65 +17,87 @@ export type BlogPostMeta = {
 };
 
 export type BlogPost = BlogPostMeta & {
-	content: string;
+	body: PortableTextBlock[];
 };
 
-function getSlugFromFilename(filename: string) {
-	return filename.replace(/\.md$/, '');
-}
+type SanityPostRecord = {
+	slug: string | null;
+	title: string | null;
+	description: string | null;
+	publishedAt: string | null;
+	author: string | null;
+	body?: PortableTextBlock[];
+};
 
-function parsePostMeta(
-	slug: string,
-	data: Record<string, unknown>,
-): BlogPostMeta {
+const fetchOptions = { next: { tags: ['blog'] } };
+
+function toPostMeta(record: SanityPostRecord): BlogPostMeta | null {
+	if (!record.slug || !record.title || !record.publishedAt) {
+		return null;
+	}
+
 	return {
-		slug,
-		title: String(data.title ?? slug),
-		description: String(data.description ?? ''),
-		publishedAt: String(data.publishedAt ?? ''),
-		author: String(data.author ?? 'Corsair'),
+		slug: record.slug,
+		title: record.title,
+		description: record.description ?? '',
+		publishedAt: record.publishedAt,
+		author: record.author ?? 'Corsair Team',
 	};
 }
 
-export function getAllPosts(): BlogPostMeta[] {
-	if (!fs.existsSync(BLOG_DIR)) return [];
+export async function getAllPosts(): Promise<BlogPostMeta[]> {
+	const sanityClient = getSanityClient();
 
-	const posts = fs
-		.readdirSync(BLOG_DIR)
-		.filter((filename) => filename.endsWith('.md'))
-		.map((filename) => {
-			const slug = getSlugFromFilename(filename);
-			const raw = fs.readFileSync(path.join(BLOG_DIR, filename), 'utf8');
-			const { data } = matter(raw);
-			return parsePostMeta(slug, data);
-		});
+	if (!sanityProjectId || !sanityClient) return [];
 
-	return posts.sort(
-		(a, b) =>
-			new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+	const records = await sanityClient.fetch<SanityPostRecord[]>(
+		allPostsQuery,
+		{},
+		fetchOptions,
 	);
+
+	return records
+		.map(toPostMeta)
+		.filter((post): post is BlogPostMeta => post !== null);
 }
 
-export function getPostBySlug(slug: string): BlogPost | null {
-	const filepath = path.join(BLOG_DIR, `${slug}.md`);
-	if (!fs.existsSync(filepath)) return null;
+export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+	const sanityClient = getSanityClient();
 
-	const raw = fs.readFileSync(filepath, 'utf8');
-	const { data, content } = matter(raw);
+	if (!sanityProjectId || !sanityClient) return null;
+
+	const record = await sanityClient.fetch<SanityPostRecord | null>(
+		postBySlugQuery,
+		{ slug },
+		fetchOptions,
+	);
+
+	const meta = record ? toPostMeta(record) : null;
+
+	if (!meta || !record?.body) {
+		return null;
+	}
 
 	return {
-		...parsePostMeta(slug, data),
-		content,
+		...meta,
+		body: record.body,
 	};
 }
 
-export function getAllSlugs(): string[] {
-	if (!fs.existsSync(BLOG_DIR)) return [];
+export async function getAllSlugs(): Promise<string[]> {
+	const sanityClient = getSanityClient();
 
-	return fs
-		.readdirSync(BLOG_DIR)
-		.filter((filename) => filename.endsWith('.md'))
-		.map(getSlugFromFilename);
+	if (!sanityProjectId || !sanityClient) return [];
+
+	const records = await sanityClient.fetch<Array<{ slug: string | null }>>(
+		allPostSlugsQuery,
+		{},
+		fetchOptions,
+	);
+
+	return records
+		.map((record) => record.slug)
+		.filter((slug): slug is string => Boolean(slug));
 }
 
 export function formatPostDate(date: string) {
