@@ -883,7 +883,7 @@ const GetCommentsInputSchema = z
     'Retrieve comments associated with a specific Instagram media object.'
   );
 
-const ReplayCommentsInputSchema = z
+const ReplyCommentsInputSchema = z
   .object({
     comment_id: z
       .string()
@@ -990,7 +990,7 @@ export const InstagramEndpointInputSchemas = {
   GetMessage: GetMessageInputSchema,
   SendMessage: SendMessageInputSchema,
   GetComments: GetCommentsInputSchema,
-  ReplayComments: ReplayCommentsInputSchema,
+  ReplyComments: ReplyCommentsInputSchema,
   SendComments: SendCommentsInputSchema,
   GetCommentsDetails: GetInstagramCommentDetailsInputSchema,
   UpdateComments: UpdateCommentsInputSchema,
@@ -1318,7 +1318,7 @@ const GetCommentsOutputSchema = z
     'Represents the comments retrieved for an Instagram media object.'
   );
 
-const ReplayCommentsOutputSchema = z
+const ReplyCommentsOutputSchema = z
   .object({
     id: z
       .string()
@@ -1506,7 +1506,7 @@ export type GetConversationMessagesOutputSchema = z.infer<typeof GetConversation
 export type MessageSchema = z.infer<typeof MessageSchema>
 export type SendMessageOutputSchema = z.infer<typeof SendMessageOutputSchema>
 export type GetCommentsOutputSchema = z.infer<typeof GetCommentsOutputSchema>
-export type ReplayCommentsOutputSchema = z.infer<typeof ReplayCommentsOutputSchema>
+export type ReplyCommentsOutputSchema = z.infer<typeof ReplyCommentsOutputSchema>
 export type SendCommentsOutputSchema = z.infer<typeof SendCommentsOutputSchema>
 export type GetInstagramCommentDetailsOutputSchema = z.infer<typeof GetInstagramCommentDetailsOutputSchema>
 export type UpdateCommentsOutputSchema = z.infer<typeof UpdateCommentsOutputSchema>
@@ -1532,7 +1532,7 @@ export const InstagramEndpointOutputSchemas = {
   GetMessage: MessageSchema,
   SendMessage: SendMessageOutputSchema,
   GetComments: GetCommentsOutputSchema,
-  ReplayComments: ReplayCommentsOutputSchema,
+  ReplyComments: ReplyCommentsOutputSchema,
   SendComments: SendCommentsOutputSchema,
   GetCommentsDetails: GetInstagramCommentDetailsOutputSchema,
   UpdateComments: UpdateCommentsOutputSchema,
@@ -1558,7 +1558,7 @@ export type InstagramEndpointOutputs = {
   GetMessage: MessageSchema,
   SendMessage: SendMessageOutputSchema,
   GetComments: GetCommentsOutputSchema,
-  ReplayComments: ReplayCommentsOutputSchema,
+  ReplyComments: ReplyCommentsOutputSchema,
   SendComments: SendCommentsOutputSchema,
   GetCommentsDetails: GetInstagramCommentDetailsOutputSchema,
   UpdateComments: UpdateCommentsOutputSchema,

@@ -22,7 +22,7 @@ import { InstagramEndpointInputSchemas, InstagramEndpointOutputSchemas } from ".
 
 import { ProfileEndpoints, MediaEndpoints, ImageEndpoints, PublishEndpoints, ReelEndpoints, VideoEndponts, CarouselEndpoints, ConversationsEndpoints, MessagesEndpoints, CommentsEndpoints } from "./endpoints/index";
 
-import type { InstagramWebhookOutputs, InstagramMessageReceivedEvent, InstagramUrlVerificationEvent, InstagramWebhookUrlVerificationPayload, InstagramWebhookPayload, InstagramWebhookCommentPayload } from "./webhooks/types"
+import type { InstagramWebhookOutputs, InstagramWebhookUrlVerificationPayload, InstagramWebhookPayload, InstagramWebhookCommentPayload } from "./webhooks/types"
 import {
     InstagramMessageReceivedEventSchema,
     InstagramWebhookPayloadSchema,
@@ -92,7 +92,7 @@ export type InstagramEndpoints = {
     GetMessage: InstagramEndpoint<'GetMessage'>
     SendMessage: InstagramEndpoint<'SendMessage'>
     GetComments: InstagramEndpoint<'GetComments'>,
-    ReplayComments: InstagramEndpoint<'ReplayComments'>,
+    ReplayComments: InstagramEndpoint<'ReplyComments'>,
     SendComments: InstagramEndpoint<'SendComments'>,
     GetCommentsDetails: InstagramEndpoint<'GetCommentsDetails'>,
     UpdateComments: InstagramEndpoint<'UpdateComments'>
@@ -231,9 +231,9 @@ export const InstagramEndpointSchemas = {
         input: InstagramEndpointInputSchemas.GetComments,
         output: InstagramEndpointOutputSchemas.GetComments,
     },
-    'comments.replay': {
-        input: InstagramEndpointInputSchemas.ReplayComments,
-        output: InstagramEndpointOutputSchemas.ReplayComments,
+    'comments.Reply': {
+        input: InstagramEndpointInputSchemas.ReplyComments,
+        output: InstagramEndpointOutputSchemas.ReplyComments,
     },
     'comments.send': {
         input: InstagramEndpointInputSchemas.SendComments,

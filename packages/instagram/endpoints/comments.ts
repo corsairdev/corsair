@@ -38,7 +38,7 @@ export const list: InstagramEndpoints['GetComments'] = async (ctx, input) => {
 
 export const reply: InstagramEndpoints['ReplayComments'] = async (ctx, input) => {
 
-    const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['ReplayComments']>
+    const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['ReplyComments']>
         (`/${input.comment_id}/replies`, ctx, {
             method: 'POST',
             body: {
