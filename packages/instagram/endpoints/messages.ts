@@ -8,16 +8,21 @@ import type { FacebookPageSchema } from "../schema/database";
 
 export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
 
-    const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
-
     const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['GetMessage']>
         (`/${input.message_id}`, ctx, {
             method: 'GET',
             query: {
-                access_token: res.access_token,
                 fields: input.q
             }
-        });
+        },
+            async () => {
+                const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+                if (!res.access_token) {
+                    throw new Error(`No page access token found for page`);
+                }
+                return res.access_token;
+            } 
+    );
 
     if (result.id) {
         try {
@@ -64,11 +69,16 @@ export const send: InstagramEndpoints['SendMessage'] = async (ctx, input) => {
     const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['SendMessage']>
         (`/me/messages`, ctx, {
             method: 'POST',
-            query: {
-                access_token: res.access_token,
-            },
             body
-        });
+        },
+            async () => {
+                const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+                if (!res.access_token) {
+                    throw new Error(`No page access token found for page`);
+                }
+                return res.access_token;
+            }
+        );
 
     await logEventFromContext(
         ctx,

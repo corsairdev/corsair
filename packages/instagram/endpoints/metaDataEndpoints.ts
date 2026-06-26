@@ -12,11 +12,15 @@ export const GetFacebookPages = async (
 
     const params = new URLSearchParams({
         fields: input,
-        access_token: accessToken,
     });
 
     const response = await fetch(
         `${FACEBOOK_API_BASE}/${META_API_VERSION}/${pageId}?${params.toString()}`,
+        {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        },
     );
 
     if (!response.ok) {

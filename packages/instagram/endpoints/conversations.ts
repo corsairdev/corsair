@@ -7,17 +7,22 @@ import type { FacebookPageSchema } from "../schema/database";
 
 export const list: InstagramEndpoints['GetInstagramConversations'] = async (ctx, input) => {
 
-    const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
-
     const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['GetInstagramConversations']>
         (`${input.page_id}/conversations`, ctx, {
             method: 'GET',
             query: {
                 platform: 'instagram',
-                access_token: res.access_token,
                 fields: input.q
             }
-        });
+        },
+            async () => {
+        const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+        if (!res.access_token) {
+            throw new Error(`No page access token found for page`);
+        }
+        return res.access_token;
+}
+        );
 
     if (result.data) {
         for (const con of result.data) {
@@ -46,16 +51,21 @@ export const list: InstagramEndpoints['GetInstagramConversations'] = async (ctx,
 
 export const get: InstagramEndpoints['GetConversationMessages'] = async (ctx, input) => {
 
-    const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
-
     const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['GetConversationMessages']>
         (`/${input.conversation_id}/messages`, ctx, {
             method: 'GET',
             query: {
-                access_token: res.access_token,
                 fields: input.q
             }
-        });
+        },
+            async () => {
+                const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+                if (!res.access_token) {
+                    throw new Error(`No page access token found for page`);
+                }
+                return res.access_token;
+            }
+        );
 
     if (result.data) {
         for (const msg of result.data) {
