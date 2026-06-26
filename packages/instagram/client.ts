@@ -192,9 +192,6 @@ export async function makeAuthenticatedInstagramRequest<T>(
 
             if (getToken) {
                 // Page-token endpoint: use fresh user token to re-fetch page token.
-                // getToken closes over ctx, so update ctx.key first so the
-                // GetFacebookPages call inside it uses the new user token.
-                ctx.key = freshUserToken;
                 const freshPageToken = await getToken(freshUserToken);
                 return await makeInstagramRequest<T>(endpoint, freshPageToken, options);
             } else {
