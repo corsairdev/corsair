@@ -76,8 +76,13 @@ const InteractiveMessageSchema = BaseMessageSchema.extend({
 	interactive: z
 		.object({
 			type: z.enum(['button', 'list', 'product', 'product_list', 'flow']),
+			body: z
+				.object({
+					text: z.string().optional(),
+				})
+				.optional(),
 		})
-		.loose(),
+		.passthrough(),
 });
 
 const LocationMessageSchema = BaseMessageSchema.extend({
@@ -92,17 +97,25 @@ const LocationMessageSchema = BaseMessageSchema.extend({
 
 const ContactsMessageSchema = BaseMessageSchema.extend({
 	type: z.literal('contacts'),
-	contacts: z.array(z.object({
-		name: z.object({
-			formatted_name: z.string(),
-			first_name: z.string().optional(),
-		}),
-		phones: z.array(z.object({
-			phone: z.string().optional(),
-			type: z.string().optional(),
-			wa_id: z.string().optional(),
-		})).optional(),
-	})).min(1),
+	contacts: z
+		.array(
+			z.object({
+				name: z.object({
+					formatted_name: z.string(),
+					first_name: z.string().optional(),
+				}),
+				phones: z
+					.array(
+						z.object({
+							phone: z.string().optional(),
+							type: z.string().optional(),
+							wa_id: z.string().optional(),
+						}),
+					)
+					.optional(),
+			}),
+		)
+		.min(1),
 });
 
 export const MessagesSendInputSchema = z.discriminatedUnion('type', [
@@ -164,7 +177,7 @@ export const PhoneNumbersGetResponseSchema = z
 			})
 			.optional(),
 	})
-	.loose();
+	.passthrough();
 
 export const BusinessProfilesGetInputSchema = z.object({
 	phoneNumberId: PhoneNumberIdSchema,
@@ -180,7 +193,7 @@ export const BusinessProfileSchema = z
 		websites: z.array(z.string()).optional(),
 		vertical: z.string().optional(),
 	})
-	.loose();
+	.passthrough();
 
 export const BusinessProfilesGetResponseSchema = z.object({
 	data: z.array(BusinessProfileSchema),
@@ -254,15 +267,19 @@ export const PhoneNumbersListInputSchema = z.object({
 });
 
 export const PhoneNumbersListResponseSchema = z.object({
-	data: z.array(z.object({
-		id: z.string(),
-		display_phone_number: z.string().optional(),
-		verified_name: z.string().optional(),
-		quality_rating: z.string().optional(),
-		code_verification_status: z.string().optional(),
-		platform_type: z.string().optional(),
-		throughput: z.record(z.string(), z.unknown()).optional(),
-	}).loose()),
+	data: z.array(
+		z
+			.object({
+				id: z.string(),
+				display_phone_number: z.string().optional(),
+				verified_name: z.string().optional(),
+				quality_rating: z.string().optional(),
+				code_verification_status: z.string().optional(),
+				platform_type: z.string().optional(),
+				throughput: z.record(z.string(), z.unknown()).optional(),
+			})
+			.passthrough(),
+	),
 });
 
 export type WhatsappEndpointInputs = {
@@ -275,7 +292,9 @@ export type WhatsappEndpointInputs = {
 	messageTemplatesCreate: z.infer<typeof MessageTemplatesCreateInputSchema>;
 	messageTemplatesDelete: z.infer<typeof MessageTemplatesDeleteInputSchema>;
 	messageTemplatesList: z.infer<typeof MessageTemplatesListInputSchema>;
-	messageTemplatesGetStatus: z.infer<typeof MessageTemplatesGetStatusInputSchema>;
+	messageTemplatesGetStatus: z.infer<
+		typeof MessageTemplatesGetStatusInputSchema
+	>;
 	phoneNumbersList: z.infer<typeof PhoneNumbersListInputSchema>;
 };
 
@@ -289,7 +308,9 @@ export type WhatsappEndpointOutputs = {
 	messageTemplatesCreate: z.infer<typeof MessageTemplatesCreateResponseSchema>;
 	messageTemplatesDelete: z.infer<typeof MessageTemplatesDeleteResponseSchema>;
 	messageTemplatesList: z.infer<typeof MessageTemplatesListResponseSchema>;
-	messageTemplatesGetStatus: z.infer<typeof MessageTemplatesGetStatusResponseSchema>;
+	messageTemplatesGetStatus: z.infer<
+		typeof MessageTemplatesGetStatusResponseSchema
+	>;
 	phoneNumbersList: z.infer<typeof PhoneNumbersListResponseSchema>;
 };
 

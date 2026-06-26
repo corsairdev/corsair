@@ -18,7 +18,7 @@ const GraphErrorSchema = z.object({
 				details: z.string().optional(),
 				messaging_product: z.string().optional(),
 			})
-			.loose()
+			.passthrough()
 			.optional(),
 	}),
 });
@@ -82,9 +82,10 @@ export async function makeWhatsappRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: accessToken,
-		HEADERS: mediaType === 'multipart/form-data' 
-			? {} // Let the HTTP client set the appropriate boundary headers for FormData
-			: { 'Content-Type': mediaType || 'application/json' },
+		HEADERS:
+			mediaType === 'multipart/form-data'
+				? {} // Let the HTTP client set the appropriate boundary headers for FormData
+				: { 'Content-Type': mediaType || 'application/json' },
 	};
 
 	const requestOptions: ApiRequestOptions = {

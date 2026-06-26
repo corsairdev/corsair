@@ -19,7 +19,7 @@ export const WhatsappMessage = z
 		rawStatus: z.record(z.string(), z.unknown()).optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.loose();
+	.passthrough();
 
 export const WhatsappContact = z
 	.object({
@@ -28,7 +28,7 @@ export const WhatsappContact = z
 		name: z.string().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.loose();
+	.passthrough();
 
 export const WhatsappPhoneNumber = z
 	.object({
@@ -41,7 +41,7 @@ export const WhatsappPhoneNumber = z
 		throughput: z.record(z.string(), z.unknown()).optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.loose();
+	.passthrough();
 
 export const WhatsappBusinessProfile = z
 	.object({
@@ -56,7 +56,7 @@ export const WhatsappBusinessProfile = z
 		vertical: z.string().optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
-	.loose();
+	.passthrough();
 
 export type WhatsappMessage = z.infer<typeof WhatsappMessage>;
 export type WhatsappContact = z.infer<typeof WhatsappContact>;

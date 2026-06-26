@@ -29,20 +29,41 @@ export const WhatsappIncomingMessageSchema = z
 			})
 			.optional(),
 		text: z.object({ body: z.string() }).optional(),
-		image: z.record(z.string(), z.unknown()).optional(),
+		image: z
+			.object({ caption: z.string().optional() })
+			.passthrough()
+			.optional(),
 		audio: z.record(z.string(), z.unknown()).optional(),
-		document: z.record(z.string(), z.unknown()).optional(),
-		video: z.record(z.string(), z.unknown()).optional(),
+		document: z
+			.object({ caption: z.string().optional() })
+			.passthrough()
+			.optional(),
+		video: z
+			.object({ caption: z.string().optional() })
+			.passthrough()
+			.optional(),
 		sticker: z.record(z.string(), z.unknown()).optional(),
 		location: z.record(z.string(), z.unknown()).optional(),
 		contacts: z.array(z.record(z.string(), z.unknown())).optional(),
-		interactive: z.record(z.string(), z.unknown()).optional(),
-		button: z.record(z.string(), z.unknown()).optional(),
+		interactive: z
+			.object({
+				button_reply: z
+					.object({ title: z.string().optional() })
+					.passthrough()
+					.optional(),
+				list_reply: z
+					.object({ title: z.string().optional() })
+					.passthrough()
+					.optional(),
+			})
+			.passthrough()
+			.optional(),
+		button: z.object({ text: z.string().optional() }).passthrough().optional(),
 		order: z.record(z.string(), z.unknown()).optional(),
 		referral: z.record(z.string(), z.unknown()).optional(),
 		errors: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
-	.loose();
+	.passthrough();
 
 export const WhatsappStatusSchema = z
 	.object({
@@ -63,14 +84,14 @@ export const WhatsappStatusSchema = z
 							.object({
 								details: z.string().optional(),
 							})
-							.loose()
+							.passthrough()
 							.optional(),
 					})
-					.loose(),
+					.passthrough(),
 			)
 			.optional(),
 	})
-	.loose();
+	.passthrough();
 
 const WhatsappChangeValueSchema = z
 	.object({
@@ -84,7 +105,7 @@ const WhatsappChangeValueSchema = z
 		statuses: z.array(WhatsappStatusSchema).optional(),
 		errors: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
-	.loose();
+	.passthrough();
 
 export const WhatsappWebhookPayloadSchema = z.object({
 	object: z.literal('whatsapp_business_account'),
@@ -103,6 +124,9 @@ export const WhatsappWebhookPayloadSchema = z.object({
 
 export type WhatsappWebhookPayload = z.infer<
 	typeof WhatsappWebhookPayloadSchema
+>;
+export type WhatsappIncomingMessage = z.infer<
+	typeof WhatsappIncomingMessageSchema
 >;
 
 export const WhatsappMessageEventSchema = z.object({

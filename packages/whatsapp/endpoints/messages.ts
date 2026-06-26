@@ -26,7 +26,7 @@ function messagePreview(input: MessagesSendInput): string | undefined {
 	if (input.type === 'video') return input.video.caption;
 	if (input.type === 'template') return input.template.name;
 	if (input.type === 'interactive') {
-		const body = (input.interactive as any).body?.text;
+		const body = input.interactive.body?.text;
 		if (typeof body === 'string') return body;
 		return `[Interactive: ${input.interactive.type}]`;
 	}

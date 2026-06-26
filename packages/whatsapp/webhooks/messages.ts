@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { WhatsappWebhooks } from '../index';
+import type { WhatsappIncomingMessage } from './types';
 import {
 	createWhatsappMatch,
 	extractWhatsappMessageEvents,
@@ -7,13 +8,19 @@ import {
 	verifyWhatsappWebhookSignature,
 } from './types';
 
-function extractMessageText(message: any): string | undefined {
+function extractMessageText(
+	message: WhatsappIncomingMessage,
+): string | undefined {
 	if (message.text?.body) return message.text.body;
 	if (message.image?.caption) return message.image.caption;
 	if (message.document?.caption) return message.document.caption;
 	if (message.video?.caption) return message.video.caption;
-	if (message.interactive?.button_reply?.title) return message.interactive.button_reply.title;
-	if (message.interactive?.list_reply?.title) return message.interactive.list_reply.title;
+	if (message.interactive?.button_reply?.title) {
+		return message.interactive.button_reply.title;
+	}
+	if (message.interactive?.list_reply?.title) {
+		return message.interactive.list_reply.title;
+	}
 	if (message.button?.text) return message.button.text;
 	if (message.type === 'audio') return '[Audio]';
 	if (message.type === 'image') return '[Image]';

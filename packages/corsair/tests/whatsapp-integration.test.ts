@@ -5,8 +5,20 @@ import { createIntegrationAndAccount } from './plugins-test-utils';
 import { processWebhook } from '../webhooks';
 import * as crypto from 'crypto';
 
+const whatsappOptions = {
+	key: 'test-wa-token',
+	phoneNumberId: '101010101010',
+	webhookSecret: 'test-webhook-secret',
+};
+
 function generateSignature(secret: string, payload: string) {
 	return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+}
+
+function parseEntityData(data: unknown): Record<string, unknown> {
+	return typeof data === 'string'
+		? (JSON.parse(data) as Record<string, unknown>)
+		: (data as Record<string, unknown>);
 }
 
 const originalFetch = global.fetch;
@@ -25,40 +37,32 @@ describe('WhatsApp Integration Tests', () => {
 		capturedRequestHeaders = null;
 		jest.clearAllMocks();
 
-		global.fetch = jest.fn().mockImplementation(async (url: string | URL | globalThis.Request, init?: RequestInit) => {
-			capturedRequestUrl = url.toString();
-			if (init?.body) {
-				capturedRequestBody = JSON.parse(init.body as string);
-			}
-			if (init?.headers) {
-				capturedRequestHeaders = new Headers(init.headers);
-			}
-			return new Response(
-				JSON.stringify({
-					messaging_product: 'whatsapp',
-					contacts: [{ input: '1234567890', wa_id: '1234567890' }],
-					messages: [{ id: 'wamid.HBgL...' }],
-				}),
-				{
-					status: 200,
-					headers: { 'content-type': 'application/json' },
-				}
+		global.fetch = jest
+			.fn()
+			.mockImplementation(
+				async (url: string | URL | globalThis.Request, init?: RequestInit) => {
+					capturedRequestUrl = url.toString();
+					if (init?.body) {
+						capturedRequestBody = JSON.parse(init.body as string);
+					}
+					if (init?.headers) {
+						capturedRequestHeaders = new Headers(init.headers);
+					}
+					return new Response(
+						JSON.stringify({
+							messaging_product: 'whatsapp',
+							contacts: [{ input: '1234567890', wa_id: '1234567890' }],
+							messages: [{ id: 'wamid.HBgL...' }],
+						}),
+						{
+							status: 200,
+							headers: { 'content-type': 'application/json' },
+						},
+					);
+				},
 			);
-		});
 
 		await createIntegrationAndAccount(testDb.db, 'whatsapp');
-		
-		await testDb.db
-			.updateTable('corsair_accounts')
-			.set({
-				config: {
-					api_key: 'test-wa-token',
-					phone_number_id: '101010101010',
-					webhook_secret: 'test-webhook-secret',
-				},
-			})
-			.where('id', '=', accountId)
-			.execute();
 	});
 
 	afterEach(() => {
@@ -70,7 +74,7 @@ describe('WhatsApp Integration Tests', () => {
 		it('should route message sending through Corsair Core to the Meta API', async () => {
 			const corsair = createCorsair({
 				kek: 'test-kek-32-chars-long-padding-x',
-				plugins: [whatsapp()],
+				plugins: [whatsapp(whatsappOptions)],
 				database: testDb.db,
 			});
 
@@ -82,8 +86,12 @@ describe('WhatsApp Integration Tests', () => {
 			});
 
 			expect(global.fetch).toHaveBeenCalledTimes(1);
-			expect(capturedRequestUrl).toBe('https://graph.facebook.com/v24.0/101010101010/messages');
-			expect(capturedRequestHeaders?.get('authorization')).toBe('Bearer test-wa-token');
+			expect(capturedRequestUrl).toBe(
+				'https://graph.facebook.com/v24.0/101010101010/messages',
+			);
+			expect(capturedRequestHeaders?.get('authorization')).toBe(
+				'Bearer test-wa-token',
+			);
 			expect(capturedRequestBody).toMatchObject({
 				messaging_product: 'whatsapp',
 				to: '1234567890',
@@ -94,12 +102,12 @@ describe('WhatsApp Integration Tests', () => {
 			const entities = await testDb.db
 				.selectFrom('corsair_entities')
 				.where('account_id', '=', accountId)
-				.where('entity_type', '=', 'message')
+				.where('entity_type', '=', 'messages')
 				.selectAll()
 				.execute();
 
 			expect(entities).toHaveLength(1);
-			const data = entities[0]!.data as Record<string, unknown>;
+			const data = parseEntityData(entities[0]!.data);
 			expect(data.to).toBe('1234567890');
 		});
 	});
@@ -110,6 +118,7 @@ describe('WhatsApp Integration Tests', () => {
 				kek: 'test-kek-32-chars-long-padding-x',
 				plugins: [
 					whatsapp({
+						...whatsappOptions,
 						hooks: {
 							messages: {
 								send: {
@@ -135,7 +144,9 @@ describe('WhatsApp Integration Tests', () => {
 			});
 
 			expect(global.fetch).toHaveBeenCalledTimes(1);
-			expect(capturedRequestBody?.text).toEqual({ body: 'Intercepted: Original' });
+			expect(capturedRequestBody?.text).toEqual({
+				body: 'Intercepted: Original',
+			});
 		});
 	});
 
@@ -143,7 +154,7 @@ describe('WhatsApp Integration Tests', () => {
 		it('should ingest valid webhook, verify signature, and persist incoming entity', async () => {
 			const corsair = createCorsair({
 				kek: 'test-kek-32-chars-long-padding-x',
-				plugins: [whatsapp()],
+				plugins: [whatsapp(whatsappOptions)],
 				database: testDb.db,
 			});
 
@@ -188,23 +199,23 @@ describe('WhatsApp Integration Tests', () => {
 					'x-hub-signature-256': `sha256=${signature}`,
 					'content-type': 'application/json',
 				},
-				rawBody
+				rawBody,
 			);
 
 			expect(result.plugin).toBe('whatsapp');
-			expect(result.action).toBe('messages');
+			expect(result.action).toBe('messages.received');
 
 			const entities = await testDb.db
 				.selectFrom('corsair_entities')
 				.where('account_id', '=', accountId)
-				.where('entity_type', '=', 'message')
+				.where('entity_type', '=', 'messages')
 				.where('entity_id', '=', 'wamid.HBgL...')
 				.selectAll()
 				.execute();
 
 			expect(entities).toHaveLength(1);
-			const data = entities[0]!.data as Record<string, unknown>;
-			expect((data.text as any)?.body).toBe('Inbound message');
+			const data = parseEntityData(entities[0]!.data);
+			expect(data.text).toBe('Inbound message');
 		});
 	});
 });

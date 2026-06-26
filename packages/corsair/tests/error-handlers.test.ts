@@ -320,7 +320,7 @@ describe('Error Handlers', () => {
 				body: { error: { message: 'Rate limited', code: 4 } },
 			};
 			const error = new ApiError(mockRequest, mockResponse, 'Rate limited');
-			
+
 			const result = await handleCorsairError(
 				error,
 				'whatsapp',
