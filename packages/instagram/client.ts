@@ -180,7 +180,7 @@ export async function makeAuthenticatedInstagramRequest<T>(
     endpoint: string,
     ctx: { key: string; _refreshAuth?: () => Promise<string> },
     options: InstagramRequestOptions = {},
-    getToken?: () => Promise<string>,
+    getToken?: (userToken?: string) => Promise<string>,
 ): Promise<T> {
     const token = getToken ? await getToken() : ctx.key;
 
@@ -195,7 +195,7 @@ export async function makeAuthenticatedInstagramRequest<T>(
                 // getToken closes over ctx, so update ctx.key first so the
                 // GetFacebookPages call inside it uses the new user token.
                 ctx.key = freshUserToken;
-                const freshPageToken = await getToken();
+                const freshPageToken = await getToken(freshUserToken);
                 return await makeInstagramRequest<T>(endpoint, freshPageToken, options);
             } else {
                 // User-token endpoint: use the fresh user token directly.

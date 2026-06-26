@@ -15,8 +15,9 @@ export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
                 fields: input.q
             }
         },
-            async () => {
-                const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+            async (userToken) => {
+                const key = userToken ?? ctx.key;
+                const res: FacebookPageSchema = await GetFacebookPages(key, 'access_token', input.page_id);
                 if (!res.access_token) {
                     throw new Error(`No page access token found for page`);
                 }
@@ -71,8 +72,9 @@ export const send: InstagramEndpoints['SendMessage'] = async (ctx, input) => {
             method: 'POST',
             body
         },
-            async () => {
-                const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+            async (userToken) => {
+                const key = userToken ?? ctx.key;
+                const res: FacebookPageSchema = await GetFacebookPages(key, 'access_token', input.page_id);
                 if (!res.access_token) {
                     throw new Error(`No page access token found for page`);
                 }

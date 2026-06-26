@@ -15,8 +15,9 @@ export const list: InstagramEndpoints['GetInstagramConversations'] = async (ctx,
                 fields: input.q
             }
         },
-            async () => {
-        const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+            async (userToken) => {
+                const key = userToken ?? ctx.key;
+        const res: FacebookPageSchema = await GetFacebookPages(key, 'access_token', input.page_id);
         if (!res.access_token) {
             throw new Error(`No page access token found for page`);
         }
@@ -58,8 +59,9 @@ export const get: InstagramEndpoints['GetConversationMessages'] = async (ctx, in
                 fields: input.q
             }
         },
-            async () => {
-                const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
+            async (userToken) => {
+                const key = userToken ?? ctx.key;
+                const res: FacebookPageSchema = await GetFacebookPages(key, 'access_token', input.page_id);
                 if (!res.access_token) {
                     throw new Error(`No page access token found for page`);
                 }
