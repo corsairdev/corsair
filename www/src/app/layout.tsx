@@ -6,6 +6,8 @@ import './globals.css';
 import '@/components/landing/theme.css';
 import { cn } from '@/lib/utils';
 
+const googleAnalyticsId = process.env.NEXT_PUBLIC_GA_ID;
+
 const hostGrotesk = Host_Grotesk({
 	subsets: ['latin'],
 	weight: ['300', '400', '500', '600'],
@@ -138,7 +140,9 @@ export default function RootLayout({
 				/>
 				{children}
 			</body>
-			<GoogleAnalytics gaId="G-5BBT1HJ3FR" />
+			{googleAnalyticsId ? (
+				<GoogleAnalytics gaId={googleAnalyticsId} />
+			) : null}
 		</html>
 	);
 }
