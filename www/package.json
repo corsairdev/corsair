@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@corsair-dev/github": "workspace:*",
+    "@next/third-parties": "15.3.2",
     "@phosphor-icons/react": "^2.1.10",
     "@trpc/server": "^11.0.0",
     "better-auth": "^1.5.5",

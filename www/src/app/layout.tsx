@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata, Viewport } from 'next';
 import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
@@ -137,6 +138,7 @@ export default function RootLayout({
 				/>
 				{children}
 			</body>
+			<GoogleAnalytics gaId="G-5BBT1HJ3FR" />
 		</html>
 	);
 }
