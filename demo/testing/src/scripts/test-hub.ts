@@ -1,13 +1,12 @@
 import 'dotenv/config';
 
 import {
-	getHubConfig,
-	processManagedOAuthDelivery,
 	setupCorsair,
 } from 'corsair';
 
 import { sqlite } from '@/db';
 import { corsair } from '@/server/corsair';
+import { getHubConfig, processManagedOAuthDelivery,  } from 'corsair/hub';
 
 // Single-tenant instances use 'default' for API calls.
 const TENANT_ID = 'default';
