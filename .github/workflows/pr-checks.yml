@@ -48,18 +48,28 @@ jobs:
         run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Build
+        id: build
+        continue-on-error: true
         run: pnpm turbo run build --filter='...[HEAD^1]' --concurrency=100%
 
       - name: Lint
+        id: lint
+        continue-on-error: true
         run: pnpm turbo run lint --filter='...[HEAD^1]'
 
       - name: Validate Plugins
+        id: validate
+        continue-on-error: true
         run: pnpm run validate:plugins
 
       - name: Typecheck
+        id: typecheck
+        continue-on-error: true
         run: pnpm turbo run typecheck --filter='...[HEAD^1]'
 
       - name: Run tests
+        id: test
+        continue-on-error: true
         run: pnpm turbo run test --filter='...[HEAD^1]' -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
 
       - name: Generate Dependency Graph
@@ -73,3 +83,50 @@ jobs:
           name: turbo-dependency-graph
           path: dependency-graph.html
           retention-days: 7
+
+      - name: Check Results
+        if: always()
+        run: |
+          echo "## CI Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.build.outcome }}" == "failure" ]; then
+            echo "❌ **Build**: Failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Build**: Passed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ steps.lint.outcome }}" == "failure" ]; then
+            echo "❌ **Lint**: Failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Lint**: Passed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ steps.validate.outcome }}" == "failure" ]; then
+            echo "❌ **Validate Plugins**: Failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Validate Plugins**: Passed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ steps.typecheck.outcome }}" == "failure" ]; then
+            echo "❌ **Typecheck**: Failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Typecheck**: Passed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ steps.test.outcome }}" == "failure" ]; then
+            echo "❌ **Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Fail the job if any step failed
+          if [ "${{ steps.build.outcome }}" == "failure" ] || \
+             [ "${{ steps.lint.outcome }}" == "failure" ] || \
+             [ "${{ steps.validate.outcome }}" == "failure" ] || \
+             [ "${{ steps.typecheck.outcome }}" == "failure" ] || \
+             [ "${{ steps.test.outcome }}" == "failure" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **One or more checks failed. See logs above for details.**" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
