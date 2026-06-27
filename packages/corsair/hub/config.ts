@@ -1,5 +1,4 @@
-import type { CorsairInternalConfig } from '../core';
-import { CORSAIR_INTERNAL } from '../core';
+import { getCorsairInternal } from '../core/utils/corsair-instance';
 import type { HubConfig, HubConfigInput } from './types';
 import { DEFAULT_HUB_API_URL } from './types';
 
@@ -12,16 +11,6 @@ export class HubNotConfiguredError extends Error {
 		);
 		this.name = 'HubNotConfiguredError';
 	}
-}
-
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new Error('Invalid corsair instance');
-	}
-	return internal;
 }
 
 export function normalizeHubConfig(input: HubConfigInput): HubConfig {
@@ -58,7 +47,7 @@ function isHubConfigComplete(hub: HubConfig): boolean {
 }
 
 export function getHubConfig(corsair: unknown): HubConfig {
-	const hub = getInternal(corsair).hub;
+	const hub = getCorsairInternal(corsair).hub;
 	if (!hub || !isHubConfigComplete(hub)) {
 		throw new HubNotConfiguredError();
 	}

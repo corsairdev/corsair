@@ -387,3 +387,17 @@ export async function enforcePermission(
 		expiresAt: expiresAt,
 	};
 }
+
+export type {
+	ApprovalConfigForMessage,
+	CorsairPermissionsOptions,
+} from './approval-message';
+export {
+	APPROVAL_SETUP_HINT,
+	buildManualApprovalUrl,
+	enrichPermissionWithApprovalUrl,
+	formatDefaultApprovalMessage,
+	resolveApprovalUrl,
+	resolveAsyncApprovalMessage,
+	usesManualApprovalConfig,
+} from './approval-message';

@@ -1,5 +1,6 @@
 import * as Comments from './comments';
 import * as Discussions from './discussions';
+import * as Events from './events';
 import * as Forks from './forks';
 import * as Issues from './issues';
 import * as PullRequests from './pull-requests';
@@ -64,6 +65,18 @@ export const CommentsEndpoints = {
 	get: Comments.get,
 	update: Comments.update,
 	delete: Comments.deleteComment,
+};
+
+export const EventsEndpoints = {
+	list: Events.list,
+	listForNetwork: Events.listForNetwork,
+	listForOrg: Events.listForOrg,
+	listForRepository: Events.listForRepository,
+	listForUser: Events.listForUser,
+	listForUserOrg: Events.listForUserOrg,
+	listPublicForUser: Events.listPublicForUser,
+	listReceivedForUser: Events.listReceivedForUser,
+	listPublicReceivedForUser: Events.listPublicReceivedForUser,
 };
 
 export const UsersEndpoints = {

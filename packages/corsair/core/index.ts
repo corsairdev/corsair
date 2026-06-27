@@ -5,9 +5,15 @@ import { normalizeHubConfig } from '../hub';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
-import type { CorsairIntegration, CorsairPlugin } from './plugins';
+import type {
+	CorsairIntegration,
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
+	CorsairPlugin,
+} from './plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal access for CLI tooling
@@ -20,31 +26,8 @@ export type CorsairInternalConfig = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	multiTenancy: boolean;
-	approval?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		/** Called when a permission is blocked in async mode. Return the message surfaced to the LLM. */
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
-	connect?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-	};
+	permissions?: CorsairPermissionsOptions;
+	manual?: CorsairManualConfig;
 	hub?: HubConfig;
 };
 
@@ -98,13 +81,15 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 					!!config.kek,
 				);
 
+	const rootPermissions = resolveRootPermissionsConfig(config);
+
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
 		database: resolvedDatabase,
 		kek: config.kek,
 		multiTenancy: !!config.multiTenancy,
-		approval: config.approval,
-		connect: config.connect,
+		permissions: rootPermissions,
+		manual: config.manual,
 		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
 	};
 
@@ -125,8 +110,8 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						tenantId,
 						kek: config.kek,
 						rootErrorHandlers: config.errorHandlers,
-						approvalConfig: config.approval,
-						connectConfig: config.connect,
+						permissionsOptions: rootPermissions,
+						manualConfig: config.manual,
 						hubConfig: internalConfig.hub,
 					});
 					return Object.assign(client as object, {
@@ -146,8 +131,8 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		tenantId: undefined,
 		kek: config.kek,
 		rootErrorHandlers: config.errorHandlers,
-		approvalConfig: config.approval,
-		connectConfig: config.connect,
+		permissionsOptions: rootPermissions,
+		manualConfig: config.manual,
 		hubConfig: internalConfig.hub,
 	});
 

@@ -1,5 +1,6 @@
 import { createCorsair } from '../core';
 import {
+	managementHandler,
 	toExpressHandler,
 	toHonoHandler,
 	toNextJsHandler,
@@ -42,7 +43,7 @@ describe('toNextJsHandler', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => env?.cleanup?.());
 
-	it('exposes GET and POST that share the same handler', async () => {
+	it('exposes GET, POST, and OPTIONS that share the same handler', async () => {
 		env = createTestDatabase();
 		const corsair = makeCorsair(env);
 		const route = toNextJsHandler(corsair);
@@ -63,6 +64,50 @@ describe('toNextJsHandler', () => {
 		expect(created.status).toBe(201);
 		const body = await created.json();
 		expect(body.id).toBe('team-a');
+
+		const options = await route.OPTIONS(
+			new Request('http://x/api/corsair', { method: 'OPTIONS' }),
+		);
+		expect(options.status).toBe(405);
+	});
+});
+
+describe('managementHandler — hub delivery at base path', () => {
+	let env: ReturnType<typeof createTestDatabase>;
+	afterEach(() => env?.cleanup?.());
+
+	it('returns hub health check at the delivery URL', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [slack],
+			database: env.db,
+			kek: KEK,
+			hub: {
+				projectApiKey: 'project-key',
+				signingSecret: 'signing-secret',
+				deliveryUrl: 'http://x/api/corsair',
+			},
+		} as any);
+		const handler = managementHandler(corsair);
+
+		const res = await handler(
+			new Request('http://x/api/corsair', { method: 'GET' }),
+		);
+		expect(res.status).toBe(200);
+		const body = await res.json();
+		expect(body.status).toBe('ok');
+		expect(body.message).toBe('Corsair tunnel endpoint is active');
+	});
+
+	it('returns 503 when hub is not configured', async () => {
+		env = createTestDatabase();
+		const corsair = makeCorsair(env);
+		const handler = managementHandler(corsair);
+
+		const res = await handler(
+			new Request('http://x/api/corsair', { method: 'GET' }),
+		);
+		expect(res.status).toBe(503);
 	});
 });
 

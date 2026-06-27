@@ -1,9 +1,12 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata, Viewport } from 'next';
 import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
 import './globals.css';
 import '@/components/landing/theme.css';
 import { cn } from '@/lib/utils';
+
+const googleAnalyticsId = process.env.NEXT_PUBLIC_GA_ID;
 
 const hostGrotesk = Host_Grotesk({
 	subsets: ['latin'],
@@ -137,6 +140,9 @@ export default function RootLayout({
 				/>
 				{children}
 			</body>
+			{googleAnalyticsId ? (
+				<GoogleAnalytics gaId={googleAnalyticsId} />
+			) : null}
 		</html>
 	);
 }

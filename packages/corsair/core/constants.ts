@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'agentql',
 	'ahrefs',
 	'airtable',
 	'amplitude',
@@ -79,6 +80,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
@@ -152,6 +154,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'

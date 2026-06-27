@@ -1,7 +1,11 @@
-import * as querystring from 'node:querystring';
-import type { CorsairInternalConfig, CorsairPlugin, OAuthConfig } from '..';
-import { CORSAIR_INTERNAL, createIntegrationKeyManager } from '..';
+import { buildOAuthAuthorizeUrl } from '../../oauth/authorize-url';
+import type { CorsairPlugin, OAuthConfig } from '..';
+import { createIntegrationKeyManager } from '..';
 import { verifyAndDecodeState } from '../auth/state';
+import {
+	getCorsairInternal,
+	requireCorsairPlugin,
+} from '../utils/corsair-instance';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured errors
@@ -34,33 +38,6 @@ export class ConnectError extends Error {
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new ConnectError(
-			'invalid_corsair_instance',
-			'Invalid corsair instance',
-		);
-	}
-	return internal;
-}
-
-function findPlugin(
-	internal: CorsairInternalConfig,
-	pluginId: string,
-): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) {
-		throw new ConnectError(
-			'plugin_not_found',
-			`Plugin '${pluginId}' not found`,
-		);
-	}
-	return plugin;
-}
 
 function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
 	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
@@ -98,7 +75,7 @@ export type ResolveConnectLinkResult = {
  * and returns the full OAuth authorization URL so you just have to render
  * a "Connect" button linking to `result.oauthUrl`.
  *
- * Uses the `redirectUri` from `createCorsair({ connect: { redirectUri } })`.
+ * Uses the `redirectUri` from `createCorsair({ manual: { redirectUri } })`.
  *
  * @param corsair - The corsair instance
  * @param state - The `state` query parameter from the connect URL
@@ -116,7 +93,11 @@ export async function resolveConnectLink(
 	corsair: unknown,
 	state: string,
 ): Promise<ResolveConnectLinkResult> {
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new ConnectError('invalid_corsair_instance', 'Invalid corsair instance'),
+	);
 
 	if (!internal.database) {
 		throw new ConnectError(
@@ -125,11 +106,11 @@ export async function resolveConnectLink(
 		);
 	}
 
-	const redirectUri = internal.connect?.redirectUri;
+	const redirectUri = internal.manual?.redirectUri;
 	if (!redirectUri) {
 		throw new ConnectError(
 			'no_redirect_uri',
-			'No redirectUri configured. Set connect.redirectUri in createCorsair().',
+			'No redirectUri configured. Set manual.redirectUri in createCorsair().',
 		);
 	}
 
@@ -142,7 +123,11 @@ export async function resolveConnectLink(
 	}
 
 	const { plugin: pluginId, tenantId } = decoded;
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new ConnectError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({
@@ -160,16 +145,12 @@ export async function resolveConnectLink(
 		);
 	}
 
-	const params: Record<string, string> = {
-		...oauthCfg.authParams,
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: 'code',
-		scope: oauthCfg.scopes.join(' '),
+	const oauthUrl = buildOAuthAuthorizeUrl({
+		oauthConfig: oauthCfg,
+		clientId,
+		redirectUri,
 		state,
-	};
-
-	const oauthUrl = `${oauthCfg.authUrl}?${querystring.stringify(params)}`;
+	});
 
 	return {
 		plugin: pluginId,

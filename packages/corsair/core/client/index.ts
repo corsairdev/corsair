@@ -24,6 +24,8 @@ import type { CorsairManageNamespace } from '../management';
 import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
 	CorsairPlugin,
 	EndpointMetaEntry,
 	OAuthConfig,
@@ -335,6 +337,8 @@ function createEntityClient(
 
 	return {
 		findByEntityId: async () => null,
+		existsByEntityId: async () => false,
+		findIdByEntityId: async () => null,
 		findById: async () => null,
 		findManyByEntityIds: async () => [],
 		list: async () => [],
@@ -357,32 +361,10 @@ export type BuildCorsairClientOptions = {
 	tenantId: string | undefined;
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
-	/** Approval timeout from createCorsair({ approval: ... }). Forwarded to the permission guard. */
-	approvalConfig?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
-	/** Connect link config from createCorsair({ connect: ... }). Forwarded to endpoint binding. */
-	connectConfig?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-	};
+	/** Global permissions config from createCorsair({ permissions: ... }). */
+	permissionsOptions?: CorsairPermissionsOptions;
+	/** Manual config from createCorsair({ manual: ... }). Forwarded to endpoint binding. */
+	manualConfig?: CorsairManualConfig;
 	/** Hub config from createCorsair({ hub: ... }). Forwarded to keyBuilder context. */
 	hubConfig?: HubConfig;
 };
@@ -408,8 +390,8 @@ export function buildCorsairClient<
 		tenantId,
 		kek,
 		rootErrorHandlers,
-		approvalConfig,
-		connectConfig,
+		permissionsOptions,
+		manualConfig,
 		hubConfig,
 	} = options;
 
@@ -531,11 +513,11 @@ export function buildCorsairClient<
 				| Record<string, EndpointMetaEntry>
 				| undefined,
 			database,
-			approvalConfig,
+			permissionsOptions,
 			tenantId,
-			connectConfig: connectConfig
+			manualConfig: manualConfig
 				? {
-						...connectConfig,
+						...manualConfig,
 						oauthConfig: (plugin as { oauthConfig?: OAuthConfig }).oauthConfig,
 						kek,
 						tenantId: effectiveTenantId,

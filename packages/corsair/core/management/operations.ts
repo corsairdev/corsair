@@ -1,10 +1,28 @@
+import { getHubConfig } from '../../hub/config';
+import { createHubConnectSession } from '../../hub/connect';
+import {
+	resolveConnectSourceFromDeliveryUrl,
+	validateExplicitConnectSource,
+} from '../../hub/contracts/delivery-mode';
+import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
 import { createIntegrationKeyManager } from '../auth/key-manager';
-import { encodeOAuthState, signState } from '../auth/state';
+import {
+	getPluginAuthStatusForTenant,
+	mapPluginAuthStatusToConnectionState,
+} from '../auth/plugin-auth-status';
+import {
+	DEFAULT_CONNECT_LINK_TTL_MS,
+	encodeOAuthState,
+	signState,
+} from '../auth/state';
 import { BASE_AUTH_FIELDS } from '../auth/types';
+import { hasManualConnectConfig } from '../config/manual-connect';
 import { ConnectError, resolveConnectLink } from '../connect';
 import type { AuthTypes } from '../constants';
+import { enrichPermissionWithApprovalUrl } from '../permissions';
 import type { CorsairPlugin, OAuthConfig } from '../plugins';
+import { requireCorsairPlugin } from '../utils/corsair-instance';
 import { badRequest, ManagementApiError, notFound } from './errors';
 import type {
 	ConnectionStatus,
@@ -15,7 +33,6 @@ import type {
 	OAuthCallbackInput,
 	OAuthCallbackResult,
 	PermissionRecord,
-	PluginConnectionState,
 	PluginInfo,
 	ResolvedConnectLink,
 	Tenant,
@@ -35,9 +52,9 @@ function findPlugin(
 	internal: CorsairInternalConfig,
 	pluginId: string,
 ): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) throw notFound(`Plugin '${pluginId}' not found`);
-	return plugin;
+	return requireCorsairPlugin(internal, pluginId, (message) =>
+		notFound(message),
+	);
 }
 
 type PluginCredState = {
@@ -246,25 +263,25 @@ export async function getConnectionStatus(
 	const effectiveTenantId = tenantId?.trim() || 'default';
 	const result: ConnectionStatus = {};
 
-	const accounts = internal.database
-		? await listAccountSummariesForTenant(internal, effectiveTenantId)
-		: [];
-	const accountsByPlugin = new Map(accounts.map((a) => [a.integrationName, a]));
+	const authStatuses = await getPluginAuthStatusForTenant(
+		internal,
+		effectiveTenantId,
+	);
+
+	for (const status of authStatuses) {
+		result[status.plugin] = mapPluginAuthStatusToConnectionState(status);
+	}
 
 	for (const plugin of internal.plugins) {
-		const cred = await getIntegrationCredState(plugin, internal);
-		if (!cred.configured) {
-			result[plugin.id] = 'missing_credentials';
-			continue;
+		if (!(plugin.id in result)) {
+			const authType = (plugin.options as { authType?: AuthTypes } | undefined)
+				?.authType;
+			if (!authType || !internal.database || !internal.kek) {
+				result[plugin.id] = 'missing_credentials';
+			} else {
+				result[plugin.id] = 'not_connected';
+			}
 		}
-		const account = accountsByPlugin.get(plugin.id);
-		let state: PluginConnectionState;
-		if (account && account.hasCredentials) {
-			state = 'connected';
-		} else {
-			state = 'not_connected';
-		}
-		result[plugin.id] = state;
 	}
 
 	return result;
@@ -285,7 +302,7 @@ export async function getPermission(
 		.where('id', '=', id)
 		.executeTakeFirst();
 	if (!record) throw notFound(`Permission '${id}' not found`);
-	return record;
+	return enrichPermissionWithApprovalUrl(internal, record);
 }
 
 // ── connect / OAuth ────────────────────────────────────────────────────────
@@ -297,20 +314,62 @@ function assertOAuthConfigured(plugin: CorsairPlugin): void {
 	}
 }
 
-function requireConnectConfig(
+function requireManualConfig(
 	internal: CorsairInternalConfig,
-): NonNullable<CorsairInternalConfig['connect']> {
-	if (!internal.connect) {
+): NonNullable<CorsairInternalConfig['manual']> {
+	if (!internal.manual) {
 		throw new ManagementApiError(
 			500,
 			'connect_not_configured',
-			'createCorsair was not given a connect config. Set { connect: { baseUrl, redirectUri } } to enable /connect routes.',
+			'createCorsair was not given manual config. Set { manual: { baseUrl, redirectUri } } to enable manual connect routes.',
 		);
 	}
-	return internal.connect;
+	return internal.manual;
 }
 
-export async function createConnectLink(
+function requireManualConnectConfig(
+	internal: CorsairInternalConfig,
+): NonNullable<CorsairInternalConfig['manual']> & {
+	baseUrl: string;
+	redirectUri: string;
+} {
+	const manual = requireManualConfig(internal);
+	if (!manual.baseUrl?.trim() || !manual.redirectUri?.trim()) {
+		throw new ManagementApiError(
+			500,
+			'connect_not_configured',
+			'Manual connect requires manual.baseUrl and manual.redirectUri. Use hub for hosted connect, or set both URLs for manual OAuth.',
+		);
+	}
+	return manual as NonNullable<CorsairInternalConfig['manual']> & {
+		baseUrl: string;
+		redirectUri: string;
+	};
+}
+
+function assertConnectModeConfigured(internal: CorsairInternalConfig): void {
+	const hasHub = Boolean(internal.hub);
+	const hasManualConnect = hasManualConnectConfig(internal.manual);
+	if (!hasHub && !hasManualConnect) {
+		throw new ManagementApiError(
+			500,
+			'connect_not_configured',
+			'createCorsair was not given connect config. Set hub: { ... } for Hub mode, or manual: { baseUrl, redirectUri } for manual connect.',
+		);
+	}
+}
+
+function requireDatabaseForConnect(internal: CorsairInternalConfig): void {
+	if (!internal.database || !internal.kek) {
+		throw new ManagementApiError(
+			500,
+			'database_not_configured',
+			'A database and kek are required to issue connect links.',
+		);
+	}
+}
+
+async function createManualConnectLink(
 	internal: CorsairInternalConfig,
 	input: CreateConnectLinkInput,
 ): Promise<ConnectLink> {
@@ -322,15 +381,8 @@ export async function createConnectLink(
 
 	const plugin = findPlugin(internal, pluginId);
 	assertOAuthConfigured(plugin);
-	const connect = requireConnectConfig(internal);
-
-	if (!internal.database || !internal.kek) {
-		throw new ManagementApiError(
-			500,
-			'database_not_configured',
-			'A database and kek are required to issue connect links.',
-		);
-	}
+	const manual = requireManualConnectConfig(internal);
+	requireDatabaseForConnect(internal);
 
 	// Surface unset client creds as data, matching /plugins behavior.
 	const cred = await getIntegrationCredState(plugin, internal);
@@ -346,17 +398,78 @@ export async function createConnectLink(
 	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
 	let url: URL;
 	try {
-		url = new URL(connect.baseUrl);
+		url = new URL(manual.baseUrl);
 	} catch {
 		throw new ManagementApiError(
 			500,
 			'connect_misconfigured',
-			'connect.baseUrl is not a valid URL. Set a full URL including protocol (e.g. https://app.example.com/connect).',
+			'manual.baseUrl is not a valid URL. Set a full URL including protocol (e.g. https://app.example.com/connect).',
 		);
 	}
 	url.searchParams.set('state', state);
 
-	return { connectUrl: url.toString(), state };
+	return {
+		connectUrl: url.toString(),
+		expiresAt: new Date(Date.now() + DEFAULT_CONNECT_LINK_TTL_MS).toISOString(),
+	};
+}
+
+async function createHubModeConnectLink(
+	corsair: unknown,
+	internal: CorsairInternalConfig,
+	input: CreateConnectLinkInput,
+): Promise<ConnectLink> {
+	requireDatabaseForConnect(internal);
+
+	const tenantId = input.tenantId?.trim() || 'default';
+	const hub = getHubConfig(corsair);
+
+	if (input.source) {
+		const sourceValidation = validateExplicitConnectSource({
+			source: input.source,
+			deliveryUrl: hub.deliveryUrl,
+			oauthMode: input.oauthMode,
+		});
+		if (sourceValidation) {
+			throw badRequest(sourceValidation.error);
+		}
+	}
+
+	const connectInput: HubConnectSessionInput = {
+		tenantId,
+		source:
+			input.source ?? resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl),
+		oauthMode: input.oauthMode,
+	};
+
+	const pluginId = input.plugin?.trim();
+	if (pluginId) {
+		connectInput.plugin = pluginId;
+	}
+	const providerName = input.providerName?.trim();
+	if (providerName) {
+		connectInput.providerName = providerName;
+	}
+
+	const session = await createHubConnectSession(corsair, connectInput);
+	return {
+		connectUrl: session.connectUrl,
+		expiresAt: session.expiresAt,
+	};
+}
+
+export async function createConnectLink(
+	corsair: unknown,
+	internal: CorsairInternalConfig,
+	input: CreateConnectLinkInput,
+): Promise<ConnectLink> {
+	assertConnectModeConfigured(internal);
+
+	if (internal.hub) {
+		return createHubModeConnectLink(corsair, internal, input);
+	}
+
+	return createManualConnectLink(internal, input);
 }
 
 export async function resolveConnect(
@@ -368,6 +481,14 @@ export async function resolveConnect(
 	internal: CorsairInternalConfig,
 	state: string,
 ): Promise<ResolvedConnectLink> {
+	if (internal.hub && !hasManualConnectConfig(internal.manual)) {
+		throw new ManagementApiError(
+			400,
+			'hub_mode',
+			'resolve is not used with hub config. Redirect users to connectUrl from createLink.',
+		);
+	}
+
 	const trimmed = state?.trim();
 	if (!trimmed) {
 		throw badRequest('state is required', { missingFields: ['state'] });
@@ -376,7 +497,7 @@ export async function resolveConnect(
 	// `connect_not_configured` code as the other connect routes, rather than
 	// falling through to a generic resolve_failed when resolveConnectLink
 	// throws on a missing redirectUri.
-	requireConnectConfig(internal);
+	requireManualConnectConfig(internal);
 	try {
 		return await resolveConnectLink(corsair, trimmed);
 	} catch (err) {
@@ -392,7 +513,7 @@ export async function resolveConnect(
 						{ missingFields: ['client_id'] },
 					);
 				case 'no_redirect_uri':
-					// Already guarded above via requireConnectConfig; fall through.
+					// Already guarded above via requireManualConfig; fall through.
 					break;
 			}
 		}
@@ -413,6 +534,14 @@ export async function completeOAuthCallback(
 	internal: CorsairInternalConfig,
 	input: OAuthCallbackInput,
 ): Promise<OAuthCallbackResult> {
+	if (internal.hub && !hasManualConnectConfig(internal.manual)) {
+		throw new ManagementApiError(
+			400,
+			'hub_mode',
+			'oauthCallback is not used with hub config. Hub delivers tokens to your deliveryUrl.',
+		);
+	}
+
 	const code = input?.code?.trim();
 	const state = input?.state?.trim();
 	const missing: string[] = [];
@@ -422,7 +551,7 @@ export async function completeOAuthCallback(
 		throw badRequest('Missing required fields', { missingFields: missing });
 	}
 
-	const connect = requireConnectConfig(internal);
+	const manual = requireManualConnectConfig(internal);
 
 	// Lazy import to avoid a management → oauth → core import cycle at module
 	// load. By call time the oauth module is fully resolved. The type-only
@@ -434,7 +563,7 @@ export async function completeOAuthCallback(
 		return await processOAuthCallback(corsair, {
 			code: code!,
 			state: state!,
-			redirectUri: connect.redirectUri,
+			redirectUri: manual.redirectUri,
 		});
 	} catch (err) {
 		// Class identity check via `name` so we don't have to import the class
@@ -482,5 +611,15 @@ export async function getPermissionByToken(
 	if (!record) {
 		throw notFound('Permission not found');
 	}
-	return record;
+	return enrichPermissionWithApprovalUrl(internal, record);
+}
+
+export async function lookupPermission(
+	internal: CorsairInternalConfig,
+	input: { id: string } | { token: string },
+): Promise<PermissionRecord> {
+	if ('id' in input) {
+		return getPermission(internal, input.id);
+	}
+	return getPermissionByToken(internal, input.token);
 }

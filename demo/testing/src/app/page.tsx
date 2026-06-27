@@ -5,14 +5,10 @@ import { useState } from 'react';
 function HubConnectButton({
 	plugin,
 	label,
-	oauthMode,
-	source = 'client',
 	buttonColor = '#4285F4',
 }: {
-	plugin: string;
+	plugin?: string;
 	label: string;
-	oauthMode?: 'byo' | 'managed';
-	source?: 'client' | 'server';
 	buttonColor?: string;
 }) {
 	const [loading, setLoading] = useState(false);
@@ -23,14 +19,12 @@ function HubConnectButton({
 		setError(null);
 
 		try {
-			const response = await fetch('/api/hub/create-link', {
+			const response = await fetch('/api/corsair/connect/links', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					plugin,
+					...(plugin ? { plugin } : {}),
 					tenantId: 'default',
-					source,
-					oauthMode,
 				}),
 			});
 			const data = await response.json();
@@ -240,22 +234,23 @@ export default function Home() {
 			>
 				<h2>Connect Integrations</h2>
 				<p style={{ color: '#666', marginBottom: '1rem' }}>
-					Connect via the Corsair Hub. Google Calendar uses BYO OAuth (your app
-					stores client credentials). GitHub uses managed OAuth (Corsair-owned
-					app, tokens refreshed via the hub).
+					One connect link for one plugin or all plugins in corsair.ts. OAuth
+					sign-in and API keys use the same hub page.
 				</p>
 				<HubConnectButton
-					plugin="googlecalendar"
-					label="Connect Google Calendar via Hub"
-					oauthMode="byo"
-					source="client"
+					label="Connect all configured plugins"
+					buttonColor="#6366f1"
 				/>
 				<div style={{ marginTop: '1rem' }}>
 					<HubConnectButton
+						plugin="googlecalendar"
+						label="Connect Google Calendar"
+					/>
+				</div>
+				<div style={{ marginTop: '1rem' }}>
+					<HubConnectButton
 						plugin="github"
-						label="Connect GitHub via Hub (Managed OAuth)"
-						oauthMode="managed"
-						source="client"
+						label="Connect GitHub"
 						buttonColor="#24292f"
 					/>
 				</div>
@@ -264,6 +259,12 @@ export default function Home() {
 			<div style={{ marginTop: '2rem' }}>
 				<h2>API Endpoints</h2>
 				<ul>
+					<li>
+						<code>/api/corsair</code> - Hub delivery endpoint
+					</li>
+					<li>
+						<code>/api/corsair/connect/links</code> - Create connect links
+					</li>
 					<li>
 						<code>/api/webhook</code> - Webhook handler for
 						Slack/Linear/GitHub/Resend events

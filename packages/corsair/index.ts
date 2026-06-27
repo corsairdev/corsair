@@ -17,6 +17,7 @@ export type {
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
@@ -29,6 +30,10 @@ export {
 	toHonoHandler,
 	toNextJsHandler,
 } from './core/management';
+export type {
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
+} from './core/plugins';
 export {
 	collectPluginWebhookMatchers,
 	matchWebhookPlugin,

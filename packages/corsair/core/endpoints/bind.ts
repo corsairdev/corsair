@@ -1,19 +1,21 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
-import {
-	createHubPermissionSession,
-	formatHubApprovalMessage,
-} from '../../hub/permission';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import { encodeOAuthState, signState } from '../auth/state';
+import type { EndpointManualConfig } from '../config/manual-connect';
+import { hasManualConnectConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
-import { enforcePermission, parseDurationMs } from '../permissions';
+import {
+	enforcePermission,
+	parseDurationMs,
+	resolveAsyncApprovalMessage,
+} from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
+	CorsairPermissionsOptions,
 	EndpointHooks,
 	EndpointMetaEntry,
-	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
@@ -33,7 +35,7 @@ export function isEndpoint(value: unknown): value is Function {
 
 function buildConnectError(
 	pluginId: string,
-	connectConfig: {
+	manualConfig: {
 		baseUrl: string;
 		onAuthMissing?: (opts: {
 			plugin: string;
@@ -48,15 +50,15 @@ function buildConnectError(
 	const state = signState(
 		encodeOAuthState(
 			pluginId,
-			connectConfig.tenantId ?? fallbackTenantId ?? 'default',
+			manualConfig.tenantId ?? fallbackTenantId ?? 'default',
 		),
-		connectConfig.kek!,
+		manualConfig.kek!,
 	);
-	const url = new URL(connectConfig.baseUrl);
+	const url = new URL(manualConfig.baseUrl);
 	url.searchParams.set('state', state);
 	const connectUrl = url.toString();
-	const msg = connectConfig.onAuthMissing
-		? connectConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
+	const msg = manualConfig.onAuthMissing
+		? manualConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
 		: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
 	return new Error(msg);
 }
@@ -85,9 +87,9 @@ export function bindEndpointsRecursively({
 	permissionsConfig,
 	endpointMeta,
 	database,
-	approvalConfig,
+	permissionsOptions,
 	tenantId,
-	connectConfig,
+	manualConfig,
 	hubConfig,
 }: {
 	endpoints: Record<string, unknown>;
@@ -107,38 +109,12 @@ export function bindEndpointsRecursively({
 	endpointMeta?: Record<string, EndpointMetaEntry>;
 	/** Required for 'require_approval' to persist the approval record to the DB. */
 	database?: CorsairDatabase;
-	/** Approval timeout config from createCorsair({ approval: ... }). */
-	approvalConfig?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		/** Called when a permission is blocked in async mode. Return the message to throw to the LLM. */
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
+	/** Global permissions config from createCorsair({ permissions: ... }). */
+	permissionsOptions?: CorsairPermissionsOptions;
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
-	/** Connect link config for generating OAuth connect URLs when auth is missing. */
-	connectConfig?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-		oauthConfig?: OAuthConfig;
-		kek?: string | undefined;
-		tenantId?: string;
-	};
+	/** Manual config from createCorsair({ manual: ... }) — connect + permission review. */
+	manualConfig?: EndpointManualConfig;
 	hubConfig?: HubConfig;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
@@ -173,11 +149,11 @@ export function bindEndpointsRecursively({
 						riskLevel: meta?.riskLevel ?? 'write',
 						meta,
 						db: database,
-						timeoutMs: approvalConfig
-							? parseDurationMs(approvalConfig.timeout)
+						timeoutMs: permissionsOptions
+							? parseDurationMs(permissionsOptions.timeout)
 							: undefined,
 						tenantId,
-						approvalMode: approvalConfig?.mode,
+						approvalMode: permissionsOptions?.mode,
 					});
 					if (permResult === 'blocked') {
 						let msg: string;
@@ -188,39 +164,26 @@ export function bindEndpointsRecursively({
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
 						} else if (permToken && permId) {
-							if (approvalConfig?.formatAsyncMessage) {
-								msg = approvalConfig.formatAsyncMessage({
-									token: permToken,
-									id: permId,
-									plugin: pluginId,
-									endpoint: operationPath,
-									args,
-								});
-							} else if (hubConfig) {
-								try {
-									const timeoutMs = approvalConfig
-										? parseDurationMs(approvalConfig.timeout)
-										: 10 * 60 * 1_000;
-									const session = await createHubPermissionSession(hubConfig, {
-										permissionId: permId,
-										permissionToken: permToken,
-										plugin: pluginId,
-										endpoint: operationPath,
-										args,
-										tenantId: tenantId ?? 'default',
-										expiresAt:
-											permExpiresAt ??
-											new Date(Date.now() + timeoutMs).toISOString(),
-									});
-									msg = formatHubApprovalMessage(session.approvalUrl);
-								} catch (error) {
-									const detail =
-										error instanceof Error ? error.message : String(error);
-									msg = `Action '${operationPath}' requires user approval before it can run. Could not create approval link: ${detail}`;
-								}
-							} else {
-								msg = `Action '${operationPath}' requires user approval before it can run.`;
-							}
+							msg = await resolveAsyncApprovalMessage({
+								permissionsOptions,
+								manual: manualConfig,
+								hub: hubConfig,
+								permissionId: permId,
+								permissionToken: permToken,
+								plugin: pluginId,
+								endpoint: operationPath,
+								args,
+								tenantId: tenantId ?? 'default',
+								expiresAt:
+									permExpiresAt ??
+									new Date(
+										Date.now() +
+											(permissionsOptions
+												? parseDurationMs(permissionsOptions.timeout)
+												: 10 * 60 * 1_000),
+									).toISOString(),
+								operationPath,
+							});
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}
@@ -303,13 +266,17 @@ export function bindEndpointsRecursively({
 				try {
 					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 				} catch (err) {
+					// manual may be permissions-only (approvalBaseUrl) without connect URLs —
+					// only rewrite AuthMissingError when manual connect is configured.
 					if (
-						connectConfig?.oauthConfig &&
-						connectConfig.kek &&
+						manualConfig &&
+						hasManualConnectConfig(manualConfig) &&
+						manualConfig.oauthConfig &&
+						manualConfig.kek &&
 						err instanceof AuthMissingError &&
 						err.authType === 'oauth_2'
 					) {
-						throw buildConnectError(pluginId, connectConfig, tenantId);
+						throw buildConnectError(pluginId, manualConfig, tenantId);
 					}
 					throw err;
 				}
@@ -357,9 +324,9 @@ export function bindEndpointsRecursively({
 				permissionsConfig,
 				endpointMeta,
 				database,
-				approvalConfig,
+				permissionsOptions,
 				tenantId,
-				connectConfig,
+				manualConfig,
 				hubConfig,
 			});
 

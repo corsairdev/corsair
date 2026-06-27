@@ -1,5 +1,7 @@
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import type { AccountKeyManagerFor } from '../core/auth/types';
+import { hubApiPost } from './client/http';
+import { parseOAuthRefreshResponse } from './contracts/connect-api';
 import type { HubConfig } from './types';
 
 const TOKEN_REFRESH_BUFFER_SECONDS = 5 * 60;
@@ -17,38 +19,8 @@ export type ManagedAccessTokenResult = {
 	refreshed: boolean;
 };
 
-type HubRefreshResponse = {
-	access_token?: string;
-	refresh_token?: string;
-	expires_in?: number;
-	scope?: string;
-	error?: string;
-	message?: string;
-};
-
-async function readHubJsonResponse(response: Response): Promise<unknown> {
-	const bodyText = await response.text();
-	if (!bodyText) return null;
-	try {
-		return JSON.parse(bodyText) as unknown;
-	} catch {
-		throw new Error(`Hub API returned invalid JSON (HTTP ${response.status})`);
-	}
-}
-
-function parseHubRefreshError(payload: unknown, status: number): string {
-	if (payload && typeof payload === 'object') {
-		const record = payload as HubRefreshResponse;
-		if (record.error) return record.error;
-		if (record.message) return record.message;
-	}
-	return `Hub token refresh failed (HTTP ${status})`;
-}
-
-/**
- * Returns a valid access token for a managed OAuth connection.
- * Uses cached credentials when still valid; otherwise refreshes via the hub.
- */
+// Returns a valid access token for a managed OAuth connection.
+// Uses cached credentials when still valid; otherwise refreshes via the hub.
 export async function getManagedAccessToken(
 	ctx: ManagedAuthContext,
 	options?: { forceRefresh?: boolean },
@@ -80,33 +52,30 @@ export async function getManagedAccessToken(
 		};
 	}
 
+	// Non-expiring tokens may have no refresh token — keep using the access token
+	// while it is still valid. If it is expired (or due for refresh), fall through
+	// to the hub, which may still hold a refresh token even when local storage does not.
 	if (!refreshToken && accessToken && !forceRefresh) {
-		return {
-			accessToken,
-			expiresAt: expiresAt ? Number(expiresAt) : now + 3600,
-			refreshed: false,
-		};
+		const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
+		const tokenStillUsable =
+			expiresAtSeconds === null ||
+			expiresAtSeconds > now + TOKEN_REFRESH_BUFFER_SECONDS;
+
+		if (tokenStillUsable) {
+			return {
+				accessToken,
+				expiresAt: expiresAtSeconds ?? now + 3600,
+				refreshed: false,
+			};
+		}
 	}
 
-	const apiUrl = hub.apiUrl.replace(/\/$/, '');
-	const response = await fetch(`${apiUrl}/oauth/refresh`, {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-			authorization: `Bearer ${hub.projectApiKey}`,
-		},
-		body: JSON.stringify({ plugin, tenantId }),
+	const tokens = await hubApiPost({
+		hub,
+		path: '/oauth/refresh',
+		body: { plugin, tenantId },
+		parseResponse: parseOAuthRefreshResponse,
 	});
-
-	const payload = await readHubJsonResponse(response);
-	if (!response.ok) {
-		throw new Error(parseHubRefreshError(payload, response.status));
-	}
-
-	const tokens = payload as HubRefreshResponse;
-	if (!tokens.access_token) {
-		throw new Error('Hub token refresh returned no access_token');
-	}
 
 	const nextExpiresAt = tokens.expires_in
 		? now + tokens.expires_in
@@ -130,9 +99,7 @@ export async function getManagedAccessToken(
 	};
 }
 
-/**
- * Attaches a `_refreshAuth` helper on the keyBuilder context for 401 retries.
- */
+// Attaches a `_refreshAuth` helper on the keyBuilder context for 401 retries.
 export async function attachManagedRefreshAuth(
 	ctx: Record<string, unknown>,
 	managedContext: ManagedAuthContext,

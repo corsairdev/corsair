@@ -1,5 +1,6 @@
-import { createHmac } from 'node:crypto';
+import { createHmac, randomUUID } from 'node:crypto';
 import { CORSAIR_INTERNAL } from '../core';
+import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
 import { processCorsair } from '../tunnel/index';
 import { createTestDatabase } from './setup-db';
 
@@ -8,12 +9,25 @@ function createMockCorsair() {
 		[CORSAIR_INTERNAL]: {
 			plugins: [],
 			kek: 'test-kek-with-at-least-32-characters!!',
+			multiTenancy: false,
 		},
 	};
 }
 
 function signBody(body: string, secret: string): string {
 	return createHmac('sha256', secret).update(body).digest('hex');
+}
+
+function signedTunnelHeaders(
+	body: string,
+	secret: string,
+	nonce = randomUUID(),
+) {
+	return {
+		'x-corsair-signature': `sha256=${signBody(body, secret)}`,
+		'x-corsair-timestamp': String(Math.floor(Date.now() / 1000)),
+		'x-corsair-nonce': nonce,
+	};
 }
 
 async function ensurePermissionsTable(
@@ -37,6 +51,10 @@ async function ensurePermissionsTable(
 }
 
 describe('processCorsair', () => {
+	beforeEach(() => {
+		resetDeliveryReplayGuardForTests();
+	});
+
 	it('rejects unsigned tunnel requests by default', async () => {
 		const body = JSON.stringify({
 			type: 'webhook',
@@ -77,12 +95,11 @@ describe('processCorsair', () => {
 			type: 'webhook',
 			payload: { headers: {}, body: '{}' },
 		});
-		const signature = signBody(body, secret);
 
 		const ack = await processCorsair(
 			createMockCorsair(),
 			{
-				headers: { 'x-corsair-signature': `sha256=${signature}` },
+				headers: signedTunnelHeaders(body, secret),
 				body,
 			},
 			{ signingSecret: secret },
@@ -90,6 +107,105 @@ describe('processCorsair', () => {
 
 		expect(ack.error).not.toBe('Tunnel signing secret is required');
 		expect(ack.error).not.toBe('Invalid tunnel signature');
+		expect(ack.error).not.toBe('Invalid or missing tunnel timestamp');
+	});
+
+	it('rejects replayed tunnel nonces', async () => {
+		const secret = 'tunnel-signing-secret';
+		const nonce = randomUUID();
+		const body = JSON.stringify({
+			type: 'webhook',
+			payload: { headers: {}, body: '{}' },
+		});
+
+		const headers = signedTunnelHeaders(body, secret, nonce);
+
+		const firstAck = await processCorsair(
+			createMockCorsair(),
+			{ headers, body },
+			{ signingSecret: secret },
+		);
+		expect(firstAck.error).not.toBe('Missing tunnel nonce');
+
+		const secondAck = await processCorsair(
+			createMockCorsair(),
+			{ headers, body },
+			{ signingSecret: secret },
+		);
+
+		expect(secondAck.status).toBe('failed');
+		expect(secondAck.error).toBe('Delivery request already consumed');
+	});
+
+	it('rejects signed requests without a nonce header', async () => {
+		const secret = 'tunnel-signing-secret';
+		const body = JSON.stringify({
+			type: 'webhook',
+			payload: { headers: {}, body: '{}' },
+		});
+
+		const ack = await processCorsair(
+			createMockCorsair(),
+			{
+				headers: {
+					'x-corsair-signature': `sha256=${signBody(body, secret)}`,
+					'x-corsair-timestamp': String(Math.floor(Date.now() / 1000)),
+				},
+				body,
+			},
+			{ signingSecret: secret },
+		);
+
+		expect(ack.status).toBe('failed');
+		expect(ack.error).toBe('Missing tunnel nonce');
+	});
+
+	it('rejects signed requests without a timestamp header', async () => {
+		const secret = 'tunnel-signing-secret';
+		const body = JSON.stringify({
+			type: 'webhook',
+			payload: { headers: {}, body: '{}' },
+		});
+
+		const ack = await processCorsair(
+			createMockCorsair(),
+			{
+				headers: {
+					'x-corsair-signature': `sha256=${signBody(body, secret)}`,
+				},
+				body,
+			},
+			{ signingSecret: secret },
+		);
+
+		expect(ack.status).toBe('failed');
+		expect(ack.error).toBe('Invalid or missing tunnel timestamp');
+	});
+
+	it('rejects signed requests with an expired timestamp', async () => {
+		const secret = 'tunnel-signing-secret';
+		const body = JSON.stringify({
+			type: 'webhook',
+			payload: { headers: {}, body: '{}' },
+		});
+		const expiredTimestamp = String(Math.floor(Date.now() / 1000) - 600);
+
+		const ack = await processCorsair(
+			createMockCorsair(),
+			{
+				headers: {
+					'x-corsair-signature': `sha256=${signBody(body, secret)}`,
+					'x-corsair-timestamp': expiredTimestamp,
+				},
+				body,
+			},
+			{ signingSecret: secret },
+		);
+
+		expect(ack.status).toBe('failed');
+		expect(ack.error).toBe(
+			'Tunnel request timestamp is outside the allowed window',
+		);
 	});
 
 	it('allows unsigned requests when allowUnsignedTunnel is enabled', async () => {
@@ -143,12 +259,12 @@ describe('processCorsair — permission decisions', () => {
 			type: 'permission.approve',
 			payload: { token },
 		});
-		const signature = signBody(body, secret);
 
 		const corsair = {
 			[CORSAIR_INTERNAL]: {
 				plugins: [],
 				kek: 'test-kek-with-at-least-32-characters!!',
+				multiTenancy: false,
 				database: env.database,
 			},
 		};
@@ -156,7 +272,7 @@ describe('processCorsair — permission decisions', () => {
 		const ack = await processCorsair(
 			corsair,
 			{
-				headers: { 'x-corsair-signature': `sha256=${signature}` },
+				headers: signedTunnelHeaders(body, secret),
 				body,
 			},
 			{ signingSecret: secret },
@@ -198,12 +314,12 @@ describe('processCorsair — permission decisions', () => {
 			type: 'permission.deny',
 			payload: { token },
 		});
-		const signature = signBody(body, secret);
 
 		const corsair = {
 			[CORSAIR_INTERNAL]: {
 				plugins: [],
 				kek: 'test-kek-with-at-least-32-characters!!',
+				multiTenancy: false,
 				database: env.database,
 			},
 		};
@@ -211,7 +327,7 @@ describe('processCorsair — permission decisions', () => {
 		const ack = await processCorsair(
 			corsair,
 			{
-				headers: { 'x-corsair-signature': `sha256=${signature}` },
+				headers: signedTunnelHeaders(body, secret),
 				body,
 			},
 			{ signingSecret: secret },

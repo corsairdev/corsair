@@ -1,11 +1,9 @@
-import * as querystring from 'node:querystring';
 import type {
 	CorsairInternalConfig,
 	CorsairPlugin,
 	OAuthConfig,
 } from '../core';
 import {
-	CORSAIR_INTERNAL,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 	encryptDEK,
@@ -17,12 +15,21 @@ import {
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
+import {
+	getCorsairInternal,
+	requireCorsairPlugin,
+} from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
+import { buildOAuthAuthorizeUrl } from './authorize-url';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
+export {
+	type BuildOAuthAuthorizeUrlInput,
+	buildOAuthAuthorizeUrl,
+} from './authorize-url';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured errors
@@ -54,33 +61,6 @@ export class OAuthCallbackError extends Error {
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
 // ─────────────────────────────────────────────────────────────────────────────
-
-function getInternal(corsair: unknown): CorsairInternalConfig {
-	const internal = (corsair as Record<symbol, unknown>)[CORSAIR_INTERNAL] as
-		| CorsairInternalConfig
-		| undefined;
-	if (!internal) {
-		throw new OAuthCallbackError(
-			'invalid_corsair_instance',
-			'Invalid corsair instance',
-		);
-	}
-	return internal;
-}
-
-function findPlugin(
-	internal: CorsairInternalConfig,
-	pluginId: string,
-): CorsairPlugin {
-	const plugin = internal.plugins.find((p) => p.id === pluginId);
-	if (!plugin) {
-		throw new OAuthCallbackError(
-			'plugin_not_found',
-			`Plugin '${pluginId}' not found`,
-		);
-	}
-	return plugin;
-}
 
 function getOAuthConfig(plugin: CorsairPlugin): OAuthConfig {
 	const cfg = (plugin as { oauthConfig?: OAuthConfig }).oauthConfig;
@@ -156,13 +136,24 @@ export async function generateOAuthUrl(
 	options: GenerateOAuthUrlOptions,
 ): Promise<GenerateOAuthUrlResult> {
 	const { tenantId, redirectUri } = options;
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new OAuthCallbackError(
+				'invalid_corsair_instance',
+				'Invalid corsair instance',
+			),
+	);
 
 	if (!internal.database) {
 		throw new Error('No database configured on corsair instance');
 	}
 
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new OAuthCallbackError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({
@@ -179,17 +170,13 @@ export async function generateOAuthUrl(
 
 	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);
 
-	const params: Record<string, string> = {
-		...oauthCfg.authParams,
-		client_id: clientId,
-		redirect_uri: redirectUri,
-		response_type: 'code',
-		scope: oauthCfg.scopes.join(' '),
-		state,
-	};
-
 	return {
-		url: `${oauthCfg.authUrl}?${querystring.stringify(params)}`,
+		url: buildOAuthAuthorizeUrl({
+			oauthConfig: oauthCfg,
+			clientId,
+			redirectUri,
+			state,
+		}),
 		state,
 	};
 }
@@ -221,7 +208,14 @@ export async function processOAuthCallback(
 ): Promise<ProcessOAuthCallbackResult> {
 	const { code, state, redirectUri } = options;
 
-	const internal = getInternal(corsair);
+	const internal = getCorsairInternal(
+		corsair,
+		() =>
+			new OAuthCallbackError(
+				'invalid_corsair_instance',
+				'Invalid corsair instance',
+			),
+	);
 
 	const decoded = verifyAndDecodeState(state, internal.kek);
 	if (!decoded) {
@@ -240,7 +234,11 @@ export async function processOAuthCallback(
 		);
 	}
 
-	const plugin = findPlugin(internal, pluginId);
+	const plugin = requireCorsairPlugin(
+		internal,
+		pluginId,
+		(message) => new OAuthCallbackError('plugin_not_found', message),
+	);
 	const oauthCfg = getOAuthConfig(plugin);
 
 	const integrationKm = createIntegrationKeyManager({

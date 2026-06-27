@@ -164,6 +164,64 @@ const RepositoriesListCommitsInputSchema = z.object({
 	page: z.number().optional(),
 });
 
+const EventsPaginationInputSchema = z.object({
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListInputSchema = EventsPaginationInputSchema;
+
+const EventsListForNetworkInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListForOrgInputSchema = z.object({
+	org: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListForRepositoryInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListForUserInputSchema = z.object({
+	username: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListForUserOrgInputSchema = z.object({
+	username: z.string(),
+	org: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListPublicForUserInputSchema = z.object({
+	username: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListReceivedForUserInputSchema = z.object({
+	username: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
+const EventsListPublicReceivedForUserInputSchema = z.object({
+	username: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
 const RepositoriesGetContentInputSchema = z.object({
 	owner: z.string(),
 	repo: z.string(),
@@ -424,6 +482,15 @@ export const GithubEndpointInputSchemas = {
 	repositoriesListBranches: RepositoriesListBranchesInputSchema,
 	repositoriesListCommits: RepositoriesListCommitsInputSchema,
 	repositoriesGetContent: RepositoriesGetContentInputSchema,
+	eventsList: EventsListInputSchema,
+	eventsListForNetwork: EventsListForNetworkInputSchema,
+	eventsListForOrg: EventsListForOrgInputSchema,
+	eventsListForRepository: EventsListForRepositoryInputSchema,
+	eventsListForUser: EventsListForUserInputSchema,
+	eventsListForUserOrg: EventsListForUserOrgInputSchema,
+	eventsListPublicForUser: EventsListPublicForUserInputSchema,
+	eventsListReceivedForUser: EventsListReceivedForUserInputSchema,
+	eventsListPublicReceivedForUser: EventsListPublicReceivedForUserInputSchema,
 	repositoriesStar: RepositoriesStarInputSchema,
 	repositoriesUnstar: RepositoriesUnstarInputSchema,
 	repositoriesCheckStarred: RepositoriesCheckStarredInputSchema,
@@ -544,6 +611,23 @@ const MilestoneSchema = z.object({
 	updatedAt: z.coerce.date().nullable().optional(),
 	closedAt: z.coerce.date().nullable().optional(),
 	dueOn: z.coerce.date().nullable().optional(),
+});
+
+const EventSchema = z.object({
+	id: z.string(),
+	type: z.string(),
+	actor: SimpleUserSchema.optional(),
+	repo: z
+		.object({
+			id: z.number(),
+			name: z.string(),
+			url: z.string().optional(),
+		})
+		.optional(),
+	org: SimpleUserSchema.optional(),
+	payload: z.record(z.string(), z.unknown()).optional(),
+	public: z.boolean().optional(),
+	createdAt: z.coerce.date().nullable().optional(),
 });
 
 const RepositorySchema = z.object({
@@ -988,6 +1072,15 @@ export const GithubEndpointOutputSchemas = {
 	repositoriesListBranches: RepositoryBranchesListResponseSchema,
 	repositoriesListCommits: RepositoryCommitsListResponseSchema,
 	repositoriesGetContent: RepositoryContentGetResponseSchema,
+	eventsList: z.array(EventSchema),
+	eventsListForNetwork: z.array(EventSchema),
+	eventsListForOrg: z.array(EventSchema),
+	eventsListForRepository: z.array(EventSchema),
+	eventsListForUser: z.array(EventSchema),
+	eventsListForUserOrg: z.array(EventSchema),
+	eventsListPublicForUser: z.array(EventSchema),
+	eventsListReceivedForUser: z.array(EventSchema),
+	eventsListPublicReceivedForUser: z.array(EventSchema),
 	repositoriesStar: z.boolean(),
 	repositoriesUnstar: z.boolean(),
 	repositoriesCheckStarred: z.object({ starred: z.boolean() }),
@@ -1085,6 +1178,11 @@ export type RepositoryBranchesListResponse = z.infer<
 export type RepositoryCommitsListResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.repositoriesListCommits
 >;
+export type EventsListResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.eventsList
+>;
+/** @deprecated Use EventsListResponse instead */
+export type RepositoryEventsListResponse = EventsListResponse;
 export type RepositoryContentGetResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.repositoriesGetContent
 >;

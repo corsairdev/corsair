@@ -1,3 +1,5 @@
+import { createMCPClient } from '@ai-sdk/mcp';
+
 export type VercelAiMcpClientOptions = {
 	url: string;
 	headers?: Record<string, string>;
@@ -6,9 +8,6 @@ export type VercelAiMcpClientOptions = {
 export async function createVercelAiMcpClient(
 	options: VercelAiMcpClientOptions,
 ) {
-	const { createMCPClient } = await import(
-		/* webpackIgnore: true */ /* turbopackIgnore: true */ '@ai-sdk/mcp'
-	);
 	const { url, headers } = options;
 	const client = await createMCPClient({
 		transport: {

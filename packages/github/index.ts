@@ -18,6 +18,7 @@ import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
 	CommentsEndpoints,
 	DiscussionsEndpoints,
+	EventsEndpoints,
 	ForksEndpoints,
 	IssuesEndpoints,
 	PullRequestsEndpoints,
@@ -308,6 +309,15 @@ export type GithubEndpoints = {
 	repositoriesListBranches: GithubEndpoint<'repositoriesListBranches'>;
 	repositoriesListCommits: GithubEndpoint<'repositoriesListCommits'>;
 	repositoriesGetContent: GithubEndpoint<'repositoriesGetContent'>;
+	eventsList: GithubEndpoint<'eventsList'>;
+	eventsListForNetwork: GithubEndpoint<'eventsListForNetwork'>;
+	eventsListForOrg: GithubEndpoint<'eventsListForOrg'>;
+	eventsListForRepository: GithubEndpoint<'eventsListForRepository'>;
+	eventsListForUser: GithubEndpoint<'eventsListForUser'>;
+	eventsListForUserOrg: GithubEndpoint<'eventsListForUserOrg'>;
+	eventsListPublicForUser: GithubEndpoint<'eventsListPublicForUser'>;
+	eventsListReceivedForUser: GithubEndpoint<'eventsListReceivedForUser'>;
+	eventsListPublicReceivedForUser: GithubEndpoint<'eventsListPublicReceivedForUser'>;
 	repositoriesStar: GithubEndpoint<'repositoriesStar'>;
 	repositoriesUnstar: GithubEndpoint<'repositoriesUnstar'>;
 	repositoriesCheckStarred: GithubEndpoint<'repositoriesCheckStarred'>;
@@ -656,6 +666,17 @@ const githubEndpointsNested = {
 		update: CommentsEndpoints.update,
 		delete: CommentsEndpoints.delete,
 	},
+	events: {
+		list: EventsEndpoints.list,
+		listForNetwork: EventsEndpoints.listForNetwork,
+		listForOrg: EventsEndpoints.listForOrg,
+		listForRepository: EventsEndpoints.listForRepository,
+		listForUser: EventsEndpoints.listForUser,
+		listForUserOrg: EventsEndpoints.listForUserOrg,
+		listPublicForUser: EventsEndpoints.listPublicForUser,
+		listReceivedForUser: EventsEndpoints.listReceivedForUser,
+		listPublicReceivedForUser: EventsEndpoints.listPublicReceivedForUser,
+	},
 	users: {
 		list: UsersEndpoints.list,
 		get: UsersEndpoints.get,
@@ -727,6 +748,42 @@ export const githubEndpointSchemas = {
 	'repositories.getContent': {
 		input: GithubEndpointInputSchemas.repositoriesGetContent,
 		output: GithubEndpointOutputSchemas.repositoriesGetContent,
+	},
+	'events.list': {
+		input: GithubEndpointInputSchemas.eventsList,
+		output: GithubEndpointOutputSchemas.eventsList,
+	},
+	'events.listForNetwork': {
+		input: GithubEndpointInputSchemas.eventsListForNetwork,
+		output: GithubEndpointOutputSchemas.eventsListForNetwork,
+	},
+	'events.listForOrg': {
+		input: GithubEndpointInputSchemas.eventsListForOrg,
+		output: GithubEndpointOutputSchemas.eventsListForOrg,
+	},
+	'events.listForRepository': {
+		input: GithubEndpointInputSchemas.eventsListForRepository,
+		output: GithubEndpointOutputSchemas.eventsListForRepository,
+	},
+	'events.listForUser': {
+		input: GithubEndpointInputSchemas.eventsListForUser,
+		output: GithubEndpointOutputSchemas.eventsListForUser,
+	},
+	'events.listForUserOrg': {
+		input: GithubEndpointInputSchemas.eventsListForUserOrg,
+		output: GithubEndpointOutputSchemas.eventsListForUserOrg,
+	},
+	'events.listPublicForUser': {
+		input: GithubEndpointInputSchemas.eventsListPublicForUser,
+		output: GithubEndpointOutputSchemas.eventsListPublicForUser,
+	},
+	'events.listReceivedForUser': {
+		input: GithubEndpointInputSchemas.eventsListReceivedForUser,
+		output: GithubEndpointOutputSchemas.eventsListReceivedForUser,
+	},
+	'events.listPublicReceivedForUser': {
+		input: GithubEndpointInputSchemas.eventsListPublicReceivedForUser,
+		output: GithubEndpointOutputSchemas.eventsListPublicReceivedForUser,
 	},
 	'repositories.star': {
 		input: GithubEndpointInputSchemas.repositoriesStar,
@@ -1593,6 +1650,42 @@ const githubEndpointMeta = {
 	'repositories.getContent': {
 		riskLevel: 'read',
 		description: 'Get file or directory content from a repository',
+	},
+	'events.list': {
+		riskLevel: 'read',
+		description: 'List public GitHub events',
+	},
+	'events.listForNetwork': {
+		riskLevel: 'read',
+		description: 'List public events for a repository network',
+	},
+	'events.listForOrg': {
+		riskLevel: 'read',
+		description: 'List public events for an organization',
+	},
+	'events.listForRepository': {
+		riskLevel: 'read',
+		description: 'List events for a repository',
+	},
+	'events.listForUser': {
+		riskLevel: 'read',
+		description: 'List events for a user',
+	},
+	'events.listForUserOrg': {
+		riskLevel: 'read',
+		description: 'List organization events for a user',
+	},
+	'events.listPublicForUser': {
+		riskLevel: 'read',
+		description: 'List public events for a user',
+	},
+	'events.listReceivedForUser': {
+		riskLevel: 'read',
+		description: 'List events received by a user',
+	},
+	'events.listPublicReceivedForUser': {
+		riskLevel: 'read',
+		description: 'List public events received by a user',
 	},
 	'repositories.star': {
 		riskLevel: 'write',

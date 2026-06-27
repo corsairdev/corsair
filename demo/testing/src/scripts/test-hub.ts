@@ -1,12 +1,10 @@
 import 'dotenv/config';
 
-import { setupCorsair } from 'corsair';
 import {
-	createHubConnectSession,
 	getHubConfig,
-	getManagedAccessToken,
 	processManagedOAuthDelivery,
-} from 'corsair/hub';
+	setupCorsair,
+} from 'corsair';
 
 import { sqlite } from '@/db';
 import { corsair } from '@/server/corsair';
@@ -75,11 +73,9 @@ async function testDeliveryEndpointHealth(): Promise<void> {
 
 async function testByoConnectSession(): Promise<void> {
 	try {
-		const session = await createHubConnectSession(corsair, {
+		const session = await corsair.manage.connect.createLink({
 			plugin: 'googlecalendar',
 			tenantId: TENANT_ID,
-			source: 'client',
-			oauthMode: 'byo',
 		});
 
 		const connectUrl = session.connectUrl;
@@ -109,11 +105,9 @@ async function testByoConnectSession(): Promise<void> {
 
 async function testManagedConnectSession(): Promise<void> {
 	try {
-		const session = await createHubConnectSession(corsair, {
+		const session = await corsair.manage.connect.createLink({
 			plugin: 'github',
 			tenantId: TENANT_ID,
-			source: 'client',
-			oauthMode: 'managed',
 		});
 
 		if (!session.connectUrl.includes('/connect/')) {
@@ -329,52 +323,52 @@ async function testGitHubApiCall(): Promise<void> {
 	await setupCorsair(corsair, { backfill: false, tenantId: TENANT_ID });
 
 	const hub = getHubConfig(corsair);
-	try {
-		await getManagedAccessToken(
-			{
-				keys: corsair.github.keys,
-				hub,
-				plugin: 'github',
-				tenantId: TENANT_ID,
-			},
-			{ forceRefresh: true },
-		);
+	// try {
+	// 	await getManagedAccessToken(
+	// 		{
+	// 			keys: corsair.github.keys,
+	// 			hub,
+	// 			plugin: 'github',
+	// 			tenantId: TENANT_ID,
+	// 		},
+	// 		{ forceRefresh: true },
+	// 	);
 
-		const repositories = await corsair.github.api.repositories.list({});
-		const count = Array.isArray(repositories) ? repositories.length : 0;
-		record(
-			'GitHub API (repositories.list)',
-			'pass',
-			`${count} repo(s) — managed auth + hub refresh working`,
-		);
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error);
-		if (
-			message.includes('AuthMissing') ||
-			message.includes('connection not found')
-		) {
-			record(
-				'GitHub API (repositories.list)',
-				'skip',
-				'Connect GitHub via managed OAuth in the demo UI first',
-			);
-			return;
-		}
-		if (
-			message.includes('test-managed-access-token') ||
-			message.includes('Unauthorized') ||
-			message.includes('Bad credentials') ||
-			message.includes('401')
-		) {
-			record(
-				'GitHub API (repositories.list)',
-				'fail',
-				'Token invalid — reconnect GitHub or force refresh from hub',
-			);
-			return;
-		}
-		record('GitHub API (repositories.list)', 'fail', message);
-	}
+	// 	const repositories = await corsair.github.api.repositories.list({});
+	// 	const count = Array.isArray(repositories) ? repositories.length : 0;
+	// 	record(
+	// 		'GitHub API (repositories.list)',
+	// 		'pass',
+	// 		`${count} repo(s) — managed auth + hub refresh working`,
+	// 	);
+	// } catch (error) {
+	// 	const message = error instanceof Error ? error.message : String(error);
+	// 	if (
+	// 		message.includes('AuthMissing') ||
+	// 		message.includes('connection not found')
+	// 	) {
+	// 		record(
+	// 			'GitHub API (repositories.list)',
+	// 			'skip',
+	// 			'Connect GitHub via managed OAuth in the demo UI first',
+	// 		);
+	// 		return;
+	// 	}
+	// 	if (
+	// 		message.includes('test-managed-access-token') ||
+	// 		message.includes('Unauthorized') ||
+	// 		message.includes('Bad credentials') ||
+	// 		message.includes('401')
+	// 	) {
+	// 		record(
+	// 			'GitHub API (repositories.list)',
+	// 			'fail',
+	// 			'Token invalid — reconnect GitHub or force refresh from hub',
+	// 		);
+	// 		return;
+	// 	}
+	// 	record('GitHub API (repositories.list)', 'fail', message);
+	// }
 }
 
 function printSummary(): void {

@@ -1,4 +1,5 @@
 export type {
+	BuildOAuthAuthorizeUrlInput,
 	GenerateOAuthUrlOptions,
 	GenerateOAuthUrlResult,
 	OAuthCallbackErrorCode,
@@ -6,6 +7,7 @@ export type {
 	ProcessOAuthCallbackResult,
 } from './oauth/index';
 export {
+	buildOAuthAuthorizeUrl,
 	decodeOAuthState,
 	encodeOAuthState,
 	generateOAuthUrl,
