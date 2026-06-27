@@ -41,7 +41,7 @@
     "bumpp": "^10.3.1",
     "tinyglobby": "^0.2.15",
     "tsx": "^4.20.6",
-    "turbo": "^2.6.1",
+    "turbo": "^2.10.0",
     "typescript": "catalog:",
     "yaml": "^2.8.1"
   }
