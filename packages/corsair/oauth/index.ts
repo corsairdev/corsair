@@ -111,6 +111,8 @@ async function ensureAccount(
 export type GenerateOAuthUrlOptions = {
 	tenantId: string;
 	redirectUri: string;
+	/** Hub generates OAuth state server-side and injects it into the authorize URL. */
+	hubConnect?: boolean;
 };
 
 export type GenerateOAuthUrlResult = {
@@ -135,7 +137,7 @@ export async function generateOAuthUrl(
 	pluginId: string,
 	options: GenerateOAuthUrlOptions,
 ): Promise<GenerateOAuthUrlResult> {
-	const { tenantId, redirectUri } = options;
+	const { tenantId, redirectUri, hubConnect = false } = options;
 	const internal = getCorsairInternal(
 		corsair,
 		() =>
@@ -166,6 +168,19 @@ export async function generateOAuthUrl(
 	const clientId = await integrationKm.get_client_id();
 	if (!clientId) {
 		throw new Error(`client_id not configured for '${pluginId}'`);
+	}
+
+	if (hubConnect) {
+		const authorizeUrl = new URL(
+			buildOAuthAuthorizeUrl({
+				oauthConfig: oauthCfg,
+				clientId,
+				redirectUri,
+				state: '',
+			}),
+		);
+		authorizeUrl.searchParams.delete('state');
+		return { url: authorizeUrl.toString(), state: '' };
 	}
 
 	const state = signState(encodeOAuthState(pluginId, tenantId), internal.kek);

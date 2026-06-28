@@ -2,7 +2,6 @@ import {
 	getPluginAuthStatus,
 	isOptionalAuthField,
 } from '../core/auth/plugin-auth-status';
-import { encodeOAuthState, signState } from '../core/auth/state';
 import type { AuthTypes } from '../core/constants';
 import { formatProviderDisplayName } from '../core/constants';
 import type { CorsairPlugin } from '../core/plugins';
@@ -107,19 +106,14 @@ export async function buildConnectPluginManifest(
 			entry.oauthMode = oauthMode;
 
 			if (!options.skipOAuthUrlGeneration) {
-				if (oauthMode === 'managed') {
-					entry.state = signState(
-						encodeOAuthState(plugin.id, tenantId),
-						internal.kek,
-					);
-				} else {
+				if (oauthMode !== 'managed') {
 					try {
 						const oauth = await generateOAuthUrl(corsair, plugin.id, {
 							tenantId,
 							redirectUri: oauthCallbackUrl,
+							hubConnect: true,
 						});
 						entry.oauthUrl = oauth.url;
-						entry.state = oauth.state;
 					} catch (error) {
 						entry.setupError =
 							error instanceof Error

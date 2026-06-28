@@ -5,6 +5,7 @@ import type {
 } from '../types';
 
 // Mirrors hub/packages/api/src/connect/http.ts connectPluginSchema + request body.
+// Hub generates OAuth state server-side; the SDK must not send state.
 export type ConnectAuthKind = 'oauth' | 'api_key' | 'bot_token';
 
 export type ConnectPluginManifestEntry = {
@@ -15,8 +16,16 @@ export type ConnectPluginManifestEntry = {
 	alreadyConfigured?: boolean;
 	oauthMode?: HubOAuthMode;
 	oauthUrl?: string;
-	state?: string;
 	setupError?: string;
+};
+
+export type HubProjectConnection = {
+	tenantId: string;
+	plugin: string;
+	status: 'pending' | 'connected' | 'failed';
+	authKind: ConnectAuthKind;
+	connectedAt: string | null;
+	expiresAt: string | null;
 };
 
 export type ConnectAuthFieldStatus = {
@@ -82,6 +91,18 @@ function isNonEmptyString(value: unknown): value is string {
 	return typeof value === 'string' && value.length > 0;
 }
 
+function isHubConnectionStatus(
+	value: unknown,
+): value is HubProjectConnection['status'] {
+	return (
+		value === 'pending' || value === 'connected' || value === 'failed'
+	);
+}
+
+function isConnectAuthKindValue(value: unknown): value is ConnectAuthKind {
+	return value === 'oauth' || value === 'api_key' || value === 'bot_token';
+}
+
 export function parseConnectSessionResponse(
 	payload: unknown,
 ): HubConnectSessionResult {
@@ -112,6 +133,43 @@ export function parseConnectSessionResponse(
 	}
 
 	return result;
+}
+
+export function parseProjectConnectionsResponse(
+	payload: unknown,
+): HubProjectConnection[] {
+	if (!Array.isArray(payload)) {
+		throw new Error(
+			'Hub API returned an invalid connections response (expected array)',
+		);
+	}
+
+	const connections: HubProjectConnection[] = [];
+	for (const item of payload) {
+		if (!item || typeof item !== 'object') continue;
+		const record = item as Record<string, unknown>;
+		if (
+			!isNonEmptyString(record.tenantId) ||
+			!isNonEmptyString(record.plugin) ||
+			!isHubConnectionStatus(record.status) ||
+			!isConnectAuthKindValue(record.authKind)
+		) {
+			continue;
+		}
+
+		connections.push({
+			tenantId: record.tenantId,
+			plugin: record.plugin,
+			status: record.status,
+			authKind: record.authKind,
+			connectedAt: isNonEmptyString(record.connectedAt)
+				? record.connectedAt
+				: null,
+			expiresAt: isNonEmptyString(record.expiresAt) ? record.expiresAt : null,
+		});
+	}
+
+	return connections;
 }
 
 export function parsePermissionSessionResponse(
@@ -179,9 +237,9 @@ export function parseOAuthRefreshResponse(
 
 	throw new Error(
 		isNonEmptyString(record.error)
-			? (isNonEmptyString(record.error_description)
-					? record.error_description
-					: record.error)
+			? isNonEmptyString(record.error_description)
+				? record.error_description
+				: record.error
 			: 'Hub token refresh returned no access_token',
 	);
 }

@@ -41,6 +41,7 @@ export {
 	type ConnectStatusResponse,
 	getConnectStatusForTenant,
 } from './connect-status';
+export { listHubProjectConnections } from './connections';
 export {
 	type ConnectAuthKind,
 	type ConnectPluginManifestEntry,
@@ -49,6 +50,7 @@ export {
 	parseHubApiErrorBody,
 	parseOAuthRefreshResponse,
 	parsePermissionSessionResponse,
+	parseProjectConnectionsResponse,
 } from './contracts/connect-api';
 export {
 	isLoopbackDeliveryUrl,
@@ -134,10 +136,12 @@ export type {
 	HubConnectSessionInput,
 	HubConnectSessionResult,
 	HubConnectSource,
+	HubListProjectConnectionsInput,
 	HubOAuthMode,
 	HubOAuthRefreshResponse,
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
+	HubProjectConnection,
 	TunnelEnvelope,
 	TunnelType,
 } from './types';

@@ -75,3 +75,28 @@ export async function hubApiPost<T>(input: {
 
 	return input.parseResponse(payload);
 }
+
+export async function hubApiGet<T>(input: {
+	hub: HubConfig;
+	path: string;
+	notFoundMessage?: string;
+	parseResponse: (payload: unknown) => T;
+}): Promise<T> {
+	const apiUrl = normalizeHubApiUrl(input.hub.apiUrl);
+	const response = await fetch(`${apiUrl}${input.path}`, {
+		method: 'GET',
+		headers: {
+			authorization: `Bearer ${input.hub.projectApiKey}`,
+		},
+	});
+
+	const payload = await readHubJsonResponse(response);
+
+	if (!response.ok) {
+		throw new Error(
+			parseHubApiError(payload, response.status, input.notFoundMessage),
+		);
+	}
+
+	return input.parseResponse(payload);
+}
