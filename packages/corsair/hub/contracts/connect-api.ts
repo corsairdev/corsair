@@ -15,7 +15,6 @@ export type ConnectPluginManifestEntry = {
 	alreadyConfigured?: boolean;
 	oauthMode?: HubOAuthMode;
 	oauthUrl?: string;
-	state?: string;
 	setupError?: string;
 };
 
@@ -179,9 +178,9 @@ export function parseOAuthRefreshResponse(
 
 	throw new Error(
 		isNonEmptyString(record.error)
-			? (isNonEmptyString(record.error_description)
-					? record.error_description
-					: record.error)
+			? isNonEmptyString(record.error_description)
+				? record.error_description
+				: record.error
 			: 'Hub token refresh returned no access_token',
 	);
 }
