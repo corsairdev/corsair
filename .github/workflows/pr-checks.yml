@@ -3,7 +3,6 @@ name: PR Checks
 on:
   pull_request:
     branches: [main]
-  workflow_dispatch:
 
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
@@ -16,16 +15,8 @@ jobs:
   ci:
     name: CI Checks
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
-      CI: true
-      SKIP_PG_TESTS: 1
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
@@ -36,97 +27,23 @@ jobs:
           node-version: '24.x'
           cache: 'pnpm'
 
-      - name: Cache Turborepo
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.sha }}
-          restore-keys: |
-            turbo-${{ runner.os }}-
-
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
-
-      - name: Build
-        id: build
-        continue-on-error: true
-        run: pnpm turbo run build --filter='...[HEAD^1]' --filter='!@corsair/demo-plugins' --concurrency=100%
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        id: lint
-        continue-on-error: true
-        run: pnpm turbo run lint --filter='...[HEAD^1]'
+        run: pnpm lint
 
       - name: Validate Plugins
-        id: validate
-        continue-on-error: true
         run: pnpm run validate:plugins
 
       - name: Typecheck
-        id: typecheck
-        continue-on-error: true
-        run: pnpm turbo run typecheck --filter='...[HEAD^1]' --filter='!corsair' --filter='!@corsair/demo-minimal'
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
 
       - name: Run tests
-        id: test
-        continue-on-error: true
-        run: pnpm turbo run test --filter='...[HEAD^1]' -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
-
-      - name: Generate Dependency Graph
-        if: always()
-        run: pnpm turbo run build --filter='...[HEAD^1]' --graph=dependency-graph.html
-
-      - name: Upload Dependency Graph
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: turbo-dependency-graph
-          path: dependency-graph.html
-          retention-days: 7
-
-      - name: Check Results
-        if: always()
-        run: |
-          echo "## CI Check Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ steps.build.outcome }}" == "failure" ]; then
-            echo "❌ **Build**: Failed" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ **Build**: Passed" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          if [ "${{ steps.lint.outcome }}" == "failure" ]; then
-            echo "❌ **Lint**: Failed" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ **Lint**: Passed" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          if [ "${{ steps.validate.outcome }}" == "failure" ]; then
-            echo "❌ **Validate Plugins**: Failed" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ **Validate Plugins**: Passed" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          if [ "${{ steps.typecheck.outcome }}" == "failure" ]; then
-            echo "❌ **Typecheck**: Failed" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ **Typecheck**: Passed" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          if [ "${{ steps.test.outcome }}" == "failure" ]; then
-            echo "❌ **Tests**: Failed" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "✅ **Tests**: Passed" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          # Fail the job if any step failed
-          if [ "${{ steps.build.outcome }}" == "failure" ] || \
-             [ "${{ steps.lint.outcome }}" == "failure" ] || \
-             [ "${{ steps.validate.outcome }}" == "failure" ] || \
-             [ "${{ steps.typecheck.outcome }}" == "failure" ] || \
-             [ "${{ steps.test.outcome }}" == "failure" ]; then
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "⚠️ **One or more checks failed. See logs above for details.**" >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
+        run: npx turbo test -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
+        env:
+          CI: true
+          SKIP_PG_TESTS: 1
