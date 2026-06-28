@@ -17,6 +17,7 @@
     "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
+    "typecheck": "tsc --noEmit",
     "test:hub": "tsx src/scripts/test-hub.ts",
     "test:manual": "tsx src/scripts/test-script.ts",
     "rebuild:sqlite": "pnpm rebuild better-sqlite3",

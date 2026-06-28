@@ -24,6 +24,10 @@
         "CORSAIR_KEK"
       ]
     },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "clean": {},
     "format": {
       "dependsOn": ["//#format"]

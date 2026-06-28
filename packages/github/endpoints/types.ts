@@ -427,6 +427,46 @@ const UsersGetHovercardInputSchema = z.object({
 	subjectId: z.string().optional(),
 });
 
+const SearchIssuesInputSchema = z.object({
+	q: z.string(),
+	sort: z
+		.enum([
+			'comments',
+			'reactions',
+			'reactions-+1',
+			'reactions--1',
+			'reactions-smile',
+			'reactions-thinking_face',
+			'reactions-heart',
+			'reactions-tada',
+			'interactions',
+			'created',
+			'updated',
+		])
+		.optional(),
+	order: z.enum(['asc', 'desc']).optional(),
+	per_page: z.number().int().min(1).max(100).optional(),
+	page: z.number().int().min(1).optional(),
+	advanced_search: z.boolean().optional(),
+	search_type: z.enum(['semantic', 'hybrid']).optional(),
+});
+
+const SearchRepositoriesInputSchema = z.object({
+	q: z.string(),
+	sort: z.enum(['stars', 'forks', 'help-wanted-issues', 'updated']).optional(),
+	order: z.enum(['asc', 'desc']).optional(),
+	per_page: z.number().int().min(1).max(100).optional(),
+	page: z.number().int().min(1).optional(),
+});
+
+const SearchUsersInputSchema = z.object({
+	q: z.string(),
+	sort: z.enum(['followers', 'repositories', 'joined']).optional(),
+	order: z.enum(['asc', 'desc']).optional(),
+	per_page: z.number().int().min(1).max(100).optional(),
+	page: z.number().int().min(1).optional(),
+});
+
 export const GithubEndpointInputSchemas = {
 	issuesList: IssuesListInputSchema,
 	issuesGet: IssuesGetInputSchema,
@@ -476,6 +516,9 @@ export const GithubEndpointInputSchemas = {
 	usersGetAuthenticated: UsersGetAuthenticatedInputSchema,
 	usersUpdate: UsersUpdateInputSchema,
 	usersGetHovercard: UsersGetHovercardInputSchema,
+	searchIssues: SearchIssuesInputSchema,
+	searchRepositories: SearchRepositoriesInputSchema,
+	searchUsers: SearchUsersInputSchema,
 } as const;
 
 export type GithubEndpointInputs = {
@@ -965,6 +1008,55 @@ const DiscussionEndpointSchema = z.object({
 	answerChosenAt: z.coerce.date().nullable().optional(),
 });
 
+const SearchPullRequestMarkerSchema = z
+	.object({
+		url: z.string().optional(),
+		html_url: z.string().optional(),
+		diff_url: z.string().optional(),
+		patch_url: z.string().optional(),
+		merged_at: z.coerce.date().nullable().optional(),
+	})
+	.loose();
+
+const SearchIssueSchema = IssueSchema.extend({
+	score: z.number().optional(),
+	pull_request: SearchPullRequestMarkerSchema.optional(),
+	repository: RepositorySchema.optional(),
+}).loose();
+
+const SearchRepositorySchema = RepositorySchema.extend({
+	score: z.number().optional(),
+	watchers: z.number().optional(),
+}).loose();
+
+const SearchUserSchema = SimpleUserSchema.extend({
+	score: z.number().optional(),
+}).loose();
+
+const SearchIssuesResponseSchema = z
+	.object({
+		total_count: z.number(),
+		incomplete_results: z.boolean(),
+		items: z.array(SearchIssueSchema),
+	})
+	.loose();
+
+const SearchRepositoriesResponseSchema = z
+	.object({
+		total_count: z.number(),
+		incomplete_results: z.boolean(),
+		items: z.array(SearchRepositorySchema),
+	})
+	.loose();
+
+const SearchUsersResponseSchema = z
+	.object({
+		total_count: z.number(),
+		incomplete_results: z.boolean(),
+		items: z.array(SearchUserSchema),
+	})
+	.loose();
+
 export const GithubEndpointOutputSchemas = {
 	issuesList: z.array(IssueSchema),
 	issuesGet: IssueSchema,
@@ -1034,6 +1126,9 @@ export const GithubEndpointOutputSchemas = {
 			}),
 		),
 	}),
+	searchIssues: SearchIssuesResponseSchema,
+	searchRepositories: SearchRepositoriesResponseSchema,
+	searchUsers: SearchUsersResponseSchema,
 } as const;
 
 export type GithubEndpointOutputs = {
@@ -1146,4 +1241,13 @@ export type UserUpdateResponse = z.infer<
 >;
 export type UserHovercardGetResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.usersGetHovercard
+>;
+export type SearchIssuesResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.searchIssues
+>;
+export type SearchRepositoriesResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.searchRepositories
+>;
+export type SearchUsersResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.searchUsers
 >;

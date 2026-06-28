@@ -17,6 +17,9 @@ import type {
 	RepositoryCommitsListResponse,
 	RepositoryContentGetResponse,
 	RepositoryGetResponse,
+	SearchIssuesResponse,
+	SearchRepositoriesResponse,
+	SearchUsersResponse,
 	WorkflowGetResponse,
 	WorkflowRunsListResponse,
 	WorkflowsListResponse,
@@ -345,6 +348,62 @@ describe('GitHub API Type Tests', () => {
 			const result = response;
 
 			GithubEndpointOutputSchemas.workflowsListRuns.parse(result);
+		});
+	});
+
+	describe('search', () => {
+		it('searchIssues returns correct type', async () => {
+			const response = await makeGithubRequest<SearchIssuesResponse>(
+				'/search/issues',
+				TEST_TOKEN,
+				{
+					query: {
+						q: `repo:${TEST_OWNER}/${TEST_REPO} type:issue`,
+						sort: 'updated',
+						order: 'desc',
+						per_page: 5,
+					},
+				},
+			);
+			const result = response;
+
+			GithubEndpointOutputSchemas.searchIssues.parse(result);
+		});
+
+		it('searchRepositories returns correct type', async () => {
+			const response = await makeGithubRequest<SearchRepositoriesResponse>(
+				'/search/repositories',
+				TEST_TOKEN,
+				{
+					query: {
+						q: `${TEST_REPO} in:name`,
+						sort: 'updated',
+						order: 'desc',
+						per_page: 5,
+					},
+				},
+			);
+			const result = response;
+
+			GithubEndpointOutputSchemas.searchRepositories.parse(result);
+		});
+
+		it('searchUsers returns correct type', async () => {
+			const response = await makeGithubRequest<SearchUsersResponse>(
+				'/search/users',
+				TEST_TOKEN,
+				{
+					query: {
+						q: `${TEST_OWNER} in:login`,
+						sort: 'repositories',
+						order: 'desc',
+						per_page: 5,
+					},
+				},
+			);
+			const result = response;
+
+			GithubEndpointOutputSchemas.searchUsers.parse(result);
 		});
 	});
 });

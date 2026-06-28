@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "tsx watch webhooks.ts",
     "start": "tsx webhooks.ts",
-    "example": "tsx example.ts"
+    "example": "tsx example.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "corsair": "^0.1.4",

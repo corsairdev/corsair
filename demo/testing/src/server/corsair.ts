@@ -17,15 +17,15 @@ import { createCorsair } from 'corsair';
 import { sqlite } from '../db';
 
 const appUrl = process.env.APP_URL ?? 'http://localhost:3001';
-const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
-const hubSigningSecret = process.env.CORSAIR_SIGNING_SECRET!;
+const hubProjectApiKey = process.env.CORSAIR_API_KEY ?? '';
+const hubSigningSecret = process.env.CORSAIR_SIGNING_SECRET ?? '';
 // const hubApiUrl = process.env.HUB_API_URL;
 // const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
 export const corsair = createCorsair({
 	multiTenancy: false,
 	database: sqlite,
-	kek: process.env.CORSAIR_KEK!,
+	kek: process.env.CORSAIR_KEK ?? 'build-time-dummy-kek-0123456789abcdef0123456789abcdef',
 	permissions: {
 		timeout: '10m',
 		onTimeout: 'deny',
