@@ -22,6 +22,8 @@ export type ConnectSessionTokenPayload = {
 	jti: string;
 	/** Corsair project id (`proj_*`). */
 	projectId: string;
+	/** Corsair environment id (`env_*`). */
+	environmentId: string;
 	/** Tenant being set up. */
 	tenantId: string;
 	/** App delivery endpoint used for credential transfer for this session. */

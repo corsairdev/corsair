@@ -7,7 +7,7 @@ export { DEFAULT_HUB_API_URL } from './types';
 export class HubNotConfiguredError extends Error {
 	constructor() {
 		super(
-			'Hub is not configured. Pass hub: { projectApiKey, signingSecret, deliveryUrl } to createCorsair().',
+			'Hub is not configured. Pass hub: { projectApiKey, signingSecret } to createCorsair().',
 		);
 		this.name = 'HubNotConfiguredError';
 	}
@@ -20,11 +20,10 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 	);
 	const projectApiKey = input.projectApiKey.trim();
 	const signingSecret = input.signingSecret.trim();
-	const deliveryUrl = input.deliveryUrl.trim();
 
-	if (!projectApiKey || !signingSecret || !deliveryUrl) {
+	if (!projectApiKey || !signingSecret) {
 		throw new Error(
-			'Hub config requires non-empty projectApiKey, signingSecret, and deliveryUrl',
+			'Hub config requires non-empty projectApiKey and signingSecret',
 		);
 	}
 
@@ -32,7 +31,6 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		apiUrl,
 		projectApiKey,
 		signingSecret,
-		deliveryUrl,
 		oauthCallbackUrl: input.oauthCallbackUrl?.trim(),
 	};
 }
@@ -40,7 +38,6 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 function isHubConfigComplete(hub: HubConfig): boolean {
 	return (
 		hub.apiUrl.trim().length > 0 &&
-		hub.deliveryUrl.trim().length > 0 &&
 		hub.projectApiKey.trim().length > 0 &&
 		hub.signingSecret.trim().length > 0
 	);
@@ -58,5 +55,17 @@ export function resolveHubOAuthCallbackUrl(config: HubConfig): string {
 	if (config.oauthCallbackUrl) {
 		return config.oauthCallbackUrl;
 	}
-	return `${config.apiUrl.replace(/\/$/, '')}/oauth/callback`;
+	return `${config.apiUrl}/oauth/callback`;
+}
+
+export function inferHubEnvironmentSlug(apiKey: string): 'development' | 'production' {
+	if (apiKey.startsWith('ck_dev_')) {
+		return 'development';
+	}
+	if (apiKey.startsWith('ck_prod_')) {
+		return 'production';
+	}
+	throw new Error(
+		'Hub API key must start with ck_dev_ (development) or ck_prod_ (production)',
+	);
 }
