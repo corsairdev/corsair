@@ -37,6 +37,10 @@ export type HubConnectSessionResult = {
 	expiresAt?: string;
 };
 
+export type HubListProjectConnectionsInput = {
+	projectId: string;
+};
+
 export type HubPermissionSessionInput = {
 	permissionId: string;
 	permissionToken: string;
@@ -60,6 +64,7 @@ export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
 	HubOAuthRefreshResponse,
+	HubProjectConnection,
 } from './contracts/connect-api';
 export type { ConnectSourceValidationError } from './contracts/delivery-mode';
 export type {
