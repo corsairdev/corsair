@@ -81,6 +81,12 @@ export interface SetupCorsairOptions {
 	 * as runnable CLI flags instead of JS method calls.
 	 */
 	caller?: 'cli' | 'script';
+
+	/**
+	 * When true, setup messages are collected in the return value only — nothing
+	 * is written to stdout/stderr. Used for internal provisioning (e.g. Hub connect).
+	 */
+	silent?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -139,13 +145,18 @@ export async function setupCorsair<
 	options?: SetupCorsairOptions,
 ): Promise<string> {
 	const messages: string[] = [];
+	const silent = options?.silent ?? false;
 	const log: SetupLog = (msg) => {
 		messages.push(msg);
-		console.log(msg);
+		if (!silent) {
+			console.log(msg);
+		}
 	};
 	const warn: SetupWarn = (msg) => {
 		messages.push(msg);
-		console.warn(msg);
+		if (!silent) {
+			console.warn(msg);
+		}
 	};
 
 	const caller = options?.caller ?? 'script';
