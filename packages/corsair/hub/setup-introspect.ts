@@ -4,11 +4,13 @@ import {
 } from '../core/auth/plugin-auth-status';
 import type { AuthTypes } from '../core/constants';
 import { formatProviderDisplayName } from '../core/constants';
+import type { CorsairInternalConfig } from '../core/index';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getAccountFields, getPluginAuthType } from '../core/utils/plugin-auth';
+import type { CorsairDatabase } from '../db/kysely/database';
 import { generateOAuthUrl } from '../oauth';
-import { getHubConfig, resolveHubOAuthCallbackUrl } from './config';
+import { resolveHubOAuthCallbackUrl } from './config';
 import type {
 	ConnectAuthKind,
 	ConnectPluginManifestEntry,
@@ -18,7 +20,9 @@ import {
 	validateExplicitConnectSource,
 } from './contracts/delivery-mode';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
-import type { HubConnectSource, HubOAuthMode } from './types';
+import type { HubConfig, HubConnectSource, HubOAuthMode } from './types';
+
+const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
 
 const OAUTH_SYSTEM_ACCOUNT_FIELDS = new Set([
 	'access_token',
@@ -28,6 +32,13 @@ const OAUTH_SYSTEM_ACCOUNT_FIELDS = new Set([
 ]);
 
 export type { ConnectPluginManifestEntry } from './contracts/connect-api';
+
+export type ConnectManifestContext = {
+	plugins: readonly CorsairPlugin[];
+	database: CorsairDatabase | undefined;
+	kek: string;
+	hub: HubConfig;
+};
 
 export type BuildConnectPluginManifestOptions = {
 	pluginIds?: string[];
@@ -61,18 +72,33 @@ function getEditableAccountFields(
 	return accountFields.filter((field) => !isOptionalAuthField(field));
 }
 
-export async function buildConnectPluginManifest(
-	corsair: unknown,
+function toAuthStatusConfig(
+	context: ConnectManifestContext,
+): CorsairInternalConfig {
+	return {
+		plugins: context.plugins,
+		database: context.database,
+		kek: context.kek,
+		multiTenancy: false,
+	};
+}
+
+function toCorsairHandle(context: ConnectManifestContext): unknown {
+	return { [CORSAIR_INTERNAL]: toAuthStatusConfig(context) };
+}
+
+export async function buildConnectPluginManifestFromContext(
+	context: ConnectManifestContext,
 	tenantId: string,
 	options: BuildConnectPluginManifestOptions = {},
 ): Promise<ConnectPluginManifestEntry[]> {
-	const internal = getCorsairInternal(corsair);
-	const hub = getHubConfig(corsair);
-	const oauthCallbackUrl = resolveHubOAuthCallbackUrl(hub);
+	const oauthCallbackUrl = resolveHubOAuthCallbackUrl(context.hub);
 	const manifest: ConnectPluginManifestEntry[] = [];
 	const pluginIdFilter = options.pluginIds ? new Set(options.pluginIds) : null;
+	const authStatusConfig = toAuthStatusConfig(context);
+	const corsairHandle = toCorsairHandle(context);
 
-	for (const plugin of internal.plugins) {
+	for (const plugin of context.plugins) {
 		if (pluginIdFilter && !pluginIdFilter.has(plugin.id)) {
 			continue;
 		}
@@ -84,7 +110,11 @@ export async function buildConnectPluginManifest(
 		const providerName =
 			options.providerNameOverrides?.[plugin.id] ??
 			formatProviderDisplayName(plugin.id);
-		const authStatus = await getPluginAuthStatus(internal, plugin, tenantId);
+		const authStatus = await getPluginAuthStatus(
+			authStatusConfig,
+			plugin,
+			tenantId,
+		);
 		const accountFields = getAccountFields(plugin, authType);
 		const credentialFields = getEditableAccountFields(authType, accountFields);
 
@@ -108,7 +138,7 @@ export async function buildConnectPluginManifest(
 			if (!options.skipOAuthUrlGeneration) {
 				if (oauthMode !== 'managed') {
 					try {
-						const oauth = await generateOAuthUrl(corsair, plugin.id, {
+						const oauth = await generateOAuthUrl(corsairHandle, plugin.id, {
 							tenantId,
 							redirectUri: oauthCallbackUrl,
 							hubConnect: true,
@@ -130,11 +160,33 @@ export async function buildConnectPluginManifest(
 	return manifest;
 }
 
-export function resolveConnectSessionSource(
+export async function buildConnectPluginManifest(
 	corsair: unknown,
+	tenantId: string,
+	options: BuildConnectPluginManifestOptions = {},
+): Promise<ConnectPluginManifestEntry[]> {
+	const internal = getCorsairInternal(corsair);
+	const hub = internal.hub;
+	if (!hub) {
+		throw new Error('Hub is not configured');
+	}
+
+	return buildConnectPluginManifestFromContext(
+		{
+			plugins: internal.plugins,
+			database: internal.database,
+			kek: internal.kek,
+			hub,
+		},
+		tenantId,
+		options,
+	);
+}
+
+export function resolveConnectSessionSourceFromHub(
+	hub: HubConfig,
 	explicitSource?: HubConnectSource,
 ): HubConnectSource {
-	const hub = getHubConfig(corsair);
 	if (explicitSource) {
 		const validation = validateExplicitConnectSource({
 			source: explicitSource,
@@ -147,6 +199,31 @@ export function resolveConnectSessionSource(
 	}
 
 	return resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl);
+}
+
+export function resolveConnectSessionSource(
+	corsair: unknown,
+	explicitSource?: HubConnectSource,
+): HubConnectSource {
+	const internal = getCorsairInternal(corsair);
+	const hub = internal.hub;
+	if (!hub) {
+		throw new Error('Hub is not configured');
+	}
+	return resolveConnectSessionSourceFromHub(hub, explicitSource);
+}
+
+export async function ensureConnectAccountRowsFromContext(
+	context: ConnectManifestContext,
+	tenantId: string,
+): Promise<void> {
+	if (!context.database) {
+		throw new Error(
+			'A database must be configured to provision Corsair for connect',
+		);
+	}
+
+	await ensureCorsairProvisionedForTenant(toCorsairHandle(context), tenantId);
 }
 
 export async function ensureConnectAccountRows(
