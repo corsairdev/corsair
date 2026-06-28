@@ -6,7 +6,8 @@
     "set-keys": "tsx scripts/set-keys.ts",
     "test:claude-sdk": "tsx scripts/test-claude-sdk.ts",
     "test:claude-api": "tsx scripts/test-claude-api.ts",
-    "test:openai-agents": "tsx scripts/test-openai-agents.ts"
+    "test:openai-agents": "tsx scripts/test-openai-agents.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.52",
