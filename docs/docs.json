@@ -764,6 +764,10 @@
   "redirects": [
     { "source": "/", "destination": "/getting-started/introduction" },
     {
+      "source": "/studio/overview",
+      "destination": "/getting-started/introduction"
+    },
+    {
       "source": "/getting-started/installation",
       "destination": "/getting-started/setup"
     },

@@ -164,7 +164,7 @@ import { github } from '@corsair-dev/github';
 const db = new Database('corsair.db');
 
 export const corsair = createCorsair({
-    plugins: [github()],
+    plugins: [github({ authType: 'managed' })],
     database: db,
     kek: process.env.CORSAIR_KEK!,
     hub: {
