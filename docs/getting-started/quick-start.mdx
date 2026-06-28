@@ -1,10 +1,16 @@
 ---
 title: Quick Start
-description: Get a working integration in a few steps.
+description: A working integration in five steps, powered by Hub.
 ---
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
-import { WindowsEnvVarsNote, WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+
+The quickest path to a working integration is **Hub**. It hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are still encrypted and stored in your own database — Hub stores none.
+
+<Note>
+Want to host those surfaces yourself instead? Every step below is the same; you just swap the `hub` block for `manual`. See [Manual or Hub](/hub/manual-vs-hub).
+</Note>
 
 <Steps>
 
@@ -14,16 +20,16 @@ import { WindowsEnvVarsNote, WindowsMigrationNote } from '/snippets/windows-shel
 
 <CodeGroup>
 ```bash npm
-npm install corsair
+npm install corsair @corsair-dev/github
 ```
 ```bash yarn
-yarn add corsair
+yarn add corsair @corsair-dev/github
 ```
 ```bash pnpm
-pnpm install corsair
+pnpm install corsair @corsair-dev/github
 ```
 ```bash bun
-bun add corsair
+bun add corsair @corsair-dev/github
 ```
 </CodeGroup>
 
@@ -31,29 +37,30 @@ bun add corsair
 
 <Step>
 
-## Generate your encryption key
+## Set your environment
 
-Corsair encrypts every stored credential with a Key Encryption Key (KEK). Click **Generate** to create one, or run the command yourself:
+Create a project in the [Hub dashboard](https://app.corsair.dev) and copy its API key and signing secret. Then generate a KEK — Corsair encrypts every stored credential with it:
 
 <GenerateKEK />
 
+```bash .env
+CORSAIR_KEK=your-generated-kek
+CORSAIR_API_KEY=your-hub-project-key
+CORSAIR_SIGNING_SECRET=your-hub-signing-secret
+APP_URL=http://localhost:3000
+```
+
 <Warning>
-**Keep this key safe**
-If you lose it, you lose access to all stored credentials. Treat it like a root password.
+Keep your KEK safe. Lose it and you lose access to every stored credential. Treat it like a root password.
 </Warning>
 
 </Step>
 
 <Step>
 
-## Migrate the database
+## Create the database
 
-Corsair needs four tables. Run this once, then you're done.
-
-<Tabs>
-  <Tab title="SQLite">
-
-Install the driver, then run the migration:
+Corsair stores data in four tables. SQLite is the fastest way to start:
 
 <CodeGroup>
 ```bash npm
@@ -69,62 +76,7 @@ pnpm install better-sqlite3
 bun add better-sqlite3
 ```
 </CodeGroup>
-<CodeGroup>
-```bash npm
-npm install --save-dev @types/better-sqlite3
-```
-```bash yarn
-yarn add --dev @types/better-sqlite3
-```
-```bash pnpm
-pnpm install --save-dev @types/better-sqlite3
-```
-```bash bun
-bun add --dev @types/better-sqlite3
-```
-</CodeGroup>
 
-  </Tab>
-  <Tab title="PostgreSQL">
-
-Install the driver, then run the migration:
-
-<CodeGroup>
-```bash npm
-npm install pg
-```
-```bash yarn
-yarn add pg
-```
-```bash pnpm
-pnpm install pg
-```
-```bash bun
-bun add pg
-```
-</CodeGroup>
-<CodeGroup>
-```bash npm
-npm install --save-dev @types/pg
-```
-```bash yarn
-yarn add --dev @types/pg
-```
-```bash pnpm
-pnpm install --save-dev @types/pg
-```
-```bash bun
-bun add --dev @types/pg
-```
-</CodeGroup>
-
-  </Tab>
-</Tabs>
-
-<Tabs>
-  <Tab title="SQLite">
-
-<AccordionGroup>
 <Accordion title="View migration SQL">
 
 ```sql migration.sql
@@ -173,7 +125,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
 ```
 
 </Accordion>
-</AccordionGroup>
 
 <Tabs>
   <Tab title="macOS / Linux">
@@ -194,240 +145,15 @@ Get-Content migration.sql | sqlite3 corsair.db
   </Tab>
 </Tabs>
 
-  </Tab>
-  <Tab title="PostgreSQL">
-
-<Tabs>
-  <Tab title="SQL">
-
-<AccordionGroup>
-<Accordion title="View migration SQL">
-
-```sql migration.sql
-CREATE TABLE IF NOT EXISTS corsair_integrations (
-    id TEXT PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    name TEXT NOT NULL,
-    config JSONB NOT NULL DEFAULT '{}',
-    dek TEXT NULL
-);
-
-CREATE TABLE IF NOT EXISTS corsair_accounts (
-    id TEXT PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    tenant_id TEXT NOT NULL,
-    integration_id TEXT NOT NULL REFERENCES corsair_integrations(id),
-    config JSONB NOT NULL DEFAULT '{}',
-    dek TEXT NULL
-);
-
-CREATE TABLE IF NOT EXISTS corsair_entities (
-    id TEXT PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    account_id TEXT NOT NULL REFERENCES corsair_accounts(id),
-    entity_id TEXT NOT NULL,
-    entity_type TEXT NOT NULL,
-    version TEXT NOT NULL,
-    data JSONB NOT NULL DEFAULT '{}'
-);
-
-CREATE TABLE IF NOT EXISTS corsair_events (
-    id TEXT PRIMARY KEY,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    account_id TEXT NOT NULL REFERENCES corsair_accounts(id),
-    event_type TEXT NOT NULL,
-    payload JSONB NOT NULL DEFAULT '{}',
-    status TEXT
-);
-```
-
-</Accordion>
-</AccordionGroup>
-
-<Tabs>
-  <Tab title="macOS / Linux">
-
-```bash
-psql $DATABASE_URL -f migration.sql
-```
-
-  </Tab>
-  <Tab title="Windows (PowerShell)">
-
-<WindowsMigrationNote />
-
-```powershell
-psql $env:DATABASE_URL -f migration.sql
-```
-
-  </Tab>
-</Tabs>
-
-  </Tab>
-  <Tab title="Drizzle">
-
-<AccordionGroup>
-<Accordion title="View Drizzle schema">
-
-```ts src/server/db/schema.ts
-import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
-
-export const corsairIntegrations = pgTable('corsair_integrations', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    name: text('name').notNull(),
-    config: jsonb('config').notNull().default({}),
-    dek: text('dek'),
-});
-
-export const corsairAccounts = pgTable('corsair_accounts', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    tenantId: text('tenant_id').notNull(),
-    integrationId: text('integration_id').notNull().references(() => corsairIntegrations.id),
-    config: jsonb('config').notNull().default({}),
-    dek: text('dek'),
-});
-
-export const corsairEntities = pgTable('corsair_entities', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
-    entityId: text('entity_id').notNull(),
-    entityType: text('entity_type').notNull(),
-    version: text('version').notNull(),
-    data: jsonb('data').notNull().default({}),
-});
-
-export const corsairEvents = pgTable('corsair_events', {
-    id: text('id').primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
-    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
-    eventType: text('event_type').notNull(),
-    payload: jsonb('payload').notNull().default({}),
-    status: text('status'),
-});
-```
-
-</Accordion>
-</AccordionGroup>
-
-Then push the schema to your database:
-
-```bash
-npx drizzle-kit push
-```
-
-  </Tab>
-  <Tab title="Prisma">
-
-<AccordionGroup>
-<Accordion title="View Prisma schema">
-
-```prisma schema.prisma
-model CorsairIntegration {
-  id        String           @id
-  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime         @updatedAt @map("updated_at") @db.Timestamptz
-  name      String
-  config    Json             @default("{}")
-  dek       String?
-  accounts  CorsairAccount[]
-
-  @@map("corsair_integrations")
-}
-
-model CorsairAccount {
-  id            String             @id
-  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
-  tenantId      String             @map("tenant_id")
-  integrationId String             @map("integration_id")
-  config        Json               @default("{}")
-  dek           String?
-  integration   CorsairIntegration @relation(fields: [integrationId], references: [id])
-  entities      CorsairEntity[]
-  events        CorsairEvent[]
-
-  @@map("corsair_accounts")
-}
-
-model CorsairEntity {
-  id         String         @id
-  createdAt  DateTime       @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt  DateTime       @updatedAt @map("updated_at") @db.Timestamptz
-  accountId  String         @map("account_id")
-  entityId   String         @map("entity_id")
-  entityType String         @map("entity_type")
-  version    String
-  data       Json           @default("{}")
-  account    CorsairAccount @relation(fields: [accountId], references: [id])
-
-  @@map("corsair_entities")
-}
-
-model CorsairEvent {
-  id        String         @id
-  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz
-  accountId String         @map("account_id")
-  eventType String         @map("event_type")
-  payload   Json           @default("{}")
-  status    String?
-  account   CorsairAccount @relation(fields: [accountId], references: [id])
-
-  @@map("corsair_events")
-}
-```
-
-</Accordion>
-</AccordionGroup>
-
-Then run the migration:
-
-```bash
-npx prisma migrate dev
-```
-
-  </Tab>
-</Tabs>
-
-  </Tab>
-</Tabs>
+Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) for each option.
 
 </Step>
 
 <Step>
 
-## Install GitHub plugin and create corsair.ts
+## Configure Corsair
 
-<CodeGroup>
-```bash npm
-npm install @corsair-dev/github
-```
-```bash yarn
-yarn add @corsair-dev/github
-```
-```bash pnpm
-pnpm install @corsair-dev/github
-```
-```bash bun
-bun add @corsair-dev/github
-```
-</CodeGroup> 
-
-This is the one file that wires everything together. Create it at `src/server/corsair.ts`:
-
-<Tabs>
-<Tab title="SQLite">
+Wire your database, KEK, and Hub keys together in `src/server/corsair.ts`:
 
 ```ts src/server/corsair.ts
 import 'dotenv/config';
@@ -441,545 +167,50 @@ export const corsair = createCorsair({
     plugins: [github()],
     database: db,
     kek: process.env.CORSAIR_KEK!,
-    multiTenancy: false,
+    hub: {
+        projectApiKey: process.env.CORSAIR_API_KEY!,
+        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+        deliveryUrl: `${process.env.APP_URL}/api/corsair`,
+    },
 });
 ```
 
-</Tab>
-<Tab title="PostgreSQL">
+Mount the handler once — it serves Hub delivery and the management API:
 
-<Tabs>
-<Tab title="SQL">
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from 'corsair';
+import { corsair } from '@/server/corsair';
 
-```ts src/server/corsair.ts
-import 'dotenv/config';
-import { Pool } from 'pg';
-import { createCorsair } from 'corsair';
-import { github } from '@corsair-dev/github';
-
-const db = new Pool({ connectionString: process.env.DATABASE_URL });
-
-export const corsair = createCorsair({
-    plugins: [github()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
-    multiTenancy: false,
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+    basePath: '/api/corsair',
 });
 ```
 
-</Tab>
-<Tab title="Drizzle / Prisma">
-
-Pass the **underlying `pg` Pool** to Corsair — not the ORM client. Use Drizzle or Prisma for your own app tables on the same pool.
-
-**Drizzle:**
-
-```ts src/server/corsair.ts
-import 'dotenv/config';
-import { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { createCorsair } from 'corsair';
-import { github } from '@corsair-dev/github';
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(pool); // your app tables
-
-export const corsair = createCorsair({
-    plugins: [github()],
-    database: pool,
-    kek: process.env.CORSAIR_KEK!,
-    multiTenancy: false,
-});
-```
-
-**Prisma:**
-
-```ts src/server/corsair.ts
-import 'dotenv/config';
-import { Pool } from 'pg';
-import { PrismaClient } from '@prisma/client';
-import { createCorsair } from 'corsair';
-import { github } from '@corsair-dev/github';
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const prisma = new PrismaClient(); // your app tables
-
-export const corsair = createCorsair({
-    plugins: [github()],
-    database: pool,
-    kek: process.env.CORSAIR_KEK!,
-    multiTenancy: false,
-});
-```
-
-See [Database](/concepts/database) for SQLite, postgres.js, and Kysely options.
-
-</Tab>
-</Tabs>
-
-</Tab>
-</Tabs>
-
-You'll add more plugins here later — `slack()`, `linear()`, `gmail()` — same pattern, just append to the array.
-
-<AccordionGroup>
-<Accordion title="CORSAIR_KEK not loading?">
-
-If `process.env.CORSAIR_KEK` is `undefined` at runtime, your `.env` file isn't being picked up. Install dotenv and add one line at the top of `src/server/corsair.ts`:
-
-<CodeGroup>
-```bash npm
-npm install dotenv
-```
-```bash yarn
-yarn add dotenv
-```
-```bash pnpm
-pnpm install dotenv
-```
-```bash bun
-bun add dotenv
-```
-</CodeGroup>
-
-```ts src/server/corsair.ts
-import 'dotenv/config'; // add this line
-import Database from 'better-sqlite3';
-// ...
-```
-
-</Accordion>
-</AccordionGroup>
+Add more plugins later — `slack()`, `linear()`, `gmail()` — by appending to the array.
 
 </Step>
 
 <Step>
 
-## Add your GitHub token and run setup
+## Connect and call
 
-Use Corsair with any integration. Here's an example of how to get started with Github.
+Mint a connect link and send the user to it. Hub hosts the connect page and delivers the result back to your app — no connect page or OAuth callback to build:
 
-1. Go to **[GitHub → Settings → Developer settings → Personal access tokens (classic)](https://github.com/settings/tokens)**
-2. Click **Generate new token (classic)**
-3. Select scopes: `repo`, `read:org`, `read:user`
-4. Copy the token — it starts with `ghp_`
-
-<Tabs>
-  <Tab title="macOS / Linux">
-
-```bash
-export GITHUB_TOKEN=ghp_...
-```
-
-  </Tab>
-  <Tab title="Windows (PowerShell)">
-
-```powershell
-$env:GITHUB_TOKEN = "ghp_..."
-```
-
-<WindowsEnvVarsNote />
-
-  </Tab>
-</Tabs>
-
-Run setup once with the Corsair CLI:
-
-<CodeGroup>
-```bash npm
-npm install @corsair-dev/cli
-```
-```bash yarn
-yarn add @corsair-dev/cli
-```
-```bash pnpm
-pnpm install @corsair-dev/cli
-```
-```bash bun
-bun add @corsair-dev/cli
-```
-</CodeGroup>
-
-<Tabs>
-  <Tab title="macOS / Linux">
-
-<CodeGroup>
-```bash npm
-npx corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
-```
-```bash yarn
-yarn corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
-```
-```bash pnpm
-pnpm corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
-```
-```bash bun
-bunx corsair setup --plugin=github api_key=$GITHUB_TOKEN --backfill
-```
-</CodeGroup>
-
-  </Tab>
-  <Tab title="Windows (PowerShell)">
-
-<CodeGroup>
-```bash npm
-npx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
-```
-```bash yarn
-yarn corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
-```
-```bash pnpm
-pnpm corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
-```
-```bash bun
-bunx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN --backfill
-```
-</CodeGroup>
-
-  </Tab>
-</Tabs>
-
-<AccordionGroup>
-<Accordion title="pnpm: command not found or setup fails?">
-
-If `pnpm corsair` isn't found, add this to your `package.json` so pnpm builds the native dependency correctly:
-
-```json package.json
-{
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "better-sqlite3"
-    ]
-  }
-}
-```
-
-Then re-run `pnpm install` and retry the setup command.
-
-</Accordion>
-</AccordionGroup>
-
-Corsair stores your token, creates the database rows, and fetches your GitHub data locally. Your agent can now query it instantly — no API call needed every time.
-
-</Step>
-
-<Step>
-
-## Interact with Corsair
-
-There's multiple ways to use Corsair. Here's three easy ways:
-
-<Tabs>
-
-<Tab title="MCP / Agent">
-
-Let the agent discover and call endpoints on its own. You prompt in plain English — Corsair handles the rest.
-
-Install the MCP adapter alongside your preferred framework:
-
-<AccordionGroup>
-
-<Accordion title="Anthropic SDK">
-
-<CodeGroup>
-```bash npm
-npm install @corsair-dev/mcp @anthropic-ai/sdk
-```
-```bash yarn
-yarn add @corsair-dev/mcp @anthropic-ai/sdk
-```
-```bash pnpm
-pnpm install @corsair-dev/mcp @anthropic-ai/sdk
-```
-```bash bun
-bun add @corsair-dev/mcp @anthropic-ai/sdk
-```
-</CodeGroup>
-
-```ts agent.ts
-import Anthropic from '@anthropic-ai/sdk';
-import { AnthropicProvider } from '@corsair-dev/mcp';
-import { corsair } from './src/server/corsair';
-
-async function main() {
-    const provider = new AnthropicProvider();
-    const tools = provider.build({ corsair });
-    const client = new Anthropic();
-
-    const message = await client.beta.messages.toolRunner({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 4096,
-        tools,
-        messages: [{
-            role: 'user',
-            content: 'Use Corsair to list my GitHub repos with the most open issues.',
-        }],
-    });
-
-    for (const block of message.content) {
-        if (block.type === 'text') console.log(block.text);
-    }
-}
-
-main().catch(console.error);
-```
-
-</Accordion>
-
-<Accordion title="Claude Agent SDK">
-
-<CodeGroup>
-```bash npm
-npm install @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
-```
-```bash yarn
-yarn add @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
-```
-```bash pnpm
-pnpm install @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
-```
-```bash bun
-bun add @corsair-dev/mcp @anthropic-ai/claude-agent-sdk
-```
-</CodeGroup>
-
-```ts agent.ts
-import { createSdkMcpServer, query } from '@anthropic-ai/claude-agent-sdk';
-import { ClaudeProvider } from '@corsair-dev/mcp';
-import { corsair } from './src/server/corsair';
-
-async function main() {
-    const provider = new ClaudeProvider();
-    const tools = await provider.build({ corsair });
-    const server = createSdkMcpServer({ name: 'corsair', tools });
-
-    const stream = query({
-        prompt: 'Use Corsair to list my GitHub repos with the most open issues.',
-        options: {
-            model: 'claude-opus-4-6',
-            mcpServers: { corsair: server },
-            allowedTools: ['mcp__corsair__corsair_setup', 'mcp__corsair__list_operations', 'mcp__corsair__get_schema', 'mcp__corsair__run_script'],
-        },
-    });
-
-    for await (const event of stream) {
-        if ('result' in event) process.stdout.write(event.result);
-    }
-}
-
-main().catch(console.error);
-```
-
-</Accordion>
-
-<Accordion title="OpenAI Agents">
-
-<CodeGroup>
-```bash npm
-npm install @corsair-dev/mcp @openai/agents
-```
-```bash yarn
-yarn add @corsair-dev/mcp @openai/agents
-```
-```bash pnpm
-pnpm install @corsair-dev/mcp @openai/agents
-```
-```bash bun
-bun add @corsair-dev/mcp @openai/agents
-```
-</CodeGroup>
-
-```ts agent.ts
-import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
-import { Agent, run, tool } from '@openai/agents';
-import { corsair } from './src/server/corsair';
-
-async function main() {
-    const provider = new OpenAIAgentsProvider();
-    const tools = provider.build({ corsair, tool });
-
-    const agent = new Agent({
-        name: 'corsair-agent',
-        model: 'gpt-4.1',
-        instructions:
-            'You have access to Corsair tools. Use list_operations to discover ' +
-            'available APIs, get_schema to understand arguments, and run_script ' +
-            'to execute them.',
-        tools,
-    });
-
-    const result = await run(agent, 'Use Corsair. List my GitHub repos with the most open issues.');
-    console.log(result.finalOutput);
-}
-
-main().catch(console.error);
-```
-
-</Accordion>
-
-</AccordionGroup>
-
-Your agent gets four tools automatically — regardless of which framework you use:
-
-| Tool | What it does |
-|---|---|
-| `corsair_setup` | Check auth and get credential instructions |
-| `list_operations` | Discover every available API endpoint |
-| `get_schema` | Inspect parameters for a specific endpoint |
-| `run_script` | Execute a JS snippet with `corsair` in scope |
-
-See [MCP Adapters](/mcp-adapters/mcp-adapters) for Vercel AI SDK, Mastra, and more.
-
-</Tab>
-
-<Tab title="CLI">
-
-<CodeGroup>
-```bash npm
-npm install @corsair-dev/cli
-```
-```bash yarn
-yarn add @corsair-dev/cli
-```
-```bash pnpm
-pnpm install @corsair-dev/cli
-```
-```bash bun
-bun add @corsair-dev/cli
-```
-</CodeGroup>
-
-Check credentials and initialize a plugin:
-
-<Tabs>
-  <Tab title="macOS / Linux">
-
-<CodeGroup>
-```bash npm
-npx corsair setup --plugin=github api_key=$GITHUB_TOKEN
-```
-```bash yarn
-yarn corsair setup --plugin=github api_key=$GITHUB_TOKEN
-```
-```bash pnpm
-pnpm corsair setup --plugin=github api_key=$GITHUB_TOKEN
-```
-```bash bun
-bunx corsair setup --plugin=github api_key=$GITHUB_TOKEN
-```
-</CodeGroup>
-
-  </Tab>
-  <Tab title="Windows (PowerShell)">
-
-<CodeGroup>
-```bash npm
-npx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
-```
-```bash yarn
-yarn corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
-```
-```bash pnpm
-pnpm corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
-```
-```bash bun
-bunx corsair setup --plugin=github api_key=$env:GITHUB_TOKEN
-```
-</CodeGroup>
-
-  </Tab>
-</Tabs>
-
-Authenticate a plugin that uses OAuth:
-
-<CodeGroup>
-```bash npm
-npx corsair auth --plugin=slack
-```
-```bash yarn
-yarn corsair auth --plugin=slack
-```
-```bash pnpm
-pnpm corsair auth --plugin=slack
-```
-```bash bun
-bunx corsair auth --plugin=slack
-```
-</CodeGroup>
-
-List available operations for a plugin:
-
-<CodeGroup>
-```bash npm
-npx corsair list --plugin=github
-```
-```bash yarn
-yarn corsair list --plugin=github
-```
-```bash pnpm
-pnpm corsair list --plugin=github
-```
-```bash bun
-bunx corsair list --plugin=github
-```
-</CodeGroup>
-
-Run a script with `corsair` injected — use `return` to output a value:
-
-<CodeGroup>
-```bash npm
-npx corsair script --code "return await corsair.github.api.repositories.list({})"
-```
-```bash yarn
-yarn corsair script --code "return await corsair.github.api.repositories.list({})"
-```
-```bash pnpm
-pnpm corsair script --code "return await corsair.github.api.repositories.list({})"
-```
-```bash bun
-bunx corsair script --code "return await corsair.github.api.repositories.list({})"
-```
-</CodeGroup>
-
-</Tab>
-
-<Tab title="Direct (Hardcode)">
-
-Call any endpoint from plain TypeScript — no agent, no framework required.
-
-The pattern is always: **`corsair.[plugin].[api | db].[group].[method]()`**
-
-**API — live calls to GitHub:**
-
-```ts
-// Get a specific repo
-const repo = await corsair.github.api.repositories.get({
-    owner: 'octocat',
-    repo: 'hello-world',
+```ts connect.ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+    plugin: 'github',
+    tenantId: 'acme',
 });
-
-console.log(repo.name); // "hello-world"
+// redirect the user's browser to connectUrl
 ```
 
-**DB — query what's already cached locally:**
+Once connected, call any endpoint. Responses are also cached in your database for instant reads:
 
-After backfill runs (or after any API call), data lives in your database. Query it without touching the GitHub API:
-
-```ts
-// Every repo you've fetched — instant, no network
-const repos = await corsair.github.db.repositories.search({});
-
-// Filter in JS using camelCase data fields
-const withIssues = repos.filter((r) => Number(r.data?.openIssuesCount ?? 0) > 0);
-
-for (const repo of withIssues) {
-    console.log(`${repo.data?.name} — ${repo.data?.openIssuesCount} open issues`);
-}
+```ts usage.ts
+const repos = await corsair.github.api.repositories.list({});
 ```
 
-</Tab>
-
-</Tabs>
+Want an agent to call endpoints on its own? See [MCP Adapters](/mcp-adapters/mcp-adapters).
 
 </Step>
 
@@ -990,16 +221,16 @@ for (const repo of withIssues) {
 ## What's next
 
 <CardGroup cols={2}>
-  <Card title="Set up Webhooks" href="/concepts/webhooks">
-    Get ngrok running, register your endpoint, and react to GitHub stars and PR events in real time.
+  <Card title="Use with AI" href="/mcp-adapters/mcp-adapters">
+    Give an agent the four Corsair tools and let it discover and call any endpoint.
   </Card>
-  <Card title="Vibe Code Your Dashboard" href="/guides/dashboard">
-    Scaffold a Next.js + tRPC + SQLite project and build a live GitHub dashboard — just copy the prompt.
+  <Card title="Hub overview" href="/hub/overview">
+    How the relay works, and why Hub stores none of your credentials.
   </Card>
   <Card title="Multi-Tenancy" href="/concepts/multi-tenancy">
     Building a product? Flip one flag and every user gets their own data and credentials.
   </Card>
-  <Card title="Workflows" href="/guides/workflows">
-    Chain events across plugins — PR merged → Slack notification → Linear issue, all in TypeScript.
+  <Card title="Database options" href="/concepts/database">
+    Postgres, Drizzle, Prisma, and the four tables Corsair uses.
   </Card>
 </CardGroup>

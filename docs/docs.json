@@ -59,10 +59,10 @@
             ]
           },
           {
-            "group": "Use with AI",
+            "group": "Adapters",
             "pages": [
               {
-                "group": "MCP Adapters",
+                "group": "MCP",
                 "pages": [
                   "mcp-adapters/mcp-adapters",
                   "mcp-adapters/anthropic-sdk",
@@ -80,30 +80,41 @@
                   "mcp-adapters/claude-code",
                   "mcp-adapters/cursor"
                 ]
+              },
+              {
+                "group": "Workflow Engines",
+                "pages": [
+                  "guides/inngest",
+                  "guides/temporal",
+                  "guides/trigger-dev",
+                  "guides/hatchet"
+                ]
               }
             ]
           },
           {
-            "group": "Management API",
+            "group": "Reference",
             "pages": [
-              "management/overview",
-              "management/handler",
-              "management/client",
-              "management/react",
-              "management/connect"
+              {
+                "group": "Client",
+                "expanded": false,
+                "pages": [
+                  "management/overview",
+                  "management/handler",
+                  "management/client",
+                  "management/react",
+                  "management/connect"
+                ]
+              }
             ]
           },
           {
-            "group": "Studio",
-            "pages": ["studio/overview"]
-          },
-          {
-            "group": "Workflow Engines",
+            "group": "Hub",
             "pages": [
-              "guides/inngest",
-              "guides/temporal",
-              "guides/trigger-dev",
-              "guides/hatchet"
+              "hub/overview",
+              "hub/manual-vs-hub",
+              "hub/delivery-urls",
+              "hub/permissions"
             ]
           }
         ]
@@ -740,10 +751,10 @@
           {
             "group": "Guides",
             "pages": [
-              "guides/webhooks",
-              "guides/workflows",
               "guides/dashboard",
-              "guides/plugin-credentials"
+              "guides/plugin-credentials",
+              "guides/webhooks",
+              "guides/workflows"
             ]
           }
         ]
