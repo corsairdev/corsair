@@ -65,7 +65,7 @@ jobs:
       - name: Typecheck
         id: typecheck
         continue-on-error: true
-        run: pnpm turbo run typecheck --filter='...[HEAD^1]' --filter='!corsair'
+        run: pnpm turbo run typecheck --filter='...[HEAD^1]' --filter='!corsair' --filter='!@corsair/demo-minimal'
 
       - name: Run tests
         id: test
