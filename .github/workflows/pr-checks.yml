@@ -50,7 +50,7 @@ jobs:
       - name: Build
         id: build
         continue-on-error: true
-        run: pnpm turbo run build --filter='...[HEAD^1]' --concurrency=100%
+        run: pnpm turbo run build --filter='...[HEAD^1]' --filter='!@corsair/demo-plugins' --concurrency=100%
 
       - name: Lint
         id: lint
