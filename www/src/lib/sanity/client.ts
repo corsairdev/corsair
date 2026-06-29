@@ -1,5 +1,6 @@
 import createImageUrlBuilder from '@sanity/image-url';
-import { createClient, type SanityClient } from 'next-sanity';
+import type { SanityClient } from 'next-sanity';
+import { createClient } from 'next-sanity';
 
 import {
 	sanityApiVersion,
@@ -47,7 +48,9 @@ export function getSanityWriteClient(): SanityClient | null {
 	return writeClient;
 }
 
-export function urlForImage(source: Parameters<ReturnType<typeof createImageUrlBuilder>['image']>[0]) {
+export function urlForImage(
+	source: Parameters<ReturnType<typeof createImageUrlBuilder>['image']>[0],
+) {
 	if (!projectId) {
 		throw new Error('Missing NEXT_PUBLIC_SANITY_PROJECT_ID');
 	}

@@ -34,11 +34,13 @@ import type {
 	MessageLabelChangedEvent,
 	MessageReceivedEvent,
 } from './webhooks';
-import type { GmailWebhookEventType } from './webhooks/types';
 import { MessageWebhooks } from './webhooks';
 import { resolveGmailOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchGmailTenantWebhook } from './webhooks/tenant-matcher';
-import type { PubSubNotification } from './webhooks/types';
+import type {
+	GmailWebhookEventType,
+	PubSubNotification,
+} from './webhooks/types';
 import {
 	decodePubSubMessage,
 	GmailWebhookEventSchema,

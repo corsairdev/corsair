@@ -62,7 +62,9 @@ export function resolveHubOAuthCallbackUrl(config: HubConfig): string {
 	return `${stripTrailingSlash(config.apiUrl)}/oauth/callback`;
 }
 
-export function inferHubEnvironmentSlug(apiKey: string): 'development' | 'production' {
+export function inferHubEnvironmentSlug(
+	apiKey: string,
+): 'development' | 'production' {
 	if (apiKey.startsWith('ck_dev_')) {
 		return 'development';
 	}

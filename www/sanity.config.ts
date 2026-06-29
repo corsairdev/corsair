@@ -16,7 +16,9 @@ export default defineConfig({
 	basePath: '/studio',
 	plugins: [
 		structureTool({ structure }),
-		...(process.env.NODE_ENV === 'development' ? [visionTool({ defaultApiVersion: sanityApiVersion })] : []),
+		...(process.env.NODE_ENV === 'development'
+			? [visionTool({ defaultApiVersion: sanityApiVersion })]
+			: []),
 	],
 	schema: {
 		types: schemaTypes,

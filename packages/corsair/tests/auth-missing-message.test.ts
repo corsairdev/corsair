@@ -133,7 +133,9 @@ describe('resolveAuthMissingConnectMessage', () => {
 	});
 
 	it('returns fallback message when hub session creation fails', async () => {
-		createHubConnectSessionForPlugin.mockRejectedValueOnce(new Error('hub down'));
+		createHubConnectSessionForPlugin.mockRejectedValueOnce(
+			new Error('hub down'),
+		);
 
 		const msg = await resolveAuthMissingConnectMessage({
 			hub,

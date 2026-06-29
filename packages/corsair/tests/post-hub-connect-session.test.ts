@@ -58,8 +58,8 @@ describe('postHubConnectSession', () => {
 	it('includes auto-detected deliveryUrl for development keys', async () => {
 		const previousPort = process.env.PORT;
 		process.env.PORT = '3001';
-		delete process.env.CORSAIR_DELIVERY_URL;
-		delete process.env.APP_URL;
+		process.env.CORSAIR_DELIVERY_URL = undefined;
+		process.env.APP_URL = undefined;
 
 		const { fetchMock, getRequestBody } = mockHubConnectFetch();
 		global.fetch = fetchMock;
@@ -77,7 +77,7 @@ describe('postHubConnectSession', () => {
 			});
 		} finally {
 			if (previousPort === undefined) {
-				delete process.env.PORT;
+				process.env.PORT = undefined;
 			} else {
 				process.env.PORT = previousPort;
 			}

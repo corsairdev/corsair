@@ -96,11 +96,7 @@ export async function makeGithubRequest<T>(
 	} catch (error) {
 		if (isUnauthorizedError(error) && refreshAuth) {
 			const freshToken = await refreshAuth();
-			return await makeGithubRequestWithToken<T>(
-				endpoint,
-				freshToken,
-				options,
-			);
+			return await makeGithubRequestWithToken<T>(endpoint, freshToken, options);
 		}
 		throw error;
 	}

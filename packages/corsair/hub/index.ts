@@ -56,7 +56,6 @@ export {
 	usesBrowserDelivery,
 	validateProductionDeliveryUrl,
 } from './contracts/environment';
-export { resolveHubDeliveryUrl } from './resolve-delivery-url';
 export {
 	type BrowserDeliveryMode,
 	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
@@ -87,6 +86,7 @@ export {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from './permission';
+export { resolveHubDeliveryUrl } from './resolve-delivery-url';
 export { createHubRouteHandlers } from './route-handlers';
 export {
 	BROWSER_DELIVERY_TTL_MS,

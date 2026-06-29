@@ -95,9 +95,7 @@ function isNonEmptyString(value: unknown): value is string {
 function isHubConnectionStatus(
 	value: unknown,
 ): value is HubProjectConnection['status'] {
-	return (
-		value === 'pending' || value === 'connected' || value === 'failed'
-	);
+	return value === 'pending' || value === 'connected' || value === 'failed';
 }
 
 function isConnectAuthKindValue(value: unknown): value is ConnectAuthKind {

@@ -25,7 +25,9 @@ export async function createHubPermissionSession(
 	};
 
 	if (environmentSlug === 'development') {
-		body.deliveryUrl = resolveHubDeliveryUrl({ deliveryUrl: input.deliveryUrl });
+		body.deliveryUrl = resolveHubDeliveryUrl({
+			deliveryUrl: input.deliveryUrl,
+		});
 	}
 
 	return hubApiPost({

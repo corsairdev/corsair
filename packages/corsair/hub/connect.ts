@@ -1,16 +1,16 @@
-import type { CorsairDatabase } from '../db/kysely/database';
 import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
+import type { CorsairDatabase } from '../db/kysely/database';
 import { hubApiPost } from './client/http';
 import { getHubConfig, inferHubEnvironmentSlug } from './config';
-import { parseConnectSessionResponse } from './contracts/connect-api';
 import type { ConnectPluginManifestEntry } from './contracts/connect-api';
+import { parseConnectSessionResponse } from './contracts/connect-api';
+import { resolveHubDeliveryUrl } from './resolve-delivery-url';
+import type { ConnectManifestContext } from './setup-introspect';
 import {
 	buildConnectPluginManifestFromContext,
 	ensureConnectAccountRowsFromContext,
 } from './setup-introspect';
-import type { ConnectManifestContext } from './setup-introspect';
-import { resolveHubDeliveryUrl } from './resolve-delivery-url';
 import type {
 	HubConfig,
 	HubConnectSessionInput,
@@ -43,7 +43,9 @@ export async function postHubConnectSession(
 	};
 
 	if (environmentSlug === 'development') {
-		body.deliveryUrl = resolveHubDeliveryUrl({ deliveryUrl: input.deliveryUrl });
+		body.deliveryUrl = resolveHubDeliveryUrl({
+			deliveryUrl: input.deliveryUrl,
+		});
 	}
 
 	return hubApiPost({

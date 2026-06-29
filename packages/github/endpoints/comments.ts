@@ -28,11 +28,9 @@ async function upsertComment(
 export const list: GithubEndpoints['commentsList'] = async (ctx, input) => {
 	const { owner, repo, ...queryParams } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/comments`;
-	const result = await makeGithubRequest<CommentsListResponse>(
-		endpoint,
-		ctx,
-		{ query: queryParams },
-	);
+	const result = await makeGithubRequest<CommentsListResponse>(endpoint, ctx, {
+		query: queryParams,
+	});
 
 	if (result) {
 		try {
@@ -59,11 +57,9 @@ export const listForIssue: GithubEndpoints['commentsListForIssue'] = async (
 ) => {
 	const { owner, repo, issueNumber, ...queryParams } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/${issueNumber}/comments`;
-	const result = await makeGithubRequest<CommentsListResponse>(
-		endpoint,
-		ctx,
-		{ query: queryParams },
-	);
+	const result = await makeGithubRequest<CommentsListResponse>(endpoint, ctx, {
+		query: queryParams,
+	});
 
 	if (result) {
 		try {
@@ -109,11 +105,10 @@ export const get: GithubEndpoints['commentsGet'] = async (ctx, input) => {
 export const update: GithubEndpoints['commentsUpdate'] = async (ctx, input) => {
 	const { owner, repo, commentId, body } = input;
 	const endpoint = `/repos/${owner}/${repo}/issues/comments/${commentId}`;
-	const result = await makeGithubRequest<CommentUpdateResponse>(
-		endpoint,
-		ctx,
-		{ method: 'PATCH', body: { body } },
-	);
+	const result = await makeGithubRequest<CommentUpdateResponse>(endpoint, ctx, {
+		method: 'PATCH',
+		body: { body },
+	});
 
 	if (result) {
 		try {
