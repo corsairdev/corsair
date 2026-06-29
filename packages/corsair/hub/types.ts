@@ -1,4 +1,4 @@
-export type HubConnectSource = 'client' | 'server';
+export type HubEnvironmentSlug = 'development' | 'production';
 
 export type HubOAuthMode = 'byo' | 'managed';
 
@@ -7,7 +7,6 @@ export const DEFAULT_HUB_API_URL = 'https://auth.corsair.dev';
 export type HubConfigInput = {
 	projectApiKey: string;
 	signingSecret: string;
-	deliveryUrl: string;
 	apiUrl?: string;
 	oauthCallbackUrl?: string;
 };
@@ -16,7 +15,6 @@ export type HubConfig = {
 	apiUrl: string;
 	projectApiKey: string;
 	signingSecret: string;
-	deliveryUrl: string;
 	oauthCallbackUrl?: string;
 };
 
@@ -24,8 +22,8 @@ export type HubConnectSessionInput = {
 	/** When omitted, the connect link covers all configured plugins. */
 	plugin?: string;
 	tenantId: string;
-	/** Inferred from hub deliveryUrl when omitted (loopback → client, else server). */
-	source?: HubConnectSource;
+	/** Override auto-detected delivery URL (development only). */
+	deliveryUrl?: string;
 	providerName?: string;
 	oauthMode?: HubOAuthMode;
 };
@@ -34,6 +32,7 @@ export type HubConnectSessionResult = {
 	connectUrl: string;
 	token: string;
 	projectId: string;
+	environmentId: string;
 	expiresAt?: string;
 };
 
@@ -49,6 +48,7 @@ export type HubPermissionSessionInput = {
 	args: unknown;
 	tenantId: string;
 	expiresAt: string;
+	deliveryUrl?: string;
 };
 
 export type HubPermissionSessionResult = {
@@ -66,7 +66,7 @@ export type {
 	HubOAuthRefreshResponse,
 	HubProjectConnection,
 } from './contracts/connect-api';
-export type { ConnectSourceValidationError } from './contracts/delivery-mode';
+export type { DeliveryTransport } from './contracts/environment';
 export type {
 	BrowserDeliveryMode,
 	TunnelEnvelope,

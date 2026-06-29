@@ -58,8 +58,8 @@ export type ConnectStatusResponse = {
 
 export type CreateConnectSessionRequestBody = {
 	tenantId: string;
-	deliveryUrl: string;
-	source?: 'client' | 'server';
+	/** Required for development environment; ignored for production. */
+	deliveryUrl?: string;
 	plugins: ConnectPluginManifestEntry[];
 };
 
@@ -70,7 +70,8 @@ export type CreatePermissionSessionRequestBody = {
 	endpoint: string;
 	args: unknown;
 	tenantId: string;
-	deliveryUrl: string;
+	/** Required for development environment; ignored for production. */
+	deliveryUrl?: string;
 	expiresAt: string;
 };
 
@@ -126,6 +127,9 @@ export function parseConnectSessionResponse(
 		connectUrl: session.connectUrl,
 		token: session.token,
 		projectId: session.projectId,
+		environmentId: isNonEmptyString(session.environmentId)
+			? session.environmentId
+			: session.projectId,
 	};
 
 	if (isNonEmptyString(session.expiresAt)) {

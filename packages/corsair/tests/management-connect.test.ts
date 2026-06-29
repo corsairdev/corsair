@@ -389,9 +389,8 @@ describe('corsair.manage.connect — hub mode', () => {
 			database: env.db,
 			kek: KEK,
 			hub: {
-				projectApiKey: 'project-key',
+				projectApiKey: 'ck_dev_test_key',
 				signingSecret: 'signing-secret',
-				deliveryUrl: 'http://localhost:3001/api/corsair',
 			},
 		} as any);
 		await setupCorsair(corsair);
@@ -436,9 +435,8 @@ describe('corsair.manage.connect — hub mode', () => {
 			database: env.db,
 			kek: KEK,
 			hub: {
-				projectApiKey: 'project-key',
+				projectApiKey: 'ck_dev_test_key',
 				signingSecret: 'signing-secret',
-				deliveryUrl: 'http://localhost:3001/api/corsair',
 			},
 		} as any);
 

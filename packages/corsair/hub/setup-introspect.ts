@@ -13,12 +13,8 @@ import type {
 	ConnectAuthKind,
 	ConnectPluginManifestEntry,
 } from './contracts/connect-api';
-import {
-	resolveConnectSourceFromDeliveryUrl,
-	validateExplicitConnectSource,
-} from './contracts/delivery-mode';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
-import type { HubConnectSource, HubOAuthMode } from './types';
+import type { HubOAuthMode } from './types';
 
 const OAUTH_SYSTEM_ACCOUNT_FIELDS = new Set([
 	'access_token',
@@ -128,25 +124,6 @@ export async function buildConnectPluginManifest(
 	}
 
 	return manifest;
-}
-
-export function resolveConnectSessionSource(
-	corsair: unknown,
-	explicitSource?: HubConnectSource,
-): HubConnectSource {
-	const hub = getHubConfig(corsair);
-	if (explicitSource) {
-		const validation = validateExplicitConnectSource({
-			source: explicitSource,
-			deliveryUrl: hub.deliveryUrl,
-		});
-		if (validation) {
-			throw new Error(validation.error);
-		}
-		return explicitSource;
-	}
-
-	return resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl);
 }
 
 export async function ensureConnectAccountRows(

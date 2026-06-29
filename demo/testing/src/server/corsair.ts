@@ -16,9 +16,10 @@ import { createCorsair } from 'corsair';
 
 import { sqlite } from '../db';
 
-const appUrl = process.env.APP_URL ?? 'http://localhost:3001';
-const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
-const hubSigningSecret = process.env.CORSAIR_SIGNING_SECRET!;
+const hubProjectApiKey =
+	process.env.CORSAIR_DEV_API_KEY ?? process.env.CORSAIR_API_KEY!;
+const hubSigningSecret =
+	process.env.CORSAIR_DEV_SIGNING_SECRET ?? process.env.CORSAIR_SIGNING_SECRET!;
 // const hubApiUrl = process.env.HUB_API_URL;
 // const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
@@ -35,7 +36,6 @@ export const corsair = createCorsair({
 		// oauthCallbackUrl: hubOAuthCallbackUrl,
 		projectApiKey: hubProjectApiKey,
 		signingSecret: hubSigningSecret,
-		deliveryUrl: `${appUrl}/api/corsair`,
 	},
 	plugins: [
 		// github({ authType: 'managed' }),
