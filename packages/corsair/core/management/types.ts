@@ -54,8 +54,6 @@ export type CreateConnectLinkInput = {
 	tenantId?: string;
 	/** Hub mode only — BYO uses your OAuth app; managed uses Corsair's. */
 	oauthMode?: 'byo' | 'managed';
-	/** Hub mode only — inferred from deliveryUrl when omitted. */
-	source?: 'client' | 'server';
 	/** Hub mode only — override the provider display name. */
 	providerName?: string;
 };

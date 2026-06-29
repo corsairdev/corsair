@@ -15,12 +15,8 @@ import type {
 	ConnectAuthKind,
 	ConnectPluginManifestEntry,
 } from './contracts/connect-api';
-import {
-	resolveConnectSourceFromDeliveryUrl,
-	validateExplicitConnectSource,
-} from './contracts/delivery-mode';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
-import type { HubConfig, HubConnectSource, HubOAuthMode } from './types';
+import type { HubConfig, HubOAuthMode } from './types';
 
 const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
 
@@ -181,36 +177,6 @@ export async function buildConnectPluginManifest(
 		tenantId,
 		options,
 	);
-}
-
-export function resolveConnectSessionSourceFromHub(
-	hub: HubConfig,
-	explicitSource?: HubConnectSource,
-): HubConnectSource {
-	if (explicitSource) {
-		const validation = validateExplicitConnectSource({
-			source: explicitSource,
-			deliveryUrl: hub.deliveryUrl,
-		});
-		if (validation) {
-			throw new Error(validation.error);
-		}
-		return explicitSource;
-	}
-
-	return resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl);
-}
-
-export function resolveConnectSessionSource(
-	corsair: unknown,
-	explicitSource?: HubConnectSource,
-): HubConnectSource {
-	const internal = getCorsairInternal(corsair);
-	const hub = internal.hub;
-	if (!hub) {
-		throw new Error('Hub is not configured');
-	}
-	return resolveConnectSessionSourceFromHub(hub, explicitSource);
 }
 
 export async function ensureConnectAccountRowsFromContext(
