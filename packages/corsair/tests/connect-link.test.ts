@@ -9,13 +9,16 @@ import { bindEndpointsRecursively } from '../core/endpoints/bind';
 import type { CorsairPlugin } from '../core/plugins';
 import type { HubConfig } from '../hub';
 
+const mockHubConnectSession = {
+	connectUrl: 'https://hub.example/connect/sess-1',
+	token: 'hub-connect-token',
+	projectId: 'proj-1',
+	environmentId: 'env_dev_1',
+	expiresAt: '2099-01-01T00:00:00.000Z',
+};
+
 jest.mock('../hub/connect', () => ({
-	createHubConnectSessionForPlugin: jest.fn(async () => ({
-		connectUrl: 'https://hub.example/connect/sess-1',
-		token: 'hub-connect-token',
-		projectId: 'proj-1',
-		expiresAt: '2099-01-01T00:00:00.000Z',
-	})),
+	createHubConnectSessionForPlugin: jest.fn(async () => mockHubConnectSession),
 }));
 
 describe('AuthMissingError', () => {
@@ -85,9 +88,8 @@ describe('connect-link generation in endpoint binding', () => {
 
 	const hubConfig: HubConfig = {
 		apiUrl: 'https://hub.example',
-		projectApiKey: 'project-key',
+		projectApiKey: 'ck_dev_test_key',
 		signingSecret: 'signing-secret',
-		deliveryUrl: 'http://localhost:3001/api/corsair',
 	};
 
 	const slackPlugin = {
