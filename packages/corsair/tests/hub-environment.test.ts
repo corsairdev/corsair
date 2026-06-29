@@ -2,6 +2,7 @@ import {
 	normalizeHubConfig,
 	resolveHubOAuthCallbackUrl,
 } from '../hub/config';
+import type { HubConfig } from '../hub/types';
 import {
 	isLoopbackUrl,
 	resolveDeliveryTransport,
@@ -151,6 +152,31 @@ describe('hub environment delivery', () => {
 		});
 
 		expect(resolveHubOAuthCallbackUrl(config)).toBe(
+			'https://auth.corsair.dev/oauth/callback',
+		);
+	});
+
+	it('normalizes callback URLs when resolveHubOAuthCallbackUrl is called directly', () => {
+		const unnormalizedConfig: HubConfig = {
+			apiUrl: 'https://auth.corsair.dev/',
+			projectApiKey: 'ck_dev_test',
+			signingSecret: 'signing-secret',
+			oauthCallbackUrl: 'https://auth.corsair.dev/oauth/callback/',
+		};
+
+		expect(resolveHubOAuthCallbackUrl(unnormalizedConfig)).toBe(
+			'https://auth.corsair.dev/oauth/callback',
+		);
+	});
+
+	it('normalizes default callback path when apiUrl is unnormalized', () => {
+		const unnormalizedConfig: HubConfig = {
+			apiUrl: 'https://auth.corsair.dev/',
+			projectApiKey: 'ck_dev_test',
+			signingSecret: 'signing-secret',
+		};
+
+		expect(resolveHubOAuthCallbackUrl(unnormalizedConfig)).toBe(
 			'https://auth.corsair.dev/oauth/callback',
 		);
 	});

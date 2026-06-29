@@ -51,11 +51,15 @@ export function getHubConfig(corsair: unknown): HubConfig {
 	return hub;
 }
 
+function stripTrailingSlash(url: string): string {
+	return url.replace(/\/$/, '');
+}
+
 export function resolveHubOAuthCallbackUrl(config: HubConfig): string {
 	if (config.oauthCallbackUrl) {
-		return config.oauthCallbackUrl;
+		return stripTrailingSlash(config.oauthCallbackUrl.trim());
 	}
-	return `${config.apiUrl}/oauth/callback`;
+	return `${stripTrailingSlash(config.apiUrl)}/oauth/callback`;
 }
 
 export function inferHubEnvironmentSlug(apiKey: string): 'development' | 'production' {
