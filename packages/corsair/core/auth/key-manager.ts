@@ -1,5 +1,4 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
-import { resolveIntegrationAndAccount } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -346,26 +345,38 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		getAccount: async () => {
 			if (cachedAccount) return cachedAccount;
 
-			const { integration, account } = await resolveIntegrationAndAccount({
-				database,
-				integrationName,
-				tenantId,
-				ensureProvisioned,
-			});
+			let provisionAttempted = false;
 
-			cachedIntegration = {
-				id: integration.id,
-				config: parseConfig(integration.config),
-				dek: integration.dek,
-			};
+			while (true) {
+				const integration = await getIntegration();
 
-			cachedAccount = {
-				id: account.id,
-				config: parseConfig(account.config),
-				dek: account.dek,
-			};
+				const account = await database.db
+					.selectFrom('corsair_accounts')
+					.selectAll()
+					.where('tenant_id', '=', tenantId)
+					.where('integration_id', '=', integration.id)
+					.executeTakeFirst();
 
-			return cachedAccount;
+				if (!account) {
+					if (!provisionAttempted && ensureProvisioned) {
+						provisionAttempted = true;
+						await ensureProvisioned();
+						continue;
+					}
+
+					throw new Error(
+						`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
+					);
+				}
+
+				cachedAccount = {
+					id: account.id,
+					config: parseConfig(account.config),
+					dek: account.dek ?? null,
+				};
+
+				return cachedAccount;
+			}
 		},
 
 		updateAccount: async (data) => {
