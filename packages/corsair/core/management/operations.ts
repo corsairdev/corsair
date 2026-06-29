@@ -1,9 +1,4 @@
-import { getHubConfig } from '../../hub/config';
 import { createHubConnectSession } from '../../hub/connect';
-import {
-	resolveConnectSourceFromDeliveryUrl,
-	validateExplicitConnectSource,
-} from '../../hub/contracts/delivery-mode';
 import type { HubConnectSessionInput } from '../../hub/types';
 import type { CorsairInternalConfig } from '..';
 import { createIntegrationKeyManager } from '../auth/key-manager';
@@ -422,23 +417,9 @@ async function createHubModeConnectLink(
 	requireDatabaseForConnect(internal);
 
 	const tenantId = input.tenantId?.trim() || 'default';
-	const hub = getHubConfig(corsair);
-
-	if (input.source) {
-		const sourceValidation = validateExplicitConnectSource({
-			source: input.source,
-			deliveryUrl: hub.deliveryUrl,
-			oauthMode: input.oauthMode,
-		});
-		if (sourceValidation) {
-			throw badRequest(sourceValidation.error);
-		}
-	}
 
 	const connectInput: HubConnectSessionInput = {
 		tenantId,
-		source:
-			input.source ?? resolveConnectSourceFromDeliveryUrl(hub.deliveryUrl),
 		oauthMode: input.oauthMode,
 	};
 

@@ -83,9 +83,8 @@ describe('managementHandler — hub delivery at base path', () => {
 			database: env.db,
 			kek: KEK,
 			hub: {
-				projectApiKey: 'project-key',
+				projectApiKey: 'ck_dev_test_key',
 				signingSecret: 'signing-secret',
-				deliveryUrl: 'http://x/api/corsair',
 			},
 		} as any);
 		const handler = managementHandler(corsair);

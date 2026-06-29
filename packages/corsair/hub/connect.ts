@@ -1,11 +1,11 @@
 import { hubApiPost } from './client/http';
-import { getHubConfig } from './config';
+import { getHubConfig, inferHubEnvironmentSlug } from './config';
 import { parseConnectSessionResponse } from './contracts/connect-api';
 import {
 	buildConnectPluginManifest,
 	ensureConnectAccountRows,
-	resolveConnectSessionSource,
 } from './setup-introspect';
+import { resolveHubDeliveryUrl } from './resolve-delivery-url';
 import type { HubConnectSessionInput, HubConnectSessionResult } from './types';
 
 export async function createHubConnectSession(
@@ -13,6 +13,7 @@ export async function createHubConnectSession(
 	input: HubConnectSessionInput,
 ): Promise<HubConnectSessionResult> {
 	const hub = getHubConfig(corsair);
+	const environmentSlug = inferHubEnvironmentSlug(hub.projectApiKey);
 
 	await ensureConnectAccountRows(corsair, input.tenantId);
 
@@ -40,19 +41,21 @@ export async function createHubConnectSession(
 		);
 	}
 
-	const source = resolveConnectSessionSource(corsair, input.source);
+	const body: Record<string, unknown> = {
+		tenantId: input.tenantId,
+		plugins,
+	};
+
+	if (environmentSlug === 'development') {
+		body.deliveryUrl = resolveHubDeliveryUrl({ deliveryUrl: input.deliveryUrl });
+	}
 
 	return hubApiPost({
 		hub,
 		path: '/connect/sessions',
 		notFoundMessage:
 			'Hub REST API not found at /connect/sessions. Check HUB_API_URL and ensure the Hub API is deployed.',
-		body: {
-			tenantId: input.tenantId,
-			deliveryUrl: hub.deliveryUrl,
-			source,
-			plugins,
-		},
+		body,
 		parseResponse: parseConnectSessionResponse,
 	});
 }
