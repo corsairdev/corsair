@@ -1,13 +1,13 @@
 import type { AuthTypes } from '../core/constants';
-import { getPluginAuthStatus } from '../core/auth/plugin-auth-status';
-import type { CorsairPlugin } from '../core/plugins';
-import { getCorsairInternal } from '../core/utils/corsair-instance';
-import { getPluginAuthType } from '../core/utils/plugin-auth';
-import { hubApiPost } from './client/http';
 import type {
 	ConnectAuthKind,
 	ConnectAuthStatusLevel,
 } from './contracts/connect-api';
+import type { CorsairPlugin } from '../core/plugins';
+import { getPluginAuthStatus } from '../core/auth/plugin-auth-status';
+import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { getPluginAuthType } from '../core/utils/plugin-auth';
+import { hubApiPost } from './client/http';
 import type { CorsairDatabase } from '../db/kysely/database';
 import { getHubConfig, HubNotConfiguredError } from './config';
 import type { HubConfig } from './types';
@@ -16,6 +16,7 @@ export type ReportConnectionStatusInput = {
 	tenantId: string;
 	plugin: string;
 	authKind: ConnectAuthKind;
+	authType: AuthTypes;
 	status: ConnectAuthStatusLevel;
 	connected: boolean;
 	verified: boolean;
@@ -30,6 +31,27 @@ function toConnectAuthKind(authType: AuthTypes): ConnectAuthKind {
 		return 'bot_token';
 	}
 	return 'api_key';
+}
+
+function buildConnectionStatusReport(input: {
+	tenantId: string;
+	plugin: string;
+	authType: AuthTypes;
+	status: ConnectAuthStatusLevel;
+	connected: boolean;
+	verified: boolean;
+	missingFields?: string[];
+}): ReportConnectionStatusInput {
+	return {
+		tenantId: input.tenantId,
+		plugin: input.plugin,
+		authKind: toConnectAuthKind(input.authType),
+		authType: input.authType,
+		status: input.status,
+		connected: input.connected,
+		verified: input.verified,
+		missingFields: input.missingFields,
+	};
 }
 
 function fireAndForgetReport(
@@ -88,15 +110,18 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 		return;
 	}
 
-	reportConnectionStatusForHub(input.hub, {
-		tenantId: effectiveTenantId,
-		plugin: input.plugin.id,
-		authKind: toConnectAuthKind(authType),
-		status: authStatus.status,
-		connected: authStatus.connected,
-		verified: input.verified ?? authStatus.connected,
-		missingFields: authStatus.missingRequiredFields,
-	});
+	reportConnectionStatusForHub(
+		input.hub,
+		buildConnectionStatusReport({
+			tenantId: effectiveTenantId,
+			plugin: input.plugin.id,
+			authType,
+			status: authStatus.status,
+			connected: authStatus.connected,
+			verified: input.verified ?? authStatus.connected,
+			missingFields: authStatus.missingRequiredFields,
+		}),
+	);
 }
 
 export function reportConnectionStatus(
@@ -157,15 +182,18 @@ export async function reportPluginConnectionStatus(
 		return;
 	}
 
-	reportConnectionStatus(corsair, {
-		tenantId: input.tenantId.trim() || 'default',
-		plugin: input.plugin.id,
-		authKind: toConnectAuthKind(authType),
-		status: authStatus.status,
-		connected: authStatus.connected,
-		verified: input.verified ?? authStatus.connected,
-		missingFields: authStatus.missingRequiredFields,
-	});
+	reportConnectionStatus(
+		corsair,
+		buildConnectionStatusReport({
+			tenantId: input.tenantId.trim() || 'default',
+			plugin: input.plugin.id,
+			authType,
+			status: authStatus.status,
+			connected: authStatus.connected,
+			verified: input.verified ?? authStatus.connected,
+			missingFields: authStatus.missingRequiredFields,
+		}),
+	);
 }
 
 export async function reportPluginConnectionVerified(
@@ -200,13 +228,16 @@ export async function reportPluginConnectionAuthMissing(
 		input.tenantId,
 	);
 
-	reportConnectionStatus(corsair, {
-		tenantId: input.tenantId.trim() || 'default',
-		plugin: input.plugin.id,
-		authKind: toConnectAuthKind(authType),
-		status: authStatus?.status ?? 'not_started',
-		connected: authStatus?.connected ?? false,
-		verified: false,
-		missingFields: authStatus?.missingRequiredFields ?? [],
-	});
+	reportConnectionStatus(
+		corsair,
+		buildConnectionStatusReport({
+			tenantId: input.tenantId.trim() || 'default',
+			plugin: input.plugin.id,
+			authType,
+			status: authStatus?.status ?? 'not_started',
+			connected: authStatus?.connected ?? false,
+			verified: false,
+			missingFields: authStatus?.missingRequiredFields ?? [],
+		}),
+	);
 }

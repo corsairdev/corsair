@@ -1,3 +1,4 @@
+import type { AuthTypes } from '../../core/constants';
 import type {
 	HubConnectSessionResult,
 	HubOAuthMode,
@@ -23,6 +24,7 @@ export type HubProjectConnection = {
 	tenantId: string;
 	plugin: string;
 	authKind: ConnectAuthKind;
+	authType?: AuthTypes;
 	status: ConnectAuthStatusLevel;
 	connected: boolean;
 	verified: boolean;
