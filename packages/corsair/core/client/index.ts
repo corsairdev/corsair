@@ -524,6 +524,9 @@ export function buildCorsairClient<
 					}
 				: undefined,
 			hubConfig,
+			plugin,
+			kek,
+			allPlugins: plugins,
 		});
 
 		if (Object.keys(boundTree).length > 0) {

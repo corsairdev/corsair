@@ -5,6 +5,7 @@ import {
 	processManagedOAuthDelivery,
 	setupCorsair,
 } from 'corsair';
+import { resolveHubDeliveryUrl } from 'corsair/hub';
 
 import { sqlite } from '@/db';
 import { corsair } from '@/server/corsair';
@@ -38,7 +39,7 @@ async function testHubConfig(): Promise<void> {
 		record(
 			'Hub config',
 			'pass',
-			`apiUrl=${hub.apiUrl}, deliveryUrl=${hub.deliveryUrl}`,
+			`apiUrl=${hub.apiUrl}, keyPrefix=${hub.projectApiKey.slice(0, 10)}…, devDelivery=${resolveHubDeliveryUrl()}`,
 		);
 	} catch (error) {
 		record(
