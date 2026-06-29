@@ -6,7 +6,7 @@ import {
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
 import { getIntegrationFields, getPluginAuthType } from '../core/utils/plugin-auth';
-import { ensureCorsairProvisionedForTenant } from './internal/provision';
+import { ensureCorsairIntegrationProvisioned } from './internal/provision';
 
 export type IntegrationCredentialsDeliveryErrorCode =
 	| 'invalid_corsair_instance'
@@ -67,7 +67,7 @@ export async function processIntegrationCredentialsDelivery(
 		);
 	}
 
-	await ensureCorsairProvisionedForTenant(corsair, 'default');
+	await ensureCorsairIntegrationProvisioned(corsair);
 
 	const integrationFields = new Set(getIntegrationFields(plugin, authType));
 	const authConfig = plugin.authConfig as PluginAuthConfig | undefined;

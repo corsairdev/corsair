@@ -50,31 +50,11 @@ function fireAndForgetReport(
 		if (error instanceof HubNotConfiguredError) {
 			return;
 		}
+		// Push-only telemetry — never block app operations on hub misconfiguration.
 	}
 }
 
-export function reportConnectionStatus(
-	corsair: unknown,
-	input: ReportConnectionStatusInput,
-): void {
-	fireAndForgetReport(corsair, input);
-}
-
-export function reportConnectionStatusForHub(
-	hub: HubConfig,
-	input: ReportConnectionStatusInput,
-): void {
-	void hubApiPost({
-		hub,
-		path: '/connections/report',
-		body: input,
-		parseResponse: () => ({ ok: true as const }),
-	}).catch(() => {
-		// Push-only telemetry — never block app operations on hub availability.
-	});
-}
-
-export async function reportPluginConnectionStatusFromBinding(input: {
+async function reportPluginConnectionStatusFromBindingAsync(input: {
 	hub?: HubConfig;
 	database?: CorsairDatabase;
 	kek?: string;
@@ -116,6 +96,41 @@ export async function reportPluginConnectionStatusFromBinding(input: {
 		connected: authStatus.connected,
 		verified: input.verified ?? authStatus.connected,
 		missingFields: authStatus.missingRequiredFields,
+	});
+}
+
+export function reportConnectionStatus(
+	corsair: unknown,
+	input: ReportConnectionStatusInput,
+): void {
+	fireAndForgetReport(corsair, input);
+}
+
+export function reportConnectionStatusForHub(
+	hub: HubConfig,
+	input: ReportConnectionStatusInput,
+): void {
+	void hubApiPost({
+		hub,
+		path: '/connections/report',
+		body: input,
+		parseResponse: () => ({ ok: true as const }),
+	}).catch(() => {
+		// Push-only telemetry — never block app operations on hub availability.
+	});
+}
+
+export function reportPluginConnectionStatusFromBinding(input: {
+	hub?: HubConfig;
+	database?: CorsairDatabase;
+	kek?: string;
+	plugins: readonly CorsairPlugin[];
+	plugin: CorsairPlugin;
+	tenantId?: string;
+	verified?: boolean;
+}): void {
+	void reportPluginConnectionStatusFromBindingAsync(input).catch(() => {
+		// Push-only telemetry — never block endpoint operations on status reporting.
 	});
 }
 

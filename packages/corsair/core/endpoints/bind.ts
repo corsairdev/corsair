@@ -245,7 +245,7 @@ export function bindEndpointsRecursively({
 				} catch (err) {
 					if (err instanceof AuthMissingError) {
 						if (plugin && hubConfig) {
-							void reportPluginConnectionStatusFromBinding({
+						reportPluginConnectionStatusFromBinding({
 								hub: hubConfig,
 								database,
 								kek,
@@ -273,7 +273,7 @@ export function bindEndpointsRecursively({
 					const res = await call(0, { ...ctx, key }, args);
 					await onPermissionComplete?.();
 					if (plugin && hubConfig) {
-						void reportPluginConnectionStatusFromBinding({
+						reportPluginConnectionStatusFromBinding({
 							hub: hubConfig,
 							database,
 							kek,
@@ -304,7 +304,7 @@ export function bindEndpointsRecursively({
 				);
 				await onPermissionComplete?.();
 				if (plugin && hubConfig) {
-					void reportPluginConnectionStatusFromBinding({
+					reportPluginConnectionStatusFromBinding({
 						hub: hubConfig,
 						database,
 						kek,
