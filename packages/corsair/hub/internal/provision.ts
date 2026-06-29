@@ -15,5 +15,6 @@ export async function ensureCorsairProvisionedForTenant(
 
 	await setupCorsair(corsair as Parameters<typeof setupCorsair>[0], {
 		tenantId,
+		silent: true,
 	});
 }
