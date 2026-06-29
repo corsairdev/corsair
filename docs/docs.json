@@ -714,6 +714,15 @@
                 ]
               },
               {
+                "group": "Whatsapp",
+                "pages": [
+                  "plugins/whatsapp/overview",
+                  "plugins/whatsapp/api",
+                  "plugins/whatsapp/database",
+                  "plugins/whatsapp/webhooks"
+                ]
+              },
+              {
                 "group": "Xquik",
                 "pages": [
                   "plugins/xquik/overview",
@@ -781,14 +790,26 @@
     ]
   },
   "redirects": [
-    { "source": "/", "destination": "/getting-started/introduction" },
+    {
+      "source": "/",
+      "destination": "/getting-started/introduction"
+    },
     {
       "source": "/getting-started/installation",
       "destination": "/getting-started/setup"
     },
-    { "source": "/app/introduction", "destination": "/app/home" },
-    { "source": "/hosted-sdk/overview", "destination": "/app/home" },
-    { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },
+    {
+      "source": "/app/introduction",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/overview",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/quickstart",
+      "destination": "/app/installation"
+    },
     {
       "source": "/hosted-sdk/instances-and-plugins",
       "destination": "/app/instances-and-plugins"

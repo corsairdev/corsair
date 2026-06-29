@@ -88,6 +88,9 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@corsair-dev/linear": "workspace:^",
+    "@corsair-dev/slack": "workspace:^",
+    "@corsair-dev/whatsapp": "workspace:^",
     "@testing-library/react": "^16.3.2",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.14",

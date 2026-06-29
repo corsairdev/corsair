@@ -2,6 +2,7 @@
 
 import { linear } from '@corsair-dev/linear';
 import { slack } from '@corsair-dev/slack';
+import { whatsapp } from '@corsair-dev/whatsapp';
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
 import type { CorsairPlugin } from '../core';
@@ -92,7 +93,7 @@ describe('setupCorsair', () => {
 	it('creates integration and account rows for each plugin', async () => {
 		const corsair = createCorsair({
 			kek: 'test-kek-32-chars-long-padding-x',
-			plugins: [slack(), linear()],
+			plugins: [slack(), linear(), whatsapp()],
 			database: testDb.db,
 		});
 
@@ -103,16 +104,17 @@ describe('setupCorsair', () => {
 			.selectAll()
 			.execute();
 
-		expect(integrations).toHaveLength(2);
+		expect(integrations).toHaveLength(3);
 		expect(integrations.map((i) => i.name)).toContain('slack');
 		expect(integrations.map((i) => i.name)).toContain('linear');
+		expect(integrations.map((i) => i.name)).toContain('whatsapp');
 
 		const accounts = await testDb.db
 			.selectFrom('corsair_accounts')
 			.selectAll()
 			.execute();
 
-		expect(accounts).toHaveLength(2);
+		expect(accounts).toHaveLength(3);
 		expect(accounts.every((a) => a.tenant_id === 'default')).toBe(true);
 	});
 
