@@ -1,12 +1,12 @@
-import type { AuthTypes } from '../core/constants';
-import type { ConnectAuthStatusLevel } from './contracts/connect-api';
-import type { CorsairPlugin } from '../core/plugins';
 import { getPluginAuthStatus } from '../core/auth/plugin-auth-status';
+import type { AuthTypes } from '../core/constants';
+import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
-import { hubApiPost } from './client/http';
 import type { CorsairDatabase } from '../db/kysely/database';
+import { hubApiPost } from './client/http';
 import { getHubConfig, HubNotConfiguredError } from './config';
+import type { ConnectAuthStatusLevel } from './contracts/connect-api';
 import type { HubConfig } from './types';
 
 export type ReportConnectionStatusInput = {

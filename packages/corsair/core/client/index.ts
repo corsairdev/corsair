@@ -18,11 +18,10 @@ import type {
 	PluginAuthConfig,
 } from '../auth/types';
 import type { AuthTypes } from '../constants';
-import type { CorsairInternalConfig } from '../index';
-import { ensureTenantProvisioned } from '../tenant-provision';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
+import type { CorsairInternalConfig } from '../index';
 import type { CorsairManageNamespace } from '../management';
 import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
@@ -35,6 +34,7 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { ensureTenantProvisioned } from '../tenant-provision';
 import type {
 	BindWebhooks,
 	CorsairWebhookTenantMatcher,
@@ -384,11 +384,7 @@ export function buildCorsairClient<
 
 	const ensureProvisioned =
 		internalConfig && database
-			? () =>
-					ensureTenantProvisioned(
-						internalConfig,
-						tenantId ?? 'default',
-					)
+			? () => ensureTenantProvisioned(internalConfig, tenantId ?? 'default')
 			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};

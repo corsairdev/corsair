@@ -1,5 +1,5 @@
-import { getCorsairInternal } from '../../core/utils/corsair-instance';
 import { ensureTenantProvisioned } from '../../core/tenant-provision';
+import { getCorsairInternal } from '../../core/utils/corsair-instance';
 import { setupCorsair } from '../../setup';
 
 // Ensures integration rows and DEKs exist without tenant-scoped account provisioning.

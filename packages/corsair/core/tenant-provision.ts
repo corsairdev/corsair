@@ -7,7 +7,9 @@ const inflightByInstance = new WeakMap<
 	Map<string, Promise<void>>
 >();
 
-function getInflightMap(internal: CorsairInternalConfig): Map<string, Promise<void>> {
+function getInflightMap(
+	internal: CorsairInternalConfig,
+): Map<string, Promise<void>> {
 	let inflightByTenant = inflightByInstance.get(internal);
 	if (!inflightByTenant) {
 		inflightByTenant = new Map();

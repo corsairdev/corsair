@@ -22,7 +22,9 @@ export async function processConnectLinkDelivery(
 		throw new Error('tenantId is required');
 	}
 
-	const plugins = payload.plugins.map((plugin) => plugin.trim()).filter(Boolean);
+	const plugins = payload.plugins
+		.map((plugin) => plugin.trim())
+		.filter(Boolean);
 	if (plugins.length === 0) {
 		throw new Error('At least one plugin is required');
 	}
@@ -67,8 +69,10 @@ async function createHubConnectSessionForPlugins(
 		pluginIds: string[];
 	},
 ) {
-	const { buildConnectPluginManifestFromContext, ensureConnectAccountRowsFromContext } =
-		await import('./setup-introspect');
+	const {
+		buildConnectPluginManifestFromContext,
+		ensureConnectAccountRowsFromContext,
+	} = await import('./setup-introspect');
 	const { postHubConnectSession } = await import('./connect');
 
 	const manifestContext = {

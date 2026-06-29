@@ -1,5 +1,6 @@
 import type { CorsairInternalConfig } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
 import type { TunnelEnvelope } from '../hub/contracts/tunnel';
 import {
 	INBOUND_TUNNEL_TYPES,
@@ -7,7 +8,6 @@ import {
 } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
-import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
