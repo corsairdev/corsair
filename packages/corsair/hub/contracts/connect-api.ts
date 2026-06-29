@@ -22,10 +22,12 @@ export type ConnectPluginManifestEntry = {
 export type HubProjectConnection = {
 	tenantId: string;
 	plugin: string;
-	status: 'pending' | 'connected' | 'failed';
 	authKind: ConnectAuthKind;
-	connectedAt: string | null;
-	expiresAt: string | null;
+	status: ConnectAuthStatusLevel;
+	connected: boolean;
+	verified: boolean;
+	missingFields: string[];
+	reportedAt: string;
 };
 
 export type ConnectAuthFieldStatus = {
@@ -95,7 +97,12 @@ function isNonEmptyString(value: unknown): value is string {
 function isHubConnectionStatus(
 	value: unknown,
 ): value is HubProjectConnection['status'] {
-	return value === 'pending' || value === 'connected' || value === 'failed';
+	return (
+		value === 'ready' ||
+		value === 'partial' ||
+		value === 'not_started' ||
+		value === 'missing_integration'
+	);
 }
 
 function isConnectAuthKindValue(value: unknown): value is ConnectAuthKind {
@@ -154,20 +161,30 @@ export function parseProjectConnectionsResponse(
 			!isNonEmptyString(record.tenantId) ||
 			!isNonEmptyString(record.plugin) ||
 			!isHubConnectionStatus(record.status) ||
-			!isConnectAuthKindValue(record.authKind)
+			!isConnectAuthKindValue(record.authKind) ||
+			typeof record.connected !== 'boolean' ||
+			typeof record.verified !== 'boolean'
 		) {
 			continue;
 		}
+
+		const missingFields = Array.isArray(record.missingFields)
+			? record.missingFields.filter(
+					(field): field is string => typeof field === 'string',
+				)
+			: [];
 
 		connections.push({
 			tenantId: record.tenantId,
 			plugin: record.plugin,
 			status: record.status,
 			authKind: record.authKind,
-			connectedAt: isNonEmptyString(record.connectedAt)
-				? record.connectedAt
-				: null,
-			expiresAt: isNonEmptyString(record.expiresAt) ? record.expiresAt : null,
+			connected: record.connected,
+			verified: record.verified,
+			missingFields,
+			reportedAt: isNonEmptyString(record.reportedAt)
+				? record.reportedAt
+				: new Date().toISOString(),
 		});
 	}
 

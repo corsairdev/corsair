@@ -3,7 +3,6 @@ export {
 	type BrowserDeliveryPayload,
 	isAuthCredentialsBrowserDelivery,
 	isByoOAuthBrowserDelivery,
-	isConnectStatusBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	type OAuthCallbackTunnelPayload,
