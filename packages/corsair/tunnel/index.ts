@@ -7,6 +7,7 @@ import {
 } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
+import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
@@ -41,6 +42,10 @@ export type TunnelAck = {
 	status: 'ok' | 'failed';
 	retryable?: boolean;
 	error?: string;
+	connectLink?: {
+		connectUrl: string;
+		expiresAt?: string;
+	};
 	webhookResponse?: {
 		status?: number;
 		body?: unknown;
@@ -89,6 +94,31 @@ export type IntegrationCredentialsTunnelPayload = {
 	plugin: string;
 	credentials: Record<string, string>;
 };
+
+export type ConnectCreateLinkTunnelPayload = {
+	tenantId: string;
+	plugins: string[];
+};
+
+async function handleConnectCreateLinkTunnel(
+	corsair: unknown,
+	payload: ConnectCreateLinkTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		const result = await processConnectLinkDelivery(corsair, payload);
+		return {
+			status: 'ok',
+			connectLink: result,
+		};
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				error instanceof Error ? error.message : 'Connect link delivery failed',
+		};
+	}
+}
 
 export type ProcessCorsairRequest = {
 	headers: Headers | Record<string, string | string[] | undefined>;
@@ -462,6 +492,11 @@ export async function processCorsair(
 			return handleIntegrationCredentialsTunnel(
 				corsair,
 				envelope.payload as IntegrationCredentialsTunnelPayload,
+			);
+		case 'connect.create_link':
+			return handleConnectCreateLinkTunnel(
+				corsair,
+				envelope.payload as ConnectCreateLinkTunnelPayload,
 			);
 		default:
 			return unsupportedTunnelType(String(envelope.type));

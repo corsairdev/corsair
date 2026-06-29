@@ -1,4 +1,5 @@
 import { getCorsairInternal } from '../../core/utils/corsair-instance';
+import { ensureTenantProvisioned } from '../../core/tenant-provision';
 import { setupCorsair } from '../../setup';
 
 // Ensures integration rows and DEKs exist without tenant-scoped account provisioning.
@@ -29,8 +30,5 @@ export async function ensureCorsairProvisionedForTenant(
 		);
 	}
 
-	await setupCorsair(corsair as Parameters<typeof setupCorsair>[0], {
-		tenantId,
-		silent: true,
-	});
+	await ensureTenantProvisioned(internal, tenantId);
 }

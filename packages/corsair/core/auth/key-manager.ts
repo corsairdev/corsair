@@ -1,4 +1,5 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
+import { resolveIntegrationAccountIds } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -259,6 +260,7 @@ export type AccountKeyManagerOptions<T extends AuthTypes> = {
 	database: CorsairDatabase;
 	/** Extra account-level fields from plugin authConfig */
 	extraAccountFields?: readonly string[];
+	ensureProvisioned?: () => Promise<void>;
 };
 
 /**
@@ -277,6 +279,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		kek,
 		database,
 		extraAccountFields = [],
+		ensureProvisioned,
 	} = options;
 
 	// Merge base + extra fields
@@ -302,25 +305,35 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const getIntegration = async () => {
 		if (cachedIntegration) return cachedIntegration;
 
-		const integration = await database.db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', integrationName)
-			.executeTakeFirst();
+		let provisionAttempted = false;
 
-		if (!integration) {
-			throw new Error(
-				`Integration "${integrationName}" not found. Make sure to create the integration first.`,
-			);
+		while (true) {
+			const integration = await database.db
+				.selectFrom('corsair_integrations')
+				.selectAll()
+				.where('name', '=', integrationName)
+				.executeTakeFirst();
+
+			if (!integration) {
+				if (!provisionAttempted && ensureProvisioned) {
+					provisionAttempted = true;
+					await ensureProvisioned();
+					continue;
+				}
+
+				throw new Error(
+					`Integration "${integrationName}" not found. Make sure to create the integration first.`,
+				);
+			}
+
+			cachedIntegration = {
+				id: integration.id,
+				config: parseConfig(integration.config),
+				dek: integration.dek ?? null,
+			};
+
+			return cachedIntegration;
 		}
-
-		cachedIntegration = {
-			id: integration.id,
-			config: parseConfig(integration.config),
-			dek: integration.dek ?? null,
-		};
-
-		return cachedIntegration;
 	};
 
 	const ctx: AccountKeyContext = {
@@ -333,13 +346,18 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		getAccount: async () => {
 			if (cachedAccount) return cachedAccount;
 
-			const integration = await getIntegration();
+			const { integrationId, accountId } = await resolveIntegrationAccountIds({
+				database,
+				integrationName,
+				tenantId,
+				ensureProvisioned,
+			});
 
 			const account = await database.db
 				.selectFrom('corsair_accounts')
 				.selectAll()
-				.where('tenant_id', '=', tenantId)
-				.where('integration_id', '=', integration.id)
+				.where('id', '=', accountId)
+				.where('integration_id', '=', integrationId)
 				.executeTakeFirst();
 
 			if (!account) {

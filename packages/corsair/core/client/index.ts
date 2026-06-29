@@ -7,6 +7,7 @@ import type {
 	PluginEntityClients,
 } from '../../db/orm';
 import type { HubConfig } from '../../hub';
+import { resolveIntegrationAccountIds } from '../account-lookup';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -17,6 +18,8 @@ import type {
 	PluginAuthConfig,
 } from '../auth/types';
 import type { AuthTypes } from '../constants';
+import type { CorsairInternalConfig } from '../index';
+import { ensureTenantProvisioned } from '../tenant-provision';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
@@ -266,6 +269,7 @@ function createAccountIdResolver(
 	database: CorsairDatabase | undefined,
 	integrationName: string,
 	tenantId: string,
+	ensureProvisioned?: () => Promise<void>,
 ): () => Promise<string> {
 	let cachedAccountId: string | null = null;
 
@@ -276,34 +280,14 @@ function createAccountIdResolver(
 			throw new Error('Database not configured');
 		}
 
-		// Find the integration by name
-		const integration = await database.db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', integrationName)
-			.executeTakeFirst();
+		const { accountId } = await resolveIntegrationAccountIds({
+			database,
+			integrationName,
+			tenantId,
+			ensureProvisioned,
+		});
 
-		if (!integration) {
-			throw new Error(
-				`Integration "${integrationName}" not found. Make sure to create the integration first.`,
-			);
-		}
-
-		// Find the account for this tenant and integration
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
-
-		if (!account) {
-			throw new Error(
-				`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
-			);
-		}
-
-		cachedAccountId = account.id;
+		cachedAccountId = accountId;
 		return cachedAccountId;
 	};
 }
@@ -367,6 +351,8 @@ export type BuildCorsairClientOptions = {
 	manualConfig?: CorsairManualConfig;
 	/** Hub config from createCorsair({ hub: ... }). Forwarded to keyBuilder context. */
 	hubConfig?: HubConfig;
+	/** Internal config for lazy tenant provisioning on first use. */
+	internalConfig?: CorsairInternalConfig;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -393,7 +379,17 @@ export function buildCorsairClient<
 		permissionsOptions,
 		manualConfig,
 		hubConfig,
+		internalConfig,
 	} = options;
+
+	const ensureProvisioned =
+		internalConfig && database
+			? () =>
+					ensureTenantProvisioned(
+						internalConfig,
+						tenantId ?? 'default',
+					)
+			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
@@ -412,6 +408,7 @@ export function buildCorsairClient<
 			database,
 			plugin.id,
 			effectiveTenantId,
+			ensureProvisioned,
 		);
 
 		// Create typed entity clients from plugin schema, nested under `db`
@@ -459,6 +456,7 @@ export function buildCorsairClient<
 				kek,
 				database,
 				extraAccountFields,
+				ensureProvisioned,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}
