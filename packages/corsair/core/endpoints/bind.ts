@@ -5,6 +5,7 @@ import { AuthMissingError } from '../auth/errors/auth-missing';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
+import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import {
 	enforcePermission,
 	parseDurationMs,
@@ -243,6 +244,17 @@ export function bindEndpointsRecursively({
 					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 				} catch (err) {
 					if (err instanceof AuthMissingError) {
+						if (plugin && hubConfig) {
+							void reportPluginConnectionStatusFromBinding({
+								hub: hubConfig,
+								database,
+								kek,
+								plugins: allPlugins ?? [],
+								plugin,
+								tenantId,
+								verified: false,
+							});
+						}
 						return resolveAuthMissingEndpointResult({
 							error: err,
 							manual: manualConfig,
@@ -260,6 +272,17 @@ export function bindEndpointsRecursively({
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, args);
 					await onPermissionComplete?.();
+					if (plugin && hubConfig) {
+						void reportPluginConnectionStatusFromBinding({
+							hub: hubConfig,
+							database,
+							kek,
+							plugins: allPlugins ?? [],
+							plugin,
+							tenantId,
+							verified: true,
+						});
+					}
 					return res;
 				}
 
@@ -280,6 +303,17 @@ export function bindEndpointsRecursively({
 					beforeResult.passToAfter,
 				);
 				await onPermissionComplete?.();
+				if (plugin && hubConfig) {
+					void reportPluginConnectionStatusFromBinding({
+						hub: hubConfig,
+						database,
+						kek,
+						plugins: allPlugins ?? [],
+						plugin,
+						tenantId,
+						verified: true,
+					});
+				}
 				return res;
 			};
 
