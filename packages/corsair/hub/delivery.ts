@@ -245,6 +245,18 @@ export async function handleHubDeliveryPost(
 	}
 
 	const webhookResponse = ack.webhookResponse;
+	if (ack.connectLink) {
+		return {
+			type: 'json',
+			status: 200,
+			body: {
+				status: 'ok',
+				connectUrl: ack.connectLink.connectUrl,
+				expiresAt: ack.connectLink.expiresAt,
+			},
+		};
+	}
+
 	if (!webhookResponse) {
 		return {
 			type: 'json',

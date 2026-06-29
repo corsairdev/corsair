@@ -1,3 +1,4 @@
+import { ensureTenantProvisioned } from '../../core/tenant-provision';
 import { getCorsairInternal } from '../../core/utils/corsair-instance';
 import { setupCorsair } from '../../setup';
 
@@ -29,8 +30,5 @@ export async function ensureCorsairProvisionedForTenant(
 		);
 	}
 
-	await setupCorsair(corsair as Parameters<typeof setupCorsair>[0], {
-		tenantId,
-		silent: true,
-	});
+	await ensureTenantProvisioned(internal, tenantId);
 }

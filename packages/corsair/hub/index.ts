@@ -71,6 +71,10 @@ export {
 	respondToHubDeliveryFromRequest,
 } from './delivery';
 export {
+	IntegrationCredentialsDeliveryError,
+	processIntegrationCredentialsDelivery,
+} from './integration-credentials-delivery';
+export {
 	attachManagedRefreshAuth,
 	getManagedAccessToken,
 	type ManagedAccessTokenResult,
@@ -86,7 +90,7 @@ export {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from './permission';
-export { resolveHubDeliveryUrl } from './resolve-delivery-url';
+export type { ReportConnectionStatusInput } from './report-connection-status';
 export {
 	reportConnectionStatus,
 	reportConnectionStatusForHub,
@@ -95,11 +99,7 @@ export {
 	reportPluginConnectionStatusFromBinding,
 	reportPluginConnectionVerified,
 } from './report-connection-status';
-export type { ReportConnectionStatusInput } from './report-connection-status';
-export {
-	IntegrationCredentialsDeliveryError,
-	processIntegrationCredentialsDelivery,
-} from './integration-credentials-delivery';
+export { resolveHubDeliveryUrl } from './resolve-delivery-url';
 export { createHubRouteHandlers } from './route-handlers';
 export {
 	BROWSER_DELIVERY_TTL_MS,

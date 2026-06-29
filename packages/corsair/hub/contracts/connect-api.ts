@@ -23,8 +23,7 @@ export type ConnectPluginManifestEntry = {
 export type HubProjectConnection = {
 	tenantId: string;
 	plugin: string;
-	authKind: ConnectAuthKind;
-	authType?: AuthTypes;
+	authType: AuthTypes;
 	status: ConnectAuthStatusLevel;
 	connected: boolean;
 	verified: boolean;
@@ -107,8 +106,13 @@ function isHubConnectionStatus(
 	);
 }
 
-function isConnectAuthKindValue(value: unknown): value is ConnectAuthKind {
-	return value === 'oauth' || value === 'api_key' || value === 'bot_token';
+function isPluginAuthTypeValue(value: unknown): value is AuthTypes {
+	return (
+		value === 'oauth_2' ||
+		value === 'api_key' ||
+		value === 'bot_token' ||
+		value === 'managed'
+	);
 }
 
 export function parseConnectSessionResponse(
@@ -163,7 +167,7 @@ export function parseProjectConnectionsResponse(
 			!isNonEmptyString(record.tenantId) ||
 			!isNonEmptyString(record.plugin) ||
 			!isHubConnectionStatus(record.status) ||
-			!isConnectAuthKindValue(record.authKind) ||
+			!isPluginAuthTypeValue(record.authType) ||
 			typeof record.connected !== 'boolean' ||
 			typeof record.verified !== 'boolean'
 		) {
@@ -180,7 +184,7 @@ export function parseProjectConnectionsResponse(
 			tenantId: record.tenantId,
 			plugin: record.plugin,
 			status: record.status,
-			authKind: record.authKind,
+			authType: record.authType,
 			connected: record.connected,
 			verified: record.verified,
 			missingFields,

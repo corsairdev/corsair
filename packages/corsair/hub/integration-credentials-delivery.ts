@@ -5,7 +5,10 @@ import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
-import { getIntegrationFields, getPluginAuthType } from '../core/utils/plugin-auth';
+import {
+	getIntegrationFields,
+	getPluginAuthType,
+} from '../core/utils/plugin-auth';
 import { ensureCorsairIntegrationProvisioned } from './internal/provision';
 
 export type IntegrationCredentialsDeliveryErrorCode =

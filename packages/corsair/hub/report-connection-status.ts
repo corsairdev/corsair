@@ -1,37 +1,23 @@
-import type { AuthTypes } from '../core/constants';
-import type {
-	ConnectAuthKind,
-	ConnectAuthStatusLevel,
-} from './contracts/connect-api';
-import type { CorsairPlugin } from '../core/plugins';
 import { getPluginAuthStatus } from '../core/auth/plugin-auth-status';
+import type { AuthTypes } from '../core/constants';
+import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
-import { hubApiPost } from './client/http';
 import type { CorsairDatabase } from '../db/kysely/database';
+import { hubApiPost } from './client/http';
 import { getHubConfig, HubNotConfiguredError } from './config';
+import type { ConnectAuthStatusLevel } from './contracts/connect-api';
 import type { HubConfig } from './types';
 
 export type ReportConnectionStatusInput = {
 	tenantId: string;
 	plugin: string;
-	authKind: ConnectAuthKind;
 	authType: AuthTypes;
 	status: ConnectAuthStatusLevel;
 	connected: boolean;
 	verified: boolean;
 	missingFields?: string[];
 };
-
-function toConnectAuthKind(authType: AuthTypes): ConnectAuthKind {
-	if (authType === 'oauth_2' || authType === 'managed') {
-		return 'oauth';
-	}
-	if (authType === 'bot_token') {
-		return 'bot_token';
-	}
-	return 'api_key';
-}
 
 function buildConnectionStatusReport(input: {
 	tenantId: string;
@@ -45,7 +31,6 @@ function buildConnectionStatusReport(input: {
 	return {
 		tenantId: input.tenantId,
 		plugin: input.plugin,
-		authKind: toConnectAuthKind(input.authType),
 		authType: input.authType,
 		status: input.status,
 		connected: input.connected,
@@ -115,7 +100,7 @@ async function reportPluginConnectionStatusFromBindingAsync(input: {
 		buildConnectionStatusReport({
 			tenantId: effectiveTenantId,
 			plugin: input.plugin.id,
-			authType,
+			authType: authStatus.authType,
 			status: authStatus.status,
 			connected: authStatus.connected,
 			verified: input.verified ?? authStatus.connected,
@@ -187,7 +172,7 @@ export async function reportPluginConnectionStatus(
 		buildConnectionStatusReport({
 			tenantId: input.tenantId.trim() || 'default',
 			plugin: input.plugin.id,
-			authType,
+			authType: authStatus.authType,
 			status: authStatus.status,
 			connected: authStatus.connected,
 			verified: input.verified ?? authStatus.connected,
@@ -233,7 +218,7 @@ export async function reportPluginConnectionAuthMissing(
 		buildConnectionStatusReport({
 			tenantId: input.tenantId.trim() || 'default',
 			plugin: input.plugin.id,
-			authType,
+			authType: authStatus?.authType ?? authType,
 			status: authStatus?.status ?? 'not_started',
 			connected: authStatus?.connected ?? false,
 			verified: false,
