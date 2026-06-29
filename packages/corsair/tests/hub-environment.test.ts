@@ -1,8 +1,4 @@
-import {
-	normalizeHubConfig,
-	resolveHubOAuthCallbackUrl,
-} from '../hub/config';
-import type { HubConfig } from '../hub/types';
+import { normalizeHubConfig, resolveHubOAuthCallbackUrl } from '../hub/config';
 import {
 	isLoopbackUrl,
 	resolveDeliveryTransport,
@@ -10,6 +6,7 @@ import {
 	validateProductionDeliveryUrl,
 } from '../hub/contracts/environment';
 import { resolveHubDeliveryUrl } from '../hub/resolve-delivery-url';
+import type { HubConfig } from '../hub/types';
 
 function withEnv(
 	values: Record<string, string | undefined>,

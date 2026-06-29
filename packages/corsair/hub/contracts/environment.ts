@@ -24,7 +24,9 @@ export function usesBrowserDelivery(slug: HubEnvironmentSlug): boolean {
 	return resolveDeliveryTransport(slug) === 'browser';
 }
 
-export function validateProductionDeliveryUrl(deliveryUrl: string): string | null {
+export function validateProductionDeliveryUrl(
+	deliveryUrl: string,
+): string | null {
 	if (isLoopbackUrl(deliveryUrl)) {
 		return 'Production delivery URL must be a public URL, not localhost';
 	}

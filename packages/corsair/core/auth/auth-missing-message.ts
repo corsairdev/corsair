@@ -1,10 +1,10 @@
+import type { CorsairDatabase } from '../../db/kysely/database';
+import type { HubConfig } from '../../hub';
 import { createHubConnectSessionForPlugin } from '../../hub/connect';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import { hasManualConnectConfig } from '../config/manual-connect';
-import type { CorsairDatabase } from '../../db/kysely/database';
 import type { CorsairPlugin } from '../plugins';
-import type { HubConfig } from '../../hub';
-import { AuthMissingError } from './errors/auth-missing';
+import type { AuthMissingError } from './errors/auth-missing';
 import { encodeOAuthState, signState } from './state';
 
 /**
@@ -191,11 +191,15 @@ export async function resolveAuthMissingEndpointResult(input: {
 		input.manual.kek &&
 		input.error.authType === 'oauth_2'
 	) {
-		return buildManualConnectMessage(pluginId, {
-			...input.manual,
-			baseUrl: input.manual.baseUrl!,
-			kek: input.manual.kek,
-		}, input.tenantId);
+		return buildManualConnectMessage(
+			pluginId,
+			{
+				...input.manual,
+				baseUrl: input.manual.baseUrl!,
+				kek: input.manual.kek,
+			},
+			input.tenantId,
+		);
 	}
 
 	if (
