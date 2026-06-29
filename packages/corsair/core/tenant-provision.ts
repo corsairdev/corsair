@@ -2,7 +2,20 @@ import type { CorsairInternalConfig } from './index';
 
 const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
 
-const inflightByTenant = new Map<string, Promise<void>>();
+const inflightByInstance = new WeakMap<
+	CorsairInternalConfig,
+	Map<string, Promise<void>>
+>();
+
+function getInflightMap(internal: CorsairInternalConfig): Map<string, Promise<void>> {
+	let inflightByTenant = inflightByInstance.get(internal);
+	if (!inflightByTenant) {
+		inflightByTenant = new Map();
+		inflightByInstance.set(internal, inflightByTenant);
+	}
+
+	return inflightByTenant;
+}
 
 function createSetupShim(internal: CorsairInternalConfig): object {
 	if (internal.multiTenancy) {
@@ -27,7 +40,8 @@ export async function ensureTenantProvisioned(
 	}
 
 	const normalizedTenantId = tenantId.trim() || 'default';
-	const inflightKey = `${internal.multiTenancy}:${normalizedTenantId}`;
+	const inflightByTenant = getInflightMap(internal);
+	const inflightKey = normalizedTenantId;
 	const existing = inflightByTenant.get(inflightKey);
 	if (existing) {
 		await existing;

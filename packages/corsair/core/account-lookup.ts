@@ -7,9 +7,22 @@ export type AccountLookupInput = {
 	ensureProvisioned?: () => Promise<void>;
 };
 
-export async function resolveIntegrationAccountIds(
+export type IntegrationAccountRow = {
+	id: string;
+	config: unknown;
+	dek: string | null;
+};
+
+export type IntegrationAccountLookupResult = {
+	integrationId: string;
+	accountId: string;
+	integration: IntegrationAccountRow;
+	account: IntegrationAccountRow;
+};
+
+export async function resolveIntegrationAndAccount(
 	input: AccountLookupInput,
-): Promise<{ integrationId: string; accountId: string }> {
+): Promise<IntegrationAccountLookupResult> {
 	let provisionAttempted = false;
 
 	while (true) {
@@ -53,6 +66,25 @@ export async function resolveIntegrationAccountIds(
 		return {
 			integrationId: integration.id,
 			accountId: account.id,
+			integration: {
+				id: integration.id,
+				config: integration.config,
+				dek: integration.dek ?? null,
+			},
+			account: {
+				id: account.id,
+				config: account.config,
+				dek: account.dek ?? null,
+			},
 		};
 	}
+}
+
+export async function resolveIntegrationAccountIds(
+	input: AccountLookupInput,
+): Promise<{ integrationId: string; accountId: string }> {
+	const { integrationId, accountId } =
+		await resolveIntegrationAndAccount(input);
+
+	return { integrationId, accountId };
 }

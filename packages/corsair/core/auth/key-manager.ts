@@ -1,5 +1,5 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
-import { resolveIntegrationAccountIds } from '../account-lookup';
+import { resolveIntegrationAndAccount } from '../account-lookup';
 import type { AuthTypes } from '../constants';
 import {
 	decryptConfig,
@@ -346,30 +346,23 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		getAccount: async () => {
 			if (cachedAccount) return cachedAccount;
 
-			const { integrationId, accountId } = await resolveIntegrationAccountIds({
+			const { integration, account } = await resolveIntegrationAndAccount({
 				database,
 				integrationName,
 				tenantId,
 				ensureProvisioned,
 			});
 
-			const account = await database.db
-				.selectFrom('corsair_accounts')
-				.selectAll()
-				.where('id', '=', accountId)
-				.where('integration_id', '=', integrationId)
-				.executeTakeFirst();
-
-			if (!account) {
-				throw new Error(
-					`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
-				);
-			}
+			cachedIntegration = {
+				id: integration.id,
+				config: parseConfig(integration.config),
+				dek: integration.dek,
+			};
 
 			cachedAccount = {
 				id: account.id,
 				config: parseConfig(account.config),
-				dek: account.dek ?? null,
+				dek: account.dek,
 			};
 
 			return cachedAccount;
