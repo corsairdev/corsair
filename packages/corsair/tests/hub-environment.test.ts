@@ -1,10 +1,41 @@
 import {
+	normalizeHubConfig,
+	resolveHubOAuthCallbackUrl,
+} from '../hub/config';
+import {
 	isLoopbackUrl,
 	resolveDeliveryTransport,
 	usesBrowserDelivery,
 	validateProductionDeliveryUrl,
 } from '../hub/contracts/environment';
 import { resolveHubDeliveryUrl } from '../hub/resolve-delivery-url';
+
+function withEnv(
+	values: Record<string, string | undefined>,
+	run: () => void,
+): void {
+	const previous = new Map<string, string | undefined>();
+	for (const [key, value] of Object.entries(values)) {
+		previous.set(key, process.env[key]);
+		if (value === undefined) {
+			delete process.env[key];
+		} else {
+			process.env[key] = value;
+		}
+	}
+
+	try {
+		run();
+	} finally {
+		for (const [key, value] of previous) {
+			if (value === undefined) {
+				delete process.env[key];
+			} else {
+				process.env[key] = value;
+			}
+		}
+	}
+}
 
 describe('hub environment delivery', () => {
 	it('resolves transport from environment slug', () => {
@@ -30,19 +61,97 @@ describe('hub environment delivery', () => {
 	});
 
 	it('auto-detects localhost delivery URL from PORT', () => {
-		const previousPort = process.env.PORT;
-		process.env.PORT = '3001';
-		delete process.env.CORSAIR_DELIVERY_URL;
-		delete process.env.APP_URL;
-
-		expect(resolveHubDeliveryUrl()).toBe(
-			'http://localhost:3001/api/corsair',
+		withEnv(
+			{
+				PORT: '3001',
+				CORSAIR_DELIVERY_URL: undefined,
+				APP_URL: undefined,
+			},
+			() => {
+				expect(resolveHubDeliveryUrl()).toBe(
+					'http://localhost:3001/api/corsair',
+				);
+			},
 		);
+	});
 
-		if (previousPort === undefined) {
-			delete process.env.PORT;
-		} else {
-			process.env.PORT = previousPort;
-		}
+	it('uses CORSAIR_DELIVERY_URL as a full endpoint without appending the path', () => {
+		withEnv(
+			{
+				CORSAIR_DELIVERY_URL: 'http://localhost:3001/api/corsair',
+				APP_URL: 'http://localhost:9999',
+			},
+			() => {
+				expect(resolveHubDeliveryUrl()).toBe(
+					'http://localhost:3001/api/corsair',
+				);
+			},
+		);
+	});
+
+	it('strips trailing slash from CORSAIR_DELIVERY_URL', () => {
+		withEnv(
+			{
+				CORSAIR_DELIVERY_URL: 'http://localhost:3001/api/corsair/',
+				APP_URL: undefined,
+			},
+			() => {
+				expect(resolveHubDeliveryUrl()).toBe(
+					'http://localhost:3001/api/corsair',
+				);
+			},
+		);
+	});
+
+	it('appends delivery path for APP_URL base URLs', () => {
+		withEnv(
+			{
+				CORSAIR_DELIVERY_URL: undefined,
+				APP_URL: 'http://localhost:3000',
+			},
+			() => {
+				expect(resolveHubDeliveryUrl()).toBe(
+					'http://localhost:3000/api/corsair',
+				);
+			},
+		);
+	});
+
+	it('handles APP_URL with a trailing slash', () => {
+		withEnv(
+			{
+				CORSAIR_DELIVERY_URL: undefined,
+				APP_URL: 'http://localhost:3000/',
+			},
+			() => {
+				expect(resolveHubDeliveryUrl()).toBe(
+					'http://localhost:3000/api/corsair',
+				);
+			},
+		);
+	});
+
+	it('strips trailing slash from explicit oauthCallbackUrl', () => {
+		const config = normalizeHubConfig({
+			projectApiKey: 'ck_dev_test',
+			signingSecret: 'signing-secret',
+			oauthCallbackUrl: 'https://auth.corsair.dev/oauth/callback/',
+		});
+
+		expect(resolveHubOAuthCallbackUrl(config)).toBe(
+			'https://auth.corsair.dev/oauth/callback',
+		);
+	});
+
+	it('does not double-slash default oauth callback when apiUrl has trailing slash', () => {
+		const config = normalizeHubConfig({
+			projectApiKey: 'ck_dev_test',
+			signingSecret: 'signing-secret',
+			apiUrl: 'https://auth.corsair.dev/',
+		});
+
+		expect(resolveHubOAuthCallbackUrl(config)).toBe(
+			'https://auth.corsair.dev/oauth/callback',
+		);
 	});
 });

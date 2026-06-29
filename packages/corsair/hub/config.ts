@@ -31,7 +31,7 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		apiUrl,
 		projectApiKey,
 		signingSecret,
-		oauthCallbackUrl: input.oauthCallbackUrl?.trim(),
+		oauthCallbackUrl: input.oauthCallbackUrl?.trim().replace(/\/$/, ''),
 	};
 }
 
