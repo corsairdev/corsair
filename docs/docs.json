@@ -26,6 +26,7 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
+              "getting-started/nextjs",
               "getting-started/setup"
             ]
           },
