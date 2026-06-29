@@ -87,6 +87,19 @@ export {
 	formatHubApprovalMessage,
 } from './permission';
 export { resolveHubDeliveryUrl } from './resolve-delivery-url';
+export {
+	reportConnectionStatus,
+	reportConnectionStatusForHub,
+	reportPluginConnectionAuthMissing,
+	reportPluginConnectionStatus,
+	reportPluginConnectionStatusFromBinding,
+	reportPluginConnectionVerified,
+} from './report-connection-status';
+export type { ReportConnectionStatusInput } from './report-connection-status';
+export {
+	IntegrationCredentialsDeliveryError,
+	processIntegrationCredentialsDelivery,
+} from './integration-credentials-delivery';
 export { createHubRouteHandlers } from './route-handlers';
 export {
 	BROWSER_DELIVERY_TTL_MS,
