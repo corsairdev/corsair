@@ -62,6 +62,7 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'supabase',
 	'tally',
 	'tavily',
 	'teams',
@@ -130,6 +131,7 @@ export const ProviderDisplayNames = {
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
+	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	teams: 'Teams',
@@ -205,6 +207,7 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'supabase'
 	| 'tally'
 	| 'tavily'
 	| 'teams'

@@ -30,9 +30,8 @@ describe('hub browser delivery replay guard', () => {
 				database: env.db,
 				kek: 'test-kek-hub-browser-delivery-replay-tests',
 				hub: {
-					projectApiKey: 'project-key',
+					projectApiKey: 'ck_dev_test_key',
 					signingSecret: 'signing-secret',
-					deliveryUrl: 'http://localhost:3001/api/corsair',
 				},
 			} as any),
 			{ tenantId: 'default' },
@@ -47,9 +46,8 @@ describe('hub browser delivery replay guard', () => {
 			database: env.db,
 			kek: 'test-kek-hub-browser-delivery-replay-tests',
 			hub: {
-				projectApiKey: 'project-key',
+				projectApiKey: 'ck_dev_test_key',
 				signingSecret: 'signing-secret',
-				deliveryUrl: 'http://localhost:3001/api/corsair',
 			},
 		} as any);
 
@@ -89,9 +87,8 @@ describe('hub browser delivery replay guard', () => {
 			database: env.db,
 			kek: 'test-kek-hub-browser-delivery-replay-tests',
 			hub: {
-				projectApiKey: 'project-key',
+				projectApiKey: 'ck_dev_test_key',
 				signingSecret: 'signing-secret',
-				deliveryUrl: 'http://localhost:3001/api/corsair',
 			},
 		} as any);
 

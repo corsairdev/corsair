@@ -52,20 +52,25 @@ export async function getManagedAccessToken(
 		};
 	}
 
+	// Non-expiring tokens may have no refresh token — keep using the access token
+	// while it is still valid. If it is expired (or due for refresh), fall through
+	// to the hub, which may still hold a refresh token even when local storage does not.
 	if (!refreshToken && accessToken && !forceRefresh) {
-		return {
-			accessToken,
-			expiresAt: expiresAt ? Number(expiresAt) : now + 3600,
-			refreshed: false,
-		};
+		const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
+		const tokenStillUsable =
+			expiresAtSeconds === null ||
+			expiresAtSeconds > now + TOKEN_REFRESH_BUFFER_SECONDS;
+
+		if (tokenStillUsable) {
+			return {
+				accessToken,
+				expiresAt: expiresAtSeconds ?? now + 3600,
+				refreshed: false,
+			};
+		}
 	}
 
-	const tokens = await hubApiPost({
-		hub,
-		path: '/oauth/refresh',
-		body: { plugin, tenantId },
-		parseResponse: parseOAuthRefreshResponse,
-	});
+	const tokens = await refreshManagedTokensFromHub(hub, plugin, tenantId);
 
 	const nextExpiresAt = tokens.expires_in
 		? now + tokens.expires_in
@@ -87,6 +92,34 @@ export async function getManagedAccessToken(
 		expiresAt: nextExpiresAt,
 		refreshed: true,
 	};
+}
+
+function isManagedConnectionMissingOnHub(message: string): boolean {
+	return (
+		message.includes('Managed OAuth connection not found') ||
+		message.includes('Managed OAuth connection has no tokens')
+	);
+}
+
+async function refreshManagedTokensFromHub(
+	hub: HubConfig,
+	plugin: string,
+	tenantId: string,
+) {
+	try {
+		return await hubApiPost({
+			hub,
+			path: '/oauth/refresh',
+			body: { plugin, tenantId },
+			parseResponse: parseOAuthRefreshResponse,
+		});
+	} catch (error) {
+		const message = error instanceof Error ? error.message : '';
+		if (isManagedConnectionMissingOnHub(message)) {
+			throw new AuthMissingError(plugin, 'managed');
+		}
+		throw error;
+	}
 }
 
 // Attaches a `_refreshAuth` helper on the keyBuilder context for 401 retries.

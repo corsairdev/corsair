@@ -1,9 +1,13 @@
 import type { CorsairInternalConfig } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
-import { getConnectStatusForTenant } from '../hub/connect-status';
+import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
 import type { TunnelEnvelope } from '../hub/contracts/tunnel';
-import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
+import {
+	INBOUND_TUNNEL_TYPES,
+	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
+} from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
+import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
@@ -29,7 +33,6 @@ export {
 	type BrowserDeliveryPayload,
 	isAuthCredentialsBrowserDelivery,
 	isByoOAuthBrowserDelivery,
-	isConnectStatusBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,
@@ -39,6 +42,10 @@ export type TunnelAck = {
 	status: 'ok' | 'failed';
 	retryable?: boolean;
 	error?: string;
+	connectLink?: {
+		connectUrl: string;
+		expiresAt?: string;
+	};
 	webhookResponse?: {
 		status?: number;
 		body?: unknown;
@@ -83,10 +90,35 @@ export type AuthCredentialsTunnelPayload = {
 	credentials: Record<string, string>;
 };
 
-export type ConnectStatusTunnelPayload = {
-	tenantId: string;
-	plugins?: string[];
+export type IntegrationCredentialsTunnelPayload = {
+	plugin: string;
+	credentials: Record<string, string>;
 };
+
+export type ConnectCreateLinkTunnelPayload = {
+	tenantId: string;
+	plugins: string[];
+};
+
+async function handleConnectCreateLinkTunnel(
+	corsair: unknown,
+	payload: ConnectCreateLinkTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		const result = await processConnectLinkDelivery(corsair, payload);
+		return {
+			status: 'ok',
+			connectLink: result,
+		};
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				error instanceof Error ? error.message : 'Connect link delivery failed',
+		};
+	}
+}
 
 export type ProcessCorsairRequest = {
 	headers: Headers | Record<string, string | string[] | undefined>;
@@ -316,22 +348,13 @@ async function handleAuthCredentialsTunnel(
 	}
 }
 
-async function handleConnectStatusTunnel(
+async function handleIntegrationCredentialsTunnel(
 	corsair: unknown,
-	payload: ConnectStatusTunnelPayload,
+	payload: IntegrationCredentialsTunnelPayload,
 ): Promise<TunnelAck> {
-	const tenantId = payload.tenantId?.trim() || 'default';
 	try {
-		const status = await getConnectStatusForTenant(corsair, tenantId, {
-			pluginIds: payload.plugins,
-		});
-		return {
-			status: 'ok',
-			webhookResponse: {
-				status: 200,
-				body: status,
-			},
-		};
+		await processIntegrationCredentialsDelivery(corsair, payload);
+		return { status: 'ok' };
 	} catch (error) {
 		return {
 			status: 'failed',
@@ -339,7 +362,7 @@ async function handleConnectStatusTunnel(
 			error:
 				error instanceof Error
 					? error.message
-					: 'Connect status introspection failed',
+					: 'Integration credential delivery failed',
 		};
 	}
 }
@@ -422,6 +445,15 @@ export async function processCorsair(
 		};
 	}
 
+	if ((envelope.type as string) === 'connect.status') {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				'connect.status pull introspection is disabled; apps push status via POST /connections/report',
+		};
+	}
+
 	switch (envelope.type) {
 		case 'webhook':
 			return handleWebhookTunnel(
@@ -456,16 +488,32 @@ export async function processCorsair(
 				corsair,
 				envelope.payload as AuthCredentialsTunnelPayload,
 			);
-		case 'connect.status':
-			return handleConnectStatusTunnel(
+		case 'integration.credentials':
+			return handleIntegrationCredentialsTunnel(
 				corsair,
-				envelope.payload as ConnectStatusTunnelPayload,
+				envelope.payload as IntegrationCredentialsTunnelPayload,
+			);
+		case 'connect.create_link':
+			return handleConnectCreateLinkTunnel(
+				corsair,
+				envelope.payload as ConnectCreateLinkTunnelPayload,
 			);
 		default:
-			return {
-				status: 'failed',
-				retryable: false,
-				error: `Unsupported tunnel type: ${envelope.type}`,
-			};
+			return unsupportedTunnelType(String(envelope.type));
 	}
+}
+
+function unsupportedTunnelType(type: string): TunnelAck {
+	if (!INBOUND_TUNNEL_TYPES.has(type as TunnelEnvelope['type'])) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error: `Unsupported tunnel type: ${type}`,
+		};
+	}
+	return {
+		status: 'failed',
+		retryable: false,
+		error: `Unsupported tunnel type: ${type}`,
+	};
 }
