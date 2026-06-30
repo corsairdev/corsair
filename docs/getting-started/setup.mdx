@@ -15,6 +15,9 @@ Install, migrate, and set `CORSAIR_KEK` — [Quick start](/getting-started/quick
 import 'dotenv/config';
 import { createCorsair } from 'corsair';
 import { slack, linear, gmail } from 'corsair';
+import { Pool } from 'pg';
+
+const db = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export const corsair = createCorsair({
     plugins: [slack(), linear(), gmail()],

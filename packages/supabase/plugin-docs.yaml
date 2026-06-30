@@ -1,0 +1,4 @@
+displayName: Supabase
+description: Supabase plugin for Corsair
+overviewNote: |
+  Supabase exposes project, database, auth, functions, storage, and infrastructure workflows. Use Corsair permissions for destructive actions such as deleting projects, resetting branches, restoring backups, or changing network restrictions.
