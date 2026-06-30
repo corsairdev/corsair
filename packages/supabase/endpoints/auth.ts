@@ -4,7 +4,7 @@ import {
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { authOperations } from './operation-groups/auth';
+import { authOperations } from '../operations/auth';
 
 function getOperation(name: (typeof authOperations)[number]['name']) {
 	const operation = authOperations.find((candidate) => candidate.name === name);

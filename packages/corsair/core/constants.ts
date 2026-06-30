@@ -129,6 +129,7 @@ export const ProviderDisplayNames = {
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
+	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	teams: 'Teams',

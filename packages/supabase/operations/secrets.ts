@@ -1,4 +1,4 @@
-import type { SupabaseOperation } from '../operation-types';
+import type { SupabaseOperation } from '../endpoints/operation-types';
 
 export const secretsOperations = [
 	{

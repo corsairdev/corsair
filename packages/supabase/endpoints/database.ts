@@ -4,7 +4,7 @@ import {
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { databaseOperations } from './operation-groups/database';
+import { databaseOperations } from '../operations/database';
 
 function getOperation(name: (typeof databaseOperations)[number]['name']) {
 	const operation = databaseOperations.find(

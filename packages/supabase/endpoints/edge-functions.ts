@@ -4,7 +4,7 @@ import {
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { edgeFunctionOperations } from './operation-groups/edge-functions';
+import { edgeFunctionOperations } from '../operations/edge-functions';
 
 function getOperation(name: (typeof edgeFunctionOperations)[number]['name']) {
 	const operation = edgeFunctionOperations.find(
