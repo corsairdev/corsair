@@ -1,0 +1,71 @@
+---
+title: Hub Dashboard
+sidebarTitle: Dashboard
+description: Manage project keys, connection status, sign-in links, and production delivery from hub.corsair.dev.
+---
+
+The [Hub dashboard](https://hub.corsair.dev/dashboard) is where you create projects, copy environment credentials, monitor connections, and activate production.
+
+Each project has **development** and **production** environments. Switch between them with the environment picker at the top of the project settings. See [Development and Production](/hub/environments) for how they differ.
+
+## Keys tab
+
+Copy or rotate the API key and signing secret for the selected environment.
+
+| Credential | Used as |
+| ---------- | ------- |
+| API key | `hub.projectApiKey` in `createCorsair` |
+| Signing secret | `hub.signingSecret` in `createCorsair` |
+
+Development keys start with `ck_dev_`; production keys start with `ck_prod_`. Rotating credentials in the dashboard revokes the old pair immediately — update your app env vars before rotating in production.
+
+The **OAuth redirect URL** shown on this tab (`https://auth.corsair.dev/oauth/callback`) is the single callback to register with each OAuth provider.
+
+## Delivery URLs tab (production only)
+
+Register the public HTTPS URL where Hub POSTs signed envelopes after production connect sessions, credential deliveries, and approval decisions.
+
+This is the **Activate production** step. Until a delivery URL is registered, production connect flows return an error asking you to activate.
+
+Development does not use this tab — delivery is auto-detected locally. See [Delivery URLs](/hub/delivery-urls).
+
+## Connections tab
+
+The connections table mirrors what your Corsair instance reports when API calls run. Rows are tenants × plugins; cells show connection status (verified, partial, not started, and so on).
+
+### Sign-in links
+
+Each tenant row has a **Sign-in link** button. Use it to copy a short-lived connect URL without writing code — useful for onboarding a customer or testing a tenant's integrations.
+
+You can generate a link for **unverified plugins only** or for **all plugins** on that tenant.
+
+### Corsair-managed integrations
+
+If you use plugins with `authType: 'managed'`, Corsair can host the OAuth app for eligible integrations in production. In development, all configured managed plugins are available.
+
+If your plan limits how many integrations Corsair manages in production, the Connections tab asks you to **select which ones** you want Corsair to manage. Save your selection before going live — integrations not selected use bring-your-own OAuth (you supply client id and secret via the dashboard or your app).
+
+### BYO credentials from the dashboard
+
+For plugins that need your own OAuth app credentials, open the credentials modal on a plugin column and enter client id and secret. Hub delivers them to your app's handler so they are encrypted and stored in your database.
+
+## Settings tab
+
+Project lifecycle settings (delete project, consent screen branding — coming soon).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Environments" href="/hub/environments">
+    Development vs production keys and delivery.
+  </Card>
+  <Card title="Hub overview" href="/hub/overview">
+    Setup from scratch.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink from your app code.
+  </Card>
+  <Card title="Delivery URLs" href="/hub/delivery-urls">
+    How Hub reaches your handler.
+  </Card>
+</CardGroup>
