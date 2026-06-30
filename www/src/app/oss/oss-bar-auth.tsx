@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 
@@ -22,9 +21,6 @@ export function OssBarAuth({
 	githubUsername: string | null;
 	githubAvatarUrl: string | null;
 }) {
-	const pathname = usePathname();
-	const hideSignIn = !session?.user && pathname.startsWith('/oss/waitlist');
-
 	if (session?.user) {
 		return (
 			<>
@@ -70,10 +66,6 @@ export function OssBarAuth({
 				<SignOutButton />
 			</>
 		);
-	}
-
-	if (hideSignIn) {
-		return null;
 	}
 
 	return (

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 
 import { IntegrationListSkeleton } from './integration-list-skeleton';
@@ -24,6 +23,8 @@ import type { OssIntegrationsView } from './view-tabs';
 
 export const metadata: Metadata = {
 	title: 'OSS Integrations',
+	description:
+		'Claim an integration, build the plugin, get it merged. Every merged plugin earns AI credits in the Corsair open source contributor program.',
 };
 
 type PageProps = {
@@ -48,9 +49,6 @@ function normalizeQueryParam(
 }
 
 export default async function OssIntegrationsPage({ searchParams }: PageProps) {
-	// gate: hackathon waitlist until launch
-	redirect('/oss/waitlist');
-
 	const params = await searchParams;
 	const view = parseView(params.view);
 	const page = Math.max(1, Number(params.page) || 1);

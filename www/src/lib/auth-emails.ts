@@ -1,23 +1,3 @@
-type MagicLinkEmailContext = 'waitlist' | 'sign-in';
-
-function getMagicLinkContext(url: string): MagicLinkEmailContext {
-	try {
-		const parsed = new URL(url);
-		const callback =
-			parsed.searchParams.get('callbackURL') ??
-			parsed.searchParams.get('callbackUrl') ??
-			'';
-
-		if (callback.includes('waitlist')) {
-			return 'waitlist';
-		}
-	} catch {
-		// Fall back to the default sign-in copy.
-	}
-
-	return 'sign-in';
-}
-
 function escapeHtml(value: string) {
 	return value
 		.replaceAll('&', '&amp;')
@@ -26,32 +6,14 @@ function escapeHtml(value: string) {
 		.replaceAll('"', '&quot;');
 }
 
-export function buildMagicLinkEmail({
-	url,
-	context,
-}: {
-	url: string;
-	context: MagicLinkEmailContext;
-}) {
-	const isWaitlist = context === 'waitlist';
-
-	const subject = isWaitlist
-		? 'Confirm your email — Corsair OSS Hackathon'
-		: 'Confirm your email — Corsair OSS Hackathon';
-
-	const headline = isWaitlist
-		? 'Confirm your waitlist spot'
-		: 'Confirm your email';
-
-	const preview = isWaitlist
-		? 'One click to confirm your email and finish joining the Corsair integrations hackathon waitlist.'
-		: 'One click to confirm your email and join the Corsair integrations hackathon.';
-
-	const body = isWaitlist
-		? 'Thanks for signing up for the Corsair OSS Hackathon waitlist. Confirm your email address to save your spot — we will notify you when integrations open for claiming.'
-		: 'Confirm your email address to join the Corsair OSS Hackathon. Once verified, you can claim integrations, ship plugins, and climb the leaderboard.';
-
-	const cta = isWaitlist ? 'Confirm email address' : 'Confirm email address';
+export function buildMagicLinkEmail({ url }: { url: string }) {
+	const subject = 'Confirm your email — Corsair OSS';
+	const headline = 'Confirm your email';
+	const preview =
+		'One click to confirm your email and start contributing integrations.';
+	const body =
+		'Confirm your email address to join the Corsair open source contributor program. Claim integrations, ship plugins, and earn AI credits for every merge.';
+	const cta = 'Confirm email address';
 	const safeUrl = escapeHtml(url);
 
 	const html = `<!DOCTYPE html>
@@ -69,7 +31,7 @@ export function buildMagicLinkEmail({
           <tr>
             <td style="padding:32px 32px 24px;">
               <p style="margin:0 0 12px;font-size:11px;line-height:1.4;letter-spacing:0.08em;text-transform:uppercase;color:rgba(28,28,28,0.6);">
-                Corsair OSS Hackathon
+                Corsair OSS
               </p>
               <h1 style="margin:0 0 12px;font-size:28px;font-weight:400;line-height:1.15;letter-spacing:-0.02em;color:#1c1c1c;">
                 ${escapeHtml(headline)}
@@ -106,8 +68,5 @@ export function buildMagicLinkEmail({
 }
 
 export function buildMagicLinkEmailFromUrl(url: string) {
-	return buildMagicLinkEmail({
-		url,
-		context: getMagicLinkContext(url),
-	});
+	return buildMagicLinkEmail({ url });
 }

@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
 				destination: '/oss/:slug',
 				permanent: true,
 			},
+			{
+				source: '/oss/waitlist',
+				destination: '/oss',
+				permanent: true,
+			},
 		];
 	},
 };
