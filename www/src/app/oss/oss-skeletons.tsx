@@ -10,7 +10,7 @@ export function OssHeroSkeleton() {
 			<div className="grid gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:items-center lg:gap-16">
 				<div>
 					<p className="font-[family-name:var(--font-landing-mono)] text-xs font-medium tracking-[0.02em] text-[#1c1c1c99] uppercase">
-						The OSS program
+						Open source contributor program
 					</p>
 					<h1 className="mt-5 text-[clamp(2rem,4.5vw,3.25rem)] font-light leading-[1.1] tracking-[-0.02em] text-[#1c1c1c]">
 						<span className="font-[family-name:var(--landing-font-serif)] italic">
@@ -22,7 +22,8 @@ export function OssHeroSkeleton() {
 						</span>
 					</h1>
 					<p className="mt-5 max-w-[460px] text-[15px] leading-[1.65] text-[#1c1c1c99]">
-						Claim an integration, ship the plugin, climb the leaderboard.
+						Claim an integration, build the plugin, get it merged — and earn AI
+						credits for every merge.
 					</p>
 					<div className="mt-7 flex flex-wrap gap-3">
 						<Pulse className="h-10 w-36 rounded-lg" />

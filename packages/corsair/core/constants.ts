@@ -37,6 +37,7 @@ export const BaseProviders = [
 	'gmail',
 	'googlecalendar',
 	'googledrive',
+	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
@@ -61,6 +62,7 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'supabase',
 	'tally',
 	'tavily',
 	'teams',
@@ -105,6 +107,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledrive: 'Google Drive',
 	googlesheets: 'Google Sheets',
+	googlemeet: 'Google Meet',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
@@ -128,6 +131,7 @@ export const ProviderDisplayNames = {
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
+	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	teams: 'Teams',
@@ -178,6 +182,7 @@ export type AllProviders =
 	| 'gmail'
 	| 'googlecalendar'
 	| 'googledrive'
+	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
@@ -202,6 +207,7 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'supabase'
 	| 'tally'
 	| 'tavily'
 	| 'teams'

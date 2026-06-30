@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { SlackSchema } from '@corsair-dev/slack/schema';
 import { slack } from '@corsair-dev/slack';
+import { SlackSchema } from '@corsair-dev/slack/schema';
 import { Kysely, sql } from 'kysely';
 import postgres from 'postgres';
 import { createCorsair } from '../core';

@@ -57,9 +57,8 @@ describe('resolveApprovalUrl', () => {
 				manual: { approvalBaseUrl: 'https://app/approve' },
 				hub: {
 					apiUrl: 'https://hub',
-					projectApiKey: 'key',
+					projectApiKey: 'ck_dev_test_key',
 					signingSecret: 'secret',
-					deliveryUrl: 'https://app/delivery',
 				},
 			},
 			baseRecord,
@@ -72,9 +71,8 @@ describe('resolveApprovalUrl', () => {
 			{
 				hub: {
 					apiUrl: 'https://hub',
-					projectApiKey: 'key',
+					projectApiKey: 'ck_dev_test_key',
 					signingSecret: 'secret',
-					deliveryUrl: 'https://app/delivery',
 				},
 			},
 			baseRecord,
@@ -127,9 +125,8 @@ describe('resolveAsyncApprovalMessage', () => {
 		const msg = await resolveAsyncApprovalMessage({
 			hub: {
 				apiUrl: 'https://hub',
-				projectApiKey: 'key',
+				projectApiKey: 'ck_dev_test_key',
 				signingSecret: 'secret',
-				deliveryUrl: 'https://app/delivery',
 			},
 			permissionId: 'perm-1',
 			permissionToken: 'tok-abc',

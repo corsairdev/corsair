@@ -350,6 +350,14 @@
                 ]
               },
               {
+                "group": "Google Meet",
+                "pages": [
+                  "plugins/googlemeet/overview",
+                  "plugins/googlemeet/api",
+                  "plugins/googlemeet/database"
+                ]
+              },
+              {
                 "group": "Google sheets",
                 "pages": [
                   "plugins/googlesheets/overview",
@@ -589,6 +597,15 @@
                 ]
               },
               {
+                "group": "Supabase",
+                "pages": [
+                  "plugins/supabase/overview",
+                  "plugins/supabase/get-credentials",
+                  "plugins/supabase/api",
+                  "plugins/supabase/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
@@ -762,7 +779,10 @@
     ]
   },
   "redirects": [
-    { "source": "/", "destination": "/getting-started/introduction" },
+    {
+      "source": "/",
+      "destination": "/getting-started/introduction"
+    },
     {
       "source": "/studio/overview",
       "destination": "/getting-started/introduction"
