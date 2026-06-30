@@ -1181,6 +1181,69 @@ const GetInstagramConversationsOutputSchema = z
     'Represents a collection of Instagram Direct Message conversations.'
   );
 
+const MessageAttachmentDataSchema = z
+  .object({
+    id: z
+      .string()
+      .optional()
+      .describe(
+        'The unique ID of the attachment.'
+      ),
+
+    mime_type: z
+      .string()
+      .optional()
+      .describe(
+        'The MIME type of the attachment, such as image/jpeg or video/mp4.'
+      ),
+
+    name: z
+      .string()
+      .optional()
+      .describe(
+        'The filename or display name of the attachment.'
+      ),
+
+    image_data: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe(
+        'Image-specific attachment metadata, including URLs and dimensions.'
+      ),
+
+    video_data: z
+      .record(z.string(), z.unknown())
+      .optional()
+      .describe(
+        'Video-specific attachment metadata, including URLs and dimensions.'
+      ),
+
+    file_url: z
+      .string()
+      .optional()
+      .describe(
+        'The URL of the attached file when returned by the Graph API.'
+      ),
+  })
+  .loose()
+  .describe(
+    'A single attachment item returned on an Instagram or Messenger message.'
+  );
+
+const MessageAttachmentsSchema = z
+  .object({
+    data: z
+      .array(MessageAttachmentDataSchema)
+      .optional()
+      .describe(
+        'The list of attachments included with the message.'
+      ),
+  })
+  .loose()
+  .describe(
+    'Graph API collection wrapper for message attachments.'
+  );
+
 export const MessageSchema = z
   .object({
     id: z
@@ -1224,8 +1287,7 @@ export const MessageSchema = z
         'Information about the user who sent the message.'
       ),
 
-    attachments: z
-      .object(z.any())
+    attachments: MessageAttachmentsSchema
       .optional()
       .describe(
         'Attachment data associated with the message, such as images, videos, files, or other media.'
