@@ -10,11 +10,11 @@ import type {
     CorsairWebhook,
     BindWebhooks,
     RequiredPluginEndpointMeta,
-    RawWebhookRequest,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 
 import {
+    attachInstagramRefreshAuth,
     getValidFacebookAccessToken,
 } from './client';
 
@@ -475,19 +475,6 @@ export function instagram<const T extends InstagramPluginOptions>(
                     'instagram_manage_insights',
                 ],
             },
-            pluginWebhookMatcher: (request: RawWebhookRequest) => {
-                const body = request.body as { object?: string } | null;
-                if (body?.object === 'instagram') {
-                    return true;
-                }
-
-                const query = request.query;
-                const mode = query?.['hub.mode'];
-                return (
-                    mode === 'subscribe' ||
-                    (Array.isArray(mode) && mode.includes('subscribe'))
-                );
-            },
 
             hooks: options.hooks,
             webhookHooks: options.webhookHooks,
@@ -559,7 +546,7 @@ export function instagram<const T extends InstagramPluginOptions>(
                     }
                 }
 
-                (ctx as Record<string, unknown>)._refreshAuth = async () => {
+                attachInstagramRefreshAuth(ctx, async () => {
                     const currentToken =
                         (await ctx.keys.get_access_token()) ??
                         creds?.accessToken ??
@@ -578,7 +565,7 @@ export function instagram<const T extends InstagramPluginOptions>(
                     await ctx.keys.set_access_token(freshResult.accessToken);
                     await ctx.keys.set_expires_at(String(freshResult.expiresAt));
                     return freshResult.accessToken;
-                };
+                });
 
                 return result.accessToken;
             },

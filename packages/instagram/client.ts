@@ -176,9 +176,21 @@ function isUnauthorizedError(
  * (e.g. revoked, corrupted) even though `expires_at` hasn't passed yet.
  */
 
+export type InstagramRequestContext = {
+    key: string;
+    _refreshAuth?: () => Promise<string>;
+};
+
+export function attachInstagramRefreshAuth(
+    ctx: object,
+    refreshAuth: () => Promise<string>,
+): void {
+    Object.assign(ctx, { _refreshAuth: refreshAuth });
+}
+
 export async function makeAuthenticatedInstagramRequest<T>(
     endpoint: string,
-    ctx: { key: string; _refreshAuth?: () => Promise<string> },
+    ctx: InstagramRequestContext,
     options: InstagramRequestOptions = {},
     getToken?: (userToken?: string) => Promise<string>,
 ): Promise<T> {

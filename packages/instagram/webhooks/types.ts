@@ -195,6 +195,50 @@ function readBodyString(body: unknown, key: string): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+type InstagramSignaturePayload =
+	| InstagramWebhookPayload
+	| InstagramWebhookCommentPayload;
+
+function parseInstagramSignaturePayload(
+	payload: unknown,
+): InstagramSignaturePayload | null {
+	const messagePayload = InstagramWebhookPayloadSchema.safeParse(payload);
+	if (messagePayload.success) {
+		return messagePayload.data;
+	}
+
+	const commentPayload = InstagramCommentsWebhookSchema.safeParse(payload);
+	if (commentPayload.success) {
+		return commentPayload.data;
+	}
+
+	return null;
+}
+
+type EmojiWebhookEntry = {
+	messaging?: Array<{
+		message?: { text?: string };
+		reaction?: { emoji?: string };
+	}>;
+	changes?: Array<{
+		field?: string;
+		value?: { text?: string };
+	}>;
+};
+
+type EmojiWebhookBody = {
+	object?: string;
+	entry?: EmojiWebhookEntry[];
+};
+
+function toEmojiWebhookBody(body: unknown): EmojiWebhookBody | null {
+	if (!body || typeof body !== 'object' || Array.isArray(body)) {
+		return null;
+	}
+
+	return body as EmojiWebhookBody;
+}
+
 // ─────────────────────────────────────────────────────────────
 // Challenge Matcher
 // ─────────────────────────────────────────────────────────────
@@ -216,7 +260,7 @@ export function verifyInstagramWebhookSignature(
 		};
 	}
 
-	const payload = request.payload as any;
+	const payload = parseInstagramSignaturePayload(request.payload);
 
 	if (payload?.object === 'instagram') {
 		const modifiedPayload =
@@ -237,9 +281,11 @@ export function verifyInstagramWebhookSignature(
 		);
 
 		// Match comment webhook formatting
+		const firstEntry = payload.entry[0];
 		if (
-			payload?.entry?.[0]?.changes?.[0]?.field ===
-			'comments'
+			firstEntry &&
+			'changes' in firstEntry &&
+			firstEntry.changes[0]?.field === 'comments'
 		) {
 			rawBody = rawBody
 				.replace(/:/g, ': ')
@@ -318,63 +364,55 @@ function toUnicodeEscape(str: string): string {
 		.join('');
 }
 
-function convertInstagramEmojiFields<T>(
-	body: T,
-): T {
-	const clonedBody = structuredClone(body);
+function convertInstagramEmojiFields(
+	body: InstagramSignaturePayload,
+): EmojiWebhookBody {
+	const emojiBody = toEmojiWebhookBody(structuredClone(body));
+	if (!emojiBody?.entry) {
+		return { object: body.object, entry: [] };
+	}
 
-	for (const entry of (clonedBody as any)?.entry ??
-		[]) {
+	for (const entry of emojiBody.entry) {
 		// Messaging events
-		for (const messaging of entry.messaging ??
-			[]) {
+		for (const messaging of entry.messaging ?? []) {
 			// Message text
 			if (
-				messaging?.message &&
-				typeof messaging.message.text ===
-					'string'
+				messaging.message &&
+				typeof messaging.message.text === 'string'
 			) {
-				messaging.message.text =
-					toUnicodeEscape(
-						messaging.message.text,
-					);
+				messaging.message.text = toUnicodeEscape(
+					messaging.message.text,
+				);
 
-				messaging.message.text =
-					messaging.message.text.replace(
-						/\\\\u/g,
-						'\\u',
-					);
+				messaging.message.text = messaging.message.text.replace(
+					/\\\\u/g,
+					'\\u',
+				);
 			}
 
 			// Reaction emoji
 			if (
-				messaging?.reaction &&
-				typeof messaging.reaction
-					.emoji === 'string'
+				messaging.reaction &&
+				typeof messaging.reaction.emoji === 'string'
 			) {
-				messaging.reaction.emoji =
-					toUnicodeEscape(
-						messaging.reaction.emoji,
-					);
+				messaging.reaction.emoji = toUnicodeEscape(
+					messaging.reaction.emoji,
+				);
 			}
 		}
 
 		// Comment webhooks
 		for (const change of entry.changes ?? []) {
 			if (
-				change?.field === 'comments' &&
-				typeof change?.value?.text ===
-					'string'
+				change.field === 'comments' &&
+				typeof change.value?.text === 'string'
 			) {
-				change.value.text =
-					toUnicodeEscape(
-						change.value.text,
-					);
+				change.value.text = toUnicodeEscape(change.value.text);
 			}
 		}
 	}
 
-	return clonedBody;
+	return emojiBody;
 }
 
 // ─────────────────────────────────────────────────────────────
