@@ -148,6 +148,7 @@ export async function makeAuthenticatedGoogleMeetRequest<T>(
 	} catch (error) {
 		if (isUnauthorizedError(error) && ctx._refreshAuth) {
 			const freshToken = await ctx._refreshAuth();
+			ctx.key = freshToken;
 			return await makeGoogleMeetRequest<T>(endpoint, freshToken, options);
 		}
 		throw error;
