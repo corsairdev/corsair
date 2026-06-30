@@ -50,9 +50,7 @@ export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
 
 export const send: InstagramEndpoints['SendMessage'] = async (ctx, input) => {
 
-    const res: FacebookPageSchema = await GetFacebookPages(ctx.key, 'access_token', input.page_id);
-
-    const body: Record<string, any> = {
+    const body: Record<string, unknown> = {
         recipient: {
             id: input.recipient
         },

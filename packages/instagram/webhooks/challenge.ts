@@ -1,50 +1,58 @@
 import { logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
-import { createInstagramWebhookMatcher } from './types';
-
-const META_VERIFY_TOKEN = process.env.META_VERIFY_TOKEN;
+import {
+	createInstagramWebhookMatcher,
+	extractMetaWebhookChallenge,
+	InstagramUrlVerificationEventSchema,
+} from './types';
 
 export const url_verification: InstagramWebhooks['url_verification'] = {
-    match: createInstagramWebhookMatcher('url_verification'),
-    handler: async (ctx, request) => {
+	match: createInstagramWebhookMatcher('url_verification'),
+	handler: async (ctx, request) => {
+		const challengeRequest = extractMetaWebhookChallenge({
+			query: request.query,
+			body: request.payload,
+		});
 
-        const body = request.payload;
+		if (!challengeRequest) {
+			return {
+				success: false,
+				data: undefined,
+			};
+		}
 
-        if (!body) {
+		const expectedVerifyToken = ctx.options.webhookVerifyToken;
+		if (
+			!expectedVerifyToken ||
+			challengeRequest.verifyToken !== expectedVerifyToken
+		) {
+			return {
+				success: false,
+				error: 'Invalid verification token',
+			};
+		}
 
-            return {
-                success: false,
-                data: undefined,
-            };
-        }
+		const event = InstagramUrlVerificationEventSchema.parse({
+			type: 'url_verification',
+			challenge: challengeRequest.challenge,
+		});
 
-        if (
-            body.mode === 'subscribe' &&
-            body.verify_token === META_VERIFY_TOKEN
-        ) {
+		await logEventFromContext(
+			ctx,
+			'instagram.webhook.url_verification',
+			{ mode: challengeRequest.mode },
+			'completed',
+		);
 
-            await logEventFromContext(
-                ctx,
-                'instagram.webhook.url_verification',
-                { ...body },
-                'completed'
-            )
-
-            return {
-                success: true,
-                returnToSender: {
-                    challenge: body.challenge,
-                },
-                data: {
-                    type: body.type,
-                    challenge: body.challenge,
-                },
-            };
-        }
-
-        return {
-            success: false,
-            error: 'Invalid verification token',
-        };
-    },
+		return {
+			success: true,
+			returnToSender: {
+				validationToken: challengeRequest.challenge,
+			},
+			responseHeaders: {
+				'Content-Type': 'text/plain; charset=utf-8',
+			},
+			data: event,
+		};
+	},
 };

@@ -9,8 +9,10 @@ import type {
     BindEndpoints,
     CorsairWebhook,
     BindWebhooks,
-    RequiredPluginEndpointMeta
+    RequiredPluginEndpointMeta,
+    RawWebhookRequest,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 
 import {
     getValidFacebookAccessToken,
@@ -20,7 +22,7 @@ import type { InstagramEndpointInputs, InstagramEndpointOutputs } from "./endpoi
 
 import { InstagramEndpointInputSchemas, InstagramEndpointOutputSchemas } from "./endpoints/types"
 
-import { ProfileEndpoints, MediaEndpoints, ImageEndpoints, PublishEndpoints, ReelEndpoints, VideoEndponts, CarouselEndpoints, ConversationsEndpoints, MessagesEndpoints, CommentsEndpoints } from "./endpoints/index";
+import { ProfileEndpoints, MediaEndpoints, ImageEndpoints, PublishEndpoints, ReelEndpoints, VideoEndpoints, CarouselEndpoints, ConversationsEndpoints, MessagesEndpoints, CommentsEndpoints } from "./endpoints/index";
 
 import type { InstagramWebhookOutputs, InstagramWebhookUrlVerificationPayload, InstagramWebhookPayload, InstagramWebhookCommentPayload } from "./webhooks/types"
 import {
@@ -93,7 +95,7 @@ export type InstagramEndpoints = {
     GetMessage: InstagramEndpoint<'GetMessage'>
     SendMessage: InstagramEndpoint<'SendMessage'>
     GetComments: InstagramEndpoint<'GetComments'>,
-    ReplayComments: InstagramEndpoint<'ReplyComments'>,
+    ReplyComments: InstagramEndpoint<'ReplyComments'>,
     SendComments: InstagramEndpoint<'SendComments'>,
     GetCommentsDetails: InstagramEndpoint<'GetCommentsDetails'>,
     UpdateComments: InstagramEndpoint<'UpdateComments'>
@@ -123,8 +125,8 @@ export const InstagramEndpointsNested = {
     },
 
     video: {
-        story: VideoEndponts.story,
-        container: VideoEndponts.container,
+        story: VideoEndpoints.story,
+        container: VideoEndpoints.container,
     },
 
     carousel: {
@@ -232,7 +234,7 @@ export const InstagramEndpointSchemas = {
         input: InstagramEndpointInputSchemas.GetComments,
         output: InstagramEndpointOutputSchemas.GetComments,
     },
-    'comments.Reply': {
+    'comments.reply': {
         input: InstagramEndpointInputSchemas.ReplyComments,
         output: InstagramEndpointOutputSchemas.ReplyComments,
     },
@@ -396,10 +398,12 @@ const InstagramWebhookSchemas = {
 export type InstagramPluginOptions = {
     authType?: PickAuth<'oauth_2'>;
     key?: string;
-    credentials?: InstagramCredentials,
-    hooks?: InternalInstagramPlugin['hooks'],
-    webhookHooks?: InternalInstagramPlugin['webhookHooks'],
-    permissions?: PluginPermissionsConfig<typeof InstagramEndpointsNested>
+    credentials?: InstagramCredentials;
+    /** Verify token configured in the Meta app dashboard for webhook URL verification. */
+    webhookVerifyToken?: string;
+    hooks?: InternalInstagramPlugin['hooks'];
+    webhookHooks?: InternalInstagramPlugin['webhookHooks'];
+    permissions?: PluginPermissionsConfig<typeof InstagramEndpointsNested>;
 };
 
 export type InstagramContext = CorsairPluginContext<
@@ -445,8 +449,7 @@ export function instagram<const T extends InstagramPluginOptions>(
         ...incomingOptions,
         authType: incomingOptions.authType ?? defaultAuthType,
     };
-    {
-        return {
+    return {
             id: 'instagram',
 
             schema: InstagramSchema,
@@ -470,7 +473,20 @@ export function instagram<const T extends InstagramPluginOptions>(
                     'instagram_manage_messages',
                     'instagram_content_publish',
                     'instagram_manage_insights',
-                ]
+                ],
+            },
+            pluginWebhookMatcher: (request: RawWebhookRequest) => {
+                const body = request.body as { object?: string } | null;
+                if (body?.object === 'instagram') {
+                    return true;
+                }
+
+                const query = request.query;
+                const mode = query?.['hub.mode'];
+                return (
+                    mode === 'subscribe' ||
+                    (Array.isArray(mode) && mode.includes('subscribe'))
+                );
             },
 
             hooks: options.hooks,
@@ -480,66 +496,91 @@ export function instagram<const T extends InstagramPluginOptions>(
             endpointSchemas: InstagramEndpointSchemas,
             webhookSchemas: InstagramWebhookSchemas,
             endpointMeta: instagramEndpointMeta,
-            keyBuilder: async (
-                ctx: InstagramKeyBuilderContext
-            ) => {
-                if (options.key) return options.key;
+            keyBuilder: async (ctx: InstagramKeyBuilderContext) => {
+                if (options.key) {
+                    return options.key;
+                }
+
+                if (ctx.authType !== 'oauth_2') {
+                    throw new AuthMissingError('instagram', 'oauth_2');
+                }
+
+                const creds = options.credentials;
+
+                const [storedAccessToken, expiresAt, integrationCredentials] =
+                    await Promise.all([
+                        ctx.keys.get_access_token(),
+                        ctx.keys.get_expires_at(),
+                        ctx.keys.get_integration_credentials(),
+                    ]);
 
                 const accessToken =
-                    await ctx.keys.get_access_token();
+                    storedAccessToken ?? creds?.accessToken ?? null;
 
-                const expiresAt =
-                    await ctx.keys.get_expires_at();
-
-                const integrationCredentials =
-                    await ctx.keys
-                        .get_integration_credentials();
+                const clientId =
+                    integrationCredentials.client_id ?? creds?.clientId ?? null;
+                const clientSecret =
+                    integrationCredentials.client_secret ??
+                    creds?.clientSecret ??
+                    null;
 
                 if (!accessToken) {
+                    throw new AuthMissingError('instagram', 'oauth_2');
+                }
+
+                if (!clientId || !clientSecret) {
                     throw new Error(
-                        'Missing access token'
+                        '[auth-missing:instagram:client_credentials]: Instagram client credentials are missing',
                     );
                 }
 
-                if (
-                    !integrationCredentials.client_id ||
-                    !integrationCredentials.client_secret
-                ) {
-                    throw new Error(
-                        'Missing client credentials'
-                    );
-                }
-
-                const result =
-                    await getValidFacebookAccessToken({
+                let result: Awaited<ReturnType<typeof getValidFacebookAccessToken>>;
+                try {
+                    result = await getValidFacebookAccessToken({
                         accessToken,
-                        expiresAt:
-                            expiresAt
-                                ? Number(expiresAt)
-                                : null,
-
-                        appId:
-                            integrationCredentials.client_id,
-
-                        appSecret:
-                            integrationCredentials.client_secret,
+                        expiresAt: expiresAt ? Number(expiresAt) : null,
+                        appId: clientId,
+                        appSecret: clientSecret,
                     });
+                } catch (error) {
+                    throw new Error(
+                        `[corsair:instagram] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
+                    );
+                }
 
                 if (result.refreshed) {
-
-                    await ctx.keys
-                        .set_access_token(
-                            result.accessToken
+                    try {
+                        await ctx.keys.set_access_token(result.accessToken);
+                        await ctx.keys.set_expires_at(String(result.expiresAt));
+                    } catch (error) {
+                        throw new Error(
+                            `[corsair:instagram] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
                         );
-
-                    await ctx.keys
-                        .set_expires_at(
-                            String(result.expiresAt)
-                        );
+                    }
                 }
+
+                (ctx as Record<string, unknown>)._refreshAuth = async () => {
+                    const currentToken =
+                        (await ctx.keys.get_access_token()) ??
+                        creds?.accessToken ??
+                        null;
+                    if (!currentToken) {
+                        throw new AuthMissingError('instagram', 'oauth_2');
+                    }
+
+                    const freshResult = await getValidFacebookAccessToken({
+                        accessToken: currentToken,
+                        expiresAt: null,
+                        appId: clientId,
+                        appSecret: clientSecret,
+                        forceRefresh: true,
+                    });
+                    await ctx.keys.set_access_token(freshResult.accessToken);
+                    await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+                    return freshResult.accessToken;
+                };
 
                 return result.accessToken;
             },
         } satisfies InternalInstagramPlugin;
-    }
 }

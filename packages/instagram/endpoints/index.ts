@@ -34,7 +34,7 @@ export const PublishEndpoints = {
     publish: Publish.publish,
 }
 
-export const VideoEndponts = {
+export const VideoEndpoints = {
     story: Video.story,
     container: Video.container,
 }

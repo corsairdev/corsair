@@ -11,10 +11,6 @@
       "dev-source": "./index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./types": {
-      "dev-source": "./types.ts",
-      "types": "./dist/types.d.ts"
     }
   },
   "scripts": {

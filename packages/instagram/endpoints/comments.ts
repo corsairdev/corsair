@@ -27,7 +27,7 @@ export const list: InstagramEndpoints['GetComments'] = async (ctx, input) => {
 
     await logEventFromContext(
         ctx,
-        'instagram.comments.get',
+        'instagram.comments.list',
         { ...input },
         'completed'
     )
@@ -36,7 +36,7 @@ export const list: InstagramEndpoints['GetComments'] = async (ctx, input) => {
 
 }
 
-export const reply: InstagramEndpoints['ReplayComments'] = async (ctx, input) => {
+export const reply: InstagramEndpoints['ReplyComments'] = async (ctx, input) => {
 
     const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['ReplyComments']>
         (`/${input.comment_id}/replies`, ctx, {
@@ -48,7 +48,7 @@ export const reply: InstagramEndpoints['ReplayComments'] = async (ctx, input) =>
 
     await logEventFromContext(
         ctx,
-        'instagram.comments.replay',
+        'instagram.comments.reply',
         { ...input },
         'completed'
     )

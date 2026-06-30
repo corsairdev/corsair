@@ -1,4 +1,5 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { readQueryParam } from 'corsair/core';
 import { z } from 'zod';
 import { verifyHmacSignatureWithPrefix } from "corsair/http";
 import { CommentsOutputSchema } from "../endpoints/types";
@@ -48,10 +49,9 @@ export const InstagramWebhookPayloadSchema = z.object({
 });
 
 export const InstagramWebhookUrlVerificationSchema = z.object({
-	type: z.literal('url_verification'),
-	mode: z.string(),
+	mode: z.literal('subscribe'),
 	verify_token: z.string(),
-	challenge: z.string()
+	challenge: z.string(),
 });
 
 export const InstagramCommentsWebhookSchema = z.object({
@@ -129,9 +129,8 @@ export const InstagramUrlVerificationEventSchema = z.object({
 	challenge: z.string(),
 });
 
-export const InstagramCommentEventSchema = z.object({
+export const InstagramCommentEventSchema = CommentsOutputSchema.extend({
 	type: z.literal('comments'),
-	CommentsOutputSchema,
 });
 
 export type InstagramMessageReceivedEvent = z.infer<
@@ -157,6 +156,44 @@ export type InstagramWebhookOutputs = {
 };
 
 export type InstagramEventName = 'messageReceived' | 'url_verification' | 'comments';
+
+export type MetaWebhookChallenge = {
+	mode: string;
+	verifyToken: string;
+	challenge: string;
+};
+
+export function extractMetaWebhookChallenge(
+	request: Pick<RawWebhookRequest, 'query' | 'body'>,
+): MetaWebhookChallenge | null {
+	const mode =
+		readQueryParam(request, 'hub.mode') ??
+		readBodyString(request.body, 'hub.mode') ??
+		readBodyString(request.body, 'mode');
+	const verifyToken =
+		readQueryParam(request, 'hub.verify_token') ??
+		readBodyString(request.body, 'hub.verify_token') ??
+		readBodyString(request.body, 'verify_token');
+	const challenge =
+		readQueryParam(request, 'hub.challenge') ??
+		readBodyString(request.body, 'hub.challenge') ??
+		readBodyString(request.body, 'challenge');
+
+	if (!mode || !verifyToken || !challenge) {
+		return null;
+	}
+
+	return { mode, verifyToken, challenge };
+}
+
+function readBodyString(body: unknown, key: string): string | undefined {
+	if (!body || typeof body !== 'object' || Array.isArray(body)) {
+		return undefined;
+	}
+
+	const value = (body as Record<string, unknown>)[key];
+	return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
 
 // ─────────────────────────────────────────────────────────────
 // Challenge Matcher
@@ -350,13 +387,8 @@ export function createInstagramWebhookMatcher(
 	return (request: RawWebhookRequest) => {
 
 		if (eventType === 'url_verification') {
-			const parsed = InstagramWebhookUrlVerificationSchema.safeParse(request.body);
-
-			if (!parsed.success) {
-				return false;
-			}
-
-			return parsed.data.type === 'url_verification';
+			const challenge = extractMetaWebhookChallenge(request);
+			return challenge?.mode === 'subscribe';
 		}
 
 		if (eventType === 'messageReceived') {
