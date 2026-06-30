@@ -7,15 +7,21 @@ export type { ResolveConnectLinkResult } from './core';
 export { AuthMissingError, createCorsair, resolveConnectLink } from './core';
 export type {
 	ConnectionStatus,
+	ConnectLink,
 	CorsairManageNamespace,
+	CreateConnectLinkInput,
 	CreateTenantInput,
 	ExpressHandler,
 	HonoHandler,
 	ManagementHandlerOptions,
 	ManagementOk,
+	OAuthCallbackInput,
+	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
+	ResolvedConnectLink,
 	Tenant,
 } from './core/management';
 export {
@@ -24,6 +30,25 @@ export {
 	toHonoHandler,
 	toNextJsHandler,
 } from './core/management';
+export type {
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
+} from './core/plugins';
+export {
+	collectPluginWebhookMatchers,
+	matchWebhookPlugin,
+	matchWebhookPluginAndTenant,
+	type PluginWebhookMatchers,
+	type WebhookPluginTenantMatch,
+} from './core/webhooks/tenant-match';
+export {
+	asRecord,
+	decodePubSubData,
+	firstString,
+	getHeader,
+	readBodyRecord,
+	toExternalId,
+} from './core/webhooks/tenant-match-utils';
 export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,
@@ -36,4 +61,22 @@ export {
 export type { PermissionExecuteResult } from './permissions';
 export { executePermission } from './permissions';
 export { type SetupCorsairOptions, setupCorsair } from './setup/index';
+export {
+	type OAuthCallbackTunnelPayload,
+	type ProcessCorsairOptions,
+	type ProcessCorsairRequest,
+	processCorsair,
+	type TunnelAck,
+	type TunnelEnvelope,
+	type TunnelType,
+	type WebhookTunnelPayload,
+} from './tunnel';
 export { processWebhook } from './webhooks';
+export {
+	type ResolveAccountFromWebhookLinkInput,
+	resolveAccountFromWebhookLink,
+	resolveTenantFromWebhookLink,
+	resolveTenantIdFromWebhookLink,
+	setWebhookTenantLink,
+	type WebhookTenantLink,
+} from './webhooks/tenant-links';

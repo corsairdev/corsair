@@ -17,6 +17,7 @@
     "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
+    "test:hub": "tsx src/scripts/test-hub.ts",
     "test:manual": "tsx src/scripts/test-script.ts",
     "rebuild:sqlite": "pnpm rebuild better-sqlite3",
     "inngest:dev": "npx inngest-cli@latest dev",
@@ -24,6 +25,7 @@
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.0",
+    "@corsair-dev/agentql": "workspace:*",
     "@corsair-dev/bitwarden": "workspace:*",
     "@corsair-dev/cursor": "workspace:*",
     "@corsair-dev/firecrawl": "workspace:*",

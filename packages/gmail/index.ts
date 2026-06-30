@@ -35,7 +35,12 @@ import type {
 	MessageReceivedEvent,
 } from './webhooks';
 import { MessageWebhooks } from './webhooks';
-import type { PubSubNotification } from './webhooks/types';
+import { resolveGmailOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchGmailTenantWebhook } from './webhooks/tenant-matcher';
+import type {
+	GmailWebhookEventType,
+	PubSubNotification,
+} from './webhooks/types';
 import {
 	decodePubSubMessage,
 	GmailWebhookEventSchema,
@@ -49,6 +54,7 @@ import {
 export const gmailAuthConfig = {
 	oauth_2: {
 		integration: ['topic_id'] as const,
+		account: ['email_address'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -260,6 +266,16 @@ export type GmailPluginOptions = {
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
+	/**
+	 * Which Gmail webhook event types to process and store.
+	 * When omitted, all event types are processed (default).
+	 *
+	 * @example
+	 * gmail({
+	 *   webhookEvents: ['messageReceived', 'messageDeleted'],
+	 * })
+	 */
+	webhookEvents?: GmailWebhookEventType[];
 	/**
 	 * Permission configuration for the Gmail plugin.
 	 * Controls what the AI agent is allowed to do.
@@ -518,6 +534,8 @@ export function gmail<const T extends GmailPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGmailTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveGmailOAuthWebhookTenantLink,
 	} satisfies InternalGmailPlugin;
 }
 
@@ -529,6 +547,7 @@ export type {
 	GmailEventName,
 	GmailPushNotification,
 	GmailWebhookEvent,
+	GmailWebhookEventType,
 	GmailWebhookOutputs,
 	GmailWebhookPayload,
 	MessageDeletedEvent,

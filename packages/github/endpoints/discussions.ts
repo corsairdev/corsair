@@ -8,7 +8,7 @@ export const list: GithubEndpoints['discussionsList'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/discussions`;
 	const result = await makeGithubRequest<DiscussionsListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -57,10 +57,7 @@ export const list: GithubEndpoints['discussionsList'] = async (ctx, input) => {
 export const get: GithubEndpoints['discussionsGet'] = async (ctx, input) => {
 	const { owner, repo, discussionNumber } = input;
 	const endpoint = `/repos/${owner}/${repo}/discussions/${discussionNumber}`;
-	const result = await makeGithubRequest<DiscussionGetResponse>(
-		endpoint,
-		ctx.key,
-	);
+	const result = await makeGithubRequest<DiscussionGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.discussions) {
 		try {

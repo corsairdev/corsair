@@ -1,14 +1,22 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
+import type { HubConfig } from '../../hub';
+import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
+import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
-import { encodeOAuthState, signState } from '../auth/state';
+import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
-import { enforcePermission, parseDurationMs } from '../permissions';
+import {
+	enforcePermission,
+	parseDurationMs,
+	resolveAsyncApprovalMessage,
+} from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
+	CorsairPermissionsOptions,
+	CorsairPlugin,
 	EndpointHooks,
 	EndpointMetaEntry,
-	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
@@ -24,36 +32,6 @@ import type {
  */
 export function isEndpoint(value: unknown): value is Function {
 	return typeof value === 'function';
-}
-
-function buildConnectError(
-	pluginId: string,
-	connectConfig: {
-		baseUrl: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-		kek?: string;
-		tenantId?: string;
-	},
-	fallbackTenantId: string | undefined,
-): Error {
-	const state = signState(
-		encodeOAuthState(
-			pluginId,
-			connectConfig.tenantId ?? fallbackTenantId ?? 'default',
-		),
-		connectConfig.kek!,
-	);
-	const url = new URL(connectConfig.baseUrl);
-	url.searchParams.set('state', state);
-	const connectUrl = url.toString();
-	const msg = connectConfig.onAuthMissing
-		? connectConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
-		: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
-	return new Error(msg);
 }
 
 /**
@@ -80,9 +58,13 @@ export function bindEndpointsRecursively({
 	permissionsConfig,
 	endpointMeta,
 	database,
-	approvalConfig,
+	permissionsOptions,
 	tenantId,
-	connectConfig,
+	manualConfig,
+	hubConfig,
+	plugin,
+	kek,
+	allPlugins,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -101,38 +83,16 @@ export function bindEndpointsRecursively({
 	endpointMeta?: Record<string, EndpointMetaEntry>;
 	/** Required for 'require_approval' to persist the approval record to the DB. */
 	database?: CorsairDatabase;
-	/** Approval timeout config from createCorsair({ approval: ... }). */
-	approvalConfig?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		/** Called when a permission is blocked in async mode. Return the message to throw to the LLM. */
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
+	/** Global permissions config from createCorsair({ permissions: ... }). */
+	permissionsOptions?: CorsairPermissionsOptions;
 	/** Tenant ID for multi-tenant instances. Forwarded to the permission record so executePermission can scope correctly. */
 	tenantId?: string;
-	/** Connect link config for generating OAuth connect URLs when auth is missing. */
-	connectConfig?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-		oauthConfig?: OAuthConfig;
-		kek?: string | undefined;
-		tenantId?: string;
-	};
+	/** Manual config from createCorsair({ manual: ... }) — connect + permission review. */
+	manualConfig?: EndpointManualConfig;
+	hubConfig?: HubConfig;
+	plugin?: CorsairPlugin;
+	kek?: string;
+	allPlugins?: readonly CorsairPlugin[];
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -155,6 +115,7 @@ export function bindEndpointsRecursively({
 						onComplete,
 						token: permToken,
 						id: permId,
+						expiresAt: permExpiresAt,
 					} = await enforcePermission({
 						pluginId,
 						endpointPath: operationPath,
@@ -165,11 +126,11 @@ export function bindEndpointsRecursively({
 						riskLevel: meta?.riskLevel ?? 'write',
 						meta,
 						db: database,
-						timeoutMs: approvalConfig
-							? parseDurationMs(approvalConfig.timeout)
+						timeoutMs: permissionsOptions
+							? parseDurationMs(permissionsOptions.timeout)
 							: undefined,
 						tenantId,
-						approvalMode: approvalConfig?.mode,
+						approvalMode: permissionsOptions?.mode,
 					});
 					if (permResult === 'blocked') {
 						let msg: string;
@@ -179,17 +140,26 @@ export function bindEndpointsRecursively({
 							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
-						} else if (
-							approvalConfig?.formatAsyncMessage &&
-							permToken &&
-							permId
-						) {
-							msg = approvalConfig.formatAsyncMessage({
-								token: permToken,
-								id: permId,
+						} else if (permToken && permId) {
+							msg = await resolveAsyncApprovalMessage({
+								permissionsOptions,
+								manual: manualConfig,
+								hub: hubConfig,
+								permissionId: permId,
+								permissionToken: permToken,
 								plugin: pluginId,
 								endpoint: operationPath,
 								args,
+								tenantId: tenantId ?? 'default',
+								expiresAt:
+									permExpiresAt ??
+									new Date(
+										Date.now() +
+											(permissionsOptions
+												? parseDurationMs(permissionsOptions.timeout)
+												: 10 * 60 * 1_000),
+									).toISOString(),
+								operationPath,
 							});
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
@@ -273,13 +243,28 @@ export function bindEndpointsRecursively({
 				try {
 					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 				} catch (err) {
-					if (
-						connectConfig?.oauthConfig &&
-						connectConfig.kek &&
-						err instanceof AuthMissingError &&
-						err.authType === 'oauth_2'
-					) {
-						throw buildConnectError(pluginId, connectConfig, tenantId);
+					if (err instanceof AuthMissingError) {
+						if (plugin && hubConfig) {
+							reportPluginConnectionStatusFromBinding({
+								hub: hubConfig,
+								database,
+								kek,
+								plugins: allPlugins ?? [],
+								plugin,
+								tenantId,
+								verified: false,
+							});
+						}
+						return resolveAuthMissingEndpointResult({
+							error: err,
+							manual: manualConfig,
+							hub: hubConfig,
+							plugin,
+							tenantId,
+							database,
+							kek,
+							plugins: allPlugins,
+						});
 					}
 					throw err;
 				}
@@ -287,6 +272,17 @@ export function bindEndpointsRecursively({
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, args);
 					await onPermissionComplete?.();
+					if (plugin && hubConfig) {
+						reportPluginConnectionStatusFromBinding({
+							hub: hubConfig,
+							database,
+							kek,
+							plugins: allPlugins ?? [],
+							plugin,
+							tenantId,
+							verified: true,
+						});
+					}
 					return res;
 				}
 
@@ -307,6 +303,17 @@ export function bindEndpointsRecursively({
 					beforeResult.passToAfter,
 				);
 				await onPermissionComplete?.();
+				if (plugin && hubConfig) {
+					reportPluginConnectionStatusFromBinding({
+						hub: hubConfig,
+						database,
+						kek,
+						plugins: allPlugins ?? [],
+						plugin,
+						tenantId,
+						verified: true,
+					});
+				}
 				return res;
 			};
 
@@ -327,9 +334,13 @@ export function bindEndpointsRecursively({
 				permissionsConfig,
 				endpointMeta,
 				database,
-				approvalConfig,
+				permissionsOptions,
 				tenantId,
-				connectConfig,
+				manualConfig,
+				hubConfig,
+				plugin,
+				kek,
+				allPlugins,
 			});
 
 			tree[key] = nestedTree;

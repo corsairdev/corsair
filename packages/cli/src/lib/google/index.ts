@@ -1,4 +1,5 @@
 import * as p from '@clack/prompts';
+import { setWebhookTenantLink } from 'corsair';
 import type { CorsairInternalConfig } from 'corsair/core';
 import {
 	CORSAIR_INTERNAL,
@@ -165,6 +166,23 @@ export async function runGoogleSubscribe({
 
 		credSpin.stop('Credentials loaded.');
 
+		const saveGoogleTenantLink = async (link: {
+			linkType: string;
+			externalId: string;
+		}) => {
+			await setWebhookTenantLink({
+				database,
+				kek,
+				pluginId: pluginType,
+				tenantId,
+				link: {
+					linkType: link.linkType,
+					externalId: link.externalId,
+				},
+				authType: 'oauth_2',
+			});
+		};
+
 		if (pluginType === 'gmail') {
 			const topicName = await p.text({
 				message: 'Enter Pub/Sub topic name:',
@@ -177,7 +195,16 @@ export async function runGoogleSubscribe({
 				p.cancel('Operation cancelled.');
 				process.exit(0);
 			}
-			await setupGmailWatch(accessToken, topicName as string);
+			const gmailWatch = await setupGmailWatch(
+				accessToken,
+				topicName as string,
+			);
+			if (gmailWatch.emailAddress) {
+				await saveGoogleTenantLink({
+					linkType: 'email_address',
+					externalId: gmailWatch.emailAddress,
+				});
+			}
 		} else if (pluginType === 'googledrive') {
 			const webhookUrl = await p.text({
 				message: 'Enter webhook URL:',
@@ -190,7 +217,14 @@ export async function runGoogleSubscribe({
 				p.cancel('Operation cancelled.');
 				process.exit(0);
 			}
-			await setupDriveWatch(accessToken, webhookUrl as string);
+			const driveWatch = await setupDriveWatch(
+				accessToken,
+				webhookUrl as string,
+			);
+			await saveGoogleTenantLink({
+				linkType: 'channel_id',
+				externalId: driveWatch.channelId,
+			});
 		} else if (pluginType === 'googlecalendar') {
 			const webhookUrl = await p.text({
 				message: 'Enter webhook URL:',
@@ -212,11 +246,15 @@ export async function runGoogleSubscribe({
 				p.cancel('Operation cancelled.');
 				process.exit(0);
 			}
-			await setupCalendarWatch(
+			const calendarWatch = await setupCalendarWatch(
 				accessToken,
 				webhookUrl as string,
 				calendarId as string,
 			);
+			await saveGoogleTenantLink({
+				linkType: 'channel_id',
+				externalId: calendarWatch.channelId,
+			});
 		} else {
 			p.log.error(`Unsupported Google plugin: ${pluginType}`);
 			process.exit(1);

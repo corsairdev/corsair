@@ -38,6 +38,7 @@ import {
 	ConversationWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { matchIntercomTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ContactCreatedEvent,
 	ContactDeletedEvent,
@@ -661,7 +662,7 @@ const intercomEndpointMeta = {
 
 export const intercomAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['app_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -728,6 +729,7 @@ export function intercom<const T extends IntercomPluginOptions>(
 	};
 	return {
 		id: 'intercom',
+		authConfig: intercomAuthConfig,
 		schema: IntercomSchema,
 		options: options,
 		hooks: options.hooks,
@@ -743,6 +745,7 @@ export function intercom<const T extends IntercomPluginOptions>(
 			const hasSubscriptionId = 'intercom-webhook-subscription-id' in headers;
 			return hasSignature && hasSubscriptionId;
 		},
+		pluginTenantWebhookMatcher: matchIntercomTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

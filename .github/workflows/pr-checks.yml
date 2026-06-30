@@ -33,6 +33,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Validate Plugins
+        run: pnpm run validate:plugins
+
       - name: Typecheck
         run: pnpm typecheck
 

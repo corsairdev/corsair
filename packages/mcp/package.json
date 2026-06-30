@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/mcp",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "description": "MCP server and SDK adapters for Corsair — list operations, inspect schemas, run API calls",
   "type": "module",
   "main": "./dist/index.js",
@@ -22,13 +22,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/mcp": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "corsair": "workspace:*",
     "express": "^4.21.0",
     "zod": "^4.1.13"
   },
   "peerDependencies": {
-    "@ai-sdk/mcp": ">=0.0.1",
     "@anthropic-ai/claude-agent-sdk": ">=0.2.0",
     "@anthropic-ai/sdk": ">=0.78.0",
     "@mastra/core": ">=1.0.0",
@@ -36,9 +36,6 @@
     "openai": ">=4.0.0"
   },
   "peerDependenciesMeta": {
-    "@ai-sdk/mcp": {
-      "optional": true
-    },
     "@anthropic-ai/claude-agent-sdk": {
       "optional": true
     },

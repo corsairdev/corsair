@@ -11,11 +11,9 @@ import type {
 export const list: GithubEndpoints['releasesList'] = async (ctx, input) => {
 	const { owner, repo, ...queryParams } = input;
 	const endpoint = `/repos/${owner}/${repo}/releases`;
-	const result = await makeGithubRequest<ReleasesListResponse>(
-		endpoint,
-		ctx.key,
-		{ query: queryParams },
-	);
+	const result = await makeGithubRequest<ReleasesListResponse>(endpoint, ctx, {
+		query: queryParams,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -29,7 +27,7 @@ export const list: GithubEndpoints['releasesList'] = async (ctx, input) => {
 export const get: GithubEndpoints['releasesGet'] = async (ctx, input) => {
 	const { owner, repo, releaseId } = input;
 	const endpoint = `/repos/${owner}/${repo}/releases/${releaseId}`;
-	const result = await makeGithubRequest<ReleaseGetResponse>(endpoint, ctx.key);
+	const result = await makeGithubRequest<ReleaseGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.releases) {
 		try {
@@ -56,11 +54,10 @@ export const create: GithubEndpoints['releasesCreate'] = async (ctx, input) => {
 		tag_name: tagName,
 		target_commitish: targetCommitish,
 	};
-	const result = await makeGithubRequest<ReleaseCreateResponse>(
-		endpoint,
-		ctx.key,
-		{ method: 'POST', body },
-	);
+	const result = await makeGithubRequest<ReleaseCreateResponse>(endpoint, ctx, {
+		method: 'POST',
+		body,
+	});
 
 	if (result && ctx.db.releases) {
 		try {
@@ -89,11 +86,10 @@ export const update: GithubEndpoints['releasesUpdate'] = async (ctx, input) => {
 	if (typeof targetCommitish === 'string') {
 		body.target_commitish = targetCommitish;
 	}
-	const result = await makeGithubRequest<ReleaseUpdateResponse>(
-		endpoint,
-		ctx.key,
-		{ method: 'PATCH', body },
-	);
+	const result = await makeGithubRequest<ReleaseUpdateResponse>(endpoint, ctx, {
+		method: 'PATCH',
+		body,
+	});
 
 	if (result && ctx.db.releases) {
 		try {

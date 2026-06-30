@@ -1,0 +1,104 @@
+---
+title: Overview
+description: Mount Corsair's management API in your own app — the same routes app.corsair.dev uses, available to self-hosted dashboards.
+---
+
+Corsair has two surfaces:
+
+- **Runtime** — `createCorsair()`. Agents call Slack, GitHub, and the rest through this.
+- **Management API** — the routes behind a dashboard: list tenants, connect OAuth accounts, check plugin status, look up permissions.
+
+If you self-host Corsair and want your own dashboard, the management API is what you mount. The shape mirrors [better-auth](https://better-auth.com):
+
+```ts mental-model.ts
+managementHandler(corsair)              // server instance → fetch handler
+toNextJsHandler(corsair)                // framework adapter
+createCorsairClient({ baseURL })        // typed vanilla client
+createCorsairReactClient({ baseURL })   // typed React hooks
+```
+
+All of these (except the React hooks) are exported from the `corsair` package root.
+
+## When to reach for it
+
+- You are building a dashboard, an internal tool, or any UI that needs to see Corsair state from outside the agent runtime.
+- You want a typed HTTP boundary between a frontend and your Corsair server instead of calling `corsair.*` directly.
+
+If you only run agents server-side, you don't need this — keep using `corsair.slack.api.*` and friends.
+
+## The pieces
+
+<CardGroup cols={2}>
+  <Card title="Handler" href="/management/handler">
+    Mount the 9 management routes on any HTTP framework. Ships with Next.js, Express, and Hono adapters.
+  </Card>
+  <Card title="Vanilla client" href="/management/client">
+    `createCorsairClient` — typed fetch wrapper. Works in any JS runtime.
+  </Card>
+  <Card title="React hooks" href="/management/react">
+    `createCorsairReactClient` — typed `useTenants`, `useConnectionStatus`, etc.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    One `createLink` API — hub or self-hosted, config-driven.
+  </Card>
+</CardGroup>
+
+## End-to-end flow
+
+```ts server.ts
+// 1. Your existing Corsair instance
+import { createCorsair } from "corsair";
+import { github, slack } from "corsair/plugins";
+
+export const corsair = createCorsair({
+  plugins: [github(), slack()],
+  database,
+  kek,
+});
+```
+
+```ts app/api/corsair/[[...path]]/route.ts
+// 2. Mount the management API on your framework
+import { toNextJsHandler } from "corsair";
+import { corsair } from "@/server";
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+  basePath: "/api/corsair",
+});
+```
+
+```tsx app/dashboard/page.tsx
+// 3. Use the typed React hooks in your dashboard
+"use client";
+import { createCorsairReactClient } from "corsair/client/react";
+
+const { useTenants } = createCorsairReactClient({
+  baseURL: "/api/corsair",
+});
+
+export function Dashboard() {
+  const { data: tenants, loading } = useTenants();
+  if (loading) return <p>Loading…</p>;
+  return <ul>{tenants?.map(t => <li key={t.id}>{t.id}</li>)}</ul>;
+}
+```
+
+That is the whole picture. The next pages cover each layer in detail.
+
+## Auth
+
+The management API has **no auth opinion**. Wire your own — NextAuth, Clerk, an API key check, whatever already protects the rest of your dashboard. Put it in front of the handler:
+
+```ts
+import { managementHandler } from "corsair";
+
+const corsairHandler = managementHandler(corsair);
+
+export async function GET(req: Request) {
+  const session = await getSession(req);
+  if (!session) return new Response("Unauthorized", { status: 401 });
+  return corsairHandler(req);
+}
+```
+
+Corsair will not block you, prompt you, or guess. That is intentional.
