@@ -39,14 +39,14 @@ bun add corsair @corsair-dev/github
 
 ## Set your environment
 
-Create a project in the [Hub dashboard](https://app.corsair.dev) and copy its API key and signing secret. Then generate a KEK — Corsair encrypts every stored credential with it:
+Create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard) and copy the **development** API key and signing secret. Then generate a KEK — Corsair encrypts every stored credential with it:
 
 <GenerateKEK />
 
 ```bash .env
 CORSAIR_KEK=your-generated-kek
-CORSAIR_API_KEY=your-hub-project-key
-CORSAIR_SIGNING_SECRET=your-hub-signing-secret
+CORSAIR_API_KEY=ck_dev_...
+CORSAIR_SIGNING_SECRET=...
 APP_URL=http://localhost:3000
 ```
 
@@ -170,12 +170,11 @@ export const corsair = createCorsair({
     hub: {
         projectApiKey: process.env.CORSAIR_API_KEY!,
         signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-        deliveryUrl: `${process.env.APP_URL}/api/corsair`,
     },
 });
 ```
 
-Mount the handler once — it serves Hub delivery and the management API:
+Mount the handler once — it serves Hub delivery and the management API. In development, Hub auto-detects your localhost delivery URL:
 
 ```ts app/api/corsair/[[...path]]/route.ts
 import { toNextJsHandler } from 'corsair';
@@ -226,6 +225,9 @@ Want an agent to call endpoints on its own? See [MCP Adapters](/mcp-adapters/mcp
   </Card>
   <Card title="Hub overview" href="/hub/overview">
     How the relay works, and why Hub stores none of your credentials.
+  </Card>
+  <Card title="Environments" href="/hub/environments">
+    Development vs production keys — switch to production when you deploy.
   </Card>
   <Card title="Multi-Tenancy" href="/concepts/multi-tenancy">
     Building a product? Flip one flag and every user gets their own data and credentials.

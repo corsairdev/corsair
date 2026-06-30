@@ -112,6 +112,8 @@
             "group": "Hub",
             "pages": [
               "hub/overview",
+              "hub/environments",
+              "hub/dashboard",
               "hub/manual-vs-hub",
               "hub/delivery-urls",
               "hub/permissions"

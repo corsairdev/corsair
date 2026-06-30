@@ -15,7 +15,7 @@ The picker is config on `createCorsair`: pass `manual` or `hub`.
 
 | Surface | Manual (you host it) | Hub (Corsair hosts it) |
 | ------- | -------------------- | ---------------------- |
-| OAuth callback URL | One per environment, registered with each provider | One callback, fanned out to every [delivery URL](/hub/delivery-urls) |
+| OAuth callback URL | One per environment, registered with each provider | One callback for [development and production](/hub/environments) |
 | Connect page | You build it (`resolve` the signed state, redirect to provider) | Hosted by Hub |
 | OAuth callback route | You build it (`oauthCallback` exchanges the code) | Hosted by Hub, result delivered to you |
 | Approval UI | You build a review page and wire `onApprovalRequired` | Hosted approve/deny page, link auto-generated |
@@ -59,12 +59,11 @@ export const corsair = createCorsair({
     hub: {
         projectApiKey: process.env.CORSAIR_API_KEY!,
         signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-        deliveryUrl: `${appUrl}/api/corsair`,
     },
 });
 ```
 
-No connect page, callback route, or approval page to build. Mount the handler once and Hub delivers results to it.
+No connect page, callback route, or approval page to build. Mount the handler once — Hub [delivers results](/hub/delivery-urls) to it (auto-detected locally, registered in the dashboard for production).
 
 </Tab>
 
@@ -95,7 +94,7 @@ sequenceDiagram
     App->>Surface: Redirect to Hub connect page
     Surface->>Provider: Hub handles resolve and callback
     Provider->>Surface: callback ?code
-    Surface->>App: delivers result to your deliveryUrl
+    Surface->>App: delivers result to your handler
     App->>App: tokens encrypted into your DB
 ```
 
@@ -105,7 +104,7 @@ In both lanes the tokens end up in the same place: your database. Hub removes th
 
 Choose **manual** when you want full control of the connect and approval surfaces, need everything inside your own domain, or cannot add an external hop in the auth path.
 
-Choose **hub** when you would rather not build and host those surfaces, or when you want one provider callback to cover local, staging, and production at once.
+Choose **hub** when you would rather not build and host those surfaces, or when you want one provider callback to cover [local development and production](/hub/environments) at once.
 
 You can also mix: connect through Hub while keeping approvals manual, or the reverse. The two surfaces are configured independently.
 
@@ -114,6 +113,9 @@ You can also mix: connect through Hub while keeping approvals manual, or the rev
 <CardGroup cols={2}>
   <Card title="Hub overview" href="/hub/overview">
     What Hub is and the relay / no-storage model.
+  </Card>
+  <Card title="Environments" href="/hub/environments">
+    Development vs production keys and delivery.
   </Card>
   <Card title="OAuth Process" href="/production/oauth-process">
     The full manual-mode implementation with security best practices.

@@ -31,7 +31,7 @@ sequenceDiagram
     Corsair->>DB: status → completed
 ```
 
-The approval record still lives in **your** `corsair_permissions` table. Hub renders the UI and delivers the signed decision to your handler, which writes it to your database. Hub never touches your database and stores no approval data of its own.
+The approval record still lives in **your** `corsair_permissions` table. Hub renders the UI and delivers the signed decision to your handler, which writes it to your database. Hub never touches your database and stores no approval data of its own. Delivery uses the same [environment-specific transport](/hub/delivery-urls) as connect flows — browser redirect in development, signed POST in production.
 
 ## Configuration
 
@@ -57,7 +57,6 @@ export const corsair = createCorsair({
     hub: {
         projectApiKey: process.env.CORSAIR_API_KEY!,
         signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-        deliveryUrl: `${appUrl}/api/corsair`,
     },
 });
 ```
@@ -93,7 +92,6 @@ export const corsair = createCorsair({
     hub: {
         projectApiKey: process.env.CORSAIR_API_KEY!,
         signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-        deliveryUrl: `${appUrl}/api/corsair`,
     },
     // Approvals stay on your own page
     manual: {
