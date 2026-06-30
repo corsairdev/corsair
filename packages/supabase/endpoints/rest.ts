@@ -4,7 +4,7 @@ import {
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { restOperations } from './operation-groups/rest';
+import { restOperations } from '../operations/rest';
 
 function getOperation(name: (typeof restOperations)[number]['name']) {
 	const operation = restOperations.find((candidate) => candidate.name === name);

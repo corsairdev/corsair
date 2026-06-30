@@ -4,7 +4,7 @@ import {
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { secretsOperations } from './operation-groups/secrets';
+import { secretsOperations } from '../operations/secrets';
 
 function getOperation(name: (typeof secretsOperations)[number]['name']) {
 	const operation = secretsOperations.find(

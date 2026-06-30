@@ -1,16 +1,16 @@
-import { advisorsOperations } from './operation-groups/advisors';
-import { analyticsOperations } from './operation-groups/analytics';
-import { authOperations } from './operation-groups/auth';
-import { databaseOperations } from './operation-groups/database';
-import { domainsOperations } from './operation-groups/domains';
-import { edgeFunctionOperations } from './operation-groups/edge-functions';
-import { environmentsOperations } from './operation-groups/environments';
-import { oauthOperations } from './operation-groups/oauth';
-import { organizationsOperations } from './operation-groups/organizations';
-import { projectsOperations } from './operation-groups/projects';
-import { restOperations } from './operation-groups/rest';
-import { secretsOperations } from './operation-groups/secrets';
-import { storageOperations } from './operation-groups/storage';
+import { advisorsOperations } from '../operations/advisors';
+import { analyticsOperations } from '../operations/analytics';
+import { authOperations } from '../operations/auth';
+import { databaseOperations } from '../operations/database';
+import { domainsOperations } from '../operations/domains';
+import { edgeFunctionOperations } from '../operations/edge-functions';
+import { environmentsOperations } from '../operations/environments';
+import { oauthOperations } from '../operations/oauth';
+import { organizationsOperations } from '../operations/organizations';
+import { projectsOperations } from '../operations/projects';
+import { restOperations } from '../operations/rest';
+import { secretsOperations } from '../operations/secrets';
+import { storageOperations } from '../operations/storage';
 
 export type {
 	SupabaseMethod,

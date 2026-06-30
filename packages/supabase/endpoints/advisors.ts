@@ -4,7 +4,7 @@ import {
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { advisorsOperations } from './operation-groups/advisors';
+import { advisorsOperations } from '../operations/advisors';
 
 function getOperation(name: (typeof advisorsOperations)[number]['name']) {
 	const operation = advisorsOperations.find(

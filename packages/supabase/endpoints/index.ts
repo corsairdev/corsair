@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { AdvisorsEndpoints } from './advisors';
 import { AnalyticsEndpoints } from './analytics';
 import { AuthEndpoints } from './auth';
@@ -43,7 +44,7 @@ export const supabaseEndpointMeta = Object.fromEntries(
 			description: operation.description,
 		},
 	]),
-);
+) as RequiredPluginEndpointMeta<typeof supabaseEndpointsNested>;
 
 export const supabaseEndpointSchemas = Object.fromEntries(
 	supabaseOperations.map((operation: SupabaseOperation) => [

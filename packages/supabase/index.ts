@@ -8,15 +8,21 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	supabaseEndpointMeta,
+	supabaseEndpointMeta as generatedSupabaseEndpointMeta,
 	supabaseEndpointSchemas,
 	supabaseEndpointsNested,
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { SupabaseSchema } from './schema';
+
+export const supabaseEndpointMeta =
+	generatedSupabaseEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof supabaseEndpointsNested
+	>;
 
 export type SupabasePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -127,7 +133,6 @@ export type {
 } from './endpoints/types';
 
 export {
-	supabaseEndpointMeta,
 	supabaseEndpointsNested,
 	supabaseEndpointSchemas,
 };

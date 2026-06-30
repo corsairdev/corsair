@@ -4,7 +4,7 @@ import {
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { environmentsOperations } from './operation-groups/environments';
+import { environmentsOperations } from '../operations/environments';
 
 function getOperation(name: (typeof environmentsOperations)[number]['name']) {
 	const operation = environmentsOperations.find(
