@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedGoogleMeetRequest } from '../client';
-import type { GoogleMeetEndpoints } from '..';
+import type { GoogleMeetEndpoints } from '../index';
 import type { GoogleMeetEndpointOutputs } from './types';
 
 export const get: GoogleMeetEndpoints['conferenceRecordsGet'] = async (ctx, input) => {

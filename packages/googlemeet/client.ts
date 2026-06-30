@@ -39,12 +39,11 @@ async function refreshAccessToken(
 		);
 	}
 
-	const json = (await response.json()) as {
+	return (await response.json()) as {
 		access_token: string;
 		expires_in: number;
+		refresh_token?: string;
 	};
-
-	return json;
 }
 
 export async function getValidAccessToken({
@@ -61,7 +60,12 @@ export async function getValidAccessToken({
 	expiresAt?: string | null;
 	refreshToken: string;
 	forceRefresh?: boolean;
-}): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
+}): Promise<{
+	accessToken: string;
+	newRefreshToken?: string;
+	expiresAt: number;
+	refreshed: boolean;
+}> {
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
@@ -81,6 +85,7 @@ export async function getValidAccessToken({
 	);
 	return {
 		accessToken: tokenData.access_token,
+		newRefreshToken: tokenData.refresh_token,
 		expiresAt: now + tokenData.expires_in,
 		refreshed: true,
 	};

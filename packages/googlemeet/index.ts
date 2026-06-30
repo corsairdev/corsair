@@ -27,16 +27,15 @@ import {
 } from './endpoints';
 import { GoogleMeetSchema } from './schema';
 import { errorHandlers } from './error-handlers';
+import { createGoogleMeetWebhookMatcher } from './webhooks/types';
 
 export const googleMeetAuthConfig = {
-	oauth_2: {} as const,
+	oauth_2: {},
 } as const satisfies PluginAuthConfig;
 
 export type GoogleMeetContext = CorsairPluginContext<
 	typeof GoogleMeetSchema,
-	GoogleMeetPluginOptions,
-	undefined,
-	typeof googleMeetAuthConfig
+	GoogleMeetPluginOptions
 >;
 
 type GoogleMeetEndpoint<K extends keyof GoogleMeetEndpointOutputs> = CorsairEndpoint<
@@ -215,13 +214,16 @@ export type GoogleMeetPluginOptions = {
 	hooks?: InternalGoogleMeetPlugin['hooks'];
 	webhookHooks?: InternalGoogleMeetPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
+	/**
+	 * Permission configuration for the Google Meet plugin.
+	 * Controls what the AI agent is allowed to do.
+	 * Overrides use dot-notation paths from the Google Meet endpoint tree — invalid paths are type errors.
+	 */
 	permissions?: PluginPermissionsConfig<typeof googleMeetEndpointsNested>;
 };
 
-export type GoogleMeetKeyBuilderContext = KeyBuilderContext<
-	GoogleMeetPluginOptions,
-	typeof googleMeetAuthConfig
->;
+export type GoogleMeetKeyBuilderContext =
+	KeyBuilderContext<GoogleMeetPluginOptions>;
 
 export type BaseGoogleMeetPlugin<T extends GoogleMeetPluginOptions> = CorsairPlugin<
 	'googlemeet',
@@ -229,8 +231,7 @@ export type BaseGoogleMeetPlugin<T extends GoogleMeetPluginOptions> = CorsairPlu
 	typeof googleMeetEndpointsNested,
 	typeof googleMeetWebhooksNested,
 	T,
-	typeof defaultAuthType,
-	typeof googleMeetAuthConfig
+	typeof defaultAuthType
 >;
 
 export type InternalGoogleMeetPlugin = BaseGoogleMeetPlugin<GoogleMeetPluginOptions>;
@@ -247,9 +248,9 @@ export function googlemeet<const T extends GoogleMeetPluginOptions>(
 	};
 	return {
 		id: 'googlemeet',
+		authConfig: googleMeetAuthConfig,
 		schema: GoogleMeetSchema,
 		options: options,
-		authConfig: googleMeetAuthConfig,
 		oauthConfig: {
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -266,7 +267,6 @@ export function googlemeet<const T extends GoogleMeetPluginOptions>(
 		webhooks: googleMeetWebhooksNested,
 		endpointMeta: googleMeetEndpointMeta,
 		endpointSchemas: googlemeetEndpointSchemas,
-		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -291,55 +291,59 @@ export function googlemeet<const T extends GoogleMeetPluginOptions>(
 
 				if (!res.client_id || !res.client_secret) {
 					throw new Error(
-						'[auth-missing:googlemeet:client_credentials]: Google Meet client credentials are missing',
+						'[corsair:googlemeet] No client id or client secret',
 					);
 				}
 
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
+				let currentRefreshToken = refreshToken;
+
 				try {
-					result = await getValidAccessToken({
+					const result = await getValidAccessToken({
 						accessToken,
 						expiresAt,
-						refreshToken,
+						refreshToken: currentRefreshToken,
 						clientId: res.client_id,
 						clientSecret: res.client_secret,
 					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:googlemeet] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
 
-				if (result.refreshed) {
-					try {
+					if (result.refreshed) {
 						await ctx.keys.set_access_token(result.accessToken);
 						await ctx.keys.set_expires_at(String(result.expiresAt));
-					} catch (error) {
-						throw new Error(
-							`[corsair:googlemeet] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
+						if (result.newRefreshToken) {
+							currentRefreshToken = result.newRefreshToken;
+							await ctx.keys.set_refresh_token(currentRefreshToken);
+						}
 					}
+
+					(ctx as Record<string, unknown>)._refreshAuth = async () => {
+						const freshResult = await getValidAccessToken({
+							accessToken: null,
+							expiresAt: null,
+							refreshToken: currentRefreshToken,
+							clientId: res.client_id!,
+							clientSecret: res.client_secret!,
+							forceRefresh: true,
+						});
+						await ctx.keys.set_access_token(freshResult.accessToken);
+						await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+						if (freshResult.newRefreshToken) {
+							currentRefreshToken = freshResult.newRefreshToken;
+							await ctx.keys.set_refresh_token(currentRefreshToken);
+						}
+						return freshResult.accessToken;
+					};
+
+					return result.accessToken;
+				} catch (error) {
+					throw new Error(
+						`[corsair:googlemeet] Failed to get valid access token: ${error instanceof Error ? error.message : String(error)}`,
+					);
 				}
-
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: res.client_id!,
-						clientSecret: res.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
 			}
 
 			throw new AuthMissingError('googlemeet', 'oauth_2');
 		},
+		pluginWebhookMatcher: createGoogleMeetWebhookMatcher(),
 	} satisfies InternalGoogleMeetPlugin;
 }
 
@@ -350,3 +354,9 @@ export type {
 
 export * from './error-handlers';
 export { GoogleMeetSchema } from './schema';
+export type {
+	GoogleMeetWebhookOutputs,
+} from './webhooks/types';
+export { createGoogleMeetWebhookMatcher } from './webhooks/types';
+
+export type * from './types';

@@ -66,11 +66,16 @@
           },
           {
             "group": "Studio",
-            "pages": ["studio/overview"]
+            "pages": [
+              "studio/overview"
+            ]
           },
           {
             "group": "Auth Types",
-            "pages": ["concepts/api-key", "concepts/oauth"]
+            "pages": [
+              "concepts/api-key",
+              "concepts/oauth"
+            ]
           },
           {
             "group": "Management API",
@@ -125,7 +130,11 @@
           },
           {
             "group": "Agent SDKs",
-            "pages": ["app/vercel-ai", "app/openai", "app/claude"]
+            "pages": [
+              "app/vercel-ai",
+              "app/openai",
+              "app/claude"
+            ]
           },
           {
             "group": "SDK Concepts",
@@ -143,7 +152,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -366,6 +378,14 @@
                   "plugins/googledrive/api",
                   "plugins/googledrive/database",
                   "plugins/googledrive/webhooks"
+                ]
+              },
+              {
+                "group": "Google Meet",
+                "pages": [
+                  "plugins/googlemeet/overview",
+                  "plugins/googlemeet/api",
+                  "plugins/googlemeet/database"
                 ]
               },
               {
@@ -790,14 +810,26 @@
     ]
   },
   "redirects": [
-    { "source": "/", "destination": "/getting-started/introduction" },
+    {
+      "source": "/",
+      "destination": "/getting-started/introduction"
+    },
     {
       "source": "/getting-started/installation",
       "destination": "/getting-started/setup"
     },
-    { "source": "/app/introduction", "destination": "/app/home" },
-    { "source": "/hosted-sdk/overview", "destination": "/app/home" },
-    { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },
+    {
+      "source": "/app/introduction",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/overview",
+      "destination": "/app/home"
+    },
+    {
+      "source": "/hosted-sdk/quickstart",
+      "destination": "/app/installation"
+    },
     {
       "source": "/hosted-sdk/instances-and-plugins",
       "destination": "/app/instances-and-plugins"
