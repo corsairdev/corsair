@@ -1112,6 +1112,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.6.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
@@ -1125,7 +1128,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       zod:
-        specifier: '^4.1.13'
+        specifier: ^4.1.13
         version: 4.1.13
 
   packages/intercom:
