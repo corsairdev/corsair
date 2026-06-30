@@ -74,6 +74,11 @@ const backfillConfig = {
 			getMany: {},
 		},
 	},
+	googlemeet: {
+		conferenceRecords: {
+			list: {},
+		},
+	},
 	googledrive: {
 		files: {
 			list: {},

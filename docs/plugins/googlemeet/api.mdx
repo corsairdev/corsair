@@ -1,0 +1,1073 @@
+---
+title: API
+description: "API reference for Google Meet: every `googlemeet.api.*` operation with input and output types."
+---
+
+Every `googlemeet.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Conference Records
+
+### get
+
+`conferenceRecords.get`
+
+Get a conference record
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.conferenceRecords.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `space` | `string` | No | — |
+| `fixedExternalMeetingId` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+| `expireTime` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`conferenceRecords.list`
+
+List conference records
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.conferenceRecords.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conferenceRecords` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="conferenceRecords full type">
+
+```ts
+{
+  name?: string,
+  space?: string,
+  fixedExternalMeetingId?: string,
+  startTime?: string,
+  endTime?: string,
+  expireTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Participants
+
+### get
+
+`participants.get`
+
+Get a participant
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.participants.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `signedInUser` | `object` | No | — |
+| `anonymousUser` | `object` | No | — |
+| `phoneUser` | `object` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="signedInUser full type">
+
+```ts
+{
+  user?: string,
+  displayName?: string
+}
+```
+</Accordion>
+
+<Accordion title="anonymousUser full type">
+
+```ts
+{
+  displayName?: string
+}
+```
+</Accordion>
+
+<Accordion title="phoneUser full type">
+
+```ts
+{
+  displayName?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`participants.list`
+
+List participants
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.participants.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `participants` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="participants full type">
+
+```ts
+{
+  name?: string,
+  signedInUser?: {
+    user?: string,
+    displayName?: string
+  },
+  anonymousUser?: {
+    displayName?: string
+  },
+  phoneUser?: {
+    displayName?: string
+  },
+  startTime?: string,
+  endTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Participant Sessions
+
+### get
+
+`participantSessions.get`
+
+Get a participant session
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.participantSessions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`participantSessions.list`
+
+List participant sessions
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.participantSessions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `participantSessions` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="participantSessions full type">
+
+```ts
+{
+  name?: string,
+  startTime?: string,
+  endTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recordings
+
+### get
+
+`recordings.get`
+
+Get a recording
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.recordings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+| `state` | `STATE_UNSPECIFIED \| STARTED \| ENDED \| FILE_GENERATED` | No | — |
+| `driveDestination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="driveDestination full type">
+
+```ts
+{
+  file?: string,
+  exportUri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`recordings.list`
+
+List recordings
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.recordings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordings` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recordings full type">
+
+```ts
+{
+  name?: string,
+  startTime?: string,
+  endTime?: string,
+  state?: STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED,
+  driveDestination?: {
+    file?: string,
+    exportUri?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Smart Notes
+
+### get
+
+`smartNotes.get`
+
+Get smart notes
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.smartNotes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+| `state` | `STATE_UNSPECIFIED \| STARTED \| ENDED \| FILE_GENERATED` | No | — |
+| `docsDestination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="docsDestination full type">
+
+```ts
+{
+  document?: string,
+  exportUri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`smartNotes.list`
+
+List smart notes
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.smartNotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `smartNotes` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="smartNotes full type">
+
+```ts
+{
+  name?: string,
+  startTime?: string,
+  endTime?: string,
+  state?: STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED,
+  docsDestination?: {
+    document?: string,
+    exportUri?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spaces
+
+### create
+
+`spaces.create`
+
+Create a new meeting space
+
+**Risk:** `write`
+
+```ts
+await corsair.googlemeet.api.spaces.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space` | `object` | No | — |
+| `requestId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="space full type">
+
+```ts
+{
+  config?: {
+    accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED,
+    entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL,
+    moderation?: MODERATION_UNSPECIFIED | OFF | ON,
+    moderationRestrictions?: {
+      chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+      reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+      presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+      defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF
+    },
+    attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT,
+    artifactConfig?: {
+      recordingConfig?: {
+        autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+      },
+      transcriptionConfig?: {
+        autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+      },
+      smartNotesConfig?: {
+        autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `meetingUri` | `string` | No | — |
+| `meetingCode` | `string` | No | — |
+| `config` | `object` | No | — |
+| `activeConference` | `object` | No | — |
+| `phoneAccess` | `object[]` | No | — |
+| `gatewaySipAccess` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED,
+  entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL,
+  moderation?: MODERATION_UNSPECIFIED | OFF | ON,
+  moderationRestrictions?: {
+    chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF
+  },
+  attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT,
+  artifactConfig?: {
+    recordingConfig?: {
+      autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    },
+    transcriptionConfig?: {
+      autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    },
+    smartNotesConfig?: {
+      autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="activeConference full type">
+
+```ts
+{
+  conferenceRecord?: string
+}
+```
+</Accordion>
+
+<Accordion title="phoneAccess full type">
+
+```ts
+{
+  languageCode?: string,
+  phoneNumber?: string,
+  pin?: string,
+  regionCode?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="gatewaySipAccess full type">
+
+```ts
+{
+  uri?: string,
+  sipAccessCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### endActiveConference
+
+`spaces.endActiveConference`
+
+End an active conference [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlemeet.api.spaces.endActiveConference({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`spaces.get`
+
+Get a meeting space
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.spaces.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `meetingUri` | `string` | No | — |
+| `meetingCode` | `string` | No | — |
+| `config` | `object` | No | — |
+| `activeConference` | `object` | No | — |
+| `phoneAccess` | `object[]` | No | — |
+| `gatewaySipAccess` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED,
+  entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL,
+  moderation?: MODERATION_UNSPECIFIED | OFF | ON,
+  moderationRestrictions?: {
+    chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF
+  },
+  attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT,
+  artifactConfig?: {
+    recordingConfig?: {
+      autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    },
+    transcriptionConfig?: {
+      autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    },
+    smartNotesConfig?: {
+      autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="activeConference full type">
+
+```ts
+{
+  conferenceRecord?: string
+}
+```
+</Accordion>
+
+<Accordion title="phoneAccess full type">
+
+```ts
+{
+  languageCode?: string,
+  phoneNumber?: string,
+  pin?: string,
+  regionCode?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="gatewaySipAccess full type">
+
+```ts
+{
+  uri?: string,
+  sipAccessCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`spaces.patch`
+
+Update a meeting space
+
+**Risk:** `write`
+
+```ts
+await corsair.googlemeet.api.spaces.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `updateMask` | `string` | No | — |
+| `space` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="space full type">
+
+```ts
+{
+  config?: {
+    accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED,
+    entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL,
+    moderation?: MODERATION_UNSPECIFIED | OFF | ON,
+    moderationRestrictions?: {
+      chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+      reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+      presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+      defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF
+    },
+    attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT,
+    artifactConfig?: {
+      recordingConfig?: {
+        autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+      },
+      transcriptionConfig?: {
+        autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+      },
+      smartNotesConfig?: {
+        autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `meetingUri` | `string` | No | — |
+| `meetingCode` | `string` | No | — |
+| `config` | `object` | No | — |
+| `activeConference` | `object` | No | — |
+| `phoneAccess` | `object[]` | No | — |
+| `gatewaySipAccess` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  accessType?: ACCESS_TYPE_UNSPECIFIED | OPEN | TRUSTED | RESTRICTED,
+  entryPointAccess?: ENTRY_POINT_ACCESS_UNSPECIFIED | CREATOR_APP_ONLY | ALL,
+  moderation?: MODERATION_UNSPECIFIED | OFF | ON,
+  moderationRestrictions?: {
+    chatRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    reactionRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    presentRestriction?: RESTRICTION_TYPE_UNSPECIFIED | HOSTS_ONLY | NO_RESTRICTION,
+    defaultJoinAsViewerType?: DEFAULT_JOIN_AS_VIEWER_TYPE_UNSPECIFIED | ON | OFF
+  },
+  attendanceReportGenerationType?: ATTENDANCE_REPORT_GENERATION_TYPE_UNSPECIFIED | DO_NOT_GENERATE | GENERATE_REPORT,
+  artifactConfig?: {
+    recordingConfig?: {
+      autoRecordingGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    },
+    transcriptionConfig?: {
+      autoTranscriptionGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    },
+    smartNotesConfig?: {
+      autoSmartNotesGeneration?: AUTO_GENERATION_TYPE_UNSPECIFIED | ON | OFF
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="activeConference full type">
+
+```ts
+{
+  conferenceRecord?: string
+}
+```
+</Accordion>
+
+<Accordion title="phoneAccess full type">
+
+```ts
+{
+  languageCode?: string,
+  phoneNumber?: string,
+  pin?: string,
+  regionCode?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="gatewaySipAccess full type">
+
+```ts
+{
+  uri?: string,
+  sipAccessCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transcript Entries
+
+### get
+
+`transcriptEntries.get`
+
+Get a transcript entry
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.transcriptEntries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `participant` | `string` | No | — |
+| `text` | `string` | No | — |
+| `languageCode` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`transcriptEntries.list`
+
+List transcript entries
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.transcriptEntries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcriptEntries` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcriptEntries full type">
+
+```ts
+{
+  name?: string,
+  participant?: string,
+  text?: string,
+  languageCode?: string,
+  startTime?: string,
+  endTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transcripts
+
+### get
+
+`transcripts.get`
+
+Get a transcript
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.transcripts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+| `state` | `STATE_UNSPECIFIED \| STARTED \| ENDED \| FILE_GENERATED` | No | — |
+| `docsDestination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="docsDestination full type">
+
+```ts
+{
+  document?: string,
+  exportUri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transcripts.list`
+
+List transcripts
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemeet.api.transcripts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcripts` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="transcripts full type">
+
+```ts
+{
+  name?: string,
+  startTime?: string,
+  endTime?: string,
+  state?: STATE_UNSPECIFIED | STARTED | ENDED | FILE_GENERATED,
+  docsDestination?: {
+    document?: string,
+    exportUri?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

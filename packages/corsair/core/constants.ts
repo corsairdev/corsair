@@ -37,6 +37,7 @@ export const BaseProviders = [
 	'gmail',
 	'googlecalendar',
 	'googledrive',
+	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
@@ -106,6 +107,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledrive: 'Google Drive',
 	googlesheets: 'Google Sheets',
+	googlemeet: 'Google Meet',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
@@ -180,6 +182,7 @@ export type AllProviders =
 	| 'gmail'
 	| 'googlecalendar'
 	| 'googledrive'
+	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
