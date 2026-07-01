@@ -1,18 +1,24 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { readQueryParam } from 'corsair/core';
+import { verifyHmacSignatureWithPrefix } from 'corsair/http';
 import { z } from 'zod';
-import { verifyHmacSignatureWithPrefix } from "corsair/http";
-import { CommentsOutputSchema } from "../endpoints/types";
+import { CommentsOutputSchema } from '../endpoints/types';
 
 // ─────────────────────────────────────────────────────────────
 // Webhook Payload
 // ─────────────────────────────────────────────────────────────
 
-export const InstagramMessageSchema = z.object({
-	mid: z.string().optional(),
-	text: z.string().optional(),
-	is_echo: z.boolean().optional(),
-}).loose();
+export const InstagramMessageSchema = z
+	.object({
+		mid: z.string().optional(),
+		text: z.string().optional(),
+		is_echo: z.boolean().optional(),
+	})
+	.loose();
 
 const InstagramReactionSchema = z.object({
 	mid: z.string(),
@@ -96,7 +102,6 @@ export const InstagramCommentsWebhookSchema = z.object({
 	),
 });
 
-
 export type InstagramWebhookPayload = z.infer<
 	typeof InstagramWebhookPayloadSchema
 >;
@@ -121,7 +126,7 @@ export const InstagramMessageReceivedEventSchema = z.object({
 	messageId: z.string(),
 	text: z.string().optional(),
 	timestamp: z.number().optional(),
-	isEcho: z.boolean().default(false)
+	isEcho: z.boolean().default(false),
 });
 
 export const InstagramUrlVerificationEventSchema = z.object({
@@ -141,9 +146,7 @@ export type InstagramUrlVerificationEvent = z.infer<
 	typeof InstagramUrlVerificationEventSchema
 >;
 
-export type InstagramCommentEvent = z.infer<
-	typeof InstagramCommentEventSchema
->;
+export type InstagramCommentEvent = z.infer<typeof InstagramCommentEventSchema>;
 
 // ─────────────────────────────────────────────────────────────
 // Outputs
@@ -155,7 +158,10 @@ export type InstagramWebhookOutputs = {
 	comments: InstagramCommentEvent;
 };
 
-export type InstagramEventName = 'messageReceived' | 'url_verification' | 'comments';
+export type InstagramEventName =
+	| 'messageReceived'
+	| 'url_verification'
+	| 'comments';
 
 export type MetaWebhookChallenge = {
 	mode: string;
@@ -263,8 +269,7 @@ export function verifyInstagramWebhookSignature(
 	const payload = parseInstagramSignaturePayload(request.payload);
 
 	if (payload?.object === 'instagram') {
-		const modifiedPayload =
-			convertInstagramEmojiFields(payload);
+		const modifiedPayload = convertInstagramEmojiFields(payload);
 
 		rawBody = JSON.stringify(modifiedPayload);
 
@@ -275,10 +280,7 @@ export function verifyInstagramWebhookSignature(
 		);
 
 		// Fix double-escaped unicode
-		rawBody = rawBody.replace(
-			/\\\\u([0-9a-fA-F]{4})/g,
-			'\\u$1',
-		);
+		rawBody = rawBody.replace(/\\\\u([0-9a-fA-F]{4})/g, '\\u$1');
 
 		// Match comment webhook formatting
 		const firstEntry = payload.entry[0];
@@ -287,17 +289,13 @@ export function verifyInstagramWebhookSignature(
 			'changes' in firstEntry &&
 			firstEntry.changes[0]?.field === 'comments'
 		) {
-			rawBody = rawBody
-				.replace(/:/g, ': ')
-				.replace(/,/g, ', ');
+			rawBody = rawBody.replace(/:/g, ': ').replace(/,/g, ', ');
 		}
 	}
 
 	const headers = request.headers;
 
-	const signature = Array.isArray(
-		headers['x-hub-signature-256'],
-	)
+	const signature = Array.isArray(headers['x-hub-signature-256'])
 		? headers['x-hub-signature-256'][0]
 		: headers['x-hub-signature-256'];
 
@@ -330,33 +328,21 @@ export function verifyInstagramWebhookSignature(
 
 function toUnicodeEscape(str: string): string {
 	return [...str]
-		.map(char => {
+		.map((char) => {
 			const code = char.codePointAt(0)!;
 
 			if (code > 127) {
 				if (code > 0xffff) {
-					const high =
-						Math.floor(
-							(code - 0x10000) / 0x400,
-						) + 0xd800;
+					const high = Math.floor((code - 0x10000) / 0x400) + 0xd800;
 
-					const low =
-						((code - 0x10000) % 0x400) +
-						0xdc00;
+					const low = ((code - 0x10000) % 0x400) + 0xdc00;
 
-					return `\\u${high
-						.toString(16)
-						.padStart(
-							4,
-							'0',
-						)}\\u${low
+					return `\\u${high.toString(16).padStart(4, '0')}\\u${low
 						.toString(16)
 						.padStart(4, '0')}`;
 				}
 
-				return `\\u${code
-					.toString(16)
-					.padStart(4, '0')}`;
+				return `\\u${code.toString(16).padStart(4, '0')}`;
 			}
 
 			return char;
@@ -376,13 +362,8 @@ function convertInstagramEmojiFields(
 		// Messaging events
 		for (const messaging of entry.messaging ?? []) {
 			// Message text
-			if (
-				messaging.message &&
-				typeof messaging.message.text === 'string'
-			) {
-				messaging.message.text = toUnicodeEscape(
-					messaging.message.text,
-				);
+			if (messaging.message && typeof messaging.message.text === 'string') {
+				messaging.message.text = toUnicodeEscape(messaging.message.text);
 
 				messaging.message.text = messaging.message.text.replace(
 					/\\\\u/g,
@@ -391,13 +372,8 @@ function convertInstagramEmojiFields(
 			}
 
 			// Reaction emoji
-			if (
-				messaging.reaction &&
-				typeof messaging.reaction.emoji === 'string'
-			) {
-				messaging.reaction.emoji = toUnicodeEscape(
-					messaging.reaction.emoji,
-				);
+			if (messaging.reaction && typeof messaging.reaction.emoji === 'string') {
+				messaging.reaction.emoji = toUnicodeEscape(messaging.reaction.emoji);
 			}
 		}
 
@@ -423,29 +399,25 @@ export function createInstagramWebhookMatcher(
 	eventType: InstagramEventName,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-
 		if (eventType === 'url_verification') {
 			const challenge = extractMetaWebhookChallenge(request);
 			return challenge?.mode === 'subscribe';
 		}
 
 		if (eventType === 'messageReceived') {
-			const parsed =
-				InstagramWebhookPayloadSchema.safeParse(
-					request.body,
-				);
+			const parsed = InstagramWebhookPayloadSchema.safeParse(request.body);
 
 			if (!parsed.success) {
 				return false;
 			}
 
-			return parsed.data.object === 'instagram'
+			return parsed.data.object === 'instagram';
 		}
 
-		if(eventType === 'comments') {
+		if (eventType === 'comments') {
 			const parsed = InstagramCommentsWebhookSchema.safeParse(request.body);
 
-			if(!parsed.success) {
+			if (!parsed.success) {
 				return false;
 			}
 
@@ -453,5 +425,5 @@ export function createInstagramWebhookMatcher(
 		}
 
 		return false;
-	}
-};
+	};
+}

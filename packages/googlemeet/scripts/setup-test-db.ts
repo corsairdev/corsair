@@ -1,7 +1,7 @@
-import { randomBytes, createCipheriv, createDecipheriv, scrypt } from 'crypto';
-import { promisify } from 'util';
-import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { createCipheriv, randomBytes, scrypt } from 'crypto';
+import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
+import { promisify } from 'util';
 
 const scryptAsync = promisify(scrypt);
 
@@ -19,19 +19,35 @@ async function encryptDEK(dek: string, kek: string): Promise<string> {
 	const salt = randomBytes(SALT_LENGTH);
 	const derivedKey = (await scryptAsync(kek, salt, KEY_LENGTH)) as Buffer;
 	const iv = randomBytes(IV_LENGTH);
-	const cipher = createCipheriv(ALGORITHM, derivedKey, iv, { authTagLength: AUTH_TAG_LENGTH });
+	const cipher = createCipheriv(ALGORITHM, derivedKey, iv, {
+		authTagLength: AUTH_TAG_LENGTH,
+	});
 	const encrypted = Buffer.concat([cipher.update(dek, 'utf8'), cipher.final()]);
 	const authTag = cipher.getAuthTag();
-	return [salt.toString('base64'), iv.toString('base64'), authTag.toString('base64'), encrypted.toString('base64')].join(':');
+	return [
+		salt.toString('base64'),
+		iv.toString('base64'),
+		authTag.toString('base64'),
+		encrypted.toString('base64'),
+	].join(':');
 }
 
 function encryptWithDEK(data: string, dek: string): string {
 	const key = Buffer.from(dek, 'base64');
 	const iv = randomBytes(IV_LENGTH);
-	const cipher = createCipheriv(ALGORITHM, key, iv, { authTagLength: AUTH_TAG_LENGTH });
-	const encrypted = Buffer.concat([cipher.update(data, 'utf8'), cipher.final()]);
+	const cipher = createCipheriv(ALGORITHM, key, iv, {
+		authTagLength: AUTH_TAG_LENGTH,
+	});
+	const encrypted = Buffer.concat([
+		cipher.update(data, 'utf8'),
+		cipher.final(),
+	]);
 	const authTag = cipher.getAuthTag();
-	return [iv.toString('base64'), authTag.toString('base64'), encrypted.toString('base64')].join(':');
+	return [
+		iv.toString('base64'),
+		authTag.toString('base64'),
+		encrypted.toString('base64'),
+	].join(':');
 }
 
 function escapeSql(str: string): string {
@@ -58,7 +74,9 @@ async function main() {
 	const refreshToken = env.GOOGLE_REFRESH_TOKEN;
 
 	if (!kek || kek === 'corsair-googlemeet-test-kek-32-chars-minimum') {
-		console.error('ERROR: Set CORSAIR_KEK in demo/testing/.env to a real value (at least 32 chars)');
+		console.error(
+			'ERROR: Set CORSAIR_KEK in demo/testing/.env to a real value (at least 32 chars)',
+		);
 		process.exit(1);
 	}
 	if (!clientId || clientId === 'your-client-id-here') {
@@ -93,7 +111,10 @@ async function main() {
 	const integrationConfig = {
 		client_id: encryptWithDEK(clientId, integrationDek),
 		client_secret: encryptWithDEK(clientSecret, integrationDek),
-		redirect_url: encryptWithDEK('http://localhost:3001/api/connect/callback', integrationDek),
+		redirect_url: encryptWithDEK(
+			'http://localhost:3001/api/connect/callback',
+			integrationDek,
+		),
 	};
 
 	const expiresAt = String(Math.floor(Date.now() / 1000) + 3600);
@@ -101,7 +122,10 @@ async function main() {
 		access_token: encryptWithDEK(accessToken, accountDek),
 		refresh_token: encryptWithDEK(refreshToken, accountDek),
 		expires_at: encryptWithDEK(expiresAt, accountDek),
-		scope: encryptWithDEK('https://www.googleapis.com/auth/meetings.space.created https://www.googleapis.com/auth/meetings.space.readonly', accountDek),
+		scope: encryptWithDEK(
+			'https://www.googleapis.com/auth/meetings.space.created https://www.googleapis.com/auth/meetings.space.readonly',
+			accountDek,
+		),
 		webhook_signature: encryptWithDEK('', accountDek),
 	};
 
