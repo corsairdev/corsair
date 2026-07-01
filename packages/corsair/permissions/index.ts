@@ -199,6 +199,9 @@ export async function executePermission(
 			resolvedArgs = permission.error.substring(
 				'__corsair_modified_args__:'.length,
 			);
+			if (resolvedArgs.includes('__corsair_error__:')) {
+				resolvedArgs = resolvedArgs.split('__corsair_error__:')[0] || '';
+			}
 		}
 		let parsedArgs = resolvedArgs;
 		if (typeof resolvedArgs === 'string') {
@@ -215,9 +218,20 @@ export async function executePermission(
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		const db = getInternalDb(corsair);
 		if (db) {
+			let errorValue = errorMessage;
+			if (
+				typeof permission.error === 'string' &&
+				permission.error.startsWith('__corsair_modified_args__:')
+			) {
+				let baseArgs = permission.error;
+				if (baseArgs.includes('__corsair_error__:')) {
+					baseArgs = baseArgs.split('__corsair_error__:')[0] || '';
+				}
+				errorValue = `${baseArgs}__corsair_error__:${errorMessage}`;
+			}
 			await db.db
 				.updateTable('corsair_permissions')
-				.set({ status: 'failed', error: errorMessage, updated_at: new Date() })
+				.set({ status: 'failed', error: errorValue, updated_at: new Date() })
 				.where('id', '=', permission.id)
 				.execute();
 		}

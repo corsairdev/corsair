@@ -230,6 +230,9 @@ async function pollUntilResolved(
 				resolvedArgs = record.error.substring(
 					'__corsair_modified_args__:'.length,
 				);
+				if (resolvedArgs.includes('__corsair_error__:')) {
+					resolvedArgs = resolvedArgs.split('__corsair_error__:')[0] || '';
+				}
 			}
 			return {
 				result: 'allow',
@@ -303,7 +306,13 @@ export async function enforcePermission(
 		.selectAll()
 		.where('plugin', '=', opts.pluginId)
 		.where('endpoint', '=', opts.endpointPath)
-		.where('args', '=', argsJson)
+		.where((eb) =>
+			eb.or([
+				eb('args', '=', argsJson),
+				eb('error', '=', `__corsair_modified_args__:${argsJson}`),
+				eb('error', 'like', `__corsair_modified_args__:${argsJson}__corsair_error__:%`),
+			])
+		)
 		.where('tenant_id', '=', tenantId)
 		.where('expires_at', '>', now)
 		.where('status', 'in', ['pending', 'approved', 'executing'])
@@ -324,6 +333,11 @@ export async function enforcePermission(
 				resolvedArgs = existing.error.substring(
 					'__corsair_modified_args__:'.length,
 				);
+				if (resolvedArgs.includes('__corsair_error__:')) {
+					resolvedArgs = existing.error.substring(
+						'__corsair_modified_args__:'.length,
+					).split('__corsair_error__:')[0] || '';
+				}
 			}
 			return {
 				result: 'allow',

@@ -85,6 +85,9 @@ function PermissionRowView({
 			r.error.startsWith('__corsair_modified_args__:')
 		) {
 			rawArgs = r.error.substring('__corsair_modified_args__:'.length);
+			if (rawArgs.includes('__corsair_error__:')) {
+				rawArgs = rawArgs.split('__corsair_error__:')[0] || '';
+			}
 		}
 		try {
 			return JSON.stringify(JSON.parse(rawArgs), null, 2);
@@ -129,15 +132,22 @@ function PermissionRowView({
 	const hasModifiedArgs =
 		typeof r.error === 'string' &&
 		r.error.startsWith('__corsair_modified_args__:');
-	const displayArgs =
-		hasModifiedArgs && typeof r.error === 'string'
-			? r.error.substring('__corsair_modified_args__:'.length)
-			: String(r.args);
 
-	const displayError =
+	let displayArgs = String(r.args);
+	let displayError =
 		r.error && !r.error.startsWith('__corsair_modified_args__:')
 			? String(r.error)
 			: null;
+
+	if (hasModifiedArgs && typeof r.error === 'string') {
+		let rawArgs = r.error.substring('__corsair_modified_args__:'.length);
+		if (rawArgs.includes('__corsair_error__:')) {
+			const parts = rawArgs.split('__corsair_error__:');
+			rawArgs = parts[0] || '';
+			displayError = parts[1] || null;
+		}
+		displayArgs = rawArgs;
+	}
 
 	return (
 		<Card className="p-4 flex flex-col gap-3">

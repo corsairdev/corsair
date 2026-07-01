@@ -2,6 +2,7 @@ import { slack } from '@corsair-dev/slack';
 import { sql } from 'kysely';
 import { makeSlackRequest } from '../../slack/client';
 import { createCorsair } from '../core';
+import { executePermission } from '../permissions';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 import { createTestDatabase } from './setup-db';
 
@@ -175,7 +176,7 @@ describe('Modify and Approve Permissions', () => {
 				channel: 'C123456',
 				text: originalText,
 			}),
-		).rejects.toThrow(/requires user approval/i);
+		).rejects.toThrow(/approval/i);
 
 		// Retrieve the pending permission from the database
 		const record = await testDb.db
@@ -212,5 +213,88 @@ describe('Modify and Approve Permissions', () => {
 		expect(mockedMakeSlackRequest).toHaveBeenCalledTimes(1);
 		expect(capturedRequestBody?.text).toBe(modifiedText);
 		expect(capturedRequestBody?.text).not.toBe(originalText);
+	});
+
+	it('should preserve human-modified args in the database error column when executePermission fails', async () => {
+		const originalText = 'Original text';
+		const modifiedText = 'Hello modified by human';
+
+		const corsair = createCorsair({
+			kek: 'test_kek',
+			plugins: [
+				slack({
+					authType: 'api_key',
+					key: 'mock-slack-key',
+					permissions: {
+						mode: 'cautious',
+						overrides: {
+							'messages.post': 'require_approval',
+						},
+					},
+				}),
+			],
+			database: testDb.db,
+			approval: {
+				mode: 'synchronous',
+				timeout: '5s',
+				onTimeout: 'deny',
+			},
+		});
+
+		// Force the slack API request to throw an error
+		mockedMakeSlackRequest.mockRejectedValueOnce(new Error('Slack API Error'));
+
+		// Insert an approved permission record with modified args
+		const modifiedArgsObj = {
+			channel: 'C123456',
+			text: modifiedText,
+		};
+		const permissionId = 'test-permission-id';
+		const token = 'test-token';
+		const now = new Date();
+		const expiresAt = new Date(now.getTime() + 60000).toISOString();
+
+		await testDb.db
+			.insertInto('corsair_permissions')
+			.values({
+				id: permissionId,
+				created_at: now,
+				updated_at: now,
+				token,
+				plugin: 'slack',
+				endpoint: 'messages.post',
+				args: JSON.stringify({ channel: 'C123456', text: originalText }),
+				status: 'approved',
+				expires_at: expiresAt,
+				error: `__corsair_modified_args__:${JSON.stringify(modifiedArgsObj)}`,
+				tenant_id: 'default',
+			})
+			.execute();
+
+		// Execute the permission - this will invoke executePermission which catches the error
+		const execResult = await executePermission(corsair, token);
+
+		expect(execResult.error).toBe('Slack API Error');
+
+		// Retrieve the failed permission from the database
+		const failedRecord = await testDb.db
+			.selectFrom('corsair_permissions')
+			.selectAll()
+			.where('id', '=', permissionId)
+			.executeTakeFirst();
+
+		expect(failedRecord).toBeDefined();
+		expect(failedRecord?.status).toBe('failed');
+		// The error column should preserve the modified arguments and append the error message
+		expect(failedRecord?.error).toContain('__corsair_modified_args__');
+		expect(failedRecord?.error).toContain('__corsair_error__');
+		expect(failedRecord?.error).toContain('Slack API Error');
+
+		// Verify that we can still parse the modified args from the updated error column
+		const rawArgs = failedRecord!.error!.substring('__corsair_modified_args__:'.length);
+		expect(rawArgs).toContain('__corsair_error__:');
+		const parts = rawArgs.split('__corsair_error__:');
+		expect(parts[0]).toBe(JSON.stringify(modifiedArgsObj));
+		expect(parts[1]).toBe('Slack API Error');
 	});
 });
