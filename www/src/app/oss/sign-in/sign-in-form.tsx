@@ -21,7 +21,7 @@ export function SignInForm() {
 		await authClient.signIn.magicLink(
 			{
 				email,
-				callbackURL: '/oss/waitlist',
+				callbackURL: '/oss',
 			},
 			{
 				onSuccess: () => setSent(true),
@@ -63,7 +63,8 @@ export function SignInForm() {
 		<div className="mx-auto max-w-md">
 			<h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
 			<p className="mt-2 text-sm text-muted-foreground">
-				Enter your email and we&apos;ll send you a magic link.
+				Sign in to claim integrations, ship plugins, and earn AI credits for
+				every merge.
 			</p>
 
 			<form

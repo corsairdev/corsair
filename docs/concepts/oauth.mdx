@@ -1,5 +1,6 @@
 ---
 title: OAuth 2.0 Authentication
+sidebarTitle: OAuth 2.0
 description: Connect user accounts with OAuth 2.0 flows in Corsair plugins.
 ---
 
@@ -209,7 +210,7 @@ const messages = await tenant.gmail.api.messages.list({ maxResults: 10 });
 
 ### Hub mode alternative
 
-If you don't want to build connect pages, use `hub: { ... }` instead of `manual`. Call the same `createLink` API — the URL points to Corsair Hub's hosted UI. See [Connect / OAuth](/management/connect#hub-mode-hosted-connect-ui).
+If you don't want to build connect pages, use `hub: { ... }` instead of `manual`. Call the same `createLink` API — the URL points to Corsair Hub's hosted UI. Hub hosts the connect surfaces and stores none of your credentials. See [Hub overview](/hub/overview) for the model and [Connect / OAuth](/management/connect#hub-mode-hosted-connect-ui) for the API.
 
 ---
 

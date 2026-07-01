@@ -1,0 +1,162 @@
+---
+title: Hub
+sidebarTitle: Overview
+description: An optional hosted relay for the parts of Corsair that need a public URL — connect flows and approvals. It stores none of your credentials.
+---
+
+Corsair runs entirely in your own app. A few things, though, need a stable public URL that a third party can reach: OAuth callbacks and approval pages. In a self-hosted setup you build and host those yourself. **Hub is an optional hosted relay that provides them for you** so you can skip the boilerplate.
+
+Hub is not a separate product or a separate SDK. It is the same `createCorsair` instance with one extra config block. Leave it out and you run fully self-hosted (the default). Add it and Corsair routes the public-URL surfaces through Corsair's hosted endpoint.
+
+```ts corsair.ts
+export const corsair = createCorsair({
+    plugins: [github(), slack()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+    hub: {
+        projectApiKey: process.env.CORSAIR_API_KEY!,
+        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+    },
+});
+```
+
+<Info>
+Self-hosted (`manual`) is the default and is fully featured. Hub is a convenience upgrade, not a requirement. See [Manual or Hub](/hub/manual-vs-hub) for a side-by-side.
+</Info>
+
+## Hub stores none of your credentials
+
+This is the part to internalize first: **Hub is a relay, not a credential store.** It does not keep your users' access or refresh tokens. Tokens pass through the relay and are persisted only in **your** database, under your [KEK](/concepts/auth#envelope-encryption). Compromising the relay exposes no credentials, because there are none there to expose.
+
+```mermaid
+flowchart LR
+    Prov[OAuth Provider]
+    Hub["Corsair Hub<br/>relay only · stores nothing"]
+    App[Your App]
+    DB[(Your Database)]
+
+    Prov <--> Hub
+    Hub <--> App
+    App -->|encrypted tokens| DB
+```
+
+The same envelope encryption described in [Authentication](/concepts/auth#envelope-encryption) still applies. Each connection gets its own DEK, encrypted with your KEK, and the plaintext credential never lives anywhere but your database at runtime.
+
+## What Hub provides
+
+Three surfaces normally need a public URL. Hub hosts all three:
+
+<CardGroup cols={2}>
+  <Card title="OAuth callbacks">
+    Register one callback URL with the provider. Hub holds it for both [development and production](/hub/environments). No more swapping redirect URIs between environments.
+  </Card>
+  <Card title="Hosted connect page">
+    When an action needs a connection the user has not made yet, call `createLink()` to mint a Hub sign-in link. Hub hosts the connect page, so there is none to build. The user connects and retries.
+  </Card>
+  <Card title="Approval UI">
+    For gated [permissions](/concepts/permissions), the SDK generates a link to a hosted approve/deny page. You do not build a review UI.
+  </Card>
+</CardGroup>
+
+## Connecting an account
+
+When an agent or app hits an action that needs a connection the user has not made yet, the call throws an auth-missing error. You call `createLink()` to mint a Hub sign-in link and send the user to it. Hub hosts the connect page, so there is no "connect this first" UI to build. The user follows the link, connects, and retries the original action.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant App as Your App
+    participant Corsair
+    participant Hub as Hub sign-in
+
+    App->>Corsair: action needs GitHub
+    Corsair-->>App: throws auth-missing (no connection for this tenant)
+    App->>Corsair: createLink() — mint a sign-in link
+    App->>User: "Connect GitHub to continue"
+    User->>Hub: approve
+    Hub-->>App: connected (tokens to your DB)
+    App->>Corsair: retry — succeeds
+```
+
+You can also copy sign-in links from the [Hub dashboard](/hub/dashboard) without writing code.
+
+## One callback, two environments
+
+In a self-hosted setup, the OAuth redirect URI you register with each provider has to match the environment that is running, so you end up juggling separate provider apps (or rewriting redirect URIs) for local and production.
+
+With Hub you register **one** callback URL with the provider. Hub receives the callback and delivers the result to your app. Development and production use separate API keys and different delivery paths — see [Environments](/hub/environments) for why (browser redirect locally, signed POST in production).
+
+## Turning Hub on
+
+Set up a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), then pass the `hub` block to `createCorsair`.
+
+<Steps>
+  <Step title="Create an organization and project">
+    Sign in to the dashboard, create an organization, then create your first project. You get **development** and **production** environments automatically.
+  </Step>
+  <Step title="Copy development credentials">
+    Open the **Keys** tab (development environment). Add the API key and signing secret to your local env. Use development keys locally; switch to production keys when you deploy.
+
+    ```bash .env.local
+    CORSAIR_API_KEY=ck_dev_...
+    CORSAIR_SIGNING_SECRET=...
+    CORSAIR_KEK=...
+    ```
+  </Step>
+  <Step title="Register the OAuth redirect URL">
+    Register `https://auth.corsair.dev/oauth/callback` in each OAuth provider console (GitHub, Google, etc.). This is the single callback Hub holds for every environment.
+  </Step>
+  <Step title="Mount the handler and run locally">
+    Mount `toNextJsHandler` at `/api/corsair`. In development, Hub auto-detects your localhost delivery URL — no dashboard registration needed.
+  </Step>
+  <Step title="Activate production when you deploy">
+    Switch to the **production** environment in the dashboard, register your public HTTPS delivery URL, and set `ck_prod_…` credentials in your deployed env. See [Environments](/hub/environments).
+  </Step>
+</Steps>
+
+The `hub` block carries two required fields:
+
+| Field | Purpose |
+| ----- | ------- |
+| `projectApiKey` | Identifies your project and environment (`ck_dev_…` or `ck_prod_…`) |
+| `signingSecret` | Verifies signed deliveries so only your app accepts them |
+
+Optional: `apiUrl` (self-hosted Hub API), `oauthCallbackUrl` (override callback URL).
+
+Mount the handler once and it serves both Hub delivery and the [management API](/management/overview):
+
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from "corsair";
+import { corsair } from "@/server";
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+    basePath: "/api/corsair",
+});
+```
+
+From there, minting a connect link is identical to the self-hosted path. The same `createLink` API is used in both modes; only where the link points changes. See [Connect / OAuth](/management/connect) for the reference.
+
+## When to use Hub
+
+Reach for Hub when you do not want to build and host connect pages and approval UIs, or when you want one provider callback to cover local development and production. Stay self-hosted when you want full control of those surfaces or cannot add an external dependency in the auth path.
+
+<Info>
+Hub does not change how your agents call APIs. `corsair.slack.api.*`, `withTenant`, hooks, and the database layer all behave the same. Hub only affects the public-URL surfaces.
+</Info>
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Environments" href="/hub/environments">
+    Development vs production keys and delivery.
+  </Card>
+  <Card title="Hub dashboard" href="/hub/dashboard">
+    Connections, sign-in links, and production activation.
+  </Card>
+  <Card title="Manual or Hub" href="/hub/manual-vs-hub">
+    A side-by-side of what each mode requires you to build.
+  </Card>
+  <Card title="Delivery URLs" href="/hub/delivery-urls">
+    Browser redirect vs signed POST delivery.
+  </Card>
+</CardGroup>

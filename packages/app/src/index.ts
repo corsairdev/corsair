@@ -5,6 +5,8 @@
  * Vercel AI SDK, Claude Agents SDK, and OpenAI Agents SDK.
  */
 
+import { createMCPClient } from '@ai-sdk/mcp';
+
 export type CorsairConfig = {
 	/** MCP URL from your Corsair instance's MCP page */
 	url: string;
@@ -57,10 +59,7 @@ export function toCorsairMcpConfig(config: CorsairConfig): {
  * ```
  */
 export async function createVercelAiClient(config: CorsairConfig) {
-	const { experimental_createMCPClient } = await import(
-		/* webpackIgnore: true */ /* turbopackIgnore: true */ '@ai-sdk/mcp'
-	);
-	return experimental_createMCPClient({
+	return createMCPClient({
 		transport: {
 			type: 'http',
 			url: config.url,

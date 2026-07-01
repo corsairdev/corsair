@@ -27,13 +27,16 @@ If you want to contribute a new plugin, please start with the issue first. The i
 
 ## Fork and Local Setup
 
-1. Fork the repository on GitHub.
-2. Clone your fork locally.
-3. Install dependencies from the repo root.
+For each new integration, start from a fresh fork and a new local clone. If you already forked corsair for a previous integration, delete that fork on GitHub before forking again. Reusing an old fork or local checkout causes merge conflicts when you open a PR.
+
+1. Delete any existing corsair fork on GitHub (if this is not your first integration).
+2. Fork the repository on GitHub from [corsairdev/corsair](https://github.com/corsairdev/corsair).
+3. Clone your new fork into a new local directory (do not reuse a previous clone).
+4. Install dependencies from the repo root.
 
 ```bash
-git clone https://github.com/<your-username>/corsair.git
-cd corsair
+git clone https://github.com/<your-username>/corsair.git corsair-<integration-slug>
+cd corsair-<integration-slug>
 pnpm install
 ```
 

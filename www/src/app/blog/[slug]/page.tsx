@@ -10,14 +10,16 @@ type PageProps = {
 };
 
 export async function generateStaticParams() {
-	return getAllSlugs().map((slug) => ({ slug }));
+	const slugs = await getAllSlugs();
+
+	return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
 	params,
 }: PageProps): Promise<Metadata> {
 	const { slug } = await params;
-	const post = getPostBySlug(slug);
+	const post = await getPostBySlug(slug);
 
 	if (!post) {
 		return { title: 'Article not found' };
@@ -41,7 +43,7 @@ export async function generateMetadata({
 
 export default async function BlogArticlePage({ params }: PageProps) {
 	const { slug } = await params;
-	const post = getPostBySlug(slug);
+	const post = await getPostBySlug(slug);
 
 	if (!post) {
 		notFound();
@@ -72,7 +74,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
 				</p>
 			</header>
 
-			<BlogProse content={post.content} />
+			<BlogProse value={post.body} />
 		</main>
 	);
 }
