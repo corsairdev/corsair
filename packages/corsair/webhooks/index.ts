@@ -147,9 +147,6 @@ function buildGoogleChannelBody(
 	};
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main Function
-// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * Filters an incoming webhook request through all plugins in a corsair instance.
@@ -186,6 +183,7 @@ export async function processWebhook(
 		[x: string]: string | string[] | undefined;
 	},
 ): Promise<WebhookFilterResult> {
+
 	const normalizedHeaders = normalizeHeaders(headers);
 	let parsedBody =
 		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
@@ -237,7 +235,7 @@ export async function processWebhook(
 		if (!matched) continue;
 
 		const action = matched.path.join('.');
-
+			
 		const webhookRequest = {
 			payload: parsedBody,
 			headers: normalizedHeaders,

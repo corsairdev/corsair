@@ -231,6 +231,25 @@ describe('setupCorsair', () => {
 		expect(accounts[0]?.tenant_id).toBe('acme');
 	});
 
+	it('auto-provisions account rows when accessing a new tenant without setupCorsair', async () => {
+		const corsair = createCorsair({
+			kek: 'test-kek-32-chars-long-padding-x',
+			plugins: [slack({ authType: 'api_key' })],
+			database: testDb.db,
+			multiTenancy: true,
+		});
+
+		await corsair.withTenant('lazy-tenant').slack.keys.get_api_key();
+
+		const accounts = await testDb.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('tenant_id', '=', 'lazy-tenant')
+			.execute();
+
+		expect(accounts).toHaveLength(1);
+	});
+
 	it('rejects tenant-scoped writes to integration-level credentials', async () => {
 		const oauthPlugin = {
 			id: 'test-oauth',

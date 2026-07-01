@@ -1,7 +1,7 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({path: "../.env"});
 
 import { agentql } from '@corsair-dev/agentql';
-import { github } from '@corsair-dev/github';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -16,9 +16,10 @@ import { createCorsair } from 'corsair';
 
 import { sqlite } from '../db';
 
-const appUrl = process.env.APP_URL ?? 'http://localhost:3001';
-const hubProjectApiKey = process.env.CORSAIR_API_KEY!;
-const hubSigningSecret = process.env.CORSAIR_SIGNING_SECRET!;
+const hubProjectApiKey =
+	process.env.CORSAIR_DEV_API_KEY ?? process.env.CORSAIR_API_KEY!;
+const hubSigningSecret =
+	process.env.CORSAIR_DEV_SIGNING_SECRET ?? process.env.CORSAIR_SIGNING_SECRET!;
 // const hubApiUrl = process.env.HUB_API_URL;
 // const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
@@ -35,7 +36,6 @@ export const corsair = createCorsair({
 		// oauthCallbackUrl: hubOAuthCallbackUrl,
 		projectApiKey: hubProjectApiKey,
 		signingSecret: hubSigningSecret,
-		deliveryUrl: `${appUrl}/api/corsair`,
 	},
 	plugins: [
 		// github({ authType: 'managed' }),
@@ -62,5 +62,6 @@ export const corsair = createCorsair({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
+		instagram()
 	],
 });

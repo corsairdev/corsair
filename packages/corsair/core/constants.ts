@@ -37,6 +37,7 @@ export const BaseProviders = [
 	'gmail',
 	'googlecalendar',
 	'googledrive',
+	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
@@ -61,6 +62,7 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'supabase',
 	'tally',
 	'tavily',
 	'teams',
@@ -77,6 +79,7 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
+	'instagram',
 ] as const;
 
 export const ProviderDisplayNames = {
@@ -105,6 +108,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledrive: 'Google Drive',
 	googlesheets: 'Google Sheets',
+	googlemeet: 'Google Meet',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
@@ -128,6 +132,7 @@ export const ProviderDisplayNames = {
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
+	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	teams: 'Teams',
@@ -144,6 +149,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
+	instagram: 'Instagram'
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -178,6 +184,7 @@ export type AllProviders =
 	| 'gmail'
 	| 'googlecalendar'
 	| 'googledrive'
+	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
@@ -202,6 +209,7 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'supabase'
 	| 'tally'
 	| 'tavily'
 	| 'teams'
@@ -218,6 +226,7 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
+	| 'instagram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';

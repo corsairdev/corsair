@@ -1,9 +1,9 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
+import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
+import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
-import { encodeOAuthState, signState } from '../auth/state';
 import type { EndpointManualConfig } from '../config/manual-connect';
-import { hasManualConnectConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
@@ -14,6 +14,7 @@ import {
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPermissionsOptions,
+	CorsairPlugin,
 	EndpointHooks,
 	EndpointMetaEntry,
 	PermissionMode,
@@ -31,36 +32,6 @@ import type {
  */
 export function isEndpoint(value: unknown): value is Function {
 	return typeof value === 'function';
-}
-
-function buildConnectError(
-	pluginId: string,
-	manualConfig: {
-		baseUrl: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-		kek?: string;
-		tenantId?: string;
-	},
-	fallbackTenantId: string | undefined,
-): Error {
-	const state = signState(
-		encodeOAuthState(
-			pluginId,
-			manualConfig.tenantId ?? fallbackTenantId ?? 'default',
-		),
-		manualConfig.kek!,
-	);
-	const url = new URL(manualConfig.baseUrl);
-	url.searchParams.set('state', state);
-	const connectUrl = url.toString();
-	const msg = manualConfig.onAuthMissing
-		? manualConfig.onAuthMissing({ plugin: pluginId, connectUrl, state })
-		: `[auth-missing:${pluginId}] Authentication required. Direct the user to connect their account: ${connectUrl}`;
-	return new Error(msg);
 }
 
 /**
@@ -91,6 +62,9 @@ export function bindEndpointsRecursively({
 	tenantId,
 	manualConfig,
 	hubConfig,
+	plugin,
+	kek,
+	allPlugins,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -116,6 +90,9 @@ export function bindEndpointsRecursively({
 	/** Manual config from createCorsair({ manual: ... }) — connect + permission review. */
 	manualConfig?: EndpointManualConfig;
 	hubConfig?: HubConfig;
+	plugin?: CorsairPlugin;
+	kek?: string;
+	allPlugins?: readonly CorsairPlugin[];
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -269,17 +246,28 @@ export function bindEndpointsRecursively({
 				try {
 					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 				} catch (err) {
-					// manual may be permissions-only (approvalBaseUrl) without connect URLs —
-					// only rewrite AuthMissingError when manual connect is configured.
-					if (
-						manualConfig &&
-						hasManualConnectConfig(manualConfig) &&
-						manualConfig.oauthConfig &&
-						manualConfig.kek &&
-						err instanceof AuthMissingError &&
-						err.authType === 'oauth_2'
-					) {
-						throw buildConnectError(pluginId, manualConfig, tenantId);
+					if (err instanceof AuthMissingError) {
+						if (plugin && hubConfig) {
+							reportPluginConnectionStatusFromBinding({
+								hub: hubConfig,
+								database,
+								kek,
+								plugins: allPlugins ?? [],
+								plugin,
+								tenantId,
+								verified: false,
+							});
+						}
+						return resolveAuthMissingEndpointResult({
+							error: err,
+							manual: manualConfig,
+							hub: hubConfig,
+							plugin,
+							tenantId,
+							database,
+							kek,
+							plugins: allPlugins,
+						});
 					}
 					throw err;
 				}
@@ -287,6 +275,17 @@ export function bindEndpointsRecursively({
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					const res = await call(0, { ...ctx, key }, finalArgs);
 					await onPermissionComplete?.();
+					if (plugin && hubConfig) {
+						reportPluginConnectionStatusFromBinding({
+							hub: hubConfig,
+							database,
+							kek,
+							plugins: allPlugins ?? [],
+							plugin,
+							tenantId,
+							verified: true,
+						});
+					}
 					return res;
 				}
 
@@ -307,6 +306,17 @@ export function bindEndpointsRecursively({
 					beforeResult.passToAfter,
 				);
 				await onPermissionComplete?.();
+				if (plugin && hubConfig) {
+					reportPluginConnectionStatusFromBinding({
+						hub: hubConfig,
+						database,
+						kek,
+						plugins: allPlugins ?? [],
+						plugin,
+						tenantId,
+						verified: true,
+					});
+				}
 				return res;
 			};
 
@@ -331,6 +341,9 @@ export function bindEndpointsRecursively({
 				tenantId,
 				manualConfig,
 				hubConfig,
+				plugin,
+				kek,
+				allPlugins,
 			});
 
 			tree[key] = nestedTree;

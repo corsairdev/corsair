@@ -3,12 +3,12 @@ import {
 	GithubBranch,
 	GithubComment,
 	GithubDiscussion,
+	GithubEvent,
 	GithubFork,
 	GithubIssue,
 	GithubPullRequest,
 	GithubRelease,
 	GithubRepository,
-	GithubEvent,
 	GithubUser,
 	GithubWorkflow,
 } from './database';
