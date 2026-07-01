@@ -134,6 +134,18 @@ describe('Recursive Mask Sensitive Data', () => {
 		expect(masked.name).toBe('circularObj');
 		expect(masked.self).toBe('[Circular]');
 	});
+
+	test('sibling shared reference safety', () => {
+		const shared = { value: 'some-value' };
+		const input = {
+			first: shared,
+			second: shared,
+		};
+
+		const masked = maskSensitiveData(input) as any;
+		expect(masked.first.value).toBe('some-value');
+		expect(masked.second.value).toBe('some-value');
+	});
 });
 
 describe('obfuscateExecutionRecord', () => {

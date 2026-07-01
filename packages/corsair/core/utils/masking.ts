@@ -115,7 +115,11 @@ export function maskSensitiveData(
 
 	// 1. Array traversal
 	if (Array.isArray(val)) {
-		return val.map((item) => maskSensitiveData(item, fieldName, visited));
+		const result = val.map((item) =>
+			maskSensitiveData(item, fieldName, visited),
+		);
+		visited.delete(val);
+		return result;
 	}
 
 	// 2. Object traversal
@@ -125,6 +129,7 @@ export function maskSensitiveData(
 		for (const [k, v] of Object.entries(obj)) {
 			result[k] = maskSensitiveData(v, k, visited);
 		}
+		visited.delete(val);
 		return result;
 	}
 
