@@ -84,6 +84,43 @@ export type DbEntityRowsResp = {
 export type DbEntitySortField = 'created_at' | 'updated_at';
 export type DbEntitySortDirection = 'asc' | 'desc';
 
+export type ExecutionStatus = 'pending' | 'completed' | 'failed';
+
+export type ExecutionRow = {
+	id: string;
+	created_at: string;
+	updated_at: string;
+	tenant_id: string;
+	plugin: string;
+	endpoint: string;
+	input: Record<string, unknown>;
+	output: Record<string, unknown>;
+	status: ExecutionStatus;
+	duration_ms: number | null;
+	error: string | null;
+	permission_id: string | null;
+};
+
+export type ExecutionsListResp = {
+	rows: ExecutionRow[];
+	total: number;
+	limit: number;
+	offset: number;
+	hasMore: boolean;
+	note?: string;
+};
+
+export type ExecutionStatsResp = {
+	totalExecutions: number;
+	byStatus: {
+		pending: number;
+		completed: number;
+		failed: number;
+	};
+	byPlugin: Record<string, number>;
+	recentExecutions: ExecutionRow[];
+};
+
 async function request<T>(
 	method: 'GET' | 'POST',
 	path: string,
@@ -213,4 +250,20 @@ export const api = {
 			'GET',
 			'/api/db/permissions',
 		),
+	updatePermission: (input: {
+		id: string;
+		status: 'approved' | 'denied';
+		args?: string;
+	}) => request<{ ok: true }>('POST', '/api/db/permissions/update', input),
+
+	listExecutions: (input: {
+		tenant?: string;
+		plugin?: string;
+		status?: ExecutionStatus;
+		search?: string;
+		limit?: number;
+		offset?: number;
+	}) => request<ExecutionsListResp>('POST', '/api/executions/list', input),
+	executionStats: () =>
+		request<ExecutionStatsResp>('GET', '/api/executions/stats'),
 };

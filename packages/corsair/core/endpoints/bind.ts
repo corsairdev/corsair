@@ -1,4 +1,5 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
+import { createCorsairOrm } from '../../db/orm';
 import type { HubConfig } from '../../hub';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
@@ -20,6 +21,7 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { maskSensitiveData } from '../utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -32,6 +34,74 @@ import type {
  */
 export function isEndpoint(value: unknown): value is Function {
 	return typeof value === 'function';
+}
+
+/**
+ * Record an execution to the audit trail table.
+ * Safely captures endpoint invocations with obfuscated sensitive data.
+ * Non-blocking: silently fails if database is not configured or table doesn't exist.
+ */
+async function recordExecution({
+	database,
+	tenantId,
+	pluginId,
+	operationPath,
+	finalArgs,
+	finalOutput,
+	status,
+	duration,
+	error,
+}: {
+	database?: CorsairDatabase;
+	tenantId: string;
+	pluginId: string;
+	operationPath: string;
+	finalArgs: unknown;
+	finalOutput?: unknown;
+	status: 'completed' | 'failed';
+	duration: number;
+	error: string | null;
+}): Promise<void> {
+	if (!database) return; // Database not configured, skip recording
+
+	try {
+		// Obfuscate input arguments and output response before storage
+		const prepareForDb = (
+			val: unknown,
+			wrapKey: string,
+		): Record<string, unknown> => {
+			const masked = maskSensitiveData(val);
+			if (
+				typeof masked === 'object' &&
+				masked !== null &&
+				!Array.isArray(masked)
+			) {
+				return masked as Record<string, unknown>;
+			}
+			return { [wrapKey]: masked };
+		};
+
+		const input = prepareForDb(finalArgs, 'args');
+		const output =
+			finalOutput !== undefined ? prepareForDb(finalOutput, 'result') : {};
+
+		// Create ORM and insert execution record
+		const orm = createCorsairOrm(database);
+		await orm.executions.insert({
+			tenant_id: tenantId,
+			plugin: pluginId,
+			endpoint: operationPath,
+			input,
+			output,
+			status,
+			duration_ms: duration,
+			error: error ?? undefined,
+			permission_id: undefined,
+		});
+	} catch {
+		// Silently fail recording — don't interrupt the actual endpoint call
+		// This allows executions to continue even if audit trail fails
+	}
 }
 
 /**
@@ -107,6 +177,7 @@ export function bindEndpointsRecursively({
 			const boundFn = async (args: unknown = {}) => {
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
+				let permArgs: unknown;
 				if (permissionsConfig) {
 					const meta = endpointMeta?.[operationPath];
 					const {
@@ -115,6 +186,7 @@ export function bindEndpointsRecursively({
 						onComplete,
 						token: permToken,
 						id: permId,
+						args: resolvedArgs,
 						expiresAt: permExpiresAt,
 					} = await enforcePermission({
 						pluginId,
@@ -167,6 +239,7 @@ export function bindEndpointsRecursively({
 						throw new Error(msg);
 					}
 					onPermissionComplete = onComplete;
+					permArgs = resolvedArgs;
 				}
 
 				const call = async (
@@ -268,9 +341,75 @@ export function bindEndpointsRecursively({
 					}
 					throw err;
 				}
-
+				const finalArgs = permArgs ?? args;
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					const res = await call(0, { ...ctx, key }, args);
+					const startTime = Date.now();
+					let recordedStatus: 'completed' | 'failed' = 'completed';
+					let recordedError: string | null = null;
+					let finalOutput: unknown | undefined;
+					try {
+						const res = await call(0, { ...ctx, key }, finalArgs);
+						finalOutput = res;
+						await onPermissionComplete?.();
+						if (plugin && hubConfig) {
+							reportPluginConnectionStatusFromBinding({
+								hub: hubConfig,
+								database,
+								kek,
+								plugins: allPlugins ?? [],
+								plugin,
+								tenantId,
+								verified: true,
+							});
+						}
+						return res;
+					} catch (error) {
+						recordedStatus = 'failed';
+						recordedError =
+							error instanceof Error ? error.message : String(error);
+						throw error;
+					} finally {
+						// Record execution for audit trail
+						const duration = Date.now() - startTime;
+						await recordExecution({
+							database,
+							tenantId: tenantId ?? 'default',
+							pluginId,
+							operationPath,
+							finalArgs,
+							finalOutput,
+							status: recordedStatus,
+							duration,
+							error: recordedError,
+						});
+					}
+				}
+
+				const ctxWithKey = { ...ctx, key };
+				const startTime = Date.now();
+				let recordedStatus: 'completed' | 'failed' = 'completed';
+				let recordedError: string | null = null;
+				let finalOutput: unknown | undefined;
+				try {
+					const beforeResult = endpointHooks.before
+						? await endpointHooks.before(ctxWithKey, finalArgs)
+						: {
+								ctx: ctxWithKey,
+								args: finalArgs,
+								continue: true as const,
+								passToAfter: undefined,
+							};
+					if (beforeResult.continue === false) {
+						recordedStatus = 'completed'; // Hook early exit is not a failure
+						return;
+					}
+					const res = await call(0, beforeResult.ctx, beforeResult.args);
+					finalOutput = res;
+					await endpointHooks.after?.(
+						beforeResult.ctx,
+						res,
+						beforeResult.passToAfter,
+					);
 					await onPermissionComplete?.();
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
@@ -284,37 +423,26 @@ export function bindEndpointsRecursively({
 						});
 					}
 					return res;
-				}
-
-				const ctxWithKey = { ...ctx, key };
-				const beforeResult = endpointHooks.before
-					? await endpointHooks.before(ctxWithKey, args)
-					: {
-							ctx: ctxWithKey,
-							args,
-							continue: true as const,
-							passToAfter: undefined,
-						};
-				if (beforeResult.continue === false) return;
-				const res = await call(0, beforeResult.ctx, beforeResult.args);
-				await endpointHooks.after?.(
-					beforeResult.ctx,
-					res,
-					beforeResult.passToAfter,
-				);
-				await onPermissionComplete?.();
-				if (plugin && hubConfig) {
-					reportPluginConnectionStatusFromBinding({
-						hub: hubConfig,
+				} catch (error) {
+					recordedStatus = 'failed';
+					recordedError =
+						error instanceof Error ? error.message : String(error);
+					throw error;
+				} finally {
+					// Record execution for audit trail
+					const duration = Date.now() - startTime;
+					await recordExecution({
 						database,
-						kek,
-						plugins: allPlugins ?? [],
-						plugin,
-						tenantId,
-						verified: true,
+						tenantId: tenantId ?? 'default',
+						pluginId,
+						operationPath,
+						finalArgs,
+						finalOutput,
+						status: recordedStatus,
+						duration,
+						error: recordedError,
 					});
 				}
-				return res;
 			};
 
 			tree[key] = boundFn;

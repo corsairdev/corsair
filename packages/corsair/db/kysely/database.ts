@@ -7,6 +7,7 @@ import type {
 	CorsairAccount,
 	CorsairEntity,
 	CorsairEvent,
+	CorsairExecution,
 	CorsairIntegration,
 	CorsairPermission,
 } from '../index';
@@ -18,6 +19,7 @@ export type CorsairKyselyDatabase = {
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
 	corsair_permissions: CorsairPermission;
+	corsair_executions: CorsairExecution;
 };
 
 export type CorsairDatabase = {

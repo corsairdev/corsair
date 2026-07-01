@@ -12,7 +12,9 @@ import {
 	listDbTables,
 	listPermissions,
 	queryEntityData,
+	updatePermission,
 } from './handlers/db';
+import { getExecutionStats, listExecutions } from './handlers/executions';
 import {
 	listOperations,
 	runOperation,
@@ -63,6 +65,11 @@ const routes: Route[] = [
 	{ method: 'POST', path: '/api/db/rows', handler: listDbRows },
 	{ method: 'POST', path: '/api/db/entities/query', handler: queryEntityData },
 	{ method: 'GET', path: '/api/db/permissions', handler: listPermissions },
+	{
+		method: 'POST',
+		path: '/api/db/permissions/update',
+		handler: updatePermission,
+	},
 
 	{ method: 'GET', path: '/api/chats', handler: listChatsHandler },
 	{ method: 'POST', path: '/api/chats', handler: createChatHandler },
@@ -73,6 +80,9 @@ const routes: Route[] = [
 	},
 
 	{ method: 'POST', path: '/api/chat', handler: chatHandler },
+
+	{ method: 'POST', path: '/api/executions/list', handler: listExecutions },
+	{ method: 'GET', path: '/api/executions/stats', handler: getExecutionStats },
 ];
 
 export async function handleApi(

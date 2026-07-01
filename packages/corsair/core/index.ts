@@ -262,6 +262,14 @@ export type {
 } from './plugins';
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
+export {
+	getShannonEntropy,
+	isPotentialSecretValue,
+	maskSensitiveData,
+	obfuscateExecutionRecord,
+	obfuscateValue,
+	shouldObfuscateField,
+} from './utils';
 // Webhook types
 export type {
 	BindWebhooks,

@@ -1,10 +1,10 @@
+import { edgeFunctionOperations } from '../operations/edge-functions';
 import type { SupabaseEndpoint } from './factory';
 import {
 	logSupabaseOperation,
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { edgeFunctionOperations } from '../operations/edge-functions';
 
 function getOperation(name: (typeof edgeFunctionOperations)[number]['name']) {
 	const operation = edgeFunctionOperations.find(

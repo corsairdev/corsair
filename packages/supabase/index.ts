@@ -132,7 +132,4 @@ export type {
 	SupabaseEndpointOutputs,
 } from './endpoints/types';
 
-export {
-	supabaseEndpointsNested,
-	supabaseEndpointSchemas,
-};
+export { supabaseEndpointsNested, supabaseEndpointSchemas };

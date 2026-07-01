@@ -1,7 +1,6 @@
-// @ts-expect-error - better-sqlite3 types may not be available
-
 import { linear } from '@corsair-dev/linear';
 import { slack } from '@corsair-dev/slack';
+// @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
 import type { CorsairPlugin } from '../core';
