@@ -310,8 +310,12 @@ export async function enforcePermission(
 			eb.or([
 				eb('args', '=', argsJson),
 				eb('error', '=', `__corsair_modified_args__:${argsJson}`),
-				eb('error', 'like', `__corsair_modified_args__:${argsJson}__corsair_error__:%`),
-			])
+				eb(
+					'error',
+					'like',
+					`__corsair_modified_args__:${argsJson}__corsair_error__:%`,
+				),
+			]),
 		)
 		.where('tenant_id', '=', tenantId)
 		.where('expires_at', '>', now)
@@ -334,9 +338,10 @@ export async function enforcePermission(
 					'__corsair_modified_args__:'.length,
 				);
 				if (resolvedArgs.includes('__corsair_error__:')) {
-					resolvedArgs = existing.error.substring(
-						'__corsair_modified_args__:'.length,
-					).split('__corsair_error__:')[0] || '';
+					resolvedArgs =
+						existing.error
+							.substring('__corsair_modified_args__:'.length)
+							.split('__corsair_error__:')[0] || '';
 				}
 			}
 			return {

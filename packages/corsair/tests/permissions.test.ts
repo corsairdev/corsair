@@ -291,7 +291,9 @@ describe('Modify and Approve Permissions', () => {
 		expect(failedRecord?.error).toContain('Slack API Error');
 
 		// Verify that we can still parse the modified args from the updated error column
-		const rawArgs = failedRecord!.error!.substring('__corsair_modified_args__:'.length);
+		const rawArgs = failedRecord!.error!.substring(
+			'__corsair_modified_args__:'.length,
+		);
 		expect(rawArgs).toContain('__corsair_error__:');
 		const parts = rawArgs.split('__corsair_error__:');
 		expect(parts[0]).toBe(JSON.stringify(modifiedArgsObj));
