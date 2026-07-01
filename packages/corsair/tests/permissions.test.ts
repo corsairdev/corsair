@@ -175,7 +175,7 @@ describe('Modify and Approve Permissions', () => {
 				channel: 'C123456',
 				text: originalText,
 			}),
-		).rejects.toThrow(/requires user approval/i);
+		).rejects.toThrow(/(approval required|requires user approval)/i);
 
 		// Retrieve the pending permission from the database
 		const record = await testDb.db

@@ -1,3 +1,4 @@
+import { obfuscateExecutionRecord } from 'corsair/core';
 import { readJsonBody } from '../router';
 import type { HandlerFn } from '../types';
 
@@ -122,7 +123,7 @@ export const listExecutions: HandlerFn = async (ctx) => {
 			: parseInt(String(countResult?.count ?? 0), 10);
 
 	// Obfuscate sensitive data in input/output
-	const safeRows = resultRows.map(obfuscateSensitiveData);
+	const safeRows = resultRows.map(obfuscateExecutionRecord);
 
 	return {
 		rows: safeRows,
@@ -210,7 +211,7 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 		.limit(10)
 		.execute();
 
-	const recentExecutions = recentRows.map(obfuscateSensitiveData);
+	const recentExecutions = recentRows.map(obfuscateExecutionRecord);
 
 	return {
 		totalExecutions,
@@ -219,85 +220,3 @@ export const getExecutionStats: HandlerFn = async (ctx) => {
 		recentExecutions,
 	};
 };
-
-/**
- * Obfuscate sensitive data in execution records.
- * Truncates long values and masks potential secrets.
- */
-function obfuscateSensitiveData(
-	row: Record<string, unknown>,
-): Record<string, unknown> {
-	const copy = { ...row };
-
-	// Obfuscate input
-	if (
-		copy.input &&
-		typeof copy.input === 'object' &&
-		!Array.isArray(copy.input)
-	) {
-		const input = copy.input as Record<string, unknown>;
-		const masked: Record<string, unknown> = {};
-		for (const [k, v] of Object.entries(input)) {
-			if (shouldObfuscateField(k)) {
-				masked[k] = obfuscateValue(v);
-			} else {
-				masked[k] = v;
-			}
-		}
-		copy.input = masked;
-	}
-
-	// Obfuscate output
-	if (
-		copy.output &&
-		typeof copy.output === 'object' &&
-		!Array.isArray(copy.output)
-	) {
-		const output = copy.output as Record<string, unknown>;
-		const masked: Record<string, unknown> = {};
-		for (const [k, v] of Object.entries(output)) {
-			if (shouldObfuscateField(k)) {
-				masked[k] = obfuscateValue(v);
-			} else {
-				masked[k] = v;
-			}
-		}
-		copy.output = masked;
-	}
-
-	return copy;
-}
-
-/**
- * Check if a field name suggests it contains sensitive data.
- */
-function shouldObfuscateField(fieldName: string): boolean {
-	const sensitivePatterns = [
-		'key',
-		'token',
-		'secret',
-		'password',
-		'credential',
-		'auth',
-		'api_key',
-		'access_token',
-		'refresh_token',
-	];
-	const lowerName = fieldName.toLowerCase();
-	return sensitivePatterns.some((pattern) => lowerName.includes(pattern));
-}
-
-/**
- * Obfuscate a value (truncate and mask).
- */
-function obfuscateValue(value: unknown): string {
-	if (value === null || value === undefined) return '***';
-	if (typeof value === 'string') {
-		if (value.length === 0) return '***';
-		if (value.length <= 8) return '***';
-		return `${value.slice(0, 4)}…${value.slice(-3)} (${value.length} chars)`;
-	}
-	if (typeof value === 'number') return String(value);
-	if (typeof value === 'boolean') return String(value);
-	return '***';
-}

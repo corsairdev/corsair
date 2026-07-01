@@ -20,6 +20,7 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import { maskSensitiveData } from '../utils';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Utilities
@@ -75,6 +76,7 @@ async function recordExecution({
 	pluginId,
 	operationPath,
 	finalArgs,
+	finalOutput,
 	status,
 	duration,
 	error,
@@ -84,6 +86,7 @@ async function recordExecution({
 	pluginId: string;
 	operationPath: string;
 	finalArgs: unknown;
+	finalOutput?: unknown;
 	status: 'completed' | 'failed';
 	duration: number;
 	error: string | null;
@@ -91,8 +94,25 @@ async function recordExecution({
 	if (!database) return; // Database not configured, skip recording
 
 	try {
-		// Obfuscate input arguments before storage
-		const input = obfuscateInput(finalArgs);
+		// Obfuscate input arguments and output response before storage
+		const prepareForDb = (
+			val: unknown,
+			wrapKey: string,
+		): Record<string, unknown> => {
+			const masked = maskSensitiveData(val);
+			if (
+				typeof masked === 'object' &&
+				masked !== null &&
+				!Array.isArray(masked)
+			) {
+				return masked as Record<string, unknown>;
+			}
+			return { [wrapKey]: masked };
+		};
+
+		const input = prepareForDb(finalArgs, 'args');
+		const output =
+			finalOutput !== undefined ? prepareForDb(finalOutput, 'result') : {};
 
 		// Create ORM and insert execution record
 		const orm = createCorsairOrm(database);
@@ -101,7 +121,7 @@ async function recordExecution({
 			plugin: pluginId,
 			endpoint: operationPath,
 			input,
-			output: {}, // Output is empty in bind layer; would be captured at SDK level
+			output,
 			status,
 			duration_ms: duration,
 			error: error ?? undefined,
@@ -111,62 +131,6 @@ async function recordExecution({
 		// Silently fail recording — don't interrupt the actual endpoint call
 		// This allows executions to continue even if audit trail fails
 	}
-}
-
-/**
- * Obfuscate sensitive fields in input arguments before storing in audit trail.
- * Masks potential secrets like tokens, keys, and credentials.
- */
-function obfuscateInput(value: unknown): Record<string, unknown> {
-	if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-		const obj = value as Record<string, unknown>;
-		const result: Record<string, unknown> = {};
-
-		for (const [key, val] of Object.entries(obj)) {
-			if (shouldObfuscateField(key)) {
-				result[key] = obfuscateValue(val);
-			} else {
-				result[key] = val;
-			}
-		}
-		return result;
-	}
-
-	return { args: value };
-}
-
-/**
- * Check if a field name suggests it contains sensitive data.
- */
-function shouldObfuscateField(fieldName: string): boolean {
-	const sensitivePatterns = [
-		'key',
-		'token',
-		'secret',
-		'password',
-		'credential',
-		'auth',
-		'api_key',
-		'access_token',
-		'refresh_token',
-	];
-	const lowerName = fieldName.toLowerCase();
-	return sensitivePatterns.some((pattern) => lowerName.includes(pattern));
-}
-
-/**
- * Obfuscate a value (truncate and mask).
- */
-function obfuscateValue(value: unknown): unknown {
-	if (value === null || value === undefined) return '***';
-	if (typeof value === 'string') {
-		if (value.length === 0) return '***';
-		if (value.length <= 8) return '***';
-		return `${value.slice(0, 4)}…${value.slice(-3)} (${value.length} chars)`;
-	}
-	if (typeof value === 'number') return value;
-	if (typeof value === 'boolean') return value;
-	return '***';
 }
 
 /**
@@ -394,8 +358,10 @@ export function bindEndpointsRecursively({
 					const startTime = Date.now();
 					let recordedStatus: 'completed' | 'failed' = 'completed';
 					let recordedError: string | null = null;
+					let finalOutput: unknown | undefined;
 					try {
 						const res = await call(0, { ...ctx, key }, finalArgs);
+						finalOutput = res;
 						await onPermissionComplete?.();
 						return res;
 					} catch (error) {
@@ -412,6 +378,7 @@ export function bindEndpointsRecursively({
 							pluginId,
 							operationPath,
 							finalArgs,
+							finalOutput,
 							status: recordedStatus,
 							duration,
 							error: recordedError,
@@ -423,6 +390,7 @@ export function bindEndpointsRecursively({
 				const startTime = Date.now();
 				let recordedStatus: 'completed' | 'failed' = 'completed';
 				let recordedError: string | null = null;
+				let finalOutput: unknown | undefined;
 				try {
 					const beforeResult = endpointHooks.before
 						? await endpointHooks.before(ctxWithKey, finalArgs)
@@ -437,6 +405,7 @@ export function bindEndpointsRecursively({
 						return;
 					}
 					const res = await call(0, beforeResult.ctx, beforeResult.args);
+					finalOutput = res;
 					await endpointHooks.after?.(
 						beforeResult.ctx,
 						res,
@@ -458,6 +427,7 @@ export function bindEndpointsRecursively({
 						pluginId,
 						operationPath,
 						finalArgs,
+						finalOutput,
 						status: recordedStatus,
 						duration,
 						error: recordedError,
