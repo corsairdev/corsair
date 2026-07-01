@@ -7,8 +7,7 @@ export function getShannonEntropy(str: string): number {
 	if (len === 0) return 0;
 
 	const frequencies: Record<string, number> = {};
-	for (let i = 0; i < len; i++) {
-		const c = str[i];
+	for (const c of str) {
 		frequencies[c] = (frequencies[c] || 0) + 1;
 	}
 
