@@ -107,6 +107,7 @@ export function bindEndpointsRecursively({
 			const boundFn = async (args: unknown = {}) => {
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
+				let permArgs: unknown;
 				if (permissionsConfig) {
 					const meta = endpointMeta?.[operationPath];
 					const {
@@ -115,6 +116,7 @@ export function bindEndpointsRecursively({
 						onComplete,
 						token: permToken,
 						id: permId,
+						args: resolvedArgs,
 						expiresAt: permExpiresAt,
 					} = await enforcePermission({
 						pluginId,
@@ -167,6 +169,7 @@ export function bindEndpointsRecursively({
 						throw new Error(msg);
 					}
 					onPermissionComplete = onComplete;
+					permArgs = resolvedArgs;
 				}
 
 				const call = async (
@@ -268,9 +271,9 @@ export function bindEndpointsRecursively({
 					}
 					throw err;
 				}
-
+				const finalArgs = permArgs ?? args;
 				if (!endpointHooks?.before && !endpointHooks?.after) {
-					const res = await call(0, { ...ctx, key }, args);
+					const res = await call(0, { ...ctx, key }, finalArgs);
 					await onPermissionComplete?.();
 					if (plugin && hubConfig) {
 						reportPluginConnectionStatusFromBinding({
@@ -288,10 +291,10 @@ export function bindEndpointsRecursively({
 
 				const ctxWithKey = { ...ctx, key };
 				const beforeResult = endpointHooks.before
-					? await endpointHooks.before(ctxWithKey, args)
+					? await endpointHooks.before(ctxWithKey, finalArgs)
 					: {
 							ctx: ctxWithKey,
-							args,
+							args: finalArgs,
 							continue: true as const,
 							passToAfter: undefined,
 						};

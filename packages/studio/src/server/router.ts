@@ -12,6 +12,7 @@ import {
 	listDbTables,
 	listPermissions,
 	queryEntityData,
+	updatePermission,
 } from './handlers/db';
 import {
 	listOperations,
@@ -63,6 +64,11 @@ const routes: Route[] = [
 	{ method: 'POST', path: '/api/db/rows', handler: listDbRows },
 	{ method: 'POST', path: '/api/db/entities/query', handler: queryEntityData },
 	{ method: 'GET', path: '/api/db/permissions', handler: listPermissions },
+	{
+		method: 'POST',
+		path: '/api/db/permissions/update',
+		handler: updatePermission,
+	},
 
 	{ method: 'GET', path: '/api/chats', handler: listChatsHandler },
 	{ method: 'POST', path: '/api/chats', handler: createChatHandler },

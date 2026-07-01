@@ -213,4 +213,9 @@ export const api = {
 			'GET',
 			'/api/db/permissions',
 		),
+	updatePermission: (input: {
+		id: string;
+		status: 'approved' | 'denied';
+		args?: string;
+	}) => request<{ ok: true }>('POST', '/api/db/permissions/update', input),
 };
