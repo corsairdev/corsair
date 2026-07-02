@@ -365,12 +365,22 @@ export async function logNeonOperation(
 	input: NeonEndpointInput,
 	operation: NeonOperation,
 ) {
-	await logEventFromContext(
-		ctx,
-		`neon.${operation.group}.${operation.name}`,
-		safeLogInput(input),
-		'completed',
-	);
+	// same rationale as the cache sync above: the api call already
+	// succeeded, so a local event-store failure must not surface to the
+	// caller as an endpoint error
+	try {
+		await logEventFromContext(
+			ctx,
+			`neon.${operation.group}.${operation.name}`,
+			safeLogInput(input),
+			'completed',
+		);
+	} catch (error) {
+		console.warn(
+			`[neon] failed to log ${operation.group}.${operation.name}:`,
+			error,
+		);
+	}
 }
 
 export async function requestNeonOperation(

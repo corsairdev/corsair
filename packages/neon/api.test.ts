@@ -464,6 +464,36 @@ describe('Neon endpoints', () => {
 		expect(ctxWithDb.db.projects.upsertByEntityId).toHaveBeenCalled();
 	});
 
+	it('returns api results even when event logging fails', async () => {
+		const plugin = neon({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				listProjects: (ctx: NeonContext, input: {}) => Promise<unknown>;
+			};
+		};
+		const ctxWithBrokenLogging = {
+			...mockCtx,
+			$getAccountId: jest.fn().mockRejectedValue(new Error('store down')),
+		} as unknown as NeonContext;
+
+		mockRequest.mockResolvedValueOnce({
+			projects: [{ id: 'summer-sound-12345678', name: 'Demo' }],
+		});
+
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const result = await endpoints.projects.listProjects(
+			ctxWithBrokenLogging,
+			{},
+		);
+		warn.mockRestore();
+
+		expect(result).toMatchObject({
+			projects: [{ id: 'summer-sound-12345678' }],
+		});
+	});
+
 	it('deletes cached entities for destructive operations', async () => {
 		const plugin = neon({ key: 'test-token' });
 		const endpoints = plugin.endpoints as NonNullable<

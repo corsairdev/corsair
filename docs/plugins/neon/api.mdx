@@ -20,7 +20,7 @@ Create API key
 **Risk:** `write`
 
 ```ts
-await corsair.neon.api.apiKeys.createApiKey({});
+await corsair.neon.api.apiKeys.createApiKey({ body: { key_name: "my-api-key" } });
 ```
 
 **Input**
@@ -45,7 +45,7 @@ await corsair.neon.api.apiKeys.createApiKey({});
 | `region_id` | `string` | No | — |
 | `vpc_endpoint_id` | `string` | No | — |
 | `snapshot_id` | `string` | No | — |
-| `body` | `any` | No | — |
+| `body` | `any` | No | The Neon API requires `key_name` in the body |
 | `query` | `object` | No | — |
 | `headers` | `object` | No | — |
 | `baseUrl` | `string` | No | — |
