@@ -1,0 +1,7356 @@
+---
+title: API
+description: "API reference for Neon: every `neon.api.*` operation with input and output types."
+---
+
+Every `neon.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### createApiKey
+
+`apiKeys.createApiKey`
+
+Create API key
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.apiKeys.createApiKey({ body: { key_name: "my-api-key" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | The Neon API requires `key_name` in the body |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listApiKeys
+
+`apiKeys.listApiKeys`
+
+List API keys
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.apiKeys.listApiKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### revokeApiKey
+
+`apiKeys.revokeApiKey`
+
+Revoke API key
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neon.api.apiKeys.revokeApiKey({
+  key_id: '123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | Yes | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Auth
+
+### createBranchNeonAuthNewUser
+
+`auth.createBranchNeonAuthNewUser`
+
+Create new auth user
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.auth.createBranchNeonAuthNewUser({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createNeonAuth
+
+`auth.createNeonAuth`
+
+Enable Neon Auth for the branch
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.auth.createNeonAuth({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createNeonAuthProviderSDKKeys
+
+`auth.createNeonAuthProviderSDKKeys`
+
+Create Auth Provider SDK keys
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.auth.createNeonAuthProviderSDKKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteBranchNeonAuthOauthProvider
+
+`auth.deleteBranchNeonAuthOauthProvider`
+
+Delete OAuth provider
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.auth.deleteBranchNeonAuthOauthProvider({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  oauth_provider_id: 'google',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | Yes | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteBranchNeonAuthTrustedDomain
+
+`auth.deleteBranchNeonAuthTrustedDomain`
+
+Delete domain from redirect_uri whitelist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.auth.deleteBranchNeonAuthTrustedDomain({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteBranchNeonAuthUser
+
+`auth.deleteBranchNeonAuthUser`
+
+Delete auth user
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neon.api.auth.deleteBranchNeonAuthUser({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  auth_user_id: 'auth-user-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | Yes | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteNeonAuthDomainFromRedirectURIWhitelist
+
+`auth.deleteNeonAuthDomainFromRedirectURIWhitelist`
+
+Delete trusted redirect URI domain (deprecated project-level route)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.auth.deleteNeonAuthDomainFromRedirectURIWhitelist({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### disableNeonAuth
+
+`auth.disableNeonAuth`
+
+Disable Neon Auth for the branch
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.auth.disableNeonAuth({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAuthDetails
+
+`auth.getAuthDetails`
+
+Retrieve details about the current API credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.auth.getAuthDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getNeonAuthAllowLocalhost
+
+`auth.getNeonAuthAllowLocalhost`
+
+Retrieve localhost allow setting
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.auth.getNeonAuthAllowLocalhost({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getNeonAuthEmailProvider
+
+`auth.getNeonAuthEmailProvider`
+
+Retrieve email provider configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.auth.getNeonAuthEmailProvider({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listBranchNeonAuthOauthProviders
+
+`auth.listBranchNeonAuthOauthProviders`
+
+List OAuth providers for the branch
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.auth.listBranchNeonAuthOauthProviders({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listBranchNeonAuthTrustedDomains
+
+`auth.listBranchNeonAuthTrustedDomains`
+
+List domains in redirect_uri whitelist
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.auth.listBranchNeonAuthTrustedDomains({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listNeonAuthOauthProviders
+
+`auth.listNeonAuthOauthProviders`
+
+List OAuth providers (deprecated project-level route)
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.auth.listNeonAuthOauthProviders({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### sendNeonAuthTestEmail
+
+`auth.sendNeonAuthTestEmail`
+
+Send test email
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.auth.sendNeonAuthTestEmail({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateNeonAuthAllowLocalhost
+
+`auth.updateNeonAuthAllowLocalhost`
+
+Update localhost allow setting
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.auth.updateNeonAuthAllowLocalhost({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateNeonAuthEmailProvider
+
+`auth.updateNeonAuthEmailProvider`
+
+Update email provider configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.auth.updateNeonAuthEmailProvider({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateNeonAuthOauthProvider
+
+`auth.updateNeonAuthOauthProvider`
+
+Update OAuth provider (deprecated project-level route)
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.auth.updateNeonAuthOauthProvider({
+  project_id: 'summer-sound-12345678',
+  oauth_provider_id: 'google',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | Yes | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Branches
+
+### countProjectBranches
+
+`branches.countProjectBranches`
+
+Retrieve number of branches
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.countProjectBranches({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createProjectBranch
+
+`branches.createProjectBranch`
+
+Create branch
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.createProjectBranch({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createProjectBranchAnonymized
+
+`branches.createProjectBranchAnonymized`
+
+Create anonymized branch
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.createProjectBranchAnonymized({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectBranch
+
+`branches.deleteProjectBranch`
+
+Delete branch
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.branches.deleteProjectBranch({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### finalizeRestoreBranch
+
+`branches.finalizeRestoreBranch`
+
+Finalize branch restore from snapshot
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.finalizeRestoreBranch({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAnonymizedBranchStatus
+
+`branches.getAnonymizedBranchStatus`
+
+Retrieve anonymized branch status
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.getAnonymizedBranchStatus({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getMaskingRules
+
+`branches.getMaskingRules`
+
+Retrieve masking rules
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.getMaskingRules({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectBranch
+
+`branches.getProjectBranch`
+
+Retrieve branch details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.getProjectBranch({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectBranchSchema
+
+`branches.getProjectBranchSchema`
+
+Retrieve database schema
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.getProjectBranchSchema({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectBranchSchemaComparison
+
+`branches.getProjectBranchSchemaComparison`
+
+Compare database schema
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.getProjectBranchSchemaComparison({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectBranchEndpoints
+
+`branches.listProjectBranchEndpoints`
+
+List compute endpoints for the branch
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.listProjectBranchEndpoints({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectBranches
+
+`branches.listProjectBranches`
+
+List branches
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.branches.listProjectBranches({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### restoreProjectBranch
+
+`branches.restoreProjectBranch`
+
+Restore branch to a historical state
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.restoreProjectBranch({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### setDefaultProjectBranch
+
+`branches.setDefaultProjectBranch`
+
+Set branch as default
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.setDefaultProjectBranch({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### startAnonymization
+
+`branches.startAnonymization`
+
+Start anonymization
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.startAnonymization({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateMaskingRules
+
+`branches.updateMaskingRules`
+
+Update masking rules
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.updateMaskingRules({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectBranch
+
+`branches.updateProjectBranch`
+
+Update branch
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.branches.updateProjectBranch({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Compute Endpoints
+
+### createProjectEndpoint
+
+`computeEndpoints.createProjectEndpoint`
+
+Create compute endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.computeEndpoints.createProjectEndpoint({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectEndpoint
+
+`computeEndpoints.deleteProjectEndpoint`
+
+Delete compute endpoint
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.computeEndpoints.deleteProjectEndpoint({
+  project_id: 'summer-sound-12345678',
+  endpoint_id: 'ep-cool-darkness-123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | Yes | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectEndpoint
+
+`computeEndpoints.getProjectEndpoint`
+
+Retrieve compute endpoint details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.computeEndpoints.getProjectEndpoint({
+  project_id: 'summer-sound-12345678',
+  endpoint_id: 'ep-cool-darkness-123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | Yes | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectEndpoints
+
+`computeEndpoints.listProjectEndpoints`
+
+List compute endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.computeEndpoints.listProjectEndpoints({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### restartProjectEndpoint
+
+`computeEndpoints.restartProjectEndpoint`
+
+Restart compute endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.computeEndpoints.restartProjectEndpoint({
+  project_id: 'summer-sound-12345678',
+  endpoint_id: 'ep-cool-darkness-123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | Yes | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### startProjectEndpoint
+
+`computeEndpoints.startProjectEndpoint`
+
+Start compute endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.computeEndpoints.startProjectEndpoint({
+  project_id: 'summer-sound-12345678',
+  endpoint_id: 'ep-cool-darkness-123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | Yes | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### suspendProjectEndpoint
+
+`computeEndpoints.suspendProjectEndpoint`
+
+Suspend compute endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.computeEndpoints.suspendProjectEndpoint({
+  project_id: 'summer-sound-12345678',
+  endpoint_id: 'ep-cool-darkness-123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | Yes | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectEndpoint
+
+`computeEndpoints.updateProjectEndpoint`
+
+Update compute endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.computeEndpoints.updateProjectEndpoint({
+  project_id: 'summer-sound-12345678',
+  endpoint_id: 'ep-cool-darkness-123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | Yes | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Consumption
+
+### getConsumptionHistoryPerAccount
+
+`consumption.getConsumptionHistoryPerAccount`
+
+Retrieve account consumption metrics (legacy, deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.consumption.getConsumptionHistoryPerAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getConsumptionHistoryPerProject
+
+`consumption.getConsumptionHistoryPerProject`
+
+Retrieve project consumption metrics (legacy plans)
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.consumption.getConsumptionHistoryPerProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Data Api
+
+### createProjectBranchDataAPI
+
+`dataApi.createProjectBranchDataAPI`
+
+Create Neon Data API
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.dataApi.createProjectBranchDataAPI({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  database_name: 'neondb',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | Yes | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectBranchDataAPI
+
+`dataApi.deleteProjectBranchDataAPI`
+
+Delete Neon Data API
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.dataApi.deleteProjectBranchDataAPI({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  database_name: 'neondb',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | Yes | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectBranchDataAPI
+
+`dataApi.getProjectBranchDataAPI`
+
+Retrieve Neon Data API configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.dataApi.getProjectBranchDataAPI({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  database_name: 'neondb',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | Yes | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectBranchDataAPI
+
+`dataApi.updateProjectBranchDataAPI`
+
+Update Neon Data API
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.dataApi.updateProjectBranchDataAPI({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  database_name: 'neondb',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | Yes | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Databases
+
+### createProjectBranchDatabase
+
+`databases.createProjectBranchDatabase`
+
+Create database
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.databases.createProjectBranchDatabase({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectBranchDatabase
+
+`databases.deleteProjectBranchDatabase`
+
+Delete database
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.databases.deleteProjectBranchDatabase({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  database_name: 'neondb',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | Yes | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectBranchDatabase
+
+`databases.getProjectBranchDatabase`
+
+Retrieve database details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.databases.getProjectBranchDatabase({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  database_name: 'neondb',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | Yes | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectBranchDatabases
+
+`databases.listProjectBranchDatabases`
+
+List databases
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.databases.listProjectBranchDatabases({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProjectBranchDatabase
+
+`databases.updateProjectBranchDatabase`
+
+Update database
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.databases.updateProjectBranchDatabase({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  database_name: 'neondb',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | Yes | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Organizations
+
+### createOrganizationInvitations
+
+`organizations.createOrganizationInvitations`
+
+Create organization invitations
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.organizations.createOrganizationInvitations({
+  org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createOrgApiKey
+
+`organizations.createOrgApiKey`
+
+Create organization API key
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.organizations.createOrgApiKey({
+  org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganization
+
+`organizations.getOrganization`
+
+Retrieve organization details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.organizations.getOrganization({
+  org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganizationInvitations
+
+`organizations.getOrganizationInvitations`
+
+List organization invitations
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.organizations.getOrganizationInvitations({
+  org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganizationMember
+
+`organizations.getOrganizationMember`
+
+Retrieve organization member details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.organizations.getOrganizationMember({
+  org_id: 'org-cool-breeze-12345678',
+  member_id: 'member-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganizationMembers
+
+`organizations.getOrganizationMembers`
+
+List organization members
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.organizations.getOrganizationMembers({
+  org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listOrgApiKeys
+
+`organizations.listOrgApiKeys`
+
+List organization API keys
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.organizations.listOrgApiKeys({
+  org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### removeOrganizationMember
+
+`organizations.removeOrganizationMember`
+
+Remove organization member
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.organizations.removeOrganizationMember({
+  org_id: 'org-cool-breeze-12345678',
+  member_id: 'member-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### revokeOrgApiKey
+
+`organizations.revokeOrgApiKey`
+
+Revoke organization API key
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neon.api.organizations.revokeOrgApiKey({
+  org_id: 'org-cool-breeze-12345678',
+  key_id: '123456',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | Yes | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### transferProjectsFromOrgToOrg
+
+`organizations.transferProjectsFromOrgToOrg`
+
+Transfer projects between organizations
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.organizations.transferProjectsFromOrgToOrg({
+  source_org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | Yes | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### transferProjectsFromUserToOrg
+
+`organizations.transferProjectsFromUserToOrg`
+
+Transfer projects from personal account to organization (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.organizations.transferProjectsFromUserToOrg({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateOrganizationMember
+
+`organizations.updateOrganizationMember`
+
+Update role for organization member
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.organizations.updateOrganizationMember({
+  org_id: 'org-cool-breeze-12345678',
+  member_id: 'member-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Projects
+
+### acceptProjectTransferRequest
+
+`projects.acceptProjectTransferRequest`
+
+Accept a project transfer request
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.projects.acceptProjectTransferRequest({
+  project_id: 'summer-sound-12345678',
+  request_id: 'request-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | Yes | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### addProjectJWKS
+
+`projects.addProjectJWKS`
+
+Add JWKS URL
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.projects.addProjectJWKS({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createProject
+
+`projects.createProject`
+
+Create project
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.projects.createProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### createProjectTransferRequest
+
+`projects.createProjectTransferRequest`
+
+Create a project transfer request
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.projects.createProjectTransferRequest({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProject
+
+`projects.deleteProject`
+
+Delete project
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neon.api.projects.deleteProject({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectJWKS
+
+`projects.deleteProjectJWKS`
+
+Delete JWKS URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.projects.deleteProjectJWKS({
+  project_id: 'summer-sound-12345678',
+  jwks_id: 'jwks-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | Yes | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getAvailablePreloadLibraries
+
+`projects.getAvailablePreloadLibraries`
+
+List available shared preload libraries
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.getAvailablePreloadLibraries({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getConnectionURI
+
+`projects.getConnectionURI`
+
+Retrieve database connection URI
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.getConnectionURI({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProject
+
+`projects.getProject`
+
+Retrieve project details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.getProject({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectJWKS
+
+`projects.getProjectJWKS`
+
+List JWKS URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.getProjectJWKS({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectOperation
+
+`projects.getProjectOperation`
+
+Retrieve operation details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.getProjectOperation({
+  project_id: 'summer-sound-12345678',
+  operation_id: 'operation-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | Yes | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### grantPermissionToProject
+
+`projects.grantPermissionToProject`
+
+Grant project access
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.projects.grantPermissionToProject({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectOperations
+
+`projects.listProjectOperations`
+
+List operations
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.listProjectOperations({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectPermissions
+
+`projects.listProjectPermissions`
+
+List project access
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.listProjectPermissions({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjects
+
+`projects.listProjects`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listSharedProjects
+
+`projects.listSharedProjects`
+
+List shared projects
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.projects.listSharedProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### revokePermissionFromProject
+
+`projects.revokePermissionFromProject`
+
+Revoke project access
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.projects.revokePermissionFromProject({
+  project_id: 'summer-sound-12345678',
+  permission_id: 'permission-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | Yes | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateProject
+
+`projects.updateProject`
+
+Update project
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.projects.updateProject({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Regions
+
+### getActiveRegions
+
+`regions.getActiveRegions`
+
+List supported regions
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.regions.getActiveRegions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Roles
+
+### createProjectBranchRole
+
+`roles.createProjectBranchRole`
+
+Create role
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.roles.createProjectBranchRole({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectBranchRole
+
+`roles.deleteProjectBranchRole`
+
+Delete role
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.roles.deleteProjectBranchRole({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  role_name: 'casey',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | Yes | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectBranchRole
+
+`roles.getProjectBranchRole`
+
+Retrieve role details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.roles.getProjectBranchRole({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  role_name: 'casey',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | Yes | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getProjectBranchRolePassword
+
+`roles.getProjectBranchRolePassword`
+
+Retrieve role password
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.roles.getProjectBranchRolePassword({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  role_name: 'casey',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | Yes | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectBranchRoles
+
+`roles.listProjectBranchRoles`
+
+List roles
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.roles.listProjectBranchRoles({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### resetProjectBranchRolePassword
+
+`roles.resetProjectBranchRolePassword`
+
+Reset role password
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.roles.resetProjectBranchRolePassword({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+  role_name: 'casey',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | Yes | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Snapshots
+
+### createSnapshot
+
+`snapshots.createSnapshot`
+
+Create snapshot
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.snapshots.createSnapshot({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteSnapshot
+
+`snapshots.deleteSnapshot`
+
+Delete snapshot
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neon.api.snapshots.deleteSnapshot({
+  project_id: 'summer-sound-12345678',
+  snapshot_id: 'snapshot-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getSnapshotSchedule
+
+`snapshots.getSnapshotSchedule`
+
+Retrieve backup schedule
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.snapshots.getSnapshotSchedule({
+  project_id: 'summer-sound-12345678',
+  branch_id: 'br-aged-salad-637688',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | Yes | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listSnapshots
+
+`snapshots.listSnapshots`
+
+List project snapshots
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.snapshots.listSnapshots({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### restoreSnapshot
+
+`snapshots.restoreSnapshot`
+
+Restore snapshot
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.snapshots.restoreSnapshot({
+  project_id: 'summer-sound-12345678',
+  snapshot_id: 'snapshot-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### updateSnapshot
+
+`snapshots.updateSnapshot`
+
+Update snapshot
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.snapshots.updateSnapshot({
+  project_id: 'summer-sound-12345678',
+  snapshot_id: 'snapshot-id',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | Yes | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Users
+
+### getCurrentUserInfo
+
+`users.getCurrentUserInfo`
+
+Retrieve current user details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.users.getCurrentUserInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getCurrentUserOrganizations
+
+`users.getCurrentUserOrganizations`
+
+List organizations for the current user
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.users.getCurrentUserOrganizations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Vpc
+
+### assignOrganizationVPCEndpoint
+
+`vpc.assignOrganizationVPCEndpoint`
+
+Assign or update VPC endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.vpc.assignOrganizationVPCEndpoint({
+  org_id: 'org-cool-breeze-12345678',
+  region_id: 'aws-us-east-2',
+  vpc_endpoint_id: 'vpce-1234567890abcdef0',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | Yes | — |
+| `vpc_endpoint_id` | `string` | Yes | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### assignProjectVPCEndpoint
+
+`vpc.assignProjectVPCEndpoint`
+
+Set VPC endpoint restriction
+
+**Risk:** `write`
+
+```ts
+await corsair.neon.api.vpc.assignProjectVPCEndpoint({
+  project_id: 'summer-sound-12345678',
+  vpc_endpoint_id: 'vpce-1234567890abcdef0',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | Yes | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteOrganizationVPCEndpoint
+
+`vpc.deleteOrganizationVPCEndpoint`
+
+Delete VPC endpoint
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.neon.api.vpc.deleteOrganizationVPCEndpoint({
+  org_id: 'org-cool-breeze-12345678',
+  region_id: 'aws-us-east-2',
+  vpc_endpoint_id: 'vpce-1234567890abcdef0',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | Yes | — |
+| `vpc_endpoint_id` | `string` | Yes | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteProjectVPCEndpoint
+
+`vpc.deleteProjectVPCEndpoint`
+
+Delete VPC endpoint restriction
+
+**Risk:** `destructive`
+
+```ts
+await corsair.neon.api.vpc.deleteProjectVPCEndpoint({
+  project_id: 'summer-sound-12345678',
+  vpc_endpoint_id: 'vpce-1234567890abcdef0',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | Yes | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### getOrganizationVPCEndpointDetails
+
+`vpc.getOrganizationVPCEndpointDetails`
+
+Retrieve VPC endpoint details
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.vpc.getOrganizationVPCEndpointDetails({
+  org_id: 'org-cool-breeze-12345678',
+  region_id: 'aws-us-east-2',
+  vpc_endpoint_id: 'vpce-1234567890abcdef0',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | Yes | — |
+| `vpc_endpoint_id` | `string` | Yes | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listOrganizationVPCEndpoints
+
+`vpc.listOrganizationVPCEndpoints`
+
+List VPC endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.vpc.listOrganizationVPCEndpoints({
+  org_id: 'org-cool-breeze-12345678',
+  region_id: 'aws-us-east-2',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | Yes | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listOrganizationVPCEndpointsAllRegions
+
+`vpc.listOrganizationVPCEndpointsAllRegions`
+
+List VPC endpoints across all regions
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.vpc.listOrganizationVPCEndpointsAllRegions({
+  org_id: 'org-cool-breeze-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | Yes | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### listProjectVPCEndpoints
+
+`vpc.listProjectVPCEndpoints`
+
+List VPC endpoint restrictions
+
+**Risk:** `read`
+
+```ts
+await corsair.neon.api.vpc.listProjectVPCEndpoints({
+  project_id: 'summer-sound-12345678',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `branch_id` | `string` | No | — |
+| `database_name` | `string` | No | — |
+| `role_name` | `string` | No | — |
+| `endpoint_id` | `string` | No | — |
+| `operation_id` | `string` | No | — |
+| `permission_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `jwks_id` | `string` | No | — |
+| `key_id` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `member_id` | `string` | No | — |
+| `oauth_provider_id` | `string` | No | — |
+| `auth_user_id` | `string` | No | — |
+| `source_org_id` | `string` | No | — |
+| `region_id` | `string` | No | — |
+| `vpc_endpoint_id` | `string` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `baseUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
