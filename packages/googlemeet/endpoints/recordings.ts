@@ -5,30 +5,39 @@ import type { GoogleMeetEndpointOutputs } from './types';
 
 export const get: GoogleMeetEndpoints['recordingsGet'] = async (ctx, input) => {
 	const recordingName = input.name;
-	const result = await makeAuthenticatedGoogleMeetRequest<GoogleMeetEndpointOutputs['recordingsGet']>(
-		`/v2/${recordingName}`,
-		ctx,
-		{ method: 'GET' },
-	);
+	const result = await makeAuthenticatedGoogleMeetRequest<
+		GoogleMeetEndpointOutputs['recordingsGet']
+	>(`/v2/${recordingName}`, ctx, { method: 'GET' });
 
-	await logEventFromContext(ctx, 'googlemeet.recordings.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'googlemeet.recordings.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const list: GoogleMeetEndpoints['recordingsList'] = async (ctx, input) => {
+export const list: GoogleMeetEndpoints['recordingsList'] = async (
+	ctx,
+	input,
+) => {
 	const parentName = input.parent.replace('conferenceRecords/', '');
-	const result = await makeAuthenticatedGoogleMeetRequest<GoogleMeetEndpointOutputs['recordingsList']>(
-		`/v2/conferenceRecords/${parentName}/recordings`,
-		ctx,
-		{
-			method: 'GET',
-			query: {
-				pageSize: input.pageSize,
-				pageToken: input.pageToken,
-			},
+	const result = await makeAuthenticatedGoogleMeetRequest<
+		GoogleMeetEndpointOutputs['recordingsList']
+	>(`/v2/conferenceRecords/${parentName}/recordings`, ctx, {
+		method: 'GET',
+		query: {
+			pageSize: input.pageSize,
+			pageToken: input.pageToken,
 		},
-	);
+	});
 
-	await logEventFromContext(ctx, 'googlemeet.recordings.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'googlemeet.recordings.list',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };

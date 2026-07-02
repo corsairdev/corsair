@@ -1,10 +1,10 @@
+import { oauthOperations } from '../operations/oauth';
 import type { SupabaseEndpoint } from './factory';
 import {
 	logSupabaseOperation,
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { oauthOperations } from '../operations/oauth';
 
 function getOperation(name: (typeof oauthOperations)[number]['name']) {
 	const operation = oauthOperations.find(

@@ -77,8 +77,12 @@ const ModerationRestrictionsSchema = z.object({
 });
 
 const SpaceConfigSchema = z.object({
-	accessType: z.enum(['ACCESS_TYPE_UNSPECIFIED', 'OPEN', 'TRUSTED', 'RESTRICTED']).optional(),
-	entryPointAccess: z.enum(['ENTRY_POINT_ACCESS_UNSPECIFIED', 'CREATOR_APP_ONLY', 'ALL']).optional(),
+	accessType: z
+		.enum(['ACCESS_TYPE_UNSPECIFIED', 'OPEN', 'TRUSTED', 'RESTRICTED'])
+		.optional(),
+	entryPointAccess: z
+		.enum(['ENTRY_POINT_ACCESS_UNSPECIFIED', 'CREATOR_APP_ONLY', 'ALL'])
+		.optional(),
 	moderation: z.enum(['MODERATION_UNSPECIFIED', 'OFF', 'ON']).optional(),
 	moderationRestrictions: ModerationRestrictionsSchema.optional(),
 	attendanceReportGenerationType: z
@@ -437,16 +441,30 @@ export type GoogleMeetEndpointOutputs = {
 
 export type Space = z.infer<typeof SpaceSchema>;
 export type ConferenceRecord = z.infer<typeof ConferenceRecordSchema>;
-export type ListConferenceRecordsResponse = z.infer<typeof ListConferenceRecordsResponseSchema>;
+export type ListConferenceRecordsResponse = z.infer<
+	typeof ListConferenceRecordsResponseSchema
+>;
 export type Participant = z.infer<typeof ParticipantSchema>;
-export type ListParticipantsResponse = z.infer<typeof ListParticipantsResponseSchema>;
+export type ListParticipantsResponse = z.infer<
+	typeof ListParticipantsResponseSchema
+>;
 export type ParticipantSession = z.infer<typeof ParticipantSessionSchema>;
-export type ListParticipantSessionsResponse = z.infer<typeof ListParticipantSessionsResponseSchema>;
+export type ListParticipantSessionsResponse = z.infer<
+	typeof ListParticipantSessionsResponseSchema
+>;
 export type Recording = z.infer<typeof RecordingSchema>;
-export type ListRecordingsResponse = z.infer<typeof ListRecordingsResponseSchema>;
+export type ListRecordingsResponse = z.infer<
+	typeof ListRecordingsResponseSchema
+>;
 export type Transcript = z.infer<typeof TranscriptSchema>;
-export type ListTranscriptsResponse = z.infer<typeof ListTranscriptsResponseSchema>;
+export type ListTranscriptsResponse = z.infer<
+	typeof ListTranscriptsResponseSchema
+>;
 export type TranscriptEntry = z.infer<typeof TranscriptEntrySchema>;
-export type ListTranscriptEntriesResponse = z.infer<typeof ListTranscriptEntriesResponseSchema>;
+export type ListTranscriptEntriesResponse = z.infer<
+	typeof ListTranscriptEntriesResponseSchema
+>;
 export type SmartNote = z.infer<typeof SmartNoteSchema>;
-export type ListSmartNotesResponse = z.infer<typeof ListSmartNotesResponseSchema>;
+export type ListSmartNotesResponse = z.infer<
+	typeof ListSmartNotesResponseSchema
+>;

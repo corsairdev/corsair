@@ -69,8 +69,12 @@ const ModerationRestrictions = z.object({
 });
 
 const SpaceConfig = z.object({
-	accessType: z.enum(['ACCESS_TYPE_UNSPECIFIED', 'OPEN', 'TRUSTED', 'RESTRICTED']).optional(),
-	entryPointAccess: z.enum(['ENTRY_POINT_ACCESS_UNSPECIFIED', 'CREATOR_APP_ONLY', 'ALL']).optional(),
+	accessType: z
+		.enum(['ACCESS_TYPE_UNSPECIFIED', 'OPEN', 'TRUSTED', 'RESTRICTED'])
+		.optional(),
+	entryPointAccess: z
+		.enum(['ENTRY_POINT_ACCESS_UNSPECIFIED', 'CREATOR_APP_ONLY', 'ALL'])
+		.optional(),
 	moderation: z.enum(['MODERATION_UNSPECIFIED', 'OFF', 'ON']).optional(),
 	moderationRestrictions: ModerationRestrictions.optional(),
 	attendanceReportGenerationType: z
@@ -159,7 +163,9 @@ export const GoogleMeetSmartNote = z.object({
 });
 
 export type GoogleMeetSpace = z.infer<typeof GoogleMeetSpace>;
-export type GoogleMeetConferenceRecord = z.infer<typeof GoogleMeetConferenceRecord>;
+export type GoogleMeetConferenceRecord = z.infer<
+	typeof GoogleMeetConferenceRecord
+>;
 export type GoogleMeetParticipant = z.infer<typeof GoogleMeetParticipant>;
 export type GoogleMeetRecording = z.infer<typeof GoogleMeetRecording>;
 export type GoogleMeetTranscript = z.infer<typeof GoogleMeetTranscript>;

@@ -34,7 +34,8 @@ export const postType = defineType({
 			type: 'text',
 			rows: 3,
 			group: 'content',
-			description: 'Shown on the blog index and used as the meta description fallback.',
+			description:
+				'Shown on the blog index and used as the meta description fallback.',
 			validation: (rule) => rule.required().max(300),
 		}),
 		defineField({

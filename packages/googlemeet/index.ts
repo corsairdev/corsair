@@ -13,20 +13,26 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { getValidAccessToken } from './client';
-import type { GoogleMeetEndpointInputs, GoogleMeetEndpointOutputs } from './endpoints/types';
-import { GoogleMeetEndpointInputSchemas, GoogleMeetEndpointOutputSchemas } from './endpoints/types';
 import {
-	SpacesEndpoints,
 	ConferenceRecordsEndpoints,
-	ParticipantsEndpoints,
 	ParticipantSessionsEndpoints,
+	ParticipantsEndpoints,
 	RecordingsEndpoints,
-	TranscriptsEndpoints,
-	TranscriptEntriesEndpoints,
 	SmartNotesEndpoints,
+	SpacesEndpoints,
+	TranscriptEntriesEndpoints,
+	TranscriptsEndpoints,
 } from './endpoints';
-import { GoogleMeetSchema } from './schema';
+import type {
+	GoogleMeetEndpointInputs,
+	GoogleMeetEndpointOutputs,
+} from './endpoints/types';
+import {
+	GoogleMeetEndpointInputSchemas,
+	GoogleMeetEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { GoogleMeetSchema } from './schema';
 import { createGoogleMeetWebhookMatcher } from './webhooks/types';
 
 export const googleMeetAuthConfig = {
@@ -38,11 +44,12 @@ export type GoogleMeetContext = CorsairPluginContext<
 	GoogleMeetPluginOptions
 >;
 
-type GoogleMeetEndpoint<K extends keyof GoogleMeetEndpointOutputs> = CorsairEndpoint<
-	GoogleMeetContext,
-	GoogleMeetEndpointInputs[K],
-	GoogleMeetEndpointOutputs[K]
->;
+type GoogleMeetEndpoint<K extends keyof GoogleMeetEndpointOutputs> =
+	CorsairEndpoint<
+		GoogleMeetContext,
+		GoogleMeetEndpointInputs[K],
+		GoogleMeetEndpointOutputs[K]
+	>;
 
 export type GoogleMeetEndpoints = {
 	spacesCreate: GoogleMeetEndpoint<'spacesCreate'>;
@@ -65,7 +72,9 @@ export type GoogleMeetEndpoints = {
 	smartNotesList: GoogleMeetEndpoint<'smartNotesList'>;
 };
 
-export type GoogleMeetBoundEndpoints = BindEndpoints<typeof googleMeetEndpointsNested>;
+export type GoogleMeetBoundEndpoints = BindEndpoints<
+	typeof googleMeetEndpointsNested
+>;
 
 const googleMeetWebhooksNested = {} as const;
 
@@ -179,12 +188,17 @@ export const googlemeetEndpointSchemas = {
 		input: GoogleMeetEndpointInputSchemas.smartNotesList,
 		output: GoogleMeetEndpointOutputSchemas.smartNotesList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof googleMeetEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof googleMeetEndpointsNested
+>;
 
 const defaultAuthType = 'oauth_2' as const;
 
 const googleMeetEndpointMeta = {
-	'spaces.create': { riskLevel: 'write', description: 'Create a new meeting space' },
+	'spaces.create': {
+		riskLevel: 'write',
+		description: 'Create a new meeting space',
+	},
 	'spaces.get': { riskLevel: 'read', description: 'Get a meeting space' },
 	'spaces.patch': { riskLevel: 'write', description: 'Update a meeting space' },
 	'spaces.endActiveConference': {
@@ -192,18 +206,36 @@ const googleMeetEndpointMeta = {
 		irreversible: true,
 		description: 'End an active conference [DESTRUCTIVE]',
 	},
-	'conferenceRecords.get': { riskLevel: 'read', description: 'Get a conference record' },
-	'conferenceRecords.list': { riskLevel: 'read', description: 'List conference records' },
+	'conferenceRecords.get': {
+		riskLevel: 'read',
+		description: 'Get a conference record',
+	},
+	'conferenceRecords.list': {
+		riskLevel: 'read',
+		description: 'List conference records',
+	},
 	'participants.get': { riskLevel: 'read', description: 'Get a participant' },
 	'participants.list': { riskLevel: 'read', description: 'List participants' },
-	'participantSessions.get': { riskLevel: 'read', description: 'Get a participant session' },
-	'participantSessions.list': { riskLevel: 'read', description: 'List participant sessions' },
+	'participantSessions.get': {
+		riskLevel: 'read',
+		description: 'Get a participant session',
+	},
+	'participantSessions.list': {
+		riskLevel: 'read',
+		description: 'List participant sessions',
+	},
 	'recordings.get': { riskLevel: 'read', description: 'Get a recording' },
 	'recordings.list': { riskLevel: 'read', description: 'List recordings' },
 	'transcripts.get': { riskLevel: 'read', description: 'Get a transcript' },
 	'transcripts.list': { riskLevel: 'read', description: 'List transcripts' },
-	'transcriptEntries.get': { riskLevel: 'read', description: 'Get a transcript entry' },
-	'transcriptEntries.list': { riskLevel: 'read', description: 'List transcript entries' },
+	'transcriptEntries.get': {
+		riskLevel: 'read',
+		description: 'Get a transcript entry',
+	},
+	'transcriptEntries.list': {
+		riskLevel: 'read',
+		description: 'List transcript entries',
+	},
 	'smartNotes.get': { riskLevel: 'read', description: 'Get smart notes' },
 	'smartNotes.list': { riskLevel: 'read', description: 'List smart notes' },
 } satisfies RequiredPluginEndpointMeta<typeof googleMeetEndpointsNested>;
@@ -225,22 +257,25 @@ export type GoogleMeetPluginOptions = {
 export type GoogleMeetKeyBuilderContext =
 	KeyBuilderContext<GoogleMeetPluginOptions>;
 
-export type BaseGoogleMeetPlugin<T extends GoogleMeetPluginOptions> = CorsairPlugin<
-	'googlemeet',
-	typeof GoogleMeetSchema,
-	typeof googleMeetEndpointsNested,
-	typeof googleMeetWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseGoogleMeetPlugin<T extends GoogleMeetPluginOptions> =
+	CorsairPlugin<
+		'googlemeet',
+		typeof GoogleMeetSchema,
+		typeof googleMeetEndpointsNested,
+		typeof googleMeetWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalGoogleMeetPlugin = BaseGoogleMeetPlugin<GoogleMeetPluginOptions>;
+export type InternalGoogleMeetPlugin =
+	BaseGoogleMeetPlugin<GoogleMeetPluginOptions>;
 
 export type ExternalGoogleMeetPlugin<T extends GoogleMeetPluginOptions> =
 	BaseGoogleMeetPlugin<T>;
 
 export function googlemeet<const T extends GoogleMeetPluginOptions>(
-	incomingOptions: GoogleMeetPluginOptions & T = {} as GoogleMeetPluginOptions & T,
+	incomingOptions: GoogleMeetPluginOptions & T = {} as GoogleMeetPluginOptions &
+		T,
 ): ExternalGoogleMeetPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -290,9 +325,7 @@ export function googlemeet<const T extends GoogleMeetPluginOptions>(
 				const res = await ctx.keys.get_integration_credentials();
 
 				if (!res.client_id || !res.client_secret) {
-					throw new Error(
-						'[corsair:googlemeet] No client id or client secret',
-					);
+					throw new Error('[corsair:googlemeet] No client id or client secret');
 				}
 
 				let currentRefreshToken = refreshToken;
@@ -354,9 +387,6 @@ export type {
 
 export * from './error-handlers';
 export { GoogleMeetSchema } from './schema';
-export type {
-	GoogleMeetWebhookOutputs,
-} from './webhooks/types';
-export { createGoogleMeetWebhookMatcher } from './webhooks/types';
-
 export type * from './types';
+export type { GoogleMeetWebhookOutputs } from './webhooks/types';
+export { createGoogleMeetWebhookMatcher } from './webhooks/types';

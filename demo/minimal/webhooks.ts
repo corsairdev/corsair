@@ -12,10 +12,7 @@ app.get('/webhooks', (req, res) => {
 	const verifyToken = req.query['hub.verify_token'];
 	const challenge = req.query['hub.challenge'];
 
-	if (
-		typeof META_VERIFY_TOKEN !== 'string' ||
-		META_VERIFY_TOKEN.length === 0
-	) {
+	if (typeof META_VERIFY_TOKEN !== 'string' || META_VERIFY_TOKEN.length === 0) {
 		return res.status(503).send('Webhook verification is not configured');
 	}
 
