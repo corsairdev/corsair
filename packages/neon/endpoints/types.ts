@@ -23,6 +23,8 @@ export const NeonEndpointInputBaseSchema = z.object({
 	region_id: z.string().min(1).optional(),
 	vpc_endpoint_id: z.string().min(1).optional(),
 	snapshot_id: z.string().min(1).optional(),
+	// request bodies are operation-specific json; the neon api validates
+	// their shape, so they intentionally stay unknown at this layer
 	body: z.unknown().optional(),
 	query: QuerySchema.optional(),
 	headers: z.record(z.string(), z.string()).optional(),
@@ -33,6 +35,8 @@ export type NeonEndpointInput = z.infer<typeof NeonEndpointInputBaseSchema> & {
 	[key: string]: unknown;
 };
 
+// responses are operation-specific json passed through to callers; they
+// intentionally stay unknown here and callers narrow them as needed
 export type NeonEndpointOutput = unknown;
 
 export type NeonEndpointInputs = Record<string, NeonEndpointInput>;
@@ -48,6 +52,9 @@ function inputSchemaForOperation(operation: NeonOperation) {
 	return NeonEndpointInputBaseSchema.extend(requiredParams);
 }
 
+// Object.fromEntries infers a value type union across all entries; assert
+// to the homogeneous record the entries are built as (one zod schema per
+// operation key from neonOperations)
 export const NeonEndpointInputSchemas = Object.fromEntries(
 	neonOperations.map((operation) => [
 		operation.key,
@@ -55,6 +62,7 @@ export const NeonEndpointInputSchemas = Object.fromEntries(
 	]),
 ) as Record<string, z.ZodTypeAny>;
 
+// same rationale as NeonEndpointInputSchemas above
 export const NeonEndpointOutputSchemas = Object.fromEntries(
 	neonOperations.map((operation) => [operation.key, NeonEndpointOutputSchema]),
 ) as Record<string, z.ZodTypeAny>;

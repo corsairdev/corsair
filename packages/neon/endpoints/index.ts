@@ -34,6 +34,9 @@ export const neonEndpointsNested = {
 	vpc: VpcEndpoints,
 } as const;
 
+// Object.fromEntries widens keys to string; assert to the meta map keyed
+// by nested endpoint paths, which the entries mirror 1:1 (every operation
+// in neonOperations has a matching handler, verified by api.test.ts)
 export const neonEndpointMeta = Object.fromEntries(
 	neonOperations.map((operation: NeonOperation) => [
 		`${operation.group}.${operation.name}`,

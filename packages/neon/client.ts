@@ -18,6 +18,8 @@ const NEON_API_BASE = 'https://console.neon.tech/api/v2';
 
 export type NeonRequestOptions = {
 	method?: NeonMethod;
+	// bodies and query values are operation-specific json; the neon api
+	// validates their shape, so they intentionally stay unknown here
 	body?: unknown;
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
@@ -42,11 +44,12 @@ export async function makeNeonRequest<T>(
 		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// TOKEN is the single source of auth: corsair/http builds the
+		// `Authorization: Bearer` header from it on every request
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 			...headers,
 		},
 	};

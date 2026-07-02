@@ -112,7 +112,6 @@ describe('Neon request client', () => {
 				BASE: 'https://console.neon.tech/api/v2',
 				TOKEN: 'test-token',
 				HEADERS: expect.objectContaining({
-					Authorization: 'Bearer test-token',
 					'Content-Type': 'application/json',
 					Accept: 'application/json',
 				}),
@@ -124,6 +123,11 @@ describe('Neon request client', () => {
 				mediaType: 'application/json',
 			}),
 		);
+		// auth flows only through TOKEN; corsair/http derives the bearer
+		// header from it, so no explicit Authorization header is set
+		expect(
+			mockRequest.mock.calls[0]?.[0].HEADERS?.Authorization,
+		).toBeUndefined();
 	});
 
 	it('drops bodies for GET requests and keeps query params', async () => {
@@ -379,6 +383,50 @@ describe('Neon endpoints', () => {
 		expect(ctxWithDb.db.branches.upsertByEntityId).toHaveBeenCalledWith(
 			'br-aged-salad-637688',
 			expect.objectContaining({ name: 'main' }),
+		);
+	});
+
+	it('never caches the plaintext token returned by createApiKey', async () => {
+		const plugin = neon({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			apiKeys: {
+				createApiKey: (
+					ctx: NeonContext,
+					input: { body: unknown },
+				) => Promise<unknown>;
+			};
+		};
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				apiKeys: { upsertByEntityId: jest.fn() },
+			},
+		} as unknown as NeonContext;
+
+		mockRequest.mockResolvedValueOnce({
+			id: 165434,
+			key: 'neon-plaintext-token-shown-once',
+			name: 'ci-key',
+			created_at: '2022-11-15T20:13:35Z',
+			created_by: 'user-id',
+		});
+
+		const response = await endpoints.apiKeys.createApiKey(ctxWithDb, {
+			body: { key_name: 'ci-key' },
+		});
+
+		// callers still get the one-time token from the api response
+		expect(response).toMatchObject({ key: 'neon-plaintext-token-shown-once' });
+		// but the cached copy must not contain it
+		expect(ctxWithDb.db.apiKeys.upsertByEntityId).toHaveBeenCalledWith(
+			'165434',
+			expect.objectContaining({ id: 165434, name: 'ci-key' }),
+		);
+		expect(ctxWithDb.db.apiKeys.upsertByEntityId).toHaveBeenCalledWith(
+			'165434',
+			expect.not.objectContaining({ key: expect.anything() }),
 		);
 	});
 
