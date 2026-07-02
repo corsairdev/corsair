@@ -1,9 +1,22 @@
-import { create, get as spacesGet, patch, endActiveConference } from './spaces';
-import { get as conferenceRecordsGet, list as conferenceRecordsList } from './conferenceRecords';
-import { get as participantsGet, list as participantsList, getParticipantSession, listParticipantSessions } from './participants';
+import {
+	get as conferenceRecordsGet,
+	list as conferenceRecordsList,
+} from './conferenceRecords';
+import {
+	getParticipantSession,
+	listParticipantSessions,
+	get as participantsGet,
+	list as participantsList,
+} from './participants';
 import { get as recordingsGet, list as recordingsList } from './recordings';
-import { get as transcriptsGet, list as transcriptsList, getEntry, listEntries } from './transcripts';
 import { get as smartNotesGet, list as smartNotesList } from './smartNotes';
+import { create, endActiveConference, patch, get as spacesGet } from './spaces';
+import {
+	getEntry,
+	listEntries,
+	get as transcriptsGet,
+	list as transcriptsList,
+} from './transcripts';
 
 export const SpacesEndpoints = {
 	create,
