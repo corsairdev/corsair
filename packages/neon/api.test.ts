@@ -430,6 +430,40 @@ describe('Neon endpoints', () => {
 		);
 	});
 
+	it('returns api results even when cache writes fail', async () => {
+		const plugin = neon({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			projects: {
+				listProjects: (ctx: NeonContext, input: {}) => Promise<unknown>;
+			};
+		};
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				projects: {
+					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
+				},
+			},
+		} as unknown as NeonContext;
+
+		mockRequest.mockResolvedValueOnce({
+			projects: [{ id: 'summer-sound-12345678', name: 'Demo' }],
+		});
+
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		// the neon api call succeeded; a local cache failure must not make
+		// the endpoint throw, or callers could retry a completed operation
+		const result = await endpoints.projects.listProjects(ctxWithDb, {});
+		warn.mockRestore();
+
+		expect(result).toMatchObject({
+			projects: [{ id: 'summer-sound-12345678' }],
+		});
+		expect(ctxWithDb.db.projects.upsertByEntityId).toHaveBeenCalled();
+	});
+
 	it('deletes cached entities for destructive operations', async () => {
 		const plugin = neon({ key: 'test-token' });
 		const endpoints = plugin.endpoints as NonNullable<

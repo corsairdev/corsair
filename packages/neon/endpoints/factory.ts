@@ -336,20 +336,27 @@ export async function syncNeonOperationResult(
 		| undefined;
 	const client = db?.[rule.entity];
 
-	if (operation.method === 'DELETE' && rule.deleteInputKeys) {
-		const entityId = cacheDeleteEntityId(input, rule);
-		if (entityId && client?.deleteByEntityId) {
-			await client.deleteByEntityId(entityId);
+	// the api call already succeeded by the time we sync the cache; a local
+	// db failure must not surface to the caller, or they may retry an
+	// operation that already completed (duplicate creates, 404s on deletes)
+	try {
+		if (operation.method === 'DELETE' && rule.deleteInputKeys) {
+			const entityId = cacheDeleteEntityId(input, rule);
+			if (entityId && client?.deleteByEntityId) {
+				await client.deleteByEntityId(entityId);
+			}
+			return;
 		}
-		return;
-	}
 
-	if (!client?.upsertByEntityId) return;
+		if (!client?.upsertByEntityId) return;
 
-	for (const item of cacheItems(response, rule)) {
-		const entityId = cacheEntityId(item, rule);
-		if (!entityId) continue;
-		await client.upsertByEntityId(entityId, cacheData(item, rule));
+		for (const item of cacheItems(response, rule)) {
+			const entityId = cacheEntityId(item, rule);
+			if (!entityId) continue;
+			await client.upsertByEntityId(entityId, cacheData(item, rule));
+		}
+	} catch (error) {
+		console.warn(`[neon] failed to sync ${rule.entity} cache:`, error);
 	}
 }
 
