@@ -1,0 +1,4 @@
+displayName: Neon
+description: Neon plugin for Corsair
+overviewNote: |
+  Neon exposes project, branch, database, role, compute endpoint, auth, organization, and infrastructure workflows for serverless Postgres. Use Corsair permissions for destructive actions such as deleting projects, dropping branches or databases, revoking API keys, or removing VPC endpoints.
