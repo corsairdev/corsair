@@ -46,6 +46,7 @@ export const BaseProviders = [
 	'jira',
 	'linear',
 	'monday',
+	'neon',
 	'notion',
 	'onedrive',
 	'openweathermap',
@@ -116,6 +117,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	linear: 'Linear',
 	monday: 'Monday',
+	neon: 'Neon',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
 	openweathermap: 'OpenWeatherMap',
@@ -149,7 +151,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram'
+	instagram: 'Instagram',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -193,6 +195,7 @@ export type AllProviders =
 	| 'jira'
 	| 'linear'
 	| 'monday'
+	| 'neon'
 	| 'notion'
 	| 'onedrive'
 	| 'openweathermap'
