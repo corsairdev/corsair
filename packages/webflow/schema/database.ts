@@ -27,6 +27,9 @@ export const WebflowCollection = z
 export const WebflowCollectionItem = z
 	.object({
 		id: z.string().optional(),
+		// not part of the webflow item response; stamped from the request at
+		// cache time so collection deletes can cascade-evict cached items
+		collectionId: z.string().optional(),
 		cmsLocaleId: z.string().nullable().optional(),
 		lastPublished: z.string().nullable().optional(),
 		lastUpdated: z.string().optional(),

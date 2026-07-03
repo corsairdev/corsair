@@ -657,6 +657,89 @@ describe('Webflow endpoints', () => {
 		);
 	});
 
+	it('stamps cached collection items with their parent collection id', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionItems: {
+				createCollectionItem: (
+					ctx: WebflowContext,
+					input: { collection_id: string; body: unknown },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const ctxWithDb = testContext({
+			db: {
+				collectionItems: { upsertByEntityId: jest.fn() },
+			},
+		});
+
+		mockRequest.mockResolvedValueOnce({
+			id: '580e64008c9a982ac9b8b754',
+			isDraft: true,
+		});
+
+		await endpoints.collectionItems.createCollectionItem(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			body: { fieldData: { name: 'Post', slug: 'post' } },
+		});
+
+		// webflow item responses do not echo the parent collection id, so the
+		// cache stamps it from the request to enable cascade eviction
+		expect(ctxWithDb.db.collectionItems.upsertByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b754',
+			expect.objectContaining({
+				collectionId: '580e63fc8c9a982ac9b8b745',
+			}),
+		);
+	});
+
+	it('cascade-evicts cached items when their collection is deleted', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collections: {
+				deleteCollection: (
+					ctx: WebflowContext,
+					input: { collection_id: string },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const search = jest
+			.fn()
+			.mockResolvedValue([
+				{ entity_id: '580e64008c9a982ac9b8b754' },
+				{ entity_id: '580e64008c9a982ac9b8b755' },
+			]);
+		const ctxWithDb = testContext({
+			db: {
+				collections: { deleteByEntityId: jest.fn() },
+				collectionItems: {
+					search,
+					deleteByEntityId: jest.fn(),
+				},
+			},
+		});
+
+		await endpoints.collections.deleteCollection(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+		});
+
+		expect(ctxWithDb.db.collections.deleteByEntityId).toHaveBeenCalledWith(
+			'580e63fc8c9a982ac9b8b745',
+		);
+		// webflow deletes all items server-side with the collection, so the
+		// cache must not keep orphaned item rows around
+		expect(search).toHaveBeenCalledWith({
+			data: { collectionId: '580e63fc8c9a982ac9b8b745' },
+			limit: 100,
+		});
+		expect(ctxWithDb.db.collectionItems.deleteByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b754',
+		);
+		expect(ctxWithDb.db.collectionItems.deleteByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b755',
+		);
+	});
+
 	it('deletes cached entities for destructive operations', async () => {
 		const plugin = webflow({ key: 'test-token' });
 		const endpoints = endpointsAs<{
