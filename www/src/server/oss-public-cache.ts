@@ -83,16 +83,21 @@ export async function getIntegrationListForPage(
 
 	if (!userId) return list;
 
-	const claims = await getActiveClaimsForUser(db, userId);
-	const claimedIds = new Set(claims.map((claim) => claim.integrationId));
+	try {
+		const claims = await getActiveClaimsForUser(db, userId);
+		const claimedIds = new Set(claims.map((claim) => claim.integrationId));
 
-	return {
-		...list,
-		items: list.items.map((item) => ({
-			...item,
-			claimedByCurrentUser: claimedIds.has(item.id),
-		})),
-	};
+		return {
+			...list,
+			items: list.items.map((item) => ({
+				...item,
+				claimedByCurrentUser: claimedIds.has(item.id),
+			})),
+		};
+	} catch (error) {
+		console.error('[oss] claim overlay failed', error);
+		return list;
+	}
 }
 
 export const getCachedContributorProfile = unstable_cache(

@@ -92,6 +92,7 @@ export function IntegrationCard({
 				<div className="flex flex-wrap items-baseline gap-x-2.5">
 					<Link
 						href={buildOssIntegrationHref(integration.slug)}
+						prefetch={false}
 						className={cn(
 							'text-[15px] font-medium no-underline underline-offset-2 hover:underline',
 							isActive ? 'text-[#4a38f5]' : 'text-[#1c1c1c]',

@@ -17,6 +17,7 @@ import { FramedPanel } from './framed-panel';
 import { GithubUsernameCallout } from './github-username-callout';
 import { HowItWorks } from './how-it-works';
 import { IntegrationCard } from './integration-card';
+import { IntegrationListSkeleton } from './integration-list-skeleton';
 import { IntegrationTagFilter } from './integration-tag-filter';
 import { LeaderboardPodium } from './leaderboard-podium';
 import { LeaderboardTable } from './leaderboard-table';
@@ -72,11 +73,14 @@ export async function OssUserSection() {
 	const session = await getSession();
 	if (!session) return null;
 
-	const profile = await getCurrentProfile();
-
-	if (profile?.githubUsername) return null;
-
-	return <GithubUsernameCallout />;
+	try {
+		const profile = await getCurrentProfile();
+		if (profile?.githubUsername) return null;
+		return <GithubUsernameCallout />;
+	} catch (error) {
+		console.error('[oss] github username callout failed', error);
+		return null;
+	}
 }
 
 type OssIntegrationsSectionProps = {
@@ -91,12 +95,19 @@ export async function OssIntegrationsSection({
 	selectedTags,
 }: OssIntegrationsSectionProps) {
 	const session = await getSession();
-	const integrationsData = await getIntegrationListForPage(
-		page,
-		q,
-		selectedTags,
-		session?.user.id,
-	);
+
+	let integrationsData: Awaited<ReturnType<typeof getIntegrationListForPage>>;
+	try {
+		integrationsData = await getIntegrationListForPage(
+			page,
+			q,
+			selectedTags,
+			session?.user.id,
+		);
+	} catch (error) {
+		console.error('[oss] integration list failed', error);
+		return <IntegrationListSkeleton count={8} />;
+	}
 
 	const startIndex = (page - 1) * integrationsData.pageSize;
 
@@ -204,11 +215,36 @@ type OssSidebarSectionProps = {
 export async function OssSidebarSection({ view }: OssSidebarSectionProps) {
 	const session = await getSession();
 	const api = session ? await getApi() : null;
-	const [recentActivity, leaderboardData, myIntegrations] = await Promise.all([
-		getCachedRecentActivity(10),
-		getCachedLeaderboard(1),
-		api ? api.integrations.listMine() : null,
-	]);
+
+	const [recentActivityResult, leaderboardResult, myIntegrationsResult] =
+		await Promise.allSettled([
+			getCachedRecentActivity(10),
+			getCachedLeaderboard(1),
+			api ? api.integrations.listMine() : Promise.resolve(null),
+		]);
+
+	if (recentActivityResult.status === 'rejected') {
+		console.error('[oss sidebar] recent activity failed', recentActivityResult.reason);
+	}
+	if (leaderboardResult.status === 'rejected') {
+		console.error('[oss sidebar] leaderboard failed', leaderboardResult.reason);
+	}
+	if (myIntegrationsResult.status === 'rejected') {
+		console.error('[oss sidebar] listMine failed', myIntegrationsResult.reason);
+	}
+
+	const recentActivity =
+		recentActivityResult.status === 'fulfilled'
+			? recentActivityResult.value
+			: { items: [] };
+	const leaderboardData =
+		leaderboardResult.status === 'fulfilled'
+			? leaderboardResult.value
+			: { items: [], totalPages: 1 };
+	const myIntegrations =
+		myIntegrationsResult.status === 'fulfilled'
+			? myIntegrationsResult.value
+			: null;
 
 	return (
 		<aside className="space-y-10 lg:sticky lg:top-20 lg:self-start">
