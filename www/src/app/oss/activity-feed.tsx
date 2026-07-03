@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { ContributorLink } from './contributor-link';
+import { formatPointsDelta } from './integration-reward';
 import { formatRelativeTime } from './relative-time';
 
 type ActivityItem = {
@@ -41,14 +43,10 @@ export function ActivityFeed({ items }: { items: ActivityItem[] }) {
 							</span>
 							<p className="min-w-0 text-[13px] leading-snug text-[#1c1c1c99]">
 								{item.githubUsername ? (
-									<a
-										href={`https://github.com/${item.githubUsername}`}
-										target="_blank"
-										rel="noreferrer"
-										className="font-medium text-[#1c1c1c] no-underline hover:underline"
-									>
-										{item.githubUsername}
-									</a>
+									<ContributorLink
+										githubUsername={item.githubUsername}
+										className="font-medium text-[#1c1c1c] hover:text-[#4a38f5]"
+									/>
 								) : (
 									<span className="font-medium text-[#1c1c1c]">someone</span>
 								)}{' '}
@@ -62,7 +60,7 @@ export function ActivityFeed({ items }: { items: ActivityItem[] }) {
 								{item.type === 'finished' ? (
 									<span className="font-[family-name:var(--font-landing-mono)] text-[11px] font-medium text-[#4a38f5]">
 										{' '}
-										+{item.points}
+										{formatPointsDelta(item.points)} pts
 									</span>
 								) : null}
 							</p>

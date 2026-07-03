@@ -22,8 +22,8 @@ export function OssHeroSkeleton() {
 						</span>
 					</h1>
 					<p className="mt-5 max-w-[460px] text-[15px] leading-[1.65] text-[#1c1c1c99]">
-						Claim an integration, build the plugin, get it merged — and earn AI
-						credits for every merge.
+						Claim an integration, build the plugin, get it merged — and earn
+						points for every contribution.
 					</p>
 					<div className="mt-7 flex flex-wrap gap-3">
 						<Pulse className="h-10 w-36 rounded-lg" />

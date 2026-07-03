@@ -12,7 +12,7 @@ const steps = [
 	{
 		title: 'Earn',
 		description:
-			'Once your PR is merged, mark it finished and collect AI credits.',
+			'Once your PR is merged, mark it finished and collect your points.',
 	},
 ];
 
@@ -36,8 +36,9 @@ export function HowItWorks({ signedIn }: { signedIn: boolean }) {
 				))}
 			</ol>
 			<p className="mt-4 rounded-lg border border-[#4a38f5]/20 bg-[#4a38f508] px-3 py-2.5 text-[13px] leading-snug text-[#1c1c1c99]">
-				<span className="font-medium text-[#1c1c1c]">AI credits.</span> Every
-				plugin you build and merge earns credits you can use anywhere.
+				<span className="font-medium text-[#1c1c1c]">Community rewards.</span>{' '}
+				Points recognize your contribution to the open catalog. Redeem them for
+				AI credits when your plugin ships.
 			</p>
 			{!signedIn ? (
 				<Link

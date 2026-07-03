@@ -63,8 +63,8 @@ export function SignInForm() {
 		<div className="mx-auto max-w-md">
 			<h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
 			<p className="mt-2 text-sm text-muted-foreground">
-				Sign in to claim integrations, ship plugins, and earn AI credits for
-				every merge.
+				Sign in to claim integrations, ship plugins, and earn points for every
+				merge.
 			</p>
 
 			<form

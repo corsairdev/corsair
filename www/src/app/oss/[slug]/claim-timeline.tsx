@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import type { IntegrationPhase } from '@/db/schema';
 import { phaseLabel } from '@/lib/integration-phases';
 
+import { ContributorLink } from '../contributor-link';
 import { formatRelativeTime } from '../relative-time';
 
 type TimelineEvent = {
@@ -48,11 +49,9 @@ function ClaimTimelineItem({ event }: { event: TimelineEvent }) {
 			</span>
 			<p className="min-w-0 text-[13px] leading-snug text-[#1c1c1c99]">
 				{event.githubUsername ? (
-					<a
-						href={`https://github.com/${event.githubUsername}`}
-						target="_blank"
-						rel="noreferrer"
-						className="inline-flex items-center gap-1.5 font-medium text-[#1c1c1c] no-underline hover:underline"
+					<ContributorLink
+						githubUsername={event.githubUsername}
+						className="inline-flex items-center gap-1.5 font-medium text-[#1c1c1c] hover:text-[#4a38f5]"
 					>
 						{event.avatarUrl ? (
 							<img
@@ -64,7 +63,7 @@ function ClaimTimelineItem({ event }: { event: TimelineEvent }) {
 							/>
 						) : null}
 						{event.githubUsername}
-					</a>
+					</ContributorLink>
 				) : (
 					<span className="font-medium text-[#1c1c1c]">someone</span>
 				)}{' '}

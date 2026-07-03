@@ -114,18 +114,19 @@ export async function OssIntegrationsSection({
 				<span>
 					{integrationsData.total} integration
 					{integrationsData.total === 1 ? '' : 's'}
+					{q ? (
+						<>
+							{' '}
+							matching &ldquo;{q}&rdquo;{' '}
+							<Link
+								href={buildOssHref({ tags: selectedTags })}
+								className="text-[#1c1c1c] underline underline-offset-2 hover:text-[#4a38f5]"
+							>
+								clear
+							</Link>
+						</>
+					) : null}
 				</span>
-				{q ? (
-					<>
-						<span>matching &ldquo;{q}&rdquo;</span>
-						<Link
-							href={buildOssHref({ tags: selectedTags })}
-							className="text-[#1c1c1c] underline underline-offset-2 hover:text-[#4a38f5]"
-						>
-							clear
-						</Link>
-					</>
-				) : null}
 			</div>
 			<FramedPanel>
 				<div className="divide-y divide-[#1c1c1c0d]">

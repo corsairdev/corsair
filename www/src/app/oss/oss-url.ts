@@ -41,3 +41,7 @@ export function buildOssIntegrationHref(slug: string, searchParams?: string) {
 	const base = `/oss/${slug}`;
 	return searchParams ? `${base}?${searchParams}` : base;
 }
+
+export function buildOssContributorHref(username: string) {
+	return `/oss/u/${username.toLowerCase()}`;
+}

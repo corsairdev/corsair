@@ -51,9 +51,10 @@ export function OssHero({ signedIn, stats }: OssHeroProps) {
 						</span>
 					</h1>
 					<p className="mt-5 max-w-[460px] text-[15px] leading-[1.65] text-[#1c1c1c99]">
-						Claim an integration, build the plugin, get it merged. Every plugin
-						you merge earns AI credits. Your work goes live in the open catalog
-						— powering real agents, in real products, from day one.
+						Claim an integration, build the plugin, get it merged. Contributors
+						earn points for every merge — redeemable for AI credits. Your work
+						goes live in the open catalog, powering real agents in real products
+						from day one.
 					</p>
 					<div className="mt-7 flex flex-wrap items-center gap-3">
 						<Link

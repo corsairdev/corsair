@@ -1,6 +1,8 @@
 import { cn } from '@/lib/utils';
 
+import { ContributorLink } from './contributor-link';
 import { FramedPanel } from './framed-panel';
+import { IntegrationRewardDisplay } from './integration-reward-display';
 
 type PodiumEntry = {
 	rank: number;
@@ -10,8 +12,6 @@ type PodiumEntry = {
 	totalPoints: number;
 	integrations: Array<{ id: string }>;
 };
-
-const numberFormatter = new Intl.NumberFormat('en-US');
 
 const rankWords: Record<number, string> = {
 	1: 'First',
@@ -59,14 +59,10 @@ function PodiumCard({ entry }: { entry: PodiumEntry }) {
 					)}
 					<div className="min-w-0">
 						{entry.githubUsername ? (
-							<a
-								href={`https://github.com/${entry.githubUsername}`}
-								target="_blank"
-								rel="noreferrer"
-								className="block truncate text-sm font-medium text-[#1c1c1c] no-underline hover:underline"
-							>
-								{entry.githubUsername}
-							</a>
+							<ContributorLink
+								githubUsername={entry.githubUsername}
+								className="block truncate text-sm font-medium text-[#1c1c1c] hover:text-[#4a38f5]"
+							/>
 						) : (
 							<span className="block text-sm text-[#1c1c1c66]">unknown</span>
 						)}
@@ -75,10 +71,10 @@ function PodiumCard({ entry }: { entry: PodiumEntry }) {
 							{entry.integrations.length === 1 ? '' : 's'}
 						</p>
 					</div>
-					<p className="font-[family-name:var(--font-landing-mono)] text-[26px] font-light leading-none tabular-nums text-[#1c1c1c]">
-						{numberFormatter.format(entry.totalPoints)}
-						<span className="ml-1.5 text-[11px] text-[#1c1c1c66]">pts</span>
-					</p>
+					<IntegrationRewardDisplay
+						points={entry.totalPoints}
+						variant="emphasis"
+					/>
 				</div>
 			</FramedPanel>
 

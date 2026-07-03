@@ -3,6 +3,8 @@ import Link from 'next/link';
 import type { IntegrationPhase } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { ClaimIntegrationButton } from './claim-integration-button';
+import { ContributorLink } from './contributor-link';
+import { IntegrationRewardDisplay } from './integration-reward-display';
 import { buildOssIntegrationHref } from './oss-url';
 import { UnclaimIntegrationButton } from './unclaim-integration-button';
 
@@ -122,11 +124,9 @@ export function IntegrationCard({
 					status={integration.status}
 				/>
 				{integration.isClaimed && integration.claimerGithubUsername ? (
-					<a
-						href={`https://github.com/${integration.claimerGithubUsername}`}
-						target="_blank"
-						rel="noreferrer"
-						className="inline-flex items-center gap-1.5 whitespace-nowrap text-[#1c1c1c99] no-underline hover:text-[#1c1c1c] hover:underline"
+					<ContributorLink
+						githubUsername={integration.claimerGithubUsername}
+						className="inline-flex items-center gap-1.5 whitespace-nowrap text-[#1c1c1c99] hover:text-[#1c1c1c]"
 					>
 						{integration.claimerAvatarUrl ? (
 							<img
@@ -138,22 +138,20 @@ export function IntegrationCard({
 							/>
 						) : null}
 						@{integration.claimerGithubUsername}
-					</a>
+					</ContributorLink>
 				) : null}
 			</div>
 
 			<div className="col-start-2 row-start-1 flex items-center justify-end gap-3 sm:col-start-auto sm:row-start-auto">
-				<span
-					className={cn(
-						'font-[family-name:var(--font-landing-mono)] text-[13px] font-medium tabular-nums',
-						integration.isClaimed ? 'text-[#1c1c1c40]' : 'text-[#1c1c1c]',
-					)}
-				>
-					{integration.points}
-					<span className="ml-1 text-[10px] font-normal text-[#1c1c1c66]">
-						pts
-					</span>
-				</span>
+				<IntegrationRewardDisplay
+					points={integration.points}
+					amountClassName={
+						integration.isClaimed ? 'text-[#1c1c1c40]' : 'text-[#1c1c1c]'
+					}
+					labelClassName={
+						integration.isClaimed ? 'text-[#1c1c1c33]' : 'text-[#1c1c1c66]'
+					}
+				/>
 				{session && integration.claimedByCurrentUser ? (
 					<UnclaimIntegrationButton integrationId={integration.id} />
 				) : null}

@@ -10,6 +10,7 @@ export const OSS_CACHE_TAGS = {
 	tags: 'oss:tags',
 	leaderboard: 'oss:leaderboard',
 	list: 'oss:list',
+	contributors: 'oss:contributors',
 } as const;
 
 export function revalidateOssWriteSurface() {
@@ -17,6 +18,7 @@ export function revalidateOssWriteSurface() {
 	revalidateTag(OSS_CACHE_TAGS.activity);
 	revalidateTag(OSS_CACHE_TAGS.leaderboard);
 	revalidateTag(OSS_CACHE_TAGS.list);
+	revalidateTag(OSS_CACHE_TAGS.contributors);
 }
 
 const MAX_CACHE_Q_LENGTH = 64;
@@ -92,3 +94,10 @@ export async function getIntegrationListForPage(
 		})),
 	};
 }
+
+export const getCachedContributorProfile = unstable_cache(
+	async (username: string) =>
+		createPublicCaller().contributors.byGithubUsername({ username }),
+	['oss-contributor-profile'],
+	{ revalidate: 30, tags: [OSS_CACHE_TAGS.contributors] },
+);

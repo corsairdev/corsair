@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import type { IntegrationPhase } from '@/db/schema';
 
 import { IntegrationStatusBadge } from '../integration-status-badge';
+import { ContributorLink } from '../contributor-link';
+import { IntegrationRewardDisplay } from '../integration-reward-display';
 import { UnclaimIntegrationButton } from '../unclaim-integration-button';
 import { ClaimTimeline } from './claim-timeline';
 import { IntegrationUrlsSection } from './integration-urls-section';
@@ -76,9 +78,11 @@ export function IntegrationDetailSidebar({
 							phase={integration.phase}
 							status={integration.status}
 						/>
-						<span className="font-[family-name:var(--font-landing-mono)] text-[12px] tabular-nums text-[#1c1c1c66]">
-							{integration.points} pts
-						</span>
+						<IntegrationRewardDisplay
+							points={integration.points}
+							className="items-start"
+							amountClassName="text-[12px] text-[#1c1c1c]"
+						/>
 					</div>
 
 					{integration.isClaimed && integration.claimerGithubUsername ? (
@@ -95,14 +99,12 @@ export function IntegrationDetailSidebar({
 							<span className="font-[family-name:var(--font-landing-mono)] text-[11px] text-[#1c1c1c66]">
 								Maintained by
 							</span>
-							<a
-								href={`https://github.com/${integration.claimerGithubUsername}`}
-								className="font-[family-name:var(--font-landing-mono)] text-[12px] text-[#1c1c1c] no-underline hover:underline"
-								target="_blank"
-								rel="noreferrer"
+							<ContributorLink
+								githubUsername={integration.claimerGithubUsername}
+								className="font-[family-name:var(--font-landing-mono)] text-[12px] text-[#1c1c1c] hover:text-[#4a38f5]"
 							>
 								@{integration.claimerGithubUsername}
-							</a>
+							</ContributorLink>
 						</div>
 					) : null}
 
