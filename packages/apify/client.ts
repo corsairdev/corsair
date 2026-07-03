@@ -26,17 +26,21 @@ const RESERVED_INPUT_KEYS = new Set([
 	'mediaType',
 ]);
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+// Apify accepts and returns endpoint-specific JSON that the generic client passes through unchanged.
+type ApifyJsonValue = unknown;
+type ApifyJsonRecord = Record<string, ApifyJsonValue>;
+
+function isRecord(value: ApifyJsonValue): value is ApifyJsonRecord {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function pickDefined(
 	input: ApifyOperationInput,
 	keys: readonly string[] | undefined,
-): Record<string, unknown> | undefined {
+): ApifyJsonRecord | undefined {
 	if (!keys?.length) return undefined;
 
-	const output: Record<string, unknown> = {};
+	const output: ApifyJsonRecord = {};
 	for (const key of keys) {
 		const value = input[key];
 		if (value !== undefined) output[key] = value;
@@ -48,7 +52,7 @@ function pickDefined(
 function buildQuery(
 	operation: ApifyOperationDefinition,
 	input: ApifyOperationInput,
-): Record<string, unknown> | undefined {
+): ApifyJsonRecord | undefined {
 	const query = {
 		...(isRecord(input.query) ? input.query : {}),
 		...(pickDefined(input, operation.queryParams) ?? {}),
@@ -60,14 +64,14 @@ function buildQuery(
 function buildBody(
 	operation: ApifyOperationDefinition,
 	input: ApifyOperationInput,
-): unknown {
+): ApifyJsonValue {
 	if (input.body !== undefined) return input.body;
 	if (operation.method === 'GET' || operation.method === 'HEAD')
 		return undefined;
 
 	const queryParams = new Set(operation.queryParams ?? []);
 	const pathParams = new Set(operation.pathParams);
-	const body: Record<string, unknown> = {};
+	const body: ApifyJsonRecord = {};
 
 	for (const [key, value] of Object.entries(input)) {
 		if (
@@ -118,7 +122,7 @@ export async function makeApifyRequest(
 	};
 
 	try {
-		const response = await request<unknown>(config, requestOptions);
+		const response = await request<ApifyJsonValue>(config, requestOptions);
 		if (response === undefined && operation.method === 'HEAD') {
 			return { exists: true };
 		}

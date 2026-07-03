@@ -406,8 +406,7 @@ export const apifyOperations = {
 			path: '/v2/actors/{actorId}/runs/last/request-queue/requests/{requestId}/lock',
 			pathParams: ['actorId', 'requestId'],
 			queryParams: ['status', 'origin', 'clientKey', 'forefront'],
-			riskLevel: 'destructive',
-			irreversible: true,
+			riskLevel: 'write',
 			description: "Delete lock on request in last run's default request queue",
 		},
 		runsLastRequestQueueRequestLockPut: {
@@ -1018,8 +1017,7 @@ export const apifyOperations = {
 			path: '/v2/actor-runs/{runId}/request-queue/requests/{requestId}/lock',
 			pathParams: ['runId', 'requestId'],
 			queryParams: ['clientKey', 'forefront'],
-			riskLevel: 'destructive',
-			irreversible: true,
+			riskLevel: 'write',
 			description: 'Delete lock on request in default request queue',
 		},
 		requestQueueRequestLockPut: {
@@ -1409,8 +1407,7 @@ export const apifyOperations = {
 			path: '/v2/actor-tasks/{actorTaskId}/runs/last/request-queue/requests/{requestId}/lock',
 			pathParams: ['actorTaskId', 'requestId'],
 			queryParams: ['status', 'origin', 'clientKey', 'forefront'],
-			riskLevel: 'destructive',
-			irreversible: true,
+			riskLevel: 'write',
 			description:
 				"Delete lock on request in last task run's default request queue",
 		},
@@ -1965,8 +1962,7 @@ export const apifyOperations = {
 			path: '/v2/request-queues/{queueId}/requests/{requestId}/lock',
 			pathParams: ['queueId', 'requestId'],
 			queryParams: ['clientKey', 'forefront'],
-			riskLevel: 'destructive',
-			irreversible: true,
+			riskLevel: 'write',
 			description: 'Delete request lock',
 		},
 		requestLockPut: {
