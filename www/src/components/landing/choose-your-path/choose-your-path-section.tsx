@@ -4,12 +4,12 @@ import {
 } from '../copyable-code-snippet';
 
 const SDK_INSTALL_COMMAND = 'npm install corsair';
-const APP_URL = 'https://app.corsair.dev';
+const APP_URL = 'https://hub.corsair.dev';
 const DOCS_URL = 'https://docs.corsair.dev';
 
 const PATH_CTAS = {
 	sdk: { type: 'install', command: SDK_INSTALL_COMMAND },
-	hosted: { type: 'link', href: APP_URL, label: 'app.corsair.dev' },
+	hosted: { type: 'link', href: APP_URL, label: 'hub.corsair.dev' },
 	'cloud-sdk': { type: 'link', href: DOCS_URL, label: 'docs.corsair.dev' },
 } as const;
 
