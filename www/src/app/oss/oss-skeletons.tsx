@@ -21,27 +21,29 @@ export function OssHeroSkeleton() {
 							built in the open.
 						</span>
 					</h1>
-					<p className="mt-5 max-w-[460px] text-[15px] leading-[1.65] text-[#1c1c1c99]">
-						Claim an integration, build the plugin, get it merged — and earn
-						points for every contribution.
+					<p className="mt-4 max-w-[520px] text-[clamp(1.125rem,2vw,1.375rem)] font-light leading-[1.35] text-[#1c1c1c]">
+						Ship a plugin, get it merged — earn AI credits.
 					</p>
+					<div className="mt-5 space-y-2">
+						<Pulse className="h-4 w-full max-w-md rounded" />
+						<Pulse className="h-4 w-full max-w-sm rounded" />
+					</div>
 					<div className="mt-7 flex flex-wrap gap-3">
 						<Pulse className="h-10 w-36 rounded-lg" />
 						<Pulse className="h-10 w-40 rounded-lg" />
 					</div>
 				</div>
 				<FramedPanel>
-					<div className="grid grid-cols-2 gap-px bg-[#1c1c1c1a] sm:grid-cols-4">
-						{Array.from({ length: 4 }, (_, i) => (
-							<div key={i} className="bg-white px-5 py-4 sm:px-6">
-								<Pulse className="h-7 w-12" />
-								<Pulse className="mt-2 h-3 w-16" />
+					<div className="grid grid-cols-1 gap-px bg-[#1c1c1c1a] sm:grid-cols-2">
+						{Array.from({ length: 2 }, (_, index) => (
+							<div
+								key={index}
+								className="flex min-h-[140px] flex-col justify-center bg-white px-6 py-8 sm:px-8"
+							>
+								<Pulse className="h-8 w-24" />
+								<Pulse className="mt-3 h-3 w-28" />
 							</div>
 						))}
-					</div>
-					<div className="border-t border-[#1c1c1c1a] px-5 py-4 sm:px-6">
-						<Pulse className="h-2 w-full rounded" />
-						<Pulse className="mt-2.5 h-3 w-48" />
 					</div>
 				</FramedPanel>
 			</div>

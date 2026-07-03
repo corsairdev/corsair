@@ -24,7 +24,7 @@ import type { OssIntegrationsView } from './view-tabs';
 export const metadata: Metadata = {
 	title: 'OSS Integrations',
 	description:
-		'Claim an integration, build the plugin, get it merged. Every merged plugin earns points in the Corsair open source contributor program.',
+		'Build integrations in the open and earn AI credits — 1 point = $1. Your code ships to thousands of developers via Corsair\'s open catalog.',
 };
 
 type PageProps = {
