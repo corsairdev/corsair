@@ -11,9 +11,11 @@ type OssHeroProps = {
 
 const numberFormatter = new Intl.NumberFormat('en-US');
 
-const heroBullets = [
-	'Your code ships to Corsair\u2019s open catalog, used by thousands of developers',
-	'Claim an integration, open a PR, get merged to main',
+const heroSteps: Array<{ label: string; accent?: boolean }> = [
+	{ label: 'Ship a plugin' },
+	{ label: 'Get it merged' },
+	{ label: 'Earn AI credits', accent: true },
+	{ label: 'Watch your code be used by thousands' },
 ];
 
 function HeroStatBlock({
@@ -48,37 +50,43 @@ export function OssHero({ signedIn, stats }: OssHeroProps) {
 		<section className="pt-12 pb-10 sm:pt-16 sm:pb-14">
 			<div className="grid gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:items-center lg:gap-16">
 				<div>
-					<p className="font-[family-name:var(--font-landing-mono)] text-xs font-medium tracking-[0.02em] text-[#1c1c1c99] uppercase">
-						Open source contributor program
-					</p>
+					<h1 className="flex max-w-[520px] flex-col font-[family-name:var(--landing-font-sans)] text-[clamp(1.375rem,2.8vw,1.875rem)] font-light leading-snug tracking-[-0.02em]">
+						{heroSteps.map((step, index) => {
+							const isLast = index === heroSteps.length - 1;
 
-					<h1 className="mt-5 text-[clamp(2rem,4.5vw,3.25rem)] font-light leading-[1.1] tracking-[-0.02em] text-[#1c1c1c]">
-						<span className="font-[family-name:var(--landing-font-serif)] italic">
-							Every integration,
-						</span>
-						<br />
-						<span className="font-[family-name:var(--landing-font-sans)] tracking-[-0.04em]">
-							built in the open.
-						</span>
-					</h1>
-
-					<p className="mt-4 max-w-[520px] text-[clamp(1.125rem,2vw,1.375rem)] font-light leading-[1.35] tracking-[-0.02em] text-[#1c1c1c]">
-						Ship a plugin, get it merged —{' '}
-						<span className="font-medium text-[#4a38f5]">earn AI credits</span>{' '}
-						for every integration you write.
-					</p>
-
-					<ul className="mt-5 max-w-[480px] space-y-2 text-[14px] leading-relaxed text-[#1c1c1c99]">
-						{heroBullets.map((bullet) => (
-							<li key={bullet} className="flex gap-2.5">
+							return (
 								<span
-									className="mt-[0.55em] size-1 shrink-0 rounded-full bg-[#4a38f5]"
-									aria-hidden
-								/>
-								<span>{bullet}</span>
-							</li>
-						))}
-					</ul>
+									key={step.label}
+									className={`flex gap-4 ${isLast ? '' : 'pb-3.5'}`}
+								>
+									<span
+										className="relative flex w-3.5 shrink-0 flex-col items-center"
+										aria-hidden
+									>
+										<span
+											className={
+												step.accent
+													? 'mt-2 size-2.5 shrink-0 rounded-full bg-[#4a38f5]'
+													: 'mt-2 size-2.5 shrink-0 rounded-full border border-[#1c1c1c]/20 bg-white'
+											}
+										/>
+										{!isLast ? (
+											<span className="mt-1 w-px flex-1 bg-[#1c1c1c]/12" />
+										) : null}
+									</span>
+									<span
+										className={
+											step.accent
+												? 'pb-0.5 font-medium text-[#4a38f5]'
+												: 'text-[#1c1c1c]'
+										}
+									>
+										{step.label}
+									</span>
+								</span>
+							);
+						})}
+					</h1>
 
 					<div className="mt-7 flex flex-wrap items-center gap-3">
 						<Link
