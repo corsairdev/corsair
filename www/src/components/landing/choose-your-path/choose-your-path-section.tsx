@@ -2,10 +2,9 @@ import {
 	CopyableCodeSnippet,
 	LANDING_CTA_BOX_CLASS,
 } from '../copyable-code-snippet';
+import { APP_URL, DOCS_URL } from '@/lib/site-links';
 
 const SDK_INSTALL_COMMAND = 'npm install corsair';
-const APP_URL = 'https://hub.corsair.dev';
-const DOCS_URL = 'https://docs.corsair.dev';
 
 const PATH_CTAS = {
 	sdk: { type: 'install', command: SDK_INSTALL_COMMAND },

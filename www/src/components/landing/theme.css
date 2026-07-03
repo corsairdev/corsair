@@ -382,15 +382,15 @@
 	font-size: 1rem;
 }
 
-/* Nav links (Docs, Github) */
-.site-menu-container nav a[target="_blank"]:not(.group) {
+/* Nav links (Docs, Contribute, Github, Discord) */
+.site-menu-container nav a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not([aria-label="Discord"]) {
 	transition:
 		padding 1.2s cubic-bezier(0.22, 1, 0.36, 1),
 		font-size 1.2s cubic-bezier(0.22, 1, 0.36, 1),
 		color 0.3s ease;
 }
 
-.site-menu-scrolled nav a[target="_blank"]:not(.group) {
+.site-menu-scrolled nav a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not([aria-label="Discord"]) {
 	padding: 0.375rem 0.5rem;
 	font-size: 0.8125rem;
 }
