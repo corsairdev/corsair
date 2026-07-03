@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import type { IntegrationPhase } from '@/db/schema';
+import type { IntegrationPhase, IntegrationUrls } from '@/db/schema';
 
 import { ContributorLink } from '../contributor-link';
 import { FramedPanel } from '../framed-panel';
@@ -25,11 +25,7 @@ type ReviewQueueItem = {
 	claimerName: string | null;
 	claimerGithubUsername: string | null;
 	claimerAvatarUrl: string | null;
-	urls: {
-		issueUrl: string | null;
-		prUrl: string | null;
-		docsUrl: string | null;
-	};
+	urls: IntegrationUrls;
 };
 
 export function AdminReviewQueue({
