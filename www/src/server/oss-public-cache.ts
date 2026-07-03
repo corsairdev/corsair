@@ -1,7 +1,10 @@
 import { revalidateTag, unstable_cache } from 'next/cache';
 
 import { db } from '@/db';
-import { getActiveClaimsForUser, getUserWipClaim } from '@/db/integration-status';
+import {
+	getActiveClaimsForUser,
+	getUserWipClaim,
+} from '@/db/integration-status';
 import { appRouter } from '@/server/api/root';
 
 export const OSS_CACHE_TAGS = {
@@ -102,7 +105,15 @@ export async function getIntegrationListForPage(
 		};
 	} catch (error) {
 		console.error('[oss] claim overlay failed', error);
-		return list;
+		// Fail safe: disable claim buttons rather than showing stale public-cache state.
+		return {
+			...list,
+			wipIntegrationName: null,
+			items: list.items.map((item) => ({
+				...item,
+				userCanClaim: false,
+			})),
+		};
 	}
 }
 
