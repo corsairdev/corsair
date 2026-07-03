@@ -7,7 +7,7 @@ import { ProblemStatementSection } from './problem-statement/problem-statement-s
 import { SolutionFramingSection } from './solution-framing/solution-framing-section';
 import { TerminalTrioSection } from './terminal-trio/terminal-trio-section';
 
-export function LandingPage() {
+export function LandingPage({ starCount }: { starCount?: number | null }) {
 	return (
 		<div
 			className="landing min-h-screen overflow-x-clip bg-[#f4f4f4]"
@@ -18,7 +18,7 @@ export function LandingPage() {
 			}}
 		>
 			<SiteMenu />
-			<LandingHero />
+			<LandingHero starCount={starCount} />
 			<TerminalTrioSection />
 			<ProblemStatementSection />
 			<SolutionFramingSection />

@@ -26,6 +26,66 @@
 	box-sizing: border-box;
 }
 
+@keyframes sparkle-glow {
+	0%, 100% {
+		filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.4));
+		opacity: 0.7;
+	}
+	50% {
+		filter: drop-shadow(0 0 6px rgba(255, 255, 255, 1)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.5));
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.sparkle-icon-glow {
+		animation: sparkle-glow 2s ease-in-out infinite;
+	}
+}
+
+@keyframes star-glow {
+	0%, 100% {
+		filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.55));
+		color: #f59e0b;
+	}
+	50% {
+		filter: drop-shadow(0 0 8px rgba(251, 191, 36, 1)) drop-shadow(0 0 18px rgba(251, 191, 36, 0.5));
+		color: #fcd34d;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.star-icon-glow {
+		animation: star-glow 2.4s ease-in-out infinite;
+	}
+}
+
+@keyframes button-shine {
+	0% { transform: translateX(-120%) skewX(-20deg); }
+	100% { transform: translateX(420%) skewX(-20deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.star-button-shine {
+		position: relative;
+		overflow: hidden;
+	}
+	.star-button-shine::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			to right,
+			transparent 0%,
+			rgba(255, 255, 255, 0.55) 50%,
+			transparent 100%
+		);
+		width: 30%;
+		animation: button-shine 3.5s ease-in-out infinite;
+		pointer-events: none;
+	}
+}
+
 @keyframes landing-integration-pulse {
 	0%,
 	100% {
@@ -252,25 +312,29 @@
 	transform: rotate(360deg);
 }
 
-/* ---- Container: frosted glass + shrink ---- */
+/* ---- Container: glassy dynamic island ---- */
 .site-menu-container {
-	background: rgba(244, 244, 244, 1);
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
+	background: rgba(244, 244, 244, 0.85);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	border: 1px solid rgba(28, 28, 28, 0.08);
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.08),
+		0 2px 8px rgba(0, 0, 0, 0.04),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9);
 	transition:
 		max-width 1.2s cubic-bezier(0.22, 1, 0.36, 1),
 		background 0.5s ease,
-		backdrop-filter 0.5s ease,
-		-webkit-backdrop-filter 0.5s ease,
 		box-shadow 0.5s ease;
 }
 
 .site-menu-scrolled.site-menu-container {
 	max-width: 1100px;
-	background: rgba(244, 244, 244, 0.65);
-	backdrop-filter: blur(14px);
-	-webkit-backdrop-filter: blur(14px);
-	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+	background: rgba(244, 244, 244, 0.88);
+	box-shadow:
+		0 12px 40px rgba(0, 0, 0, 0.1),
+		0 4px 12px rgba(0, 0, 0, 0.06),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 /* ---- Nav inner: vertical shrink ---- */
@@ -318,15 +382,15 @@
 	font-size: 1rem;
 }
 
-/* Nav links (Docs, Github) */
-.site-menu-container nav a[target="_blank"]:not(.group) {
+/* Nav links (Docs, Contribute, Github, Discord) */
+.site-menu-container nav a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not([aria-label="Discord"]) {
 	transition:
 		padding 1.2s cubic-bezier(0.22, 1, 0.36, 1),
 		font-size 1.2s cubic-bezier(0.22, 1, 0.36, 1),
 		color 0.3s ease;
 }
 
-.site-menu-scrolled nav a[target="_blank"]:not(.group) {
+.site-menu-scrolled nav a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not([aria-label="Discord"]) {
 	padding: 0.375rem 0.5rem;
 	font-size: 0.8125rem;
 }

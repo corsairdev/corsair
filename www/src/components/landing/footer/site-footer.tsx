@@ -80,6 +80,14 @@ export function SiteFooter() {
 									Cloud Dashboard
 								</a>
 							</li>
+							<li>
+								<Link
+									href="/oss"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									OSS Integrations
+								</Link>
+							</li>
 						</ul>
 					</div>
 

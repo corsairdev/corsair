@@ -1,7 +1,8 @@
 'use client';
 
-import { Copy } from '@phosphor-icons/react';
+import { Sparkle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { APP_URL } from '@/lib/site-links';
 import { cn } from '@/lib/utils';
 import { CopyFeedbackIcon } from '../copy-feedback-icon';
 
@@ -71,20 +72,17 @@ export function HeroAppCta() {
 			className="group/app-cta relative flex w-full items-stretch overflow-visible rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition-all duration-300 ease-out hover:bg-[#2a2a2a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_16px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:translate-y-0 sm:inline-flex sm:w-auto"
 		>
 			<a
-				href="https://app.corsair.dev"
+				href={APP_URL}
 				target="_blank"
 				rel="noopener noreferrer"
-				className="inline-flex flex-1 touch-manipulation items-center justify-center gap-2 px-6 py-3 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white no-underline sm:flex-none"
+				className="inline-flex flex-1 touch-manipulation items-center justify-center px-6 py-3 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white no-underline sm:flex-none"
 			>
 				Go to app
-				<span className="transition-transform duration-300 ease-out group-hover/app-cta:translate-x-1">
-					→
-				</span>
 			</a>
 
 			<button
 				type="button"
-				className="inline-flex shrink-0 touch-manipulation items-center justify-center border-l border-white/15 px-3 py-3 text-white/70 transition-colors duration-300 ease-out hover:bg-white/10 hover:text-white active:bg-white/15"
+				className="relative inline-flex shrink-0 touch-manipulation items-center justify-center border-l border-white/15 px-3 py-3 text-white/60 transition-all duration-300 ease-out hover:bg-white/10 hover:text-white active:bg-white/15"
 				aria-label="Copy for agents"
 				aria-haspopup="menu"
 				aria-expanded={open}
@@ -94,7 +92,11 @@ export function HeroAppCta() {
 					setOpen((prev) => !prev);
 				}}
 			>
-				<Copy className="size-4" aria-hidden />
+				<span className="absolute right-1.5 top-1.5 flex size-1.5">
+					<span className="landing-send-cta-ring absolute inline-flex size-full rounded-full bg-white/70" />
+					<span className="relative inline-flex size-1.5 rounded-full bg-white/90" />
+				</span>
+				<Sparkle className="sparkle-icon-glow size-[15px]" weight="fill" aria-hidden />
 			</button>
 
 			{open ? (

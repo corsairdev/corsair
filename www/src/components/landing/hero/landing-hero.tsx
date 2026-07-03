@@ -6,7 +6,15 @@ import { YcBackedLink } from '../yc-backed-link';
 import { HeroAppCta } from './hero-app-cta';
 import { HeroBackground } from './hero-background';
 
-export function LandingHero() {
+function formatStarCount(count: number): string {
+	if (count >= 1000) {
+		const k = count / 1000;
+		return `${k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)}k`;
+	}
+	return count.toString();
+}
+
+export function LandingHero({ starCount }: { starCount?: number | null }) {
 	return (
 		<section className="relative w-full overflow-clip pb-3 md:pb-4">
 			{/* Bottom fade — dots dissolve into the next section */}
@@ -41,19 +49,23 @@ export function LandingHero() {
 						href="https://github.com/corsairdev/corsair/"
 						target="_blank"
 						rel="noopener noreferrer"
-						className="group inline-flex items-center justify-center gap-2 rounded-lg border border-[#1c1c1c]/10 bg-white/50 px-6 py-3 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(0,0,0,0.02)] backdrop-blur-sm transition-all duration-300 ease-out hover:bg-white hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 active:translate-y-0"
+						className="star-button-shine group inline-flex items-center justify-center rounded-lg border border-amber-200/60 bg-gradient-to-b from-amber-50/80 to-white/60 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(251,191,36,0.12)] backdrop-blur-sm transition-all duration-300 ease-out hover:border-amber-300/80 hover:shadow-[0_4px_20px_rgba(251,191,36,0.22)] hover:-translate-y-0.5 active:translate-y-0"
 					>
-						<div className="relative flex size-4 items-center justify-center transition-transform duration-300 ease-out group-hover:scale-110">
+						<span className="inline-flex items-center gap-2 px-4 py-3">
 							<Star
 								weight="fill"
-								className="absolute size-4 text-[#1c1c1c] transition-opacity duration-300 ease-out group-hover:opacity-0"
+								className="star-icon-glow size-4"
 							/>
-							<Star
-								weight="regular"
-								className="absolute size-4 text-[#1c1c1c] opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
-							/>
-						</div>
-						Star on GitHub
+							Star on GitHub
+						</span>
+						{starCount != null ? (
+							<>
+								<span className="self-stretch w-px bg-amber-200/60" aria-hidden />
+								<span className="px-3.5 py-3 font-[family-name:var(--landing-font-mono)] text-[13px] font-semibold text-amber-600 tabular-nums">
+									{formatStarCount(starCount)}
+								</span>
+							</>
+						) : null}
 					</a>
 					<HeroAppCta />
 				</div>
