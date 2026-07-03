@@ -1,0 +1,418 @@
+import type { CorsairEndpoint } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
+import { makeWebflowRequest } from '../client';
+import type { WebflowContext } from '../index';
+import type { WebflowOperation } from './operations';
+import type { WebflowEndpointInput } from './types';
+
+const PATH_PARAM_KEYS = [
+	'site_id',
+	'collection_id',
+	'field_id',
+	'item_id',
+	'asset_id',
+	'asset_folder_id',
+	'page_id',
+	'component_id',
+	'order_id',
+	'webhook_id',
+] as const;
+
+const INPUT_CONTROL_KEYS = new Set(['body', 'query', 'headers', 'baseUrl']);
+
+export type WebflowEndpoint = CorsairEndpoint<
+	WebflowContext,
+	WebflowEndpointInput,
+	unknown
+>;
+
+type CacheRule = {
+	entity: string;
+	idKeys: string[];
+	listKeys?: string[];
+	itemKeys?: string[];
+	deleteInputKeys?: string[];
+	// key in the request body holding an array of { id } records whose
+	// cached entities should be evicted (webflow bulk deletes put target
+	// ids in the body, not the path)
+	deleteBodyItemsKey?: string;
+	omitKeys?: string[];
+};
+
+const CACHE_RULES: Record<string, CacheRule> = {
+	listSites: { entity: 'sites', idKeys: ['id'], listKeys: ['sites'] },
+	getSite: { entity: 'sites', idKeys: ['id'] },
+	updateSite: { entity: 'sites', idKeys: ['id'] },
+	listCollections: {
+		entity: 'collections',
+		idKeys: ['id'],
+		listKeys: ['collections'],
+	},
+	createCollection: { entity: 'collections', idKeys: ['id'] },
+	getCollection: { entity: 'collections', idKeys: ['id'] },
+	deleteCollection: {
+		entity: 'collections',
+		idKeys: ['id'],
+		deleteInputKeys: ['collection_id'],
+	},
+	listCollectionItems: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		listKeys: ['items'],
+	},
+	getCollectionItem: { entity: 'collectionItems', idKeys: ['id'] },
+	createCollectionItem: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		listKeys: ['items'],
+	},
+	createBulkCollectionItems: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		listKeys: ['items'],
+	},
+	updateCollectionItem: { entity: 'collectionItems', idKeys: ['id'] },
+	// deprecated bulk-endpoint variant still returns the updated items, so
+	// keep the cache in sync for callers that have not migrated yet
+	updateCollectionItemLegacy: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		listKeys: ['items'],
+	},
+	deleteCollectionItem: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		deleteInputKeys: ['item_id'],
+	},
+	deleteCollectionItems: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		deleteBodyItemsKey: 'items',
+	},
+	getLiveCollectionItem: { entity: 'collectionItems', idKeys: ['id'] },
+	createLiveCollectionItem: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		listKeys: ['items'],
+	},
+	updateLiveCollectionItem: { entity: 'collectionItems', idKeys: ['id'] },
+	updateLiveCollectionItems: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		listKeys: ['items'],
+	},
+	// unpublishing flips isDraft server-side but returns no body; evict the
+	// cached copy instead of serving stale published state (the entity is
+	// re-cached on the next read)
+	unpublishLiveCollectionItem: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		deleteInputKeys: ['item_id'],
+	},
+	unpublishLiveCollectionItems: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		deleteBodyItemsKey: 'items',
+	},
+	listAssets: { entity: 'assets', idKeys: ['id'], listKeys: ['assets'] },
+	getAsset: { entity: 'assets', idKeys: ['id'] },
+	uploadAsset: {
+		entity: 'assets',
+		idKeys: ['id'],
+		// the upload response includes pre-signed s3 form fields that are
+		// short-lived upload credentials; never persist them in the cache
+		omitKeys: ['uploadDetails', 'uploadUrl'],
+	},
+	deleteAsset: {
+		entity: 'assets',
+		idKeys: ['id'],
+		deleteInputKeys: ['asset_id'],
+	},
+	listAssetFolders: {
+		entity: 'assetFolders',
+		idKeys: ['id'],
+		listKeys: ['assetFolders'],
+	},
+	createAssetFolder: { entity: 'assetFolders', idKeys: ['id'] },
+	getAssetFolder: { entity: 'assetFolders', idKeys: ['id'] },
+	listPages: { entity: 'pages', idKeys: ['id'], listKeys: ['pages'] },
+	getPage: { entity: 'pages', idKeys: ['id'] },
+	updatePageMetadata: { entity: 'pages', idKeys: ['id'] },
+	listOrders: {
+		entity: 'orders',
+		idKeys: ['orderId'],
+		listKeys: ['orders'],
+		// orders are cached for fulfillment workflows, but card and payment
+		// processor references are not needed locally; never persist them
+		omitKeys: ['stripeCard', 'stripeDetails', 'paypalDetails'],
+	},
+	getOrder: {
+		entity: 'orders',
+		idKeys: ['orderId'],
+		// orders are cached for fulfillment workflows, but card and payment
+		// processor references are not needed locally; never persist them
+		omitKeys: ['stripeCard', 'stripeDetails', 'paypalDetails'],
+	},
+	updateOrder: {
+		entity: 'orders',
+		idKeys: ['orderId'],
+		// orders are cached for fulfillment workflows, but card and payment
+		// processor references are not needed locally; never persist them
+		omitKeys: ['stripeCard', 'stripeDetails', 'paypalDetails'],
+	},
+	fulfillOrder: {
+		entity: 'orders',
+		idKeys: ['orderId'],
+		// orders are cached for fulfillment workflows, but card and payment
+		// processor references are not needed locally; never persist them
+		omitKeys: ['stripeCard', 'stripeDetails', 'paypalDetails'],
+	},
+	unfulfillOrder: {
+		entity: 'orders',
+		idKeys: ['orderId'],
+		// orders are cached for fulfillment workflows, but card and payment
+		// processor references are not needed locally; never persist them
+		omitKeys: ['stripeCard', 'stripeDetails', 'paypalDetails'],
+	},
+	refundOrder: {
+		entity: 'orders',
+		idKeys: ['orderId'],
+		// orders are cached for fulfillment workflows, but card and payment
+		// processor references are not needed locally; never persist them
+		omitKeys: ['stripeCard', 'stripeDetails', 'paypalDetails'],
+	},
+	listWebhooks: {
+		entity: 'webhooks',
+		idKeys: ['id'],
+		listKeys: ['webhooks'],
+	},
+	deleteWebhook: {
+		entity: 'webhooks',
+		idKeys: ['id'],
+		deleteInputKeys: ['webhook_id'],
+	},
+};
+
+function encodePathPart(value: unknown): string {
+	if (typeof value === 'number') {
+		return encodeURIComponent(String(value));
+	}
+	if (typeof value !== 'string' || value.length === 0) {
+		throw new Error('[webflow] missing required path parameter');
+	}
+	return encodeURIComponent(value);
+}
+
+function resolvePath(path: string, input: WebflowEndpointInput): string {
+	return path.replace(/\{([^}]+)\}/g, (_, key: string) =>
+		encodePathPart(input[key]),
+	);
+}
+
+function extraInputEntries(
+	operation: WebflowOperation,
+	input: WebflowEndpointInput,
+) {
+	const pathParams = new Set(operation.pathParams ?? []);
+	return Object.entries(input).filter(([key, value]) => {
+		return (
+			!pathParams.has(key) &&
+			!INPUT_CONTROL_KEYS.has(key) &&
+			value !== undefined
+		);
+	});
+}
+
+function requestBody(
+	operation: WebflowOperation,
+	input: WebflowEndpointInput,
+): unknown {
+	if ('body' in input) return input.body;
+
+	const body = Object.fromEntries(extraInputEntries(operation, input));
+	return Object.keys(body).length > 0 ? body : undefined;
+}
+
+function requestQuery(
+	operation: WebflowOperation,
+	input: WebflowEndpointInput,
+): Record<string, unknown> | undefined {
+	if (operation.method !== 'GET') {
+		return input.query;
+	}
+
+	const query = {
+		...Object.fromEntries(extraInputEntries(operation, input)),
+		...input.query,
+	};
+	return Object.keys(query).length > 0 ? query : undefined;
+}
+
+function safeLogInput(input: WebflowEndpointInput) {
+	const logInput: Record<string, unknown> = {};
+	for (const key of PATH_PARAM_KEYS) {
+		if (input[key] !== undefined) logInput[key] = input[key];
+	}
+	if (input.query) logInput.query = input.query;
+	if (input.body !== undefined) logInput.hasBody = true;
+	return logInput;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function cacheItems(response: unknown, rule: CacheRule) {
+	if (Array.isArray(response)) return response.filter(isRecord);
+	if (!isRecord(response)) return [];
+
+	for (const key of rule.listKeys ?? []) {
+		const value = response[key];
+		if (Array.isArray(value)) return value.filter(isRecord);
+	}
+
+	for (const key of rule.itemKeys ?? []) {
+		const value = response[key];
+		if (isRecord(value)) return [value];
+	}
+
+	return [response];
+}
+
+function cacheData(item: Record<string, unknown>, rule: CacheRule) {
+	if (!rule.omitKeys?.length) return item;
+	const data = { ...item };
+	for (const key of rule.omitKeys) {
+		delete data[key];
+	}
+	return data;
+}
+
+function cacheEntityId(item: Record<string, unknown>, rule: CacheRule) {
+	for (const key of rule.idKeys) {
+		const value = item[key];
+		if (typeof value === 'string' && value.length > 0) return value;
+		if (typeof value === 'number') return String(value);
+	}
+	return undefined;
+}
+
+function cacheDeleteEntityId(input: WebflowEndpointInput, rule: CacheRule) {
+	for (const key of rule.deleteInputKeys ?? []) {
+		const value = input[key];
+		if (typeof value === 'string' && value.length > 0) return value;
+		if (typeof value === 'number') return String(value);
+	}
+	return undefined;
+}
+
+function cacheDeleteBodyIds(input: WebflowEndpointInput, rule: CacheRule) {
+	if (!rule.deleteBodyItemsKey || !isRecord(input.body)) return [];
+	const items = input.body[rule.deleteBodyItemsKey];
+	if (!Array.isArray(items)) return [];
+
+	const ids: string[] = [];
+	for (const item of items) {
+		if (!isRecord(item)) continue;
+		const value = item.id;
+		if (typeof value === 'string' && value.length > 0) ids.push(value);
+		if (typeof value === 'number') ids.push(String(value));
+	}
+	return ids;
+}
+
+export async function syncWebflowOperationResult(
+	ctx: WebflowContext,
+	operation: WebflowOperation,
+	input: WebflowEndpointInput,
+	response: unknown,
+) {
+	const rule = CACHE_RULES[operation.key];
+	if (!rule) return;
+
+	// ctx.db maps entity names to typed clients, but this shared sync path
+	// looks clients up dynamically via rule.entity (a plain string), which
+	// the concrete mapped type cannot be indexed with; widen structurally
+	// to just the two methods used here
+	const db = ctx.db as
+		| Record<
+				string,
+				| {
+						upsertByEntityId?: (
+							entityId: string,
+							data: Record<string, unknown>,
+						) => Promise<unknown>;
+						deleteByEntityId?: (entityId: string) => Promise<boolean>;
+				  }
+				| undefined
+		  >
+		| undefined;
+	const client = db?.[rule.entity];
+
+	// the api call already succeeded by the time we sync the cache; a local
+	// db failure must not surface to the caller, or they may retry an
+	// operation that already completed (duplicate creates, 404s on deletes)
+	try {
+		if (
+			operation.method === 'DELETE' &&
+			(rule.deleteInputKeys || rule.deleteBodyItemsKey)
+		) {
+			if (!client?.deleteByEntityId) return;
+			const entityId = cacheDeleteEntityId(input, rule);
+			if (entityId) {
+				await client.deleteByEntityId(entityId);
+			}
+			for (const id of cacheDeleteBodyIds(input, rule)) {
+				await client.deleteByEntityId(id);
+			}
+			return;
+		}
+
+		if (!client?.upsertByEntityId) return;
+
+		for (const item of cacheItems(response, rule)) {
+			const entityId = cacheEntityId(item, rule);
+			if (!entityId) continue;
+			await client.upsertByEntityId(entityId, cacheData(item, rule));
+		}
+	} catch (error) {
+		console.warn(`[webflow] failed to sync ${rule.entity} cache:`, error);
+	}
+}
+
+export async function logWebflowOperation(
+	ctx: WebflowContext,
+	input: WebflowEndpointInput,
+	operation: WebflowOperation,
+) {
+	// same rationale as the cache sync above: the api call already
+	// succeeded, so a local event-store failure must not surface to the
+	// caller as an endpoint error
+	try {
+		await logEventFromContext(
+			ctx,
+			`webflow.${operation.group}.${operation.name}`,
+			safeLogInput(input),
+			'completed',
+		);
+	} catch (error) {
+		console.warn(
+			`[webflow] failed to log ${operation.group}.${operation.name}:`,
+			error,
+		);
+	}
+}
+
+export async function requestWebflowOperation(
+	ctx: WebflowContext,
+	input: WebflowEndpointInput,
+	operation: WebflowOperation,
+) {
+	return makeWebflowRequest(resolvePath(operation.path, input), ctx.key, {
+		method: operation.method,
+		body: requestBody(operation, input),
+		query: requestQuery(operation, input),
+		headers: input.headers,
+		baseUrl: input.baseUrl,
+	});
+}
