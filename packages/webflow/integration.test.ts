@@ -1,0 +1,58 @@
+import { createCorsair } from 'corsair/core';
+import { request } from 'corsair/http';
+import { createCorsairOrm } from 'corsair/orm';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { webflow } from './index';
+
+jest.mock('corsair/http', () => {
+	const original = jest.requireActual('corsair/http');
+	return {
+		...original,
+		request: jest.fn(),
+	};
+});
+
+const mockRequest = request as jest.Mock;
+
+describe('Webflow plugin integration', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	it('logs events and caches site entities', async () => {
+		mockRequest.mockResolvedValue({
+			sites: [
+				{
+					id: '580e63e98c9a982ac9b8b741',
+					displayName: 'Demo Site',
+					shortName: 'demo-site',
+					timeZone: 'America/New_York',
+				},
+			],
+		});
+
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'webflow');
+
+		const corsair = createCorsair({
+			plugins: [webflow({ key: 'test-token' })],
+			database: testDb.db,
+			kek: 'mock-kek-32-chars-long-mock-kek-3',
+		});
+
+		await corsair.webflow.api.sites.listSites({});
+
+		const site = await corsair.webflow.db.sites.findByEntityId(
+			'580e63e98c9a982ac9b8b741',
+		);
+		expect(site?.data.displayName).toBe('Demo Site');
+
+		const orm = createCorsairOrm(testDb.database);
+		const events = await orm.events.findMany({
+			where: { event_type: 'webflow.sites.listSites' },
+		});
+		expect(events.length).toBeGreaterThan(0);
+
+		testDb.cleanup();
+	});
+});
