@@ -143,6 +143,9 @@ importers:
       '@corsair-dev/agentql':
         specifier: workspace:*
         version: link:../../packages/agentql
+      '@corsair-dev/apify':
+        specifier: workspace:*
+        version: link:../../packages/apify
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
