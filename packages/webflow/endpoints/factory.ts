@@ -32,10 +32,10 @@ type CacheRule = {
 	listKeys?: string[];
 	itemKeys?: string[];
 	deleteInputKeys?: string[];
-	// key in the request body holding an array of { id } records whose
-	// cached entities should be evicted (webflow bulk deletes put target
-	// ids in the body, not the path)
-	deleteBodyItemsKey?: string;
+	// keys in the request body holding arrays of target ids (bare strings
+	// or { id } records) whose cached entities should be evicted; webflow
+	// bulk deletes and publishes put target ids in the body, not the path
+	deleteBodyItemsKeys?: string[];
 	omitKeys?: string[];
 };
 
@@ -87,7 +87,7 @@ const CACHE_RULES: Record<string, CacheRule> = {
 	deleteCollectionItems: {
 		entity: 'collectionItems',
 		idKeys: ['id'],
-		deleteBodyItemsKey: 'items',
+		deleteBodyItemsKeys: ['items'],
 	},
 	getLiveCollectionItem: { entity: 'collectionItems', idKeys: ['id'] },
 	createLiveCollectionItem: {
@@ -101,6 +101,15 @@ const CACHE_RULES: Record<string, CacheRule> = {
 		idKeys: ['id'],
 		listKeys: ['items'],
 	},
+	// publishing flips isDraft server-side but the response only returns
+	// publishedItemIds; evict the cached copies instead of serving stale
+	// draft state (same strategy as the unpublish operations below). the
+	// body is either { itemIds: string[] } or { items: [{ id }] }
+	publishCollectionItems: {
+		entity: 'collectionItems',
+		idKeys: ['id'],
+		deleteBodyItemsKeys: ['itemIds', 'items'],
+	},
 	// unpublishing flips isDraft server-side but returns no body; evict the
 	// cached copy instead of serving stale published state (the entity is
 	// re-cached on the next read)
@@ -112,7 +121,7 @@ const CACHE_RULES: Record<string, CacheRule> = {
 	unpublishLiveCollectionItems: {
 		entity: 'collectionItems',
 		idKeys: ['id'],
-		deleteBodyItemsKey: 'items',
+		deleteBodyItemsKeys: ['items'],
 	},
 	listAssets: { entity: 'assets', idKeys: ['id'], listKeys: ['assets'] },
 	getAsset: { entity: 'assets', idKeys: ['id'] },
@@ -307,16 +316,19 @@ function cacheDeleteEntityId(input: WebflowEndpointInput, rule: CacheRule) {
 }
 
 function cacheDeleteBodyIds(input: WebflowEndpointInput, rule: CacheRule) {
-	if (!rule.deleteBodyItemsKey || !isRecord(input.body)) return [];
-	const items = input.body[rule.deleteBodyItemsKey];
-	if (!Array.isArray(items)) return [];
+	if (!rule.deleteBodyItemsKeys?.length || !isRecord(input.body)) return [];
 
 	const ids: string[] = [];
-	for (const item of items) {
-		if (!isRecord(item)) continue;
-		const value = item.id;
-		if (typeof value === 'string' && value.length > 0) ids.push(value);
-		if (typeof value === 'number') ids.push(String(value));
+	for (const key of rule.deleteBodyItemsKeys) {
+		const items = input.body[key];
+		if (!Array.isArray(items)) continue;
+		for (const item of items) {
+			// bulk deletes and locale-aware publishes send { id } records,
+			// while simple publishes send bare string ids
+			const value = isRecord(item) ? item.id : item;
+			if (typeof value === 'string' && value.length > 0) ids.push(value);
+			if (typeof value === 'number') ids.push(String(value));
+		}
 	}
 	return ids;
 }
@@ -353,10 +365,10 @@ export async function syncWebflowOperationResult(
 	// db failure must not surface to the caller, or they may retry an
 	// operation that already completed (duplicate creates, 404s on deletes)
 	try {
-		if (
-			operation.method === 'DELETE' &&
-			(rule.deleteInputKeys || rule.deleteBodyItemsKey)
-		) {
+		// eviction rules are keyed on the rule shape rather than the http
+		// verb: bulk deletes use DELETE, but publish (POST) also evicts
+		// because its response carries no entity data to upsert
+		if (rule.deleteInputKeys || rule.deleteBodyItemsKeys) {
 			if (!client?.deleteByEntityId) return;
 			const entityId = cacheDeleteEntityId(input, rule);
 			if (entityId) {

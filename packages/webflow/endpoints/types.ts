@@ -23,6 +23,10 @@ export const WebflowEndpointInputBaseSchema = z.object({
 	baseUrl: z.string().url().optional(),
 });
 
+// the index signature lets callers pass operation-specific fields that are
+// forwarded to the webflow api verbatim (folded into the query for GET and
+// the body otherwise); the api validates their shape, so narrowing beyond
+// unknown here would add no safety while restricting ergonomics
 export type WebflowEndpointInput = z.infer<
 	typeof WebflowEndpointInputBaseSchema
 > & {

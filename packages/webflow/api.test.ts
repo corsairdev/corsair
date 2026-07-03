@@ -36,13 +36,30 @@ function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
 	});
 }
 
-const mockCtx = {
-	key: 'test-token',
-	$getAccountId: () => 'test-account-id',
-	options: {},
-	logEvent: jest.fn(),
-	db: {},
-} as unknown as WebflowContext;
+// endpoint tests drive handlers with a minimal structural stand-in: the
+// factory only reads key, db, options, and $getAccountId, but the full
+// CorsairPluginContext type carries runtime-bound members that a hand-built
+// literal cannot satisfy, so widen through unknown once here instead of at
+// every call site
+function testContext(overrides: Record<string, unknown> = {}): WebflowContext {
+	return {
+		key: 'test-token',
+		$getAccountId: () => 'test-account-id',
+		options: {},
+		logEvent: jest.fn(),
+		db: {},
+		...overrides,
+	} as unknown as WebflowContext;
+}
+
+// plugin.endpoints is typed against the runtime endpoint binder; tests call
+// the raw handlers directly with (ctx, input) tuples, so narrow the nested
+// map to just the call signatures under test
+function endpointsAs<T>(plugin: { endpoints?: unknown }): T {
+	return plugin.endpoints as T;
+}
+
+const mockCtx = testContext();
 
 describe('Webflow plugin shape', () => {
 	it('keeps endpoint domain files explicit', () => {
@@ -188,9 +205,7 @@ describe('Webflow endpoints', () => {
 
 	it('maps representative operations to official API routes', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			sites: {
 				listSites: (ctx: WebflowContext, input: {}) => Promise<unknown>;
 				publishSite: (
@@ -226,7 +241,7 @@ describe('Webflow endpoints', () => {
 					input: {},
 				) => Promise<unknown>;
 			};
-		};
+		}>(plugin);
 
 		await endpoints.sites.listSites(mockCtx, {});
 		await endpoints.sites.publishSite(mockCtx, {
@@ -288,16 +303,14 @@ describe('Webflow endpoints', () => {
 
 	it('folds extra GET inputs into the query string', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			collectionItems: {
 				listCollectionItems: (
 					ctx: WebflowContext,
 					input: Record<string, unknown>,
 				) => Promise<unknown>;
 			};
-		};
+		}>(plugin);
 
 		await endpoints.collectionItems.listCollectionItems(mockCtx, {
 			collection_id: '580e63fc8c9a982ac9b8b745',
@@ -314,16 +327,14 @@ describe('Webflow endpoints', () => {
 
 	it('rejects calls with missing required path parameters', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			sites: {
 				getSite: (
 					ctx: WebflowContext,
 					input: Record<string, unknown>,
 				) => Promise<unknown>;
 			};
-		};
+		}>(plugin);
 
 		await expect(endpoints.sites.getSite(mockCtx, {})).rejects.toThrow(
 			'missing required path parameter',
@@ -333,9 +344,7 @@ describe('Webflow endpoints', () => {
 
 	it('caches wrapped list and flat item responses when database clients exist', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			sites: {
 				listSites: (ctx: WebflowContext, input: {}) => Promise<unknown>;
 			};
@@ -345,14 +354,13 @@ describe('Webflow endpoints', () => {
 					input: { collection_id: string },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				sites: { upsertByEntityId: jest.fn() },
 				collections: { upsertByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		mockRequest
 			.mockResolvedValueOnce({
@@ -380,22 +388,19 @@ describe('Webflow endpoints', () => {
 
 	it('caches orders under their orderId', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			ecommerce: {
 				getOrder: (
 					ctx: WebflowContext,
 					input: { site_id: string; order_id: string },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				orders: { upsertByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		mockRequest.mockResolvedValueOnce({
 			orderId: 'dfa-3f1',
@@ -415,22 +420,19 @@ describe('Webflow endpoints', () => {
 
 	it('never caches the pre-signed upload fields returned by uploadAsset', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			assets: {
 				uploadAsset: (
 					ctx: WebflowContext,
 					input: { site_id: string; body: unknown },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				assets: { upsertByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		mockRequest.mockResolvedValueOnce({
 			id: '63e5889e7fe4eafa7384cea4',
@@ -468,22 +470,19 @@ describe('Webflow endpoints', () => {
 
 	it('sends bulk delete ids in the DELETE body and evicts them from cache', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			collectionItems: {
 				deleteCollectionItems: (
 					ctx: WebflowContext,
 					input: { collection_id: string; body: unknown },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				collectionItems: { deleteByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		await endpoints.collectionItems.deleteCollectionItems(ctxWithDb, {
 			collection_id: '580e63fc8c9a982ac9b8b745',
@@ -514,24 +513,56 @@ describe('Webflow endpoints', () => {
 		);
 	});
 
+	it('evicts published items so the cache never serves stale draft state', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionItems: {
+				publishCollectionItems: (
+					ctx: WebflowContext,
+					input: { collection_id: string; body: unknown },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const ctxWithDb = testContext({
+			db: {
+				collectionItems: { deleteByEntityId: jest.fn() },
+			},
+		});
+
+		// simple publish sends bare string ids
+		await endpoints.collectionItems.publishCollectionItems(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			body: { itemIds: ['580e64008c9a982ac9b8b754'] },
+		});
+		// locale-aware publish sends { id, cmsLocaleIds } records
+		await endpoints.collectionItems.publishCollectionItems(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			body: { items: [{ id: '580e64008c9a982ac9b8b755' }] },
+		});
+
+		expect(ctxWithDb.db.collectionItems.deleteByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b754',
+		);
+		expect(ctxWithDb.db.collectionItems.deleteByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b755',
+		);
+	});
+
 	it('evicts unpublished items instead of serving stale published state', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			collectionItems: {
 				unpublishLiveCollectionItem: (
 					ctx: WebflowContext,
 					input: { collection_id: string; item_id: string },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				collectionItems: { deleteByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		await endpoints.collectionItems.unpublishLiveCollectionItem(ctxWithDb, {
 			collection_id: '580e63fc8c9a982ac9b8b745',
@@ -545,22 +576,19 @@ describe('Webflow endpoints', () => {
 
 	it('keeps the cache in sync for the deprecated bulk update endpoint', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			collectionItems: {
 				updateCollectionItemLegacy: (
 					ctx: WebflowContext,
 					input: { collection_id: string; body: unknown },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				collectionItems: { upsertByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		mockRequest.mockResolvedValueOnce({
 			items: [{ id: '580e64008c9a982ac9b8b754', isDraft: true }],
@@ -583,22 +611,19 @@ describe('Webflow endpoints', () => {
 
 	it('never caches card or payment processor references from orders', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			ecommerce: {
 				getOrder: (
 					ctx: WebflowContext,
 					input: { site_id: string; order_id: string },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				orders: { upsertByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		mockRequest.mockResolvedValueOnce({
 			orderId: 'dfa-3f1',
@@ -634,9 +659,7 @@ describe('Webflow endpoints', () => {
 
 	it('deletes cached entities for destructive operations', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			assets: {
 				deleteAsset: (
 					ctx: WebflowContext,
@@ -649,14 +672,13 @@ describe('Webflow endpoints', () => {
 					input: { webhook_id: string },
 				) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				assets: { deleteByEntityId: jest.fn() },
 				webhooks: { deleteByEntityId: jest.fn() },
 			},
-		} as unknown as WebflowContext;
+		});
 
 		await endpoints.assets.deleteAsset(ctxWithDb, {
 			asset_id: '63e5889e7fe4eafa7384cea4',
@@ -675,21 +697,18 @@ describe('Webflow endpoints', () => {
 
 	it('returns api results even when cache writes fail', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			sites: {
 				listSites: (ctx: WebflowContext, input: {}) => Promise<unknown>;
 			};
-		};
-		const ctxWithDb = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithDb = testContext({
 			db: {
 				sites: {
 					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
 				},
 			},
-		} as unknown as WebflowContext;
+		});
 
 		mockRequest.mockResolvedValueOnce({
 			sites: [{ id: '580e63e98c9a982ac9b8b741', displayName: 'Demo' }],
@@ -709,17 +728,14 @@ describe('Webflow endpoints', () => {
 
 	it('returns api results even when event logging fails', async () => {
 		const plugin = webflow({ key: 'test-token' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
+		const endpoints = endpointsAs<{
 			sites: {
 				listSites: (ctx: WebflowContext, input: {}) => Promise<unknown>;
 			};
-		};
-		const ctxWithBrokenLogging = {
-			...mockCtx,
+		}>(plugin);
+		const ctxWithBrokenLogging = testContext({
 			$getAccountId: jest.fn().mockRejectedValue(new Error('store down')),
-		} as unknown as WebflowContext;
+		});
 
 		mockRequest.mockResolvedValueOnce({
 			sites: [{ id: '580e63e98c9a982ac9b8b741', displayName: 'Demo' }],
