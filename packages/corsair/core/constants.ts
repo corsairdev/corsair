@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'ahrefs',
 	'airtable',
 	'amplitude',
+	'apify',
 	'asana',
 	'bitwarden',
 	'bluesky',
@@ -42,6 +43,7 @@ export const BaseProviders = [
 	'grafana',
 	'hackernews',
 	'hubspot',
+	'instagram',
 	'intercom',
 	'jira',
 	'linear',
@@ -79,7 +81,6 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
-	'instagram',
 ] as const;
 
 export const ProviderDisplayNames = {
@@ -87,6 +88,7 @@ export const ProviderDisplayNames = {
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
+	apify: 'Apify',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
@@ -164,6 +166,7 @@ export type AllProviders =
 	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
+	| 'apify'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
@@ -189,6 +192,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
+	| 'instagram'
 	| 'intercom'
 	| 'jira'
 	| 'linear'
@@ -226,7 +230,6 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
-	| 'instagram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
