@@ -1,6 +1,18 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+export function toQueryParams(
+	input: Record<string, unknown>,
+): Record<string, string | number | boolean> {
+	const result: Record<string, string | number | boolean> = {};
+	for (const [key, value] of Object.entries(input)) {
+		if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+			result[key] = value;
+		}
+	}
+	return result;
+}
+
 export class ComposioAPIError extends Error {
 	constructor(
 		message: string,
@@ -50,7 +62,10 @@ export async function makeComposioRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new ComposioAPIError(error.message, error.status);
+			throw new ComposioAPIError(
+				`Composio API error (${error.status}): ${error.statusText}`,
+				error.status,
+			);
 		}
 		if (error instanceof Error) {
 			throw new ComposioAPIError(error.message);

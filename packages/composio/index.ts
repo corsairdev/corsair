@@ -12,10 +12,16 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
 import type { ComposioEndpointInputs, ComposioEndpointOutputs } from './endpoints/types';
 import { ComposioEndpointInputSchemas, ComposioEndpointOutputSchemas } from './endpoints/types';
+import {
+	ActionCompletedEventSchema,
+	ConnectionStatusEventSchema,
+	TriggerFiredEventSchema,
+} from './webhooks/types';
 import type {
 	ActionCompletedEvent,
 	ComposioWebhookOutputs,
@@ -143,6 +149,24 @@ export const composioEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof composioEndpointsNested>;
 
+const composioWebhookSchemas = {
+	'triggers.fired': {
+		description: 'A Composio trigger was fired',
+		payload: TriggerFiredEventSchema,
+		response: TriggerFiredEventSchema,
+	},
+	'triggers.connectionStatus': {
+		description: 'A Composio connection status changed',
+		payload: ConnectionStatusEventSchema,
+		response: ConnectionStatusEventSchema,
+	},
+	'triggers.actionCompleted': {
+		description: 'A Composio action execution completed',
+		payload: ActionCompletedEventSchema,
+		response: ActionCompletedEventSchema,
+	},
+} as const satisfies RequiredPluginWebhookSchemas<typeof composioWebhooksNested>;
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const composioEndpointMeta = {
@@ -221,6 +245,7 @@ export function composio<const T extends ComposioPluginOptions>(
 		webhooks: composioWebhooksNested,
 		endpointMeta: composioEndpointMeta,
 		endpointSchemas: composioEndpointSchemas,
+		webhookSchemas: composioWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
 			return 'x-composio-signature' in headers;

@@ -1,14 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ComposioEndpoints } from '..';
 import type { ComposioEndpointOutputs } from './types';
-import { makeComposioRequest } from '../client';
+import { makeComposioRequest, toQueryParams } from '../client';
 
 export const list: ComposioEndpoints['toolsList'] = async (ctx, input) => {
 	const response = await makeComposioRequest<ComposioEndpointOutputs['toolsList']>(
 		'/v1/tools',
 		ctx.key,
-		// Spread input into query — Zod-validated keys are all optional query params
-		{ method: 'GET', query: input as Record<string, string | number | boolean | undefined> },
+		{ method: 'GET', query: toQueryParams(input) },
 	);
 
 	await logEventFromContext(ctx, 'composio.tools.list', { ...input }, 'completed');

@@ -79,17 +79,13 @@ export function verifyComposioWebhookSignature(
 		? request.headers['x-composio-signature'][0]
 		: request.headers['x-composio-signature'];
 
-	if (!signature) {
-		return { valid: false, error: 'Missing x-composio-signature header' };
-	}
-
-	if (!request.rawBody) {
-		return { valid: false, error: 'Missing raw body for signature verification' };
+	if (!signature || !request.rawBody) {
+		return { valid: false, error: 'Signature verification failed' };
 	}
 
 	const isValid = verifyHmacSignature(request.rawBody, secret, signature);
 	if (!isValid) {
-		return { valid: false, error: 'Invalid signature' };
+		return { valid: false, error: 'Signature verification failed' };
 	}
 
 	return { valid: true };

@@ -33,7 +33,7 @@ const ToolsListResponseSchema = z.object({
 export type ToolsListResponse = z.infer<typeof ToolsListResponseSchema>;
 
 const ToolGetInputSchema = z.object({
-	toolId: z.string(),
+	toolId: z.string().min(1).regex(/^[a-zA-Z0-9_-]+$/),
 });
 
 export type ToolGetInput = z.infer<typeof ToolGetInputSchema>;
@@ -73,7 +73,7 @@ const ActionsListResponseSchema = z.object({
 export type ActionsListResponse = z.infer<typeof ActionsListResponseSchema>;
 
 const ActionGetInputSchema = z.object({
-	actionId: z.string(),
+	actionId: z.string().min(1).regex(/^[a-zA-Z0-9_-]+$/),
 });
 
 export type ActionGetInput = z.infer<typeof ActionGetInputSchema>;
@@ -147,7 +147,7 @@ export type ConnectionCreateResponse = z.infer<
 >;
 
 const ConnectionDeleteInputSchema = z.object({
-	connectionId: z.string(),
+	connectionId: z.string().min(1).regex(/^[a-zA-Z0-9_-]+$/),
 });
 
 export type ConnectionDeleteInput = z.infer<typeof ConnectionDeleteInputSchema>;
