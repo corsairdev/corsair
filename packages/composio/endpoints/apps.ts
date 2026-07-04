@@ -7,6 +7,7 @@ export const list: ComposioEndpoints['appsList'] = async (ctx, input) => {
 	const response = await makeComposioRequest<ComposioEndpointOutputs['appsList']>(
 		'/v1/apps',
 		ctx.key,
+		// Spread input into query — Zod-validated keys are all optional query params
 		{ method: 'GET', query: input as Record<string, string | number | boolean | undefined> },
 	);
 

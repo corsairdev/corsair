@@ -1,4 +1,5 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 
 export interface ComposioWebhookPayload {
 	type: string;
@@ -42,9 +43,13 @@ export type ComposioWebhookOutputs = {
 	actionCompleted: ActionCompletedEvent;
 };
 
-function parseBody(body: unknown): Record<string, unknown> {
+function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
-		return JSON.parse(body) as Record<string, unknown>;
+		try {
+			return JSON.parse(body) as Record<string, unknown>;
+		} catch {
+			return null;
+		}
 	}
 	return (body ?? {}) as Record<string, unknown>;
 }
@@ -52,6 +57,7 @@ function parseBody(body: unknown): Record<string, unknown> {
 export function createComposioMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
+		if (!parsedBody) return false;
 		return typeof parsedBody.type === 'string' && parsedBody.type === eventType;
 	};
 }
@@ -60,9 +66,21 @@ export function verifyComposioWebhookSignature(
 	request: WebhookRequest<ComposioWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	const signature = request.headers['x-composio-signature'];
+	const signature = Array.isArray(request.headers['x-composio-signature'])
+		? request.headers['x-composio-signature'][0]
+		: request.headers['x-composio-signature'];
+
 	if (!signature) {
 		return { valid: false, error: 'Missing x-composio-signature header' };
+	}
+
+	if (!request.rawBody) {
+		return { valid: false, error: 'Missing raw body for signature verification' };
+	}
+
+	const isValid = verifyHmacSignature(request.rawBody, secret, signature);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
 	}
 
 	return { valid: true };
