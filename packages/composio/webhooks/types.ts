@@ -1,41 +1,50 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import { verifyHmacSignature } from 'corsair/http';
+import { z } from 'zod';
 
-export interface ComposioWebhookPayload {
-	type: string;
-	created_at: string;
-	data: Record<string, unknown>;
-}
+const TriggerFiredEventDataSchema = z.object({
+	triggerId: z.string(),
+	appName: z.string(),
+	payload: z.record(z.unknown()),
+});
 
-export interface TriggerFiredEvent extends ComposioWebhookPayload {
-	type: 'trigger.fired';
-	data: {
-		triggerId: string;
-		appName: string;
-		payload: Record<string, unknown>;
-	};
-}
+export const TriggerFiredEventSchema = z.object({
+	type: z.literal('trigger.fired'),
+	created_at: z.string(),
+	data: TriggerFiredEventDataSchema,
+});
+export type TriggerFiredEvent = z.infer<typeof TriggerFiredEventSchema>;
 
-export interface ConnectionStatusEvent extends ComposioWebhookPayload {
-	type: 'connection.status';
-	data: {
-		connectionId: string;
-		appName: string;
-		status: 'connected' | 'disconnected' | 'error';
-		error?: string;
-	};
-}
+const ConnectionStatusEventDataSchema = z.object({
+	connectionId: z.string(),
+	appName: z.string(),
+	status: z.union([z.literal('connected'), z.literal('disconnected'), z.literal('error')]),
+	error: z.string().optional(),
+});
 
-export interface ActionCompletedEvent extends ComposioWebhookPayload {
-	type: 'action.completed';
-	data: {
-		executionId: string;
-		actionId: string;
-		status: 'success' | 'failed';
-		output?: Record<string, unknown>;
-		error?: string;
-	};
-}
+export const ConnectionStatusEventSchema = z.object({
+	type: z.literal('connection.status'),
+	created_at: z.string(),
+	data: ConnectionStatusEventDataSchema,
+});
+export type ConnectionStatusEvent = z.infer<typeof ConnectionStatusEventSchema>;
+
+const ActionCompletedEventDataSchema = z.object({
+	executionId: z.string(),
+	actionId: z.string(),
+	status: z.union([z.literal('success'), z.literal('failed')]),
+	output: z.record(z.unknown()).optional(),
+	error: z.string().optional(),
+});
+
+export const ActionCompletedEventSchema = z.object({
+	type: z.literal('action.completed'),
+	created_at: z.string(),
+	data: ActionCompletedEventDataSchema,
+});
+export type ActionCompletedEvent = z.infer<typeof ActionCompletedEventSchema>;
+
+export type ComposioWebhookPayload = TriggerFiredEvent | ConnectionStatusEvent | ActionCompletedEvent;
 
 export type ComposioWebhookOutputs = {
 	triggerFired: TriggerFiredEvent;
