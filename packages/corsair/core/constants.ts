@@ -24,6 +24,7 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'cloudflare',
+	'composio',
 	'cursor',
 	'discord',
 	'dodopayments',
@@ -171,6 +172,7 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'cloudflare'
+	| 'composio'
 	| 'cursor'
 	| 'discord'
 	| 'dodopayments'
