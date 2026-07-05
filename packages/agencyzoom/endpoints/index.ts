@@ -1,0 +1,59 @@
+import { AuthEndpoints } from './auth';
+import { ContactEndpoints } from './contact';
+import { CustomersEndpoints } from './customers';
+import { EmailThreadsEndpoints } from './emailThreads';
+import { LeadsEndpoints } from './leads';
+import { LifeEndpoints } from './life';
+import { OpportunitiesEndpoints } from './opportunities';
+import { PoliciesEndpoints } from './policies';
+import { ProfileEndpoints } from './profile';
+import { ReferenceDataEndpoints } from './referenceData';
+import { ServiceTicketsEndpoints } from './serviceTickets';
+import { TasksEndpoints } from './tasks';
+import { TextThreadsEndpoints } from './textThreads';
+import { V4ssoEndpoints } from './v4sso';
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
+import { agencyZoomRoutes } from './routes';
+import { AgencyZoomEndpointInputSchemas, AgencyZoomEndpointOutputSchemas } from './types';
+
+export const agencyZoomEndpointsNested = {
+	auth: AuthEndpoints,
+	contact: ContactEndpoints,
+	customers: CustomersEndpoints,
+	emailThreads: EmailThreadsEndpoints,
+	leads: LeadsEndpoints,
+	life: LifeEndpoints,
+	opportunities: OpportunitiesEndpoints,
+	policies: PoliciesEndpoints,
+	profile: ProfileEndpoints,
+	referenceData: ReferenceDataEndpoints,
+	serviceTickets: ServiceTicketsEndpoints,
+	tasks: TasksEndpoints,
+	textThreads: TextThreadsEndpoints,
+	v4sso: V4ssoEndpoints
+} as const;
+
+export const agencyZoomEndpointMeta = Object.fromEntries(
+	agencyZoomRoutes.map((route) => [
+		`${route.group}.${route.name}`,
+		{
+			riskLevel: route.riskLevel,
+			irreversible: 'irreversible' in route ? route.irreversible : undefined,
+			description: route.description,
+		},
+	]),
+) as RequiredPluginEndpointMeta<typeof agencyZoomEndpointsNested>;
+
+export const agencyZoomEndpointSchemas = Object.fromEntries(
+	agencyZoomRoutes.map((route) => [
+		`${route.group}.${route.name}`,
+		{
+			input: AgencyZoomEndpointInputSchemas[route.key],
+			output: AgencyZoomEndpointOutputSchemas[route.key],
+		},
+	]),
+);
+
+export { AgencyZoomEndpointInputSchemas, AgencyZoomEndpointOutputSchemas };
+export * from './routes';
+export * from './types';
