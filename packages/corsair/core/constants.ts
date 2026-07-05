@@ -16,6 +16,7 @@ export const BaseProviders = [
 	'agentql',
 	'ahrefs',
 	'airtable',
+	'alttext_ai',
 	'amplitude',
 	'asana',
 	'bitwarden',
@@ -86,6 +87,7 @@ export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
+	alttext_ai: 'AltText.ai',
 	amplitude: 'Amplitude',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -163,6 +165,7 @@ export type AllProviders =
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
+	| 'alttext_ai'
 	| 'amplitude'
 	| 'asana'
 	| 'bitwarden'
