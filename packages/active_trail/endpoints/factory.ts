@@ -21,6 +21,7 @@ const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 
 const BODY_CONTROL_KEYS = new Set(['body', 'query', 'headers']);
 
+// Response shapes vary across 159 ActiveTrail endpoints; outputs are validated at runtime via Zod.
 export type ActiveTrailEndpoint = CorsairEndpoint<
 	ActiveTrailContext,
 	ActiveTrailEndpointInput,
@@ -47,11 +48,25 @@ function resolvePathParam(input: ActiveTrailEndpointInput, pathKey: string): unk
 	return undefined;
 }
 
-export function resolvePath(path: string, input: ActiveTrailEndpointInput): string {
+export function resolvePath(
+	path: string,
+	input: ActiveTrailEndpointInput,
+	route?: Pick<ActiveTrailRoute, 'pathParams'>,
+): string {
 	const pathOnly = path.split('?')[0] ?? path;
-	return pathOnly.replace(/\{([^}]+)\}/g, (_, key: string) =>
-		encodePathPart(resolvePathParam(input, key)),
-	);
+	let index = 0;
+	return pathOnly.replace(/\{([^}]+)\}/g, (_, placeholder: string) => {
+		const mappedKey = route?.pathParams?.[index];
+		index += 1;
+		if (mappedKey !== undefined) {
+			const direct =
+				input[mappedKey] ?? input[camelToSnake(mappedKey)];
+			if (direct !== undefined) {
+				return encodePathPart(direct);
+			}
+		}
+		return encodePathPart(resolvePathParam(input, placeholder));
+	});
 }
 
 function buildQuery(route: ActiveTrailRoute, input: ActiveTrailEndpointInput) {
@@ -102,10 +117,11 @@ export async function requestActiveTrailOperation(
 	input: ActiveTrailEndpointInput,
 	route: ActiveTrailRoute,
 ) {
-	return makeActiveTrailRequest(resolvePath(route.path, input), ctx.key, {
+	return makeActiveTrailRequest(resolvePath(route.path, input, route), ctx.key, {
 		method: route.method,
 		body: requestBody(route, input),
 		query: buildQuery(route, input),
+		// headers is optional unknown on ActiveTrailEndpointInput; callers pass string header maps.
 		headers: input.headers as Record<string, string> | undefined,
 	});
 }

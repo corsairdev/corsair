@@ -449,6 +449,8 @@ def build_routes(
         group = ep.group
         path = normalize_path(ep.path_only)
         path_params = infer_path_params(ep.raw_path, op.params)
+        if key == "deleteWebhooksParameters":
+            path_params = ["webhook_id", "parameter_id"]
         route = Route(
             key=key,
             group=group,
@@ -741,7 +743,7 @@ def generate_group_file(group: str, routes: list[Route]) -> str:
         "function getRoute(name: string) {",
         "\tconst route = activeTrailRoutes.find((candidate) => candidate.name === name);",
         "\tif (!route) {",
-        f"\t\tthrow new Error('[{PLUGIN_ID}] missing route: ${{name}}');",
+		f"\t\tthrow new Error(`[{PLUGIN_ID}] missing route: ${{name}}`);",
         "\t}",
         "\treturn route;",
         "}",

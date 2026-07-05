@@ -5,7 +5,7 @@ import { logActiveTrailOperation, requestActiveTrailOperation } from './factory'
 function getRoute(name: string) {
 	const route = activeTrailRoutes.find((candidate) => candidate.name === name);
 	if (!route) {
-		throw new Error('[active_trail] missing route: ${name}');
+		throw new Error(`[active_trail] missing route: ${name}`);
 	}
 	return route;
 }

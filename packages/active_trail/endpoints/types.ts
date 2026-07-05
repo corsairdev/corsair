@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+// ActiveTrail response payloads vary across 159 endpoints; per-route schemas are not yet mapped from API docs.
+const ActiveTrailResponseSchema = z.unknown();
+// Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
+const ActiveTrailOptionalBodySchema = z.unknown().optional();
+
 // addGroupMember
 const AddGroupMemberInputSchema = z.object({
 	fax: z.string().optional(),
@@ -28,11 +33,11 @@ const AddGroupMemberInputSchema = z.object({
 	encryptedext4: z.string().optional(),
 	is_do_not_mail: z.boolean().optional(),
 	is_trigger_events: z.boolean().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type AddGroupMemberInput = z.infer<typeof AddGroupMemberInputSchema>;
-const AddGroupMemberResponseSchema = z.unknown();
+const AddGroupMemberResponseSchema = ActiveTrailResponseSchema;
 export type AddGroupMemberResponse = z.infer<typeof AddGroupMemberResponseSchema>;
 
 // addMailinglistMember
@@ -90,32 +95,32 @@ const AddMailinglistMemberInputSchema = z.object({
 	anniversary: z.string().optional(),
 	subscribe_ip: z.string().optional(),
 	mailinglist_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type AddMailinglistMemberInput = z.infer<typeof AddMailinglistMemberInputSchema>;
-const AddMailinglistMemberResponseSchema = z.unknown();
+const AddMailinglistMemberResponseSchema = ActiveTrailResponseSchema;
 export type AddMailinglistMemberResponse = z.infer<typeof AddMailinglistMemberResponseSchema>;
 
 // contactGrowth
 const ContactGrowthInputSchema = z.object({
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type ContactGrowthInput = z.infer<typeof ContactGrowthInputSchema>;
-const ContactGrowthResponseSchema = z.unknown();
+const ContactGrowthResponseSchema = ActiveTrailResponseSchema;
 export type ContactGrowthResponse = z.infer<typeof ContactGrowthResponseSchema>;
 
 // createANewGroup
 const CreateANewGroupInputSchema = z.object({
 	name: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateANewGroupInput = z.infer<typeof CreateANewGroupInputSchema>;
-const CreateANewGroupResponseSchema = z.unknown();
+const CreateANewGroupResponseSchema = ActiveTrailResponseSchema;
 export type CreateANewGroupResponse = z.infer<typeof CreateANewGroupResponseSchema>;
 
 // createCampaign
@@ -130,22 +135,22 @@ const CreateCampaignInputSchema = z.object({
 	scheduling: z.record(z.string(), z.unknown()),
 	a_b_settings: z.record(z.string(), z.unknown()).optional(),
 	Id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateCampaignInput = z.infer<typeof CreateCampaignInputSchema>;
-const CreateCampaignResponseSchema = z.unknown();
+const CreateCampaignResponseSchema = ActiveTrailResponseSchema;
 export type CreateCampaignResponse = z.infer<typeof CreateCampaignResponseSchema>;
 
 // createCampaignForContacts
 const CreateCampaignForContactsInputSchema = z.object({
 	campaign: z.record(z.string(), z.unknown()),
 	campaign_contacts: z.record(z.string(), z.unknown()),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateCampaignForContactsInput = z.infer<typeof CreateCampaignForContactsInputSchema>;
-const CreateCampaignForContactsResponseSchema = z.unknown();
+const CreateCampaignForContactsResponseSchema = ActiveTrailResponseSchema;
 export type CreateCampaignForContactsResponse = z.infer<typeof CreateCampaignForContactsResponseSchema>;
 
 // createContact
@@ -198,11 +203,11 @@ const CreateContactInputSchema = z.object({
 	first_name: z.string().optional(),
 	anniversary: z.string().optional(),
 	subscribe_ip: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateContactInput = z.infer<typeof CreateContactInputSchema>;
-const CreateContactResponseSchema = z.unknown();
+const CreateContactResponseSchema = ActiveTrailResponseSchema;
 export type CreateContactResponse = z.infer<typeof CreateContactResponseSchema>;
 
 // createContentCategory
@@ -210,53 +215,53 @@ const CreateContentCategoryInputSchema = z.object({
 	name: z.string(),
 	is_default: z.boolean().optional(),
 	display_order: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateContentCategoryInput = z.infer<typeof CreateContentCategoryInputSchema>;
-const CreateContentCategoryResponseSchema = z.unknown();
+const CreateContentCategoryResponseSchema = ActiveTrailResponseSchema;
 export type CreateContentCategoryResponse = z.infer<typeof CreateContentCategoryResponseSchema>;
 
 // createNewMailingList
 const CreateNewMailingListInputSchema = z.object({
 	name: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateNewMailingListInput = z.infer<typeof CreateNewMailingListInputSchema>;
-const CreateNewMailingListResponseSchema = z.unknown();
+const CreateNewMailingListResponseSchema = ActiveTrailResponseSchema;
 export type CreateNewMailingListResponse = z.infer<typeof CreateNewMailingListResponseSchema>;
 
 // createOrder
 const CreateOrderInputSchema = z.object({
 	orders: z.array(z.unknown()),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateOrderInput = z.infer<typeof CreateOrderInputSchema>;
-const CreateOrderResponseSchema = z.unknown();
+const CreateOrderResponseSchema = ActiveTrailResponseSchema;
 export type CreateOrderResponse = z.infer<typeof CreateOrderResponseSchema>;
 
 // createSegmentation
 const CreateSegmentationInputSchema = z.object({
 	name: z.string(),
 	rules_segment: z.record(z.string(), z.unknown()),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateSegmentationInput = z.infer<typeof CreateSegmentationInputSchema>;
-const CreateSegmentationResponseSchema = z.unknown();
+const CreateSegmentationResponseSchema = ActiveTrailResponseSchema;
 export type CreateSegmentationResponse = z.infer<typeof CreateSegmentationResponseSchema>;
 
 // createSmartCodeSite
 const CreateSmartCodeSiteInputSchema = z.object({
 	name: z.string(),
 	domains: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateSmartCodeSiteInput = z.infer<typeof CreateSmartCodeSiteInputSchema>;
-const CreateSmartCodeSiteResponseSchema = z.unknown();
+const CreateSmartCodeSiteResponseSchema = ActiveTrailResponseSchema;
 export type CreateSmartCodeSiteResponse = z.infer<typeof CreateSmartCodeSiteResponseSchema>;
 
 // createSmsCampaign
@@ -269,11 +274,11 @@ const CreateSmsCampaignInputSchema = z.object({
 	can_unsubscribe: z.boolean().optional(),
 	is_link_tracking: z.boolean().optional(),
 	unsubscribe_text: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateSmsCampaignInput = z.infer<typeof CreateSmsCampaignInputSchema>;
-const CreateSmsCampaignResponseSchema = z.unknown();
+const CreateSmsCampaignResponseSchema = ActiveTrailResponseSchema;
 export type CreateSmsCampaignResponse = z.infer<typeof CreateSmsCampaignResponseSchema>;
 
 // createSmsOperationalMessage
@@ -283,11 +288,11 @@ const CreateSmsOperationalMessageInputSchema = z.object({
 	from_name: z.string(),
 	can_unsubscribe: z.boolean().optional(),
 	unsubscribe_text: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateSmsOperationalMessageInput = z.infer<typeof CreateSmsOperationalMessageInputSchema>;
-const CreateSmsOperationalMessageResponseSchema = z.unknown();
+const CreateSmsOperationalMessageResponseSchema = ActiveTrailResponseSchema;
 export type CreateSmsOperationalMessageResponse = z.infer<typeof CreateSmsOperationalMessageResponseSchema>;
 
 // createWebhook
@@ -295,171 +300,171 @@ const CreateWebhookInputSchema = z.object({
 	url: z.string(),
 	name: z.string(),
 	event_type: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateWebhookInput = z.infer<typeof CreateWebhookInputSchema>;
-const CreateWebhookResponseSchema = z.unknown();
+const CreateWebhookResponseSchema = ActiveTrailResponseSchema;
 export type CreateWebhookResponse = z.infer<typeof CreateWebhookResponseSchema>;
 
 // deleteAccountContentCategories
 const DeleteAccountContentCategoriesInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteAccountContentCategoriesInput = z.infer<typeof DeleteAccountContentCategoriesInputSchema>;
-const DeleteAccountContentCategoriesResponseSchema = z.unknown();
+const DeleteAccountContentCategoriesResponseSchema = ActiveTrailResponseSchema;
 export type DeleteAccountContentCategoriesResponse = z.infer<typeof DeleteAccountContentCategoriesResponseSchema>;
 
 // deleteAMemberInAGroup
 const DeleteAMemberInAGroupInputSchema = z.object({
 	group_id: z.number().int(),
 	contact_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteAMemberInAGroupInput = z.infer<typeof DeleteAMemberInAGroupInputSchema>;
-const DeleteAMemberInAGroupResponseSchema = z.unknown();
+const DeleteAMemberInAGroupResponseSchema = ActiveTrailResponseSchema;
 export type DeleteAMemberInAGroupResponse = z.infer<typeof DeleteAMemberInAGroupResponseSchema>;
 
 // deleteAutomations
 const DeleteAutomationsInputSchema = z.object({
 	ids: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteAutomationsInput = z.infer<typeof DeleteAutomationsInputSchema>;
-const DeleteAutomationsResponseSchema = z.unknown();
+const DeleteAutomationsResponseSchema = ActiveTrailResponseSchema;
 export type DeleteAutomationsResponse = z.infer<typeof DeleteAutomationsResponseSchema>;
 
 // deleteCampaign
 const DeleteCampaignInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteCampaignInput = z.infer<typeof DeleteCampaignInputSchema>;
-const DeleteCampaignResponseSchema = z.unknown();
+const DeleteCampaignResponseSchema = ActiveTrailResponseSchema;
 export type DeleteCampaignResponse = z.infer<typeof DeleteCampaignResponseSchema>;
 
 // deleteContact
 const DeleteContactInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteContactInput = z.infer<typeof DeleteContactInputSchema>;
-const DeleteContactResponseSchema = z.unknown();
+const DeleteContactResponseSchema = ActiveTrailResponseSchema;
 export type DeleteContactResponse = z.infer<typeof DeleteContactResponseSchema>;
 
 // deleteGroupById
 const DeleteGroupByIdInputSchema = z.object({
 	group_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteGroupByIdInput = z.infer<typeof DeleteGroupByIdInputSchema>;
-const DeleteGroupByIdResponseSchema = z.unknown();
+const DeleteGroupByIdResponseSchema = ActiveTrailResponseSchema;
 export type DeleteGroupByIdResponse = z.infer<typeof DeleteGroupByIdResponseSchema>;
 
 // deleteMailingList
 const DeleteMailingListInputSchema = z.object({
 	id: z.string(),
 	mailinglist_id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteMailingListInput = z.infer<typeof DeleteMailingListInputSchema>;
-const DeleteMailingListResponseSchema = z.unknown();
+const DeleteMailingListResponseSchema = ActiveTrailResponseSchema;
 export type DeleteMailingListResponse = z.infer<typeof DeleteMailingListResponseSchema>;
 
 // deleteSmartCodeSite
 const DeleteSmartCodeSiteInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteSmartCodeSiteInput = z.infer<typeof DeleteSmartCodeSiteInputSchema>;
-const DeleteSmartCodeSiteResponseSchema = z.unknown();
+const DeleteSmartCodeSiteResponseSchema = ActiveTrailResponseSchema;
 export type DeleteSmartCodeSiteResponse = z.infer<typeof DeleteSmartCodeSiteResponseSchema>;
 
 // deleteTemplate
 const DeleteTemplateInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteTemplateInput = z.infer<typeof DeleteTemplateInputSchema>;
-const DeleteTemplateResponseSchema = z.unknown();
+const DeleteTemplateResponseSchema = ActiveTrailResponseSchema;
 export type DeleteTemplateResponse = z.infer<typeof DeleteTemplateResponseSchema>;
 
 // deleteTemplatesTemplateCategory
 const DeleteTemplatesTemplateCategoryInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteTemplatesTemplateCategoryInput = z.infer<typeof DeleteTemplatesTemplateCategoryInputSchema>;
-const DeleteTemplatesTemplateCategoryResponseSchema = z.unknown();
+const DeleteTemplatesTemplateCategoryResponseSchema = ActiveTrailResponseSchema;
 export type DeleteTemplatesTemplateCategoryResponse = z.infer<typeof DeleteTemplatesTemplateCategoryResponseSchema>;
 
 // deleteWebhook
 const DeleteWebhookInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteWebhookInput = z.infer<typeof DeleteWebhookInputSchema>;
-const DeleteWebhookResponseSchema = z.unknown();
+const DeleteWebhookResponseSchema = ActiveTrailResponseSchema;
 export type DeleteWebhookResponse = z.infer<typeof DeleteWebhookResponseSchema>;
 
 // deleteWebhooksParameters
 const DeleteWebhooksParametersInputSchema = z.object({
 	webhook_id: z.number().int(),
 	parameter_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type DeleteWebhooksParametersInput = z.infer<typeof DeleteWebhooksParametersInputSchema>;
-const DeleteWebhooksParametersResponseSchema = z.unknown();
+const DeleteWebhooksParametersResponseSchema = ActiveTrailResponseSchema;
 export type DeleteWebhooksParametersResponse = z.infer<typeof DeleteWebhooksParametersResponseSchema>;
 
 // getAccountBalance
 const GetAccountBalanceInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAccountBalanceInput = z.infer<typeof GetAccountBalanceInputSchema>;
-const GetAccountBalanceResponseSchema = z.unknown();
+const GetAccountBalanceResponseSchema = ActiveTrailResponseSchema;
 export type GetAccountBalanceResponse = z.infer<typeof GetAccountBalanceResponseSchema>;
 
 // getAccountContentCategories2
 const GetAccountContentCategories2InputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAccountContentCategories2Input = z.infer<typeof GetAccountContentCategories2InputSchema>;
-const GetAccountContentCategories2ResponseSchema = z.unknown();
+const GetAccountContentCategories2ResponseSchema = ActiveTrailResponseSchema;
 export type GetAccountContentCategories2Response = z.infer<typeof GetAccountContentCategories2ResponseSchema>;
 
 // getAccountIntegrationdata
 const GetAccountIntegrationdataInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAccountIntegrationdataInput = z.infer<typeof GetAccountIntegrationdataInputSchema>;
-const GetAccountIntegrationdataResponseSchema = z.unknown();
+const GetAccountIntegrationdataResponseSchema = ActiveTrailResponseSchema;
 export type GetAccountIntegrationdataResponse = z.infer<typeof GetAccountIntegrationdataResponseSchema>;
 
 // getAccountMerge
 const GetAccountMergeInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAccountMergeInput = z.infer<typeof GetAccountMergeInputSchema>;
-const GetAccountMergeResponseSchema = z.unknown();
+const GetAccountMergeResponseSchema = ActiveTrailResponseSchema;
 export type GetAccountMergeResponse = z.infer<typeof GetAccountMergeResponseSchema>;
 
 // getAllCampaignReports
@@ -469,11 +474,11 @@ const GetAllCampaignReportsInputSchema = z.object({
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAllCampaignReportsInput = z.infer<typeof GetAllCampaignReportsInputSchema>;
-const GetAllCampaignReportsResponseSchema = z.unknown();
+const GetAllCampaignReportsResponseSchema = ActiveTrailResponseSchema;
 export type GetAllCampaignReportsResponse = z.infer<typeof GetAllCampaignReportsResponseSchema>;
 
 // getAllGroups
@@ -481,11 +486,11 @@ const GetAllGroupsInputSchema = z.object({
 	page: z.number().int().optional(),
 	limit: z.number().int().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAllGroupsInput = z.infer<typeof GetAllGroupsInputSchema>;
-const GetAllGroupsResponseSchema = z.unknown();
+const GetAllGroupsResponseSchema = ActiveTrailResponseSchema;
 export type GetAllGroupsResponse = z.infer<typeof GetAllGroupsResponseSchema>;
 
 // getAllSentCampaigns
@@ -500,31 +505,31 @@ const GetAllSentCampaignsInputSchema = z.object({
 	content_category_id: z.string().optional(),
 	groupid: z.union([z.string(), z.number()]).optional(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAllSentCampaignsInput = z.infer<typeof GetAllSentCampaignsInputSchema>;
-const GetAllSentCampaignsResponseSchema = z.unknown();
+const GetAllSentCampaignsResponseSchema = ActiveTrailResponseSchema;
 export type GetAllSentCampaignsResponse = z.infer<typeof GetAllSentCampaignsResponseSchema>;
 
 // getAutomationLog
 const GetAutomationLogInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationLogInput = z.infer<typeof GetAutomationLogInputSchema>;
-const GetAutomationLogResponseSchema = z.unknown();
+const GetAutomationLogResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationLogResponse = z.infer<typeof GetAutomationLogResponseSchema>;
 
 // getAutomationReportsLogAutomationQueue
 const GetAutomationReportsLogAutomationQueueInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationReportsLogAutomationQueueInput = z.infer<typeof GetAutomationReportsLogAutomationQueueInputSchema>;
-const GetAutomationReportsLogAutomationQueueResponseSchema = z.unknown();
+const GetAutomationReportsLogAutomationQueueResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationReportsLogAutomationQueueResponse = z.infer<typeof GetAutomationReportsLogAutomationQueueResponseSchema>;
 
 // getAutomationReportsSmsCampaignSummary
@@ -532,11 +537,11 @@ const GetAutomationReportsSmsCampaignSummaryInputSchema = z.object({
 	id: z.number().int(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationReportsSmsCampaignSummaryInput = z.infer<typeof GetAutomationReportsSmsCampaignSummaryInputSchema>;
-const GetAutomationReportsSmsCampaignSummaryResponseSchema = z.unknown();
+const GetAutomationReportsSmsCampaignSummaryResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationReportsSmsCampaignSummaryResponse = z.infer<typeof GetAutomationReportsSmsCampaignSummaryResponseSchema>;
 
 // getAutomationReportsSummaryReport
@@ -544,11 +549,11 @@ const GetAutomationReportsSummaryReportInputSchema = z.object({
 	id: z.number().int(),
 	to_date: z.string(),
 	from_date: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationReportsSummaryReportInput = z.infer<typeof GetAutomationReportsSummaryReportInputSchema>;
-const GetAutomationReportsSummaryReportResponseSchema = z.unknown();
+const GetAutomationReportsSummaryReportResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationReportsSummaryReportResponse = z.infer<typeof GetAutomationReportsSummaryReportResponseSchema>;
 
 // getAutomations
@@ -556,51 +561,51 @@ const GetAutomationsInputSchema = z.object({
 	page: z.number().int().optional(),
 	limit: z.number().int().optional(),
 	state_type: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationsInput = z.infer<typeof GetAutomationsInputSchema>;
-const GetAutomationsResponseSchema = z.unknown();
+const GetAutomationsResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationsResponse = z.infer<typeof GetAutomationsResponseSchema>;
 
 // getAutomationsDetails
 const GetAutomationsDetailsInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationsDetailsInput = z.infer<typeof GetAutomationsDetailsInputSchema>;
-const GetAutomationsDetailsResponseSchema = z.unknown();
+const GetAutomationsDetailsResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationsDetailsResponse = z.infer<typeof GetAutomationsDetailsResponseSchema>;
 
 // getAutomationsEmailCampaignSteps
 const GetAutomationsEmailCampaignStepsInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationsEmailCampaignStepsInput = z.infer<typeof GetAutomationsEmailCampaignStepsInputSchema>;
-const GetAutomationsEmailCampaignStepsResponseSchema = z.unknown();
+const GetAutomationsEmailCampaignStepsResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationsEmailCampaignStepsResponse = z.infer<typeof GetAutomationsEmailCampaignStepsResponseSchema>;
 
 // getAutomationsSmsCampaignSteps
 const GetAutomationsSmsCampaignStepsInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationsSmsCampaignStepsInput = z.infer<typeof GetAutomationsSmsCampaignStepsInputSchema>;
-const GetAutomationsSmsCampaignStepsResponseSchema = z.unknown();
+const GetAutomationsSmsCampaignStepsResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationsSmsCampaignStepsResponse = z.infer<typeof GetAutomationsSmsCampaignStepsResponseSchema>;
 
 // getAutomationTriggerTypes
 const GetAutomationTriggerTypesInputSchema = z.object({
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetAutomationTriggerTypesInput = z.infer<typeof GetAutomationTriggerTypesInputSchema>;
-const GetAutomationTriggerTypesResponseSchema = z.unknown();
+const GetAutomationTriggerTypesResponseSchema = ActiveTrailResponseSchema;
 export type GetAutomationTriggerTypesResponse = z.infer<typeof GetAutomationTriggerTypesResponseSchema>;
 
 // getCampaignBounces
@@ -611,11 +616,11 @@ const GetCampaignBouncesInputSchema = z.object({
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
 	bounce_type: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignBouncesInput = z.infer<typeof GetCampaignBouncesInputSchema>;
-const GetCampaignBouncesResponseSchema = z.unknown();
+const GetCampaignBouncesResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignBouncesResponse = z.infer<typeof GetCampaignBouncesResponseSchema>;
 
 // getCampaignClicks
@@ -626,21 +631,21 @@ const GetCampaignClicksInputSchema = z.object({
 	link_id: z.string().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignClicksInput = z.infer<typeof GetCampaignClicksInputSchema>;
-const GetCampaignClicksResponseSchema = z.unknown();
+const GetCampaignClicksResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignClicksResponse = z.infer<typeof GetCampaignClicksResponseSchema>;
 
 // getCampaignDesign
 const GetCampaignDesignInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignDesignInput = z.infer<typeof GetCampaignDesignInputSchema>;
-const GetCampaignDesignResponseSchema = z.unknown();
+const GetCampaignDesignResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignDesignResponse = z.infer<typeof GetCampaignDesignResponseSchema>;
 
 // getCampaignDomainsReport
@@ -650,11 +655,11 @@ const GetCampaignDomainsReportInputSchema = z.object({
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
 	campaign_id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignDomainsReportInput = z.infer<typeof GetCampaignDomainsReportInputSchema>;
-const GetCampaignDomainsReportResponseSchema = z.unknown();
+const GetCampaignDomainsReportResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignDomainsReportResponse = z.infer<typeof GetCampaignDomainsReportResponseSchema>;
 
 // getCampaignOpens
@@ -665,11 +670,11 @@ const GetCampaignOpensInputSchema = z.object({
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
 	campaign_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignOpensInput = z.infer<typeof GetCampaignOpensInputSchema>;
-const GetCampaignOpensResponseSchema = z.unknown();
+const GetCampaignOpensResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignOpensResponse = z.infer<typeof GetCampaignOpensResponseSchema>;
 
 // getCampaignReport
@@ -679,11 +684,11 @@ const GetCampaignReportInputSchema = z.object({
 	limit: z.number().int().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignReportInput = z.infer<typeof GetCampaignReportInputSchema>;
-const GetCampaignReportResponseSchema = z.unknown();
+const GetCampaignReportResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignReportResponse = z.infer<typeof GetCampaignReportResponseSchema>;
 
 // getCampaignReportsBounced
@@ -692,11 +697,11 @@ const GetCampaignReportsBouncedInputSchema = z.object({
 	page: z.number().int().optional(),
 	limit: z.number().int().optional(),
 	bounce_type: z.unknown().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignReportsBouncedInput = z.infer<typeof GetCampaignReportsBouncedInputSchema>;
-const GetCampaignReportsBouncedResponseSchema = z.unknown();
+const GetCampaignReportsBouncedResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignReportsBouncedResponse = z.infer<typeof GetCampaignReportsBouncedResponseSchema>;
 
 // getCampaignReportsComplaints
@@ -707,11 +712,11 @@ const GetCampaignReportsComplaintsInputSchema = z.object({
 	groupid: z.string().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignReportsComplaintsInput = z.infer<typeof GetCampaignReportsComplaintsInputSchema>;
-const GetCampaignReportsComplaintsResponseSchema = z.unknown();
+const GetCampaignReportsComplaintsResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignReportsComplaintsResponse = z.infer<typeof GetCampaignReportsComplaintsResponseSchema>;
 
 // getCampaignReportsEmailActivity
@@ -721,11 +726,11 @@ const GetCampaignReportsEmailActivityInputSchema = z.object({
 	limit: z.number().int().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignReportsEmailActivityInput = z.infer<typeof GetCampaignReportsEmailActivityInputSchema>;
-const GetCampaignReportsEmailActivityResponseSchema = z.unknown();
+const GetCampaignReportsEmailActivityResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignReportsEmailActivityResponse = z.infer<typeof GetCampaignReportsEmailActivityResponseSchema>;
 
 // getCampaignReportsSent
@@ -736,11 +741,11 @@ const GetCampaignReportsSentInputSchema = z.object({
 	groupid: z.string().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignReportsSentInput = z.infer<typeof GetCampaignReportsSentInputSchema>;
-const GetCampaignReportsSentResponseSchema = z.unknown();
+const GetCampaignReportsSentResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignReportsSentResponse = z.infer<typeof GetCampaignReportsSentResponseSchema>;
 
 // getCampaignReportsUnopened
@@ -751,70 +756,70 @@ const GetCampaignReportsUnopenedInputSchema = z.object({
 	groupid: z.string().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignReportsUnopenedInput = z.infer<typeof GetCampaignReportsUnopenedInputSchema>;
-const GetCampaignReportsUnopenedResponseSchema = z.unknown();
+const GetCampaignReportsUnopenedResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignReportsUnopenedResponse = z.infer<typeof GetCampaignReportsUnopenedResponseSchema>;
 
 // getCampaignScheduling
 const GetCampaignSchedulingInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignSchedulingInput = z.infer<typeof GetCampaignSchedulingInputSchema>;
-const GetCampaignSchedulingResponseSchema = z.unknown();
+const GetCampaignSchedulingResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignSchedulingResponse = z.infer<typeof GetCampaignSchedulingResponseSchema>;
 
 // getCampaignSDetails
 const GetCampaignSDetailsInputSchema = z.object({
 	campaign_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignSDetailsInput = z.infer<typeof GetCampaignSDetailsInputSchema>;
-const GetCampaignSDetailsResponseSchema = z.unknown();
+const GetCampaignSDetailsResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignSDetailsResponse = z.infer<typeof GetCampaignSDetailsResponseSchema>;
 
 // getCampaignsDetails
 const GetCampaignsDetailsInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignsDetailsInput = z.infer<typeof GetCampaignsDetailsInputSchema>;
-const GetCampaignsDetailsResponseSchema = z.unknown();
+const GetCampaignsDetailsResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignsDetailsResponse = z.infer<typeof GetCampaignsDetailsResponseSchema>;
 
 // getCampaignsSegment
 const GetCampaignsSegmentInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignsSegmentInput = z.infer<typeof GetCampaignsSegmentInputSchema>;
-const GetCampaignsSegmentResponseSchema = z.unknown();
+const GetCampaignsSegmentResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignsSegmentResponse = z.infer<typeof GetCampaignsSegmentResponseSchema>;
 
 // getCampaignsSentCampaigns
 const GetCampaignsSentCampaignsInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignsSentCampaignsInput = z.infer<typeof GetCampaignsSentCampaignsInputSchema>;
-const GetCampaignsSentCampaignsResponseSchema = z.unknown();
+const GetCampaignsSentCampaignsResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignsSentCampaignsResponse = z.infer<typeof GetCampaignsSentCampaignsResponseSchema>;
 
 // getCampaignTemplate
 const GetCampaignTemplateInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignTemplateInput = z.infer<typeof GetCampaignTemplateInputSchema>;
-const GetCampaignTemplateResponseSchema = z.unknown();
+const GetCampaignTemplateResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignTemplateResponse = z.infer<typeof GetCampaignTemplateResponseSchema>;
 
 // getCampaignUnsubscribed
@@ -824,60 +829,60 @@ const GetCampaignUnsubscribedInputSchema = z.object({
 	limit: z.number().int().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCampaignUnsubscribedInput = z.infer<typeof GetCampaignUnsubscribedInputSchema>;
-const GetCampaignUnsubscribedResponseSchema = z.unknown();
+const GetCampaignUnsubscribedResponseSchema = ActiveTrailResponseSchema;
 export type GetCampaignUnsubscribedResponse = z.infer<typeof GetCampaignUnsubscribedResponseSchema>;
 
 // getCommerceSchema
 const GetCommerceSchemaInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCommerceSchemaInput = z.infer<typeof GetCommerceSchemaInputSchema>;
-const GetCommerceSchemaResponseSchema = z.unknown();
+const GetCommerceSchemaResponseSchema = ActiveTrailResponseSchema;
 export type GetCommerceSchemaResponse = z.infer<typeof GetCommerceSchemaResponseSchema>;
 
 // getContactActivity
 const GetContactActivityInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactActivityInput = z.infer<typeof GetContactActivityInputSchema>;
-const GetContactActivityResponseSchema = z.unknown();
+const GetContactActivityResponseSchema = ActiveTrailResponseSchema;
 export type GetContactActivityResponse = z.infer<typeof GetContactActivityResponseSchema>;
 
 // getContactDetails
 const GetContactDetailsInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactDetailsInput = z.infer<typeof GetContactDetailsInputSchema>;
-const GetContactDetailsResponseSchema = z.unknown();
+const GetContactDetailsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactDetailsResponse = z.infer<typeof GetContactDetailsResponseSchema>;
 
 // getContactFields
 const GetContactFieldsInputSchema = z.object({
 	fields_type: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactFieldsInput = z.infer<typeof GetContactFieldsInputSchema>;
-const GetContactFieldsResponseSchema = z.unknown();
+const GetContactFieldsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactFieldsResponse = z.infer<typeof GetContactFieldsResponseSchema>;
 
 // getContactGroups
 const GetContactGroupsInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactGroupsInput = z.infer<typeof GetContactGroupsInputSchema>;
-const GetContactGroupsResponseSchema = z.unknown();
+const GetContactGroupsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactGroupsResponse = z.infer<typeof GetContactGroupsResponseSchema>;
 
 // getContactList
@@ -889,31 +894,31 @@ const GetContactListInputSchema = z.object({
 	search_term: z.string().optional(),
 	customer_states: z.string().optional(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactListInput = z.infer<typeof GetContactListInputSchema>;
-const GetContactListResponseSchema = z.unknown();
+const GetContactListResponseSchema = ActiveTrailResponseSchema;
 export type GetContactListResponse = z.infer<typeof GetContactListResponseSchema>;
 
 // getContactsErrors
 const GetContactsErrorsInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsErrorsInput = z.infer<typeof GetContactsErrorsInputSchema>;
-const GetContactsErrorsResponseSchema = z.unknown();
+const GetContactsErrorsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsErrorsResponse = z.infer<typeof GetContactsErrorsResponseSchema>;
 
 // getContactsMailinglists
 const GetContactsMailinglistsInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsMailinglistsInput = z.infer<typeof GetContactsMailinglistsInputSchema>;
-const GetContactsMailinglistsResponseSchema = z.unknown();
+const GetContactsMailinglistsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsMailinglistsResponse = z.infer<typeof GetContactsMailinglistsResponseSchema>;
 
 // getContactsMerges
@@ -923,33 +928,33 @@ const GetContactsMergesInputSchema = z.object({
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
 	state_type: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsMergesInput = z.infer<typeof GetContactsMergesInputSchema>;
-const GetContactsMergesResponseSchema = z.unknown();
+const GetContactsMergesResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsMergesResponse = z.infer<typeof GetContactsMergesResponseSchema>;
 
 // getContactSmsStatistics
 const GetContactSmsStatisticsInputSchema = z.object({
 	contact_id: z.number().int(),
 	message_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactSmsStatisticsInput = z.infer<typeof GetContactSmsStatisticsInputSchema>;
-const GetContactSmsStatisticsResponseSchema = z.unknown();
+const GetContactSmsStatisticsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactSmsStatisticsResponse = z.infer<typeof GetContactSmsStatisticsResponseSchema>;
 
 // getContactsStatisticsCampaign
 const GetContactsStatisticsCampaignInputSchema = z.object({
 	id: z.number().int(),
 	campaign_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsStatisticsCampaignInput = z.infer<typeof GetContactsStatisticsCampaignInputSchema>;
-const GetContactsStatisticsCampaignResponseSchema = z.unknown();
+const GetContactsStatisticsCampaignResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsStatisticsCampaignResponse = z.infer<typeof GetContactsStatisticsCampaignResponseSchema>;
 
 // getContactsSubscriptionAllContacts
@@ -958,11 +963,11 @@ const GetContactsSubscriptionAllContactsInputSchema = z.object({
 	limit: z.number().int().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsSubscriptionAllContactsInput = z.infer<typeof GetContactsSubscriptionAllContactsInputSchema>;
-const GetContactsSubscriptionAllContactsResponseSchema = z.unknown();
+const GetContactsSubscriptionAllContactsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsSubscriptionAllContactsResponse = z.infer<typeof GetContactsSubscriptionAllContactsResponseSchema>;
 
 // getContactsSubscriptionCustomersStatus
@@ -971,11 +976,11 @@ const GetContactsSubscriptionCustomersStatusInputSchema = z.object({
 	from_date: z.string().optional(),
 	page: z.union([z.string(), z.number()]).optional(),
 	limit: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsSubscriptionCustomersStatusInput = z.infer<typeof GetContactsSubscriptionCustomersStatusInputSchema>;
-const GetContactsSubscriptionCustomersStatusResponseSchema = z.unknown();
+const GetContactsSubscriptionCustomersStatusResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsSubscriptionCustomersStatusResponse = z.infer<typeof GetContactsSubscriptionCustomersStatusResponseSchema>;
 
 // getContactsSubscriptionSubscribers
@@ -984,11 +989,11 @@ const GetContactsSubscriptionSubscribersInputSchema = z.object({
 	limit: z.number().int().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsSubscriptionSubscribersInput = z.infer<typeof GetContactsSubscriptionSubscribersInputSchema>;
-const GetContactsSubscriptionSubscribersResponseSchema = z.unknown();
+const GetContactsSubscriptionSubscribersResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsSubscriptionSubscribersResponse = z.infer<typeof GetContactsSubscriptionSubscribersResponseSchema>;
 
 // getContactsSubscriptionUnsubscribers
@@ -997,11 +1002,11 @@ const GetContactsSubscriptionUnsubscribersInputSchema = z.object({
 	limit: z.number().int().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsSubscriptionUnsubscribersInput = z.infer<typeof GetContactsSubscriptionUnsubscribersInputSchema>;
-const GetContactsSubscriptionUnsubscribersResponseSchema = z.unknown();
+const GetContactsSubscriptionUnsubscribersResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsSubscriptionUnsubscribersResponse = z.infer<typeof GetContactsSubscriptionUnsubscribersResponseSchema>;
 
 // getContactsUnsubscribersSms
@@ -1010,11 +1015,11 @@ const GetContactsUnsubscribersSmsInputSchema = z.object({
 	limit: z.number().int().optional(),
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsUnsubscribersSmsInput = z.infer<typeof GetContactsUnsubscribersSmsInputSchema>;
-const GetContactsUnsubscribersSmsResponseSchema = z.unknown();
+const GetContactsUnsubscribersSmsResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsUnsubscribersSmsResponse = z.infer<typeof GetContactsUnsubscribersSmsResponseSchema>;
 
 // getContactsWithSmsState
@@ -1025,20 +1030,20 @@ const GetContactsWithSmsStateInputSchema = z.object({
 	from_date: z.string().optional(),
 	search_term: z.string().optional(),
 	customer_states: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContactsWithSmsStateInput = z.infer<typeof GetContactsWithSmsStateInputSchema>;
-const GetContactsWithSmsStateResponseSchema = z.unknown();
+const GetContactsWithSmsStateResponseSchema = ActiveTrailResponseSchema;
 export type GetContactsWithSmsStateResponse = z.infer<typeof GetContactsWithSmsStateResponseSchema>;
 
 // getContentCategories
 const GetContentCategoriesInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetContentCategoriesInput = z.infer<typeof GetContentCategoriesInputSchema>;
-const GetContentCategoriesResponseSchema = z.unknown();
+const GetContentCategoriesResponseSchema = ActiveTrailResponseSchema;
 export type GetContentCategoriesResponse = z.infer<typeof GetContentCategoriesResponseSchema>;
 
 // getCustomerStatsForTransactionalMessage
@@ -1046,39 +1051,39 @@ const GetCustomerStatsForTransactionalMessageInputSchema = z.object({
 	contact_id: z.number().int(),
 	transactional_id: z.number().int(),
 	message_id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetCustomerStatsForTransactionalMessageInput = z.infer<typeof GetCustomerStatsForTransactionalMessageInputSchema>;
-const GetCustomerStatsForTransactionalMessageResponseSchema = z.unknown();
+const GetCustomerStatsForTransactionalMessageResponseSchema = ActiveTrailResponseSchema;
 export type GetCustomerStatsForTransactionalMessageResponse = z.infer<typeof GetCustomerStatsForTransactionalMessageResponseSchema>;
 
 // getExecutiveReport
 const GetExecutiveReportInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetExecutiveReportInput = z.infer<typeof GetExecutiveReportInputSchema>;
-const GetExecutiveReportResponseSchema = z.unknown();
+const GetExecutiveReportResponseSchema = ActiveTrailResponseSchema;
 export type GetExecutiveReportResponse = z.infer<typeof GetExecutiveReportResponseSchema>;
 
 // getExternalSchema
 const GetExternalSchemaInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetExternalSchemaInput = z.infer<typeof GetExternalSchemaInputSchema>;
-const GetExternalSchemaResponseSchema = z.unknown();
+const GetExternalSchemaResponseSchema = ActiveTrailResponseSchema;
 export type GetExternalSchemaResponse = z.infer<typeof GetExternalSchemaResponseSchema>;
 
 // getGroup
 const GetGroupInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetGroupInput = z.infer<typeof GetGroupInputSchema>;
-const GetGroupResponseSchema = z.unknown();
+const GetGroupResponseSchema = ActiveTrailResponseSchema;
 export type GetGroupResponse = z.infer<typeof GetGroupResponseSchema>;
 
 // getGroupContentsById
@@ -1090,11 +1095,11 @@ const GetGroupContentsByIdInputSchema = z.object({
 	from_date: z.string().optional(),
 	search_term: z.string().optional(),
 	customer_states: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetGroupContentsByIdInput = z.infer<typeof GetGroupContentsByIdInputSchema>;
-const GetGroupContentsByIdResponseSchema = z.unknown();
+const GetGroupContentsByIdResponseSchema = ActiveTrailResponseSchema;
 export type GetGroupContentsByIdResponse = z.infer<typeof GetGroupContentsByIdResponseSchema>;
 
 // getGroupsEvents
@@ -1105,32 +1110,32 @@ const GetGroupsEventsInputSchema = z.object({
 	created_to_date: z.string().optional(),
 	event_from_date: z.string().optional(),
 	created_from_date: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetGroupsEventsInput = z.infer<typeof GetGroupsEventsInputSchema>;
-const GetGroupsEventsResponseSchema = z.unknown();
+const GetGroupsEventsResponseSchema = ActiveTrailResponseSchema;
 export type GetGroupsEventsResponse = z.infer<typeof GetGroupsEventsResponseSchema>;
 
 // getLandingPages
 const GetLandingPagesInputSchema = z.object({
 	page: z.number().int().optional(),
 	limit: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetLandingPagesInput = z.infer<typeof GetLandingPagesInputSchema>;
-const GetLandingPagesResponseSchema = z.unknown();
+const GetLandingPagesResponseSchema = ActiveTrailResponseSchema;
 export type GetLandingPagesResponse = z.infer<typeof GetLandingPagesResponseSchema>;
 
 // getMailingList
 const GetMailingListInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetMailingListInput = z.infer<typeof GetMailingListInputSchema>;
-const GetMailingListResponseSchema = z.unknown();
+const GetMailingListResponseSchema = ActiveTrailResponseSchema;
 export type GetMailingListResponse = z.infer<typeof GetMailingListResponseSchema>;
 
 // getMailingListMembers
@@ -1141,30 +1146,30 @@ const GetMailingListMembersInputSchema = z.object({
 	to_date: z.string().optional(),
 	from_date: z.string().optional(),
 	customer_states: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetMailingListMembersInput = z.infer<typeof GetMailingListMembersInputSchema>;
-const GetMailingListMembersResponseSchema = z.unknown();
+const GetMailingListMembersResponseSchema = ActiveTrailResponseSchema;
 export type GetMailingListMembersResponse = z.infer<typeof GetMailingListMembersResponseSchema>;
 
 // getMailingLists
 const GetMailingListsInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetMailingListsInput = z.infer<typeof GetMailingListsInputSchema>;
-const GetMailingListsResponseSchema = z.unknown();
+const GetMailingListsResponseSchema = ActiveTrailResponseSchema;
 export type GetMailingListsResponse = z.infer<typeof GetMailingListsResponseSchema>;
 
 // getOrder
 const GetOrderInputSchema = z.object({
 	order_id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetOrderInput = z.infer<typeof GetOrderInputSchema>;
-const GetOrderResponseSchema = z.unknown();
+const GetOrderResponseSchema = ActiveTrailResponseSchema;
 export type GetOrderResponse = z.infer<typeof GetOrderResponseSchema>;
 
 // getPushCampaignOpens
@@ -1176,11 +1181,11 @@ const GetPushCampaignOpensInputSchema = z.object({
 	from_date: z.string().optional(),
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetPushCampaignOpensInput = z.infer<typeof GetPushCampaignOpensInputSchema>;
-const GetPushCampaignOpensResponseSchema = z.unknown();
+const GetPushCampaignOpensResponseSchema = ActiveTrailResponseSchema;
 export type GetPushCampaignOpensResponse = z.infer<typeof GetPushCampaignOpensResponseSchema>;
 
 // getPushCampaignReportDelivered
@@ -1192,11 +1197,11 @@ const GetPushCampaignReportDeliveredInputSchema = z.object({
 	from_date: z.string().optional(),
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetPushCampaignReportDeliveredInput = z.infer<typeof GetPushCampaignReportDeliveredInputSchema>;
-const GetPushCampaignReportDeliveredResponseSchema = z.unknown();
+const GetPushCampaignReportDeliveredResponseSchema = ActiveTrailResponseSchema;
 export type GetPushCampaignReportDeliveredResponse = z.infer<typeof GetPushCampaignReportDeliveredResponseSchema>;
 
 // getPushCampaignReportFailed
@@ -1208,11 +1213,11 @@ const GetPushCampaignReportFailedInputSchema = z.object({
 	from_date: z.string().optional(),
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetPushCampaignReportFailedInput = z.infer<typeof GetPushCampaignReportFailedInputSchema>;
-const GetPushCampaignReportFailedResponseSchema = z.unknown();
+const GetPushCampaignReportFailedResponseSchema = ActiveTrailResponseSchema;
 export type GetPushCampaignReportFailedResponse = z.infer<typeof GetPushCampaignReportFailedResponseSchema>;
 
 // getPushCampaignReports
@@ -1224,11 +1229,11 @@ const GetPushCampaignReportsInputSchema = z.object({
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetPushCampaignReportsInput = z.infer<typeof GetPushCampaignReportsInputSchema>;
-const GetPushCampaignReportsResponseSchema = z.unknown();
+const GetPushCampaignReportsResponseSchema = ActiveTrailResponseSchema;
 export type GetPushCampaignReportsResponse = z.infer<typeof GetPushCampaignReportsResponseSchema>;
 
 // getPushCampaignReportSent
@@ -1240,11 +1245,11 @@ const GetPushCampaignReportSentInputSchema = z.object({
 	from_date: z.string().optional(),
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetPushCampaignReportSentInput = z.infer<typeof GetPushCampaignReportSentInputSchema>;
-const GetPushCampaignReportSentResponseSchema = z.unknown();
+const GetPushCampaignReportSentResponseSchema = ActiveTrailResponseSchema;
 export type GetPushCampaignReportSentResponse = z.infer<typeof GetPushCampaignReportSentResponseSchema>;
 
 // getPushCampaignReportSummary
@@ -1256,11 +1261,11 @@ const GetPushCampaignReportSummaryInputSchema = z.object({
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetPushCampaignReportSummaryInput = z.infer<typeof GetPushCampaignReportSummaryInputSchema>;
-const GetPushCampaignReportSummaryResponseSchema = z.unknown();
+const GetPushCampaignReportSummaryResponseSchema = ActiveTrailResponseSchema;
 export type GetPushCampaignReportSummaryResponse = z.infer<typeof GetPushCampaignReportSummaryResponseSchema>;
 
 // getPushCampaigns
@@ -1274,93 +1279,93 @@ const GetPushCampaignsInputSchema = z.object({
 	search_term: z.string().optional(),
 	include_deleted: z.boolean().optional(),
 	include_not_sent: z.boolean().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetPushCampaignsInput = z.infer<typeof GetPushCampaignsInputSchema>;
-const GetPushCampaignsResponseSchema = z.unknown();
+const GetPushCampaignsResponseSchema = ActiveTrailResponseSchema;
 export type GetPushCampaignsResponse = z.infer<typeof GetPushCampaignsResponseSchema>;
 
 // getSegmentationRuleFieldTypes
 const GetSegmentationRuleFieldTypesInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSegmentationRuleFieldTypesInput = z.infer<typeof GetSegmentationRuleFieldTypesInputSchema>;
-const GetSegmentationRuleFieldTypesResponseSchema = z.unknown();
+const GetSegmentationRuleFieldTypesResponseSchema = ActiveTrailResponseSchema;
 export type GetSegmentationRuleFieldTypesResponse = z.infer<typeof GetSegmentationRuleFieldTypesResponseSchema>;
 
 // getSegmentationRuleOperations
 const GetSegmentationRuleOperationsInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSegmentationRuleOperationsInput = z.infer<typeof GetSegmentationRuleOperationsInputSchema>;
-const GetSegmentationRuleOperationsResponseSchema = z.unknown();
+const GetSegmentationRuleOperationsResponseSchema = ActiveTrailResponseSchema;
 export type GetSegmentationRuleOperationsResponse = z.infer<typeof GetSegmentationRuleOperationsResponseSchema>;
 
 // getSegmentationRuleTypes
 const GetSegmentationRuleTypesInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSegmentationRuleTypesInput = z.infer<typeof GetSegmentationRuleTypesInputSchema>;
-const GetSegmentationRuleTypesResponseSchema = z.unknown();
+const GetSegmentationRuleTypesResponseSchema = ActiveTrailResponseSchema;
 export type GetSegmentationRuleTypesResponse = z.infer<typeof GetSegmentationRuleTypesResponseSchema>;
 
 // getSegmentationRuleTypesMapping
 const GetSegmentationRuleTypesMappingInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSegmentationRuleTypesMappingInput = z.infer<typeof GetSegmentationRuleTypesMappingInputSchema>;
-const GetSegmentationRuleTypesMappingResponseSchema = z.unknown();
+const GetSegmentationRuleTypesMappingResponseSchema = ActiveTrailResponseSchema;
 export type GetSegmentationRuleTypesMappingResponse = z.infer<typeof GetSegmentationRuleTypesMappingResponseSchema>;
 
 // getSegmentations
 const GetSegmentationsInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSegmentationsInput = z.infer<typeof GetSegmentationsInputSchema>;
-const GetSegmentationsResponseSchema = z.unknown();
+const GetSegmentationsResponseSchema = ActiveTrailResponseSchema;
 export type GetSegmentationsResponse = z.infer<typeof GetSegmentationsResponseSchema>;
 
 // getSendingProfiles
 const GetSendingProfilesInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSendingProfilesInput = z.infer<typeof GetSendingProfilesInputSchema>;
-const GetSendingProfilesResponseSchema = z.unknown();
+const GetSendingProfilesResponseSchema = ActiveTrailResponseSchema;
 export type GetSendingProfilesResponse = z.infer<typeof GetSendingProfilesResponseSchema>;
 
 // getSignupForms
 const GetSignupFormsInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSignupFormsInput = z.infer<typeof GetSignupFormsInputSchema>;
-const GetSignupFormsResponseSchema = z.unknown();
+const GetSignupFormsResponseSchema = ActiveTrailResponseSchema;
 export type GetSignupFormsResponse = z.infer<typeof GetSignupFormsResponseSchema>;
 
 // getSmartCodeSites
 const GetSmartCodeSitesInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmartCodeSitesInput = z.infer<typeof GetSmartCodeSitesInputSchema>;
-const GetSmartCodeSitesResponseSchema = z.unknown();
+const GetSmartCodeSitesResponseSchema = ActiveTrailResponseSchema;
 export type GetSmartCodeSitesResponse = z.infer<typeof GetSmartCodeSitesResponseSchema>;
 
 // getSmsCampaign
 const GetSmsCampaignInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignInput = z.infer<typeof GetSmsCampaignInputSchema>;
-const GetSmsCampaignResponseSchema = z.unknown();
+const GetSmsCampaignResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignResponse = z.infer<typeof GetSmsCampaignResponseSchema>;
 
 // getSmsCampaignClickers
@@ -1375,11 +1380,11 @@ const GetSmsCampaignClickersInputSchema = z.object({
 	search_term: z.string().optional(),
 	rows_affected: z.number().int().optional(),
 	previous_row_count: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignClickersInput = z.infer<typeof GetSmsCampaignClickersInputSchema>;
-const GetSmsCampaignClickersResponseSchema = z.unknown();
+const GetSmsCampaignClickersResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignClickersResponse = z.infer<typeof GetSmsCampaignClickersResponseSchema>;
 
 // getSmsCampaignDelivered
@@ -1393,31 +1398,31 @@ const GetSmsCampaignDeliveredInputSchema = z.object({
 	search_term: z.string().optional(),
 	rows_affected: z.number().int().optional(),
 	previous_row_count: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignDeliveredInput = z.infer<typeof GetSmsCampaignDeliveredInputSchema>;
-const GetSmsCampaignDeliveredResponseSchema = z.unknown();
+const GetSmsCampaignDeliveredResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignDeliveredResponse = z.infer<typeof GetSmsCampaignDeliveredResponseSchema>;
 
 // getSmsCampaignEstimate
 const GetSmsCampaignEstimateInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignEstimateInput = z.infer<typeof GetSmsCampaignEstimateInputSchema>;
-const GetSmsCampaignEstimateResponseSchema = z.unknown();
+const GetSmsCampaignEstimateResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignEstimateResponse = z.infer<typeof GetSmsCampaignEstimateResponseSchema>;
 
 // getSmsCampaignReport
 const GetSmsCampaignReportInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignReportInput = z.infer<typeof GetSmsCampaignReportInputSchema>;
-const GetSmsCampaignReportResponseSchema = z.unknown();
+const GetSmsCampaignReportResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignReportResponse = z.infer<typeof GetSmsCampaignReportResponseSchema>;
 
 // getSmsCampaignReportClicks
@@ -1431,11 +1436,11 @@ const GetSmsCampaignReportClicksInputSchema = z.object({
 	search_term: z.string().optional(),
 	rows_affected: z.number().int().optional(),
 	previous_row_count: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignReportClicksInput = z.infer<typeof GetSmsCampaignReportClicksInputSchema>;
-const GetSmsCampaignReportClicksResponseSchema = z.unknown();
+const GetSmsCampaignReportClicksResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignReportClicksResponse = z.infer<typeof GetSmsCampaignReportClicksResponseSchema>;
 
 // getSmsCampaignReportFailed
@@ -1447,11 +1452,11 @@ const GetSmsCampaignReportFailedInputSchema = z.object({
 	from_date: z.string().optional(),
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignReportFailedInput = z.infer<typeof GetSmsCampaignReportFailedInputSchema>;
-const GetSmsCampaignReportFailedResponseSchema = z.unknown();
+const GetSmsCampaignReportFailedResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignReportFailedResponse = z.infer<typeof GetSmsCampaignReportFailedResponseSchema>;
 
 // getSmsCampaignReports
@@ -1465,11 +1470,11 @@ const GetSmsCampaignReportsInputSchema = z.object({
 	rows_affected: z.number().int().optional(),
 	previous_row_count: z.number().int().optional(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignReportsInput = z.infer<typeof GetSmsCampaignReportsInputSchema>;
-const GetSmsCampaignReportsResponseSchema = z.unknown();
+const GetSmsCampaignReportsResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignReportsResponse = z.infer<typeof GetSmsCampaignReportsResponseSchema>;
 
 // getSmsCampaignReportSent
@@ -1483,11 +1488,11 @@ const GetSmsCampaignReportSentInputSchema = z.object({
 	search_term: z.string().optional(),
 	rows_affected: z.number().int().optional(),
 	previous_row_count: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignReportSentInput = z.infer<typeof GetSmsCampaignReportSentInputSchema>;
-const GetSmsCampaignReportSentResponseSchema = z.unknown();
+const GetSmsCampaignReportSentResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignReportSentResponse = z.infer<typeof GetSmsCampaignReportSentResponseSchema>;
 
 // getSmsCampaignReportSummary
@@ -1497,11 +1502,11 @@ const GetSmsCampaignReportSummaryInputSchema = z.object({
 	send_type: z.string().optional(),
 	search_term: z.string().optional(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignReportSummaryInput = z.infer<typeof GetSmsCampaignReportSummaryInputSchema>;
-const GetSmsCampaignReportSummaryResponseSchema = z.unknown();
+const GetSmsCampaignReportSummaryResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignReportSummaryResponse = z.infer<typeof GetSmsCampaignReportSummaryResponseSchema>;
 
 // getSmsCampaignReportUnsubscribed
@@ -1515,40 +1520,40 @@ const GetSmsCampaignReportUnsubscribedInputSchema = z.object({
 	search_term: z.string().optional(),
 	rows_affected: z.number().int().optional(),
 	previous_row_count: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsCampaignReportUnsubscribedInput = z.infer<typeof GetSmsCampaignReportUnsubscribedInputSchema>;
-const GetSmsCampaignReportUnsubscribedResponseSchema = z.unknown();
+const GetSmsCampaignReportUnsubscribedResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsCampaignReportUnsubscribedResponse = z.infer<typeof GetSmsCampaignReportUnsubscribedResponseSchema>;
 
 // getSmsSendingProfiles
 const GetSmsSendingProfilesInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetSmsSendingProfilesInput = z.infer<typeof GetSmsSendingProfilesInputSchema>;
-const GetSmsSendingProfilesResponseSchema = z.unknown();
+const GetSmsSendingProfilesResponseSchema = ActiveTrailResponseSchema;
 export type GetSmsSendingProfilesResponse = z.infer<typeof GetSmsSendingProfilesResponseSchema>;
 
 // getTemplate
 const GetTemplateInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetTemplateInput = z.infer<typeof GetTemplateInputSchema>;
-const GetTemplateResponseSchema = z.unknown();
+const GetTemplateResponseSchema = ActiveTrailResponseSchema;
 export type GetTemplateResponse = z.infer<typeof GetTemplateResponseSchema>;
 
 // getTemplateContent
 const GetTemplateContentInputSchema = z.object({
 	id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetTemplateContentInput = z.infer<typeof GetTemplateContentInputSchema>;
-const GetTemplateContentResponseSchema = z.unknown();
+const GetTemplateContentResponseSchema = ActiveTrailResponseSchema;
 export type GetTemplateContentResponse = z.infer<typeof GetTemplateContentResponseSchema>;
 
 // getTemplates
@@ -1556,40 +1561,40 @@ const GetTemplatesInputSchema = z.object({
 	page: z.number().int().optional(),
 	limit: z.number().int().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetTemplatesInput = z.infer<typeof GetTemplatesInputSchema>;
-const GetTemplatesResponseSchema = z.unknown();
+const GetTemplatesResponseSchema = ActiveTrailResponseSchema;
 export type GetTemplatesResponse = z.infer<typeof GetTemplatesResponseSchema>;
 
 // getTemplatesTemplateCategory
 const GetTemplatesTemplateCategoryInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetTemplatesTemplateCategoryInput = z.infer<typeof GetTemplatesTemplateCategoryInputSchema>;
-const GetTemplatesTemplateCategoryResponseSchema = z.unknown();
+const GetTemplatesTemplateCategoryResponseSchema = ActiveTrailResponseSchema;
 export type GetTemplatesTemplateCategoryResponse = z.infer<typeof GetTemplatesTemplateCategoryResponseSchema>;
 
 // getTransactionalMessagesClassification
 const GetTransactionalMessagesClassificationInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetTransactionalMessagesClassificationInput = z.infer<typeof GetTransactionalMessagesClassificationInputSchema>;
-const GetTransactionalMessagesClassificationResponseSchema = z.unknown();
+const GetTransactionalMessagesClassificationResponseSchema = ActiveTrailResponseSchema;
 export type GetTransactionalMessagesClassificationResponse = z.infer<typeof GetTransactionalMessagesClassificationResponseSchema>;
 
 // getTransactionalSmsMessage
 const GetTransactionalSmsMessageInputSchema = z.object({
 	transactional_sms_id: z.number().int(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetTransactionalSmsMessageInput = z.infer<typeof GetTransactionalSmsMessageInputSchema>;
-const GetTransactionalSmsMessageResponseSchema = z.unknown();
+const GetTransactionalSmsMessageResponseSchema = ActiveTrailResponseSchema;
 export type GetTransactionalSmsMessageResponse = z.infer<typeof GetTransactionalSmsMessageResponseSchema>;
 
 // getTwoWaySmsReplies
@@ -1600,40 +1605,40 @@ const GetTwoWaySmsRepliesInputSchema = z.object({
 	from_date: z.string().optional(),
 	campaign_id: z.number().int().optional(),
 	search_term: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetTwoWaySmsRepliesInput = z.infer<typeof GetTwoWaySmsRepliesInputSchema>;
-const GetTwoWaySmsRepliesResponseSchema = z.unknown();
+const GetTwoWaySmsRepliesResponseSchema = ActiveTrailResponseSchema;
 export type GetTwoWaySmsRepliesResponse = z.infer<typeof GetTwoWaySmsRepliesResponseSchema>;
 
 // getUpdateActions
 const GetUpdateActionsInputSchema = z.object({
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetUpdateActionsInput = z.infer<typeof GetUpdateActionsInputSchema>;
-const GetUpdateActionsResponseSchema = z.unknown();
+const GetUpdateActionsResponseSchema = ActiveTrailResponseSchema;
 export type GetUpdateActionsResponse = z.infer<typeof GetUpdateActionsResponseSchema>;
 
 // getUserSocialAccountsGet
 const GetUserSocialAccountsGetInputSchema = z.object({
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetUserSocialAccountsGetInput = z.infer<typeof GetUserSocialAccountsGetInputSchema>;
-const GetUserSocialAccountsGetResponseSchema = z.unknown();
+const GetUserSocialAccountsGetResponseSchema = ActiveTrailResponseSchema;
 export type GetUserSocialAccountsGetResponse = z.infer<typeof GetUserSocialAccountsGetResponseSchema>;
 
 // getWebhook
 const GetWebhookInputSchema = z.object({
 	webhook_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetWebhookInput = z.infer<typeof GetWebhookInputSchema>;
-const GetWebhookResponseSchema = z.unknown();
+const GetWebhookResponseSchema = ActiveTrailResponseSchema;
 export type GetWebhookResponse = z.infer<typeof GetWebhookResponseSchema>;
 
 // getWebhooks
@@ -1642,21 +1647,21 @@ const GetWebhooksInputSchema = z.object({
 	state_type: z.string().optional(),
 	target_type: z.string().optional(),
 	is_ignore_parameters: z.boolean().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetWebhooksInput = z.infer<typeof GetWebhooksInputSchema>;
-const GetWebhooksResponseSchema = z.unknown();
+const GetWebhooksResponseSchema = ActiveTrailResponseSchema;
 export type GetWebhooksResponse = z.infer<typeof GetWebhooksResponseSchema>;
 
 // getWebhooksParameters
 const GetWebhooksParametersInputSchema = z.object({
 	webhook_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type GetWebhooksParametersInput = z.infer<typeof GetWebhooksParametersInputSchema>;
-const GetWebhooksParametersResponseSchema = z.unknown();
+const GetWebhooksParametersResponseSchema = ActiveTrailResponseSchema;
 export type GetWebhooksParametersResponse = z.infer<typeof GetWebhooksParametersResponseSchema>;
 
 // importNewContacts
@@ -1664,11 +1669,11 @@ const ImportNewContactsInputSchema = z.object({
 	group: z.number().int(),
 	contacts: z.array(z.unknown()),
 	mailing_list: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type ImportNewContactsInput = z.infer<typeof ImportNewContactsInputSchema>;
-const ImportNewContactsResponseSchema = z.unknown();
+const ImportNewContactsResponseSchema = ActiveTrailResponseSchema;
 export type ImportNewContactsResponse = z.infer<typeof ImportNewContactsResponseSchema>;
 
 // listSmsCampaigns
@@ -1680,22 +1685,22 @@ const ListSmsCampaignsInputSchema = z.object({
 	filter_type: z.string().optional(),
 	search_term: z.string().optional(),
 	is_include_not_sent: z.boolean().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type ListSmsCampaignsInput = z.infer<typeof ListSmsCampaignsInputSchema>;
-const ListSmsCampaignsResponseSchema = z.unknown();
+const ListSmsCampaignsResponseSchema = ActiveTrailResponseSchema;
 export type ListSmsCampaignsResponse = z.infer<typeof ListSmsCampaignsResponseSchema>;
 
 // listTransactionalSmsMessages
 const ListTransactionalSmsMessagesInputSchema = z.object({
 	page: z.number().int().optional(),
 	limit: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type ListTransactionalSmsMessagesInput = z.infer<typeof ListTransactionalSmsMessagesInputSchema>;
-const ListTransactionalSmsMessagesResponseSchema = z.unknown();
+const ListTransactionalSmsMessagesResponseSchema = ActiveTrailResponseSchema;
 export type ListTransactionalSmsMessagesResponse = z.infer<typeof ListTransactionalSmsMessagesResponseSchema>;
 
 // postTemplatesCampaign
@@ -1703,22 +1708,22 @@ const PostTemplatesCampaignInputSchema = z.object({
 	template_id: z.number().int(),
 	campaign_details: z.record(z.string(), z.unknown()),
 	Id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type PostTemplatesCampaignInput = z.infer<typeof PostTemplatesCampaignInputSchema>;
-const PostTemplatesCampaignResponseSchema = z.unknown();
+const PostTemplatesCampaignResponseSchema = ActiveTrailResponseSchema;
 export type PostTemplatesCampaignResponse = z.infer<typeof PostTemplatesCampaignResponseSchema>;
 
 // postTemplatesTemplateCategory
 const PostTemplatesTemplateCategoryInputSchema = z.object({
 	name: z.string(),
 	name_key: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type PostTemplatesTemplateCategoryInput = z.infer<typeof PostTemplatesTemplateCategoryInputSchema>;
-const PostTemplatesTemplateCategoryResponseSchema = z.unknown();
+const PostTemplatesTemplateCategoryResponseSchema = ActiveTrailResponseSchema;
 export type PostTemplatesTemplateCategoryResponse = z.infer<typeof PostTemplatesTemplateCategoryResponseSchema>;
 
 // postWebhooksParameters
@@ -1729,11 +1734,11 @@ const PostWebhooksParametersInputSchema = z.object({
 	webhook_id: z.number().int(),
 	event_value_type: z.string(),
 	event_parameter_type: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type PostWebhooksParametersInput = z.infer<typeof PostWebhooksParametersInputSchema>;
-const PostWebhooksParametersResponseSchema = z.unknown();
+const PostWebhooksParametersResponseSchema = ActiveTrailResponseSchema;
 export type PostWebhooksParametersResponse = z.infer<typeof PostWebhooksParametersResponseSchema>;
 
 // postWebhooksTest2
@@ -1745,11 +1750,11 @@ const PostWebhooksTest2InputSchema = z.object({
 	parameters: z.array(z.unknown()).optional(),
 	target_type: z.string(),
 	id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type PostWebhooksTest2Input = z.infer<typeof PostWebhooksTest2InputSchema>;
-const PostWebhooksTest2ResponseSchema = z.unknown();
+const PostWebhooksTest2ResponseSchema = ActiveTrailResponseSchema;
 export type PostWebhooksTest2Response = z.infer<typeof PostWebhooksTest2ResponseSchema>;
 
 // putAccountContentCategories
@@ -1757,11 +1762,11 @@ const PutAccountContentCategoriesInputSchema = z.object({
 	id: z.number().int(),
 	name: z.string(),
 	display_order: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type PutAccountContentCategoriesInput = z.infer<typeof PutAccountContentCategoriesInputSchema>;
-const PutAccountContentCategoriesResponseSchema = z.unknown();
+const PutAccountContentCategoriesResponseSchema = ActiveTrailResponseSchema;
 export type PutAccountContentCategoriesResponse = z.infer<typeof PutAccountContentCategoriesResponseSchema>;
 
 // putCampaignsSegment
@@ -1769,33 +1774,33 @@ const PutCampaignsSegmentInputSchema = z.object({
 	id: z.number().int(),
 	group_ids: z.array(z.unknown()),
 	restricted_group_ids: z.array(z.unknown()).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type PutCampaignsSegmentInput = z.infer<typeof PutCampaignsSegmentInputSchema>;
-const PutCampaignsSegmentResponseSchema = z.unknown();
+const PutCampaignsSegmentResponseSchema = ActiveTrailResponseSchema;
 export type PutCampaignsSegmentResponse = z.infer<typeof PutCampaignsSegmentResponseSchema>;
 
 // removeAContactFromAMailingList
 const RemoveAContactFromAMailingListInputSchema = z.object({
 	contact_id: z.string(),
 	mailinglist_id: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type RemoveAContactFromAMailingListInput = z.infer<typeof RemoveAContactFromAMailingListInputSchema>;
-const RemoveAContactFromAMailingListResponseSchema = z.unknown();
+const RemoveAContactFromAMailingListResponseSchema = ActiveTrailResponseSchema;
 export type RemoveAContactFromAMailingListResponse = z.infer<typeof RemoveAContactFromAMailingListResponseSchema>;
 
 // removeExternalContactFromGroup
 const RemoveExternalContactFromGroupInputSchema = z.object({
 	group_id: z.string(),
 	external_contacts: z.array(z.unknown()),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type RemoveExternalContactFromGroupInput = z.infer<typeof RemoveExternalContactFromGroupInputSchema>;
-const RemoveExternalContactFromGroupResponseSchema = z.unknown();
+const RemoveExternalContactFromGroupResponseSchema = ActiveTrailResponseSchema;
 export type RemoveExternalContactFromGroupResponse = z.infer<typeof RemoveExternalContactFromGroupResponseSchema>;
 
 // sendOperationalMessage
@@ -1804,11 +1809,11 @@ const SendOperationalMessageInputSchema = z.object({
 	design: z.record(z.string(), z.unknown()),
 	details: z.record(z.string(), z.unknown()),
 	email_package: z.array(z.unknown()).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type SendOperationalMessageInput = z.infer<typeof SendOperationalMessageInputSchema>;
-const SendOperationalMessageResponseSchema = z.unknown();
+const SendOperationalMessageResponseSchema = ActiveTrailResponseSchema;
 export type SendOperationalMessageResponse = z.infer<typeof SendOperationalMessageResponseSchema>;
 
 // sendOperationalMessageEmail
@@ -1817,21 +1822,21 @@ const SendOperationalMessageEmailInputSchema = z.object({
 	design: z.record(z.string(), z.unknown()),
 	details: z.record(z.string(), z.unknown()),
 	email_package: z.array(z.unknown()),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type SendOperationalMessageEmailInput = z.infer<typeof SendOperationalMessageEmailInputSchema>;
-const SendOperationalMessageEmailResponseSchema = z.unknown();
+const SendOperationalMessageEmailResponseSchema = ActiveTrailResponseSchema;
 export type SendOperationalMessageEmailResponse = z.infer<typeof SendOperationalMessageEmailResponseSchema>;
 
 // testWebhook
 const TestWebhookInputSchema = z.object({
 	id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type TestWebhookInput = z.infer<typeof TestWebhookInputSchema>;
-const TestWebhookResponseSchema = z.unknown();
+const TestWebhookResponseSchema = ActiveTrailResponseSchema;
 export type TestWebhookResponse = z.infer<typeof TestWebhookResponseSchema>;
 
 // updateCampaign
@@ -1841,11 +1846,11 @@ const UpdateCampaignInputSchema = z.object({
 	details: z.record(z.string(), z.unknown()),
 	send_test: z.string().optional(),
 	send_type: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateCampaignInput = z.infer<typeof UpdateCampaignInputSchema>;
-const UpdateCampaignResponseSchema = z.unknown();
+const UpdateCampaignResponseSchema = ActiveTrailResponseSchema;
 export type UpdateCampaignResponse = z.infer<typeof UpdateCampaignResponseSchema>;
 
 // updateCampaignDesign
@@ -1857,11 +1862,11 @@ const UpdateCampaignDesignInputSchema = z.object({
 	is_auto_css_inliner: z.boolean().optional(),
 	is_remove_system_links: z.boolean().optional(),
 	header_footer_language_type: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateCampaignDesignInput = z.infer<typeof UpdateCampaignDesignInputSchema>;
-const UpdateCampaignDesignResponseSchema = z.unknown();
+const UpdateCampaignDesignResponseSchema = ActiveTrailResponseSchema;
 export type UpdateCampaignDesignResponse = z.infer<typeof UpdateCampaignDesignResponseSchema>;
 
 // updateCampaignScheduling
@@ -1869,11 +1874,11 @@ const UpdateCampaignSchedulingInputSchema = z.object({
 	id: z.number().int(),
 	is_sent: z.boolean(),
 	scheduled_date_utc: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateCampaignSchedulingInput = z.infer<typeof UpdateCampaignSchedulingInputSchema>;
-const UpdateCampaignSchedulingResponseSchema = z.unknown();
+const UpdateCampaignSchedulingResponseSchema = ActiveTrailResponseSchema;
 export type UpdateCampaignSchedulingResponse = z.infer<typeof UpdateCampaignSchedulingResponseSchema>;
 
 // updateCampaignSDetails
@@ -1886,22 +1891,22 @@ const UpdateCampaignSDetailsInputSchema = z.object({
 	content_category_id: z.number().int(),
 	predictive_delivery: z.boolean(),
 	google_analytics_name: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateCampaignSDetailsInput = z.infer<typeof UpdateCampaignSDetailsInputSchema>;
-const UpdateCampaignSDetailsResponseSchema = z.unknown();
+const UpdateCampaignSDetailsResponseSchema = ActiveTrailResponseSchema;
 export type UpdateCampaignSDetailsResponse = z.infer<typeof UpdateCampaignSDetailsResponseSchema>;
 
 // updateCampaignTemplate
 const UpdateCampaignTemplateInputSchema = z.object({
 	campaign_id: z.number().int(),
 	template_id: z.number().int(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateCampaignTemplateInput = z.infer<typeof UpdateCampaignTemplateInputSchema>;
-const UpdateCampaignTemplateResponseSchema = z.unknown();
+const UpdateCampaignTemplateResponseSchema = ActiveTrailResponseSchema;
 export type UpdateCampaignTemplateResponse = z.infer<typeof UpdateCampaignTemplateResponseSchema>;
 
 // updateContact
@@ -1961,22 +1966,22 @@ const UpdateContactInputSchema = z.object({
 	double_opt_in_config: z.record(z.string(), z.unknown()).optional(),
 	external_name: z.union([z.string(), z.number()]).optional(),
 	external_id: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateContactInput = z.infer<typeof UpdateContactInputSchema>;
-const UpdateContactResponseSchema = z.unknown();
+const UpdateContactResponseSchema = ActiveTrailResponseSchema;
 export type UpdateContactResponse = z.infer<typeof UpdateContactResponseSchema>;
 
 // updateGroup
 const UpdateGroupInputSchema = z.object({
 	id: z.number().int(),
 	name: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateGroupInput = z.infer<typeof UpdateGroupInputSchema>;
-const UpdateGroupResponseSchema = z.unknown();
+const UpdateGroupResponseSchema = ActiveTrailResponseSchema;
 export type UpdateGroupResponse = z.infer<typeof UpdateGroupResponseSchema>;
 
 // updateOrder
@@ -1998,11 +2003,11 @@ const UpdateOrderInputSchema = z.object({
 	totalPrice: z.number().optional(),
 	totalAmount: z.number().optional(),
 	purchaseDate: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateOrderInput = z.infer<typeof UpdateOrderInputSchema>;
-const UpdateOrderResponseSchema = z.unknown();
+const UpdateOrderResponseSchema = ActiveTrailResponseSchema;
 export type UpdateOrderResponse = z.infer<typeof UpdateOrderResponseSchema>;
 
 // updateSegmentation
@@ -2010,11 +2015,11 @@ const UpdateSegmentationInputSchema = z.object({
 	id: z.number().int(),
 	name: z.string().optional(),
 	rules_segment: z.record(z.string(), z.unknown()).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateSegmentationInput = z.infer<typeof UpdateSegmentationInputSchema>;
-const UpdateSegmentationResponseSchema = z.unknown();
+const UpdateSegmentationResponseSchema = ActiveTrailResponseSchema;
 export type UpdateSegmentationResponse = z.infer<typeof UpdateSegmentationResponseSchema>;
 
 // updateSmartCodeSite
@@ -2022,11 +2027,11 @@ const UpdateSmartCodeSiteInputSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	domains: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateSmartCodeSiteInput = z.infer<typeof UpdateSmartCodeSiteInputSchema>;
-const UpdateSmartCodeSiteResponseSchema = z.unknown();
+const UpdateSmartCodeSiteResponseSchema = ActiveTrailResponseSchema;
 export type UpdateSmartCodeSiteResponse = z.infer<typeof UpdateSmartCodeSiteResponseSchema>;
 
 // updateSmsOperationalMessage
@@ -2035,11 +2040,11 @@ const UpdateSmsOperationalMessageInputSchema = z.object({
 	name: z.string(),
 	content: z.string(),
 	from_name: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateSmsOperationalMessageInput = z.infer<typeof UpdateSmsOperationalMessageInputSchema>;
-const UpdateSmsOperationalMessageResponseSchema = z.unknown();
+const UpdateSmsOperationalMessageResponseSchema = ActiveTrailResponseSchema;
 export type UpdateSmsOperationalMessageResponse = z.infer<typeof UpdateSmsOperationalMessageResponseSchema>;
 
 // updateTemplate
@@ -2052,11 +2057,11 @@ const UpdateTemplateInputSchema = z.object({
 	AddPrintButton: z.boolean().optional(),
 	campaign_encoding: z.number().int().optional(),
 	template_category_id: z.number().int().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateTemplateInput = z.infer<typeof UpdateTemplateInputSchema>;
-const UpdateTemplateResponseSchema = z.unknown();
+const UpdateTemplateResponseSchema = ActiveTrailResponseSchema;
 export type UpdateTemplateResponse = z.infer<typeof UpdateTemplateResponseSchema>;
 
 // updateTemplateCategory
@@ -2064,22 +2069,22 @@ const UpdateTemplateCategoryInputSchema = z.object({
 	id: z.number().int(),
 	name: z.string(),
 	name_key: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateTemplateCategoryInput = z.infer<typeof UpdateTemplateCategoryInputSchema>;
-const UpdateTemplateCategoryResponseSchema = z.unknown();
+const UpdateTemplateCategoryResponseSchema = ActiveTrailResponseSchema;
 export type UpdateTemplateCategoryResponse = z.infer<typeof UpdateTemplateCategoryResponseSchema>;
 
 // updateTemplateContent
 const UpdateTemplateContentInputSchema = z.object({
 	id: z.string(),
 	content: z.string(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateTemplateContentInput = z.infer<typeof UpdateTemplateContentInputSchema>;
-const UpdateTemplateContentResponseSchema = z.unknown();
+const UpdateTemplateContentResponseSchema = ActiveTrailResponseSchema;
 export type UpdateTemplateContentResponse = z.infer<typeof UpdateTemplateContentResponseSchema>;
 
 // updateWebhook
@@ -2092,11 +2097,11 @@ const UpdateWebhookInputSchema = z.object({
 	stateid: z.number().int().optional(),
 	is_active: z.boolean().optional(),
 	event_type: z.string().optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateWebhookInput = z.infer<typeof UpdateWebhookInputSchema>;
-const UpdateWebhookResponseSchema = z.unknown();
+const UpdateWebhookResponseSchema = ActiveTrailResponseSchema;
 export type UpdateWebhookResponse = z.infer<typeof UpdateWebhookResponseSchema>;
 
 // updateWebhookParameter
@@ -2109,11 +2114,11 @@ const UpdateWebhookParameterInputSchema = z.object({
 	event_value_type: z.string().optional(),
 	event_parameter_type: z.string().optional(),
 	parameterid: z.union([z.string(), z.number()]).optional(),
-	body: z.unknown().optional(),
+	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 export type UpdateWebhookParameterInput = z.infer<typeof UpdateWebhookParameterInputSchema>;
-const UpdateWebhookParameterResponseSchema = z.unknown();
+const UpdateWebhookParameterResponseSchema = ActiveTrailResponseSchema;
 export type UpdateWebhookParameterResponse = z.infer<typeof UpdateWebhookParameterResponseSchema>;
 
 export const ActiveTrailEndpointInputSchemas = {

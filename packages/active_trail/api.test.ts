@@ -78,7 +78,6 @@ describe('ActiveTrail request client', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://webapi.mymarketing.co.il/api',
-				TOKEN: 'test-api-key',
 				HEADERS: expect.objectContaining({
 					Authorization: 'test-api-key',
 					'Content-Type': 'application/json',

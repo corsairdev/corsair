@@ -22,6 +22,7 @@ const ACTIVETRAIL_API_BASE = 'https://webapi.mymarketing.co.il/api';
 
 export type ActiveTrailRequestOptions = {
 	method?: ActiveTrailMethod;
+	// Request bodies vary per endpoint; callers pass API-specific JSON shapes.
 	body?: unknown;
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
@@ -38,9 +39,9 @@ export async function makeActiveTrailRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
+			// ActiveTrail expects the raw access token in Authorization (not Bearer).
 			Authorization: apiKey,
 			...headers,
 		},

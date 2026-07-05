@@ -320,7 +320,7 @@ export const activeTrailRoutes = [
 		method: 'DELETE',
 		path: '/api/webhooks/{webhook_id}/parameters/{id}',
 		description: 'Removes a specific parameter from a webhook configuration in ActiveTrail. Use this when you need to delete custom headers, query parameters, or body parameters that were previously added to a webhook. Requires both the webhook ID and the specific parameter ID to delete.',
-		pathParams: ['webhook_id', 'webhook_id'],
+		pathParams: ['webhook_id', 'parameter_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,

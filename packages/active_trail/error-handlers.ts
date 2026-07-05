@@ -1,8 +1,11 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import type { ActiveTrailAPIError } from './client';
+import { ActiveTrailAPIError } from './client';
 
 function getStatus(error: Error): number | undefined {
-	return (error as Partial<ActiveTrailAPIError>).status;
+	if (error instanceof ActiveTrailAPIError) {
+		return error.status;
+	}
+	return undefined;
 }
 
 export const errorHandlers = {
