@@ -1019,18 +1019,18 @@ const SearchPullRequestMarkerSchema = z
 	.loose();
 
 const SearchIssueSchema = IssueSchema.extend({
-	score: z.number().optional(),
+	score: z.number(),
 	pull_request: SearchPullRequestMarkerSchema.optional(),
 	repository: RepositorySchema.optional(),
 }).loose();
 
 const SearchRepositorySchema = RepositorySchema.extend({
-	score: z.number().optional(),
+	score: z.number(),
 	watchers: z.number().optional(),
 }).loose();
 
 const SearchUserSchema = SimpleUserSchema.extend({
-	score: z.number().optional(),
+	score: z.number(),
 }).loose();
 
 const SearchIssuesResponseSchema = z
