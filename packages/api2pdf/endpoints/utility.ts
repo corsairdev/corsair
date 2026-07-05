@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApi2PdfRequest, makeApi2PdfTextRequest } from '../client';
+import { assertApi2PdfSuccess, makeApi2PdfRequest, makeApi2PdfTextRequest } from '../client';
 import type { Api2PdfEndpoints } from '../index';
 
 export const checkStatus: Api2PdfEndpoints['checkStatus'] = async (ctx) => {
@@ -13,12 +13,14 @@ export const checkStatus: Api2PdfEndpoints['checkStatus'] = async (ctx) => {
 };
 
 export const deletePdf: Api2PdfEndpoints['deletePdf'] = async (ctx, input) => {
-	const response = await makeApi2PdfRequest<{ Success?: boolean; Error?: string }>(
-		`/file/${encodeURIComponent(input.responseId)}`,
-		{
-			apiKey: ctx.key,
-			method: 'DELETE',
-		},
+	const response = assertApi2PdfSuccess(
+		await makeApi2PdfRequest<{ Success?: boolean; Error?: string }>(
+			`/file/${encodeURIComponent(input.responseId)}`,
+			{
+				apiKey: ctx.key,
+				method: 'DELETE',
+			},
+		),
 	);
 
 	await logEventFromContext(

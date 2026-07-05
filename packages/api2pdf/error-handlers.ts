@@ -1,6 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import type { Api2PdfAPIError } from './client';
 
+// CorsairErrorHandler receives a plain Error; duck-type Api2Pdf-specific fields
+// without instanceof so handlers work across module boundaries.
 function getStatus(error: Error): number | undefined {
 	return (error as Partial<Api2PdfAPIError>).status;
 }
@@ -28,7 +30,8 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
-				msg.includes('invalid') ||
+				msg.includes('invalid api key') ||
+				msg.includes('invalid key') ||
 				msg.includes('401')
 			);
 		},

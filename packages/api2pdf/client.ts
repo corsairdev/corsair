@@ -4,6 +4,7 @@ import { ApiError, request } from 'corsair/http';
 export class Api2PdfAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// API error bodies vary by endpoint; unknown forces callers to narrow before use.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -47,6 +48,7 @@ function buildConfig(apiKey?: string, isWrite = false): OpenAPIConfig {
 	};
 }
 
+// Catch values are untyped at runtime; narrow to ApiError/Error before rethrowing.
 async function handleRequestError(error: unknown): Promise<never> {
 	if (error instanceof ApiError) {
 		throw new Api2PdfAPIError(error.message, error.status, {
@@ -124,6 +126,7 @@ export function assertApi2PdfSuccess<T extends { Success?: boolean; Error?: unkn
 	return response;
 }
 
+// Endpoint payloads differ per operation; Record keeps the client generic.
 export function buildPostPayload(
 	fields: Record<string, unknown>,
 	options?: {
