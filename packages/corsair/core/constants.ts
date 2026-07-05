@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'ahrefs',
 	'airtable',
 	'amplitude',
+	'api_sports',
 	'asana',
 	'bitwarden',
 	'bluesky',
@@ -87,6 +88,7 @@ export const ProviderDisplayNames = {
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
+	api_sports: 'API-Sports',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
@@ -164,6 +166,7 @@ export type AllProviders =
 	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
+	| 'api_sports'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
