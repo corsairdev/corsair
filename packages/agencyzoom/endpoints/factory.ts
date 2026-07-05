@@ -111,12 +111,13 @@ import type { CorsairEndpoint } from 'corsair/core';
         	ctx: AgencyZoomContext,
         	input: AgencyZoomEndpointInput,
         	route: AgencyZoomRoute,
+        	status: 'completed' | 'failed',
         ) {
         	await logEventFromContext(
         		ctx,
         		`agencyzoom.${route.group}.${route.name}`,
         		{ method: route.method, path: route.path },
-        		'completed',
+        		status,
         	);
         }
 
@@ -129,6 +130,8 @@ import type { CorsairEndpoint } from 'corsair/core';
         		method: route.method,
         		body: requestBody(route, input),
         		query: buildQuery(route, input),
+        		// input.headers is unknown via the AgencyZoomEndpointInput index signature;
+        		// callers supply string-valued header maps validated by per-op Zod schemas.
         		headers: input.headers as Record<string, string> | undefined,
         	});
         }
@@ -138,9 +141,13 @@ import type { CorsairEndpoint } from 'corsair/core';
         	input: AgencyZoomEndpointInput,
         	route: AgencyZoomRoute,
         ) {
+        	let status: 'completed' | 'failed' = 'completed';
         	try {
         		return await requestAgencyZoomOperation(ctx, input, route);
+        	} catch (error) {
+        		status = 'failed';
+        		throw error;
         	} finally {
-        		await logAgencyZoomOperation(ctx, input, route);
+        		await logAgencyZoomOperation(ctx, input, route, status);
         	}
         }

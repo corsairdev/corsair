@@ -5,6 +5,7 @@ import type { AgencyZoomMethod } from './endpoints/routes';
 export class AgencyZoomAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// body is unknown because AgencyZoom error payloads vary by endpoint and are not schema-validated here.
 	public readonly body?: unknown;
 
 	constructor(message: string, options?: { cause?: Error }) {

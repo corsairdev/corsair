@@ -4,12 +4,25 @@ import { z } from 'zod';
 const AgencyZoomResponseSchema = z.unknown();
 // Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
 const AgencyZoomOptionalBodySchema = z.unknown().optional();
+// Optional query filters vary by endpoint; values are heterogeneous JSON filter objects.
+const AgencyZoomQueryParamsSchema = z.record(z.string(), z.unknown()).optional();
+// Batch item arrays contain heterogeneous lead/contact/task objects per AgencyZoom API docs.
+const AgencyZoomBatchItemsSchema = z.array(z.unknown());
+const AgencyZoomBatchItemsOptionalSchema = z.array(z.unknown()).optional();
+// Tag IDs may be numeric or string depending on tenant configuration.
+const AgencyZoomTagIdsSchema = z.array(z.unknown()).optional();
+// Custom field payloads are tenant-specific and not fully described in the OpenAPI spec.
+const AgencyZoomCustomFieldsSchema = z.array(z.unknown()).optional();
+// CSR/producer/invitee arrays are loosely typed assignment lists in AgencyZoom API docs.
+const AgencyZoomAssignmentArraySchema = z.array(z.unknown()).optional();
+// Sold product line items vary by policy type and are not fully schema-defined.
+const AgencyZoomSoldProductsSchema = z.array(z.unknown());
 
 // authenticateForJwtviaV4Sso
 const AuthenticateForJwtviaV4SsoInputSchema = z.object({
 	code: z.string(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AuthenticateForJwtviaV4SsoInput = z.infer<typeof AuthenticateForJwtviaV4SsoInputSchema>;
@@ -18,9 +31,9 @@ export type AuthenticateForJwtviaV4SsoResponse = z.infer<typeof AuthenticateForJ
 
 // batchCreateContact
 const BatchCreateContactInputSchema = z.object({
-	contactDataRequests: z.array(z.unknown()),
+	contactDataRequests: AgencyZoomBatchItemsSchema,
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type BatchCreateContactInput = z.infer<typeof BatchCreateContactInputSchema>;
@@ -29,9 +42,9 @@ export type BatchCreateContactResponse = z.infer<typeof BatchCreateContactRespon
 
 // batchCreateLead
 const BatchCreateLeadInputSchema = z.object({
-	leadDataRequests: z.array(z.unknown()).optional(),
+	leadDataRequests: AgencyZoomBatchItemsOptionalSchema,
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type BatchCreateLeadInput = z.infer<typeof BatchCreateLeadInputSchema>;
@@ -40,9 +53,9 @@ export type BatchCreateLeadResponse = z.infer<typeof BatchCreateLeadResponseSche
 
 // batchDeleteTask
 const BatchDeleteTaskInputSchema = z.object({
-	taskIds: z.array(z.unknown()),
+	taskIds: AgencyZoomBatchItemsSchema,
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type BatchDeleteTaskInput = z.infer<typeof BatchDeleteTaskInputSchema>;
@@ -54,7 +67,7 @@ const ChangeStatusForLeadInputSchema = z.object({
 	date: z.string().optional(),
 	leadId: z.number().int(),
 	status: z.number().int(),
-	tagIds: z.array(z.unknown()).optional(),
+	tagIds: AgencyZoomTagIdsSchema,
 	toStageId: z.number().int().optional(),
 	xDateType: z.string().optional(),
 	workflowId: z.number().int().optional(),
@@ -64,7 +77,7 @@ const ChangeStatusForLeadInputSchema = z.object({
 	recycleToPipeline: z.number().int().optional(),
 	changeLeadSourceTo: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ChangeStatusForLeadInput = z.infer<typeof ChangeStatusForLeadInputSchema>;
@@ -75,7 +88,7 @@ export type ChangeStatusForLeadResponse = z.infer<typeof ChangeStatusForLeadResp
 const CompleteTaskInputSchema = z.object({
 	taskId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CompleteTaskInput = z.infer<typeof CompleteTaskInputSchema>;
@@ -87,7 +100,7 @@ const CreateACustomerNoteInputSchema = z.object({
 	note: z.string(),
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateACustomerNoteInput = z.infer<typeof CreateACustomerNoteInputSchema>;
@@ -107,7 +120,7 @@ const CreateADriverForAnOpportunityInputSchema = z.object({
 	opportunityId: z.number().int(),
 	stateLicensed: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateADriverForAnOpportunityInput = z.infer<typeof CreateADriverForAnOpportunityInputSchema>;
@@ -119,7 +132,7 @@ const CreateALeadNoteInputSchema = z.object({
 	note: z.string(),
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateALeadNoteInput = z.infer<typeof CreateALeadNoteInputSchema>;
@@ -132,10 +145,10 @@ const CreateALeadOpportunityInputSchema = z.object({
 	leadId: z.number().int(),
 	premium: z.number().int(),
 	carrierId: z.number().int(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	productLineId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateALeadOpportunityInput = z.infer<typeof CreateALeadOpportunityInputSchema>;
@@ -148,10 +161,10 @@ const CreateALeadQuoteInputSchema = z.object({
 	leadId: z.number().int(),
 	premium: z.number().int(),
 	carrierId: z.number().int(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	productLineId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateALeadQuoteInput = z.infer<typeof CreateALeadQuoteInputSchema>;
@@ -164,7 +177,7 @@ const CreateAnOpportunityInputSchema = z.object({
 	premium: z.number().int().optional(),
 	carrierId: z.number().int().optional(),
 	expiryDate: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	productLineId: z.number().int(),
 	property__zip: z.string().optional(),
 	property__city: z.string().optional(),
@@ -175,7 +188,7 @@ const CreateAnOpportunityInputSchema = z.object({
 	property__address2: z.string().optional(),
 	property__useMailingAddressAsLocation: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateAnOpportunityInput = z.infer<typeof CreateAnOpportunityInputSchema>;
@@ -191,7 +204,7 @@ const CreateAVehicleForAnOpportunityInputSchema = z.object({
 	ownership: z.string().optional(),
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateAVehicleForAnOpportunityInput = z.infer<typeof CreateAVehicleForAnOpportunityInputSchema>;
@@ -221,18 +234,18 @@ const CreateBizLeadInputSchema = z.object({
 	tagNames: z.string().optional(),
 	firstname: z.string(),
 	groupCode: z.string().optional(),
-	otherCsrs: z.array(z.unknown()).optional(),
+	otherCsrs: AgencyZoomAssignmentArraySchema,
 	quoteDate: z.string().optional(),
 	middlename: z.string().optional(),
 	pipelineId: z.number().int(),
 	contactDate: z.string().optional(),
 	agencyNumber: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	leadSourceId: z.number().int(),
 	annualRevenue: z.string().optional(),
 	streetAddress: z.string().optional(),
 	departmentCode: z.string().optional(),
-	otherProducers: z.array(z.unknown()).optional(),
+	otherProducers: AgencyZoomAssignmentArraySchema,
 	secondaryEmail: z.string().optional(),
 	secondaryPhone: z.string().optional(),
 	assignmentGroupId: z.number().int().optional(),
@@ -243,7 +256,7 @@ const CreateBizLeadInputSchema = z.object({
 	businessClassification: z.number().int().optional(),
 	yearsOfManagementExperience: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateBizLeadInput = z.infer<typeof CreateBizLeadInputSchema>;
@@ -271,26 +284,26 @@ const CreateLeadInputSchema = z.object({
 	tagNames: z.string().optional(),
 	firstname: z.string(),
 	groupCode: z.string().optional(),
-	otherCsrs: z.array(z.unknown()).optional(),
+	otherCsrs: AgencyZoomAssignmentArraySchema,
 	quoteDate: z.string().optional(),
 	isBusiness: z.boolean().optional(),
 	middlename: z.string().optional(),
 	pipelineId: z.number().int(),
 	contactDate: z.string().optional(),
 	agencyNumber: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	leadSourceId: z.number().int(),
 	maritalStatus: z.number().int().optional(),
 	streetAddress: z.string().optional(),
 	departmentCode: z.string().optional(),
-	otherProducers: z.array(z.unknown()).optional(),
+	otherProducers: AgencyZoomAssignmentArraySchema,
 	secondaryEmail: z.string().optional(),
 	secondaryPhone: z.string().optional(),
 	assignmentGroupId: z.number().int().optional(),
 	nextExpirationDate: z.string().optional(),
 	streetAddressLine2: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateLeadInput = z.infer<typeof CreateLeadInputSchema>;
@@ -304,7 +317,7 @@ const CreateTaskInputSchema = z.object({
 	leadId: z.number().int().optional(),
 	comments: z.string().optional(),
 	duration: z.number().int().optional(),
-	invitees: z.array(z.unknown()).optional(),
+	invitees: AgencyZoomAssignmentArraySchema,
 	assigneeId: z.number().int().optional(),
 	customerId: z.number().int().optional(),
 	dueDatetime: z.string().optional(),
@@ -312,7 +325,7 @@ const CreateTaskInputSchema = z.object({
 	timeSpecific: z.boolean().optional(),
 	lifeProfessionalId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateTaskInput = z.infer<typeof CreateTaskInputSchema>;
@@ -323,7 +336,7 @@ export type CreateTaskResponse = z.infer<typeof CreateTaskResponseSchema>;
 const DeleteACustomerInputSchema = z.object({
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteACustomerInput = z.infer<typeof DeleteACustomerInputSchema>;
@@ -335,7 +348,7 @@ const DeleteACustomerFileInputSchema = z.object({
 	fileId: z.number().int(),
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteACustomerFileInput = z.infer<typeof DeleteACustomerFileInputSchema>;
@@ -347,7 +360,7 @@ const DeleteACustomerPolicyInputSchema = z.object({
 	policyId: z.number().int(),
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteACustomerPolicyInput = z.infer<typeof DeleteACustomerPolicyInputSchema>;
@@ -358,7 +371,7 @@ export type DeleteACustomerPolicyResponse = z.infer<typeof DeleteACustomerPolicy
 const DeleteADriverInputSchema = z.object({
 	driverId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteADriverInput = z.infer<typeof DeleteADriverInputSchema>;
@@ -370,7 +383,7 @@ const DeleteALeadFileInputSchema = z.object({
 	fileId: z.number().int(),
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteALeadFileInput = z.infer<typeof DeleteALeadFileInputSchema>;
@@ -382,7 +395,7 @@ const DeleteALeadOpportunityInputSchema = z.object({
 	leadId: z.number().int(),
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteALeadOpportunityInput = z.infer<typeof DeleteALeadOpportunityInputSchema>;
@@ -394,7 +407,7 @@ const DeleteALeadQuoteInputSchema = z.object({
 	leadId: z.number().int(),
 	quoteId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteALeadQuoteInput = z.infer<typeof DeleteALeadQuoteInputSchema>;
@@ -405,7 +418,7 @@ export type DeleteALeadQuoteResponse = z.infer<typeof DeleteALeadQuoteResponseSc
 const DeleteAnOpportunityInputSchema = z.object({
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteAnOpportunityInput = z.infer<typeof DeleteAnOpportunityInputSchema>;
@@ -416,7 +429,7 @@ export type DeleteAnOpportunityResponse = z.infer<typeof DeleteAnOpportunityResp
 const DeleteATaskInputSchema = z.object({
 	taskId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteATaskInput = z.infer<typeof DeleteATaskInputSchema>;
@@ -427,7 +440,7 @@ export type DeleteATaskResponse = z.infer<typeof DeleteATaskResponseSchema>;
 const DeleteAVehicleInputSchema = z.object({
 	vehicleId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteAVehicleInput = z.infer<typeof DeleteAVehicleInputSchema>;
@@ -438,7 +451,7 @@ export type DeleteAVehicleResponse = z.infer<typeof DeleteAVehicleResponseSchema
 const DeleteMessageInputSchema = z.object({
 	id: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteMessageInput = z.infer<typeof DeleteMessageInputSchema>;
@@ -449,7 +462,7 @@ export type DeleteMessageResponse = z.infer<typeof DeleteMessageResponseSchema>;
 const DeleteThreadInputSchema = z.object({
 	threadId: z.string(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteThreadInput = z.infer<typeof DeleteThreadInputSchema>;
@@ -459,7 +472,7 @@ export type DeleteThreadResponse = z.infer<typeof DeleteThreadResponseSchema>;
 // getAListOfAssignGroups
 const GetAListOfAssignGroupsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfAssignGroupsInput = z.infer<typeof GetAListOfAssignGroupsInputSchema>;
@@ -469,7 +482,7 @@ export type GetAListOfAssignGroupsResponse = z.infer<typeof GetAListOfAssignGrou
 // getAListOfCarriers
 const GetAListOfCarriersInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfCarriersInput = z.infer<typeof GetAListOfCarriersInputSchema>;
@@ -479,7 +492,7 @@ export type GetAListOfCarriersResponse = z.infer<typeof GetAListOfCarriersRespon
 // getAListOfCsrs
 const GetAListOfCsrsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfCsrsInput = z.infer<typeof GetAListOfCsrsInputSchema>;
@@ -489,7 +502,7 @@ export type GetAListOfCsrsResponse = z.infer<typeof GetAListOfCsrsResponseSchema
 // getAListOfCustomFields
 const GetAListOfCustomFieldsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfCustomFieldsInput = z.infer<typeof GetAListOfCustomFieldsInputSchema>;
@@ -500,7 +513,7 @@ export type GetAListOfCustomFieldsResponse = z.infer<typeof GetAListOfCustomFiel
 const GetAListOfDriversForAnOpportunityInputSchema = z.object({
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfDriversForAnOpportunityInput = z.infer<typeof GetAListOfDriversForAnOpportunityInputSchema>;
@@ -510,7 +523,7 @@ export type GetAListOfDriversForAnOpportunityResponse = z.infer<typeof GetAListO
 // getAListOfEmployees
 const GetAListOfEmployeesInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfEmployeesInput = z.infer<typeof GetAListOfEmployeesInputSchema>;
@@ -520,7 +533,7 @@ export type GetAListOfEmployeesResponse = z.infer<typeof GetAListOfEmployeesResp
 // getAListOfLeadSourceCategories
 const GetAListOfLeadSourceCategoriesInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfLeadSourceCategoriesInput = z.infer<typeof GetAListOfLeadSourceCategoriesInputSchema>;
@@ -530,7 +543,7 @@ export type GetAListOfLeadSourceCategoriesResponse = z.infer<typeof GetAListOfLe
 // getAListOfLeadSources
 const GetAListOfLeadSourcesInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfLeadSourcesInput = z.infer<typeof GetAListOfLeadSourcesInputSchema>;
@@ -540,7 +553,7 @@ export type GetAListOfLeadSourcesResponse = z.infer<typeof GetAListOfLeadSources
 // getAListOfLifeProfessionals
 const GetAListOfLifeProfessionalsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfLifeProfessionalsInput = z.infer<typeof GetAListOfLifeProfessionalsInputSchema>;
@@ -550,7 +563,7 @@ export type GetAListOfLifeProfessionalsResponse = z.infer<typeof GetAListOfLifeP
 // getAListOfLocations
 const GetAListOfLocationsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfLocationsInput = z.infer<typeof GetAListOfLocationsInputSchema>;
@@ -560,7 +573,7 @@ export type GetAListOfLocationsResponse = z.infer<typeof GetAListOfLocationsResp
 // getAListOfLossReasons
 const GetAListOfLossReasonsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfLossReasonsInput = z.infer<typeof GetAListOfLossReasonsInputSchema>;
@@ -570,7 +583,7 @@ export type GetAListOfLossReasonsResponse = z.infer<typeof GetAListOfLossReasons
 // getAListOfPipelines
 const GetAListOfPipelinesInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfPipelinesInput = z.infer<typeof GetAListOfPipelinesInputSchema>;
@@ -580,7 +593,7 @@ export type GetAListOfPipelinesResponse = z.infer<typeof GetAListOfPipelinesResp
 // getAListOfProducer
 const GetAListOfProducerInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfProducerInput = z.infer<typeof GetAListOfProducerInputSchema>;
@@ -590,7 +603,7 @@ export type GetAListOfProducerResponse = z.infer<typeof GetAListOfProducerRespon
 // getAListOfProductLinesPolicyTypes
 const GetAListOfProductLinesPolicyTypesInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfProductLinesPolicyTypesInput = z.infer<typeof GetAListOfProductLinesPolicyTypesInputSchema>;
@@ -601,7 +614,7 @@ export type GetAListOfProductLinesPolicyTypesResponse = z.infer<typeof GetAListO
 const GetAListOfRecycleEventsInputSchema = z.object({
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfRecycleEventsInput = z.infer<typeof GetAListOfRecycleEventsInputSchema>;
@@ -612,7 +625,7 @@ export type GetAListOfRecycleEventsResponse = z.infer<typeof GetAListOfRecycleEv
 const GetAListOfVehiclesForAnOpportunityInputSchema = z.object({
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAListOfVehiclesForAnOpportunityInput = z.infer<typeof GetAListOfVehiclesForAnOpportunityInputSchema>;
@@ -623,7 +636,7 @@ export type GetAListOfVehiclesForAnOpportunityResponse = z.infer<typeof GetAList
 const GetAmsPoliciesForACustomerInputSchema = z.object({
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAmsPoliciesForACustomerInput = z.infer<typeof GetAmsPoliciesForACustomerInputSchema>;
@@ -633,7 +646,7 @@ export type GetAmsPoliciesForACustomerResponse = z.infer<typeof GetAmsPoliciesFo
 // getAuthUrlForV4Sso
 const GetAuthUrlForV4SsoInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAuthUrlForV4SsoInput = z.infer<typeof GetAuthUrlForV4SsoInputSchema>;
@@ -644,7 +657,7 @@ export type GetAuthUrlForV4SsoResponse = z.infer<typeof GetAuthUrlForV4SsoRespon
 const GetDepartmentsGroupsInputSchema = z.object({
 	agencyNumber: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDepartmentsGroupsInput = z.infer<typeof GetDepartmentsGroupsInputSchema>;
@@ -655,7 +668,7 @@ export type GetDepartmentsGroupsResponse = z.infer<typeof GetDepartmentsGroupsRe
 const GetLeadFilesInputSchema = z.object({
 	leadId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetLeadFilesInput = z.infer<typeof GetLeadFilesInputSchema>;
@@ -666,7 +679,7 @@ export type GetLeadFilesResponse = z.infer<typeof GetLeadFilesResponseSchema>;
 const GetLeadNotesInputSchema = z.object({
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetLeadNotesInput = z.infer<typeof GetLeadNotesInputSchema>;
@@ -677,7 +690,7 @@ export type GetLeadNotesResponse = z.infer<typeof GetLeadNotesResponseSchema>;
 const GetLeadQuotesInputSchema = z.object({
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetLeadQuotesInput = z.infer<typeof GetLeadQuotesInputSchema>;
@@ -688,7 +701,7 @@ export type GetLeadQuotesResponse = z.infer<typeof GetLeadQuotesResponseSchema>;
 const GetLeadTasksInputSchema = z.object({
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetLeadTasksInput = z.infer<typeof GetLeadTasksInputSchema>;
@@ -698,7 +711,7 @@ export type GetLeadTasksResponse = z.infer<typeof GetLeadTasksResponseSchema>;
 // getListOfEndStages
 const GetListOfEndStagesInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetListOfEndStagesInput = z.infer<typeof GetListOfEndStagesInputSchema>;
@@ -709,7 +722,7 @@ export type GetListOfEndStagesResponse = z.infer<typeof GetListOfEndStagesRespon
 const GetPoliciesForACustomerInputSchema = z.object({
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetPoliciesForACustomerInput = z.infer<typeof GetPoliciesForACustomerInputSchema>;
@@ -720,7 +733,7 @@ export type GetPoliciesForACustomerResponse = z.infer<typeof GetPoliciesForACust
 const GetTheCustomerDetailsInputSchema = z.object({
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheCustomerDetailsInput = z.infer<typeof GetTheCustomerDetailsInputSchema>;
@@ -731,7 +744,7 @@ export type GetTheCustomerDetailsResponse = z.infer<typeof GetTheCustomerDetails
 const GetTheCustomerTasksInputSchema = z.object({
 	customerId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheCustomerTasksInput = z.infer<typeof GetTheCustomerTasksInputSchema>;
@@ -742,7 +755,7 @@ export type GetTheCustomerTasksResponse = z.infer<typeof GetTheCustomerTasksResp
 const GetTheDriverDetailsInputSchema = z.object({
 	driverId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheDriverDetailsInput = z.infer<typeof GetTheDriverDetailsInputSchema>;
@@ -753,7 +766,7 @@ export type GetTheDriverDetailsResponse = z.infer<typeof GetTheDriverDetailsResp
 const GetTheLeadDetailsInputSchema = z.object({
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheLeadDetailsInput = z.infer<typeof GetTheLeadDetailsInputSchema>;
@@ -764,7 +777,7 @@ export type GetTheLeadDetailsResponse = z.infer<typeof GetTheLeadDetailsResponse
 const GetTheOpportunitiesForALeadInputSchema = z.object({
 	leadId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheOpportunitiesForALeadInput = z.infer<typeof GetTheOpportunitiesForALeadInputSchema>;
@@ -775,7 +788,7 @@ export type GetTheOpportunitiesForALeadResponse = z.infer<typeof GetTheOpportuni
 const GetTheOpportunityDetailsInputSchema = z.object({
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheOpportunityDetailsInput = z.infer<typeof GetTheOpportunityDetailsInputSchema>;
@@ -786,7 +799,7 @@ export type GetTheOpportunityDetailsResponse = z.infer<typeof GetTheOpportunityD
 const GetTheTaskDetailsInputSchema = z.object({
 	taskId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheTaskDetailsInput = z.infer<typeof GetTheTaskDetailsInputSchema>;
@@ -797,7 +810,7 @@ export type GetTheTaskDetailsResponse = z.infer<typeof GetTheTaskDetailsResponse
 const GetTheVehicleDetailsInputSchema = z.object({
 	vehicleId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTheVehicleDetailsInput = z.infer<typeof GetTheVehicleDetailsInputSchema>;
@@ -807,7 +820,7 @@ export type GetTheVehicleDetailsResponse = z.infer<typeof GetTheVehicleDetailsRe
 // getThreadDetails
 const GetThreadDetailsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetThreadDetailsInput = z.infer<typeof GetThreadDetailsInputSchema>;
@@ -819,7 +832,7 @@ const LinkADriverToOpportunityInputSchema = z.object({
 	driverId: z.number().int(),
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type LinkADriverToOpportunityInput = z.infer<typeof LinkADriverToOpportunityInputSchema>;
@@ -831,7 +844,7 @@ const LinkAVehicleToOpportunityInputSchema = z.object({
 	vehicleId: z.number().int(),
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type LinkAVehicleToOpportunityInput = z.infer<typeof LinkAVehicleToOpportunityInputSchema>;
@@ -841,7 +854,7 @@ export type LinkAVehicleToOpportunityResponse = z.infer<typeof LinkAVehicleToOpp
 // listProductCategories
 const ListProductCategoriesInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListProductCategoriesInput = z.infer<typeof ListProductCategoriesInputSchema>;
@@ -853,7 +866,7 @@ const LogTheUserInInputSchema = z.object({
 	password: z.string(),
 	username: z.string(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type LogTheUserInInput = z.infer<typeof LogTheUserInInputSchema>;
@@ -863,7 +876,7 @@ export type LogTheUserInResponse = z.infer<typeof LogTheUserInResponseSchema>;
 // logTheUserOut
 const LogTheUserOutInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type LogTheUserOutInput = z.infer<typeof LogTheUserOutInputSchema>;
@@ -875,7 +888,7 @@ const MarkThreadAsUnreadApiEndpointInputSchema = z.object({
 	threadId: z.string(),
 	markUnread: z.boolean(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type MarkThreadAsUnreadApiEndpointInput = z.infer<typeof MarkThreadAsUnreadApiEndpointInputSchema>;
@@ -886,9 +899,9 @@ export type MarkThreadAsUnreadApiEndpointResponse = z.infer<typeof MarkThreadAsU
 const MoveLeadToSoldInputSchema = z.object({
 	leadId: z.number().int(),
 	keepOpen: z.boolean().optional(),
-	soldProducts: z.array(z.unknown()),
+	soldProducts: AgencyZoomSoldProductsSchema,
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type MoveLeadToSoldInput = z.infer<typeof MoveLeadToSoldInputSchema>;
@@ -899,7 +912,7 @@ export type MoveLeadToSoldResponse = z.infer<typeof MoveLeadToSoldResponseSchema
 const RemoveTextThreadEndpointInputSchema = z.object({
 	threadId: z.string(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type RemoveTextThreadEndpointInput = z.infer<typeof RemoveTextThreadEndpointInputSchema>;
@@ -911,7 +924,7 @@ const ReopenATaskInputSchema = z.object({
 	taskId: z.number().int(),
 	comments: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ReopenATaskInput = z.infer<typeof ReopenATaskInputSchema>;
@@ -921,7 +934,7 @@ export type ReopenATaskResponse = z.infer<typeof ReopenATaskResponseSchema>;
 // searchBusinessClassifications
 const SearchBusinessClassificationsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchBusinessClassificationsInput = z.infer<typeof SearchBusinessClassificationsInputSchema>;
@@ -931,7 +944,7 @@ export type SearchBusinessClassificationsResponse = z.infer<typeof SearchBusines
 // searchCustomers
 const SearchCustomersInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchCustomersInput = z.infer<typeof SearchCustomersInputSchema>;
@@ -941,7 +954,7 @@ export type SearchCustomersResponse = z.infer<typeof SearchCustomersResponseSche
 // searchEmailThreads
 const SearchEmailThreadsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchEmailThreadsInput = z.infer<typeof SearchEmailThreadsInputSchema>;
@@ -951,7 +964,7 @@ export type SearchEmailThreadsResponse = z.infer<typeof SearchEmailThreadsRespon
 // searchLeads
 const SearchLeadsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchLeadsInput = z.infer<typeof SearchLeadsInputSchema>;
@@ -961,7 +974,7 @@ export type SearchLeadsResponse = z.infer<typeof SearchLeadsResponseSchema>;
 // searchLeadsCount
 const SearchLeadsCountInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchLeadsCountInput = z.infer<typeof SearchLeadsCountInputSchema>;
@@ -971,7 +984,7 @@ export type SearchLeadsCountResponse = z.infer<typeof SearchLeadsCountResponseSc
 // searchLifeAndHealthLeads
 const SearchLifeAndHealthLeadsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchLifeAndHealthLeadsInput = z.infer<typeof SearchLifeAndHealthLeadsInputSchema>;
@@ -981,7 +994,7 @@ export type SearchLifeAndHealthLeadsResponse = z.infer<typeof SearchLifeAndHealt
 // searchSmsThreads
 const SearchSmsThreadsInputSchema = z.object({
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchSmsThreadsInput = z.infer<typeof SearchSmsThreadsInputSchema>;
@@ -1005,7 +1018,7 @@ const SearchTasksInputSchema = z.object({
 	lifeProfessionalId: z.number().int().optional(),
 	leadSourceCategoryId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SearchTasksInput = z.infer<typeof SearchTasksInputSchema>;
@@ -1020,7 +1033,7 @@ const ServiceTicketListInputSchema = z.object({
 	categoryId: z.number().int().optional(),
 	priorityId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ServiceTicketListInput = z.infer<typeof ServiceTicketListInputSchema>;
@@ -1031,7 +1044,7 @@ export type ServiceTicketListResponse = z.infer<typeof ServiceTicketListResponse
 const TextDetailThreadInputSchema = z.object({
 	threadId: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type TextDetailThreadInput = z.infer<typeof TextDetailThreadInputSchema>;
@@ -1043,7 +1056,7 @@ const UnlinkADriverFromOpportunityInputSchema = z.object({
 	driverId: z.number().int(),
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UnlinkADriverFromOpportunityInput = z.infer<typeof UnlinkADriverFromOpportunityInputSchema>;
@@ -1055,7 +1068,7 @@ const UnlinkAVehicleFromOpportunityInputSchema = z.object({
 	vehicleId: z.number().int(),
 	opportunityId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UnlinkAVehicleFromOpportunityInput = z.infer<typeof UnlinkAVehicleFromOpportunityInputSchema>;
@@ -1067,7 +1080,7 @@ const UnreadThreadInputSchema = z.object({
 	threadId: z.string(),
 	markUnread: z.boolean(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UnreadThreadInput = z.infer<typeof UnreadThreadInputSchema>;
@@ -1087,7 +1100,7 @@ const UpdateADriverSDetailsInputSchema = z.object({
 	maritalStatus: z.number().int().optional(),
 	stateLicensed: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateADriverSDetailsInput = z.infer<typeof UpdateADriverSDetailsInputSchema>;
@@ -1101,7 +1114,7 @@ const UpdateALeadFileNameInputSchema = z.object({
 	newFileName: z.string(),
 	customerReferralId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateALeadFileNameInput = z.infer<typeof UpdateALeadFileNameInputSchema>;
@@ -1115,10 +1128,10 @@ const UpdateALeadOpportunityInputSchema = z.object({
 	leadId: z.number().int(),
 	premium: z.number().int(),
 	carrierId: z.number().int(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	productLineId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateALeadOpportunityInput = z.infer<typeof UpdateALeadOpportunityInputSchema>;
@@ -1132,10 +1145,10 @@ const UpdateALeadQuoteInputSchema = z.object({
 	leadId: z.number().int(),
 	premium: z.number().int(),
 	carrierId: z.number().int(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	productLineId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateALeadQuoteInput = z.infer<typeof UpdateALeadQuoteInputSchema>;
@@ -1148,7 +1161,7 @@ const UpdateAnOpportunityInputSchema = z.object({
 	premium: z.number().int().optional(),
 	carrierId: z.number().int().optional(),
 	expiryDate: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	opportunityId: z.number().int(),
 	productLineId: z.number().int().optional(),
 	property__zip: z.string().optional(),
@@ -1159,7 +1172,7 @@ const UpdateAnOpportunityInputSchema = z.object({
 	property__address2: z.string().optional(),
 	property__useMailingAddressAsLocation: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateAnOpportunityInput = z.infer<typeof UpdateAnOpportunityInputSchema>;
@@ -1189,7 +1202,7 @@ const UpdateAPolicyInputSchema = z.object({
 	priorPolicyNumber: z.string().optional(),
 	productCategoryId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateAPolicyInput = z.infer<typeof UpdateAPolicyInputSchema>;
@@ -1205,7 +1218,7 @@ const UpdateAVehicleSDetailsInputSchema = z.object({
 	ownership: z.string().optional(),
 	vehicleId: z.number().int(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateAVehicleSDetailsInput = z.infer<typeof UpdateAVehicleSDetailsInputSchema>;
@@ -1236,18 +1249,18 @@ const UpdateBusinessLeadInputSchema = z.object({
 	tagNames: z.string().optional(),
 	firstname: z.string(),
 	groupCode: z.string().optional(),
-	otherCsrs: z.array(z.unknown()).optional(),
+	otherCsrs: AgencyZoomAssignmentArraySchema,
 	quoteDate: z.string().optional(),
 	middlename: z.string().optional(),
 	pipelineId: z.number().int(),
 	contactDate: z.string().optional(),
 	agencyNumber: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	leadSourceId: z.number().int(),
 	annualRevenue: z.string().optional(),
 	streetAddress: z.string().optional(),
 	departmentCode: z.string().optional(),
-	otherProducers: z.array(z.unknown()).optional(),
+	otherProducers: AgencyZoomAssignmentArraySchema,
 	secondaryEmail: z.string().optional(),
 	secondaryPhone: z.string().optional(),
 	assignmentGroupId: z.number().int().optional(),
@@ -1258,7 +1271,7 @@ const UpdateBusinessLeadInputSchema = z.object({
 	businessClassification: z.number().int().optional(),
 	yearsOfManagementExperience: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateBusinessLeadInput = z.infer<typeof UpdateBusinessLeadInputSchema>;
@@ -1282,7 +1295,7 @@ const UpdateCustomerInputSchema = z.object({
 	createDate: z.string().optional(),
 	customerId: z.number().int(),
 	bizCustomer: z.number().int().optional(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	totalPayroll: z.number().int().optional(),
 	annualRevenue: z.number().int().optional(),
 	streetAddress: z.string().optional(),
@@ -1293,7 +1306,7 @@ const UpdateCustomerInputSchema = z.object({
 	contactMiddlename: z.string().optional(),
 	numberOfEmployees: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateCustomerInput = z.infer<typeof UpdateCustomerInputSchema>;
@@ -1322,26 +1335,26 @@ const UpdateLeadInputSchema = z.object({
 	tagNames: z.string().optional(),
 	firstname: z.string(),
 	groupCode: z.string().optional(),
-	otherCsrs: z.array(z.unknown()).optional(),
+	otherCsrs: AgencyZoomAssignmentArraySchema,
 	quoteDate: z.string().optional(),
 	isBusiness: z.boolean().optional(),
 	middlename: z.string().optional(),
 	pipelineId: z.number().int(),
 	contactDate: z.string().optional(),
 	agencyNumber: z.string().optional(),
-	customFields: z.array(z.unknown()).optional(),
+	customFields: AgencyZoomCustomFieldsSchema,
 	leadSourceId: z.number().int(),
 	maritalStatus: z.number().int().optional(),
 	streetAddress: z.string().optional(),
 	departmentCode: z.string().optional(),
-	otherProducers: z.array(z.unknown()).optional(),
+	otherProducers: AgencyZoomAssignmentArraySchema,
 	secondaryEmail: z.string().optional(),
 	secondaryPhone: z.string().optional(),
 	assignmentGroupId: z.number().int().optional(),
 	nextExpirationDate: z.string().optional(),
 	streetAddressLine2: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateLeadInput = z.infer<typeof UpdateLeadInputSchema>;
@@ -1353,7 +1366,7 @@ const UpdateLeadStatusByIdInputSchema = z.object({
 	date: z.string().optional(),
 	leadId: z.number().int(),
 	status: z.number().int(),
-	tagIds: z.array(z.unknown()).optional(),
+	tagIds: AgencyZoomTagIdsSchema,
 	toStageId: z.number().int().optional(),
 	xDateType: z.string().optional(),
 	workflowId: z.number().int().optional(),
@@ -1363,7 +1376,7 @@ const UpdateLeadStatusByIdInputSchema = z.object({
 	recycleToPipeline: z.number().int().optional(),
 	changeLeadSourceTo: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateLeadStatusByIdInput = z.infer<typeof UpdateLeadStatusByIdInputSchema>;
@@ -1377,7 +1390,7 @@ const UpdateMyProfileInputSchema = z.object({
 	lastname: z.string(),
 	firstname: z.string(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateMyProfileInput = z.infer<typeof UpdateMyProfileInputSchema>;
@@ -1390,7 +1403,7 @@ const UpdateTagsForAPolicyInputSchema = z.object({
 	tagNames: z.string().optional(),
 	amsPolicyId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateTagsForAPolicyInput = z.infer<typeof UpdateTagsForAPolicyInputSchema>;
@@ -1405,7 +1418,7 @@ const UpdateTaskInputSchema = z.object({
 	taskId: z.number().int(),
 	comments: z.string().optional(),
 	duration: z.number().int().optional(),
-	invitees: z.array(z.unknown()).optional(),
+	invitees: AgencyZoomAssignmentArraySchema,
 	assigneeId: z.number().int().optional(),
 	customerId: z.number().int().optional(),
 	dueDatetime: z.string().optional(),
@@ -1413,7 +1426,7 @@ const UpdateTaskInputSchema = z.object({
 	timeSpecific: z.boolean().optional(),
 	lifeProfessionalId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateTaskInput = z.infer<typeof UpdateTaskInputSchema>;
@@ -1425,7 +1438,7 @@ const V4SsoLogTheUserInInputSchema = z.object({
 	password: z.string(),
 	username: z.string(),
 	body: AgencyZoomOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type V4SsoLogTheUserInInput = z.infer<typeof V4SsoLogTheUserInInputSchema>;
@@ -1645,5 +1658,7 @@ export type AgencyZoomEndpointOutputs = {
 };
 
 export type AgencyZoomEndpointInput = AgencyZoomEndpointInputs[keyof AgencyZoomEndpointInputs] & {
+	// Index signature required: factory helpers (resolvePath, buildQuery, requestBody) access
+	// fields by dynamic string keys; stricter per-key typing is not feasible across all 99 ops.
 	[key: string]: unknown;
 };
