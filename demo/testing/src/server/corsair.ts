@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
+import { algolia } from '@corsair-dev/algolia';
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -55,6 +56,10 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
+		algolia({
+			applicationId: process.env.ALGOLIA_APPLICATION_ID,
+			key: process.env.ALGOLIA_API_KEY,
+		}),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),
