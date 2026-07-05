@@ -71,6 +71,7 @@ import type { CorsairEndpoint } from 'corsair/core';
         }
 
         function buildQuery(route: AlgoliaRoute, input: AlgoliaEndpointInput) {
+        	// AlgoliaEndpointInput is a union of 133 input schemas; query is narrowed here for merging.
         	const query: Record<string, unknown> =
         		input.query &&
         		typeof input.query === 'object' &&
@@ -124,11 +125,13 @@ import type { CorsairEndpoint } from 'corsair/core';
         	input: AlgoliaEndpointInput,
         	route: Pick<AlgoliaRoute, 'hostType'>,
         ): Promise<string> {
+        	// Optional per-request baseUrl override; not present on every input schema in the union.
         	const explicitBaseUrl = (input as { baseUrl?: string }).baseUrl;
         	if (explicitBaseUrl) return explicitBaseUrl;
 
         	const applicationId =
         		ctx.options.applicationId ?? (await ctx.keys.get_applicationId()) ?? '';
+        	// region is optional on analytics/ingestion inputs; fall back to plugin default.
         	const region =
         		(input as { region?: string }).region ?? ctx.options.region ?? 'us';
 
@@ -160,12 +163,13 @@ import type { CorsairEndpoint } from 'corsair/core';
         	ctx: AlgoliaContext,
         	input: AlgoliaEndpointInput,
         	route: AlgoliaRoute,
+        	status: 'completed' | 'failed',
         ) {
         	await logEventFromContext(
         		ctx,
         		`algolia.${route.group}.${route.name}`,
         		{ method: route.method, path: route.path, hostType: route.hostType },
-        		'completed',
+        		status,
         	);
         }
 
@@ -183,6 +187,7 @@ import type { CorsairEndpoint } from 'corsair/core';
         		method: route.method,
         		body: requestBody(route, input),
         		query: buildQuery(route, input),
+        		// headers is optional unknown on AlgoliaEndpointInput; callers pass string header maps.
         		headers: input.headers as Record<string, string> | undefined,
         		baseUrl,
         	});
@@ -193,9 +198,13 @@ import type { CorsairEndpoint } from 'corsair/core';
         	input: AlgoliaEndpointInput,
         	route: AlgoliaRoute,
         ) {
+        	let status: 'completed' | 'failed' = 'completed';
         	try {
         		return await requestAlgoliaOperation(ctx, input, route);
+        	} catch (error) {
+        		status = 'failed';
+        		throw error;
         	} finally {
-        		await logAlgoliaOperation(ctx, input, route);
+        		await logAlgoliaOperation(ctx, input, route, status);
         	}
         }

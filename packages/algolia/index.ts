@@ -77,6 +77,8 @@ export type ExternalAlgoliaPlugin<T extends AlgoliaPluginOptions> =
 	BaseAlgoliaPlugin<T>;
 
 export function algolia<const T extends AlgoliaPluginOptions>(
+	// Cast is safe: if the caller omits options entirely, an empty object is
+	// immediately merged with defaults below, satisfying the T constraint.
 	incomingOptions: AlgoliaPluginOptions & T = {} as AlgoliaPluginOptions & T,
 ): ExternalAlgoliaPlugin<T> {
 	const options = {
