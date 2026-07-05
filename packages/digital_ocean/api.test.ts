@@ -34,6 +34,7 @@ function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
 	});
 }
 
+// Partial CorsairContext stub for unit tests; full context is provided at runtime by the plugin host.
 const mockCtx = {
 	key: 'test-api-key',
 	$getAccountId: () => 'test-account-id',

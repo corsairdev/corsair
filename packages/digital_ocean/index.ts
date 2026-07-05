@@ -20,6 +20,7 @@ import { errorHandlers } from './error-handlers';
 import { DigitalOceanSchema } from './schema';
 
 export const digitalOceanEndpointMeta =
+	// Generated meta keys are validated against the nested endpoint tree at compile time.
 	generatedDigitalOceanEndpointMeta satisfies RequiredPluginEndpointMeta<
 		typeof digitalOceanEndpointsNested
 	>;

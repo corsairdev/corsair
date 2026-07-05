@@ -1,41 +1,24 @@
-import { digitalOceanRoutes } from './routes';
 import type { DigitalOceanEndpoint } from './factory';
-import { logDigitalOceanOperation, requestDigitalOceanOperation } from './factory';
-
-function getRoute(name: string) {
-	const route = digitalOceanRoutes.find((candidate) => candidate.name === name);
-	if (!route) {
-		throw new Error(`[digital_ocean] missing route: ${name}`);
-	}
-	return route;
-}
+import { executeDigitalOceanOperation, getRoute } from './factory';
 
 const createCustomImageRoute = getRoute('createCustomImage');
 export const createCustomImage: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, createCustomImageRoute);
-	await logDigitalOceanOperation(ctx, input, createCustomImageRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, createCustomImageRoute);
 };
 
 const deleteImageRoute = getRoute('deleteImage');
 export const deleteImage: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, deleteImageRoute);
-	await logDigitalOceanOperation(ctx, input, deleteImageRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, deleteImageRoute);
 };
 
 const listAllImagesRoute = getRoute('listAllImages');
 export const listAllImages: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, listAllImagesRoute);
-	await logDigitalOceanOperation(ctx, input, listAllImagesRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, listAllImagesRoute);
 };
 
 const retrieveExistingImageRoute = getRoute('retrieveExistingImage');
 export const retrieveExistingImage: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, retrieveExistingImageRoute);
-	await logDigitalOceanOperation(ctx, input, retrieveExistingImageRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, retrieveExistingImageRoute);
 };
 
 export const ImagesEndpoints = {

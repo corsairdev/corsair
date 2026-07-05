@@ -31,6 +31,7 @@ export const digitalOceanEndpointsNested = {
 	vpcs: VpcsEndpoints
 } as const;
 
+// Route metadata is built dynamically from digitalOceanRoutes; cast satisfies RequiredPluginEndpointMeta shape.
 export const digitalOceanEndpointMeta = Object.fromEntries(
 	digitalOceanRoutes.map((route) => [
 		`${route.group}.${route.name}`,

@@ -1,48 +1,29 @@
-import { digitalOceanRoutes } from './routes';
 import type { DigitalOceanEndpoint } from './factory';
-import { logDigitalOceanOperation, requestDigitalOceanOperation } from './factory';
-
-function getRoute(name: string) {
-	const route = digitalOceanRoutes.find((candidate) => candidate.name === name);
-	if (!route) {
-		throw new Error(`[digital_ocean] missing route: ${name}`);
-	}
-	return route;
-}
+import { executeDigitalOceanOperation, getRoute } from './factory';
 
 const createNewVpcRoute = getRoute('createNewVpc');
 export const createNewVpc: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, createNewVpcRoute);
-	await logDigitalOceanOperation(ctx, input, createNewVpcRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, createNewVpcRoute);
 };
 
 const deleteVpcRoute = getRoute('deleteVpc');
 export const deleteVpc: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, deleteVpcRoute);
-	await logDigitalOceanOperation(ctx, input, deleteVpcRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, deleteVpcRoute);
 };
 
 const listAllVpcsRoute = getRoute('listAllVpcs');
 export const listAllVpcs: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, listAllVpcsRoute);
-	await logDigitalOceanOperation(ctx, input, listAllVpcsRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, listAllVpcsRoute);
 };
 
 const retrieveVpcRoute = getRoute('retrieveVpc');
 export const retrieveVpc: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, retrieveVpcRoute);
-	await logDigitalOceanOperation(ctx, input, retrieveVpcRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, retrieveVpcRoute);
 };
 
 const updateVpcRoute = getRoute('updateVpc');
 export const updateVpc: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, updateVpcRoute);
-	await logDigitalOceanOperation(ctx, input, updateVpcRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, updateVpcRoute);
 };
 
 export const VpcsEndpoints = {

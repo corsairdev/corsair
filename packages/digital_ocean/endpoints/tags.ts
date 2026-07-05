@@ -1,55 +1,34 @@
-import { digitalOceanRoutes } from './routes';
 import type { DigitalOceanEndpoint } from './factory';
-import { logDigitalOceanOperation, requestDigitalOceanOperation } from './factory';
-
-function getRoute(name: string) {
-	const route = digitalOceanRoutes.find((candidate) => candidate.name === name);
-	if (!route) {
-		throw new Error(`[digital_ocean] missing route: ${name}`);
-	}
-	return route;
-}
+import { executeDigitalOceanOperation, getRoute } from './factory';
 
 const createNewTagRoute = getRoute('createNewTag');
 export const createNewTag: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, createNewTagRoute);
-	await logDigitalOceanOperation(ctx, input, createNewTagRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, createNewTagRoute);
 };
 
 const deleteTagRoute = getRoute('deleteTag');
 export const deleteTag: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, deleteTagRoute);
-	await logDigitalOceanOperation(ctx, input, deleteTagRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, deleteTagRoute);
 };
 
 const listAllTagsRoute = getRoute('listAllTags');
 export const listAllTags: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, listAllTagsRoute);
-	await logDigitalOceanOperation(ctx, input, listAllTagsRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, listAllTagsRoute);
 };
 
 const retrieveTagRoute = getRoute('retrieveTag');
 export const retrieveTag: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, retrieveTagRoute);
-	await logDigitalOceanOperation(ctx, input, retrieveTagRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, retrieveTagRoute);
 };
 
 const tagResourceRoute = getRoute('tagResource');
 export const tagResource: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, tagResourceRoute);
-	await logDigitalOceanOperation(ctx, input, tagResourceRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, tagResourceRoute);
 };
 
 const untagResourceRoute = getRoute('untagResource');
 export const untagResource: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, untagResourceRoute);
-	await logDigitalOceanOperation(ctx, input, untagResourceRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, untagResourceRoute);
 };
 
 export const TagsEndpoints = {

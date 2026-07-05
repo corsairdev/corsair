@@ -285,6 +285,8 @@ def build_routes(operations: list[Operation]) -> list[Route]:
         key = endpoint_key(op.slug, used_keys)
         template_keys = path_template_keys(path)
         path_params = [resolve_path_param_name(k, op.params) for k in template_keys]
+        if key in ("deleteDomainRecord", "retrieveDomainRecord"):
+            path_params = ["domain_name", "record_id"]
         path_param_set = set(path_params)
         query_params = []
         if method == "GET":

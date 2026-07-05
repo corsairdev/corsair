@@ -1,41 +1,24 @@
-import { digitalOceanRoutes } from './routes';
 import type { DigitalOceanEndpoint } from './factory';
-import { logDigitalOceanOperation, requestDigitalOceanOperation } from './factory';
-
-function getRoute(name: string) {
-	const route = digitalOceanRoutes.find((candidate) => candidate.name === name);
-	if (!route) {
-		throw new Error(`[digital_ocean] missing route: ${name}`);
-	}
-	return route;
-}
+import { executeDigitalOceanOperation, getRoute } from './factory';
 
 const createNewDomainRoute = getRoute('createNewDomain');
 export const createNewDomain: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, createNewDomainRoute);
-	await logDigitalOceanOperation(ctx, input, createNewDomainRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, createNewDomainRoute);
 };
 
 const deleteDomainRoute = getRoute('deleteDomain');
 export const deleteDomain: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, deleteDomainRoute);
-	await logDigitalOceanOperation(ctx, input, deleteDomainRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, deleteDomainRoute);
 };
 
 const listAllDomainsRoute = getRoute('listAllDomains');
 export const listAllDomains: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, listAllDomainsRoute);
-	await logDigitalOceanOperation(ctx, input, listAllDomainsRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, listAllDomainsRoute);
 };
 
 const retrieveDomainRoute = getRoute('retrieveDomain');
 export const retrieveDomain: DigitalOceanEndpoint = async (ctx, input = {}) => {
-	const result = await requestDigitalOceanOperation(ctx, input, retrieveDomainRoute);
-	await logDigitalOceanOperation(ctx, input, retrieveDomainRoute);
-	return result;
+	return executeDigitalOceanOperation(ctx, input, retrieveDomainRoute);
 };
 
 export const DomainsEndpoints = {

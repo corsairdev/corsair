@@ -2,7 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { makeDigitalOceanRequest } from '../client';
 import type { DigitalOceanContext } from '../index';
-import type { DigitalOceanRoute } from './routes';
+import { digitalOceanRoutes, type DigitalOceanRoute } from './routes';
 import type { DigitalOceanEndpointInput } from './types';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
@@ -15,6 +15,7 @@ const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 
 const BODY_CONTROL_KEYS = new Set(['body', 'query', 'headers']);
 
+// DigitalOcean response payloads vary by resource; outputs validated via shared Zod schemas.
 export type DigitalOceanEndpoint = CorsairEndpoint<
 	DigitalOceanContext,
 	DigitalOceanEndpointInput,
@@ -41,11 +42,24 @@ function resolvePathParam(input: DigitalOceanEndpointInput, pathKey: string): un
 	return undefined;
 }
 
-export function resolvePath(path: string, input: DigitalOceanEndpointInput): string {
+export function resolvePath(
+	path: string,
+	input: DigitalOceanEndpointInput,
+	route?: Pick<DigitalOceanRoute, 'pathParams'>,
+): string {
 	const pathOnly = path.split('?')[0] ?? path;
-	return pathOnly.replace(/\{([^}]+)\}/g, (_, key: string) =>
-		encodePathPart(resolvePathParam(input, key)),
-	);
+	let index = 0;
+	return pathOnly.replace(/\{([^}]+)\}/g, (_, placeholder: string) => {
+		const mappedKey = route?.pathParams?.[index];
+		index += 1;
+		if (mappedKey !== undefined) {
+			const direct = input[mappedKey] ?? input[camelToSnake(mappedKey)];
+			if (direct !== undefined) {
+				return encodePathPart(direct);
+			}
+		}
+		return encodePathPart(resolvePathParam(input, placeholder));
+	});
 }
 
 function buildQuery(route: DigitalOceanRoute, input: DigitalOceanEndpointInput) {
@@ -78,6 +92,14 @@ function requestBody(route: DigitalOceanRoute, input: DigitalOceanEndpointInput)
 	return Object.keys(body).length > 0 ? body : undefined;
 }
 
+export function getRoute(name: string): DigitalOceanRoute {
+	const route = digitalOceanRoutes.find((candidate) => candidate.name === name);
+	if (!route) {
+		throw new Error(`[digital_ocean] missing route: ${name}`);
+	}
+	return route;
+}
+
 export async function logDigitalOceanOperation(
 	ctx: DigitalOceanContext,
 	input: DigitalOceanEndpointInput,
@@ -96,10 +118,23 @@ export async function requestDigitalOceanOperation(
 	input: DigitalOceanEndpointInput,
 	route: DigitalOceanRoute,
 ) {
-	return makeDigitalOceanRequest(resolvePath(route.path, input), ctx.key, {
+	return makeDigitalOceanRequest(resolvePath(route.path, input, route), ctx.key, {
 		method: route.method,
 		body: requestBody(route, input),
 		query: buildQuery(route, input),
+		// headers is optional unknown on DigitalOceanEndpointInput; callers pass string header maps.
 		headers: input.headers as Record<string, string> | undefined,
 	});
+}
+
+export async function executeDigitalOceanOperation(
+	ctx: DigitalOceanContext,
+	input: DigitalOceanEndpointInput,
+	route: DigitalOceanRoute,
+) {
+	try {
+		return await requestDigitalOceanOperation(ctx, input, route);
+	} finally {
+		await logDigitalOceanOperation(ctx, input, route);
+	}
 }
