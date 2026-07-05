@@ -36,7 +36,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async () => {
-			console.log('[API_SPORTS] Authentication failed — check your x-apisports-key.');
+			console.error('[API_SPORTS] Authentication failed — check your x-apisports-key.');
 			return { maxRetries: 0 };
 		},
 	},

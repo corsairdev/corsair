@@ -62,7 +62,7 @@ ROUTES: list[tuple[str, str, str, str, str]] = [
     ("basketball", "getBasketballBookmakers", "basketball", "/bookmakers", "Get Basketball Bookmakers"),
     ("basketball", "getNbaGameStatistics", "nba", "/games/statistics", "Get NBA Game Statistics"),
     ("basketball", "getPlayerStatistics", "nba", "/players/statistics", "Get Player Statistics"),
-    ("basketball", "getGameStatisticsByTeams", "nba", "/games/statistics", "Get Game Statistics by Teams"),
+    ("basketball", "getGameStatisticsByTeams", "basketball", "/games/statistics/teams", "Get Game Statistics by Teams"),
     ("basketball", "getGamesEvents", "nba", "/games/events", "Get Games Events"),
     # AFL
     ("afl", "getAflSeasons", "afl", "/seasons", "Get AFL Seasons"),

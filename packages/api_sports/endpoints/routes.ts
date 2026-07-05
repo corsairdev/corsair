@@ -52,7 +52,11 @@ export const API_SPORTS_ROUTES = {
 	getBasketballBookmakers: { sport: 'basketball', path: '/bookmakers', description: "Get Basketball Bookmakers" },
 	getNbaGameStatistics: { sport: 'nba', path: '/games/statistics', description: "Get NBA Game Statistics" },
 	getPlayerStatistics: { sport: 'nba', path: '/players/statistics', description: "Get Player Statistics" },
-	getGameStatisticsByTeams: { sport: 'nba', path: '/games/statistics', description: "Get Game Statistics by Teams" },
+	getGameStatisticsByTeams: {
+		sport: 'basketball',
+		path: '/games/statistics/teams',
+		description: 'Get Game Statistics by Teams',
+	},
 	getGamesEvents: { sport: 'nba', path: '/games/events', description: "Get Games Events" },
 	getAflSeasons: { sport: 'afl', path: '/seasons', description: "Get AFL Seasons" },
 	getAflGames: { sport: 'afl', path: '/games', description: "Get AFL Games" },
