@@ -4,6 +4,7 @@ import { ApiError, request } from 'corsair/http';
 export class AltTextAiAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// API error bodies vary by endpoint; unknown forces callers to narrow before use.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -48,6 +49,7 @@ function buildConfig(apiKey?: string, isJsonWrite = false): OpenAPIConfig {
 	};
 }
 
+// Catch values are untyped at runtime; narrow to ApiError/Error before rethrowing.
 async function handleRequestError(error: unknown): Promise<never> {
 	if (error instanceof ApiError) {
 		throw new AltTextAiAPIError(error.message, error.status, {
@@ -87,7 +89,10 @@ export async function makeAltTextAiRequest<T>(
 		body: isJsonWrite ? body : undefined,
 		formData: isWrite && formData ? formData : undefined,
 		mediaType: isJsonWrite ? 'application/json' : undefined,
-		query: method === 'GET' || method === 'DELETE' ? query : undefined,
+		query:
+			method === 'GET' || method === 'DELETE' || method === 'PUT'
+				? query
+				: undefined,
 	};
 
 	try {

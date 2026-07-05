@@ -15,6 +15,7 @@ export const get: AltTextAiEndpoints['getAccount'] = async (ctx) => {
 };
 
 export const update: AltTextAiEndpoints['updateAccount'] = async (ctx, input) => {
+	// UpdateAccountInput wraps fields under `account`; cast satisfies JSON body typing.
 	const response = await makeAltTextAiRequest<
 		AltTextAiEndpointOutputs['updateAccount']
 	>('/account', {

@@ -1,6 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import type { AltTextAiAPIError } from './client';
 
+// CorsairErrorHandler receives a plain Error; duck-type AltText-specific fields
+// without instanceof so handlers work across module boundaries.
 function getStatus(error: Error): number | undefined {
 	return (error as Partial<AltTextAiAPIError>).status;
 }

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAltTextAiRequest } from '../client';
 import type { AltTextAiEndpoints } from '../index';
+import { cacheImageRecord } from './shared';
 import type { AltTextAiEndpointOutputs } from './types';
 
 export const list: AltTextAiEndpoints['list'] = async (ctx, input) => {
@@ -20,6 +21,7 @@ export const list: AltTextAiEndpoints['list'] = async (ctx, input) => {
 };
 
 export const create: AltTextAiEndpoints['create'] = async (ctx, input) => {
+	// CreateImageInput includes optional fields beyond Record<string, unknown>.
 	const response = await makeAltTextAiRequest<
 		AltTextAiEndpointOutputs['create']
 	>('/images', {
@@ -28,13 +30,7 @@ export const create: AltTextAiEndpoints['create'] = async (ctx, input) => {
 		body: input as Record<string, unknown>,
 	});
 
-	if (response.asset_id && ctx.db.images) {
-		try {
-			await ctx.db.images.upsertByEntityId(response.asset_id, { ...response });
-		} catch (error) {
-			console.warn('Failed to save image to database:', error);
-		}
-	}
+	await cacheImageRecord(ctx, response);
 
 	await logEventFromContext(ctx, 'alttext_ai.images.create', { ...input }, 'completed');
 	return response;
@@ -67,13 +63,7 @@ export const update: AltTextAiEndpoints['update'] = async (ctx, input) => {
 		body: { image },
 	});
 
-	if (response.asset_id && ctx.db.images) {
-		try {
-			await ctx.db.images.upsertByEntityId(response.asset_id, { ...response });
-		} catch (error) {
-			console.warn('Failed to save image to database:', error);
-		}
-	}
+	await cacheImageRecord(ctx, response);
 
 	await logEventFromContext(
 		ctx,
@@ -143,6 +133,7 @@ export const bulkCreate: AltTextAiEndpoints['bulkCreate'] = async (ctx, input) =
 };
 
 export const pageScrape: AltTextAiEndpoints['pageScrape'] = async (ctx, input) => {
+	// PageScrapeInput uses .loose() Zod schema; cast satisfies JSON body typing.
 	const response = await makeAltTextAiRequest<
 		AltTextAiEndpointOutputs['pageScrape']
 	>('/images/page_scrape', {
