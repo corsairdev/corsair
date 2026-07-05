@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
+import { active_trail } from '@corsair-dev/active_trail';
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -55,6 +56,9 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
+		active_trail({
+			key: process.env.ACTIVE_TRAIL_API_KEY,
+		}),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),
