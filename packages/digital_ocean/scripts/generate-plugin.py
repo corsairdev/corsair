@@ -1,0 +1,1230 @@
+#!/usr/bin/env python3
+"""Generate the DigitalOcean Corsair plugin from Composio toolkit MD and explicit API routes."""
+
+from __future__ import annotations
+
+import json
+import re
+import textwrap
+from collections import defaultdict
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
+
+ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.parents[1]
+COMPOSIO_MD = Path("/tmp/digital_ocean_composio.md")
+
+PLUGIN_ID = "digital_ocean"
+PASCAL = "DigitalOcean"
+CAMEL = "digitalOcean"
+PACKAGE_NAME = "@corsair-dev/digital_ocean"
+BASE_URL = "https://api.digitalocean.com/v2"
+PREFIX = "DIGITAL_OCEAN_"
+
+SKIP_SLUGS = {"DIGITAL_OCEAN_LIST_APPS"}
+
+# slug -> (group, method, path)
+MANUAL_ROUTES: dict[str, tuple[str, str, str]] = {
+    "DIGITAL_OCEAN_CREATE_CUSTOM_IMAGE": ("images", "POST", "/images"),
+    "DIGITAL_OCEAN_CREATE_DATABASE_CLUSTER": ("databases", "POST", "/databases"),
+    "DIGITAL_OCEAN_CREATE_NEW_BLOCK_STORAGE_VOLUME": ("volumes", "POST", "/volumes"),
+    "DIGITAL_OCEAN_CREATE_NEW_DOMAIN": ("domains", "POST", "/domains"),
+    "DIGITAL_OCEAN_CREATE_NEW_DOMAIN_RECORD": (
+        "domainRecords",
+        "POST",
+        "/domains/{domain_name}/records",
+    ),
+    "DIGITAL_OCEAN_CREATE_NEW_DROPLET": ("droplets", "POST", "/droplets"),
+    "DIGITAL_OCEAN_CREATE_NEW_FIREWALL": ("firewalls", "POST", "/firewalls"),
+    "DIGITAL_OCEAN_CREATE_NEW_KUBERNETES_CLUSTER": (
+        "kubernetes",
+        "POST",
+        "/kubernetes/clusters",
+    ),
+    "DIGITAL_OCEAN_CREATE_NEW_LOAD_BALANCER": ("loadBalancers", "POST", "/load_balancers"),
+    "DIGITAL_OCEAN_CREATE_NEW_SSH_KEY": ("sshKeys", "POST", "/account/keys"),
+    "DIGITAL_OCEAN_CREATE_NEW_TAG": ("tags", "POST", "/tags"),
+    "DIGITAL_OCEAN_CREATE_NEW_VPC": ("vpcs", "POST", "/vpcs"),
+    "DIGITAL_OCEAN_DELETE_BLOCK_STORAGE_VOLUME": (
+        "volumes",
+        "DELETE",
+        "/volumes/{volume_id}",
+    ),
+    "DIGITAL_OCEAN_DELETE_DATABASE_CLUSTER": (
+        "databases",
+        "DELETE",
+        "/databases/{database_cluster_uuid}",
+    ),
+    "DIGITAL_OCEAN_DELETE_DOMAIN": ("domains", "DELETE", "/domains/{name}"),
+    "DIGITAL_OCEAN_DELETE_DOMAIN_RECORD": (
+        "domainRecords",
+        "DELETE",
+        "/domains/{domain_name}/records/{record_id}",
+    ),
+    "DIGITAL_OCEAN_DELETE_EXISTING_DROPLET": (
+        "droplets",
+        "DELETE",
+        "/droplets/{droplet_id}",
+    ),
+    "DIGITAL_OCEAN_DELETE_FIREWALL": ("firewalls", "DELETE", "/firewalls/{firewall_id}"),
+    "DIGITAL_OCEAN_DELETE_IMAGE": ("images", "DELETE", "/images/{image_id}"),
+    "DIGITAL_OCEAN_DELETE_LOAD_BALANCER": (
+        "loadBalancers",
+        "DELETE",
+        "/load_balancers/{load_balancer_id}",
+    ),
+    "DIGITAL_OCEAN_DELETE_SSH_KEY": (
+        "sshKeys",
+        "DELETE",
+        "/account/keys/{key_id_or_fingerprint}",
+    ),
+    "DIGITAL_OCEAN_DELETE_TAG": ("tags", "DELETE", "/tags/{name}"),
+    "DIGITAL_OCEAN_DELETE_VPC": ("vpcs", "DELETE", "/vpcs/{vpc_id}"),
+    "DIGITAL_OCEAN_LIST_ALL_DATABASES": ("databases", "GET", "/databases"),
+    "DIGITAL_OCEAN_LIST_ALL_DOMAINS": ("domains", "GET", "/domains"),
+    "DIGITAL_OCEAN_LIST_ALL_DROPLETS": ("droplets", "GET", "/droplets"),
+    "DIGITAL_OCEAN_LIST_ALL_FIREWALLS": ("firewalls", "GET", "/firewalls"),
+    "DIGITAL_OCEAN_LIST_ALL_IMAGES": ("images", "GET", "/images"),
+    "DIGITAL_OCEAN_LIST_ALL_KUBERNETES_CLUSTERS": (
+        "kubernetes",
+        "GET",
+        "/kubernetes/clusters",
+    ),
+    "DIGITAL_OCEAN_LIST_ALL_LOAD_BALANCERS": ("loadBalancers", "GET", "/load_balancers"),
+    "DIGITAL_OCEAN_LIST_ALL_SNAPSHOTS": ("snapshots", "GET", "/snapshots"),
+    "DIGITAL_OCEAN_LIST_ALL_SSH_KEYS": ("sshKeys", "GET", "/account/keys"),
+    "DIGITAL_OCEAN_LIST_ALL_TAGS": ("tags", "GET", "/tags"),
+    "DIGITAL_OCEAN_LIST_ALL_VOLUMES": ("volumes", "GET", "/volumes"),
+    "DIGITAL_OCEAN_LIST_ALL_VPCS": ("vpcs", "GET", "/vpcs"),
+    "DIGITAL_OCEAN_LIST_DATABASE_OPTIONS": ("databases", "GET", "/databases/options"),
+    "DIGITAL_OCEAN_LIST_DOMAIN_RECORDS": (
+        "domainRecords",
+        "GET",
+        "/domains/{domain_name}/records",
+    ),
+    "DIGITAL_OCEAN_RETRIEVE_DOMAIN": ("domains", "GET", "/domains/{name}"),
+    "DIGITAL_OCEAN_RETRIEVE_DOMAIN_RECORD": (
+        "domainRecords",
+        "GET",
+        "/domains/{domain_name}/records/{record_id}",
+    ),
+    "DIGITAL_OCEAN_RETRIEVE_EXISTING_DROPLET": (
+        "droplets",
+        "GET",
+        "/droplets/{droplet_id}",
+    ),
+    "DIGITAL_OCEAN_RETRIEVE_EXISTING_IMAGE": ("images", "GET", "/images/{image_id}"),
+    "DIGITAL_OCEAN_RETRIEVE_TAG": ("tags", "GET", "/tags/{name}"),
+    "DIGITAL_OCEAN_RETRIEVE_VPC": ("vpcs", "GET", "/vpcs/{vpc_uuid}"),
+    "DIGITAL_OCEAN_TAG_RESOURCE": ("tags", "POST", "/tags/{tag_name}/resources"),
+    "DIGITAL_OCEAN_UNTAG_RESOURCE": ("tags", "DELETE", "/tags/{tag_name}/resources"),
+    "DIGITAL_OCEAN_UPDATE_DOMAIN_RECORD": (
+        "domainRecords",
+        "PUT",
+        "/domains/{domain_name}/records/{record_id}",
+    ),
+    "DIGITAL_OCEAN_UPDATE_VPC": ("vpcs", "PUT", "/vpcs/{vpc_id}"),
+}
+
+
+@dataclass
+class Param:
+    name: str
+    type: str
+    required: bool
+    description: str = ""
+
+
+@dataclass
+class Operation:
+    slug: str
+    name: str
+    description: str
+    params: list[Param] = field(default_factory=list)
+
+
+@dataclass
+class Route:
+    key: str
+    group: str
+    name: str
+    method: str
+    path: str
+    description: str
+    path_params: list[str]
+    query_params: list[str]
+    params: list[Param]
+    slug: str
+    risk_level: str
+
+
+def to_camel_case(value: str) -> str:
+    parts = re.split(r"[_\s-]+", value)
+    if not parts:
+        return value
+    return parts[0].lower() + "".join(p[:1].upper() + p[1:].lower() for p in parts[1:])
+
+
+def schema_type_name(key: str) -> str:
+    return key[0].upper() + key[1:] if key else key
+
+
+def to_pascal_case(value: str) -> str:
+    if value and re.search(r"[A-Z]", value[1:]):
+        return value[:1].upper() + value[1:]
+    camel = to_camel_case(value)
+    return camel[:1].upper() + camel[1:]
+
+
+def strip_prefix(slug: str) -> str:
+    upper = slug.upper()
+    if upper.startswith(PREFIX):
+        return upper[len(PREFIX) :]
+    return upper
+
+
+def endpoint_key(slug: str, used: set[str]) -> str:
+    stripped = strip_prefix(slug)
+    parts = [p for p in stripped.split("_") if p]
+    key = to_camel_case("_".join(parts))
+    if key not in used:
+        used.add(key)
+        return key
+    base = key
+    i = 2
+    while f"{base}{i}" in used:
+        i += 1
+    key = f"{base}{i}"
+    used.add(key)
+    return key
+
+
+def risk_level(method: str, slug: str) -> str:
+    if method == "GET":
+        return "read"
+    if method == "DELETE" or "DELETE" in slug:
+        return "destructive"
+    return "write"
+
+
+def parse_composio_md(path: Path) -> list[Operation]:
+    text = path.read_text(encoding="utf-8")
+    sections = re.split(r"\n### ", text)
+    operations: list[Operation] = []
+    for section in sections[1:]:
+        slug_match = re.search(r"\*\*Slug:\*\* `([^`]+)`", section)
+        if not slug_match:
+            continue
+        slug = slug_match.group(1)
+        if slug in SKIP_SLUGS:
+            continue
+        name = section.split("\n", 1)[0].strip()
+        desc_lines: list[str] = []
+        for line in section.splitlines()[1:]:
+            if line.startswith("#### Input Parameters"):
+                break
+            if line.strip() and not line.startswith("**Slug"):
+                desc_lines.append(line.strip())
+        description = " ".join(desc_lines).strip()
+        params: list[Param] = []
+        table = re.search(
+            r"#### Input Parameters\s*\n\n\| Parameter.*?\n\|[-| ]+\|\n(.*?)(?:\n\n####|\Z)",
+            section,
+            re.S,
+        )
+        if table:
+            for row in table.group(1).strip().splitlines():
+                cols = [c.strip() for c in row.strip("|").split("|")]
+                if len(cols) < 3:
+                    continue
+                pname, ptype, req = cols[0], cols[1], cols[2]
+                pdesc = cols[3] if len(cols) > 3 else ""
+                params.append(
+                    Param(
+                        name=pname.strip("`"),
+                        type=re.sub(r"\s*\(.*", "", ptype).lower().strip(),
+                        required=req.lower() == "yes",
+                        description=pdesc,
+                    )
+                )
+        operations.append(
+            Operation(slug=slug, name=name, description=description, params=params)
+        )
+    return operations
+
+
+def path_template_keys(path: str) -> list[str]:
+    return re.findall(r"\{([^}]+)\}", path)
+
+
+def resolve_path_param_name(template_key: str, params: list[Param]) -> str:
+    param_names = {p.name for p in params}
+    if template_key in param_names:
+        return template_key
+    aliases = {
+        "domain_name": ["domain_name", "name"],
+        "name": ["name", "domain_name"],
+        "vpc_uuid": ["vpc_uuid", "vpc_id"],
+        "vpc_id": ["vpc_id", "vpc_uuid"],
+        "tag_name": ["tag_name", "name"],
+    }
+    for candidate in aliases.get(template_key, [template_key]):
+        if candidate in param_names:
+            return candidate
+    return template_key
+
+
+def build_routes(operations: list[Operation]) -> list[Route]:
+    used_keys: set[str] = set()
+    routes: list[Route] = []
+    for op in operations:
+        if op.slug not in MANUAL_ROUTES:
+            raise KeyError(f"Missing manual route for {op.slug}")
+        group, method, path = MANUAL_ROUTES[op.slug]
+        key = endpoint_key(op.slug, used_keys)
+        template_keys = path_template_keys(path)
+        path_params = [resolve_path_param_name(k, op.params) for k in template_keys]
+        path_param_set = set(path_params)
+        query_params = []
+        if method == "GET":
+            query_params = [p.name for p in op.params if p.name not in path_param_set]
+        routes.append(
+            Route(
+                key=key,
+                group=group,
+                name=key,
+                method=method,
+                path=path,
+                description=op.description or op.name,
+                path_params=path_params,
+                query_params=query_params,
+                params=op.params,
+                slug=op.slug,
+                risk_level=risk_level(method, op.slug),
+            )
+        )
+    return routes
+
+
+def zod_type(param: Param) -> str:
+    ptype = param.type
+    if ptype == "string":
+        core = "z.string()"
+    elif ptype == "boolean":
+        core = "z.boolean()"
+    elif ptype == "integer":
+        core = "z.number().int()"
+    elif ptype == "number":
+        core = "z.number()"
+    elif ptype == "array":
+        core = "z.array(z.unknown())"
+    elif ptype == "object":
+        core = "z.record(z.string(), z.unknown())"
+    else:
+        core = "z.unknown()"
+    return core if param.required else f"{core}.optional()"
+
+
+def write_file(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content.rstrip() + "\n", encoding="utf-8")
+
+
+def json_str(value: str) -> str:
+    return repr(value)
+
+
+def generate_types(routes: list[Route]) -> str:
+    lines = ["import { z } from 'zod';", ""]
+    for route in routes:
+        key_pascal = schema_type_name(route.key)
+        fields = []
+        seen: set[str] = set()
+        for param in route.params:
+            fields.append(f"\t{param.name}: {zod_type(param)},")
+            seen.add(param.name)
+        for pp in route.path_params:
+            if pp not in seen:
+                fields.append(f"\t{pp}: z.union([z.string(), z.number()]).optional(),")
+                seen.add(pp)
+        fields.append("\tbody: z.unknown().optional(),")
+        fields.append("\tquery: z.record(z.string(), z.unknown()).optional(),")
+        fields.append("\theaders: z.record(z.string(), z.string()).optional(),")
+        schema = "z.object({\n" + "\n".join(fields) + "\n})"
+        lines.extend(
+            [
+                f"// {route.name}",
+                f"const {key_pascal}InputSchema = {schema};",
+                f"export type {key_pascal}Input = z.infer<typeof {key_pascal}InputSchema>;",
+                f"const {key_pascal}ResponseSchema = z.unknown();",
+                f"export type {key_pascal}Response = z.infer<typeof {key_pascal}ResponseSchema>;",
+                "",
+            ]
+        )
+
+    lines.append(f"export const {PASCAL}EndpointInputSchemas = {{")
+    for route in routes:
+        key_pascal = schema_type_name(route.key)
+        lines.append(f"\t{route.key}: {key_pascal}InputSchema,")
+    lines.append("} as const;")
+    lines.append("")
+    lines.append(f"export type {PASCAL}EndpointInputs = {{")
+    lines.append(
+        f"\t[K in keyof typeof {PASCAL}EndpointInputSchemas]: z.infer<(typeof {PASCAL}EndpointInputSchemas)[K]>;"
+    )
+    lines.append("};")
+    lines.append("")
+    lines.append(f"export const {PASCAL}EndpointOutputSchemas = {{")
+    for route in routes:
+        key_pascal = schema_type_name(route.key)
+        lines.append(f"\t{route.key}: {key_pascal}ResponseSchema,")
+    lines.append("} as const;")
+    lines.append("")
+    lines.append(f"export type {PASCAL}EndpointOutputs = {{")
+    lines.append(
+        f"\t[K in keyof typeof {PASCAL}EndpointOutputSchemas]: z.infer<(typeof {PASCAL}EndpointOutputSchemas)[K]>;"
+    )
+    lines.append("};")
+    lines.append("")
+    lines.append(
+        f"export type {PASCAL}EndpointInput = {PASCAL}EndpointInputs[keyof {PASCAL}EndpointInputs] & {{"
+    )
+    lines.append("\t[key: string]: unknown;")
+    lines.append("};")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def generate_routes_ts(routes: list[Route]) -> str:
+    lines = [
+        "import type { EndpointRiskLevel } from 'corsair/core';",
+        "",
+        f"export type {PASCAL}Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';",
+        "",
+        f"export type {PASCAL}Route = {{",
+        "\tkey: string;",
+        "\tgroup: string;",
+        "\tname: string;",
+        f"\tmethod: {PASCAL}Method;",
+        "\tpath: string;",
+        "\tdescription: string;",
+        "\tpathParams?: readonly string[];",
+        "\tqueryParams?: readonly string[];",
+        "\triskLevel: EndpointRiskLevel;",
+        "\tirreversible?: boolean;",
+        "};",
+        "",
+        f"export const {CAMEL}Routes = [",
+    ]
+    for route in routes:
+        path_params = ", ".join(f"'{p}'" for p in route.path_params)
+        query_params = ", ".join(f"'{p}'" for p in route.query_params)
+        risk_lines = [f"\t\triskLevel: '{route.risk_level}' as const,"]
+        if route.risk_level == "destructive":
+            risk_lines.append("\t\tirreversible: true,")
+        lines.extend(
+            [
+                "\t{",
+                f"\t\tkey: '{route.key}',",
+                f"\t\tgroup: '{route.group}',",
+                f"\t\tname: '{route.name}',",
+                f"\t\tmethod: '{route.method}',",
+                f"\t\tpath: '{route.path}',",
+                f"\t\tdescription: {json_str(route.description)},",
+                f"\t\tpathParams: [{path_params}]," if path_params else "\t\tpathParams: [],",
+                (
+                    f"\t\tqueryParams: [{query_params}],"
+                    if query_params
+                    else "\t\tqueryParams: [],"
+                ),
+                *risk_lines,
+                "\t},",
+            ]
+        )
+    lines.extend(["] as const;", "", f"export type {PASCAL}Routes = typeof {CAMEL}Routes;"])
+    return "\n".join(lines)
+
+
+def generate_factory() -> str:
+    return textwrap.dedent(
+        f"""
+        import type {{ CorsairEndpoint }} from 'corsair/core';
+        import {{ logEventFromContext }} from 'corsair/core';
+        import {{ make{PASCAL}Request }} from '../client';
+        import type {{ {PASCAL}Context }} from '../index';
+        import type {{ {PASCAL}Route }} from './routes';
+        import type {{ {PASCAL}EndpointInput }} from './types';
+
+        const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {{
+        	domain_name: ['domain_name', 'name'],
+        	name: ['name', 'domain_name'],
+        	vpc_uuid: ['vpc_uuid', 'vpc_id'],
+        	vpc_id: ['vpc_id', 'vpc_uuid'],
+        	tag_name: ['tag_name', 'name'],
+        }};
+
+        const BODY_CONTROL_KEYS = new Set(['body', 'query', 'headers']);
+
+        export type {PASCAL}Endpoint = CorsairEndpoint<
+        	{PASCAL}Context,
+        	{PASCAL}EndpointInput,
+        	unknown
+        >;
+
+        function camelToSnake(value: string): string {{
+        	return value.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
+        }}
+
+        function encodePathPart(value: unknown): string {{
+        	if (value === undefined || value === null || value === '') {{
+        		throw new Error('[{PLUGIN_ID}] missing required path parameter');
+        	}}
+        	return encodeURIComponent(String(value));
+        }}
+
+        function resolvePathParam(input: {PASCAL}EndpointInput, pathKey: string): unknown {{
+        	const snake = camelToSnake(pathKey);
+        	const candidates = [pathKey, snake, ...(PATH_PARAM_ALIASES[pathKey] ?? [])];
+        	for (const candidate of candidates) {{
+        		if (input[candidate] !== undefined) return input[candidate];
+        	}}
+        	return undefined;
+        }}
+
+        export function resolvePath(path: string, input: {PASCAL}EndpointInput): string {{
+        	const pathOnly = path.split('?')[0] ?? path;
+        	return pathOnly.replace(/\\{{([^}}]+)\\}}/g, (_, key: string) =>
+        		encodePathPart(resolvePathParam(input, key)),
+        	);
+        }}
+
+        function buildQuery(route: {PASCAL}Route, input: {PASCAL}EndpointInput) {{
+        	const query: Record<string, unknown> = {{ ...(input.query ?? {{}}) }};
+        	for (const key of route.queryParams ?? []) {{
+        		const snake = camelToSnake(key);
+        		const value =
+        			input[snake] ?? input[key] ?? resolvePathParam(input, key);
+        		if (value !== undefined) query[key] = value;
+        	}}
+        	return Object.keys(query).length > 0 ? query : undefined;
+        }}
+
+        function requestBody(route: {PASCAL}Route, input: {PASCAL}EndpointInput) {{
+        	if ('body' in input && input.body !== undefined) return input.body;
+        	const pathParams = new Set(route.pathParams ?? []);
+        	const queryParams = new Set(
+        		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
+        	);
+        	const body = Object.fromEntries(
+        		Object.entries(input).filter(([key, value]) => {{
+        			return (
+        				!pathParams.has(key) &&
+        				!queryParams.has(key) &&
+        				!BODY_CONTROL_KEYS.has(key) &&
+        				value !== undefined
+        			);
+        		}}),
+        	);
+        	return Object.keys(body).length > 0 ? body : undefined;
+        }}
+
+        export async function log{PASCAL}Operation(
+        	ctx: {PASCAL}Context,
+        	input: {PASCAL}EndpointInput,
+        	route: {PASCAL}Route,
+        ) {{
+        	await logEventFromContext(
+        		ctx,
+        		`{PLUGIN_ID}.${{route.group}}.${{route.name}}`,
+        		{{ method: route.method, path: route.path }},
+        		'completed',
+        	);
+        }}
+
+        export async function request{PASCAL}Operation(
+        	ctx: {PASCAL}Context,
+        	input: {PASCAL}EndpointInput,
+        	route: {PASCAL}Route,
+        ) {{
+        	return make{PASCAL}Request(resolvePath(route.path, input), ctx.key, {{
+        		method: route.method,
+        		body: requestBody(route, input),
+        		query: buildQuery(route, input),
+        		headers: input.headers as Record<string, string> | undefined,
+        	}});
+        }}
+        """
+    ).strip() + "\n"
+
+
+def generate_group_file(group: str, routes: list[Route]) -> str:
+    group_pascal = to_pascal_case(group)
+    lines = [
+        f"import {{ {CAMEL}Routes }} from './routes';",
+        f"import type {{ {PASCAL}Endpoint }} from './factory';",
+        f"import {{ log{PASCAL}Operation, request{PASCAL}Operation }} from './factory';",
+        "",
+        "function getRoute(name: string) {",
+        f"\tconst route = {CAMEL}Routes.find((candidate) => candidate.name === name);",
+        "\tif (!route) {",
+        f"\t\tthrow new Error(`[{PLUGIN_ID}] missing route: ${{name}}`);",
+        "\t}",
+        "\treturn route;",
+        "}",
+        "",
+    ]
+    exports: list[str] = []
+    for route in routes:
+        const_name = f"{route.name}Route"
+        lines.extend(
+            [
+                f"const {const_name} = getRoute('{route.name}');",
+                f"export const {route.name}: {PASCAL}Endpoint = async (ctx, input = {{}}) => {{",
+                f"\tconst result = await request{PASCAL}Operation(ctx, input, {const_name});",
+                f"\tawait log{PASCAL}Operation(ctx, input, {const_name});",
+                "\treturn result;",
+                "};",
+                "",
+            ]
+        )
+        exports.append(route.name)
+    lines.append(f"export const {group_pascal}Endpoints = {{")
+    lines.append(",\n".join(f"\t{name}" for name in exports))
+    lines.append("} as const;")
+    return "\n".join(lines)
+
+
+def generate_endpoints_index(groups: dict[str, list[Route]]) -> str:
+    imports = []
+    nested = []
+    for group in sorted(groups):
+        pascal = to_pascal_case(group)
+        imports.append(f"import {{ {pascal}Endpoints }} from './{group}';")
+        nested.append(f"\t{group}: {pascal}Endpoints")
+    return (
+        "\n".join(imports)
+        + "\nimport type { RequiredPluginEndpointMeta } from 'corsair/core';\n"
+        + f"import {{ {CAMEL}Routes }} from './routes';\n"
+        + f"import {{ {PASCAL}EndpointInputSchemas, {PASCAL}EndpointOutputSchemas }} from './types';\n\n"
+        + f"export const {CAMEL}EndpointsNested = {{\n"
+        + ",\n".join(nested)
+        + "\n} as const;\n\n"
+        + f"export const {CAMEL}EndpointMeta = Object.fromEntries(\n"
+        + f"\t{CAMEL}Routes.map((route) => [\n"
+        + "\t\t`${route.group}.${route.name}`,\n"
+        + "\t\t{\n"
+        + "\t\t\triskLevel: route.riskLevel,\n"
+        + "\t\t\tirreversible: 'irreversible' in route ? route.irreversible : undefined,\n"
+        + "\t\t\tdescription: route.description,\n"
+        + "\t\t},\n"
+        + "\t]),\n"
+        + f") as RequiredPluginEndpointMeta<typeof {CAMEL}EndpointsNested>;\n\n"
+        + f"export const {CAMEL}EndpointSchemas = Object.fromEntries(\n"
+        + f"\t{CAMEL}Routes.map((route) => [\n"
+        + "\t\t`${route.group}.${route.name}`,\n"
+        + "\t\t{\n"
+        + f"\t\t\tinput: {PASCAL}EndpointInputSchemas[route.key],\n"
+        + f"\t\t\toutput: {PASCAL}EndpointOutputSchemas[route.key],\n"
+        + "\t\t},\n"
+        + "\t]),\n"
+        + ");\n\n"
+        + f"export {{ {PASCAL}EndpointInputSchemas, {PASCAL}EndpointOutputSchemas }};\n"
+        + "export * from './routes';\n"
+        + "export * from './types';\n"
+    )
+
+
+def generate_client() -> str:
+    return textwrap.dedent(
+        f"""
+        import type {{ ApiRequestOptions, OpenAPIConfig }} from 'corsair/http';
+        import {{ ApiError, request }} from 'corsair/http';
+        import type {{ {PASCAL}Method }} from './endpoints/routes';
+
+        export class {PASCAL}APIError extends Error {{
+        	public readonly status?: number;
+        	public readonly statusText?: string;
+        	public readonly body?: unknown;
+
+        	constructor(message: string, options?: {{ cause?: Error }}) {{
+        		super(message, options);
+        		this.name = '{PASCAL}APIError';
+        		if (options?.cause instanceof ApiError) {{
+        			this.status = options.cause.status;
+        			this.statusText = options.cause.statusText;
+        			this.body = options.cause.body;
+        		}}
+        	}}
+        }}
+
+        const {PASCAL.upper()}_API_BASE = '{BASE_URL}';
+
+        export type {PASCAL}RequestOptions = {{
+        	method?: {PASCAL}Method;
+        	body?: unknown;
+        	query?: Record<string, unknown>;
+        	headers?: Record<string, string>;
+        }};
+
+        export async function make{PASCAL}Request<T>(
+        	endpoint: string,
+        	apiKey: string,
+        	options: {PASCAL}RequestOptions = {{}},
+        ): Promise<T> {{
+        	const {{ method = 'GET', body, query, headers }} = options;
+        	const config: OpenAPIConfig = {{
+        		BASE: {PASCAL.upper()}_API_BASE,
+        		VERSION: '1.0.0',
+        		WITH_CREDENTIALS: false,
+        		CREDENTIALS: 'omit',
+        		TOKEN: apiKey,
+        		HEADERS: {{
+        			'Content-Type': 'application/json',
+        			Authorization: `Bearer ${{apiKey}}`,
+        			...headers,
+        		}},
+        	}};
+
+        	const hasBody =
+        		body !== undefined && !['GET', 'HEAD', 'OPTIONS'].includes(method);
+        	const requestOptions: ApiRequestOptions = {{
+        		method,
+        		url: endpoint,
+        		body: hasBody ? body : undefined,
+        		query,
+        	}};
+
+        	try {{
+        		return await request<T>(config, requestOptions);
+        	}} catch (error) {{
+        		if (error instanceof ApiError) {{
+        			throw new {PASCAL}APIError(error.message, {{ cause: error }});
+        		}}
+        		if (error instanceof Error) {{
+        			throw new {PASCAL}APIError(error.message, {{ cause: error }});
+        		}}
+        		throw new {PASCAL}APIError('Unknown error');
+        	}}
+        }}
+        """
+    ).strip() + "\n"
+
+
+def generate_error_handlers() -> str:
+    return textwrap.dedent(
+        f"""
+        import type {{ CorsairErrorHandler }} from 'corsair/core';
+        import type {{ {PASCAL}APIError }} from './client';
+
+        function getStatus(error: Error): number | undefined {{
+        	return (error as Partial<{PASCAL}APIError>).status;
+        }}
+
+        export const errorHandlers = {{
+        	RATE_LIMIT_ERROR: {{
+        		match: (error: Error) => getStatus(error) === 429,
+        		handler: async () => ({{
+        			maxRetries: 3,
+        			retryStrategy: 'exponential_backoff' as const,
+        		}}),
+        	}},
+        	AUTH_ERROR: {{
+        		match: (error: Error) => {{
+        			const status = getStatus(error);
+        			if (status === 401 || status === 403) return true;
+        			const msg = error.message.toLowerCase();
+        			return msg.includes('unauthorized') || msg.includes('forbidden');
+        		}},
+        		handler: async () => {{
+        			console.error(
+        				'[{PASCAL.upper()}] Authentication failed — check your DigitalOcean API token.',
+        			);
+        			return {{ maxRetries: 0 }};
+        		}},
+        	}},
+        	NOT_FOUND_ERROR: {{
+        		match: (error: Error) => getStatus(error) === 404,
+        		handler: async () => ({{ maxRetries: 0 }}),
+        	}},
+        	SERVER_ERROR: {{
+        		match: (error: Error) => {{
+        			const status = getStatus(error);
+        			return status !== undefined && status >= 500;
+        		}},
+        		handler: async () => ({{
+        			maxRetries: 2,
+        			retryStrategy: 'exponential_backoff' as const,
+        		}}),
+        	}},
+        	DEFAULT: {{
+        		match: () => true,
+        		handler: async (error: Error) => {{
+        			console.error(`[{PASCAL.upper()}] Unhandled error: ${{error.message}}`);
+        			return {{ maxRetries: 0 }};
+        		}},
+        	}},
+        }} satisfies CorsairErrorHandler;
+        """
+    ).strip() + "\n"
+
+
+def generate_schema_database() -> str:
+    return textwrap.dedent(
+        f"""
+        import {{ z }} from 'zod';
+
+        export const {PASCAL}Droplet = z.object({{
+        	id: z.union([z.string(), z.number()]).optional(),
+        	name: z.string().optional(),
+        	status: z.string().optional(),
+        	region: z.unknown().optional(),
+        	createdAt: z.coerce.date().nullable().optional(),
+        }});
+
+        export const {PASCAL}Volume = z.object({{
+        	id: z.string().optional(),
+        	name: z.string().optional(),
+        	size_gigabytes: z.number().optional(),
+        	region: z.unknown().optional(),
+        }});
+
+        export const {PASCAL}DatabaseCluster = z.object({{
+        	id: z.string().optional(),
+        	name: z.string().optional(),
+        	engine: z.string().optional(),
+        	status: z.string().optional(),
+        }});
+
+        export type {PASCAL}Droplet = z.infer<typeof {PASCAL}Droplet>;
+        export type {PASCAL}Volume = z.infer<typeof {PASCAL}Volume>;
+        export type {PASCAL}DatabaseCluster = z.infer<typeof {PASCAL}DatabaseCluster>;
+        """
+    ).strip() + "\n"
+
+
+def generate_schema_index() -> str:
+    return textwrap.dedent(
+        f"""
+        import {{
+        	{PASCAL}DatabaseCluster,
+        	{PASCAL}Droplet,
+        	{PASCAL}Volume,
+        }} from './database';
+
+        export const {PASCAL}Schema = {{
+        	version: '1.0.0',
+        	entities: {{
+        		droplets: {PASCAL}Droplet,
+        		volumes: {PASCAL}Volume,
+        		databases: {PASCAL}DatabaseCluster,
+        	}},
+        }} as const;
+        """
+    ).strip() + "\n"
+
+
+def generate_index() -> str:
+    return textwrap.dedent(
+        f"""
+        import type {{
+        	AuthTypes,
+        	BindEndpoints,
+        	CorsairErrorHandler,
+        	CorsairPlugin,
+        	CorsairPluginContext,
+        	KeyBuilderContext,
+        	PickAuth,
+        	PluginAuthConfig,
+        	PluginPermissionsConfig,
+        	RequiredPluginEndpointMeta,
+        }} from 'corsair/core';
+        import {{ AuthMissingError }} from 'corsair/core';
+        import {{
+        	{CAMEL}EndpointMeta as generated{PASCAL}EndpointMeta,
+        	{CAMEL}EndpointSchemas,
+        	{CAMEL}EndpointsNested,
+        }} from './endpoints';
+        import {{ errorHandlers }} from './error-handlers';
+        import {{ {PASCAL}Schema }} from './schema';
+
+        export const {CAMEL}EndpointMeta =
+        	generated{PASCAL}EndpointMeta satisfies RequiredPluginEndpointMeta<
+        		typeof {CAMEL}EndpointsNested
+        	>;
+
+        export type {PASCAL}PluginOptions = {{
+        	authType?: PickAuth<'api_key'>;
+        	key?: string;
+        	hooks?: Internal{PASCAL}Plugin['hooks'];
+        	errorHandlers?: CorsairErrorHandler;
+        	permissions?: PluginPermissionsConfig<typeof {CAMEL}EndpointsNested>;
+        }};
+
+        export type {PASCAL}Context = CorsairPluginContext<
+        	typeof {PASCAL}Schema,
+        	{PASCAL}PluginOptions
+        >;
+
+        export type {PASCAL}KeyBuilderContext = KeyBuilderContext<{PASCAL}PluginOptions>;
+
+        export type {PASCAL}BoundEndpoints = BindEndpoints<typeof {CAMEL}EndpointsNested>;
+
+        export type {PASCAL}Endpoints = typeof {CAMEL}EndpointsNested;
+
+        const defaultAuthType: AuthTypes = 'api_key' as const;
+
+        export const {CAMEL}AuthConfig = {{
+        	api_key: {{}},
+        }} as const satisfies PluginAuthConfig;
+
+        export type Base{PASCAL}Plugin<T extends {PASCAL}PluginOptions> = CorsairPlugin<
+        	'{PLUGIN_ID}',
+        	typeof {PASCAL}Schema,
+        	typeof {CAMEL}EndpointsNested,
+        	{{}},
+        	T,
+        	typeof defaultAuthType
+        >;
+
+        export type Internal{PASCAL}Plugin = Base{PASCAL}Plugin<{PASCAL}PluginOptions>;
+
+        export type External{PASCAL}Plugin<T extends {PASCAL}PluginOptions> =
+        	Base{PASCAL}Plugin<T>;
+
+        export function {PLUGIN_ID}<const T extends {PASCAL}PluginOptions>(
+        	incomingOptions: {PASCAL}PluginOptions & T = {{}} as {PASCAL}PluginOptions & T,
+        ): External{PASCAL}Plugin<T> {{
+        	const options = {{
+        		...incomingOptions,
+        		authType: incomingOptions.authType ?? defaultAuthType,
+        	}};
+        	return {{
+        		id: '{PLUGIN_ID}',
+        		schema: {PASCAL}Schema,
+        		options,
+        		authConfig: {CAMEL}AuthConfig,
+        		hooks: options.hooks,
+        		endpoints: {CAMEL}EndpointsNested,
+        		webhooks: {{}},
+        		endpointMeta: {CAMEL}EndpointMeta,
+        		endpointSchemas: {CAMEL}EndpointSchemas,
+        		pluginWebhookMatcher: undefined,
+        		errorHandlers: {{
+        			...errorHandlers,
+        			...options.errorHandlers,
+        		}},
+        		keyBuilder: async (ctx: {PASCAL}KeyBuilderContext, source) => {{
+        			if (source === 'endpoint' && options.key) {{
+        				return options.key;
+        			}}
+
+        			if (source === 'endpoint' && ctx.authType === 'api_key') {{
+        				const res = await ctx.keys.get_api_key();
+        				if (!res) {{
+        					console.error(
+        						'[{PASCAL.upper()}] API key missing — connect DigitalOcean or pass key in plugin options.',
+        					);
+        					throw new AuthMissingError('{PLUGIN_ID}', 'api_key');
+        				}}
+        				return res;
+        			}}
+
+        			console.error(
+        				'[{PASCAL.upper()}] Authentication required for DigitalOcean API requests.',
+        			);
+        			throw new AuthMissingError('{PLUGIN_ID}', 'api_key');
+        		}},
+        	}} satisfies Internal{PASCAL}Plugin;
+        }}
+
+        export type {{
+        	{PASCAL}EndpointInputs,
+        	{PASCAL}EndpointOutputs,
+        }} from './endpoints/types';
+
+        export {{ {CAMEL}EndpointsNested, {CAMEL}EndpointSchemas }};
+        """
+    ).strip() + "\n"
+
+
+def generate_package_json() -> str:
+    return (
+        json.dumps(
+            {
+                "name": PACKAGE_NAME,
+                "version": "0.1.0",
+                "description": "DigitalOcean plugin for Corsair",
+                "type": "module",
+                "main": "./dist/index.js",
+                "module": "./dist/index.js",
+                "types": "./dist/index.d.ts",
+                "exports": {
+                    ".": {
+                        "dev-source": "./index.ts",
+                        "types": "./dist/index.d.ts",
+                        "default": "./dist/index.js",
+                    }
+                },
+                "scripts": {
+                    "build": "rm -rf dist && tsc --build --force && tsup",
+                    "typecheck": "tsc --noEmit",
+                    "test": "jest --config jest.config.json",
+                },
+                "peerDependencies": {"corsair": ">=0.1.0", "zod": "^4.1.13"},
+                "devDependencies": {
+                    "@types/jest": "^29.5.14",
+                    "corsair": "workspace:*",
+                    "ts-jest": "^29.4.9",
+                    "tsup": "^8.0.1",
+                    "typescript": "catalog:",
+                    "zod": "^4.1.13",
+                    "jest": "^29.7.0",
+                },
+                "keywords": ["corsair", "digital_ocean", "digitalocean", "plugin"],
+                "author": "",
+                "license": "Apache-2.0",
+                "files": ["dist"],
+            },
+            indent=2,
+        )
+        + "\n"
+    )
+
+
+def generate_api_test(count: int) -> str:
+    return textwrap.dedent(
+        f"""
+        import {{ request }} from 'corsair/http';
+        import {{ make{PASCAL}Request }} from './client';
+        import type {{ {PASCAL}Context }} from './index';
+        import {{ {PLUGIN_ID}, {CAMEL}EndpointSchemas }} from './index';
+
+        jest.mock('corsair/http', () => {{
+        	const original = jest.requireActual('corsair/http');
+        	return {{
+        		...original,
+        		request: jest.fn(),
+        	}};
+        }});
+
+        const mockRequest = request as jest.Mock;
+
+        function countLeaves(tree: Record<string, unknown>): number {{
+        	return Object.values(tree).reduce<number>((count, value) => {{
+        		if (typeof value === 'function') return count + 1;
+        		if (value && typeof value === 'object') {{
+        			return count + countLeaves(value as Record<string, unknown>);
+        		}}
+        		return count;
+        	}}, 0);
+        }}
+
+        function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {{
+        	return Object.entries(tree).flatMap(([key, value]) => {{
+        		const path = prefix ? `${{prefix}}.${{key}}` : key;
+        		if (typeof value === 'function') return [path];
+        		if (value && typeof value === 'object') {{
+        			return endpointPaths(value as Record<string, unknown>, path);
+        		}}
+        		return [];
+        	}});
+        }}
+
+        const mockCtx = {{
+        	key: 'test-api-key',
+        	$getAccountId: () => 'test-account-id',
+        	options: {{}},
+        	logEvent: jest.fn(),
+        	db: {{}},
+        }} as unknown as {PASCAL}Context;
+
+        describe('{PASCAL} plugin shape', () => {{
+        	it('exposes every listed operation with schemas and no webhooks', () => {{
+        		const plugin = {PLUGIN_ID}();
+        		const endpoints = plugin.endpoints as Record<string, unknown>;
+        		const paths = endpointPaths(endpoints).sort();
+
+        		expect(countLeaves(endpoints)).toBe({count});
+        		expect(Object.keys(plugin.endpointMeta ?? {{}})).toHaveLength({count});
+        		expect(Object.keys({CAMEL}EndpointSchemas)).toHaveLength({count});
+        		expect(Object.keys(plugin.endpointMeta ?? {{}}).sort()).toEqual(paths);
+        		expect(Object.keys({CAMEL}EndpointSchemas).sort()).toEqual(paths);
+        		expect(plugin.webhooks).toEqual({{}});
+        		expect(plugin.pluginWebhookMatcher).toBeUndefined();
+        	}});
+
+        	it('supports api key auth configuration', () => {{
+        		const plugin = {PLUGIN_ID}();
+        		expect(plugin.options?.authType).toBe('api_key');
+        		expect(plugin.authConfig).toEqual({{ api_key: {{}} }});
+        	}});
+        }});
+
+        describe('{PASCAL} request client', () => {{
+        	beforeEach(() => {{
+        		mockRequest.mockReset();
+        		mockRequest.mockResolvedValue({{ ok: true }});
+        	}});
+
+        	it('sends Bearer Authorization header and JSON bodies', async () => {{
+        		await make{PASCAL}Request('/droplets', 'test-api-key', {{
+        			method: 'GET',
+        		}});
+
+        		expect(mockRequest).toHaveBeenCalledWith(
+        			expect.objectContaining({{
+        				BASE: '{BASE_URL}',
+        				TOKEN: 'test-api-key',
+        				HEADERS: expect.objectContaining({{
+        					Authorization: 'Bearer test-api-key',
+        					'Content-Type': 'application/json',
+        				}}),
+        			}}),
+        			expect.objectContaining({{
+        				method: 'GET',
+        				url: '/droplets',
+        			}}),
+        		);
+        	}});
+        }});
+
+        describe('{PASCAL} endpoints', () => {{
+        	beforeEach(() => {{
+        		mockRequest.mockReset();
+        		mockRequest.mockResolvedValue({{ ok: true }});
+        	}});
+
+        	it('maps representative operations to API routes', async () => {{
+        		const plugin = {PLUGIN_ID}({{ key: 'test-api-key' }});
+        		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {{
+        			droplets: {{
+        				listAllDroplets: (ctx: {PASCAL}Context, input: {{}}) => Promise<unknown>;
+        				createNewDroplet: (
+        					ctx: {PASCAL}Context,
+        					input: {{ name: string; region: string; size: string; image: string }},
+        				) => Promise<unknown>;
+        			}};
+        		}};
+
+        		await endpoints.droplets.listAllDroplets(mockCtx, {{}});
+        		await endpoints.droplets.createNewDroplet(mockCtx, {{
+        			name: 'web-1',
+        			region: 'nyc3',
+        			size: 's-1vcpu-1gb',
+        			image: 'ubuntu-24-04-x64',
+        		}});
+
+        		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
+        			expect.arrayContaining([
+        				expect.objectContaining({{
+        					method: 'GET',
+        					url: '/droplets',
+        				}}),
+        				expect.objectContaining({{
+        					method: 'POST',
+        					url: '/droplets',
+        					body: {{
+        						name: 'web-1',
+        						region: 'nyc3',
+        						size: 's-1vcpu-1gb',
+        						image: 'ubuntu-24-04-x64',
+        					}},
+        				}}),
+        			]),
+        		);
+        	}});
+        }});
+        """
+    ).strip() + "\n"
+
+
+def update_constants() -> None:
+    path = REPO_ROOT / "packages/corsair/core/constants.ts"
+    text = path.read_text(encoding="utf-8")
+    if "'digital_ocean'" not in text:
+        text = text.replace(
+            "\t'discord',",
+            "\t'digital_ocean',\n\t'discord',",
+        )
+        text = text.replace(
+            "\tdiscord: 'Discord',",
+            "\tdigital_ocean: 'DigitalOcean',\n\tdiscord: 'Discord',",
+        )
+        text = text.replace(
+            "\t| 'discord'",
+            "\t| 'digital_ocean'\n\t| 'discord'",
+        )
+        path.write_text(text, encoding="utf-8")
+
+
+def update_demo_testing() -> None:
+    pkg_path = REPO_ROOT / "demo/testing/package.json"
+    pkg = json.loads(pkg_path.read_text(encoding="utf-8"))
+    deps = pkg.setdefault("dependencies", {})
+    deps["@corsair-dev/digital_ocean"] = "workspace:*"
+    pkg_path.write_text(json.dumps(pkg, indent=2) + "\n", encoding="utf-8")
+
+    corsair_path = REPO_ROOT / "demo/testing/src/server/corsair.ts"
+    text = corsair_path.read_text(encoding="utf-8")
+    if "@corsair-dev/digital_ocean" not in text:
+        text = text.replace(
+            "import { createCorsair } from 'corsair';",
+            "import { digital_ocean } from '@corsair-dev/digital_ocean';\nimport { createCorsair } from 'corsair';",
+        )
+    if "digital_ocean(" not in text:
+        text = text.replace(
+            "\t\tagentql({\n\t\t\tkey: process.env.AGENTQL_API_KEY,\n\t\t}),",
+            "\t\tdigital_ocean({\n\t\t\tkey: process.env.DIGITAL_OCEAN_API_KEY,\n\t\t}),\n\t\tagentql({\n\t\t\tkey: process.env.AGENTQL_API_KEY,\n\t\t}),",
+        )
+    corsair_path.write_text(text, encoding="utf-8")
+
+
+def main() -> None:
+    operations = parse_composio_md(COMPOSIO_MD)
+    if len(operations) != len(MANUAL_ROUTES):
+        missing = set(MANUAL_ROUTES) - {op.slug for op in operations}
+        extra = {op.slug for op in operations} - set(MANUAL_ROUTES)
+        raise SystemExit(
+            f"Route count mismatch: ops={len(operations)} manual={len(MANUAL_ROUTES)} "
+            f"missing={missing} extra={extra}"
+        )
+    routes = build_routes(operations)
+    groups: dict[str, list[Route]] = defaultdict(list)
+    for route in routes:
+        groups[route.group].append(route)
+
+    print(f"Generated {len(routes)} routes across {len(groups)} groups")
+
+    write_file(ROOT / "client.ts", generate_client())
+    write_file(ROOT / "error-handlers.ts", generate_error_handlers())
+    write_file(ROOT / "schema/database.ts", generate_schema_database())
+    write_file(ROOT / "schema/index.ts", generate_schema_index())
+    write_file(ROOT / "endpoints/types.ts", generate_types(routes))
+    write_file(ROOT / "endpoints/routes.ts", generate_routes_ts(routes))
+    write_file(ROOT / "endpoints/factory.ts", generate_factory())
+    write_file(ROOT / "endpoints/index.ts", generate_endpoints_index(groups))
+    for group, group_routes in sorted(groups.items()):
+        write_file(ROOT / f"endpoints/{group}.ts", generate_group_file(group, group_routes))
+    write_file(ROOT / "index.ts", generate_index())
+    write_file(ROOT / "package.json", generate_package_json())
+    write_file(
+        ROOT / "tsconfig.json",
+        (REPO_ROOT / "packages/openweathermap/tsconfig.json").read_text(encoding="utf-8"),
+    )
+    write_file(
+        ROOT / "tsup.config.ts",
+        (REPO_ROOT / "packages/openweathermap/tsup.config.ts").read_text(encoding="utf-8"),
+    )
+    write_file(
+        ROOT / "jest.config.json",
+        (REPO_ROOT / "packages/supabase/jest.config.json").read_text(encoding="utf-8"),
+    )
+    write_file(ROOT / "api.test.ts", generate_api_test(len(routes)))
+
+    update_constants()
+    update_demo_testing()
+
+
+if __name__ == "__main__":
+    main()

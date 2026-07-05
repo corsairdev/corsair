@@ -25,6 +25,7 @@ export const BaseProviders = [
 	'calendly',
 	'cloudflare',
 	'cursor',
+	'digital_ocean',
 	'discord',
 	'dodopayments',
 	'dropbox',
@@ -95,6 +96,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
 	cursor: 'Cursor',
+	digital_ocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
@@ -172,6 +174,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'cloudflare'
 	| 'cursor'
+	| 'digital_ocean'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
