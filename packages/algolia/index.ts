@@ -86,6 +86,18 @@ export function algolia<const T extends AlgoliaPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 		region: incomingOptions.region ?? 'us',
 	};
+
+	const ensureApplicationId = async (ctx: AlgoliaKeyBuilderContext) => {
+		if (options.applicationId) return;
+		const applicationId = await ctx.keys.get_applicationId();
+		if (!applicationId) {
+			console.error(
+				'[ALGOLIA] Application ID missing — connect Algolia or pass applicationId in plugin options.',
+			);
+			throw new AuthMissingError('algolia', 'api_key');
+		}
+	};
+
 	return {
 		id: 'algolia',
 		schema: AlgoliaSchema,
@@ -103,6 +115,7 @@ export function algolia<const T extends AlgoliaPluginOptions>(
 		},
 		keyBuilder: async (ctx: AlgoliaKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
+				await ensureApplicationId(ctx);
 				return options.key;
 			}
 
@@ -115,15 +128,7 @@ export function algolia<const T extends AlgoliaPluginOptions>(
 					throw new AuthMissingError('algolia', 'api_key');
 				}
 
-				if (!options.applicationId) {
-					const applicationId = await ctx.keys.get_applicationId();
-					if (!applicationId) {
-						console.error(
-							'[ALGOLIA] Application ID missing — connect Algolia or pass applicationId in plugin options.',
-						);
-						throw new AuthMissingError('algolia', 'api_key');
-					}
-				}
+				await ensureApplicationId(ctx);
 
 				return apiKey;
 			}
