@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
+import { agenty } from '@corsair-dev/agenty';
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -55,6 +56,9 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
+		agenty({
+			key: process.env.AGENTY_API_KEY,
+		}),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),
