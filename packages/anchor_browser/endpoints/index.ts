@@ -1,10 +1,10 @@
 import { AgentEndpoints } from './agent';
-import { BatchSessionsEndpoints } from './batchSessions';
+import { BatchSessionsEndpoints } from './batch-sessions';
 import { DownloadsEndpoints } from './downloads';
 import { EventsEndpoints } from './events';
 import { ExtensionsEndpoints } from './extensions';
 import { IntegrationsEndpoints } from './integrations';
-import { OsLevelEndpoints } from './osLevel';
+import { OsLevelEndpoints } from './os-level';
 import { PagesEndpoints } from './pages';
 import { ProfilesEndpoints } from './profiles';
 import { RecordingsEndpoints } from './recordings';

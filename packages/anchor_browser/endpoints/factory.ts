@@ -2,6 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { makeAnchorBrowserRequest } from '../client';
 import type { AnchorBrowserContext } from '../index';
+import { syncAnchorBrowserOperationCache } from './cache-sync';
 import { anchorBrowserRoutes, type AnchorBrowserRoute } from './routes';
 import type { AnchorBrowserEndpointInput } from './types';
 
@@ -146,7 +147,9 @@ export async function executeAnchorBrowserOperation(
 ) {
 	let status: 'completed' | 'failed' = 'completed';
 	try {
-		return await requestAnchorBrowserOperation(ctx, input, route);
+		const result = await requestAnchorBrowserOperation(ctx, input, route);
+		await syncAnchorBrowserOperationCache(ctx, route, input, result);
+		return result;
 	} catch (error) {
 		status = 'failed';
 		throw error;
