@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
+import { anchor_browser } from '@corsair-dev/anchor_browser';
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -55,6 +56,9 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
+		anchor_browser({
+			key: process.env.ANCHOR_BROWSER_API_KEY,
+		}),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),
