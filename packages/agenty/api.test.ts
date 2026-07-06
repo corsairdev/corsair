@@ -133,4 +133,37 @@ describe('Agenty endpoints', () => {
 			]),
 		);
 	});
+
+	it('resolves workflow_id into workflow path segments', async () => {
+		const plugin = agenty({ key: 'test-api-key' });
+		// Test-only: narrow to workflow endpoints for path-param resolution assertions.
+		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+			workflows: {
+				getWorkflowById: (
+					ctx: AgentyContext,
+					input: { workflow_id: string },
+				) => Promise<unknown>;
+				deleteWorkflow: (
+					ctx: AgentyContext,
+					input: { workflow_id: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.workflows.getWorkflowById(mockCtx, { workflow_id: 'wf-123' });
+		await endpoints.workflows.deleteWorkflow(mockCtx, { workflow_id: 'wf-456' });
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					method: 'GET',
+					url: '/workflows/wf-123',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/workflows/wf-456',
+				}),
+			]),
+		);
+	});
 });
