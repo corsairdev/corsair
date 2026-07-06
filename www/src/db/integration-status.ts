@@ -9,6 +9,9 @@ import {
 	isWipPhase,
 } from '@/lib/integration-phases';
 
+import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
+import { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
+
 export {
 	isIntegrationActivelyClaimed,
 	isIntegrationAvailable,
@@ -18,8 +21,18 @@ export {
 	WIP_PHASES,
 } from '@/lib/integration-phases';
 
+export { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
+export type { ClaimBlockReason } from '@/lib/integration-claim-limits';
+
 export const ISSUE_DEADLINE_MS = 60 * 60 * 1000;
 export const PR_DEADLINE_MS = 3 * 60 * 60 * 1000;
+
+export type UserClaimEligibility = {
+	canClaim: boolean;
+	blockReason: ClaimBlockReason | null;
+	wipIntegrationName: string | null;
+	builtCount: number;
+};
 
 export type LatestIntegrationStatus = {
 	id: string;
@@ -249,6 +262,45 @@ export async function userHasWipClaim(
 	userId: string,
 ): Promise<boolean> {
 	return (await getUserWipClaim(db, userId)) != null;
+}
+
+export async function getUserClaimEligibility(
+	db: DB,
+	userId: string,
+): Promise<UserClaimEligibility> {
+	const [activeClaims, wipClaim] = await Promise.all([
+		getActiveClaimsForUser(db, userId),
+		getUserWipClaim(db, userId),
+	]);
+
+	const builtCount = activeClaims.filter(
+		(claim) => claim.phase === 'finished',
+	).length;
+
+	if (wipClaim != null) {
+		return {
+			canClaim: false,
+			blockReason: 'wip',
+			wipIntegrationName: wipClaim.name,
+			builtCount,
+		};
+	}
+
+	if (builtCount >= MAX_USER_BUILT_INTEGRATIONS) {
+		return {
+			canClaim: false,
+			blockReason: 'limit_reached',
+			wipIntegrationName: null,
+			builtCount,
+		};
+	}
+
+	return {
+		canClaim: true,
+		blockReason: null,
+		wipIntegrationName: null,
+		builtCount,
+	};
 }
 
 export async function getActiveClaimsForUser(db: DB, userId: string) {

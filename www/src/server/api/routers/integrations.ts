@@ -22,15 +22,15 @@ import {
 	getLatestStatusesForIntegrations,
 	getLatestStatusForIntegration,
 	getUserActiveDeadlineClaim,
-	getUserWipClaim,
+	getUserClaimEligibility,
 	ISSUE_DEADLINE_MS,
 	insertIntegrationStatus,
 	isIntegrationActivelyClaimed,
 	isIntegrationAvailable,
 	legacyStatusFromPhase,
+	MAX_USER_BUILT_INTEGRATIONS,
 	PR_DEADLINE_MS,
 	releaseIntegrationClaim,
-	userHasWipClaim,
 } from '@/db/integration-status';
 import {
 	fetchIntegrationTags,
@@ -532,10 +532,10 @@ export const integrationsRouter = createTRPCRouter({
 				),
 			];
 			const claimerAvatars = await getGithubUserAvatars(claimerUsernames);
-			const wipClaim = currentUserId
-				? await getUserWipClaim(ctx.db, currentUserId)
+			const claimEligibility = currentUserId
+				? await getUserClaimEligibility(ctx.db, currentUserId)
 				: null;
-			const userCanClaim = wipClaim == null;
+			const userCanClaim = claimEligibility?.canClaim ?? true;
 
 			const items = rows.map((row) => {
 				const latestStatus = latestStatuses.get(row.id);
@@ -577,7 +577,8 @@ export const integrationsRouter = createTRPCRouter({
 				totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
 				q: input.q?.trim() ?? '',
 				tags: input.tags ?? [],
-				wipIntegrationName: wipClaim?.name ?? null,
+				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
+				claimBlockReason: claimEligibility?.blockReason ?? null,
 			};
 		}),
 
@@ -899,8 +900,8 @@ export const integrationsRouter = createTRPCRouter({
 					: null,
 			);
 
-			const wipClaim = currentUserId
-				? await getUserWipClaim(ctx.db, currentUserId)
+			const claimEligibility = currentUserId
+				? await getUserClaimEligibility(ctx.db, currentUserId)
 				: null;
 
 			const claimExpiredForCurrentUser = getClaimExpiredForUser(
@@ -923,8 +924,9 @@ export const integrationsRouter = createTRPCRouter({
 				triggers: triggerRows,
 				authSchemes: authSchemeRows,
 				...claimFields,
-				canClaimAnother: wipClaim == null,
-				wipIntegrationName: wipClaim?.name ?? null,
+				canClaimAnother: claimEligibility?.canClaim ?? true,
+				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
+				claimBlockReason: claimEligibility?.blockReason ?? null,
 				claimExpiredForCurrentUser,
 				timeline: statusHistory.map((event) => ({
 					id: event.id,
@@ -1053,7 +1055,19 @@ export const integrationsRouter = createTRPCRouter({
 	claim: protectedProcedure
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
-			if (await userHasWipClaim(ctx.db, ctx.user.id)) {
+			const claimEligibility = await getUserClaimEligibility(
+				ctx.db,
+				ctx.user.id,
+			);
+
+			if (!claimEligibility.canClaim) {
+				if (claimEligibility.blockReason === 'limit_reached') {
+					throw new TRPCError({
+						code: 'PRECONDITION_FAILED',
+						message: `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`,
+					});
+				}
+
 				throw new TRPCError({
 					code: 'PRECONDITION_FAILED',
 					message:

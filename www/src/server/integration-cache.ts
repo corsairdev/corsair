@@ -5,7 +5,7 @@ import { db } from '@/db';
 import {
 	getClaimExpiredForUser,
 	getLatestStatusForIntegration,
-	getUserWipClaim,
+	getUserClaimEligibility,
 } from '@/db/integration-status';
 import { isIntegrationActivelyClaimed } from '@/lib/integration-phases';
 import { appRouter } from '@/server/api/root';
@@ -52,12 +52,13 @@ async function withCurrentUserFields(summary: CachedSummary, userId?: string) {
 			claimExpiredForCurrentUser: null,
 			canClaimAnother: true,
 			wipIntegrationName: null,
+			claimBlockReason: null,
 		};
 	}
 
-	const [latestStatus, wipClaim] = await Promise.all([
+	const [latestStatus, claimEligibility] = await Promise.all([
 		getLatestStatusForIntegration(db, summary.id),
-		getUserWipClaim(db, userId),
+		getUserClaimEligibility(db, userId),
 	]);
 
 	const claimedByCurrentUser =
@@ -74,8 +75,9 @@ async function withCurrentUserFields(summary: CachedSummary, userId?: string) {
 		...summary,
 		claimedByCurrentUser,
 		claimExpiredForCurrentUser,
-		canClaimAnother: wipClaim == null,
-		wipIntegrationName: wipClaim?.name ?? null,
+		canClaimAnother: claimEligibility.canClaim,
+		wipIntegrationName: claimEligibility.wipIntegrationName,
+		claimBlockReason: claimEligibility.blockReason,
 	};
 }
 

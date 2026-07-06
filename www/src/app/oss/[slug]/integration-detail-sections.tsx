@@ -93,6 +93,7 @@ export async function IntegrationHeaderSection({
 						session={Boolean(session)}
 						canClaimAnother={integration.canClaimAnother}
 						wipIntegrationName={integration.wipIntegrationName}
+						claimBlockReason={integration.claimBlockReason}
 					/>
 				) : null}
 
