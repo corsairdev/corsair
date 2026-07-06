@@ -42,6 +42,8 @@ export const get: AltTextAiEndpoints['get'] = async (ctx, input) => {
 		{ apiKey: ctx.key },
 	);
 
+	await cacheImageRecord(ctx, response);
+
 	await logEventFromContext(
 		ctx,
 		'alttext_ai.images.get',
@@ -81,6 +83,14 @@ export const deleteImage: AltTextAiEndpoints['delete'] = async (ctx, input) => {
 		apiKey: ctx.key,
 		method: 'DELETE',
 	});
+
+	if (ctx.db.images?.deleteByEntityId) {
+		try {
+			await ctx.db.images.deleteByEntityId(input.assetId);
+		} catch (error) {
+			console.warn('[alttext_ai] Failed to delete image from database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
