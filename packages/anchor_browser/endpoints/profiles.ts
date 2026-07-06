@@ -11,9 +11,9 @@ export const deleteProfile: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 	return executeAnchorBrowserOperation(ctx, input, deleteProfileRoute);
 };
 
-const getProfile2Route = getRoute('getProfile2');
-export const getProfile2: AnchorBrowserEndpoint = async (ctx, input = {}) => {
-	return executeAnchorBrowserOperation(ctx, input, getProfile2Route);
+const getProfileRoute = getRoute('getProfile');
+export const getProfile: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+	return executeAnchorBrowserOperation(ctx, input, getProfileRoute);
 };
 
 const listProfilesRoute = getRoute('listProfiles');
@@ -29,7 +29,7 @@ export const updateProfile: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 export const ProfilesEndpoints = {
 	createProfile,
 	deleteProfile,
-	getProfile2,
+	getProfile,
 	listProfiles,
 	updateProfile
 } as const;

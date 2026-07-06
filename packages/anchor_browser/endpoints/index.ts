@@ -44,6 +44,7 @@ export const anchorBrowserEndpointMeta = Object.fromEntries(
 			description: route.description,
 		},
 	]),
+	// Object.fromEntries loses the literal endpoint-meta shape; cast satisfies RequiredPluginEndpointMeta.
 ) as RequiredPluginEndpointMeta<typeof anchorBrowserEndpointsNested>;
 
 export const anchorBrowserEndpointSchemas = Object.fromEntries(

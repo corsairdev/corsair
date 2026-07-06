@@ -23,7 +23,9 @@ const ANCHORBROWSER_API_BASE = 'https://api.anchorbrowser.io/v1';
 
 export type AnchorBrowserRequestOptions = {
 	method?: AnchorBrowserMethod;
+	// body is unknown because request payloads vary per Anchor Browser endpoint and are built dynamically.
 	body?: unknown;
+	// query values are heterogeneous (pagination, filters); not fully typed across 64 ops.
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
 };

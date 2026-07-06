@@ -64,6 +64,7 @@ export const anchorBrowserRoutes = [
 		key: 'createProfile',
 		group: 'profiles',
 		name: 'createProfile',
+		// Anchor API persists session state to a new profile via POST /profiles (Composio-mapped).
 		method: 'POST',
 		path: '/profiles',
 		description: 'Creates a new browser profile from an active session. A profile stores cookies, local storage, and cache data. The session must be running when this is called; profile data is persisted once the session terminates. Use profiles to maintain persistent browser state across multiple sessions.',
@@ -244,9 +245,9 @@ export const anchorBrowserRoutes = [
 		riskLevel: 'read' as const,
 	},
 	{
-		key: 'getProfile2',
+		key: 'getProfile',
 		group: 'profiles',
-		name: 'getProfile2',
+		name: 'getProfile',
 		method: 'GET',
 		path: '/profiles/{name}',
 		description: 'Tool to retrieve details of a specific profile by its name. Use when you need to fetch information about a particular browser profile.',
@@ -665,6 +666,7 @@ export const anchorBrowserRoutes = [
 		key: 'updateProfile',
 		group: 'profiles',
 		name: 'updateProfile',
+		// Anchor API refreshes an existing profile from a session via the same POST /profiles route.
 		method: 'POST',
 		path: '/profiles',
 		description: 'Updates an existing browser profile with data from an active session. The profile stores cookies, local storage, and cache from the session. Requires an active (running) browser session - the session_id must reference a session that has not been terminated.',

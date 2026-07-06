@@ -17,6 +17,7 @@ function countLeaves(tree: Record<string, unknown>): number {
 	return Object.values(tree).reduce<number>((count, value) => {
 		if (typeof value === 'function') return count + 1;
 		if (value && typeof value === 'object') {
+			// Test-only: recurse into nested endpoint groups without a typed tree shape.
 			return count + countLeaves(value as Record<string, unknown>);
 		}
 		return count;
@@ -28,6 +29,7 @@ function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
 		const path = prefix ? `${prefix}.${key}` : key;
 		if (typeof value === 'function') return [path];
 		if (value && typeof value === 'object') {
+			// Test-only: recurse into nested endpoint groups without a typed tree shape.
 			return endpointPaths(value as Record<string, unknown>, path);
 		}
 		return [];
@@ -40,11 +42,13 @@ const mockCtx = {
 	options: {},
 	logEvent: jest.fn(),
 	db: {},
+	// Test-only partial mock; AnchorBrowserContext requires full plugin/db surface not needed here.
 } as unknown as AnchorBrowserContext;
 
 describe('AnchorBrowser plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {
 		const plugin = anchor_browser();
+		// Test-only: treat nested endpoints as a tree for leaf-count traversal.
 		const endpoints = plugin.endpoints as Record<string, unknown>;
 		const paths = endpointPaths(endpoints).sort();
 
@@ -100,6 +104,7 @@ describe('AnchorBrowser endpoints', () => {
 
 	it('maps representative operations to API routes', async () => {
 		const plugin = anchor_browser({ key: 'test-api-key' });
+		// Test-only: narrow to representative session endpoints for route-mapping assertions.
 		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
 			sessions: {
 				listSessions: (

@@ -4,6 +4,14 @@ import { z } from 'zod';
 const AnchorBrowserResponseSchema = z.unknown();
 // Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
 const AnchorBrowserOptionalBodySchema = z.unknown().optional();
+// Optional query filters vary by endpoint; values are heterogeneous JSON filter objects.
+const AnchorBrowserQueryParamsSchema = z.record(z.string(), z.unknown()).optional();
+// Row/item arrays contain heterogeneous objects per Anchor Browser list and batch APIs.
+const AnchorBrowserBatchItemsSchema = z.array(z.unknown());
+const AnchorBrowserBatchItemsOptionalSchema = z.array(z.unknown()).optional();
+// Config/metadata objects are loosely typed in Anchor Browser API docs.
+const AnchorBrowserLooseRecordSchema = z.record(z.string(), z.unknown());
+const AnchorBrowserLooseRecordOptionalSchema = z.record(z.string(), z.unknown()).optional();
 
 // clickMouse
 const ClickMouseInputSchema = z.object({
@@ -12,7 +20,7 @@ const ClickMouseInputSchema = z.object({
 	button: z.string().optional(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ClickMouseInput = z.infer<typeof ClickMouseInputSchema>;
@@ -23,7 +31,7 @@ export type ClickMouseResponse = z.infer<typeof ClickMouseResponseSchema>;
 const CopySelectedTextInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CopySelectedTextInput = z.infer<typeof CopySelectedTextInputSchema>;
@@ -34,9 +42,9 @@ export type CopySelectedTextResponse = z.infer<typeof CopySelectedTextResponseSc
 const CreateIntegrationInputSchema = z.object({
 	name: z.string(),
 	type: z.string(),
-	credentials: z.record(z.string(), z.unknown()),
+	credentials: AnchorBrowserLooseRecordSchema,
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateIntegrationInput = z.infer<typeof CreateIntegrationInputSchema>;
@@ -48,7 +56,7 @@ const CreateOrUpdateTaskDraftInputSchema = z.object({
 	code: z.string(),
 	task_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateOrUpdateTaskDraftInput = z.infer<typeof CreateOrUpdateTaskDraftInputSchema>;
@@ -63,7 +71,7 @@ const CreateProfileInputSchema = z.object({
 	description: z.string().optional(),
 	dedicated_sticky_ip: z.boolean().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateProfileInput = z.infer<typeof CreateProfileInputSchema>;
@@ -76,9 +84,9 @@ const CreateTaskInputSchema = z.object({
 	name: z.string(),
 	language: z.string(),
 	description: z.string().optional(),
-	browserConfiguration: z.record(z.string(), z.unknown()).optional(),
+	browserConfiguration: AnchorBrowserLooseRecordOptionalSchema,
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateTaskInput = z.infer<typeof CreateTaskInputSchema>;
@@ -89,7 +97,7 @@ export type CreateTaskResponse = z.infer<typeof CreateTaskResponseSchema>;
 const DeleteExtensionInputSchema = z.object({
 	id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteExtensionInput = z.infer<typeof DeleteExtensionInputSchema>;
@@ -100,7 +108,7 @@ export type DeleteExtensionResponse = z.infer<typeof DeleteExtensionResponseSche
 const DeleteIntegrationInputSchema = z.object({
 	integration_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteIntegrationInput = z.infer<typeof DeleteIntegrationInputSchema>;
@@ -111,7 +119,7 @@ export type DeleteIntegrationResponse = z.infer<typeof DeleteIntegrationResponse
 const DeleteProfileInputSchema = z.object({
 	name: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteProfileInput = z.infer<typeof DeleteProfileInputSchema>;
@@ -122,7 +130,7 @@ export type DeleteProfileResponse = z.infer<typeof DeleteProfileResponseSchema>;
 const DeleteTaskInputSchema = z.object({
 	task_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteTaskInput = z.infer<typeof DeleteTaskInputSchema>;
@@ -134,7 +142,7 @@ const DeleteTaskVersionInputSchema = z.object({
 	task_id: z.string(),
 	version: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteTaskVersionInput = z.infer<typeof DeleteTaskVersionInputSchema>;
@@ -147,9 +155,9 @@ const DeployTaskInputSchema = z.object({
 	taskId: z.string(),
 	language: z.string().optional(),
 	description: z.string().optional(),
-	browserConfiguration: z.record(z.string(), z.unknown()).optional(),
+	browserConfiguration: AnchorBrowserLooseRecordOptionalSchema,
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeployTaskInput = z.infer<typeof DeployTaskInputSchema>;
@@ -162,7 +170,7 @@ const DoubleClickMouseInputSchema = z.object({
 	y: z.number().int().optional(),
 	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DoubleClickMouseInput = z.infer<typeof DoubleClickMouseInputSchema>;
@@ -177,7 +185,7 @@ const DragAndDropInputSchema = z.object({
 	startY: z.number(),
 	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DragAndDropInput = z.infer<typeof DragAndDropInputSchema>;
@@ -187,7 +195,7 @@ export type DragAndDropResponse = z.infer<typeof DragAndDropResponseSchema>;
 // endAllSessions
 const EndAllSessionsInputSchema = z.object({
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type EndAllSessionsInput = z.infer<typeof EndAllSessionsInputSchema>;
@@ -198,7 +206,7 @@ export type EndAllSessionsResponse = z.infer<typeof EndAllSessionsResponseSchema
 const EndBrowserSessionInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type EndBrowserSessionInput = z.infer<typeof EndBrowserSessionInputSchema>;
@@ -209,7 +217,7 @@ export type EndBrowserSessionResponse = z.infer<typeof EndBrowserSessionResponse
 const GetBatchSessionStatusInputSchema = z.object({
 	batch_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetBatchSessionStatusInput = z.infer<typeof GetBatchSessionStatusInputSchema>;
@@ -220,7 +228,7 @@ export type GetBatchSessionStatusResponse = z.infer<typeof GetBatchSessionStatus
 const GetBrowserSessionInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetBrowserSessionInput = z.infer<typeof GetBrowserSessionInputSchema>;
@@ -231,7 +239,7 @@ export type GetBrowserSessionResponse = z.infer<typeof GetBrowserSessionResponse
 const GetClipboardContentInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetClipboardContentInput = z.infer<typeof GetClipboardContentInputSchema>;
@@ -242,29 +250,29 @@ export type GetClipboardContentResponse = z.infer<typeof GetClipboardContentResp
 const GetLatestTaskVersionInputSchema = z.object({
 	taskId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetLatestTaskVersionInput = z.infer<typeof GetLatestTaskVersionInputSchema>;
 const GetLatestTaskVersionResponseSchema = AnchorBrowserResponseSchema;
 export type GetLatestTaskVersionResponse = z.infer<typeof GetLatestTaskVersionResponseSchema>;
 
-// getProfile2
-const GetProfile2InputSchema = z.object({
+// getProfile
+const GetProfileInputSchema = z.object({
 	name: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetProfile2Input = z.infer<typeof GetProfile2InputSchema>;
-const GetProfile2ResponseSchema = AnchorBrowserResponseSchema;
-export type GetProfile2Response = z.infer<typeof GetProfile2ResponseSchema>;
+export type GetProfileInput = z.infer<typeof GetProfileInputSchema>;
+const GetProfileResponseSchema = AnchorBrowserResponseSchema;
+export type GetProfileResponse = z.infer<typeof GetProfileResponseSchema>;
 
 // getSessionPages
 const GetSessionPagesInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetSessionPagesInput = z.infer<typeof GetSessionPagesInputSchema>;
@@ -275,7 +283,7 @@ export type GetSessionPagesResponse = z.infer<typeof GetSessionPagesResponseSche
 const GetTaskDraftInputSchema = z.object({
 	task_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTaskDraftInput = z.infer<typeof GetTaskDraftInputSchema>;
@@ -287,7 +295,7 @@ const GetTaskExecutionResultInputSchema = z.object({
 	task_id: z.string(),
 	execution_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTaskExecutionResultInput = z.infer<typeof GetTaskExecutionResultInputSchema>;
@@ -298,7 +306,7 @@ export type GetTaskExecutionResultResponse = z.infer<typeof GetTaskExecutionResu
 const GetTaskMetadataInputSchema = z.object({
 	task_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTaskMetadataInput = z.infer<typeof GetTaskMetadataInputSchema>;
@@ -310,7 +318,7 @@ const GetTaskVersionInputSchema = z.object({
 	task_id: z.string(),
 	version: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTaskVersionInput = z.infer<typeof GetTaskVersionInputSchema>;
@@ -327,7 +335,7 @@ const GetWebpageContentInputSchema = z.object({
 	page_index: z.number().int().optional(),
 	return_partial_on_timeout: z.boolean().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetWebpageContentInput = z.infer<typeof GetWebpageContentInputSchema>;
@@ -338,7 +346,7 @@ export type GetWebpageContentResponse = z.infer<typeof GetWebpageContentResponse
 const ListAgentResourcesInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListAgentResourcesInput = z.infer<typeof ListAgentResourcesInputSchema>;
@@ -348,7 +356,7 @@ export type ListAgentResourcesResponse = z.infer<typeof ListAgentResourcesRespon
 // listExtensions
 const ListExtensionsInputSchema = z.object({
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListExtensionsInput = z.infer<typeof ListExtensionsInputSchema>;
@@ -358,7 +366,7 @@ export type ListExtensionsResponse = z.infer<typeof ListExtensionsResponseSchema
 // listIntegrations
 const ListIntegrationsInputSchema = z.object({
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListIntegrationsInput = z.infer<typeof ListIntegrationsInputSchema>;
@@ -368,7 +376,7 @@ export type ListIntegrationsResponse = z.infer<typeof ListIntegrationsResponseSc
 // listProfiles
 const ListProfilesInputSchema = z.object({
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListProfilesInput = z.infer<typeof ListProfilesInputSchema>;
@@ -379,7 +387,7 @@ export type ListProfilesResponse = z.infer<typeof ListProfilesResponseSchema>;
 const ListSessionDownloadsInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListSessionDownloadsInput = z.infer<typeof ListSessionDownloadsInputSchema>;
@@ -390,7 +398,7 @@ export type ListSessionDownloadsResponse = z.infer<typeof ListSessionDownloadsRe
 const ListSessionRecordingsInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListSessionRecordingsInput = z.infer<typeof ListSessionRecordingsInputSchema>;
@@ -400,7 +408,7 @@ export type ListSessionRecordingsResponse = z.infer<typeof ListSessionRecordings
 // listSessions
 const ListSessionsInputSchema = z.object({
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListSessionsInput = z.infer<typeof ListSessionsInputSchema>;
@@ -415,7 +423,7 @@ const ListTaskExecutionsInputSchema = z.object({
 	taskId: z.string(),
 	version: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListTaskExecutionsInput = z.infer<typeof ListTaskExecutionsInputSchema>;
@@ -427,7 +435,7 @@ const ListTasksInputSchema = z.object({
 	page: z.string().optional(),
 	limit: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListTasksInput = z.infer<typeof ListTasksInputSchema>;
@@ -438,7 +446,7 @@ export type ListTasksResponse = z.infer<typeof ListTasksResponseSchema>;
 const ListTaskVersionsInputSchema = z.object({
 	task_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListTaskVersionsInput = z.infer<typeof ListTaskVersionsInputSchema>;
@@ -451,7 +459,7 @@ const MoveMouseInputSchema = z.object({
 	y: z.number().int(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type MoveMouseInput = z.infer<typeof MoveMouseInputSchema>;
@@ -463,7 +471,7 @@ const NavigateToUrlInputSchema = z.object({
 	url: z.string(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type NavigateToUrlInput = z.infer<typeof NavigateToUrlInputSchema>;
@@ -475,7 +483,7 @@ const PasteTextInputSchema = z.object({
 	text: z.string(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PasteTextInput = z.infer<typeof PasteTextInputSchema>;
@@ -486,7 +494,7 @@ export type PasteTextResponse = z.infer<typeof PasteTextResponseSchema>;
 const PauseAgentInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PauseAgentInput = z.infer<typeof PauseAgentInputSchema>;
@@ -497,7 +505,7 @@ export type PauseAgentResponse = z.infer<typeof PauseAgentResponseSchema>;
 const PauseSessionRecordingInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PauseSessionRecordingInput = z.infer<typeof PauseSessionRecordingInputSchema>;
@@ -506,11 +514,11 @@ export type PauseSessionRecordingResponse = z.infer<typeof PauseSessionRecording
 
 // performKeyboardShortcut
 const PerformKeyboardShortcutInputSchema = z.object({
-	keys: z.array(z.unknown()),
+	keys: AnchorBrowserBatchItemsSchema,
 	hold_time: z.number().int().optional(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PerformKeyboardShortcutInput = z.infer<typeof PerformKeyboardShortcutInputSchema>;
@@ -527,13 +535,13 @@ const PerformWebTaskInputSchema = z.object({
 	provider: z.string().optional(),
 	max_steps: z.number().int().optional(),
 	sessionId: z.string().optional(),
-	output_schema: z.record(z.string(), z.unknown()).optional(),
-	secret_values: z.record(z.string(), z.unknown()).optional(),
+	output_schema: AnchorBrowserLooseRecordOptionalSchema,
+	secret_values: AnchorBrowserLooseRecordOptionalSchema,
 	detect_elements: z.boolean().optional(),
 	highlight_elements: z.boolean().optional(),
 	human_intervention: z.boolean().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PerformWebTaskInput = z.infer<typeof PerformWebTaskInputSchema>;
@@ -547,7 +555,7 @@ const PressMouseButtonInputSchema = z.object({
 	button: z.string().optional(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PressMouseButtonInput = z.infer<typeof PressMouseButtonInputSchema>;
@@ -561,9 +569,9 @@ const PublishTaskVersionInputSchema = z.object({
 	language: z.string().optional(),
 	description: z.string().optional(),
 	taskVersion: z.string(),
-	browserConfiguration: z.record(z.string(), z.unknown()).optional(),
+	browserConfiguration: AnchorBrowserLooseRecordOptionalSchema,
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PublishTaskVersionInput = z.infer<typeof PublishTaskVersionInputSchema>;
@@ -577,7 +585,7 @@ const ReleaseMouseButtonInputSchema = z.object({
 	button: z.string().optional(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ReleaseMouseButtonInput = z.infer<typeof ReleaseMouseButtonInputSchema>;
@@ -588,7 +596,7 @@ export type ReleaseMouseButtonResponse = z.infer<typeof ReleaseMouseButtonRespon
 const ResumeAgentInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ResumeAgentInput = z.infer<typeof ResumeAgentInputSchema>;
@@ -599,7 +607,7 @@ export type ResumeAgentResponse = z.infer<typeof ResumeAgentResponseSchema>;
 const ResumeSessionRecordingInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ResumeSessionRecordingInput = z.infer<typeof ResumeSessionRecordingInputSchema>;
@@ -609,14 +617,14 @@ export type ResumeSessionRecordingResponse = z.infer<typeof ResumeSessionRecordi
 // runTask
 const RunTaskInputSchema = z.object({
 	async: z.boolean().optional(),
-	inputs: z.record(z.string(), z.unknown()).optional(),
+	inputs: AnchorBrowserLooseRecordOptionalSchema,
 	taskId: z.string(),
 	version: z.string().optional(),
 	sessionId: z.string().optional(),
 	cleanupSessions: z.boolean().optional(),
-	overrideBrowserConfiguration: z.record(z.string(), z.unknown()).optional(),
+	overrideBrowserConfiguration: AnchorBrowserLooseRecordOptionalSchema,
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type RunTaskInput = z.infer<typeof RunTaskInputSchema>;
@@ -625,13 +633,13 @@ export type RunTaskResponse = z.infer<typeof RunTaskResponseSchema>;
 
 // runTaskByName
 const RunTaskByNameInputSchema = z.object({
-	inputs: z.record(z.string(), z.unknown()).optional(),
+	inputs: AnchorBrowserLooseRecordOptionalSchema,
 	taskName: z.string(),
 	sessionId: z.string().optional(),
 	taskSessionId: z.string().optional(),
-	overrideBrowserConfiguration: z.record(z.string(), z.unknown()).optional(),
+	overrideBrowserConfiguration: AnchorBrowserLooseRecordOptionalSchema,
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type RunTaskByNameInput = z.infer<typeof RunTaskByNameInputSchema>;
@@ -650,7 +658,7 @@ const ScreenshotWebpageInputSchema = z.object({
 	scroll_all_content: z.boolean().optional(),
 	capture_full_height: z.boolean().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ScreenshotWebpageInput = z.infer<typeof ScreenshotWebpageInputSchema>;
@@ -667,7 +675,7 @@ const ScrollSessionInputSchema = z.object({
 	deltaY: z.number().int(),
 	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ScrollSessionInput = z.infer<typeof ScrollSessionInputSchema>;
@@ -679,7 +687,7 @@ const SetClipboardContentInputSchema = z.object({
 	text: z.string(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SetClipboardContentInput = z.infer<typeof SetClipboardContentInputSchema>;
@@ -688,10 +696,10 @@ export type SetClipboardContentResponse = z.infer<typeof SetClipboardContentResp
 
 // signalEvent
 const SignalEventInputSchema = z.object({
-	data: z.record(z.string(), z.unknown()),
+	data: AnchorBrowserLooseRecordSchema,
 	event_name: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SignalEventInput = z.infer<typeof SignalEventInputSchema>;
@@ -700,12 +708,12 @@ export type SignalEventResponse = z.infer<typeof SignalEventResponseSchema>;
 
 // startBrowserSession
 const StartBrowserSessionInputSchema = z.object({
-	browser: z.record(z.string(), z.unknown()).optional(),
-	session: z.record(z.string(), z.unknown()).optional(),
-	identities: z.array(z.unknown()).optional(),
-	integrations: z.array(z.unknown()).optional(),
+	browser: AnchorBrowserLooseRecordOptionalSchema,
+	session: AnchorBrowserLooseRecordOptionalSchema,
+	identities: AnchorBrowserBatchItemsOptionalSchema,
+	integrations: AnchorBrowserBatchItemsOptionalSchema,
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type StartBrowserSessionInput = z.infer<typeof StartBrowserSessionInputSchema>;
@@ -716,7 +724,7 @@ export type StartBrowserSessionResponse = z.infer<typeof StartBrowserSessionResp
 const TakeScreenshotInputSchema = z.object({
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type TakeScreenshotInput = z.infer<typeof TakeScreenshotInputSchema>;
@@ -729,7 +737,7 @@ const TypeTextInputSchema = z.object({
 	delay: z.number().int().optional(),
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type TypeTextInput = z.infer<typeof TypeTextInputSchema>;
@@ -743,7 +751,7 @@ const UpdateProfileInputSchema = z.object({
 	session_id: z.string(),
 	description: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;
@@ -756,7 +764,7 @@ const UpdateTaskMetadataInputSchema = z.object({
 	task_id: z.string(),
 	description: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateTaskMetadataInput = z.infer<typeof UpdateTaskMetadataInputSchema>;
@@ -765,12 +773,12 @@ export type UpdateTaskMetadataResponse = z.infer<typeof UpdateTaskMetadataRespon
 
 // uploadExtension
 const UploadExtensionInputSchema = z.object({
-	file: z.record(z.string(), z.unknown()).optional(),
+	file: AnchorBrowserLooseRecordOptionalSchema,
 	name: z.string(),
 	file_name: z.string().optional(),
 	file_content_base64: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UploadExtensionInput = z.infer<typeof UploadExtensionInputSchema>;
@@ -779,11 +787,11 @@ export type UploadExtensionResponse = z.infer<typeof UploadExtensionResponseSche
 
 // uploadFile
 const UploadFileInputSchema = z.object({
-	file: z.record(z.string(), z.unknown()),
+	file: AnchorBrowserLooseRecordSchema,
 	session_id: z.string(),
 	file_content_base64: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UploadFileInput = z.infer<typeof UploadFileInputSchema>;
@@ -792,10 +800,10 @@ export type UploadFileResponse = z.infer<typeof UploadFileResponseSchema>;
 
 // uploadFilesToSession
 const UploadFilesToSessionInputSchema = z.object({
-	file: z.record(z.string(), z.unknown()),
+	file: AnchorBrowserLooseRecordSchema,
 	session_id: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UploadFilesToSessionInput = z.infer<typeof UploadFilesToSessionInputSchema>;
@@ -807,7 +815,7 @@ const WaitForEventInputSchema = z.object({
 	timeoutMs: z.number().int().optional(),
 	event_name: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type WaitForEventInput = z.infer<typeof WaitForEventInputSchema>;
@@ -835,7 +843,7 @@ export const AnchorBrowserEndpointInputSchemas = {
 	getBrowserSession: GetBrowserSessionInputSchema,
 	getClipboardContent: GetClipboardContentInputSchema,
 	getLatestTaskVersion: GetLatestTaskVersionInputSchema,
-	getProfile2: GetProfile2InputSchema,
+	getProfile: GetProfileInputSchema,
 	getSessionPages: GetSessionPagesInputSchema,
 	getTaskDraft: GetTaskDraftInputSchema,
 	getTaskExecutionResult: GetTaskExecutionResultInputSchema,
@@ -906,7 +914,7 @@ export const AnchorBrowserEndpointOutputSchemas = {
 	getBrowserSession: GetBrowserSessionResponseSchema,
 	getClipboardContent: GetClipboardContentResponseSchema,
 	getLatestTaskVersion: GetLatestTaskVersionResponseSchema,
-	getProfile2: GetProfile2ResponseSchema,
+	getProfile: GetProfileResponseSchema,
 	getSessionPages: GetSessionPagesResponseSchema,
 	getTaskDraft: GetTaskDraftResponseSchema,
 	getTaskExecutionResult: GetTaskExecutionResultResponseSchema,
@@ -957,5 +965,6 @@ export type AnchorBrowserEndpointOutputs = {
 };
 
 export type AnchorBrowserEndpointInput = AnchorBrowserEndpointInputs[keyof AnchorBrowserEndpointInputs] & {
+	// Passthrough for extra fields not yet mapped from Anchor Browser OpenAPI definitions.
 	[key: string]: unknown;
 };
