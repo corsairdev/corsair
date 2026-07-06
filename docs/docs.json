@@ -126,7 +126,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -339,6 +342,15 @@
                   "plugins/googlecalendar/api",
                   "plugins/googlecalendar/database",
                   "plugins/googlecalendar/webhooks"
+                ]
+              },
+              {
+                "group": "Google Docs",
+                "pages": [
+                  "plugins/googledocs/overview",
+                  "plugins/googledocs/api",
+                  "plugins/googledocs/database",
+                  "plugins/googledocs/webhooks"
                 ]
               },
               {
