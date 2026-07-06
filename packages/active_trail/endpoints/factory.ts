@@ -4,6 +4,7 @@ import { makeActiveTrailRequest } from '../client';
 import type { ActiveTrailContext } from '../index';
 import type { ActiveTrailRoute } from './routes';
 import type { ActiveTrailEndpointInput } from './types';
+import { syncActiveTrailOperationCache } from './cache-sync';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 	id: ['id', 'group_id', 'contact_id', 'campaign_id', 'mailinglist_id', 'webhook_id', 'template_id', 'automation_id', 'category_id', 'parameter_id', 'order_id', 'site_id', 'segmentation_id'],
@@ -103,12 +104,13 @@ export async function logActiveTrailOperation(
 	ctx: ActiveTrailContext,
 	input: ActiveTrailEndpointInput,
 	route: ActiveTrailRoute,
+	status: 'completed' | 'failed' = 'completed',
 ) {
 	await logEventFromContext(
 		ctx,
 		`active_trail.${route.group}.${route.name}`,
 		{ method: route.method, path: route.path },
-		'completed',
+		status,
 	);
 }
 
@@ -124,4 +126,22 @@ export async function requestActiveTrailOperation(
 		// headers is optional unknown on ActiveTrailEndpointInput; callers pass string header maps.
 		headers: input.headers as Record<string, string> | undefined,
 	});
+}
+
+export async function executeActiveTrailOperation(
+	ctx: ActiveTrailContext,
+	input: ActiveTrailEndpointInput,
+	route: ActiveTrailRoute,
+) {
+	let status: 'completed' | 'failed' = 'completed';
+	try {
+		const result = await requestActiveTrailOperation(ctx, input, route);
+		await syncActiveTrailOperationCache(ctx, route, input, result);
+		return result;
+	} catch (error) {
+		status = 'failed';
+		throw error;
+	} finally {
+		await logActiveTrailOperation(ctx, input, route, status);
+	}
 }

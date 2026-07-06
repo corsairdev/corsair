@@ -1,6 +1,6 @@
 import { activeTrailRoutes } from './routes';
 import type { ActiveTrailEndpoint } from './factory';
-import { logActiveTrailOperation, requestActiveTrailOperation } from './factory';
+import { executeActiveTrailOperation } from './factory';
 
 function getRoute(name: string) {
 	const route = activeTrailRoutes.find((candidate) => candidate.name === name);
@@ -12,9 +12,7 @@ function getRoute(name: string) {
 
 const getTransactionalMessagesClassificationRoute = getRoute('getTransactionalMessagesClassification');
 export const getTransactionalMessagesClassification: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getTransactionalMessagesClassificationRoute);
-	await logActiveTrailOperation(ctx, input, getTransactionalMessagesClassificationRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getTransactionalMessagesClassificationRoute);
 };
 
 export const OperationalMessageEndpoints = {

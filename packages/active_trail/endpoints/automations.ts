@@ -1,6 +1,6 @@
 import { activeTrailRoutes } from './routes';
 import type { ActiveTrailEndpoint } from './factory';
-import { logActiveTrailOperation, requestActiveTrailOperation } from './factory';
+import { executeActiveTrailOperation } from './factory';
 
 function getRoute(name: string) {
 	const route = activeTrailRoutes.find((candidate) => candidate.name === name);
@@ -12,65 +12,47 @@ function getRoute(name: string) {
 
 const deleteAutomationsRoute = getRoute('deleteAutomations');
 export const deleteAutomations: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, deleteAutomationsRoute);
-	await logActiveTrailOperation(ctx, input, deleteAutomationsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, deleteAutomationsRoute);
 };
 
 const getAutomationLogRoute = getRoute('getAutomationLog');
 export const getAutomationLog: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAutomationLogRoute);
-	await logActiveTrailOperation(ctx, input, getAutomationLogRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAutomationLogRoute);
 };
 
 const getAutomationReportsLogAutomationQueueRoute = getRoute('getAutomationReportsLogAutomationQueue');
 export const getAutomationReportsLogAutomationQueue: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAutomationReportsLogAutomationQueueRoute);
-	await logActiveTrailOperation(ctx, input, getAutomationReportsLogAutomationQueueRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAutomationReportsLogAutomationQueueRoute);
 };
 
 const getAutomationsRoute = getRoute('getAutomations');
 export const getAutomations: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAutomationsRoute);
-	await logActiveTrailOperation(ctx, input, getAutomationsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAutomationsRoute);
 };
 
 const getAutomationsDetailsRoute = getRoute('getAutomationsDetails');
 export const getAutomationsDetails: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAutomationsDetailsRoute);
-	await logActiveTrailOperation(ctx, input, getAutomationsDetailsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAutomationsDetailsRoute);
 };
 
 const getAutomationsEmailCampaignStepsRoute = getRoute('getAutomationsEmailCampaignSteps');
 export const getAutomationsEmailCampaignSteps: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAutomationsEmailCampaignStepsRoute);
-	await logActiveTrailOperation(ctx, input, getAutomationsEmailCampaignStepsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAutomationsEmailCampaignStepsRoute);
 };
 
 const getAutomationsSmsCampaignStepsRoute = getRoute('getAutomationsSmsCampaignSteps');
 export const getAutomationsSmsCampaignSteps: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAutomationsSmsCampaignStepsRoute);
-	await logActiveTrailOperation(ctx, input, getAutomationsSmsCampaignStepsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAutomationsSmsCampaignStepsRoute);
 };
 
 const getAutomationTriggerTypesRoute = getRoute('getAutomationTriggerTypes');
 export const getAutomationTriggerTypes: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAutomationTriggerTypesRoute);
-	await logActiveTrailOperation(ctx, input, getAutomationTriggerTypesRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAutomationTriggerTypesRoute);
 };
 
 const getUpdateActionsRoute = getRoute('getUpdateActions');
 export const getUpdateActions: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getUpdateActionsRoute);
-	await logActiveTrailOperation(ctx, input, getUpdateActionsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getUpdateActionsRoute);
 };
 
 export const AutomationsEndpoints = {

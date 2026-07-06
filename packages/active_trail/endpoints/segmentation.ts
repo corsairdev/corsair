@@ -1,6 +1,6 @@
 import { activeTrailRoutes } from './routes';
 import type { ActiveTrailEndpoint } from './factory';
-import { logActiveTrailOperation, requestActiveTrailOperation } from './factory';
+import { executeActiveTrailOperation } from './factory';
 
 function getRoute(name: string) {
 	const route = activeTrailRoutes.find((candidate) => candidate.name === name);
@@ -12,51 +12,37 @@ function getRoute(name: string) {
 
 const createSegmentationRoute = getRoute('createSegmentation');
 export const createSegmentation: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, createSegmentationRoute);
-	await logActiveTrailOperation(ctx, input, createSegmentationRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, createSegmentationRoute);
 };
 
 const getSegmentationRuleFieldTypesRoute = getRoute('getSegmentationRuleFieldTypes');
 export const getSegmentationRuleFieldTypes: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getSegmentationRuleFieldTypesRoute);
-	await logActiveTrailOperation(ctx, input, getSegmentationRuleFieldTypesRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getSegmentationRuleFieldTypesRoute);
 };
 
 const getSegmentationRuleOperationsRoute = getRoute('getSegmentationRuleOperations');
 export const getSegmentationRuleOperations: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getSegmentationRuleOperationsRoute);
-	await logActiveTrailOperation(ctx, input, getSegmentationRuleOperationsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getSegmentationRuleOperationsRoute);
 };
 
 const getSegmentationRuleTypesRoute = getRoute('getSegmentationRuleTypes');
 export const getSegmentationRuleTypes: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getSegmentationRuleTypesRoute);
-	await logActiveTrailOperation(ctx, input, getSegmentationRuleTypesRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getSegmentationRuleTypesRoute);
 };
 
 const getSegmentationRuleTypesMappingRoute = getRoute('getSegmentationRuleTypesMapping');
 export const getSegmentationRuleTypesMapping: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getSegmentationRuleTypesMappingRoute);
-	await logActiveTrailOperation(ctx, input, getSegmentationRuleTypesMappingRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getSegmentationRuleTypesMappingRoute);
 };
 
 const getSegmentationsRoute = getRoute('getSegmentations');
 export const getSegmentations: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getSegmentationsRoute);
-	await logActiveTrailOperation(ctx, input, getSegmentationsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getSegmentationsRoute);
 };
 
 const updateSegmentationRoute = getRoute('updateSegmentation');
 export const updateSegmentation: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, updateSegmentationRoute);
-	await logActiveTrailOperation(ctx, input, updateSegmentationRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, updateSegmentationRoute);
 };
 
 export const SegmentationEndpoints = {

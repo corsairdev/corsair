@@ -1,6 +1,6 @@
 import { activeTrailRoutes } from './routes';
 import type { ActiveTrailEndpoint } from './factory';
-import { logActiveTrailOperation, requestActiveTrailOperation } from './factory';
+import { executeActiveTrailOperation } from './factory';
 
 function getRoute(name: string) {
 	const route = activeTrailRoutes.find((candidate) => candidate.name === name);
@@ -12,30 +12,22 @@ function getRoute(name: string) {
 
 const createSmartCodeSiteRoute = getRoute('createSmartCodeSite');
 export const createSmartCodeSite: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, createSmartCodeSiteRoute);
-	await logActiveTrailOperation(ctx, input, createSmartCodeSiteRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, createSmartCodeSiteRoute);
 };
 
 const deleteSmartCodeSiteRoute = getRoute('deleteSmartCodeSite');
 export const deleteSmartCodeSite: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, deleteSmartCodeSiteRoute);
-	await logActiveTrailOperation(ctx, input, deleteSmartCodeSiteRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, deleteSmartCodeSiteRoute);
 };
 
 const getSmartCodeSitesRoute = getRoute('getSmartCodeSites');
 export const getSmartCodeSites: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getSmartCodeSitesRoute);
-	await logActiveTrailOperation(ctx, input, getSmartCodeSitesRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getSmartCodeSitesRoute);
 };
 
 const updateSmartCodeSiteRoute = getRoute('updateSmartCodeSite');
 export const updateSmartCodeSite: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, updateSmartCodeSiteRoute);
-	await logActiveTrailOperation(ctx, input, updateSmartCodeSiteRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, updateSmartCodeSiteRoute);
 };
 
 export const SmartCodeSiteEndpoints = {

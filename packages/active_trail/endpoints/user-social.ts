@@ -1,6 +1,6 @@
 import { activeTrailRoutes } from './routes';
 import type { ActiveTrailEndpoint } from './factory';
-import { logActiveTrailOperation, requestActiveTrailOperation } from './factory';
+import { executeActiveTrailOperation } from './factory';
 
 function getRoute(name: string) {
 	const route = activeTrailRoutes.find((candidate) => candidate.name === name);
@@ -12,9 +12,7 @@ function getRoute(name: string) {
 
 const getUserSocialAccountsGetRoute = getRoute('getUserSocialAccountsGet');
 export const getUserSocialAccountsGet: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getUserSocialAccountsGetRoute);
-	await logActiveTrailOperation(ctx, input, getUserSocialAccountsGetRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getUserSocialAccountsGetRoute);
 };
 
 export const UserSocialEndpoints = {

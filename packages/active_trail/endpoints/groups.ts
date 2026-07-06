@@ -1,6 +1,6 @@
 import { activeTrailRoutes } from './routes';
 import type { ActiveTrailEndpoint } from './factory';
-import { logActiveTrailOperation, requestActiveTrailOperation } from './factory';
+import { executeActiveTrailOperation } from './factory';
 
 function getRoute(name: string) {
 	const route = activeTrailRoutes.find((candidate) => candidate.name === name);
@@ -12,65 +12,47 @@ function getRoute(name: string) {
 
 const addGroupMemberRoute = getRoute('addGroupMember');
 export const addGroupMember: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, addGroupMemberRoute);
-	await logActiveTrailOperation(ctx, input, addGroupMemberRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, addGroupMemberRoute);
 };
 
 const createANewGroupRoute = getRoute('createANewGroup');
 export const createANewGroup: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, createANewGroupRoute);
-	await logActiveTrailOperation(ctx, input, createANewGroupRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, createANewGroupRoute);
 };
 
 const deleteAMemberInAGroupRoute = getRoute('deleteAMemberInAGroup');
 export const deleteAMemberInAGroup: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, deleteAMemberInAGroupRoute);
-	await logActiveTrailOperation(ctx, input, deleteAMemberInAGroupRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, deleteAMemberInAGroupRoute);
 };
 
 const deleteGroupByIdRoute = getRoute('deleteGroupById');
 export const deleteGroupById: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, deleteGroupByIdRoute);
-	await logActiveTrailOperation(ctx, input, deleteGroupByIdRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, deleteGroupByIdRoute);
 };
 
 const getAllGroupsRoute = getRoute('getAllGroups');
 export const getAllGroups: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getAllGroupsRoute);
-	await logActiveTrailOperation(ctx, input, getAllGroupsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getAllGroupsRoute);
 };
 
 const getGroupRoute = getRoute('getGroup');
 export const getGroup: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getGroupRoute);
-	await logActiveTrailOperation(ctx, input, getGroupRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getGroupRoute);
 };
 
 const getGroupContentsByIdRoute = getRoute('getGroupContentsById');
 export const getGroupContentsById: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getGroupContentsByIdRoute);
-	await logActiveTrailOperation(ctx, input, getGroupContentsByIdRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getGroupContentsByIdRoute);
 };
 
 const getGroupsEventsRoute = getRoute('getGroupsEvents');
 export const getGroupsEvents: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, getGroupsEventsRoute);
-	await logActiveTrailOperation(ctx, input, getGroupsEventsRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, getGroupsEventsRoute);
 };
 
 const updateGroupRoute = getRoute('updateGroup');
 export const updateGroup: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	const result = await requestActiveTrailOperation(ctx, input, updateGroupRoute);
-	await logActiveTrailOperation(ctx, input, updateGroupRoute);
-	return result;
+	return executeActiveTrailOperation(ctx, input, updateGroupRoute);
 };
 
 export const GroupsEndpoints = {
