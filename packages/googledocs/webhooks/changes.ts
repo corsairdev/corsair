@@ -193,7 +193,7 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 								title: file.name,
 								changeType: 'created',
 							},
-							corsairEntityId,
+							file.id ?? '',
 						);
 					}
 					continue;

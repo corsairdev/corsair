@@ -386,7 +386,8 @@ export function googledocs<const T extends GoogleDocsPluginOptions>(
 							ctx.keys.set_expires_at(String(result.expiresAt)),
 						]);
 					}
-
+					// _refreshAuth is read by makeAuthenticatedGoogleRequest on a 401; it is not
+					// on the typed CorsairPluginContext, so the closure is attached ad hoc here.
 					(ctx as Record<string, unknown>)._refreshAuth = async () => {
 						const freshResult = await getValidAccessToken({
 							accessToken: null,

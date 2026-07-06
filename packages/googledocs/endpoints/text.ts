@@ -48,13 +48,11 @@ export const replaceAllText: GoogleDocsEndpoints['replaceAllText'] = async (
 	const response = await runBatchUpdate(ctx, input.documentId, [
 		{
 			replaceAllText: {
-				replaceText: {
-					containsText: {
-						text: input.find,
-						matchCase: input.matchCase ?? false,
-					},
-					replaceText: input.replace,
+				containsText: {
+					text: input.find,
+					matchCase: input.matchCase ?? false,
 				},
+				replaceText: input.replace,
 			},
 		},
 	]);
