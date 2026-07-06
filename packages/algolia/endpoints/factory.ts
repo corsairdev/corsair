@@ -2,6 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
         import { logEventFromContext } from 'corsair/core';
         import { makeAlgoliaRequest } from '../client';
         import type { AlgoliaContext } from '../index';
+        import { syncAlgoliaOperationCache } from './cache-sync';
         import { algoliaRoutes, type AlgoliaRoute } from './routes';
         import type { AlgoliaEndpointInput } from './types';
 
@@ -200,7 +201,9 @@ import type { CorsairEndpoint } from 'corsair/core';
         ) {
         	let status: 'completed' | 'failed' = 'completed';
         	try {
-        		return await requestAlgoliaOperation(ctx, input, route);
+        		const result = await requestAlgoliaOperation(ctx, input, route);
+        		await syncAlgoliaOperationCache(ctx, route, input, result);
+        		return result;
         	} catch (error) {
         		status = 'failed';
         		throw error;

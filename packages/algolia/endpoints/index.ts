@@ -1,6 +1,6 @@
-import { AbTestsEndpoints } from './abTests';
+import { AbTestsEndpoints } from './ab-tests';
 import { AnalyticsEndpoints } from './analytics';
-import { ApiKeysEndpoints } from './apiKeys';
+import { ApiKeysEndpoints } from './api-keys';
 import { AuthenticationsEndpoints } from './authentications';
 import { DestinationsEndpoints } from './destinations';
 import { DictionariesEndpoints } from './dictionaries';
@@ -8,7 +8,7 @@ import { IndicesEndpoints } from './indices';
 import { InsightsEndpoints } from './insights';
 import { LogsEndpoints } from './logs';
 import { PersonalizationEndpoints } from './personalization';
-import { QuerySuggestionsEndpoints } from './querySuggestions';
+import { QuerySuggestionsEndpoints } from './query-suggestions';
 import { RulesEndpoints } from './rules';
 import { RunsEndpoints } from './runs';
 import { SearchEndpoints } from './search';
