@@ -2,6 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
         import { logEventFromContext } from 'corsair/core';
         import { makeAgencyZoomRequest } from '../client';
         import type { AgencyZoomContext } from '../index';
+        import { syncAgencyZoomOperationCache } from './cache-sync';
         import { agencyZoomRoutes, type AgencyZoomRoute } from './routes';
         import type { AgencyZoomEndpointInput } from './types';
 
@@ -143,7 +144,9 @@ import type { CorsairEndpoint } from 'corsair/core';
         ) {
         	let status: 'completed' | 'failed' = 'completed';
         	try {
-        		return await requestAgencyZoomOperation(ctx, input, route);
+        		const result = await requestAgencyZoomOperation(ctx, input, route);
+        		await syncAgencyZoomOperationCache(ctx, route, input, result);
+        		return result;
         	} catch (error) {
         		status = 'failed';
         		throw error;
