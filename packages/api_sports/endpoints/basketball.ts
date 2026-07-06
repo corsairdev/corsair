@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApiSportsRequest } from '../client';
+import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
 import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
@@ -7,7 +7,8 @@ import { API_SPORTS_ROUTES } from './routes';
 /** Get Basketball Statistics */
 export const getBasketballStatistics: ApiSportsEndpoints['getBasketballStatistics'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getBasketballStatistics;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getBasketballStatistics']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getBasketballStatistics']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -19,7 +20,8 @@ export const getBasketballStatistics: ApiSportsEndpoints['getBasketballStatistic
 /** Get Basketball Bets */
 export const getBasketballBets: ApiSportsEndpoints['getBasketballBets'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getBasketballBets;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getBasketballBets']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getBasketballBets']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -31,7 +33,8 @@ export const getBasketballBets: ApiSportsEndpoints['getBasketballBets'] = async 
 /** Get Basketball Bookmakers */
 export const getBasketballBookmakers: ApiSportsEndpoints['getBasketballBookmakers'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getBasketballBookmakers;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getBasketballBookmakers']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getBasketballBookmakers']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -43,7 +46,8 @@ export const getBasketballBookmakers: ApiSportsEndpoints['getBasketballBookmaker
 /** Get NBA Game Statistics */
 export const getNbaGameStatistics: ApiSportsEndpoints['getNbaGameStatistics'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getNbaGameStatistics;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getNbaGameStatistics']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getNbaGameStatistics']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -55,7 +59,8 @@ export const getNbaGameStatistics: ApiSportsEndpoints['getNbaGameStatistics'] = 
 /** Get Player Statistics */
 export const getPlayerStatistics: ApiSportsEndpoints['getPlayerStatistics'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayerStatistics;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayerStatistics']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayerStatistics']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -67,7 +72,8 @@ export const getPlayerStatistics: ApiSportsEndpoints['getPlayerStatistics'] = as
 /** Get Game Statistics by Teams */
 export const getGameStatisticsByTeams: ApiSportsEndpoints['getGameStatisticsByTeams'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getGameStatisticsByTeams;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getGameStatisticsByTeams']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getGameStatisticsByTeams']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -79,7 +85,8 @@ export const getGameStatisticsByTeams: ApiSportsEndpoints['getGameStatisticsByTe
 /** Get Games Events */
 export const getGamesEvents: ApiSportsEndpoints['getGamesEvents'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getGamesEvents;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getGamesEvents']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getGamesEvents']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },

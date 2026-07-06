@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApiSportsRequest } from '../client';
+import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
 import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
@@ -7,7 +7,8 @@ import { API_SPORTS_ROUTES } from './routes';
 /** Get AFL Seasons */
 export const getAflSeasons: ApiSportsEndpoints['getAflSeasons'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getAflSeasons;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getAflSeasons']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getAflSeasons']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -19,7 +20,8 @@ export const getAflSeasons: ApiSportsEndpoints['getAflSeasons'] = async (ctx, in
 /** Get AFL Games */
 export const getAflGames: ApiSportsEndpoints['getAflGames'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getAflGames;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getAflGames']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getAflGames']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -31,7 +33,8 @@ export const getAflGames: ApiSportsEndpoints['getAflGames'] = async (ctx, input)
 /** Get AFL Games Quarters */
 export const getAflGamesQuarters: ApiSportsEndpoints['getAflGamesQuarters'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getAflGamesQuarters;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getAflGamesQuarters']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getAflGamesQuarters']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -43,7 +46,8 @@ export const getAflGamesQuarters: ApiSportsEndpoints['getAflGamesQuarters'] = as
 /** Get AFL Game Player Statistics */
 export const getAflGamePlayerStatistics: ApiSportsEndpoints['getAflGamePlayerStatistics'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getAflGamePlayerStatistics;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getAflGamePlayerStatistics']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getAflGamePlayerStatistics']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -55,7 +59,8 @@ export const getAflGamePlayerStatistics: ApiSportsEndpoints['getAflGamePlayerSta
 /** Get AFL Standings */
 export const getAflStandings: ApiSportsEndpoints['getAflStandings'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getAflStandings;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getAflStandings']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getAflStandings']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },

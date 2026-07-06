@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApiSportsRequest } from '../client';
+import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
 import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
@@ -7,7 +7,8 @@ import { API_SPORTS_ROUTES } from './routes';
 /** Get Players */
 export const getPlayers: ApiSportsEndpoints['getPlayers'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayers;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayers']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayers']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -19,7 +20,8 @@ export const getPlayers: ApiSportsEndpoints['getPlayers'] = async (ctx, input) =
 /** Get Players Profiles */
 export const getPlayersProfiles: ApiSportsEndpoints['getPlayersProfiles'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersProfiles;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersProfiles']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersProfiles']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -31,7 +33,8 @@ export const getPlayersProfiles: ApiSportsEndpoints['getPlayersProfiles'] = asyn
 /** Get Players Seasons */
 export const getPlayersSeasons: ApiSportsEndpoints['getPlayersSeasons'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersSeasons;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersSeasons']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersSeasons']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -43,7 +46,8 @@ export const getPlayersSeasons: ApiSportsEndpoints['getPlayersSeasons'] = async 
 /** Get Players Squads */
 export const getPlayersSquads: ApiSportsEndpoints['getPlayersSquads'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersSquads;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersSquads']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersSquads']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -55,7 +59,8 @@ export const getPlayersSquads: ApiSportsEndpoints['getPlayersSquads'] = async (c
 /** Get Players Teams */
 export const getPlayersTeams: ApiSportsEndpoints['getPlayersTeams'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersTeams;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTeams']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTeams']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -67,7 +72,8 @@ export const getPlayersTeams: ApiSportsEndpoints['getPlayersTeams'] = async (ctx
 /** Get Players Top Scorers */
 export const getPlayersTopScorers: ApiSportsEndpoints['getPlayersTopScorers'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersTopScorers;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopScorers']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopScorers']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -79,7 +85,8 @@ export const getPlayersTopScorers: ApiSportsEndpoints['getPlayersTopScorers'] = 
 /** Get Players Top Assists */
 export const getPlayersTopAssists: ApiSportsEndpoints['getPlayersTopAssists'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersTopAssists;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopAssists']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopAssists']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -91,7 +98,8 @@ export const getPlayersTopAssists: ApiSportsEndpoints['getPlayersTopAssists'] = 
 /** Get Players Top Yellow Cards */
 export const getPlayersTopYellowCards: ApiSportsEndpoints['getPlayersTopYellowCards'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersTopYellowCards;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopYellowCards']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopYellowCards']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -103,7 +111,8 @@ export const getPlayersTopYellowCards: ApiSportsEndpoints['getPlayersTopYellowCa
 /** Get Players Top Red Cards */
 export const getPlayersTopRedCards: ApiSportsEndpoints['getPlayersTopRedCards'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getPlayersTopRedCards;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopRedCards']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getPlayersTopRedCards']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApiSportsRequest } from '../client';
+import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
 import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
@@ -7,7 +7,8 @@ import { API_SPORTS_ROUTES } from './routes';
 /** Get Odds */
 export const getOdds: ApiSportsEndpoints['getOdds'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getOdds;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getOdds']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOdds']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -19,7 +20,8 @@ export const getOdds: ApiSportsEndpoints['getOdds'] = async (ctx, input) => {
 /** Get Odds Bets */
 export const getOddsBets: ApiSportsEndpoints['getOddsBets'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getOddsBets;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getOddsBets']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOddsBets']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -31,7 +33,8 @@ export const getOddsBets: ApiSportsEndpoints['getOddsBets'] = async (ctx, input)
 /** Get Odds Bookmakers */
 export const getOddsBookmakers: ApiSportsEndpoints['getOddsBookmakers'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getOddsBookmakers;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getOddsBookmakers']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOddsBookmakers']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -43,7 +46,8 @@ export const getOddsBookmakers: ApiSportsEndpoints['getOddsBookmakers'] = async 
 /** Get Odds Mapping */
 export const getOddsMapping: ApiSportsEndpoints['getOddsMapping'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getOddsMapping;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getOddsMapping']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOddsMapping']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -55,7 +59,8 @@ export const getOddsMapping: ApiSportsEndpoints['getOddsMapping'] = async (ctx, 
 /** Get In-Play Odds */
 export const getInPlayOdds: ApiSportsEndpoints['getInPlayOdds'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getInPlayOdds;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getInPlayOdds']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getInPlayOdds']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -67,7 +72,8 @@ export const getInPlayOdds: ApiSportsEndpoints['getInPlayOdds'] = async (ctx, in
 /** Get Live Odds Bets */
 export const getLiveOddsBets: ApiSportsEndpoints['getLiveOddsBets'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getLiveOddsBets;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getLiveOddsBets']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getLiveOddsBets']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },

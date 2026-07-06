@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApiSportsRequest } from '../client';
+import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
 import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
@@ -7,7 +7,8 @@ import { API_SPORTS_ROUTES } from './routes';
 /** Get MMA Categories */
 export const getMmaCategories: ApiSportsEndpoints['getMmaCategories'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getMmaCategories;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getMmaCategories']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getMmaCategories']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -19,7 +20,8 @@ export const getMmaCategories: ApiSportsEndpoints['getMmaCategories'] = async (c
 /** Get MMA Fighters */
 export const getMmaFighters: ApiSportsEndpoints['getMmaFighters'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getMmaFighters;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFighters']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFighters']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -31,7 +33,8 @@ export const getMmaFighters: ApiSportsEndpoints['getMmaFighters'] = async (ctx, 
 /** Get MMA Fights */
 export const getMmaFights: ApiSportsEndpoints['getMmaFights'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getMmaFights;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFights']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFights']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -43,7 +46,8 @@ export const getMmaFights: ApiSportsEndpoints['getMmaFights'] = async (ctx, inpu
 /** Get MMA Fight Results */
 export const getMmaFightResults: ApiSportsEndpoints['getMmaFightResults'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getMmaFightResults;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFightResults']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFightResults']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -55,7 +59,8 @@ export const getMmaFightResults: ApiSportsEndpoints['getMmaFightResults'] = asyn
 /** Get MMA Fighter Statistics */
 export const getMmaFighterStatistics: ApiSportsEndpoints['getMmaFighterStatistics'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getMmaFighterStatistics;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFighterStatistics']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getMmaFighterStatistics']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -67,7 +72,8 @@ export const getMmaFighterStatistics: ApiSportsEndpoints['getMmaFighterStatistic
 /** Get Fighters Records */
 export const getFightersRecords: ApiSportsEndpoints['getFightersRecords'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFightersRecords;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFightersRecords']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFightersRecords']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApiSportsRequest } from '../client';
+import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
 import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
@@ -7,7 +7,8 @@ import { API_SPORTS_ROUTES } from './routes';
 /** Get Standings Stages */
 export const getStandingsStages: ApiSportsEndpoints['getStandingsStages'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getStandingsStages;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getStandingsStages']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getStandingsStages']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -19,7 +20,8 @@ export const getStandingsStages: ApiSportsEndpoints['getStandingsStages'] = asyn
 /** Get Standings Groups */
 export const getStandingsGroups: ApiSportsEndpoints['getStandingsGroups'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getStandingsGroups;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getStandingsGroups']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getStandingsGroups']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -31,7 +33,8 @@ export const getStandingsGroups: ApiSportsEndpoints['getStandingsGroups'] = asyn
 /** Get Standings Divisions */
 export const getStandingsDivisions: ApiSportsEndpoints['getStandingsDivisions'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getStandingsDivisions;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getStandingsDivisions']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getStandingsDivisions']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -43,7 +46,8 @@ export const getStandingsDivisions: ApiSportsEndpoints['getStandingsDivisions'] 
 /** Get NFL Standings Conferences */
 export const getNflStandingsConferences: ApiSportsEndpoints['getNflStandingsConferences'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getNflStandingsConferences;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getNflStandingsConferences']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getNflStandingsConferences']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApiSportsRequest } from '../client';
+import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
 import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
@@ -7,7 +7,8 @@ import { API_SPORTS_ROUTES } from './routes';
 /** Get Formula 1 Circuits */
 export const getFormula1Circuits: ApiSportsEndpoints['getFormula1Circuits'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFormula1Circuits;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1Circuits']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1Circuits']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -19,7 +20,8 @@ export const getFormula1Circuits: ApiSportsEndpoints['getFormula1Circuits'] = as
 /** Get Formula 1 Competitions */
 export const getFormula1Competitions: ApiSportsEndpoints['getFormula1Competitions'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFormula1Competitions;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1Competitions']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1Competitions']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -31,7 +33,8 @@ export const getFormula1Competitions: ApiSportsEndpoints['getFormula1Competition
 /** Get Formula 1 Races */
 export const getFormula1Races: ApiSportsEndpoints['getFormula1Races'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFormula1Races;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1Races']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1Races']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -43,7 +46,8 @@ export const getFormula1Races: ApiSportsEndpoints['getFormula1Races'] = async (c
 /** Get Formula 1 Driver Rankings */
 export const getFormula1DriverRankings: ApiSportsEndpoints['getFormula1DriverRankings'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFormula1DriverRankings;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1DriverRankings']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1DriverRankings']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -55,7 +59,8 @@ export const getFormula1DriverRankings: ApiSportsEndpoints['getFormula1DriverRan
 /** Get Formula 1 Team Rankings */
 export const getFormula1TeamRankings: ApiSportsEndpoints['getFormula1TeamRankings'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFormula1TeamRankings;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1TeamRankings']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1TeamRankings']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -67,7 +72,8 @@ export const getFormula1TeamRankings: ApiSportsEndpoints['getFormula1TeamRanking
 /** Get Formula 1 Starting Grid */
 export const getFormula1StartingGrid: ApiSportsEndpoints['getFormula1StartingGrid'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFormula1StartingGrid;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1StartingGrid']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFormula1StartingGrid']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -79,7 +85,8 @@ export const getFormula1StartingGrid: ApiSportsEndpoints['getFormula1StartingGri
 /** Get Fastest Laps Rankings */
 export const getFastestLapsRankings: ApiSportsEndpoints['getFastestLapsRankings'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getFastestLapsRankings;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getFastestLapsRankings']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getFastestLapsRankings']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
@@ -91,7 +98,8 @@ export const getFastestLapsRankings: ApiSportsEndpoints['getFastestLapsRankings'
 /** Get Race Rankings */
 export const getRaceRankings: ApiSportsEndpoints['getRaceRankings'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getRaceRankings;
-	const response = await makeApiSportsRequest<ApiSportsEndpointOutputs['getRaceRankings']>(
+	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getRaceRankings']>(
+		ctx,
 		route.sport,
 		route.path,
 		{ apiKey: ctx.key, query: input },
