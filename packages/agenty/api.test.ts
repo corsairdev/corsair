@@ -166,4 +166,39 @@ describe('Agenty endpoints', () => {
 			]),
 		);
 	});
+
+	it('resolves list_id and key_id into path segments', async () => {
+		const plugin = agenty({ key: 'test-api-key' });
+		// Test-only: narrow to list/apiKey endpoints for path-param resolution assertions.
+		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+			lists: {
+				listsDeleteById: (
+					ctx: AgentyContext,
+					input: { list_id: number },
+				) => Promise<unknown>;
+			};
+			apiKeys: {
+				apiKeysDeleteById: (
+					ctx: AgentyContext,
+					input: { key_id: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.lists.listsDeleteById(mockCtx, { list_id: 123 });
+		await endpoints.apiKeys.apiKeysDeleteById(mockCtx, { key_id: 'key-789' });
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/lists/123',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/apikeys/key-789',
+				}),
+			]),
+		);
+	});
 });
