@@ -2,11 +2,17 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApifyMcpAPIError } from './client';
 
 function getStatus(error: Error): number | undefined {
-	return (error as Partial<ApifyMcpAPIError>).status;
+	if (error instanceof ApifyMcpAPIError) {
+		return error.status;
+	}
+	return undefined;
 }
 
 function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<ApifyMcpAPIError>).retryAfter;
+	if (error instanceof ApifyMcpAPIError) {
+		return error.retryAfter;
+	}
+	return undefined;
 }
 
 export const errorHandlers = {

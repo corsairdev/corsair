@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { callApifyMcpTool } from '../client';
 import type { ApifyMcpContext } from '../index';
 
@@ -15,6 +15,7 @@ function readEntityId(item: Record<string, unknown>, keys: string[]) {
 	return undefined;
 }
 
+// `unknown` because Apify MCP response shape varies by tool and Actor.
 async function cacheActors(ctx: ApifyMcpContext, response: unknown) {
 	if (!ctx.db.actors?.upsertByEntityId) return;
 
@@ -46,6 +47,7 @@ async function cacheActors(ctx: ApifyMcpContext, response: unknown) {
 	}
 }
 
+// `unknown` because run metadata shape varies by Actor and run state.
 async function cacheActorRun(ctx: ApifyMcpContext, response: unknown) {
 	if (!ctx.db.actorRuns?.upsertByEntityId || !isRecord(response)) return;
 
@@ -59,6 +61,7 @@ async function cacheActorRun(ctx: ApifyMcpContext, response: unknown) {
 	}
 }
 
+// `unknown` because dataset item shape varies by Actor output schema.
 async function cacheActorOutput(
 	ctx: ApifyMcpContext,
 	datasetId: string,
@@ -90,6 +93,10 @@ export async function executeApifyMcpTool<T>(
 ): Promise<T> {
 	let status: 'completed' | 'failed' = 'completed';
 	try {
+		if (options.requireAuth && !ctx.key) {
+			throw new AuthMissingError('apify_mcp', 'api_key');
+		}
+
 		const response = await callApifyMcpTool<T>(
 			toolName,
 			args,

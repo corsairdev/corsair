@@ -2,11 +2,17 @@ import 'dotenv/config';
 import { callApifyMcpTool } from './client';
 import { ApifyMcpEndpointOutputSchemas } from './endpoints/types';
 
-const TEST_API_KEY = process.env.APIFY_TOKEN ?? process.env.APIFY_API_KEY;
+const TEST_API_KEY =
+	process.env.APIFY_TOKEN || process.env.APIFY_API_KEY || undefined;
 
 describe('Apify MCP API Type Tests', () => {
 	describe('actors', () => {
 		it('searchActors returns a valid response', async () => {
+			if (!TEST_API_KEY) {
+				console.warn('Skipping: APIFY_TOKEN not set');
+				return;
+			}
+
 			const response = await callApifyMcpTool(
 				'search-actors',
 				{ search: 'google search', limit: 2 },
@@ -18,6 +24,11 @@ describe('Apify MCP API Type Tests', () => {
 		});
 
 		it('fetchActorDetails returns a valid response', async () => {
+			if (!TEST_API_KEY) {
+				console.warn('Skipping: APIFY_TOKEN not set');
+				return;
+			}
+
 			const response = await callApifyMcpTool(
 				'fetch-actor-details',
 				{
@@ -50,6 +61,11 @@ describe('Apify MCP API Type Tests', () => {
 
 	describe('docs', () => {
 		it('searchApifyDocs returns a valid response', async () => {
+			if (!TEST_API_KEY) {
+				console.warn('Skipping: APIFY_TOKEN not set');
+				return;
+			}
+
 			const response = await callApifyMcpTool(
 				'search-apify-docs',
 				{ query: 'actor runs', docSource: 'apify' },
@@ -61,6 +77,11 @@ describe('Apify MCP API Type Tests', () => {
 		});
 
 		it('fetchApifyDocs returns a valid response', async () => {
+			if (!TEST_API_KEY) {
+				console.warn('Skipping: APIFY_TOKEN not set');
+				return;
+			}
+
 			const response = await callApifyMcpTool(
 				'fetch-apify-docs',
 				{ url: 'https://docs.apify.com/platform/integrations/mcp' },

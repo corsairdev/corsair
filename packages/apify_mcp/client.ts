@@ -35,6 +35,7 @@ function normalizeToolResult(result: unknown): CallToolResult {
 		typeof result === 'object' &&
 		result !== null &&
 		'content' in result &&
+		// Asserting CallToolResult after confirming the required `content` array exists.
 		Array.isArray((result as CallToolResult).content)
 	) {
 		return result as CallToolResult;
@@ -44,6 +45,7 @@ function normalizeToolResult(result: unknown): CallToolResult {
 		typeof result === 'object' &&
 		result !== null &&
 		'structuredContent' in result &&
+		// MCP SDK may return structuredContent without a content array on newer transports.
 		(result as { structuredContent?: unknown }).structuredContent !== undefined
 	) {
 		return {
@@ -107,6 +109,9 @@ function toolErrorMessage(result: CallToolResult): string {
  *
  * Auth: optional Apify API token via Authorization Bearer header. Discovery and
  * documentation tools work without a token; Actor runs require authentication.
+ *
+ * Each call opens a fresh MCP session. This avoids stale-session bugs and keeps
+ * auth token rotation simple at the cost of per-request connection setup.
  */
 export async function callApifyMcpTool<T>(
 	toolName: string,
@@ -132,6 +137,7 @@ export async function callApifyMcpTool<T>(
 				body: parseToolResult(result),
 			});
 		}
+		// Caller supplies T; endpoint output schemas validate the parsed payload.
 		return parseToolResult(result) as T;
 	} catch (error) {
 		if (error instanceof ApifyMcpAPIError) {
