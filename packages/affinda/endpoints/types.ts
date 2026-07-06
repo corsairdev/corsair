@@ -4,13 +4,21 @@ import { z } from 'zod';
 const AffindaResponseSchema = z.unknown();
 // Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
 const AffindaOptionalBodySchema = z.unknown().optional();
+// Optional query filters vary by endpoint; values are heterogeneous JSON filter objects.
+const AffindaQueryParamsSchema = z.record(z.string(), z.unknown()).optional();
+// Row/item arrays contain heterogeneous objects per Affinda list and batch APIs.
+const AffindaBatchItemsSchema = z.array(z.unknown());
+const AffindaBatchItemsOptionalSchema = z.array(z.unknown()).optional();
+// Config/metadata objects are loosely typed in Affinda API docs.
+const AffindaLooseRecordSchema = z.record(z.string(), z.unknown());
+const AffindaLooseRecordOptionalSchema = z.record(z.string(), z.unknown()).optional();
 
 // addTagToDocuments
 const AddTagToDocumentsInputSchema = z.object({
 	tag: z.number().int(),
-	identifiers: z.array(z.unknown()),
+	identifiers: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AddTagToDocumentsInput = z.infer<typeof AddTagToDocumentsInputSchema>;
@@ -19,9 +27,9 @@ export type AddTagToDocumentsResponse = z.infer<typeof AddTagToDocumentsResponse
 
 // batchUpdateAnnotations
 const BatchUpdateAnnotationsInputSchema = z.object({
-	annotations: z.array(z.unknown()),
+	annotations: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type BatchUpdateAnnotationsInput = z.infer<typeof BatchUpdateAnnotationsInputSchema>;
@@ -36,7 +44,7 @@ const CreateApiUserInputSchema = z.object({
 	username: z.string().optional(),
 	organization: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateApiUserInput = z.infer<typeof CreateApiUserInputSchema>;
@@ -45,9 +53,9 @@ export type CreateApiUserResponse = z.infer<typeof CreateApiUserResponseSchema>;
 
 // createBatchAnnotations
 const CreateBatchAnnotationsInputSchema = z.object({
-	annotations: z.array(z.unknown()),
+	annotations: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateBatchAnnotationsInput = z.infer<typeof CreateBatchAnnotationsInputSchema>;
@@ -60,7 +68,7 @@ const CreateCollectionInputSchema = z.object({
 	extractor: z.string(),
 	workspace: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateCollectionInput = z.infer<typeof CreateCollectionInputSchema>;
@@ -69,12 +77,12 @@ export type CreateCollectionResponse = z.infer<typeof CreateCollectionResponseSc
 
 // createDataFieldForCollection
 const CreateDataFieldForCollectionInputSchema = z.object({
-	field: z.record(z.string(), z.unknown()),
-	dataPoint: z.record(z.string(), z.unknown()),
+	field: AffindaLooseRecordSchema,
+	dataPoint: AffindaLooseRecordSchema,
 	identifier: z.string(),
 	categoryLabel: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateDataFieldForCollectionInput = z.infer<typeof CreateDataFieldForCollectionInputSchema>;
@@ -95,7 +103,7 @@ const CreateDataPointInputSchema = z.object({
 	mappingDataSource: z.string().optional(),
 	annotationContentType: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateDataPointInput = z.infer<typeof CreateDataPointInputSchema>;
@@ -106,13 +114,13 @@ export type CreateDataPointResponse = z.infer<typeof CreateDataPointResponseSche
 const CreateDataPointChoiceInputSchema = z.object({
 	label: z.string(),
 	value: z.string(),
-	synonyms: z.array(z.unknown()).optional(),
+	synonyms: AffindaBatchItemsOptionalSchema,
 	dataPoint: z.string(),
 	collection: z.string().optional(),
 	description: z.string().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateDataPointChoiceInput = z.infer<typeof CreateDataPointChoiceInputSchema>;
@@ -122,15 +130,15 @@ export type CreateDataPointChoiceResponse = z.infer<typeof CreateDataPointChoice
 // createDataSource
 const CreateDataSourceInputSchema = z.object({
 	name: z.string().optional(),
-	schema: z.record(z.string(), z.unknown()).optional(),
-	values: z.array(z.unknown()).optional(),
+	schema: AffindaLooseRecordOptionalSchema,
+	values: AffindaBatchItemsOptionalSchema,
 	workspace: z.string().optional(),
 	identifier: z.string(),
 	keyProperty: z.string().optional(),
 	organization: z.string().optional(),
 	displayProperty: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateDataSourceInput = z.infer<typeof CreateDataSourceInputSchema>;
@@ -144,7 +152,7 @@ const CreateDataSourceValueInputSchema = z.object({
 	identifier: z.string(),
 	description: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateDataSourceValueInput = z.infer<typeof CreateDataSourceValueInputSchema>;
@@ -154,7 +162,7 @@ export type CreateDataSourceValueResponse = z.infer<typeof CreateDataSourceValue
 // createDocument
 const CreateDocumentInputSchema = z.object({
 	url: z.string().optional(),
-	file: z.record(z.string(), z.unknown()).optional(),
+	file: AffindaLooseRecordOptionalSchema,
 	wait: z.boolean().optional(),
 	compact: z.boolean().optional(),
 	fileName: z.string().optional(),
@@ -165,7 +173,7 @@ const CreateDocumentInputSchema = z.object({
 	identifier: z.string().optional(),
 	rejectDuplicates: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateDocumentInput = z.infer<typeof CreateDocumentInputSchema>;
@@ -178,7 +186,7 @@ const CreateDocumentTypeInputSchema = z.object({
 	description: z.string().optional(),
 	organization: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateDocumentTypeInput = z.infer<typeof CreateDocumentTypeInputSchema>;
@@ -190,12 +198,12 @@ const CreateExtractorInputSchema = z.object({
 	name: z.string(),
 	category: z.string().optional(),
 	namePlural: z.string().optional(),
-	fieldGroups: z.array(z.unknown()).optional(),
+	fieldGroups: AffindaBatchItemsOptionalSchema,
 	validatable: z.boolean().optional(),
 	organization: z.string(),
 	baseExtractor: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateExtractorInput = z.infer<typeof CreateExtractorInputSchema>;
@@ -215,7 +223,7 @@ const CreateFromDataDocumentsInputSchema = z.object({
 	expiry_time: z.string().optional(),
 	document_type: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateFromDataDocumentsInput = z.infer<typeof CreateFromDataDocumentsInputSchema>;
@@ -227,7 +235,7 @@ const CreateIndexInputSchema = z.object({
 	name: z.string(),
 	docType: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateIndexInput = z.infer<typeof CreateIndexInputSchema>;
@@ -240,7 +248,7 @@ const CreateInvitationInputSchema = z.object({
 	email: z.string(),
 	organization: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateInvitationInput = z.infer<typeof CreateInvitationInputSchema>;
@@ -252,15 +260,15 @@ const CreateJobDescriptionSearchInputSchema = z.object({
 	limit: z.number().int().optional(),
 	offset: z.number().int().optional(),
 	resume: z.string().optional(),
-	skills: z.array(z.unknown()).optional(),
-	degrees: z.array(z.unknown()).optional(),
-	indices: z.array(z.unknown()),
-	socCodes: z.array(z.unknown()).optional(),
-	jobTitles: z.array(z.unknown()).optional(),
-	languages: z.array(z.unknown()).optional(),
-	locations: z.array(z.unknown()).optional(),
-	customData: z.array(z.unknown()).optional(),
-	degreeTypes: z.array(z.unknown()).optional(),
+	skills: AffindaBatchItemsOptionalSchema,
+	degrees: AffindaBatchItemsOptionalSchema,
+	indices: AffindaBatchItemsSchema,
+	socCodes: AffindaBatchItemsOptionalSchema,
+	jobTitles: AffindaBatchItemsOptionalSchema,
+	languages: AffindaBatchItemsOptionalSchema,
+	locations: AffindaBatchItemsOptionalSchema,
+	customData: AffindaBatchItemsOptionalSchema,
+	degreeTypes: AffindaBatchItemsOptionalSchema,
 	skillsWeight: z.number().optional(),
 	socCodesWeight: z.number().optional(),
 	degreesRequired: z.boolean().optional(),
@@ -282,7 +290,7 @@ const CreateJobDescriptionSearchInputSchema = z.object({
 	yearsExperienceRequired: z.boolean().optional(),
 	searchExpressionRequired: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateJobDescriptionSearchInput = z.infer<typeof CreateJobDescriptionSearchInputSchema>;
@@ -291,9 +299,9 @@ export type CreateJobDescriptionSearchResponse = z.infer<typeof CreateJobDescrip
 
 // createJobDescriptionSearchEmbedUrl
 const CreateJobDescriptionSearchEmbedUrlInputSchema = z.object({
-	configOverride: z.record(z.string(), z.unknown()).optional(),
+	configOverride: AffindaLooseRecordOptionalSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateJobDescriptionSearchEmbedUrlInput = z.infer<typeof CreateJobDescriptionSearchEmbedUrlInputSchema>;
@@ -307,7 +315,7 @@ const CreateMappingInputSchema = z.object({
 	scoreCutoff: z.number().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateMappingInput = z.infer<typeof CreateMappingInputSchema>;
@@ -318,7 +326,7 @@ export type CreateMappingResponse = z.infer<typeof CreateMappingResponseSchema>;
 const CreateOrganizationInputSchema = z.object({
 	name: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateOrganizationInput = z.infer<typeof CreateOrganizationInputSchema>;
@@ -331,7 +339,7 @@ const CreateResthookSubscriptionInputSchema = z.object({
 	targetUrl: z.string(),
 	organization: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateResthookSubscriptionInput = z.infer<typeof CreateResthookSubscriptionInputSchema>;
@@ -343,15 +351,15 @@ const CreateResumeSearchInputSchema = z.object({
 	limit: z.number().int().optional(),
 	offset: z.number().int().optional(),
 	resume: z.string().optional(),
-	skills: z.array(z.unknown()).optional(),
-	degrees: z.array(z.unknown()).optional(),
-	indices: z.array(z.unknown()),
-	socCodes: z.array(z.unknown()).optional(),
-	jobTitles: z.array(z.unknown()).optional(),
-	languages: z.array(z.unknown()).optional(),
-	locations: z.array(z.unknown()).optional(),
-	customData: z.array(z.unknown()).optional(),
-	institutions: z.array(z.unknown()).optional(),
+	skills: AffindaBatchItemsOptionalSchema,
+	degrees: AffindaBatchItemsOptionalSchema,
+	indices: AffindaBatchItemsSchema,
+	socCodes: AffindaBatchItemsOptionalSchema,
+	jobTitles: AffindaBatchItemsOptionalSchema,
+	languages: AffindaBatchItemsOptionalSchema,
+	locations: AffindaBatchItemsOptionalSchema,
+	customData: AffindaBatchItemsOptionalSchema,
+	institutions: AffindaBatchItemsOptionalSchema,
 	skillsWeight: z.number().optional(),
 	jobDescription: z.string().optional(),
 	socCodesWeight: z.number().optional(),
@@ -367,7 +375,7 @@ const CreateResumeSearchInputSchema = z.object({
 	socCodesRequired: z.boolean().optional(),
 	jobTitlesRequired: z.boolean().optional(),
 	locationsRequired: z.boolean().optional(),
-	highestDegreeTypes: z.array(z.unknown()).optional(),
+	highestDegreeTypes: AffindaBatchItemsOptionalSchema,
 	yearsExperienceMax: z.number().int().optional(),
 	yearsExperienceMin: z.number().int().optional(),
 	institutionsRequired: z.boolean().optional(),
@@ -382,7 +390,7 @@ const CreateResumeSearchInputSchema = z.object({
 	searchExpressionRequired: z.boolean().optional(),
 	highestDegreeTypesRequired: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateResumeSearchInput = z.infer<typeof CreateResumeSearchInputSchema>;
@@ -391,9 +399,9 @@ export type CreateResumeSearchResponse = z.infer<typeof CreateResumeSearchRespon
 
 // createResumeSearchEmbedUrl
 const CreateResumeSearchEmbedUrlInputSchema = z.object({
-	configOverride: z.record(z.string(), z.unknown()).optional(),
+	configOverride: AffindaLooseRecordOptionalSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateResumeSearchEmbedUrlInput = z.infer<typeof CreateResumeSearchEmbedUrlInputSchema>;
@@ -405,7 +413,7 @@ const CreateTagInputSchema = z.object({
 	name: z.string(),
 	workspace: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateTagInput = z.infer<typeof CreateTagInputSchema>;
@@ -418,9 +426,9 @@ const CreateValidationResultInputSchema = z.object({
 	message: z.string(),
 	document: z.string(),
 	ruleSlug: z.string(),
-	annotations: z.array(z.unknown()),
+	annotations: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateValidationResultInput = z.infer<typeof CreateValidationResultInputSchema>;
@@ -429,9 +437,9 @@ export type CreateValidationResultResponse = z.infer<typeof CreateValidationResu
 
 // createValidationResultsBatch
 const CreateValidationResultsBatchInputSchema = z.object({
-	validation_results: z.array(z.unknown()),
+	validation_results: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateValidationResultsBatchInput = z.infer<typeof CreateValidationResultsBatchInputSchema>;
@@ -445,7 +453,7 @@ const CreateWorkspaceInputSchema = z.object({
 	organization: z.string(),
 	rejectInvalidDocuments: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceInputSchema>;
@@ -457,7 +465,7 @@ const CreateWorkspaceMembershipInputSchema = z.object({
 	user: z.number().int(),
 	workspace: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateWorkspaceMembershipInput = z.infer<typeof CreateWorkspaceMembershipInputSchema>;
@@ -466,9 +474,9 @@ export type CreateWorkspaceMembershipResponse = z.infer<typeof CreateWorkspaceMe
 
 // deleteAnnotationsBatch
 const DeleteAnnotationsBatchInputSchema = z.object({
-	annotation_ids: z.array(z.unknown()),
+	annotation_ids: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteAnnotationsBatchInput = z.infer<typeof DeleteAnnotationsBatchInputSchema>;
@@ -479,7 +487,7 @@ export type DeleteAnnotationsBatchResponse = z.infer<typeof DeleteAnnotationsBat
 const DeleteCollectionInputSchema = z.object({
 	collection_id: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteCollectionInput = z.infer<typeof DeleteCollectionInputSchema>;
@@ -490,7 +498,7 @@ export type DeleteCollectionResponse = z.infer<typeof DeleteCollectionResponseSc
 const DeleteDataPointInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteDataPointInput = z.infer<typeof DeleteDataPointInputSchema>;
@@ -501,7 +509,7 @@ export type DeleteDataPointResponse = z.infer<typeof DeleteDataPointResponseSche
 const DeleteDataSourceInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteDataSourceInput = z.infer<typeof DeleteDataSourceInputSchema>;
@@ -513,7 +521,7 @@ const DeleteDataSourceValueInputSchema = z.object({
 	value: z.string(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteDataSourceValueInput = z.infer<typeof DeleteDataSourceValueInputSchema>;
@@ -524,7 +532,7 @@ export type DeleteDataSourceValueResponse = z.infer<typeof DeleteDataSourceValue
 const DeleteDocumentInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteDocumentInput = z.infer<typeof DeleteDocumentInputSchema>;
@@ -535,7 +543,7 @@ export type DeleteDocumentResponse = z.infer<typeof DeleteDocumentResponseSchema
 const DeleteDocumentTypeInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteDocumentTypeInput = z.infer<typeof DeleteDocumentTypeInputSchema>;
@@ -546,7 +554,7 @@ export type DeleteDocumentTypeResponse = z.infer<typeof DeleteDocumentTypeRespon
 const DeleteExtractorInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteExtractorInput = z.infer<typeof DeleteExtractorInputSchema>;
@@ -557,7 +565,7 @@ export type DeleteExtractorResponse = z.infer<typeof DeleteExtractorResponseSche
 const DeleteIndexInputSchema = z.object({
 	name: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteIndexInput = z.infer<typeof DeleteIndexInputSchema>;
@@ -568,7 +576,7 @@ export type DeleteIndexResponse = z.infer<typeof DeleteIndexResponseSchema>;
 const DeleteInvitationInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteInvitationInput = z.infer<typeof DeleteInvitationInputSchema>;
@@ -579,7 +587,7 @@ export type DeleteInvitationResponse = z.infer<typeof DeleteInvitationResponseSc
 const DeleteMappingInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteMappingInput = z.infer<typeof DeleteMappingInputSchema>;
@@ -590,7 +598,7 @@ export type DeleteMappingResponse = z.infer<typeof DeleteMappingResponseSchema>;
 const DeleteOrganizationInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteOrganizationInput = z.infer<typeof DeleteOrganizationInputSchema>;
@@ -602,7 +610,7 @@ const DeleteResthookSubscriptionInputSchema = z.object({
 	identifier: z.number().int(),
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteResthookSubscriptionInput = z.infer<typeof DeleteResthookSubscriptionInputSchema>;
@@ -613,7 +621,7 @@ export type DeleteResthookSubscriptionResponse = z.infer<typeof DeleteResthookSu
 const DeleteTagInputSchema = z.object({
 	id: z.number().int(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteTagInput = z.infer<typeof DeleteTagInputSchema>;
@@ -622,9 +630,9 @@ export type DeleteTagResponse = z.infer<typeof DeleteTagResponseSchema>;
 
 // deleteValidationResults
 const DeleteValidationResultsInputSchema = z.object({
-	ids: z.array(z.unknown()),
+	ids: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteValidationResultsInput = z.infer<typeof DeleteValidationResultsInputSchema>;
@@ -636,7 +644,7 @@ const DeleteWorkspaceInputSchema = z.object({
 	workspace_id: z.string(),
 	identifier: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteWorkspaceInput = z.infer<typeof DeleteWorkspaceInputSchema>;
@@ -647,7 +655,7 @@ export type DeleteWorkspaceResponse = z.infer<typeof DeleteWorkspaceResponseSche
 const DeleteWorkspaceMembershipInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteWorkspaceMembershipInput = z.infer<typeof DeleteWorkspaceMembershipInputSchema>;
@@ -660,7 +668,7 @@ const GetAllApiUsersInputSchema = z.object({
 	offset: z.number().int().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllApiUsersInput = z.infer<typeof GetAllApiUsersInputSchema>;
@@ -674,7 +682,7 @@ const GetAllDocumentSplittersInputSchema = z.object({
 	organization: z.string().optional(),
 	includePublic: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllDocumentSplittersInput = z.infer<typeof GetAllDocumentSplittersInputSchema>;
@@ -689,7 +697,7 @@ const GetAllInvitationsInputSchema = z.object({
 	status: z.string().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllInvitationsInput = z.infer<typeof GetAllInvitationsInputSchema>;
@@ -703,7 +711,7 @@ const GetAllOrganizationMembershipsInputSchema = z.object({
 	offset: z.number().int().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllOrganizationMembershipsInput = z.infer<typeof GetAllOrganizationMembershipsInputSchema>;
@@ -717,7 +725,7 @@ const GetAllTagsInputSchema = z.object({
 	offset: z.number().int().optional(),
 	workspace: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllTagsInput = z.infer<typeof GetAllTagsInputSchema>;
@@ -730,7 +738,7 @@ const GetAllValidationResultsInputSchema = z.object({
 	offset: z.number().int().optional(),
 	document: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllValidationResultsInput = z.infer<typeof GetAllValidationResultsInputSchema>;
@@ -744,7 +752,7 @@ const GetAllWorkspaceMembershipsInputSchema = z.object({
 	offset: z.number().int().optional(),
 	workspace: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllWorkspaceMembershipsInput = z.infer<typeof GetAllWorkspaceMembershipsInputSchema>;
@@ -755,7 +763,7 @@ export type GetAllWorkspaceMembershipsResponse = z.infer<typeof GetAllWorkspaceM
 const GetAnnotationsInputSchema = z.object({
 	document: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAnnotationsInput = z.infer<typeof GetAnnotationsInputSchema>;
@@ -766,7 +774,7 @@ export type GetAnnotationsResponse = z.infer<typeof GetAnnotationsResponseSchema
 const GetCollectionInputSchema = z.object({
 	collection_id: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetCollectionInput = z.infer<typeof GetCollectionInputSchema>;
@@ -778,7 +786,7 @@ const GetCollectionFieldsInputSchema = z.object({
 	identifier: z.string(),
 	datapoint_identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetCollectionFieldsInput = z.infer<typeof GetCollectionFieldsInputSchema>;
@@ -791,7 +799,7 @@ const GetCollectionsInputSchema = z.object({
 	offset: z.number().int().optional(),
 	workspace: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetCollectionsInput = z.infer<typeof GetCollectionsInputSchema>;
@@ -804,7 +812,7 @@ const GetCollectionUsageInputSchema = z.object({
 	start: z.string().optional(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetCollectionUsageInput = z.infer<typeof GetCollectionUsageInputSchema>;
@@ -815,7 +823,7 @@ export type GetCollectionUsageResponse = z.infer<typeof GetCollectionUsageRespon
 const GetDataPointInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDataPointInput = z.infer<typeof GetDataPointInputSchema>;
@@ -826,7 +834,7 @@ export type GetDataPointResponse = z.infer<typeof GetDataPointResponseSchema>;
 const GetDataPointChoiceInputSchema = z.object({
 	id: z.number().int(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDataPointChoiceInput = z.infer<typeof GetDataPointChoiceInputSchema>;
@@ -837,7 +845,7 @@ export type GetDataPointChoiceResponse = z.infer<typeof GetDataPointChoiceRespon
 const GetDataSourceInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDataSourceInput = z.infer<typeof GetDataSourceInputSchema>;
@@ -849,7 +857,7 @@ const GetDataSourceValueInputSchema = z.object({
 	value: z.string(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDataSourceValueInput = z.infer<typeof GetDataSourceValueInputSchema>;
@@ -865,7 +873,7 @@ const GetDataSourceValuesInputSchema = z.object({
 	annotation: z.number().int().optional(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDataSourceValuesInput = z.infer<typeof GetDataSourceValuesInputSchema>;
@@ -876,7 +884,7 @@ export type GetDataSourceValuesResponse = z.infer<typeof GetDataSourceValuesResp
 const GetDocumentInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentInput = z.infer<typeof GetDocumentInputSchema>;
@@ -887,7 +895,7 @@ export type GetDocumentResponse = z.infer<typeof GetDocumentResponseSchema>;
 const GetDocumentRedactedInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentRedactedInput = z.infer<typeof GetDocumentRedactedInputSchema>;
@@ -909,7 +917,7 @@ const GetDocumentsInputSchema = z.object({
 	collection: z.string().optional(),
 	include_data: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentsInput = z.infer<typeof GetDocumentsInputSchema>;
@@ -920,7 +928,7 @@ export type GetDocumentsResponse = z.infer<typeof GetDocumentsResponseSchema>;
 const GetDocumentSplitterInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentSplitterInput = z.infer<typeof GetDocumentSplitterInputSchema>;
@@ -931,7 +939,7 @@ export type GetDocumentSplitterResponse = z.infer<typeof GetDocumentSplitterResp
 const GetDocumentTypeInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentTypeInput = z.infer<typeof GetDocumentTypeInputSchema>;
@@ -943,7 +951,7 @@ const GetDocumentTypeJsonSchemaInputSchema = z.object({
 	title: z.string().optional(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentTypeJsonSchemaInput = z.infer<typeof GetDocumentTypeJsonSchemaInputSchema>;
@@ -955,7 +963,7 @@ const GetDocumentTypePydanticModelsInputSchema = z.object({
 	identifier: z.string(),
 	model_name: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentTypePydanticModelsInput = z.infer<typeof GetDocumentTypePydanticModelsInputSchema>;
@@ -965,7 +973,7 @@ export type GetDocumentTypePydanticModelsResponse = z.infer<typeof GetDocumentTy
 // getDocumentTypes
 const GetDocumentTypesInputSchema = z.object({
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetDocumentTypesInput = z.infer<typeof GetDocumentTypesInputSchema>;
@@ -976,7 +984,7 @@ export type GetDocumentTypesResponse = z.infer<typeof GetDocumentTypesResponseSc
 const GetExtractorInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetExtractorInput = z.infer<typeof GetExtractorInputSchema>;
@@ -987,7 +995,7 @@ export type GetExtractorResponse = z.infer<typeof GetExtractorResponseSchema>;
 const GetExtractorsInputSchema = z.object({
 	organization: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetExtractorsInput = z.infer<typeof GetExtractorsInputSchema>;
@@ -1000,7 +1008,7 @@ const GetIndexDocumentsInputSchema = z.object({
 	limit: z.number().int().optional(),
 	offset: z.number().int().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetIndexDocumentsInput = z.infer<typeof GetIndexDocumentsInputSchema>;
@@ -1011,7 +1019,7 @@ export type GetIndexDocumentsResponse = z.infer<typeof GetIndexDocumentsResponse
 const GetInvitationInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetInvitationInput = z.infer<typeof GetInvitationInputSchema>;
@@ -1021,7 +1029,7 @@ export type GetInvitationResponse = z.infer<typeof GetInvitationResponseSchema>;
 // getJobDescriptionSearchConfig
 const GetJobDescriptionSearchConfigInputSchema = z.object({
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetJobDescriptionSearchConfigInput = z.infer<typeof GetJobDescriptionSearchConfigInputSchema>;
@@ -1032,7 +1040,7 @@ export type GetJobDescriptionSearchConfigResponse = z.infer<typeof GetJobDescrip
 const GetMappingInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetMappingInput = z.infer<typeof GetMappingInputSchema>;
@@ -1043,7 +1051,7 @@ export type GetMappingResponse = z.infer<typeof GetMappingResponseSchema>;
 const GetOrganizationInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetOrganizationInput = z.infer<typeof GetOrganizationInputSchema>;
@@ -1054,7 +1062,7 @@ export type GetOrganizationResponse = z.infer<typeof GetOrganizationResponseSche
 const GetOrganizationMembershipInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetOrganizationMembershipInput = z.infer<typeof GetOrganizationMembershipInputSchema>;
@@ -1064,7 +1072,7 @@ export type GetOrganizationMembershipResponse = z.infer<typeof GetOrganizationMe
 // getOrganizations
 const GetOrganizationsInputSchema = z.object({
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetOrganizationsInput = z.infer<typeof GetOrganizationsInputSchema>;
@@ -1076,7 +1084,7 @@ const GetResthookSubscriptionInputSchema = z.object({
 	identifier: z.number().int(),
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetResthookSubscriptionInput = z.infer<typeof GetResthookSubscriptionInputSchema>;
@@ -1088,7 +1096,7 @@ const GetResthookSubscriptionsInputSchema = z.object({
 	limit: z.number().int().optional(),
 	offset: z.number().int().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetResthookSubscriptionsInput = z.infer<typeof GetResthookSubscriptionsInputSchema>;
@@ -1100,7 +1108,7 @@ const GetTagInputSchema = z.object({
 	tag_id: z.number().int(),
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetTagInput = z.infer<typeof GetTagInputSchema>;
@@ -1114,7 +1122,7 @@ const GetUsageByWorkspaceInputSchema = z.object({
 	workspace_id: z.string(),
 	identifier: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetUsageByWorkspaceInput = z.infer<typeof GetUsageByWorkspaceInputSchema>;
@@ -1125,7 +1133,7 @@ export type GetUsageByWorkspaceResponse = z.infer<typeof GetUsageByWorkspaceResp
 const GetWorkspaceInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetWorkspaceInput = z.infer<typeof GetWorkspaceInputSchema>;
@@ -1136,7 +1144,7 @@ export type GetWorkspaceResponse = z.infer<typeof GetWorkspaceResponseSchema>;
 const GetWorkspaceMembershipInputSchema = z.object({
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetWorkspaceMembershipInput = z.infer<typeof GetWorkspaceMembershipInputSchema>;
@@ -1148,7 +1156,7 @@ const GetWorkspacesInputSchema = z.object({
 	name: z.string().optional(),
 	organization: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetWorkspacesInput = z.infer<typeof GetWorkspacesInputSchema>;
@@ -1163,7 +1171,7 @@ const ListDataPointChoicesInputSchema = z.object({
 	collection: z.string(),
 	data_point: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListDataPointChoicesInput = z.infer<typeof ListDataPointChoicesInputSchema>;
@@ -1176,13 +1184,13 @@ const ListDataPointsInputSchema = z.object({
 	limit: z.number().int().optional(),
 	offset: z.number().int().optional(),
 	extractor: z.string().optional(),
-	identifier: z.array(z.unknown()).optional(),
+	identifier: AffindaBatchItemsOptionalSchema,
 	description: z.string().optional(),
 	organization: z.string().optional(),
 	include_public: z.boolean().optional(),
 	annotation_content_type: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListDataPointsInput = z.infer<typeof ListDataPointsInputSchema>;
@@ -1198,7 +1206,7 @@ const ListDataSourcesInputSchema = z.object({
 	identifier: z.string().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListDataSourcesInput = z.infer<typeof ListDataSourcesInputSchema>;
@@ -1212,7 +1220,7 @@ const ListIndexesInputSchema = z.object({
 	offset: z.number().int().optional(),
 	document_type: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListIndexesInput = z.infer<typeof ListIndexesInputSchema>;
@@ -1225,7 +1233,7 @@ const ListMappingsInputSchema = z.object({
 	offset: z.number().int().optional(),
 	mappingDataSource: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListMappingsInput = z.infer<typeof ListMappingsInputSchema>;
@@ -1235,7 +1243,7 @@ export type ListMappingsResponse = z.infer<typeof ListMappingsResponseSchema>;
 // listOccupationGroups
 const ListOccupationGroupsInputSchema = z.object({
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListOccupationGroupsInput = z.infer<typeof ListOccupationGroupsInputSchema>;
@@ -1245,7 +1253,7 @@ export type ListOccupationGroupsResponse = z.infer<typeof ListOccupationGroupsRe
 // listResumeSearchConfig
 const ListResumeSearchConfigInputSchema = z.object({
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListResumeSearchConfigInput = z.infer<typeof ListResumeSearchConfigInputSchema>;
@@ -1254,9 +1262,9 @@ export type ListResumeSearchConfigResponse = z.infer<typeof ListResumeSearchConf
 
 // listResumeSearchJobTitleSuggestions
 const ListResumeSearchJobTitleSuggestionsInputSchema = z.object({
-	job_titles: z.array(z.unknown()),
+	job_titles: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListResumeSearchJobTitleSuggestionsInput = z.infer<typeof ListResumeSearchJobTitleSuggestionsInputSchema>;
@@ -1265,9 +1273,9 @@ export type ListResumeSearchJobTitleSuggestionsResponse = z.infer<typeof ListRes
 
 // listResumeSearchSkillSuggestions
 const ListResumeSearchSkillSuggestionsInputSchema = z.object({
-	skills: z.array(z.unknown()),
+	skills: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListResumeSearchSkillSuggestionsInput = z.infer<typeof ListResumeSearchSkillSuggestionsInputSchema>;
@@ -1277,9 +1285,9 @@ export type ListResumeSearchSkillSuggestionsResponse = z.infer<typeof ListResume
 // removeTagFromDocuments
 const RemoveTagFromDocumentsInputSchema = z.object({
 	tag: z.number().int(),
-	identifiers: z.array(z.unknown()),
+	identifiers: AffindaBatchItemsSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type RemoveTagFromDocumentsInput = z.infer<typeof RemoveTagFromDocumentsInputSchema>;
@@ -1288,12 +1296,12 @@ export type RemoveTagFromDocumentsResponse = z.infer<typeof RemoveTagFromDocumen
 
 // replaceDataPointChoices
 const ReplaceDataPointChoicesInputSchema = z.object({
-	choices: z.array(z.unknown()),
+	choices: AffindaBatchItemsSchema,
 	dataPoint: z.string(),
 	collection: z.string().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ReplaceDataPointChoicesInput = z.infer<typeof ReplaceDataPointChoicesInputSchema>;
@@ -1302,10 +1310,10 @@ export type ReplaceDataPointChoicesResponse = z.infer<typeof ReplaceDataPointCho
 
 // replaceDataSourceValues
 const ReplaceDataSourceValuesInputSchema = z.object({
-	values: z.array(z.unknown()),
+	values: AffindaBatchItemsSchema,
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ReplaceDataSourceValuesInput = z.infer<typeof ReplaceDataSourceValuesInputSchema>;
@@ -1314,10 +1322,10 @@ export type ReplaceDataSourceValuesResponse = z.infer<typeof ReplaceDataSourceVa
 
 // splitDocumentPages
 const SplitDocumentPagesInputSchema = z.object({
-	splits: z.array(z.unknown()),
+	splits: AffindaBatchItemsSchema,
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type SplitDocumentPagesInput = z.infer<typeof SplitDocumentPagesInputSchema>;
@@ -1334,11 +1342,11 @@ const UpdateAnnotationInputSchema = z.object({
 	document: z.string().optional(),
 	dataPoint: z.string().optional(),
 	pageIndex: z.number().int().optional(),
-	rectangles: z.array(z.unknown()).optional(),
+	rectangles: AffindaBatchItemsOptionalSchema,
 	isClientVerified: z.boolean().optional(),
-	validationResults: z.array(z.unknown()).optional(),
+	validationResults: AffindaBatchItemsOptionalSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateAnnotationInput = z.infer<typeof UpdateAnnotationInputSchema>;
@@ -1350,7 +1358,7 @@ const UpdateCollectionInputSchema = z.object({
 	name: z.string().optional(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateCollectionInput = z.infer<typeof UpdateCollectionInputSchema>;
@@ -1372,7 +1380,7 @@ const UpdateDataFieldForCollectionInputSchema = z.object({
 	autoValidationThreshold: z.number().optional(),
 	enableAutoValidationThreshold: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateDataFieldForCollectionInput = z.infer<typeof UpdateDataFieldForCollectionInputSchema>;
@@ -1388,7 +1396,7 @@ const UpdateDataPointInputSchema = z.object({
 	description: z.string().optional(),
 	mappingDataSource: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateDataPointInput = z.infer<typeof UpdateDataPointInputSchema>;
@@ -1400,13 +1408,13 @@ const UpdateDataPointChoiceInputSchema = z.object({
 	id: z.number().int(),
 	label: z.string().optional(),
 	value: z.string().optional(),
-	synonyms: z.array(z.unknown()).optional(),
+	synonyms: AffindaBatchItemsOptionalSchema,
 	dataPoint: z.string().optional(),
 	collection: z.string().optional(),
 	description: z.string().optional(),
 	organization: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateDataPointChoiceInput = z.infer<typeof UpdateDataPointChoiceInputSchema>;
@@ -1420,7 +1428,7 @@ const UpdateDataSourceValueInputSchema = z.object({
 	identifier: z.string(),
 	description: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateDataSourceValueInput = z.infer<typeof UpdateDataSourceValueInputSchema>;
@@ -1435,12 +1443,12 @@ const UpdateDocumentInputSchema = z.object({
 	collection: z.string().optional(),
 	expiryTime: z.string().optional(),
 	identifier: z.string(),
-	regionBias: z.record(z.string(), z.unknown()).optional(),
+	regionBias: AffindaLooseRecordOptionalSchema,
 	customIdentifier: z.string().optional(),
 	deleteAfterParse: z.boolean().optional(),
 	enableValidationTool: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateDocumentInput = z.infer<typeof UpdateDocumentInputSchema>;
@@ -1449,10 +1457,10 @@ export type UpdateDocumentResponse = z.infer<typeof UpdateDocumentResponseSchema
 
 // updateDocumentData
 const UpdateDocumentDataInputSchema = z.object({
-	data: z.record(z.string(), z.unknown()),
+	data: AffindaLooseRecordSchema,
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateDocumentDataInput = z.infer<typeof UpdateDocumentDataInputSchema>;
@@ -1465,7 +1473,7 @@ const UpdateDocumentTypeInputSchema = z.object({
 	identifier: z.string(),
 	description: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateDocumentTypeInput = z.infer<typeof UpdateDocumentTypeInputSchema>;
@@ -1478,11 +1486,11 @@ const UpdateExtractorInputSchema = z.object({
 	category: z.string().optional(),
 	identifier: z.string(),
 	namePlural: z.string().optional(),
-	fieldGroups: z.array(z.unknown()).optional(),
+	fieldGroups: AffindaBatchItemsOptionalSchema,
 	validatable: z.boolean().optional(),
 	baseExtractor: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateExtractorInput = z.infer<typeof UpdateExtractorInputSchema>;
@@ -1494,7 +1502,7 @@ const UpdateIndexInputSchema = z.object({
 	name: z.string(),
 	new_name: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateIndexInput = z.infer<typeof UpdateIndexInputSchema>;
@@ -1506,7 +1514,7 @@ const UpdateInvitationInputSchema = z.object({
 	role: z.string().optional(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateInvitationInput = z.infer<typeof UpdateInvitationInputSchema>;
@@ -1516,8 +1524,8 @@ export type UpdateInvitationResponse = z.infer<typeof UpdateInvitationResponseSc
 // updateJobDescriptionSearchConfig
 const UpdateJobDescriptionSearchConfigInputSchema = z.object({
 	userId: z.number().int().optional(),
-	actions: z.array(z.unknown()).optional(),
-	indices: z.array(z.unknown()).optional(),
+	actions: AffindaBatchItemsOptionalSchema,
+	indices: AffindaBatchItemsOptionalSchema,
 	username: z.string().optional(),
 	maxResults: z.number().int().optional(),
 	hideToolbar: z.boolean().optional(),
@@ -1531,14 +1539,14 @@ const UpdateJobDescriptionSearchConfigInputSchema = z.object({
 	displayJobTitle: z.boolean().optional(),
 	displayKeywords: z.boolean().optional(),
 	displayLocation: z.boolean().optional(),
-	searchToolTheme: z.record(z.string(), z.unknown()).optional(),
+	searchToolTheme: AffindaLooseRecordOptionalSchema,
 	weightEducation: z.number().optional(),
 	weightLanguages: z.number().optional(),
 	allowPdfDownload: z.boolean().optional(),
 	displayEducation: z.boolean().optional(),
 	displayLanguages: z.boolean().optional(),
 	showIndexDropdown: z.boolean().optional(),
-	customFieldsConfig: z.array(z.unknown()).optional(),
+	customFieldsConfig: AffindaBatchItemsOptionalSchema,
 	weightManagementLevel: z.number().optional(),
 	weightOccupationGroup: z.number().optional(),
 	weightYearsExperience: z.number().optional(),
@@ -1546,7 +1554,7 @@ const UpdateJobDescriptionSearchConfigInputSchema = z.object({
 	displayOccupationGroup: z.boolean().optional(),
 	displayYearsExperience: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateJobDescriptionSearchConfigInput = z.infer<typeof UpdateJobDescriptionSearchConfigInputSchema>;
@@ -1559,7 +1567,7 @@ const UpdateMappingInputSchema = z.object({
 	identifier: z.string(),
 	scoreCutoff: z.number().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateMappingInput = z.infer<typeof UpdateMappingInputSchema>;
@@ -1572,9 +1580,9 @@ const UpdateOrganizationInputSchema = z.object({
 	avatar: z.string().optional(),
 	identifier: z.string(),
 	resthook_signature_key: z.string().optional(),
-	validation_tool_config: z.record(z.string(), z.unknown()).optional(),
+	validation_tool_config: AffindaLooseRecordOptionalSchema,
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateOrganizationInput = z.infer<typeof UpdateOrganizationInputSchema>;
@@ -1586,7 +1594,7 @@ const UpdateOrganizationMembershipInputSchema = z.object({
 	role: z.string().optional(),
 	identifier: z.string(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateOrganizationMembershipInput = z.infer<typeof UpdateOrganizationMembershipInputSchema>;
@@ -1601,7 +1609,7 @@ const UpdateResthookSubscriptionInputSchema = z.object({
 	identifier: z.number().int(),
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateResthookSubscriptionInput = z.infer<typeof UpdateResthookSubscriptionInputSchema>;
@@ -1611,8 +1619,8 @@ export type UpdateResthookSubscriptionResponse = z.infer<typeof UpdateResthookSu
 // updateResumeSearchConfig
 const UpdateResumeSearchConfigInputSchema = z.object({
 	userId: z.number().int().optional(),
-	actions: z.array(z.unknown()).optional(),
-	indices: z.array(z.unknown()).optional(),
+	actions: AffindaBatchItemsOptionalSchema,
+	indices: AffindaBatchItemsOptionalSchema,
 	username: z.string().optional(),
 	maxResults: z.number().int().optional(),
 	hideToolbar: z.boolean().optional(),
@@ -1626,14 +1634,14 @@ const UpdateResumeSearchConfigInputSchema = z.object({
 	displayJobTitle: z.boolean().optional(),
 	displayKeywords: z.boolean().optional(),
 	displayLocation: z.boolean().optional(),
-	searchToolTheme: z.record(z.string(), z.unknown()).optional(),
+	searchToolTheme: AffindaLooseRecordOptionalSchema,
 	weightEducation: z.number().optional(),
 	weightLanguages: z.number().optional(),
 	allowPdfDownload: z.boolean().optional(),
 	displayEducation: z.boolean().optional(),
 	displayLanguages: z.boolean().optional(),
 	showIndexDropdown: z.boolean().optional(),
-	customFieldsConfig: z.array(z.unknown()).optional(),
+	customFieldsConfig: AffindaBatchItemsOptionalSchema,
 	weightManagementLevel: z.number().optional(),
 	weightOccupationGroup: z.number().optional(),
 	weightYearsExperience: z.number().optional(),
@@ -1641,7 +1649,7 @@ const UpdateResumeSearchConfigInputSchema = z.object({
 	displayOccupationGroup: z.boolean().optional(),
 	displayYearsExperience: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateResumeSearchConfigInput = z.infer<typeof UpdateResumeSearchConfigInputSchema>;
@@ -1654,7 +1662,7 @@ const UpdateTagInputSchema = z.object({
 	name: z.string().optional(),
 	workspace: z.string().optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateTagInput = z.infer<typeof UpdateTagInputSchema>;
@@ -1666,14 +1674,14 @@ const UpdateWorkspaceInputSchema = z.object({
 	name: z.string().optional(),
 	visibility: z.string().optional(),
 	workspace_id: z.string(),
-	documentTypes: z.array(z.unknown()).optional(),
+	documentTypes: AffindaBatchItemsOptionalSchema,
 	documentSplitter: z.string().optional(),
 	rejectDuplicates: z.boolean().optional(),
 	rejectInvalidDocuments: z.boolean().optional(),
-	whitelistIngestAddresses: z.array(z.unknown()).optional(),
+	whitelistIngestAddresses: AffindaBatchItemsOptionalSchema,
 	identifier: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateWorkspaceInput = z.infer<typeof UpdateWorkspaceInputSchema>;
@@ -1933,5 +1941,6 @@ export type AffindaEndpointOutputs = {
 };
 
 export type AffindaEndpointInput = AffindaEndpointInputs[keyof AffindaEndpointInputs] & {
+	// Passthrough for extra fields not yet mapped from Affinda OpenAPI definitions.
 	[key: string]: unknown;
 };

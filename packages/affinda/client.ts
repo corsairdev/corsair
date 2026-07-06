@@ -23,7 +23,9 @@ const AFFINDA_API_BASE = 'https://api.affinda.com/v3';
 
 export type AffindaRequestOptions = {
 	method?: AffindaMethod;
+	// body is unknown because request payloads vary per Affinda endpoint and are built dynamically.
 	body?: unknown;
+	// query values are heterogeneous (pagination, filters); not fully typed across 119 ops.
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
 };
@@ -39,7 +41,6 @@ export async function makeAffindaRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,

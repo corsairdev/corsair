@@ -17,6 +17,7 @@ function countLeaves(tree: Record<string, unknown>): number {
 	return Object.values(tree).reduce<number>((count, value) => {
 		if (typeof value === 'function') return count + 1;
 		if (value && typeof value === 'object') {
+			// Test-only: recurse into nested endpoint groups without a typed tree shape.
 			return count + countLeaves(value as Record<string, unknown>);
 		}
 		return count;
@@ -28,6 +29,7 @@ function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
 		const path = prefix ? `${prefix}.${key}` : key;
 		if (typeof value === 'function') return [path];
 		if (value && typeof value === 'object') {
+			// Test-only: recurse into nested endpoint groups without a typed tree shape.
 			return endpointPaths(value as Record<string, unknown>, path);
 		}
 		return [];
@@ -40,11 +42,13 @@ const mockCtx = {
 	options: {},
 	logEvent: jest.fn(),
 	db: {},
+	// Test-only partial mock; AffindaContext requires full plugin/db surface not needed here.
 } as unknown as AffindaContext;
 
 describe('Affinda plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {
 		const plugin = affinda();
+		// Test-only: treat nested endpoints as a tree for leaf-count traversal.
 		const endpoints = plugin.endpoints as Record<string, unknown>;
 		const paths = endpointPaths(endpoints).sort();
 
@@ -78,7 +82,6 @@ describe('Affinda request client', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://api.affinda.com/v3',
-				TOKEN: 'test-api-key',
 				HEADERS: expect.objectContaining({
 					Authorization: 'Bearer test-api-key',
 					'Content-Type': 'application/json',
@@ -100,6 +103,7 @@ describe('Affinda endpoints', () => {
 
 	it('maps representative operations to API routes', async () => {
 		const plugin = affinda({ key: 'test-api-key' });
+		// Test-only: narrow to representative document endpoints for route-mapping assertions.
 		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
 			documents: {
 				getDocuments: (ctx: AffindaContext, input: { workspace?: string }) => Promise<unknown>;
