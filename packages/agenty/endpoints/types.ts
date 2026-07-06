@@ -4,13 +4,21 @@ import { z } from 'zod';
 const AgentyResponseSchema = z.unknown();
 // Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
 const AgentyOptionalBodySchema = z.unknown().optional();
+// Optional query filters vary by endpoint; values are heterogeneous JSON filter objects.
+const AgentyQueryParamsSchema = z.record(z.string(), z.unknown()).optional();
+// Row/item arrays contain heterogeneous objects per Agenty list and batch APIs.
+const AgentyBatchItemsSchema = z.array(z.unknown());
+const AgentyBatchItemsOptionalSchema = z.array(z.unknown()).optional();
+// Config/scheduler/script objects are loosely typed in Agenty API docs.
+const AgentyLooseRecordSchema = z.record(z.string(), z.unknown());
+const AgentyLooseRecordOptionalSchema = z.record(z.string(), z.unknown()).optional();
 
 // addListRows
 const AddListRowsInputSchema = z.object({
-	rows: z.array(z.unknown()),
+	rows: AgentyBatchItemsSchema,
 	list_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AddListRowsInput = z.infer<typeof AddListRowsInputSchema>;
@@ -21,16 +29,16 @@ export type AddListRowsResponse = z.infer<typeof AddListRowsResponseSchema>;
 const AgentsControllerCreateAgentInputSchema = z.object({
 	icon: z.string().optional(),
 	name: z.string(),
-	tags: z.array(z.unknown()).optional(),
+	tags: AgentyBatchItemsOptionalSchema,
 	type: z.string().optional(),
 	start: z.boolean().optional(),
-	config: z.record(z.string(), z.unknown()),
-	scripts: z.record(z.string(), z.unknown()).optional(),
+	config: AgentyLooseRecordSchema,
+	scripts: AgentyLooseRecordOptionalSchema,
 	user_id: z.number().int().optional(),
 	version: z.number().int().optional(),
 	agent_id: z.string().optional(),
 	is_public: z.boolean().optional(),
-	scheduler: z.record(z.string(), z.unknown()).optional(),
+	scheduler: AgentyLooseRecordOptionalSchema,
 	account_id: z.number().int().optional(),
 	created_at: z.string().optional(),
 	is_managed: z.boolean().optional(),
@@ -38,7 +46,7 @@ const AgentsControllerCreateAgentInputSchema = z.object({
 	updated_at: z.string().optional(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AgentsControllerCreateAgentInput = z.infer<typeof AgentsControllerCreateAgentInputSchema>;
@@ -52,7 +60,7 @@ const AgentsControllerGetTemplatesInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AgentsControllerGetTemplatesInput = z.infer<typeof AgentsControllerGetTemplatesInputSchema>;
@@ -63,7 +71,7 @@ export type AgentsControllerGetTemplatesResponse = z.infer<typeof AgentsControll
 const AgentsDeleteByIdInputSchema = z.object({
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AgentsDeleteByIdInput = z.infer<typeof AgentsDeleteByIdInputSchema>;
@@ -77,7 +85,7 @@ const AgentsGetAllInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AgentsGetAllInput = z.infer<typeof AgentsGetAllInputSchema>;
@@ -88,7 +96,7 @@ export type AgentsGetAllResponse = z.infer<typeof AgentsGetAllResponseSchema>;
 const AgentsGetByIdInputSchema = z.object({
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AgentsGetByIdInput = z.infer<typeof AgentsGetByIdInputSchema>;
@@ -99,15 +107,15 @@ export type AgentsGetByIdResponse = z.infer<typeof AgentsGetByIdResponseSchema>;
 const AgentsUpdateByIdInputSchema = z.object({
 	icon: z.string().optional(),
 	name: z.string(),
-	tags: z.array(z.unknown()).optional(),
+	tags: AgentyBatchItemsOptionalSchema,
 	type: z.string().optional(),
-	config: z.record(z.string(), z.unknown()),
-	scripts: z.record(z.string(), z.unknown()).optional(),
+	config: AgentyLooseRecordSchema,
+	scripts: AgentyLooseRecordOptionalSchema,
 	user_id: z.number().int().optional(),
 	version: z.number().int().optional(),
 	agent_id: z.string(),
 	is_public: z.boolean().optional(),
-	scheduler: z.record(z.string(), z.unknown()).optional(),
+	scheduler: AgentyLooseRecordOptionalSchema,
 	account_id: z.number().int().optional(),
 	created_at: z.string().optional(),
 	is_managed: z.boolean().optional(),
@@ -115,7 +123,7 @@ const AgentsUpdateByIdInputSchema = z.object({
 	updated_at: z.string().optional(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type AgentsUpdateByIdInput = z.infer<typeof AgentsUpdateByIdInputSchema>;
@@ -128,7 +136,7 @@ const ApiKeysControllerCreateApiKeysInputSchema = z.object({
 	role: z.string().optional(),
 	is_enabled: z.boolean().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ApiKeysControllerCreateApiKeysInput = z.infer<typeof ApiKeysControllerCreateApiKeysInputSchema>;
@@ -139,7 +147,7 @@ export type ApiKeysControllerCreateApiKeysResponse = z.infer<typeof ApiKeysContr
 const ApiKeysDeleteByIdInputSchema = z.object({
 	key_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ApiKeysDeleteByIdInput = z.infer<typeof ApiKeysDeleteByIdInputSchema>;
@@ -153,7 +161,7 @@ const ApiKeysDownloadInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ApiKeysDownloadInput = z.infer<typeof ApiKeysDownloadInputSchema>;
@@ -167,7 +175,7 @@ const ApiKeysGetAllInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ApiKeysGetAllInput = z.infer<typeof ApiKeysGetAllInputSchema>;
@@ -178,7 +186,7 @@ export type ApiKeysGetAllResponse = z.infer<typeof ApiKeysGetAllResponseSchema>;
 const ApiKeysGetByIdInputSchema = z.object({
 	key_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ApiKeysGetByIdInput = z.infer<typeof ApiKeysGetByIdInputSchema>;
@@ -189,7 +197,7 @@ export type ApiKeysGetByIdResponse = z.infer<typeof ApiKeysGetByIdResponseSchema
 const ApiKeysResetByIdInputSchema = z.object({
 	key_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ApiKeysResetByIdInput = z.infer<typeof ApiKeysResetByIdInputSchema>;
@@ -202,7 +210,7 @@ const ApiKeysUpdateByIdInputSchema = z.object({
 	role: z.string().optional(),
 	key_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ApiKeysUpdateByIdInput = z.infer<typeof ApiKeysUpdateByIdInputSchema>;
@@ -213,7 +221,7 @@ export type ApiKeysUpdateByIdResponse = z.infer<typeof ApiKeysUpdateByIdResponse
 const CaptureScreenshotInputSchema = z.object({
 	url: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CaptureScreenshotInput = z.infer<typeof CaptureScreenshotInputSchema>;
@@ -224,15 +232,15 @@ export type CaptureScreenshotResponse = z.infer<typeof CaptureScreenshotResponse
 const CaptureScreenshotWithOptionsInputSchema = z.object({
 	url: z.string(),
 	html: z.string().optional(),
-	options: z.record(z.string(), z.unknown()).optional(),
+	options: AgentyLooseRecordOptionalSchema,
 	blockAds: z.boolean().optional(),
-	viewport: z.record(z.string(), z.unknown()).optional(),
-	anonymous: z.record(z.string(), z.unknown()).optional(),
+	viewport: AgentyLooseRecordOptionalSchema,
+	anonymous: AgentyLooseRecordOptionalSchema,
 	userAgent: z.string().optional(),
-	manipulate: z.record(z.string(), z.unknown()).optional(),
-	gotoOptions: z.record(z.string(), z.unknown()).optional(),
+	manipulate: AgentyLooseRecordOptionalSchema,
+	gotoOptions: AgentyLooseRecordOptionalSchema,
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CaptureScreenshotWithOptionsInput = z.infer<typeof CaptureScreenshotWithOptionsInputSchema>;
@@ -243,7 +251,7 @@ export type CaptureScreenshotWithOptionsResponse = z.infer<typeof CaptureScreens
 const ChangeApiKeyStatusByIdInputSchema = z.object({
 	key_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ChangeApiKeyStatusByIdInput = z.infer<typeof ChangeApiKeyStatusByIdInputSchema>;
@@ -257,7 +265,7 @@ const ConnectionsGetAllInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ConnectionsGetAllInput = z.infer<typeof ConnectionsGetAllInputSchema>;
@@ -268,7 +276,7 @@ export type ConnectionsGetAllResponse = z.infer<typeof ConnectionsGetAllResponse
 const ConvertUrlToPdfInputSchema = z.object({
 	url: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ConvertUrlToPdfInput = z.infer<typeof ConvertUrlToPdfInputSchema>;
@@ -280,14 +288,14 @@ const ConvertUrlToPdfWithOptionsInputSchema = z.object({
 	url: z.string().optional(),
 	html: z.string().optional(),
 	rotate: z.number().int().optional(),
-	options: z.record(z.string(), z.unknown()).optional(),
-	anonymous: z.record(z.string(), z.unknown()).optional(),
+	options: AgentyLooseRecordOptionalSchema,
+	anonymous: AgentyLooseRecordOptionalSchema,
 	block_ads: z.boolean().optional(),
 	user_agent: z.string().optional(),
-	goto_options: z.record(z.string(), z.unknown()).optional(),
+	goto_options: AgentyLooseRecordOptionalSchema,
 	emulate_media: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ConvertUrlToPdfWithOptionsInput = z.infer<typeof ConvertUrlToPdfWithOptionsInputSchema>;
@@ -299,7 +307,7 @@ const CopyAgentInputSchema = z.object({
 	name: z.string().optional(),
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CopyAgentInput = z.infer<typeof CopyAgentInputSchema>;
@@ -309,11 +317,11 @@ export type CopyAgentResponse = z.infer<typeof CopyAgentResponseSchema>;
 // createWorkflow
 const CreateWorkflowInputSchema = z.object({
 	name: z.string(),
-	agents: z.record(z.string(), z.unknown()),
-	actions: z.array(z.unknown()),
-	trigger: z.record(z.string(), z.unknown()),
+	agents: AgentyLooseRecordSchema,
+	actions: AgentyBatchItemsSchema,
+	trigger: AgentyLooseRecordSchema,
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateWorkflowInput = z.infer<typeof CreateWorkflowInputSchema>;
@@ -325,7 +333,7 @@ const DashboardGetReportsUsageInputSchema = z.object({
 	end: z.string().optional(),
 	start: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DashboardGetReportsUsageInput = z.infer<typeof DashboardGetReportsUsageInputSchema>;
@@ -337,7 +345,7 @@ const DeleteListRowInputSchema = z.object({
 	id: z.string(),
 	list_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteListRowInput = z.infer<typeof DeleteListRowInputSchema>;
@@ -346,10 +354,10 @@ export type DeleteListRowResponse = z.infer<typeof DeleteListRowResponseSchema>;
 
 // deleteListRows
 const DeleteListRowsInputSchema = z.object({
-	id: z.array(z.unknown()),
+	id: AgentyBatchItemsSchema,
 	list_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteListRowsInput = z.infer<typeof DeleteListRowsInputSchema>;
@@ -360,7 +368,7 @@ export type DeleteListRowsResponse = z.infer<typeof DeleteListRowsResponseSchema
 const DeleteProjectInputSchema = z.object({
 	id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteProjectInput = z.infer<typeof DeleteProjectInputSchema>;
@@ -371,7 +379,7 @@ export type DeleteProjectResponse = z.infer<typeof DeleteProjectResponseSchema>;
 const DeleteScheduleInputSchema = z.object({
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteScheduleInput = z.infer<typeof DeleteScheduleInputSchema>;
@@ -383,7 +391,7 @@ const DeleteWorkflowInputSchema = z.object({
 	workflow_id: z.string(),
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DeleteWorkflowInput = z.infer<typeof DeleteWorkflowInputSchema>;
@@ -401,7 +409,7 @@ const DownloadAgentResultInputSchema = z.object({
 	agent_id: z.string(),
 	collection: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DownloadAgentResultInput = z.infer<typeof DownloadAgentResultInputSchema>;
@@ -412,7 +420,7 @@ export type DownloadAgentResultResponse = z.infer<typeof DownloadAgentResultResp
 const DownloadListRowsInputSchema = z.object({
 	list_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DownloadListRowsInput = z.infer<typeof DownloadListRowsInputSchema>;
@@ -426,7 +434,7 @@ const DownloadUsersInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DownloadUsersInput = z.infer<typeof DownloadUsersInputSchema>;
@@ -436,7 +444,7 @@ export type DownloadUsersResponse = z.infer<typeof DownloadUsersResponseSchema>;
 // downloadWorkflows
 const DownloadWorkflowsInputSchema = z.object({
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type DownloadWorkflowsInput = z.infer<typeof DownloadWorkflowsInputSchema>;
@@ -446,9 +454,9 @@ export type DownloadWorkflowsResponse = z.infer<typeof DownloadWorkflowsResponse
 // extractBrowserStructuredData
 const ExtractBrowserStructuredDataInputSchema = z.object({
 	url: z.string(),
-	gotoOptions: z.record(z.string(), z.unknown()).optional(),
+	gotoOptions: AgentyLooseRecordOptionalSchema,
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ExtractBrowserStructuredDataInput = z.infer<typeof ExtractBrowserStructuredDataInputSchema>;
@@ -459,7 +467,7 @@ export type ExtractBrowserStructuredDataResponse = z.infer<typeof ExtractBrowser
 const ExtractStructuredDataInputSchema = z.object({
 	url: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ExtractStructuredDataInput = z.infer<typeof ExtractStructuredDataInputSchema>;
@@ -476,7 +484,7 @@ const GetAgentResultInputSchema = z.object({
 	agent_id: z.string(),
 	collection: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAgentResultInput = z.infer<typeof GetAgentResultInputSchema>;
@@ -491,7 +499,7 @@ const GetAllTeamMembersInputSchema = z.object({
 	offset: z.number().int().optional(),
 	search: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetAllTeamMembersInput = z.infer<typeof GetAllTeamMembersInputSchema>;
@@ -502,7 +510,7 @@ export type GetAllTeamMembersResponse = z.infer<typeof GetAllTeamMembersResponse
 const GetBrowserRedirectsInputSchema = z.object({
 	url: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetBrowserRedirectsInput = z.infer<typeof GetBrowserRedirectsInputSchema>;
@@ -520,7 +528,7 @@ const GetJobResultInputSchema = z.object({
 	search: z.string().optional(),
 	collection: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetJobResultInput = z.infer<typeof GetJobResultInputSchema>;
@@ -531,7 +539,7 @@ export type GetJobResultResponse = z.infer<typeof GetJobResultResponseSchema>;
 const GetListByIdInputSchema = z.object({
 	list_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetListByIdInput = z.infer<typeof GetListByIdInputSchema>;
@@ -543,7 +551,7 @@ const GetListRowByIdInputSchema = z.object({
 	id: z.string(),
 	list_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetListRowByIdInput = z.infer<typeof GetListRowByIdInputSchema>;
@@ -554,7 +562,7 @@ export type GetListRowByIdResponse = z.infer<typeof GetListRowByIdResponseSchema
 const GetPageContentInputSchema = z.object({
 	url: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetPageContentInput = z.infer<typeof GetPageContentInputSchema>;
@@ -566,7 +574,7 @@ const GetPageContentWithOptionsInputSchema = z.object({
 	url: z.string(),
 	block_ads: z.boolean().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetPageContentWithOptionsInput = z.infer<typeof GetPageContentWithOptionsInputSchema>;
@@ -577,7 +585,7 @@ export type GetPageContentWithOptionsResponse = z.infer<typeof GetPageContentWit
 const GetProjectByIdInputSchema = z.object({
 	id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetProjectByIdInput = z.infer<typeof GetProjectByIdInputSchema>;
@@ -587,9 +595,9 @@ export type GetProjectByIdResponse = z.infer<typeof GetProjectByIdResponseSchema
 // getRedirectsWithOptions
 const GetRedirectsWithOptionsInputSchema = z.object({
 	url: z.string(),
-	gotoOptions: z.record(z.string(), z.unknown()).optional(),
+	gotoOptions: AgentyLooseRecordOptionalSchema,
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetRedirectsWithOptionsInput = z.infer<typeof GetRedirectsWithOptionsInputSchema>;
@@ -600,7 +608,7 @@ export type GetRedirectsWithOptionsResponse = z.infer<typeof GetRedirectsWithOpt
 const GetScheduleInputSchema = z.object({
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetScheduleInput = z.infer<typeof GetScheduleInputSchema>;
@@ -611,7 +619,7 @@ export type GetScheduleResponse = z.infer<typeof GetScheduleResponseSchema>;
 const GetUserByIdInputSchema = z.object({
 	user_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetUserByIdInput = z.infer<typeof GetUserByIdInputSchema>;
@@ -623,7 +631,7 @@ const GetWorkflowByIdInputSchema = z.object({
 	workflow_id: z.string(),
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type GetWorkflowByIdInput = z.infer<typeof GetWorkflowByIdInputSchema>;
@@ -634,7 +642,7 @@ export type GetWorkflowByIdResponse = z.infer<typeof GetWorkflowByIdResponseSche
 const InputsGetByAgentIdInputSchema = z.object({
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type InputsGetByAgentIdInput = z.infer<typeof InputsGetByAgentIdInputSchema>;
@@ -644,13 +652,13 @@ export type InputsGetByAgentIdResponse = z.infer<typeof InputsGetByAgentIdRespon
 // inputsUpdateByAgentId
 const InputsUpdateByAgentIdInputSchema = z.object({
 	id: z.string().optional(),
-	data: z.array(z.unknown()).optional(),
+	data: AgentyBatchItemsOptionalSchema,
 	type: z.string().optional(),
 	field: z.string().optional(),
 	agent_id: z.string(),
 	collection: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type InputsUpdateByAgentIdInput = z.infer<typeof InputsUpdateByAgentIdInputSchema>;
@@ -665,7 +673,7 @@ const JobsDownloadInputSchema = z.object({
 	offset: z.number().int().optional(),
 	agent_id: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsDownloadInput = z.infer<typeof JobsDownloadInputSchema>;
@@ -677,7 +685,7 @@ const JobsDownloadFilesByIdInputSchema = z.object({
 	name: z.string(),
 	job_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsDownloadFilesByIdInput = z.infer<typeof JobsDownloadFilesByIdInputSchema>;
@@ -694,7 +702,7 @@ const JobsDownloadResultByIdInputSchema = z.object({
 	offset: z.number().int().optional(),
 	collection: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsDownloadResultByIdInput = z.infer<typeof JobsDownloadResultByIdInputSchema>;
@@ -709,7 +717,7 @@ const JobsGetAllInputSchema = z.object({
 	offset: z.number().int().optional(),
 	agent_id: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsGetAllInput = z.infer<typeof JobsGetAllInputSchema>;
@@ -720,7 +728,7 @@ export type JobsGetAllResponse = z.infer<typeof JobsGetAllResponseSchema>;
 const JobsGetByIdInputSchema = z.object({
 	job_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsGetByIdInput = z.infer<typeof JobsGetByIdInputSchema>;
@@ -733,7 +741,7 @@ const JobsGetLogsByIdInputSchema = z.object({
 	job_id: z.string(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsGetLogsByIdInput = z.infer<typeof JobsGetLogsByIdInputSchema>;
@@ -744,7 +752,7 @@ export type JobsGetLogsByIdResponse = z.infer<typeof JobsGetLogsByIdResponseSche
 const JobsListFilesByIdInputSchema = z.object({
 	job_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsListFilesByIdInput = z.infer<typeof JobsListFilesByIdInputSchema>;
@@ -755,7 +763,7 @@ export type JobsListFilesByIdResponse = z.infer<typeof JobsListFilesByIdResponse
 const JobsStartInputSchema = z.object({
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsStartInput = z.infer<typeof JobsStartInputSchema>;
@@ -766,7 +774,7 @@ export type JobsStartResponse = z.infer<typeof JobsStartResponseSchema>;
 const JobsStopByIdInputSchema = z.object({
 	job_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type JobsStopByIdInput = z.infer<typeof JobsStopByIdInputSchema>;
@@ -777,7 +785,7 @@ export type JobsStopByIdResponse = z.infer<typeof JobsStopByIdResponseSchema>;
 const ListsClearRowsInputSchema = z.object({
 	list_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsClearRowsInput = z.infer<typeof ListsClearRowsInputSchema>;
@@ -789,7 +797,7 @@ const ListsControllerCreateListInputSchema = z.object({
 	name: z.string(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsControllerCreateListInput = z.infer<typeof ListsControllerCreateListInputSchema>;
@@ -801,7 +809,7 @@ const ListsDeleteByIdInputSchema = z.object({
 	list_id: z.number().int(),
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsDeleteByIdInput = z.infer<typeof ListsDeleteByIdInputSchema>;
@@ -815,7 +823,7 @@ const ListsDownloadInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsDownloadInput = z.infer<typeof ListsDownloadInputSchema>;
@@ -829,7 +837,7 @@ const ListsGetAllInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsGetAllInput = z.infer<typeof ListsGetAllInputSchema>;
@@ -844,7 +852,7 @@ const ListsGetRowsByIdInputSchema = z.object({
 	offset: z.number().int().optional(),
 	list_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsGetRowsByIdInput = z.infer<typeof ListsGetRowsByIdInputSchema>;
@@ -857,7 +865,7 @@ const ListsUpdateByIdInputSchema = z.object({
 	list_id: z.number().int(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsUpdateByIdInput = z.infer<typeof ListsUpdateByIdInputSchema>;
@@ -866,10 +874,10 @@ export type ListsUpdateByIdResponse = z.infer<typeof ListsUpdateByIdResponseSche
 
 // listsUploadCsv
 const ListsUploadCsvInputSchema = z.object({
-	file: z.record(z.string(), z.unknown()),
+	file: AgentyLooseRecordSchema,
 	list_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ListsUploadCsvInput = z.infer<typeof ListsUploadCsvInputSchema>;
@@ -881,7 +889,7 @@ const PatchWorkflowInputSchema = z.object({
 	id: z.string(),
 	name: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type PatchWorkflowInput = z.infer<typeof PatchWorkflowInputSchema>;
@@ -890,10 +898,10 @@ export type PatchWorkflowResponse = z.infer<typeof PatchWorkflowResponseSchema>;
 
 // projectsAddAgents
 const ProjectsAddAgentsInputSchema = z.object({
-	agent_ids: z.array(z.unknown()),
+	agent_ids: AgentyBatchItemsSchema,
 	project_id: z.number().int(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ProjectsAddAgentsInput = z.infer<typeof ProjectsAddAgentsInputSchema>;
@@ -905,7 +913,7 @@ const ProjectsControllerCreateProjectInputSchema = z.object({
 	name: z.string(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ProjectsControllerCreateProjectInput = z.infer<typeof ProjectsControllerCreateProjectInputSchema>;
@@ -919,7 +927,7 @@ const ProjectsGetAllInputSchema = z.object({
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ProjectsGetAllInput = z.infer<typeof ProjectsGetAllInputSchema>;
@@ -931,7 +939,7 @@ const RemoveAgentFromProjectInputSchema = z.object({
 	agent_id: z.string(),
 	project_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type RemoveAgentFromProjectInput = z.infer<typeof RemoveAgentFromProjectInputSchema>;
@@ -941,11 +949,11 @@ export type RemoveAgentFromProjectResponse = z.infer<typeof RemoveAgentFromProje
 // scrapeWebpageData
 const ScrapeWebpageDataInputSchema = z.object({
 	url: z.string(),
-	debug: z.record(z.string(), z.unknown()).optional(),
-	query: z.record(z.string(), z.unknown()),
+	debug: AgentyLooseRecordOptionalSchema,
+	query: AgentyLooseRecordSchema,
 	blockAds: z.boolean().optional(),
 	userAgent: z.string().optional(),
-	gotoOptions: z.record(z.string(), z.unknown()).optional(),
+	gotoOptions: AgentyLooseRecordOptionalSchema,
 	body: AgentyOptionalBodySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
@@ -958,7 +966,7 @@ const ToggleScheduleInputSchema = z.object({
 	enabled: z.boolean(),
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type ToggleScheduleInput = z.infer<typeof ToggleScheduleInputSchema>;
@@ -970,7 +978,7 @@ const TransferAgentOwnershipInputSchema = z.object({
 	email: z.string(),
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type TransferAgentOwnershipInput = z.infer<typeof TransferAgentOwnershipInputSchema>;
@@ -981,9 +989,9 @@ export type TransferAgentOwnershipResponse = z.infer<typeof TransferAgentOwnersh
 const UpdateListRowInputSchema = z.object({
 	id: z.string(),
 	list_id: z.string(),
-	row_data: z.record(z.string(), z.unknown()),
+	row_data: AgentyLooseRecordSchema,
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateListRowInput = z.infer<typeof UpdateListRowInputSchema>;
@@ -996,7 +1004,7 @@ const UpdateProjectInputSchema = z.object({
 	name: z.string(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
@@ -1012,7 +1020,7 @@ const UpdateScheduleInputSchema = z.object({
 	is_enabled: z.boolean().optional(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleInputSchema>;
@@ -1030,7 +1038,7 @@ const UpdateUserByIdInputSchema = z.object({
 	is_email_verified: z.boolean().optional(),
 	is_email_subscribed: z.boolean().optional(),
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateUserByIdInput = z.infer<typeof UpdateUserByIdInputSchema>;
@@ -1041,11 +1049,11 @@ export type UpdateUserByIdResponse = z.infer<typeof UpdateUserByIdResponseSchema
 const UpdateWorkflowInputSchema = z.object({
 	id: z.string(),
 	name: z.string(),
-	agents: z.record(z.string(), z.unknown()),
-	actions: z.array(z.unknown()),
-	trigger: z.record(z.string(), z.unknown()),
+	agents: AgentyLooseRecordSchema,
+	actions: AgentyBatchItemsSchema,
+	trigger: AgentyLooseRecordSchema,
 	body: AgentyOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateWorkflowInput = z.infer<typeof UpdateWorkflowInputSchema>;
@@ -1225,5 +1233,6 @@ export type AgentyEndpointOutputs = {
 };
 
 export type AgentyEndpointInput = AgentyEndpointInputs[keyof AgentyEndpointInputs] & {
+	// Index signature required: factory helpers access fields by dynamic string keys across 79 ops.
 	[key: string]: unknown;
 };

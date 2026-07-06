@@ -23,7 +23,9 @@ const AGENTY_API_BASE = 'https://api.agenty.com/v2';
 
 export type AgentyRequestOptions = {
 	method?: AgentyMethod;
+	// body is unknown because request payloads vary per Agenty endpoint and are built dynamically.
 	body?: unknown;
+	// query values are heterogeneous (pagination, filters, apikey); not fully typed across 79 ops.
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
 	baseUrl?: string;
@@ -59,7 +61,7 @@ export async function makeAgentyRequest<T>(
 		method,
 		url: endpoint,
 		body: hasBody ? body : undefined,
-		query,
+		query: mergedQuery,
 	};
 
 	try {

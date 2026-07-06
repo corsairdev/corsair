@@ -38,6 +38,7 @@ export const agentyEndpointMeta = Object.fromEntries(
 			description: route.description,
 		},
 	]),
+// Object.fromEntries loses the literal endpoint-meta shape; cast satisfies RequiredPluginEndpointMeta.
 ) as RequiredPluginEndpointMeta<typeof agentyEndpointsNested>;
 
 export const agentyEndpointSchemas = Object.fromEntries(

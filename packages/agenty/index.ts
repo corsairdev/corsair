@@ -64,6 +64,8 @@ export type ExternalAgentyPlugin<T extends AgentyPluginOptions> =
 	BaseAgentyPlugin<T>;
 
 export function agenty<const T extends AgentyPluginOptions>(
+	// Cast is safe: if the caller omits options entirely, an empty object is
+	// immediately merged with defaults below, satisfying the T constraint.
 	incomingOptions: AgentyPluginOptions & T = {} as AgentyPluginOptions & T,
 ): ExternalAgentyPlugin<T> {
 	const options = {

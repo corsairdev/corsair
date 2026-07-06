@@ -106,6 +106,7 @@ import type { CorsairEndpoint } from 'corsair/core';
         	route: Pick<AgentyRoute, 'hostType'>,
         	input: AgentyEndpointInput,
         ): string {
+        	// baseUrl is optional on some inputs; AgentyEndpointInput union cannot narrow per-key.
         	const explicitBaseUrl = (input as { baseUrl?: string }).baseUrl;
         	if (explicitBaseUrl) return explicitBaseUrl;
         	return route.hostType === 'browser' ? 'https://browser.agenty.com/api' : 'https://api.agenty.com/v2';
