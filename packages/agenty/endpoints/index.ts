@@ -1,5 +1,5 @@
 import { AgentsEndpoints } from './agents';
-import { ApiKeysEndpoints } from './apiKeys';
+import { ApiKeysEndpoints } from './api-keys';
 import { BrowserEndpoints } from './browser';
 import { ConnectionsEndpoints } from './connections';
 import { DashboardEndpoints } from './dashboard';
