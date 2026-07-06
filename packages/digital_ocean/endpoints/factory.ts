@@ -4,6 +4,7 @@ import { makeDigitalOceanRequest } from '../client';
 import type { DigitalOceanContext } from '../index';
 import { digitalOceanRoutes, type DigitalOceanRoute } from './routes';
 import type { DigitalOceanEndpointInput } from './types';
+import { syncDigitalOceanOperationCache } from './cache-sync';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 	domain_name: ['domain_name', 'name'],
@@ -104,12 +105,13 @@ export async function logDigitalOceanOperation(
 	ctx: DigitalOceanContext,
 	input: DigitalOceanEndpointInput,
 	route: DigitalOceanRoute,
+	status: 'completed' | 'failed' = 'completed',
 ) {
 	await logEventFromContext(
 		ctx,
 		`digital_ocean.${route.group}.${route.name}`,
 		{ method: route.method, path: route.path },
-		'completed',
+		status,
 	);
 }
 
@@ -132,9 +134,15 @@ export async function executeDigitalOceanOperation(
 	input: DigitalOceanEndpointInput,
 	route: DigitalOceanRoute,
 ) {
+	let status: 'completed' | 'failed' = 'completed';
 	try {
-		return await requestDigitalOceanOperation(ctx, input, route);
+		const result = await requestDigitalOceanOperation(ctx, input, route);
+		await syncDigitalOceanOperationCache(ctx, route, input, result);
+		return result;
+	} catch (error) {
+		status = 'failed';
+		throw error;
 	} finally {
-		await logDigitalOceanOperation(ctx, input, route);
+		await logDigitalOceanOperation(ctx, input, route, status);
 	}
 }

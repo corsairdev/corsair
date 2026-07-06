@@ -1,13 +1,13 @@
 import { DatabasesEndpoints } from './databases';
-import { DomainRecordsEndpoints } from './domainRecords';
+import { DomainRecordsEndpoints } from './domain-records';
 import { DomainsEndpoints } from './domains';
 import { DropletsEndpoints } from './droplets';
 import { FirewallsEndpoints } from './firewalls';
 import { ImagesEndpoints } from './images';
 import { KubernetesEndpoints } from './kubernetes';
-import { LoadBalancersEndpoints } from './loadBalancers';
+import { LoadBalancersEndpoints } from './load-balancers';
 import { SnapshotsEndpoints } from './snapshots';
-import { SshKeysEndpoints } from './sshKeys';
+import { SshKeysEndpoints } from './ssh-keys';
 import { TagsEndpoints } from './tags';
 import { VolumesEndpoints } from './volumes';
 import { VpcsEndpoints } from './vpcs';
