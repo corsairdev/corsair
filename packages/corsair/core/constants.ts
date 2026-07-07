@@ -48,6 +48,7 @@ export const BaseProviders = [
 	'monday',
 	'notion',
 	'onedrive',
+	'onepassword',
 	'openweathermap',
 	'oura',
 	'outlook',
@@ -118,6 +119,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
@@ -195,6 +197,7 @@ export type AllProviders =
 	| 'monday'
 	| 'notion'
 	| 'onedrive'
+	| 'onepassword'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'

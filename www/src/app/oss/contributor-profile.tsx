@@ -4,8 +4,8 @@ import type { IntegrationPhase } from '@/db/schema';
 import { legacyStatusFromPhase } from '@/lib/integration-phases';
 
 import { FramedPanel } from './framed-panel';
-import { IntegrationRewardDisplay } from './integration-reward-display';
 import { formatPoints } from './integration-reward';
+import { IntegrationRewardDisplay } from './integration-reward-display';
 import { IntegrationStatusBadge } from './integration-status-badge';
 import { buildOssIntegrationHref } from './oss-url';
 
@@ -61,7 +61,11 @@ function formatMemberSince(isoDate: string) {
 	}).format(new Date(isoDate));
 }
 
-export function ContributorProfile({ profile }: { profile: ContributorProfileData }) {
+export function ContributorProfile({
+	profile,
+}: {
+	profile: ContributorProfileData;
+}) {
 	const finishedIntegrations = profile.integrations.filter(
 		(integration) => integration.phase === 'finished',
 	);
@@ -130,9 +134,7 @@ export function ContributorProfile({ profile }: { profile: ContributorProfileDat
 						<StatBlock
 							label="Rank"
 							value={profile.rank ? `#${profile.rank}` : '—'}
-							subtitle={
-								profile.rank ? 'on the leaderboard' : 'not ranked yet'
-							}
+							subtitle={profile.rank ? 'on the leaderboard' : 'not ranked yet'}
 						/>
 					</div>
 				</FramedPanel>
