@@ -11,6 +11,7 @@
     "rootDir": "../",
     "paths": {
       "@corsair-dev/slack": ["../slack/index.ts"],
+      "@corsair-dev/slack/client": ["../slack/client.ts"],
       "@corsair-dev/linear": ["../linear/index.ts"]
     }
   },

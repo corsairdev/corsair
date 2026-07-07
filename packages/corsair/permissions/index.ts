@@ -191,10 +191,26 @@ export async function executePermission(
 	await corsair.permissions.set_executing(permission.id);
 
 	try {
-		const parsedArgs =
-			typeof permission.args === 'string'
-				? JSON.parse(permission.args)
-				: permission.args;
+		let resolvedArgs = permission.args;
+		if (
+			typeof permission.error === 'string' &&
+			permission.error.startsWith('__corsair_modified_args__:')
+		) {
+			resolvedArgs = permission.error.substring(
+				'__corsair_modified_args__:'.length,
+			);
+			if (resolvedArgs.includes('__corsair_error__:')) {
+				resolvedArgs = resolvedArgs.split('__corsair_error__:')[0] || '';
+			}
+		}
+		let parsedArgs = resolvedArgs;
+		if (typeof resolvedArgs === 'string') {
+			try {
+				parsedArgs = JSON.parse(resolvedArgs);
+			} catch {
+				parsedArgs = resolvedArgs;
+			}
+		}
 		const result = await endpointFn(parsedArgs);
 		await corsair.permissions.set_completed(permission.id);
 		return { plugin: permission.plugin, endpoint: permission.endpoint, result };
@@ -202,9 +218,20 @@ export async function executePermission(
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		const db = getInternalDb(corsair);
 		if (db) {
+			let errorValue = errorMessage;
+			if (
+				typeof permission.error === 'string' &&
+				permission.error.startsWith('__corsair_modified_args__:')
+			) {
+				let baseArgs = permission.error;
+				if (baseArgs.includes('__corsair_error__:')) {
+					baseArgs = baseArgs.split('__corsair_error__:')[0] || '';
+				}
+				errorValue = `${baseArgs}__corsair_error__:${errorMessage}`;
+			}
 			await db.db
 				.updateTable('corsair_permissions')
-				.set({ status: 'failed', error: errorMessage, updated_at: new Date() })
+				.set({ status: 'failed', error: errorValue, updated_at: new Date() })
 				.where('id', '=', permission.id)
 				.execute();
 		}

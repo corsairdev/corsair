@@ -91,7 +91,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 
 	let path = options.url
 		.replace('{api-version}', config.VERSION)
-		.replace(/{(.*?)}/g, (substring: string, group: string) => {
+		.replace(/{([^{}]+)}/g, (substring: string, group: string) => {
 			if (options.path?.hasOwnProperty(group)) {
 				return encoder(String(options.path[group]));
 			}

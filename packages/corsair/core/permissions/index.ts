@@ -180,6 +180,8 @@ export type EnforcePermissionResult = {
 	id?: string;
 	/** Permission token (the value embedded in review URLs). Present when a pending approval record exists. */
 	token?: string;
+	/** Modified payload from human review, if applicable. */
+	args?: unknown;
 	/** ISO8601 expiry for pending approval records. Present when token is present. */
 	expiresAt?: string;
 	/**
@@ -189,6 +191,15 @@ export type EnforcePermissionResult = {
 	 */
 	onComplete?: () => Promise<void>;
 };
+
+function safeParseJson(value: unknown): unknown {
+	if (typeof value !== 'string') return value;
+	try {
+		return JSON.parse(value);
+	} catch {
+		return value;
+	}
+}
 
 /**
  * Polls a corsair_permissions row every 500 ms until it reaches a terminal state or the
@@ -204,15 +215,28 @@ async function pollUntilResolved(
 	while (Date.now() < deadline) {
 		const record = await db.db
 			.selectFrom('corsair_permissions')
-			.select(['id', 'status'])
+			.select(['id', 'status', 'args', 'error'])
 			.where('id', '=', permissionId)
 			.executeTakeFirst();
 
 		if (!record) return { result: 'blocked', reason: 'pending' };
 
 		if (record.status === 'approved') {
+			let resolvedArgs = record.args;
+			if (
+				typeof record.error === 'string' &&
+				record.error.startsWith('__corsair_modified_args__:')
+			) {
+				resolvedArgs = record.error.substring(
+					'__corsair_modified_args__:'.length,
+				);
+				if (resolvedArgs.includes('__corsair_error__:')) {
+					resolvedArgs = resolvedArgs.split('__corsair_error__:')[0] || '';
+				}
+			}
 			return {
 				result: 'allow',
+				args: safeParseJson(resolvedArgs),
 				onComplete: async () => {
 					await db.db
 						.updateTable('corsair_permissions')
@@ -282,7 +306,17 @@ export async function enforcePermission(
 		.selectAll()
 		.where('plugin', '=', opts.pluginId)
 		.where('endpoint', '=', opts.endpointPath)
-		.where('args', '=', argsJson)
+		.where((eb) =>
+			eb.or([
+				eb('args', '=', argsJson),
+				eb('error', '=', `__corsair_modified_args__:${argsJson}`),
+				eb(
+					'error',
+					'like',
+					`__corsair_modified_args__:${argsJson}__corsair_error__:%`,
+				),
+			]),
+		)
 		.where('tenant_id', '=', tenantId)
 		.where('expires_at', '>', now)
 		.where('status', 'in', ['pending', 'approved', 'executing'])
@@ -295,8 +329,24 @@ export async function enforcePermission(
 			// Single-use: let the call through; onComplete will mark it 'completed'
 			const db = opts.db;
 			const permissionId = existing.id;
+			let resolvedArgs = existing.args;
+			if (
+				typeof existing.error === 'string' &&
+				existing.error.startsWith('__corsair_modified_args__:')
+			) {
+				resolvedArgs = existing.error.substring(
+					'__corsair_modified_args__:'.length,
+				);
+				if (resolvedArgs.includes('__corsair_error__:')) {
+					resolvedArgs =
+						existing.error
+							.substring('__corsair_modified_args__:'.length)
+							.split('__corsair_error__:')[0] || '';
+				}
+			}
 			return {
 				result: 'allow',
+				args: safeParseJson(resolvedArgs),
 				onComplete: async () => {
 					await db.db
 						.updateTable('corsair_permissions')
