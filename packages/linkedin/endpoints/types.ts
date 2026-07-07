@@ -172,6 +172,9 @@ const CreateCommentInputSchema = z
 			.describe(
 				'URN of the object being commented on: a share, UGC post, or parent comment.',
 			),
+		actor: Urn.describe(
+			'URN of the member or organization posting the comment, e.g. urn:li:person:... or urn:li:organization:....',
+		),
 		message: z
 			.string()
 			.describe('The text of the comment (max 3000 characters).'),

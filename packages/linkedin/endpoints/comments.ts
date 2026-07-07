@@ -15,6 +15,7 @@ export const createComment: LinkedInEndpoints['CreateComment'] = async (
 		{
 			method: 'POST',
 			body: {
+				actor: input.actor,
 				object: input.commented_on_urn,
 				message: { text: input.message },
 			},

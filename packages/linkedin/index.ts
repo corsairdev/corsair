@@ -354,6 +354,8 @@ export type ExternalLinkedInPlugin<T extends LinkedInPluginOptions> =
 	BaseLinkedInPlugin<T>;
 
 export function linkedin<const T extends LinkedInPluginOptions>(
+	// Default to empty options; the assertion satisfies the `& T` intersection for
+	// the generic default, matching the shared plugin factory pattern.
 	incomingOptions: LinkedInPluginOptions & T = {} as LinkedInPluginOptions & T,
 ): ExternalLinkedInPlugin<T> {
 	const options = {
