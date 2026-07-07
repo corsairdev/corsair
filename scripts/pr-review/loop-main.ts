@@ -1,0 +1,135 @@
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import { runGate } from './gate.ts';
+import {
+	buildEscalationComment,
+	buildRoundOneComment,
+	currentRound,
+	decide,
+} from './loop.ts';
+import type { ReviewComment } from './parse-greptile.ts';
+import { parseFindings } from './parse-greptile.ts';
+
+function gh(args: string[]): string {
+	return execFileSync('gh', args, {
+		encoding: 'utf8',
+		maxBuffer: 64 * 1024 * 1024,
+	});
+}
+
+function setOutput(key: string, value: string): void {
+	if (process.env.GITHUB_OUTPUT) {
+		fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}\n`);
+	}
+}
+
+const event = JSON.parse(
+	fs.readFileSync(process.env.GITHUB_EVENT_PATH ?? '', 'utf8'),
+);
+const repo = process.env.GITHUB_REPOSITORY ?? '';
+const dryRun = process.env.PR_BOT_DRY_RUN === 'true';
+const pr = event.pull_request.number as number;
+const reviewId = event.review.id as number;
+const author = event.pull_request.user.login as string;
+
+const changedFiles = gh([
+	'api',
+	`repos/${repo}/pulls/${pr}/files`,
+	'--paginate',
+	'--jq',
+	'.[].filename',
+])
+	.trim()
+	.split('\n')
+	.filter(Boolean);
+const gate = runGate({
+	changedFiles,
+	prBody: (event.pull_request.body as string) ?? '',
+	isDraft: event.pull_request.draft as boolean,
+});
+if (!gate.isPluginPr) {
+	console.log('Not a plugin PR (or draft) — loop skipped.');
+	setOutput('decision', 'skip');
+	process.exit(0);
+}
+
+const reviewComments = JSON.parse(
+	gh(['api', `repos/${repo}/pulls/${pr}/comments`, '--paginate']),
+) as ReviewComment[];
+const findings = parseFindings(reviewComments, reviewId);
+
+const issueComments = JSON.parse(
+	gh(['api', `repos/${repo}/issues/${pr}/comments`, '--paginate']),
+) as { body: string }[];
+const round = currentRound(issueComments);
+let decision = decide(round, findings);
+
+// Cost guard: never spend an LLM run while the PR itself is incomplete
+// (missing tests/description/video). Stay at round 1 until the gate passes;
+// the loop re-fires on the contributor's next push.
+if (decision === 'fix' && gate.failures.length > 0) {
+	console.log(
+		`Fix round deferred — gate still failing (${gate.failures.map((f) => f.rule).join(', ')}).`,
+	);
+	decision = 'done';
+}
+
+function post(body: string): void {
+	const final = dryRun
+		? `<!-- corsair-review-bot dry-run -->\n<details><summary>DRY RUN — would post:</summary>\n\n${body}\n</details>`
+		: body;
+	gh([
+		'api',
+		'-X',
+		'POST',
+		`repos/${repo}/issues/${pr}/comments`,
+		'-f',
+		`body=${final}`,
+	]);
+}
+
+function label(name: string): void {
+	if (dryRun) return;
+	gh([
+		'api',
+		'-X',
+		'POST',
+		`repos/${repo}/issues/${pr}/labels`,
+		'-f',
+		`labels[]=${name}`,
+	]);
+}
+
+switch (decision) {
+	case 'comment':
+		post(buildRoundOneComment(findings, gate.failures, author));
+		label('bot:round-1');
+		break;
+	case 'fix':
+		// The workflow's fix job consumes this artifact.
+		fs.writeFileSync(
+			'/tmp/findings.json',
+			JSON.stringify(findings.filter((f) => f.severity !== 'P2')),
+		);
+		// The round=2 marker is the ratchet that guarantees the LLM fix runs
+		// at most once per PR: the next Greptile review can only escalate.
+		post(
+			[
+				'<!-- corsair-review-bot round=2 -->',
+				'Remaining findings are being fixed by a bot commit — it will be re-reviewed automatically.',
+			].join('\n'),
+		);
+		label('bot:round-2');
+		break;
+	case 'escalate':
+		post(buildEscalationComment(findings));
+		label('needs-maintainer');
+		break;
+	case 'done':
+		console.log('Nothing to do this round.');
+		break;
+}
+setOutput('decision', decision);
+console.log(
+	`round=${round} decision=${decision} findings=${findings.length} dryRun=${dryRun}`,
+);

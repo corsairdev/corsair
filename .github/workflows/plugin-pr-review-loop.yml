@@ -1,0 +1,126 @@
+name: Plugin PR Review Loop
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  group: review-loop-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  triage:
+    if: github.event.review.user.login == 'greptile-apps[bot]' && github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    outputs:
+      decision: ${{ steps.loop.outputs.decision }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Run review loop triage
+        id: loop
+        run: node --experimental-strip-types scripts/pr-review/loop-main.ts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
+
+      - name: Upload findings for fix job
+        if: steps.loop.outputs.decision == 'fix'
+        uses: actions/upload-artifact@v4
+        with:
+          name: findings-${{ github.event.pull_request.number }}
+          path: /tmp/findings.json
+
+  fix:
+    needs: triage
+    if: needs.triage.outputs.decision == 'fix'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.PR_BOT_PAT }}
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download findings
+        uses: actions/download-artifact@v4
+        with:
+          name: findings-${{ github.event.pull_request.number }}
+          path: /tmp
+
+      - name: Fetch rules file from base repo
+        run: curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/.github/PLUGIN_PR_RULES.md -o /tmp/PLUGIN_PR_RULES.md
+
+      - name: Run Claude Code fix
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npx -y @anthropic-ai/claude-code@latest -p "$(cat <<'EOF'
+          You are fixing specific code-review findings on an open-source PR.
+          The findings are in /tmp/findings.json (file, line, severity, title, detail).
+          The repo rules are in /tmp/PLUGIN_PR_RULES.md.
+          Fix ONLY the listed findings. Do not refactor, do not touch files
+          outside the plugin package the findings point at (plus
+          packages/corsair/core/constants.ts if a finding names it).
+          Never use eval or new Function. After fixing, run:
+            pnpm lint && pnpm typecheck
+          and fix any errors your changes introduced. Do not commit.
+          EOF
+          )" \
+          --allowedTools "Read,Edit,Write,Glob,Grep,Bash(pnpm lint),Bash(pnpm lint:fix),Bash(pnpm typecheck),Bash(pnpm test)" \
+          --max-turns 40
+
+      - name: Commit and push (or dry-run comment)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          git config user.name "corsair-review-bot"
+          git config user.email "bot@corsair.dev"
+          if git diff --quiet; then
+            echo "No changes produced"; exit 0
+          fi
+          if [ "$PR_BOT_DRY_RUN" = "true" ]; then
+            {
+              echo '<!-- corsair-review-bot dry-run -->'
+              echo '<details><summary>DRY RUN — would push this fix commit:</summary>'
+              echo
+              echo '```diff'
+              git diff | head -400
+              echo '```'
+              echo '</details>'
+            } > /tmp/dry.md
+            gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -F body=@/tmp/dry.md
+          else
+            git add -A
+            git commit -m "fix: address review findings (corsair review bot)"
+            git push
+          fi
