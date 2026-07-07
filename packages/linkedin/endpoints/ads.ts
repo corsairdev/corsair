@@ -9,7 +9,7 @@ export const getAdTargetingFacets: LinkedInEndpoints['GetAdTargetingFacets'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedLinkedInRequest<
 			LinkedInEndpointOutputs['GetAdTargetingFacets']
-		>('/v2/adTargetingEntities', ctx, { method: 'GET' });
+		>('/v2/adTargetingFacets', ctx, { method: 'GET' });
 
 		await logEventFromContext(
 			ctx,

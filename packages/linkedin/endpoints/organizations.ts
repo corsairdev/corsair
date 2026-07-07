@@ -94,7 +94,7 @@ export const getOrgPageStats: LinkedInEndpoints['GetOrgPageStats'] = async (
 		organization: input.organization_urn,
 	};
 	if (input.time_integrated?.start && input.time_integrated?.end) {
-		query.timeInterved = `(start:${input.time_integrated.start},end:${input.time_integrated.end})`;
+		query.timeIntervals = `(timeDuration:(start:${input.time_integrated.start},end:${input.time_integrated.end}))`;
 	}
 
 	const result = await makeAuthenticatedLinkedInRequest<
@@ -121,7 +121,7 @@ export const getShareStats: LinkedInEndpoints['GetShareStats'] = async (
 	if (input.start !== undefined) query.start = input.start;
 	if (input.count !== undefined) query.count = input.count;
 	if (input.time_integrated?.start && input.time_integrated?.end) {
-		query.timeInterved = `(start:${input.time_integrated.start},end:${input.time_integrated.end})`;
+		query.timeIntervals = `(timeDuration:(start:${input.time_integrated.start},end:${input.time_integrated.end}))`;
 	}
 
 	const result = await makeAuthenticatedLinkedInRequest<
