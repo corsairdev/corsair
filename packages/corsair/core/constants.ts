@@ -95,6 +95,7 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
+	cloudinary: 'Cloudinary',
 	cursor: 'Cursor',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',

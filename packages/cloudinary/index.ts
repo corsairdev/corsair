@@ -1,120 +1,149 @@
 import type {
 	BindEndpoints,
 	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
-	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
-	PickAuth,
-	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
-import type { CloudinaryEndpointInputs, CloudinaryEndpointOutputs } from './endpoints/types';
-import { CloudinaryEndpointInputSchemas, CloudinaryEndpointOutputSchemas } from './endpoints/types';
-import type {
-	CloudinaryWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { CloudinarySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { AuthMissingError } from 'corsair/core';
+
 import { errorHandlers } from './error-handlers';
+import { CloudinarySchema } from './schema';
+import {
+	DeleteWebhooks,
+	EagerWebhooks,
+	FolderWebhooks,
+	OtherWebhooks,
+	RenameWebhooks,
+	ResourceWebhooks,
+	UploadWebhooks,
+} from './webhooks';
+import {
+	CloudinaryAccessControlChangedSchema,
+	CloudinaryCreateFolderNotificationSchema,
+	CloudinaryDeleteFolderNotificationSchema,
+	CloudinaryDeleteNotificationSchema,
+	CloudinaryEagerNotificationSchema,
+	CloudinaryExplodeNotificationSchema,
+	CloudinaryMoveNotificationSchema,
+	CloudinaryRelatedAssetsNotificationSchema,
+	CloudinaryRenameNotificationSchema,
+	CloudinaryResourceContextChangedSchema,
+	CloudinaryResourceMetadataChangedSchema,
+	CloudinaryResourceTagsChangedSchema,
+	CloudinaryUploadNotificationSchema,
+} from './webhooks/types';
 import { matchCloudinaryTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveCloudinaryOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import {
+	cloudinaryAuthConfig,
+	type CloudinaryPluginOptionsBase,
+} from './plugin-types';
+import {
+	cloudinaryEndpointMeta,
+	cloudinaryEndpointSchemas,
+	cloudinaryEndpointsNested,
+} from './endpoints/plugin';
 
-export type CloudinaryPluginOptions = {
-	authType?: PickAuth<'api_key'>;
-	key?: string;
-	webhookSecret?: string;
+export type CloudinaryPluginOptions = CloudinaryPluginOptionsBase & {
 	hooks?: InternalCloudinaryPlugin['hooks'];
 	webhookHooks?: InternalCloudinaryPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof cloudinaryEndpointsNested>;
 };
 
-export type CloudinaryContext = CorsairPluginContext<
-	typeof CloudinarySchema,
-	CloudinaryPluginOptions
->;
+export type { CloudinaryContext } from './plugin-types';
+export { cloudinaryAuthConfig } from './auth-config';
 
-export type CloudinaryKeyBuilderContext = KeyBuilderContext<CloudinaryPluginOptions>;
+export type CloudinaryKeyBuilderContext = KeyBuilderContext<
+	CloudinaryPluginOptions,
+	typeof cloudinaryAuthConfig
+>;
 
 export type CloudinaryBoundEndpoints = BindEndpoints<typeof cloudinaryEndpointsNested>;
-
-type CloudinaryEndpoint<
-	K extends keyof CloudinaryEndpointOutputs,
-> = CorsairEndpoint<
-	CloudinaryContext,
-	CloudinaryEndpointInputs[K],
-	CloudinaryEndpointOutputs[K]
->;
-
-export type CloudinaryEndpoints = {
-	exampleGet: CloudinaryEndpoint<'exampleGet'>;
-};
-
-type CloudinaryWebhook<
-	K extends keyof CloudinaryWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CloudinaryContext, TEvent, CloudinaryWebhookOutputs[K]>;
-
-export type CloudinaryWebhooks = {
-	example: CloudinaryWebhook<'example', ExampleEvent>;
-};
-
-export type CloudinaryBoundWebhooks = BindWebhooks<CloudinaryWebhooks>;
-
-const cloudinaryEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
+export type CloudinaryBoundWebhooks = BindWebhooks<typeof cloudinaryWebhooksNested>;
 
 const cloudinaryWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	upload: UploadWebhooks,
+	eager: EagerWebhooks,
+	delete: DeleteWebhooks,
+	rename: RenameWebhooks,
+	resource: ResourceWebhooks,
+	folder: FolderWebhooks,
+	other: OtherWebhooks,
+} as const;
+
+const cloudinaryWebhookSchemas = {
+	'upload.upload': {
+		description: 'Notification when an upload completes',
+		payload: CloudinaryUploadNotificationSchema,
+		response: CloudinaryUploadNotificationSchema,
+	},
+	'eager.eager': {
+		description: 'Notification when eager transformations complete',
+		payload: CloudinaryEagerNotificationSchema,
+		response: CloudinaryEagerNotificationSchema,
+	},
+	'delete.delete': {
+		description: 'Notification when an asset is deleted',
+		payload: CloudinaryDeleteNotificationSchema,
+		response: CloudinaryDeleteNotificationSchema,
+	},
+	'rename.rename': {
+		description: 'Notification when an asset is renamed',
+		payload: CloudinaryRenameNotificationSchema,
+		response: CloudinaryRenameNotificationSchema,
+	},
+	'resource.resourceTagsChanged': {
+		description: 'Notification when resource tags change',
+		payload: CloudinaryResourceTagsChangedSchema,
+		response: CloudinaryResourceTagsChangedSchema,
+	},
+	'resource.resourceContextChanged': {
+		description: 'Notification when resource context metadata changes',
+		payload: CloudinaryResourceContextChangedSchema,
+		response: CloudinaryResourceContextChangedSchema,
+	},
+	'resource.resourceMetadataChanged': {
+		description: 'Notification when structured metadata changes',
+		payload: CloudinaryResourceMetadataChangedSchema,
+		response: CloudinaryResourceMetadataChangedSchema,
+	},
+	'folder.createFolder': {
+		description: 'Notification when a folder is created',
+		payload: CloudinaryCreateFolderNotificationSchema,
+		response: CloudinaryCreateFolderNotificationSchema,
+	},
+	'folder.deleteFolder': {
+		description: 'Notification when a folder is deleted',
+		payload: CloudinaryDeleteFolderNotificationSchema,
+		response: CloudinaryDeleteFolderNotificationSchema,
+	},
+	'folder.move': {
+		description: 'Notification when an asset is moved between folders',
+		payload: CloudinaryMoveNotificationSchema,
+		response: CloudinaryMoveNotificationSchema,
+	},
+	'other.explode': {
+		description: 'Notification when explode processing completes',
+		payload: CloudinaryExplodeNotificationSchema,
+		response: CloudinaryExplodeNotificationSchema,
+	},
+	'other.accessControlChanged': {
+		description: 'Notification when asset access control changes',
+		payload: CloudinaryAccessControlChangedSchema,
+		response: CloudinaryAccessControlChangedSchema,
+	},
+	'other.relatedAssets': {
+		description: 'Notification when related assets change',
+		payload: CloudinaryRelatedAssetsNotificationSchema,
+		response: CloudinaryRelatedAssetsNotificationSchema,
 	},
 } as const;
 
-export const cloudinaryEndpointSchemas = {
-	'example.get': {
-		input: CloudinaryEndpointInputSchemas.exampleGet,
-		output: CloudinaryEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof cloudinaryEndpointsNested>;
-
-const cloudinaryWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof cloudinaryWebhooksNested>;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const cloudinaryEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof cloudinaryEndpointsNested>;
-
-export const cloudinaryAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
 
 export type BaseCloudinaryPlugin<T extends CloudinaryPluginOptions> = CorsairPlugin<
 	'cloudinary',
@@ -122,7 +151,8 @@ export type BaseCloudinaryPlugin<T extends CloudinaryPluginOptions> = CorsairPlu
 	typeof cloudinaryEndpointsNested,
 	typeof cloudinaryWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof cloudinaryAuthConfig
 >;
 
 export type InternalCloudinaryPlugin = BaseCloudinaryPlugin<CloudinaryPluginOptions>;
@@ -137,11 +167,12 @@ export function cloudinary<const T extends CloudinaryPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'cloudinary',
 		authConfig: cloudinaryAuthConfig,
 		schema: CloudinarySchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: cloudinaryEndpointsNested,
@@ -151,8 +182,12 @@ export function cloudinary<const T extends CloudinaryPluginOptions>(
 		webhookSchemas: cloudinaryWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-cloudinary-signature' in headers;
+			return (
+				'x-cld-signature' in headers ||
+				'X-Cld-Signature' in headers ||
+				'x-cld-timestamp' in headers ||
+				'X-Cld-Timestamp' in headers
+			);
 		},
 		pluginTenantWebhookMatcher: matchCloudinaryTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveCloudinaryOAuthWebhookTenantLink,
@@ -166,33 +201,42 @@ export function cloudinary<const T extends CloudinaryPluginOptions>(
 			}
 
 			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				const webhookSecret = await ctx.keys.get_webhook_signature();
+				if (webhookSecret) return webhookSecret;
+				const apiSecret = await ctx.keys.get_api_secret();
+				return apiSecret ?? '';
 			}
 
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source === 'endpoint' && options.key && options.apiSecret) {
+				return `${options.key}:${options.apiSecret}`;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const apiKey = options.key ?? (await ctx.keys.get_api_key());
+				const apiSecret =
+					options.apiSecret ?? (await ctx.keys.get_api_secret());
+				if (!apiKey || !apiSecret) {
+					throw new AuthMissingError('cloudinary', 'api_key');
+				}
+				return `${apiKey}:${apiSecret}`;
 			}
 
-
-			return '';
+			throw new AuthMissingError('cloudinary', ctx.authType);
 		},
 	} satisfies InternalCloudinaryPlugin;
 }
 
 export type {
-	ExampleEvent,
-	CloudinaryWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	CloudinaryEndpointInputs,
 	CloudinaryEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
+
+export type { CloudinaryWebhookOutputs } from './webhooks/types';
+
+export {
+	cloudinaryEndpointsNested,
+	cloudinaryEndpointSchemas,
+	cloudinaryEndpointMeta,
+};
+
+export { parseCloudinaryCredentials, signCloudinaryParams } from './client';
