@@ -117,14 +117,27 @@ Synced entities support `corsair.googlecalendar.db.<entity>.search()` and `.list
 **Read-style (read):** `calendar.getAvailability`
 
 ```ts
-await corsair.googlecalendar.api.calendar.getAvailability({});
+await corsair.googlecalendar.api.calendar.getAvailability({
+	timeMin: '2026-01-01T00:00:00Z',
+	timeMax: '2026-01-01T00:00:00Z',
+});
 ```
 
 
 **Write-style (write):** `events.create`
 
 ```ts
-await corsair.googlecalendar.api.events.create({});
+await corsair.googlecalendar.api.events.create({
+	event: {
+		summary: 'example_summary',
+		start: {
+			dateTime: '2026-01-01T00:00:00Z',
+		},
+		end: {
+			dateTime: '2026-01-01T00:00:00Z',
+		},
+	},
+});
 ```
 
 

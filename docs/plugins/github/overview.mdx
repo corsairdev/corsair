@@ -130,14 +130,23 @@ Synced entities support `corsair.github.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `comments.get`
 
 ```ts
-await corsair.github.api.comments.get({});
+await corsair.github.api.comments.get({
+	owner: 'example_owner',
+	repo: 'example_repo',
+	commentId: 1,
+});
 ```
 
 
-**Write-style (write):** `comments.delete`
+**Write-style (write):** `comments.update`
 
 ```ts
-await corsair.github.api.comments.delete({});
+await corsair.github.api.comments.update({
+	owner: 'example_owner',
+	repo: 'example_repo',
+	commentId: 1,
+	body: 'example_body',
+});
 ```
 
 

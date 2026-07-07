@@ -130,14 +130,18 @@ Synced entities support `corsair.slack.db.<entity>.search()` and `.list()`. See 
 **Read-style (read):** `channels.get`
 
 ```ts
-await corsair.slack.api.channels.get({});
+await corsair.slack.api.channels.get({
+	channel: 'C0123456789',
+});
 ```
 
 
-**Write-style (destructive):** `channels.archive`
+**Write-style (write):** `channels.create`
 
 ```ts
-await corsair.slack.api.channels.archive({});
+await corsair.slack.api.channels.create({
+	name: 'example_name',
+});
 ```
 
 

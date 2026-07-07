@@ -107,18 +107,18 @@ Synced entities support `corsair.reddit.db.<entity>.search()` and `.list()`. See
 
 ## Example API calls
 
-**Read-style (read):** `feeds.getAll`
+**Read-style (read):** `posts.getById`
 
 ```ts
-await corsair.reddit.api.feeds.getAll({});
+await corsair.reddit.api.posts.getById({
+	names: 'example_names',
+});
 ```
 
 
-**Write-style (read):** `posts.getById`
+**Write-style (write):** `—`
 
-```ts
-await corsair.reddit.api.posts.getById({});
-```
+_No write-style endpoint inferred; pick any operation from the reference below._
 
 
 See the full list on the [API](/plugins/reddit/api) page. Use `pnpm corsair list --plugin=reddit` and `pnpm corsair schema <path>` locally to inspect schemas.

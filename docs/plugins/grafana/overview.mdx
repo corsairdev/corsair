@@ -107,17 +107,19 @@ Synced entities support `corsair.grafana.db.<entity>.search()` and `.list()`. Se
 
 ## Example API calls
 
-**Read-style (read):** `dashboards.queryPublic`
+**Read-style (read):** `health.get`
 
 ```ts
-await corsair.grafana.api.dashboards.queryPublic({});
+await corsair.grafana.api.health.get({});
 ```
 
 
 **Write-style (write):** `logs.createOtlp`
 
 ```ts
-await corsair.grafana.api.logs.createOtlp({});
+await corsair.grafana.api.logs.createOtlp({
+	resourceLogs: [{}],
+});
 ```
 
 

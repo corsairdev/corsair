@@ -117,14 +117,18 @@ Synced entities support `corsair.firecrawl.db.<entity>.search()` and `.list()`. 
 **Read-style (read):** `agent.get`
 
 ```ts
-await corsair.firecrawl.api.agent.get({});
+await corsair.firecrawl.api.agent.get({
+	id: 'example_id',
+});
 ```
 
 
-**Write-style (write):** `agent.cancel`
+**Write-style (write):** `agent.start`
 
 ```ts
-await corsair.firecrawl.api.agent.cancel({});
+await corsair.firecrawl.api.agent.start({
+	prompt: 'example_prompt',
+});
 ```
 
 

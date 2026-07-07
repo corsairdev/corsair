@@ -114,17 +114,22 @@ Synced entities support `corsair.amplitude.db.<entity>.search()` and `.list()`. 
 
 ## Example API calls
 
-**Read-style (read):** `annotations.list`
+**Read-style (read):** `charts.get`
 
 ```ts
-await corsair.amplitude.api.annotations.list({});
+await corsair.amplitude.api.charts.get({
+	chart_id: 'example_chart_id',
+});
 ```
 
 
 **Write-style (write):** `annotations.create`
 
 ```ts
-await corsair.amplitude.api.annotations.create({});
+await corsair.amplitude.api.annotations.create({
+	date: '2026-01-01T00:00:00Z',
+	label: 'example_label',
+});
 ```
 
 

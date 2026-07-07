@@ -107,10 +107,12 @@ Synced entities support `corsair.cursor.db.<entity>.search()` and `.list()`. See
 
 ## Example API calls
 
-**Read-style (read):** `account.getMe`
+**Read-style (read):** `agents.getConversation`
 
 ```ts
-await corsair.cursor.api.account.getMe({});
+await corsair.cursor.api.agents.getConversation({
+	id: 'example_id',
+});
 ```
 
 

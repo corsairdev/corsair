@@ -110,15 +110,15 @@ Synced entities support `corsair.hackernews.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `items.get`
 
 ```ts
-await corsair.hackernews.api.items.get({});
+await corsair.hackernews.api.items.get({
+	id: 1,
+});
 ```
 
 
-**Write-style (read):** `updates.get`
+**Write-style (write):** `—`
 
-```ts
-await corsair.hackernews.api.updates.get({});
-```
+_No write-style endpoint inferred; pick any operation from the reference below._
 
 
 See the full list on the [API](/plugins/hackernews/api) page. Use `pnpm corsair list --plugin=hackernews` and `pnpm corsair schema <path>` locally to inspect schemas.

@@ -114,17 +114,23 @@ Synced entities support `corsair.zoom.db.<entity>.search()` and `.list()`. See [
 
 ## Example API calls
 
-**Read-style (read):** `archiveFiles.list`
+**Read-style (read):** `meetings.get`
 
 ```ts
-await corsair.zoom.api.archiveFiles.list({});
+await corsair.zoom.api.meetings.get({
+	meetingId: 'example_meetingid',
+});
 ```
 
 
 **Write-style (write):** `meetings.addRegistrant`
 
 ```ts
-await corsair.zoom.api.meetings.addRegistrant({});
+await corsair.zoom.api.meetings.addRegistrant({
+	meetingId: 'example_meetingid',
+	email: 'user@example.com',
+	first_name: 'example_first_name',
+});
 ```
 
 

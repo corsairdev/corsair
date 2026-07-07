@@ -114,17 +114,23 @@ Synced entities support `corsair.airtable.db.<entity>.search()` and `.list()`. S
 
 ## Example API calls
 
-**Read-style (read):** `bases.getMany`
+**Read-style (read):** `bases.getSchema`
 
 ```ts
-await corsair.airtable.api.bases.getMany({});
+await corsair.airtable.api.bases.getSchema({
+	baseId: 'example_baseid',
+});
 ```
 
 
 **Write-style (write):** `records.create`
 
 ```ts
-await corsair.airtable.api.records.create({});
+await corsair.airtable.api.records.create({
+	baseId: 'example_baseid',
+	tableIdOrName: 'example_tableidorname',
+	fields: {},
+});
 ```
 
 

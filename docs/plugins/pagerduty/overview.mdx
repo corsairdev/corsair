@@ -117,14 +117,19 @@ Synced entities support `corsair.pagerduty.db.<entity>.search()` and `.list()`. 
 **Read-style (read):** `incidentNotes.list`
 
 ```ts
-await corsair.pagerduty.api.incidentNotes.list({});
+await corsair.pagerduty.api.incidentNotes.list({
+	incident_id: 'example_incident_id',
+});
 ```
 
 
 **Write-style (write):** `incidentNotes.create`
 
 ```ts
-await corsair.pagerduty.api.incidentNotes.create({});
+await corsair.pagerduty.api.incidentNotes.create({
+	incident_id: 'example_incident_id',
+	content: 'example_content',
+});
 ```
 
 

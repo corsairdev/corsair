@@ -117,14 +117,20 @@ Synced entities support `corsair.sharepoint.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `contentTypes.get`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.get({});
+await corsair.sharepoint.api.contentTypes.get({
+	content_type_id: 'example_content_type_id',
+});
 ```
 
 
 **Write-style (write):** `contentTypes.addFieldLink`
 
 ```ts
-await corsair.sharepoint.api.contentTypes.addFieldLink({});
+await corsair.sharepoint.api.contentTypes.addFieldLink({
+	listid: 'example_listid',
+	contenttypeid: 'example_contenttypeid',
+	field_internal_name: 'example_field_internal_name',
+});
 ```
 
 

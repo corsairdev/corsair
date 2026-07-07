@@ -117,14 +117,19 @@ Synced entities support `corsair.intercom.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `admins.get`
 
 ```ts
-await corsair.intercom.api.admins.get({});
+await corsair.intercom.api.admins.get({
+	id: 'example_id',
+});
 ```
 
 
 **Write-style (write):** `admins.setAway`
 
 ```ts
-await corsair.intercom.api.admins.setAway({});
+await corsair.intercom.api.admins.setAway({
+	id: 'example_id',
+	away_mode_enabled: true,
+});
 ```
 
 

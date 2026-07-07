@@ -127,17 +127,22 @@ Synced entities support `corsair.stripe.db.<entity>.search()` and `.list()`. See
 
 ## Example API calls
 
-**Read-style (read):** `balance.get`
+**Read-style (read):** `charges.get`
 
 ```ts
-await corsair.stripe.api.balance.get({});
+await corsair.stripe.api.charges.get({
+	id: 'example_id',
+});
 ```
 
 
 **Write-style (write):** `charges.create`
 
 ```ts
-await corsair.stripe.api.charges.create({});
+await corsair.stripe.api.charges.create({
+	amount: 1,
+	currency: 'example_currency',
+});
 ```
 
 

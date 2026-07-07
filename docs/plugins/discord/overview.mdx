@@ -117,14 +117,18 @@ Synced entities support `corsair.discord.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `channels.list`
 
 ```ts
-await corsair.discord.api.channels.list({});
+await corsair.discord.api.channels.list({
+	guild_id: 'example_guild_id',
+});
 ```
 
 
-**Write-style (destructive):** `messages.delete`
+**Write-style (write):** `messages.send`
 
 ```ts
-await corsair.discord.api.messages.delete({});
+await corsair.discord.api.messages.send({
+	channel_id: 'C0123456789',
+});
 ```
 
 
