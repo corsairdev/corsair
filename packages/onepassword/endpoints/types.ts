@@ -98,21 +98,19 @@ export type ItemsCreateResponse = z.infer<typeof ItemsCreateResponseSchema>;
 export const ItemsUpdateInputSchema = z.object({
 	vaultId: z.string(),
 	id: z.string(),
-	title: z.string().optional(),
-	category: z
-		.enum([
-			'LOGIN',
-			'PASSWORD',
-			'SECURE_NOTE',
-			'DATABASE',
-			'CREDIT_CARD',
-			'MEMBERSHIP',
-			'PASSPORT',
-			'SOFTWARE_LICENSE',
-			'OUTDOOR_LICENSE',
-			'API_CREDENTIAL',
-		])
-		.optional(),
+	title: z.string(),
+	category: z.enum([
+		'LOGIN',
+		'PASSWORD',
+		'SECURE_NOTE',
+		'DATABASE',
+		'CREDIT_CARD',
+		'MEMBERSHIP',
+		'PASSPORT',
+		'SOFTWARE_LICENSE',
+		'OUTDOOR_LICENSE',
+		'API_CREDENTIAL',
+	]),
 	urls: z.array(ItemUrlSchema).optional(),
 	fields: z.array(ItemFieldSchema).optional(),
 });

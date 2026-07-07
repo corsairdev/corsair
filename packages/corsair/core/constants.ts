@@ -119,6 +119,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
