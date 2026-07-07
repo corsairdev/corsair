@@ -1,0 +1,91 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeAuthenticatedLinkedInRequest } from '../client';
+import type { LinkedInEndpoints } from '../index';
+import type { LinkedInEndpointOutputs } from './types';
+
+export const getImage: LinkedInEndpoints['GetImage'] = async (ctx, input) => {
+	const result = await makeAuthenticatedLinkedInRequest<
+		LinkedInEndpointOutputs['GetImage']
+	>(`/v2/images/${encodeURIComponent(input.image_urn)}`, ctx, {
+		method: 'GET',
+	});
+
+	await logEventFromContext(
+		ctx,
+		'linkedin.images.get',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+export const getImages: LinkedInEndpoints['GetImages'] = async (ctx, input) => {
+	const query: Record<string, string | number | boolean | undefined> = {};
+	if (input.urns && input.urns.length > 0) {
+		query.q = 'urns';
+		query.urns = input.urns.join(',');
+	} else if (input.owner) {
+		query.q = 'owner';
+		query.owners = input.owner;
+	}
+	if (input.start !== undefined) query.start = input.start;
+	if (input.count !== undefined) query.count = input.count;
+
+	const result = await makeAuthenticatedLinkedInRequest<
+		LinkedInEndpointOutputs['GetImages']
+	>('/v2/images', ctx, { method: 'GET', query });
+
+	await logEventFromContext(
+		ctx,
+		'linkedin.images.list',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+export const initializeImageUpload: LinkedInEndpoints['InitializeImageUpload'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedLinkedInRequest<
+			LinkedInEndpointOutputs['InitializeImageUpload']
+		>('/v2/images?action=initializeUpload', ctx, {
+			method: 'POST',
+			body: { owner: input.owner },
+		});
+
+		await logEventFromContext(
+			ctx,
+			'linkedin.images.initializeUpload',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+export const registerImageUpload: LinkedInEndpoints['RegisterImageUpload'] =
+	async (ctx, input) => {
+		const body = {
+			registerUploadRequest: {
+				recipes: ['urn:li:digitalmediaRecipe:feedshare-image'],
+				owner: input.owner,
+				serviceRelationships: [
+					{
+						relationshipType: 'OWNER',
+						identifier: 'urn:li:userGeneratedContent',
+					},
+				],
+			},
+		};
+
+		const result = await makeAuthenticatedLinkedInRequest<
+			LinkedInEndpointOutputs['RegisterImageUpload']
+		>('/v2/images?action=registerUpload', ctx, { method: 'POST', body });
+
+		await logEventFromContext(
+			ctx,
+			'linkedin.images.registerUpload',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

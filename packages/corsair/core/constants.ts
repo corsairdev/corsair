@@ -80,6 +80,7 @@ export const BaseProviders = [
 	'zohomail',
 	'zoom',
 	'instagram',
+	'linkedin',
 ] as const;
 
 export const ProviderDisplayNames = {
@@ -150,6 +151,7 @@ export const ProviderDisplayNames = {
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	instagram: 'Instagram',
+	linkedin: 'LinkedIn',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -227,6 +229,7 @@ export type AllProviders =
 	| 'zohomail'
 	| 'zoom'
 	| 'instagram'
+	| 'linkedin'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
