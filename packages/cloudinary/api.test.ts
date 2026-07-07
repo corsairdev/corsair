@@ -257,7 +257,7 @@ describe('Cloudinary API Type Tests', () => {
 				{ method: 'GET' },
 			);
 
-			CloudinaryUsageSchema.passthrough().parse(result);
+			CloudinaryUsageSchema.loose().parse(result);
 			parseEndpointOutput('getUsage', result);
 		});
 
