@@ -3,10 +3,12 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
+import { cloudinary } from '@corsair-dev/cloudinary';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { hubspot } from '@corsair-dev/hubspot';
+import { instagram } from '@corsair-dev/instagram';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
@@ -62,6 +64,12 @@ export const corsair = createCorsair({
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		}),
+		cloudinary({
+			key: process.env.CLOUDINARY_API_KEY,
+			apiSecret: process.env.CLOUDINARY_API_SECRET,
+			cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+			webhookSecret: process.env.CLOUDINARY_WEBHOOK_SECRET,
 		}),
 		instagram(),
 	],
