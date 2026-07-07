@@ -86,6 +86,10 @@ const CreatePostInputSchema = z
 			'Optional image URN to attach as media.',
 		),
 	})
+	.refine((data) => !(data.article_url && data.image_urn), {
+		message:
+			'A post can attach either an article (article_url) or an image (image_urn), not both.',
+	})
 	.describe('Create a new LinkedIn post for a member or organization.');
 
 const CreateArticleShareInputSchema = z
@@ -621,6 +625,10 @@ const GetNetworkSizeOutputSchema = z
 	.loose()
 	.describe('Follower count for a LinkedIn organization.');
 
+// LinkedIn analytics responses are dynamic (element shape varies by requested
+// metric/facet), so these outputs are intentionally typed as records of unknown.
+// Output schemas only describe the shape for the agent and are not used for
+// runtime validation, mirroring other plugins in the monorepo.
 const StatsElementSchema = z.record(z.string(), z.unknown());
 
 const GetOrgPageStatsOutputSchema = z

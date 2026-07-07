@@ -50,6 +50,8 @@ export const getNetworkSize: LinkedInEndpoints['GetNetworkSize'] = async (
 	ctx,
 	input,
 ) => {
+	// Follower-statistics elements vary by metric; we only read the follower
+	// counts, so the rest of the element shape is intentionally untyped.
 	type FollowerStatsResponse = {
 		elements?: Array<Record<string, unknown>>;
 	};
