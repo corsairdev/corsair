@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request, ApiError } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class OnePasswordAPIError extends Error {
 	constructor(
@@ -28,6 +28,17 @@ export async function makeOnePasswordRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+
+	if (!connectUrl) {
+		if (process.env.NODE_ENV === 'production') {
+			throw new OnePasswordAPIError(
+				'1Password Connect URL is not configured. Please set connectUrl in the plugin options.',
+			);
+		}
+		console.warn(
+			'1Password Connect URL is not configured. Defaulting to http://localhost:8080',
+		);
+	}
 
 	const base = trimTrailingSlash(connectUrl || 'http://localhost:8080');
 

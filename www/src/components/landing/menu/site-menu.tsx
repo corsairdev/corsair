@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { APP_URL, DISCORD_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
-import { ArrowRightIcon, PlusCorner } from '../icons';
+import { PlusCorner } from '../icons';
 
 function MenuIcon() {
 	return (
@@ -204,7 +204,11 @@ export function SiteMenu() {
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							GitHub
-							<GithubLogo size={16} weight="fill" className="text-[#1c1c1c]/50" />
+							<GithubLogo
+								size={16}
+								weight="fill"
+								className="text-[#1c1c1c]/50"
+							/>
 						</a>
 						<a
 							href={DISCORD_URL}
@@ -214,7 +218,11 @@ export function SiteMenu() {
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							Discord
-							<DiscordLogo size={16} weight="fill" className="text-[#1c1c1c]/50" />
+							<DiscordLogo
+								size={16}
+								weight="fill"
+								className="text-[#1c1c1c]/50"
+							/>
 						</a>
 					</div>
 				</div>

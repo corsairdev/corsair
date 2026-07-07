@@ -1,11 +1,11 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -14,12 +14,17 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { OnePasswordEndpointInputs, OnePasswordEndpointOutputs } from './endpoints/types';
-import { OnePasswordEndpointInputSchemas, OnePasswordEndpointOutputSchemas } from './endpoints/types';
-import { Vaults, Items } from './endpoints';
-import { OnePasswordSchema } from './schema';
+import { Items, Vaults } from './endpoints';
+import type {
+	OnePasswordEndpointInputs,
+	OnePasswordEndpointOutputs,
+} from './endpoints/types';
+import {
+	OnePasswordEndpointInputSchemas,
+	OnePasswordEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { OnePasswordSchema } from './schema';
 
 export type OnePasswordPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -37,17 +42,19 @@ export type OnePasswordContext = CorsairPluginContext<
 	OnePasswordPluginOptions
 >;
 
-export type OnePasswordKeyBuilderContext = KeyBuilderContext<OnePasswordPluginOptions>;
+export type OnePasswordKeyBuilderContext =
+	KeyBuilderContext<OnePasswordPluginOptions>;
 
-export type OnePasswordBoundEndpoints = BindEndpoints<typeof onePasswordEndpointsNested>;
-
-type OnePasswordEndpoint<
-	K extends keyof OnePasswordEndpointOutputs,
-> = CorsairEndpoint<
-	OnePasswordContext,
-	OnePasswordEndpointInputs[K],
-	OnePasswordEndpointOutputs[K]
+export type OnePasswordBoundEndpoints = BindEndpoints<
+	typeof onePasswordEndpointsNested
 >;
+
+type OnePasswordEndpoint<K extends keyof OnePasswordEndpointOutputs> =
+	CorsairEndpoint<
+		OnePasswordContext,
+		OnePasswordEndpointInputs[K],
+		OnePasswordEndpointOutputs[K]
+	>;
 
 export type OnePasswordEndpoints = {
 	vaultsList: OnePasswordEndpoint<'vaultsList'>;
@@ -108,9 +115,14 @@ export const onePasswordEndpointSchemas = {
 		input: OnePasswordEndpointInputSchemas.itemsDelete,
 		output: OnePasswordEndpointOutputSchemas.itemsDelete,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof onePasswordEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof onePasswordEndpointsNested
+>;
 
-const onePasswordWebhookSchemas = {} as const satisfies RequiredPluginWebhookSchemas<typeof onePasswordWebhooksNested>;
+const onePasswordWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof onePasswordWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -143,7 +155,9 @@ const onePasswordEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete an item from a vault [DESTRUCTIVE]',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof onePasswordEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof onePasswordEndpointsNested
+>;
 
 export const onePasswordAuthConfig = {
 	api_key: {
@@ -151,22 +165,27 @@ export const onePasswordAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseOnePasswordPlugin<T extends OnePasswordPluginOptions> = CorsairPlugin<
-	'onepassword',
-	typeof OnePasswordSchema,
-	typeof onePasswordEndpointsNested,
-	typeof onePasswordWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseOnePasswordPlugin<T extends OnePasswordPluginOptions> =
+	CorsairPlugin<
+		'onepassword',
+		typeof OnePasswordSchema,
+		typeof onePasswordEndpointsNested,
+		typeof onePasswordWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalOnePasswordPlugin = BaseOnePasswordPlugin<OnePasswordPluginOptions>;
+export type InternalOnePasswordPlugin =
+	BaseOnePasswordPlugin<OnePasswordPluginOptions>;
 
 export type ExternalOnePasswordPlugin<T extends OnePasswordPluginOptions> =
 	BaseOnePasswordPlugin<T>;
 
 export function onepassword<const T extends OnePasswordPluginOptions>(
-	incomingOptions: OnePasswordPluginOptions & T = {} as OnePasswordPluginOptions & T,
+	// Cast required: `{}` cannot statically satisfy `OnePasswordPluginOptions & T`
+	// because T is a generic const extension; all options have defaults so this is safe.
+	incomingOptions: OnePasswordPluginOptions &
+		T = {} as OnePasswordPluginOptions & T,
 ): ExternalOnePasswordPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -215,20 +234,20 @@ export function onepassword<const T extends OnePasswordPluginOptions>(
 }
 
 export type {
-	OnePasswordEndpointInputs,
-	OnePasswordEndpointOutputs,
-	VaultsListInput,
-	VaultsListResponse,
-	VaultsGetInput,
-	VaultsGetResponse,
-	ItemsListInput,
-	ItemsListResponse,
-	ItemsGetInput,
-	ItemsGetResponse,
 	ItemsCreateInput,
 	ItemsCreateResponse,
-	ItemsUpdateInput,
-	ItemsUpdateResponse,
 	ItemsDeleteInput,
 	ItemsDeleteResponse,
+	ItemsGetInput,
+	ItemsGetResponse,
+	ItemsListInput,
+	ItemsListResponse,
+	ItemsUpdateInput,
+	ItemsUpdateResponse,
+	OnePasswordEndpointInputs,
+	OnePasswordEndpointOutputs,
+	VaultsGetInput,
+	VaultsGetResponse,
+	VaultsListInput,
+	VaultsListResponse,
 } from './endpoints/types';

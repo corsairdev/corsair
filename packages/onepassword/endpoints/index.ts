@@ -1,11 +1,11 @@
-import { get as vaultsGet, list as vaultsList } from './vaults';
 import {
+	create as itemsCreate,
+	deleteItem as itemsDelete,
 	get as itemsGet,
 	list as itemsList,
-	create as itemsCreate,
 	update as itemsUpdate,
-	deleteItem as itemsDelete,
 } from './items';
+import { get as vaultsGet, list as vaultsList } from './vaults';
 
 export const Vaults = {
 	get: vaultsGet,

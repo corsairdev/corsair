@@ -1,7 +1,6 @@
 import Link from 'next/link';
-
-import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 import type { IntegrationPhase } from '@/db/schema';
+import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 import { cn } from '@/lib/utils';
 import { ClaimIntegrationButton } from './claim-integration-button';
 import { ContributorLink } from './contributor-link';

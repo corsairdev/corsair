@@ -99,18 +99,20 @@ export const ItemsUpdateInputSchema = z.object({
 	vaultId: z.string(),
 	id: z.string(),
 	title: z.string().optional(),
-	category: z.enum([
-		'LOGIN',
-		'PASSWORD',
-		'SECURE_NOTE',
-		'DATABASE',
-		'CREDIT_CARD',
-		'MEMBERSHIP',
-		'PASSPORT',
-		'SOFTWARE_LICENSE',
-		'OUTDOOR_LICENSE',
-		'API_CREDENTIAL',
-	]).optional(),
+	category: z
+		.enum([
+			'LOGIN',
+			'PASSWORD',
+			'SECURE_NOTE',
+			'DATABASE',
+			'CREDIT_CARD',
+			'MEMBERSHIP',
+			'PASSPORT',
+			'SOFTWARE_LICENSE',
+			'OUTDOOR_LICENSE',
+			'API_CREDENTIAL',
+		])
+		.optional(),
 	urls: z.array(ItemUrlSchema).optional(),
 	fields: z.array(ItemFieldSchema).optional(),
 });

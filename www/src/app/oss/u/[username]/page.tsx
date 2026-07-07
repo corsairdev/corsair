@@ -1,10 +1,9 @@
+import { TRPCError } from '@trpc/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { TRPCError } from '@trpc/server';
-
-import { ContributorProfile } from '../../contributor-profile';
 import { getCachedContributorProfile } from '@/server/oss-public-cache';
+import { ContributorProfile } from '../../contributor-profile';
 
 type PageProps = {
 	params: Promise<{ username: string }>;
@@ -29,7 +28,7 @@ export async function generateMetadata({
 export default async function ContributorProfilePage({ params }: PageProps) {
 	const { username } = await params;
 
-	let profile;
+	let profile: Awaited<ReturnType<typeof getCachedContributorProfile>>;
 	try {
 		profile = await getCachedContributorProfile(username.toLowerCase());
 	} catch (error) {
