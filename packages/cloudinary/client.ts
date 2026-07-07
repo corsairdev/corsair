@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import type { ApiRequestOptions, OpenAPIConfig, RateLimitConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
@@ -90,19 +90,23 @@ function flattenFormValue(value: unknown): string {
 	return String(value);
 }
 
-function toFormBody(body: Record<string, unknown>): Record<string, string> {
-	const form: Record<string, string> = {};
+function toUrlSearchParams(body: Record<string, unknown>): URLSearchParams {
+	const params = new URLSearchParams();
 	for (const [key, value] of Object.entries(body)) {
 		if (value === undefined || value === null) continue;
 		if (Array.isArray(value)) {
 			for (const item of value) {
-				form[`${key}[]`] = flattenFormValue(item);
+				params.append(`${key}[]`, flattenFormValue(item));
 			}
 			continue;
 		}
-		form[key] = flattenFormValue(value);
+		params.append(key, flattenFormValue(value));
 	}
-	return form;
+	return params;
+}
+
+export function encodeCloudinaryFormBody(body: Record<string, unknown>): string {
+	return toUrlSearchParams(body).toString();
 }
 
 function appendSignedUploadParams(
@@ -244,13 +248,12 @@ export async function makeCloudinaryUploadRequest<T>(
 		return response.json() as Promise<T>;
 	}
 
-	const formBody = toFormBody(signedBody);
 	const response = await fetch(`${baseUrl}${endpoint}`, {
 		method,
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
-		body: new URLSearchParams(formBody).toString(),
+		body: encodeCloudinaryFormBody(signedBody),
 	});
 
 	if (!response.ok) {
@@ -264,6 +267,7 @@ export async function makeCloudinaryUploadRequest<T>(
 function normalizeCloudinaryError(error: unknown): CloudinaryAPIError {
 	if (error instanceof CloudinaryAPIError) return error;
 	if (error instanceof ApiError) {
+		// ApiError.body is `unknown` in corsair/http — Cloudinary error JSON shape is not modeled on the shared type.
 		const body = error.body as { error?: { message?: string } } | undefined;
 		return new CloudinaryAPIError(
 			body?.error?.message ?? error.message,
@@ -285,5 +289,17 @@ export function verifyCloudinaryNotificationSignature(
 	const expected = createHash('sha1')
 		.update(payload + timestamp + apiSecret)
 		.digest('hex');
-	return expected === signature;
+
+	if (signature.length !== expected.length) {
+		return false;
+	}
+
+	try {
+		return timingSafeEqual(
+			Buffer.from(expected, 'hex'),
+			Buffer.from(signature.toLowerCase(), 'hex'),
+		);
+	} catch {
+		return false;
+	}
 }

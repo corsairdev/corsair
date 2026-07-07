@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
 import {
+	encodeCloudinaryFormBody,
 	makeCloudinaryAdminRequest,
 	parseCloudinaryCredentials,
 	signCloudinaryParams,
@@ -72,6 +73,37 @@ describe('Cloudinary client helpers', () => {
 		expect(signature).toBe(expected);
 	});
 
+	it('signCloudinaryParams includes every array element in the signature', () => {
+		const params = {
+			eager: ['w_100', 'w_200'],
+			tags: ['a', 'b'],
+			timestamp: 1_700_000_000,
+		};
+		const signature = signCloudinaryParams(params, 'test-secret');
+		const expected = createHash('sha1')
+			.update(
+				'eager[]=w_100&eager[]=w_200&tags[]=a&tags[]=b&timestamp=1700000000test-secret',
+			)
+			.digest('hex');
+
+		expect(signature).toBe(expected);
+	});
+
+	it('encodeCloudinaryFormBody preserves all array field values', () => {
+		const encoded = encodeCloudinaryFormBody({
+			tags: ['one', 'two', 'three'],
+			eager: ['w_100', 'w_200'],
+			timestamp: 1_700_000_000,
+			api_key: 'key',
+		});
+		const params = new URLSearchParams(encoded);
+
+		expect(params.getAll('tags[]')).toEqual(['one', 'two', 'three']);
+		expect(params.getAll('eager[]')).toEqual(['w_100', 'w_200']);
+		expect(params.get('timestamp')).toBe('1700000000');
+		expect(params.get('api_key')).toBe('key');
+	});
+
 	it('verifyCloudinaryNotificationSignature validates signed payloads', () => {
 		const payload = '{"notification_type":"upload"}';
 		const timestamp = '1700000000';
@@ -85,6 +117,14 @@ describe('Cloudinary client helpers', () => {
 				payload,
 				timestamp,
 				signature,
+				apiSecret,
+			),
+		).toBe(true);
+		expect(
+			verifyCloudinaryNotificationSignature(
+				payload,
+				timestamp,
+				signature.toUpperCase(),
 				apiSecret,
 			),
 		).toBe(true);
