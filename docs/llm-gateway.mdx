@@ -1,0 +1,141 @@
+---
+title: LLM Gateway
+description: Use llm.corsair.dev as an OpenAI-compatible API with per-developer keys and budgets.
+---
+
+`llm.corsair.dev` is Corsair's internal LLM gateway. It exposes Azure-hosted models through an **OpenAI-compatible API** — use it with the Vercel AI SDK, OpenAI SDK, Cursor, or any client that accepts a custom `baseURL`.
+
+Visiting [llm.corsair.dev](https://llm.corsair.dev) in a browser redirects here. The gateway itself is API-only; there is no public admin UI.
+
+## Quick start
+
+1. Ask a Corsair admin for a **virtual API key** (`sk-...`). Each key has a dollar budget and optional model restrictions.
+2. Add these env vars to your app:
+
+```bash
+LITELLM_API_KEY=sk-your-virtual-key
+LITELLM_BASE_URL=https://llm.corsair.dev/v1
+LITELLM_MODEL=gpt-5.4-mini   # optional default
+```
+
+3. Point your client at the gateway and call models by name.
+
+## Available models
+
+| Model | Typical use |
+| ----- | ----------- |
+| `gpt-5.5` | Newest flagship |
+| `gpt-5.4` | General flagship |
+| `gpt-5.4-mini` | Fast / balanced (good default) |
+| `gpt-5.4-nano` | Cheapest / highest throughput |
+
+List models with your key:
+
+```bash
+curl https://llm.corsair.dev/v1/models \
+  -H "Authorization: Bearer $LITELLM_API_KEY"
+```
+
+## Vercel AI SDK
+
+```ts
+import { createOpenAI } from '@ai-sdk/openai';
+import { generateText } from 'ai';
+
+const corsair = createOpenAI({
+  apiKey: process.env.LITELLM_API_KEY,
+  baseURL: process.env.LITELLM_BASE_URL ?? 'https://llm.corsair.dev/v1',
+});
+
+const { text } = await generateText({
+  model: corsair('gpt-5.4-mini'),
+  prompt: 'Hello!',
+});
+```
+
+Streaming works the same way with `streamText`.
+
+## OpenAI SDK
+
+```ts
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.LITELLM_API_KEY,
+  baseURL: 'https://llm.corsair.dev/v1',
+});
+
+const response = await client.chat.completions.create({
+  model: 'gpt-5.4-mini',
+  messages: [{ role: 'user', content: 'Hello!' }],
+});
+```
+
+<Warning>
+Do not use `openai('gpt-4o')` with the default OpenAI provider — that calls OpenAI directly. Always use `createOpenAI({ baseURL, apiKey })` so requests go through the gateway.
+</Warning>
+
+## curl
+
+```bash
+curl https://llm.corsair.dev/v1/chat/completions \
+  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.4-mini",
+    "messages": [{ "role": "user", "content": "hi" }]
+  }'
+```
+
+## Env var aliases
+
+Some projects use different names. These are equivalent:
+
+| Preferred | Also accepted |
+| --------- | ------------- |
+| `LITELLM_API_KEY` | `OPENAI_API_KEY` (when `baseURL` points at the gateway) |
+| `LITELLM_BASE_URL` | — |
+| `LITELLM_MODEL` | — |
+
+## What not to use
+
+| Secret | Who gets it |
+| ------ | ----------- |
+| Virtual key (`sk-...` from admin) | **Developers** — inference only |
+| `LITELLM_MASTER_KEY` | **Admins only** — never in app code |
+| `ADMIN_API_KEY` | **Admins only** — key management API |
+
+## For admins
+
+Key management runs locally (not on the public gateway):
+
+```bash
+cd litellm
+pnpm admin:setup   # once
+pnpm admin:ui      # http://localhost:4000/ui
+```
+
+Mint a key with access to all models:
+
+```bash
+curl -X POST https://llm.corsair.dev/admin/keys \
+  -H "Authorization: Bearer $ADMIN_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "label": "alice-dev",
+    "maxBudget": 25,
+    "budgetDuration": "30d",
+    "models": ["corsair-models"]
+  }'
+```
+
+Save the returned `virtualKey` — it is only shown once.
+
+## Endpoints
+
+| Path | Purpose |
+| ---- | ------- |
+| `https://llm.corsair.dev/v1/*` | OpenAI-compatible inference |
+| `https://llm.corsair.dev/v1/models` | List available models |
+| `https://llm.corsair.dev/health` | Health check |
+| `https://llm.corsair.dev/admin/*` | Key management (admin key only) |
