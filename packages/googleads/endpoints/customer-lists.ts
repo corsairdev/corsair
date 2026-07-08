@@ -21,6 +21,7 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 			user_list.read_only
 		FROM user_list`;
 
+		// Using `unknown` because the pageSize / pageToken fields are optional and their presence changes the shape.
 		const body: Record<string, unknown> = { query };
 		if (input.pageSize) {
 			body.pageSize = input.pageSize;
@@ -154,6 +155,10 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 			});
 
 			const jobResourceName = createJobResult.resourceName;
+
+			if (!jobResourceName || !jobResourceName.startsWith('customers/')) {
+				throw new Error('API returned invalid job resource name');
+			}
 
 			try {
 				// Step 2: Add operations to the job

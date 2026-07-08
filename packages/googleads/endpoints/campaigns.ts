@@ -8,10 +8,6 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 	input,
 ) => {
 	try {
-		if (!/^\d+$/.test(String(input.campaignId))) {
-			throw new Error('Invalid campaign ID: must be numeric');
-		}
-
 		const query = `SELECT
 		campaign.resource_name,
 		campaign.id,

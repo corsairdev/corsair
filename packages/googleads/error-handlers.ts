@@ -11,7 +11,7 @@ export const errorHandlers = {
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
+			if ('retryAfter' in error && typeof error.retryAfter === 'number') {
 				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };

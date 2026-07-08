@@ -5,6 +5,7 @@ export class GoogleAdsAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'GoogleAdsAPIError';
@@ -18,6 +19,7 @@ export async function makeGoogleAdsRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Using `unknown` because request bodies differ per endpoint; callers are responsible for constructing valid payloads.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		developerToken?: string;
@@ -68,7 +70,11 @@ export async function makeGoogleAdsRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new GoogleAdsAPIError(error.message, String(error.status));
+			throw new GoogleAdsAPIError(
+				error.message,
+				String(error.status),
+				error.retryAfter,
+			);
 		}
 		if (error instanceof Error) {
 			throw new GoogleAdsAPIError(error.message);
