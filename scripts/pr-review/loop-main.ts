@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
-import { runGate } from './gate.ts';
+import { detectPlugin, runGate } from './gate.ts';
 import {
 	buildEscalationComment,
 	buildRoundOneComment,
@@ -42,10 +42,45 @@ const changedFiles = gh([
 	.trim()
 	.split('\n')
 	.filter(Boolean);
+// The triage job checks out the base branch, so plugin content signals come
+// from the PR head via the contents API. Assertion counting only inspects
+// changed test files — the gate job (full PR checkout) is authoritative.
+const headRepo = event.pull_request.head.repo.full_name as string;
+const headSha = event.pull_request.head.sha as string;
+
+function headFile(filePath: string): string | null {
+	try {
+		return gh([
+			'api',
+			`repos/${headRepo}/contents/${filePath}?ref=${headSha}`,
+			'--jq',
+			'.content',
+		]);
+	} catch {
+		return null;
+	}
+}
+
+const plugin = detectPlugin(changedFiles);
+const readmeExists =
+	plugin !== null && headFile(`packages/${plugin}/README.md`) !== null;
+let assertionCount = 0;
+for (const f of changedFiles) {
+	if (plugin && f.startsWith(`packages/${plugin}/`) && f.endsWith('.test.ts')) {
+		const b64 = headFile(f);
+		if (b64) {
+			const content = Buffer.from(b64, 'base64').toString('utf8');
+			assertionCount += content.match(/\b(expect|assert)\s*\(/g)?.length ?? 0;
+		}
+	}
+}
+
 const gate = runGate({
 	changedFiles,
 	prBody: (event.pull_request.body as string) ?? '',
 	isDraft: event.pull_request.draft as boolean,
+	readmeExists,
+	assertionCount,
 });
 if (!gate.isPluginPr) {
 	console.log('Not a plugin PR (or draft) — loop skipped.');

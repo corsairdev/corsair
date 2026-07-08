@@ -20,13 +20,17 @@ produces exactly this footprint.
 ## R2 — Tests required
 
 At least one `*.test.ts` inside `packages/<plugin>/` (see `packages/slack/`
-for `api.test.ts` + `integration.test.ts` examples). CI tests must pass.
+for `api.test.ts` + `integration.test.ts` examples), with real assertions —
+zero `expect()`/`assert()` calls fails the gate; fewer than 5 is flagged.
+Every implemented endpoint should have a corresponding test. CI tests must
+pass.
 
 ## R3 — PR description
 
 Every checklist box in the PR template ticked. Description section filled in
-with real content (not the template placeholder comments). Link the issue if
-one exists.
+with real content (not the template placeholder comments) that states exactly
+what was built — reviewers check the implementation against this. Link the
+issue or claim (`Fixes #…`) if one exists.
 
 ## R4 — Working proof (required before human merge)
 
@@ -42,4 +46,21 @@ No placeholder base URLs, no commented-out auth headers, no leftover
 ## R6 — Hard prohibitions
 
 No `eval`, no `new Function()`, no execution of dynamically-generated code.
-Bots never edit outside the PR's plugin scope. Nothing is ever auto-merged.
+No hardcoded secrets, tokens, or API keys anywhere. Bots never edit outside
+the PR's plugin scope. Nothing is ever auto-merged.
+
+## R7 — Documentation
+
+`packages/<plugin>/README.md` is required: auth/credential setup, an overview
+of the endpoints provided, and any provider quirks. It must match what the
+code actually implements.
+
+## R8 — Production quality
+
+- Inputs and outputs validated with zod schemas on every endpoint.
+- Errors routed through the plugin's `error-handlers.ts`, including
+  rate-limit (429) handling.
+- List endpoints support pagination when the provider API offers it.
+- No `any` on exported/public surfaces.
+- Follow the structure `pnpm generate:plugin` produces; `validate:plugins`
+  must pass.

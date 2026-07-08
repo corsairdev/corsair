@@ -5,6 +5,8 @@ import { runGate } from './gate.ts';
 const goodBody = `## Description
 Adds the 1Password Connect plugin with vaults and items endpoints.
 
+Fixes #123
+
 ## Checklist
 - [x] I have run \`pnpm lint\` and all checks pass
 - [x] I have run \`pnpm typecheck\` and there are no TypeScript errors
@@ -20,61 +22,74 @@ https://github.com/user-attachments/assets/demo.mp4
 const goodFiles = [
 	'packages/onepassword/index.ts',
 	'packages/onepassword/api.test.ts',
+	'packages/onepassword/README.md',
 	'packages/corsair/core/constants.ts',
 	'pnpm-lock.yaml',
 ];
 
-test('clean plugin PR passes', () => {
-	const r = runGate({
-		changedFiles: goodFiles,
-		prBody: goodBody,
-		isDraft: false,
-	});
+const goodInput = {
+	changedFiles: goodFiles,
+	prBody: goodBody,
+	isDraft: false,
+	readmeExists: true,
+	assertionCount: 12,
+};
+
+test('clean plugin PR passes every check', () => {
+	const r = runGate(goodInput);
 	assert.equal(r.isPluginPr, true);
 	assert.equal(r.plugin, 'onepassword');
 	assert.deepEqual(r.failures, []);
+	assert.ok(r.checks.length >= 6);
+	assert.ok(r.checks.every((c) => c.status === 'pass'));
 });
 
 test('non-plugin PR is skipped', () => {
 	const r = runGate({
+		...goodInput,
 		changedFiles: ['packages/cli/src/index.ts'],
-		prBody: goodBody,
-		isDraft: false,
 	});
 	assert.equal(r.isPluginPr, false);
 });
 
 test('draft plugin PR is skipped', () => {
-	const r = runGate({
-		changedFiles: goodFiles,
-		prBody: goodBody,
-		isDraft: true,
-	});
+	const r = runGate({ ...goodInput, isDraft: true });
 	assert.equal(r.isPluginPr, false);
 });
 
 test('R1: out-of-scope file fails', () => {
 	const r = runGate({
+		...goodInput,
 		changedFiles: [...goodFiles, 'packages/corsair/core/client.ts'],
-		prBody: goodBody,
-		isDraft: false,
 	});
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });
 
 test('R1: two plugins in one PR fails', () => {
 	const r = runGate({
+		...goodInput,
 		changedFiles: [...goodFiles, 'packages/slack/index.ts'],
-		prBody: goodBody,
-		isDraft: false,
 	});
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });
 
 test('R2: no test file fails', () => {
-	const files = goodFiles.filter((f) => !f.endsWith('.test.ts'));
-	const r = runGate({ changedFiles: files, prBody: goodBody, isDraft: false });
+	const r = runGate({
+		...goodInput,
+		changedFiles: goodFiles.filter((f) => !f.endsWith('.test.ts')),
+	});
 	assert.ok(r.failures.some((f) => f.rule === 'R2'));
+});
+
+test('R2: tests without assertions fail', () => {
+	const r = runGate({ ...goodInput, assertionCount: 0 });
+	assert.ok(r.failures.some((f) => f.rule === 'R2'));
+});
+
+test('R2: thin assertions warn but do not fail', () => {
+	const r = runGate({ ...goodInput, assertionCount: 2 });
+	assert.ok(!r.failures.some((f) => f.rule === 'R2'));
+	assert.ok(r.checks.some((c) => c.rule === 'R2' && c.status === 'warn'));
 });
 
 test('R3: unchecked checklist box fails', () => {
@@ -82,7 +97,7 @@ test('R3: unchecked checklist box fails', () => {
 		'- [x] I have run `pnpm lint`',
 		'- [ ] I have run `pnpm lint`',
 	);
-	const r = runGate({ changedFiles: goodFiles, prBody: body, isDraft: false });
+	const r = runGate({ ...goodInput, prBody: body });
 	assert.ok(r.failures.some((f) => f.rule === 'R3'));
 });
 
@@ -91,8 +106,15 @@ test('R3: empty description fails', () => {
 		'Adds the 1Password Connect plugin with vaults and items endpoints.',
 		'<!-- Briefly describe the changes -->',
 	);
-	const r = runGate({ changedFiles: goodFiles, prBody: body, isDraft: false });
+	const r = runGate({ ...goodInput, prBody: body });
 	assert.ok(r.failures.some((f) => f.rule === 'R3'));
+});
+
+test('R3: missing issue link warns but does not fail', () => {
+	const body = goodBody.replace('Fixes #123', '');
+	const r = runGate({ ...goodInput, prBody: body });
+	assert.ok(!r.failures.some((f) => f.rule === 'R3'));
+	assert.ok(r.checks.some((c) => c.rule === 'R3' && c.status === 'warn'));
 });
 
 test('R4: missing demo link fails', () => {
@@ -100,6 +122,11 @@ test('R4: missing demo link fails', () => {
 		'https://github.com/user-attachments/assets/demo.mp4',
 		'',
 	);
-	const r = runGate({ changedFiles: goodFiles, prBody: body, isDraft: false });
+	const r = runGate({ ...goodInput, prBody: body });
 	assert.ok(r.failures.some((f) => f.rule === 'R4'));
+});
+
+test('R7: missing README fails', () => {
+	const r = runGate({ ...goodInput, readmeExists: false });
+	assert.ok(r.failures.some((f) => f.rule === 'R7'));
 });

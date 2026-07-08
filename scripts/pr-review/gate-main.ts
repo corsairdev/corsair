@@ -1,9 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
+import path from 'node:path';
 import type { GateResult } from './gate.ts';
-import { runGate } from './gate.ts';
+import { detectPlugin, runGate } from './gate.ts';
 
 const MARKER = '<!-- corsair-pr-gate -->';
+const STATUS_ICON = { pass: '✅', warn: '⚠️', fail: '❌' } as const;
 
 function gh(args: string[]): string {
 	return execFileSync('gh', args, {
@@ -12,19 +14,42 @@ function gh(args: string[]): string {
 	});
 }
 
-function renderComment(result: GateResult): string {
-	const lines = [MARKER, '### Plugin PR gate', ''];
-	if (result.failures.length === 0) {
-		lines.push(`✅ All gate checks passed for \`packages/${result.plugin}\`.`);
-	} else {
-		lines.push(
-			`Checks for \`packages/${result.plugin}\` — see [PLUGIN_PR_RULES.md](https://github.com/${process.env.GITHUB_REPOSITORY}/blob/main/.github/PLUGIN_PR_RULES.md):`,
-			'',
+/** Counts expect()/assert() calls across a plugin's *.test.ts files on disk. */
+export function countAssertions(pluginDir: string): number {
+	if (!fs.existsSync(pluginDir)) return 0;
+	let count = 0;
+	for (const entry of fs.readdirSync(pluginDir, {
+		recursive: true,
+		withFileTypes: true,
+	})) {
+		if (!entry.isFile() || !entry.name.endsWith('.test.ts')) continue;
+		if (entry.parentPath.includes('node_modules')) continue;
+		const content = fs.readFileSync(
+			path.join(entry.parentPath, entry.name),
+			'utf8',
 		);
-		for (const f of result.failures) {
-			lines.push(`- ❌ **${f.rule}** — ${f.message}`);
-		}
+		count += content.match(/\b(expect|assert)\s*\(/g)?.length ?? 0;
 	}
+	return count;
+}
+
+function renderComment(result: GateResult): string {
+	const lines = [
+		MARKER,
+		`### Plugin PR scorecard — \`packages/${result.plugin}\``,
+		'',
+		'| Check | Status | Notes |',
+		'| --- | --- | --- |',
+	];
+	for (const c of result.checks) {
+		lines.push(
+			`| ${c.rule} — ${c.label} | ${STATUS_ICON[c.status]} | ${c.detail ?? ''} |`,
+		);
+	}
+	lines.push(
+		'',
+		`Rules: [PLUGIN_PR_RULES.md](https://github.com/${process.env.GITHUB_REPOSITORY}/blob/main/.github/PLUGIN_PR_RULES.md) · re-runs on every push`,
+	);
 	return lines.join('\n');
 }
 
@@ -94,10 +119,15 @@ const changedFiles = execFileSync(
 	.split('\n')
 	.filter(Boolean);
 
+const plugin = detectPlugin(changedFiles);
 const result = runGate({
 	changedFiles,
 	prBody: (event.pull_request.body as string) ?? '',
 	isDraft: event.pull_request.draft as boolean,
+	readmeExists: plugin
+		? fs.existsSync(path.join('packages', plugin, 'README.md'))
+		: false,
+	assertionCount: plugin ? countAssertions(path.join('packages', plugin)) : 0,
 });
 
 if (!result.isPluginPr) {
