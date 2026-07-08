@@ -4,14 +4,16 @@ import type { DB } from '@/db';
 import { user } from '@/db/auth-schema';
 import type { IntegrationPhase, IntegrationReleaseReason } from '@/db/schema';
 import { integrationStatus, integrations } from '@/db/schema';
+import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
+import { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
 import {
 	isIntegrationActivelyClaimed,
 	isWipPhase,
 } from '@/lib/integration-phases';
 
-import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
-import { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
+export type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 
+export { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
 export {
 	isIntegrationActivelyClaimed,
 	isIntegrationAvailable,
@@ -20,9 +22,6 @@ export {
 	phaseLabel,
 	WIP_PHASES,
 } from '@/lib/integration-phases';
-
-export { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
-export type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 
 export const ISSUE_DEADLINE_MS = 60 * 60 * 1000;
 export const PR_DEADLINE_MS = 3 * 60 * 60 * 1000;
