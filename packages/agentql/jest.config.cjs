@@ -13,7 +13,7 @@ module.exports = {
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',
-		'!jest.config.ts',
+		'!jest.config.cjs',
 		'!tests/**',
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
