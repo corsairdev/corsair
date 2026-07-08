@@ -1,0 +1,198 @@
+import { logEventFromContext } from 'corsair/core';
+import type { GoogleAnalyticsEndpoints } from '..';
+import {
+	GOOGLE_ANALYTICS_DATA_BASE,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
+import type { GoogleAnalyticsEndpointOutputs } from './types';
+
+// name is "properties/{id}".
+export const get: GoogleAnalyticsEndpoints['propertiesGet'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedGoogleAnalyticsRequest<
+		GoogleAnalyticsEndpointOutputs['propertiesGet']
+	>(`/v1beta/${input.name}`, ctx, {
+		method: 'GET',
+	});
+
+	if (result.name && ctx.db.properties) {
+		try {
+			await ctx.db.properties.upsertByEntityId(result.name, {
+				...result,
+				createdAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save property to database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'googleanalytics.properties.get',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+// Deprecated v1alpha properties.list. Requires a filter of the form
+// "accounts/{account}" or "firebaseProjects/{project}".
+export const list: GoogleAnalyticsEndpoints['propertiesList'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedGoogleAnalyticsRequest<
+		GoogleAnalyticsEndpointOutputs['propertiesList']
+	>('/v1alpha/properties', ctx, {
+		method: 'GET',
+		query: listQuery(input),
+	});
+
+	await logEventFromContext(
+		ctx,
+		'googleanalytics.properties.list',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+export const listFiltered: GoogleAnalyticsEndpoints['propertiesListFiltered'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedGoogleAnalyticsRequest<
+			GoogleAnalyticsEndpointOutputs['propertiesListFiltered']
+		>('/v1beta/properties', ctx, {
+			method: 'GET',
+			query: listQuery(input),
+		});
+
+		await logEventFromContext(
+			ctx,
+			'googleanalytics.properties.listFiltered',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+// property.name is the resource being updated.
+export const update: GoogleAnalyticsEndpoints['propertiesUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const query: Record<string, string> = {};
+	if (input.updateMask) {
+		query.updateMask = input.updateMask;
+	}
+
+	const result = await makeAuthenticatedGoogleAnalyticsRequest<
+		GoogleAnalyticsEndpointOutputs['propertiesUpdate']
+	>(`/v1beta/${input.property.name}`, ctx, {
+		method: 'PATCH',
+		body: input.property,
+		query,
+	});
+
+	await logEventFromContext(
+		ctx,
+		'googleanalytics.properties.update',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+// Roll-up property creation is v1alpha only.
+export const createRollup: GoogleAnalyticsEndpoints['propertiesCreateRollup'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedGoogleAnalyticsRequest<
+			GoogleAnalyticsEndpointOutputs['propertiesCreateRollup']
+		>('/v1alpha/properties:createRollupProperty', ctx, {
+			method: 'POST',
+			body: input,
+		});
+
+		await logEventFromContext(
+			ctx,
+			'googleanalytics.properties.createRollup',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+// name is "properties/{id}/attributionSettings".
+export const getAttributionSettings: GoogleAnalyticsEndpoints['propertiesGetAttributionSettings'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedGoogleAnalyticsRequest<
+			GoogleAnalyticsEndpointOutputs['propertiesGetAttributionSettings']
+		>(`/v1alpha/${input.name}`, ctx, {
+			method: 'GET',
+		});
+
+		await logEventFromContext(
+			ctx,
+			'googleanalytics.properties.getAttributionSettings',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+// name is "properties/{id}/dataRetentionSettings".
+export const getDataRetentionSettings: GoogleAnalyticsEndpoints['propertiesGetDataRetentionSettings'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedGoogleAnalyticsRequest<
+			GoogleAnalyticsEndpointOutputs['propertiesGetDataRetentionSettings']
+		>(`/v1beta/${input.name}`, ctx, {
+			method: 'GET',
+		});
+
+		await logEventFromContext(
+			ctx,
+			'googleanalytics.properties.getDataRetentionSettings',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+// name is "properties/{id}/googleSignalsSettings".
+export const getGoogleSignalsSettings: GoogleAnalyticsEndpoints['propertiesGetGoogleSignalsSettings'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedGoogleAnalyticsRequest<
+			GoogleAnalyticsEndpointOutputs['propertiesGetGoogleSignalsSettings']
+		>(`/v1alpha/${input.name}`, ctx, {
+			method: 'GET',
+		});
+
+		await logEventFromContext(
+			ctx,
+			'googleanalytics.properties.getGoogleSignalsSettings',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+// Lives on the Data API (v1alpha). name is "properties/{id}/propertyQuotasSnapshot".
+export const getPropertyQuotasSnapshot: GoogleAnalyticsEndpoints['propertiesGetPropertyQuotasSnapshot'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedGoogleAnalyticsRequest<
+			GoogleAnalyticsEndpointOutputs['propertiesGetPropertyQuotasSnapshot']
+		>(`/v1alpha/${input.name}`, ctx, {
+			method: 'GET',
+			base: GOOGLE_ANALYTICS_DATA_BASE,
+		});
+
+		await logEventFromContext(
+			ctx,
+			'googleanalytics.properties.getPropertyQuotasSnapshot',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

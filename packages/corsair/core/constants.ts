@@ -35,6 +35,7 @@ export const BaseProviders = [
 	'github',
 	'gitlab',
 	'gmail',
+	'googleanalytics',
 	'googlecalendar',
 	'googledrive',
 	'googlemeet',
@@ -42,6 +43,7 @@ export const BaseProviders = [
 	'grafana',
 	'hackernews',
 	'hubspot',
+	'instagram',
 	'intercom',
 	'jira',
 	'linear',
@@ -79,7 +81,6 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
-	'instagram',
 ] as const;
 
 export const ProviderDisplayNames = {
@@ -105,6 +106,7 @@ export const ProviderDisplayNames = {
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googleanalytics: 'Google Analytics',
 	googlecalendar: 'Google Calendar',
 	googledrive: 'Google Drive',
 	googlesheets: 'Google Sheets',
@@ -149,7 +151,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram'
+	instagram: 'Instagram',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -182,6 +184,7 @@ export type AllProviders =
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googleanalytics'
 	| 'googlecalendar'
 	| 'googledrive'
 	| 'googlemeet'
@@ -189,6 +192,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
+	| 'instagram'
 	| 'intercom'
 	| 'jira'
 	| 'linear'
@@ -226,7 +230,6 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
-	| 'instagram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
