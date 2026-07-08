@@ -3,11 +3,31 @@ import type { GoogleAdsEndpoints } from '..';
 import { makeGoogleAdsRequest } from '../client';
 import type { GoogleAdsEndpointOutputs } from './types';
 
+/**
+ * Escapes a string value for safe interpolation into a GAQL WHERE clause.
+ * GAQL uses single-quoted string literals; this escapes backslashes and single quotes.
+ */
+function escapeGaqlString(value: string): string {
+	return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+/** Defence-in-depth: asserts a value contains only ASCII digits. */
+function assertDigitsOnly(value: string, label: string): void {
+	if (!/^\d+$/.test(value)) {
+		throw new Error(`${label} must contain only digits, got: ${value}`);
+	}
+}
+
 export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 	ctx,
 	input,
 ) => {
 	try {
+		// Defence-in-depth: the Zod schema already validates this, but we guard
+		// at the query construction site too in case validation is ever loosened.
+		assertDigitsOnly(input.campaignId, 'campaignId');
+		assertDigitsOnly(input.customerId, 'customerId');
+
 		const query = `SELECT
 		campaign.resource_name,
 		campaign.id,
@@ -72,9 +92,8 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 	input,
 ) => {
 	try {
-		const escapedName = input.campaignName
-			.replace(/\\/g, '\\\\')
-			.replace(/'/g, "\\'");
+		assertDigitsOnly(input.customerId, 'customerId');
+		const escapedName = escapeGaqlString(input.campaignName);
 
 		const query = `SELECT
 		campaign.resource_name,

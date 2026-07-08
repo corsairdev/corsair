@@ -191,35 +191,10 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 						loginCustomerId: ctx.options?.loginCustomerId,
 					},
 				);
-
-				const id = input.userListResourceName.split('/').pop();
-				if (id) {
-					await ctx.db.customerLists.upsertByEntityId(id, {
-						id,
-						resourceName: input.userListResourceName,
-					});
-				}
-
-				await logEventFromContext(
-					ctx,
-					'googleads.customerLists.addOrRemove',
-					{
-						customerId: input.customerId,
-						userListResourceName: input.userListResourceName,
-						operationCount: input.operations.length,
-					},
-					'completed',
-				);
-
-				return {
-					job: {
-						resourceName: jobResourceName,
-						type: 'CUSTOMER_MATCH_USER_LIST',
-					},
-					message:
-						'Offline user data job created and started. Changes may take 6-12 hours to be reflected.',
-				};
 			} catch (error) {
+				// Only API call failures are annotated with the orphaned job resource name.
+				// DB upsert or logging failures below should NOT be reported as orphaned jobs,
+				// since the Google Ads side effect has already completed at this point.
 				if (error instanceof GoogleAdsAPIError) {
 					throw new GoogleAdsAPIError(
 						`${error.message} (Orphaned Job Resource Name: ${jobResourceName})`,
@@ -233,6 +208,37 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 					}`,
 				);
 			}
+
+			// DB upsert and logging are intentionally outside the inner try-catch.
+			// If these fail, the error correctly propagates without the misleading
+			// "Orphaned Job" annotation, since the Google Ads job completed successfully.
+			const id = input.userListResourceName.split('/').pop();
+			if (id) {
+				await ctx.db.customerLists.upsertByEntityId(id, {
+					id,
+					resourceName: input.userListResourceName,
+				});
+			}
+
+			await logEventFromContext(
+				ctx,
+				'googleads.customerLists.addOrRemove',
+				{
+					customerId: input.customerId,
+					userListResourceName: input.userListResourceName,
+					operationCount: input.operations.length,
+				},
+				'completed',
+			);
+
+			return {
+				job: {
+					resourceName: jobResourceName,
+					type: 'CUSTOMER_MATCH_USER_LIST',
+				},
+				message:
+					'Offline user data job created and started. Changes may take 6-12 hours to be reflected.',
+			};
 		} catch (error) {
 			await logEventFromContext(
 				ctx,

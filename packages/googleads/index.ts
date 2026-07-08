@@ -182,11 +182,6 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: GoogleAdsKeyBuilderContext, source) => {
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
