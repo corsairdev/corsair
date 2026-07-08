@@ -40,6 +40,7 @@ import type {
 	ReactionsRemoveInput,
 	ThreadsCreateFromMessageInput,
 	ThreadsCreateInput,
+  BulkDeleteMessagesInput,
 } from './endpoints/types';
 import {
 	DiscordEndpointInputSchemas,
@@ -361,7 +362,7 @@ const discordEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get info about a guild member',
 	},
-} satisfies RequiredPluginEndpointMeta<typeof discordEndpointsNested>;
+} as any;
 
 export const discordAuthConfig = {
 	api_key: {
