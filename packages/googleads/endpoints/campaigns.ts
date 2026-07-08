@@ -7,11 +7,12 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 	ctx,
 	input,
 ) => {
-	if (!/^\d+$/.test(String(input.campaignId))) {
-		throw new Error('Invalid campaign ID: must be numeric');
-	}
+	try {
+		if (!/^\d+$/.test(String(input.campaignId))) {
+			throw new Error('Invalid campaign ID: must be numeric');
+		}
 
-	const query = `SELECT
+		const query = `SELECT
 		campaign.resource_name,
 		campaign.id,
 		campaign.name,
@@ -32,33 +33,43 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 	FROM campaign
 	WHERE campaign.id = ${input.campaignId}`;
 
-	const response = await makeGoogleAdsRequest<
-		GoogleAdsEndpointOutputs['campaignsGetById']
-	>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
-		method: 'POST',
-		body: { query },
-		developerToken: ctx.options?.developerToken,
-		loginCustomerId: ctx.options?.loginCustomerId,
-	});
+		const response = await makeGoogleAdsRequest<
+			GoogleAdsEndpointOutputs['campaignsGetById']
+		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
+			method: 'POST',
+			body: { query },
+			developerToken: ctx.options?.developerToken,
+			loginCustomerId: ctx.options?.loginCustomerId,
+		});
 
-	await logEventFromContext(
-		ctx,
-		'googleads.campaigns.getById',
-		{ ...input },
-		'completed',
-	);
-	return response;
+		await logEventFromContext(
+			ctx,
+			'googleads.campaigns.getById',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	} catch (error) {
+		await logEventFromContext(
+			ctx,
+			'googleads.campaigns.getById',
+			{ ...input },
+			'failed',
+		);
+		throw error;
+	}
 };
 
 export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 	ctx,
 	input,
 ) => {
-	const escapedName = input.campaignName
-		.replace(/\\/g, '\\\\')
-		.replace(/'/g, "\\'");
+	try {
+		const escapedName = input.campaignName
+			.replace(/\\/g, '\\\\')
+			.replace(/'/g, "\\'");
 
-	const query = `SELECT
+		const query = `SELECT
 		campaign.resource_name,
 		campaign.id,
 		campaign.name,
@@ -79,20 +90,29 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 	FROM campaign
 	WHERE campaign.name = '${escapedName}'`;
 
-	const response = await makeGoogleAdsRequest<
-		GoogleAdsEndpointOutputs['campaignsGetByName']
-	>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
-		method: 'POST',
-		body: { query },
-		developerToken: ctx.options?.developerToken,
-		loginCustomerId: ctx.options?.loginCustomerId,
-	});
+		const response = await makeGoogleAdsRequest<
+			GoogleAdsEndpointOutputs['campaignsGetByName']
+		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
+			method: 'POST',
+			body: { query },
+			developerToken: ctx.options?.developerToken,
+			loginCustomerId: ctx.options?.loginCustomerId,
+		});
 
-	await logEventFromContext(
-		ctx,
-		'googleads.campaigns.getByName',
-		{ ...input },
-		'completed',
-	);
-	return response;
+		await logEventFromContext(
+			ctx,
+			'googleads.campaigns.getByName',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	} catch (error) {
+		await logEventFromContext(
+			ctx,
+			'googleads.campaigns.getByName',
+			{ ...input },
+			'failed',
+		);
+		throw error;
+	}
 };

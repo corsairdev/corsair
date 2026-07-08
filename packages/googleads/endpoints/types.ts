@@ -37,6 +37,7 @@ const UserIdentifierSchema = z.object({
 const CampaignsGetByIdInputSchema = z.object({
 	customerId: z
 		.string()
+		.regex(/^\d+$/, 'Customer ID must contain only digits (no dashes)')
 		.describe(
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
@@ -48,6 +49,7 @@ export type CampaignsGetByIdInput = z.infer<typeof CampaignsGetByIdInputSchema>;
 const CampaignsGetByNameInputSchema = z.object({
 	customerId: z
 		.string()
+		.regex(/^\d+$/, 'Customer ID must contain only digits (no dashes)')
 		.describe(
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
@@ -61,6 +63,7 @@ export type CampaignsGetByNameInput = z.infer<
 const CustomerListsGetManyInputSchema = z.object({
 	customerId: z
 		.string()
+		.regex(/^\d+$/, 'Customer ID must contain only digits (no dashes)')
 		.describe(
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
@@ -81,6 +84,7 @@ export type CustomerListsGetManyInput = z.infer<
 const CustomerListsCreateInputSchema = z.object({
 	customerId: z
 		.string()
+		.regex(/^\d+$/, 'Customer ID must contain only digits (no dashes)')
 		.describe(
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
@@ -108,6 +112,7 @@ export type CustomerListsCreateInput = z.infer<
 const CustomerListsAddOrRemoveInputSchema = z.object({
 	customerId: z
 		.string()
+		.regex(/^\d+$/, 'Customer ID must contain only digits (no dashes)')
 		.describe(
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
