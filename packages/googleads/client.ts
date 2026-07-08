@@ -1,6 +1,5 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class GoogleAdsAPIError extends Error {
 	constructor(
@@ -25,8 +24,13 @@ export async function makeGoogleAdsRequest<T>(
 		loginCustomerId?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, developerToken, loginCustomerId } =
-		options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		developerToken,
+		loginCustomerId,
+	} = options;
 
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
@@ -63,6 +67,9 @@ export async function makeGoogleAdsRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new GoogleAdsAPIError(error.message, String(error.status));
+		}
 		if (error instanceof Error) {
 			throw new GoogleAdsAPIError(error.message);
 		}

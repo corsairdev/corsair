@@ -12,9 +12,7 @@ const UserIdentifierSchema = z.object({
 	hashedPhoneNumber: z
 		.string()
 		.optional()
-		.describe(
-			'SHA-256 hashed phone number in E.164 format (e.g. +1234567890)',
-		),
+		.describe('SHA-256 hashed phone number in E.164 format (e.g. +1234567890)'),
 	mobileId: z.string().optional().describe('Mobile device advertising ID'),
 	thirdPartyUserId: z
 		.string()
@@ -100,9 +98,7 @@ const CustomerListsCreateInputSchema = z.object({
 	uploadKeyType: z
 		.enum(['CONTACT_INFO', 'CRM_ID', 'MOBILE_ADVERTISING_ID'])
 		.optional()
-		.describe(
-			'The type of key used for matching. Defaults to CONTACT_INFO.',
-		),
+		.describe('The type of key used for matching. Defaults to CONTACT_INFO.'),
 });
 
 export type CustomerListsCreateInput = z.infer<

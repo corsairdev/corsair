@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAdsEndpoints } from '..';
-import type { GoogleAdsEndpointOutputs } from './types';
 import { makeGoogleAdsRequest } from '../client';
+import type { GoogleAdsEndpointOutputs } from './types';
 
 export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 	ctx,
@@ -28,15 +28,14 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 		body.pageToken = input.pageToken;
 	}
 
-	const response =
-		await makeGoogleAdsRequest<
-			GoogleAdsEndpointOutputs['customerListsGetMany']
-		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
-			method: 'POST',
-			body,
-			developerToken: ctx.options?.developerToken,
-			loginCustomerId: ctx.options?.loginCustomerId,
-		});
+	const response = await makeGoogleAdsRequest<
+		GoogleAdsEndpointOutputs['customerListsGetMany']
+	>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
+		method: 'POST',
+		body,
+		developerToken: ctx.options?.developerToken,
+		loginCustomerId: ctx.options?.loginCustomerId,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -51,32 +50,29 @@ export const create: GoogleAdsEndpoints['customerListsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const response =
-		await makeGoogleAdsRequest<
-			GoogleAdsEndpointOutputs['customerListsCreate']
-		>(`/customers/${input.customerId}/userLists:mutate`, ctx.key, {
-			method: 'POST',
-			body: {
-				operations: [
-					{
-						create: {
-							name: input.listName,
-							description: input.description || '',
-							membershipStatus: 'OPEN',
-							membershipLifeSpan:
-								input.membershipLifeSpan || 10000,
-							crmBasedUserList: {
-								uploadKeyType:
-									input.uploadKeyType || 'CONTACT_INFO',
-								dataSourceType: 'FIRST_PARTY',
-							},
+	const response = await makeGoogleAdsRequest<
+		GoogleAdsEndpointOutputs['customerListsCreate']
+	>(`/customers/${input.customerId}/userLists:mutate`, ctx.key, {
+		method: 'POST',
+		body: {
+			operations: [
+				{
+					create: {
+						name: input.listName,
+						description: input.description || '',
+						membershipStatus: 'OPEN',
+						membershipLifeSpan: input.membershipLifeSpan || 10000,
+						crmBasedUserList: {
+							uploadKeyType: input.uploadKeyType || 'CONTACT_INFO',
+							dataSourceType: 'FIRST_PARTY',
 						},
 					},
-				],
-			},
-			developerToken: ctx.options?.developerToken,
-			loginCustomerId: ctx.options?.loginCustomerId,
-		});
+				},
+			],
+		},
+		developerToken: ctx.options?.developerToken,
+		loginCustomerId: ctx.options?.loginCustomerId,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -92,71 +88,78 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 		// Step 1: Create an offline user data job
 		const createJobResult = await makeGoogleAdsRequest<{
 			resourceName: string;
-		}>(
-			`/customers/${input.customerId}/offlineUserDataJobs:create`,
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					job: {
-						type: 'CUSTOMER_MATCH_USER_LIST',
-						customerMatchUserListMetadata: {
-							userList: input.userListResourceName,
-						},
+		}>(`/customers/${input.customerId}/offlineUserDataJobs:create`, ctx.key, {
+			method: 'POST',
+			body: {
+				job: {
+					type: 'CUSTOMER_MATCH_USER_LIST',
+					customerMatchUserListMetadata: {
+						userList: input.userListResourceName,
 					},
 				},
-				developerToken: ctx.options?.developerToken,
-				loginCustomerId: ctx.options?.loginCustomerId,
 			},
-		);
+			developerToken: ctx.options?.developerToken,
+			loginCustomerId: ctx.options?.loginCustomerId,
+		});
 
 		const jobResourceName = createJobResult.resourceName;
 
-		// Step 2: Add operations to the job
-		await makeGoogleAdsRequest<Record<string, unknown>>(
-			`/${jobResourceName}:addOperations`,
-			ctx.key,
-			{
-				method: 'POST',
-				body: {
-					enablePartialFailure: true,
-					operations: input.operations,
+		try {
+			// Step 2: Add operations to the job
+			// Using Record<string, unknown> because the addOperations response body is undocumented
+			// and not used - only the success/failure of the call matters here.
+			await makeGoogleAdsRequest<Record<string, unknown>>(
+				`/${jobResourceName}:addOperations`,
+				ctx.key,
+				{
+					method: 'POST',
+					body: {
+						enablePartialFailure: true,
+						operations: input.operations,
+					},
+					developerToken: ctx.options?.developerToken,
+					loginCustomerId: ctx.options?.loginCustomerId,
 				},
-				developerToken: ctx.options?.developerToken,
-				loginCustomerId: ctx.options?.loginCustomerId,
-			},
-		);
+			);
 
-		// Step 3: Run the job
-		await makeGoogleAdsRequest<Record<string, unknown>>(
-			`/${jobResourceName}:run`,
-			ctx.key,
-			{
-				method: 'POST',
-				body: {},
-				developerToken: ctx.options?.developerToken,
-				loginCustomerId: ctx.options?.loginCustomerId,
-			},
-		);
+			// Step 3: Run the job
+			// Using Record<string, unknown> because the :run response is empty/undocumented
+			// and not used - only the success/failure of the call matters here.
+			await makeGoogleAdsRequest<Record<string, unknown>>(
+				`/${jobResourceName}:run`,
+				ctx.key,
+				{
+					method: 'POST',
+					body: {},
+					developerToken: ctx.options?.developerToken,
+					loginCustomerId: ctx.options?.loginCustomerId,
+				},
+			);
 
-		await logEventFromContext(
-			ctx,
-			'googleads.customerLists.addOrRemove',
-			{
-				customerId: input.customerId,
-				userListResourceName: input.userListResourceName,
-				operationCount: input.operations.length,
-			},
-			'completed',
-		);
+			await logEventFromContext(
+				ctx,
+				'googleads.customerLists.addOrRemove',
+				{
+					customerId: input.customerId,
+					userListResourceName: input.userListResourceName,
+					operationCount: input.operations.length,
+				},
+				'completed',
+			);
 
-		return {
-			job: {
-				resourceName: jobResourceName,
-				type: 'CUSTOMER_MATCH_USER_LIST',
-				status: 'RUNNING',
-			},
-			message:
-				'Offline user data job created and started. Changes may take 6-12 hours to be reflected.',
-		};
+			return {
+				job: {
+					resourceName: jobResourceName,
+					type: 'CUSTOMER_MATCH_USER_LIST',
+					status: 'RUNNING',
+				},
+				message:
+					'Offline user data job created and started. Changes may take 6-12 hours to be reflected.',
+			};
+		} catch (error) {
+			if (error instanceof Error) {
+				error.message = `${error.message} (Orphaned Job Resource Name: ${jobResourceName})`;
+			}
+			throw error;
+		}
 	};

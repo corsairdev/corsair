@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAdsEndpoints } from '..';
-import type { GoogleAdsEndpointOutputs } from './types';
 import { makeGoogleAdsRequest } from '../client';
+import type { GoogleAdsEndpointOutputs } from './types';
 
 export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 	ctx,
@@ -32,15 +32,14 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 	FROM campaign
 	WHERE campaign.id = ${input.campaignId}`;
 
-	const response =
-		await makeGoogleAdsRequest<
-			GoogleAdsEndpointOutputs['campaignsGetById']
-		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
-			method: 'POST',
-			body: { query },
-			developerToken: ctx.options?.developerToken,
-			loginCustomerId: ctx.options?.loginCustomerId,
-		});
+	const response = await makeGoogleAdsRequest<
+		GoogleAdsEndpointOutputs['campaignsGetById']
+	>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
+		method: 'POST',
+		body: { query },
+		developerToken: ctx.options?.developerToken,
+		loginCustomerId: ctx.options?.loginCustomerId,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -55,7 +54,9 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 	ctx,
 	input,
 ) => {
-	const escapedName = input.campaignName.replace(/'/g, "\\'");
+	const escapedName = input.campaignName
+		.replace(/\\/g, '\\\\')
+		.replace(/'/g, "\\'");
 
 	const query = `SELECT
 		campaign.resource_name,
@@ -78,15 +79,14 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 	FROM campaign
 	WHERE campaign.name = '${escapedName}'`;
 
-	const response =
-		await makeGoogleAdsRequest<
-			GoogleAdsEndpointOutputs['campaignsGetByName']
-		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
-			method: 'POST',
-			body: { query },
-			developerToken: ctx.options?.developerToken,
-			loginCustomerId: ctx.options?.loginCustomerId,
-		});
+	const response = await makeGoogleAdsRequest<
+		GoogleAdsEndpointOutputs['campaignsGetByName']
+	>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
+		method: 'POST',
+		body: { query },
+		developerToken: ctx.options?.developerToken,
+		loginCustomerId: ctx.options?.loginCustomerId,
+	});
 
 	await logEventFromContext(
 		ctx,

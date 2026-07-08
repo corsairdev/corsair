@@ -1,11 +1,10 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -13,7 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
+import { CampaignsEndpoints, CustomerListsEndpoints } from './endpoints';
 import type {
 	GoogleAdsEndpointInputs,
 	GoogleAdsEndpointOutputs,
@@ -22,9 +21,8 @@ import {
 	GoogleAdsEndpointInputSchemas,
 	GoogleAdsEndpointOutputSchemas,
 } from './endpoints/types';
-import { CampaignsEndpoints, CustomerListsEndpoints } from './endpoints';
-import { GoogleAdsSchema } from './schema';
 import { errorHandlers } from './error-handlers';
+import { GoogleAdsSchema } from './schema';
 
 export type GoogleAdsPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -153,6 +151,9 @@ export type ExternalGoogleAdsPlugin<T extends GoogleAdsPluginOptions> =
 	BaseGoogleAdsPlugin<T>;
 
 export function googleads<const T extends GoogleAdsPluginOptions>(
+	// `{} as GoogleAdsPluginOptions & T` is needed here because TypeScript cannot infer
+	// that an empty object satisfies the generic `T extends GoogleAdsPluginOptions` constraint
+	// when no argument is provided. All required fields have defaults, so this is safe.
 	incomingOptions: GoogleAdsPluginOptions & T = {} as GoogleAdsPluginOptions &
 		T,
 ): ExternalGoogleAdsPlugin<T> {
@@ -200,19 +201,17 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 	} satisfies InternalGoogleAdsPlugin;
 }
 
-
-
 export type {
-	GoogleAdsEndpointInputs,
-	GoogleAdsEndpointOutputs,
 	CampaignsGetByIdInput,
 	CampaignsGetByIdResponse,
 	CampaignsGetByNameInput,
 	CampaignsGetByNameResponse,
-	CustomerListsGetManyInput,
-	CustomerListsGetManyResponse,
-	CustomerListsCreateInput,
-	CustomerListsCreateResponse,
 	CustomerListsAddOrRemoveInput,
 	CustomerListsAddOrRemoveResponse,
+	CustomerListsCreateInput,
+	CustomerListsCreateResponse,
+	CustomerListsGetManyInput,
+	CustomerListsGetManyResponse,
+	GoogleAdsEndpointInputs,
+	GoogleAdsEndpointOutputs,
 } from './endpoints/types';
