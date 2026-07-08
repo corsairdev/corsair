@@ -1,0 +1,94 @@
+import { logEventFromContext } from 'corsair/core';
+import type { GoogleAdsEndpoints } from '..';
+import type { GoogleAdsEndpointOutputs } from './types';
+import { makeGoogleAdsRequest } from '../client';
+
+export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
+	ctx,
+	input,
+) => {
+	const query = `SELECT
+		campaign.resource_name,
+		campaign.id,
+		campaign.name,
+		campaign.status,
+		campaign.advertising_channel_type,
+		campaign.bidding_strategy_type,
+		campaign.start_date,
+		campaign.end_date,
+		campaign.campaign_budget,
+		campaign.serving_status,
+		campaign.optimization_score,
+		campaign_budget.resource_name,
+		campaign_budget.id,
+		campaign_budget.name,
+		campaign_budget.amount_micros,
+		campaign_budget.delivery_method,
+		campaign_budget.status
+	FROM campaign
+	WHERE campaign.id = ${input.campaignId}`;
+
+	const response =
+		await makeGoogleAdsRequest<
+			GoogleAdsEndpointOutputs['campaignsGetById']
+		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
+			method: 'POST',
+			body: { query },
+			developerToken: ctx.options?.developerToken,
+			loginCustomerId: ctx.options?.loginCustomerId,
+		});
+
+	await logEventFromContext(
+		ctx,
+		'googleads.campaigns.getById',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
+	ctx,
+	input,
+) => {
+	const escapedName = input.campaignName.replace(/'/g, "\\'");
+
+	const query = `SELECT
+		campaign.resource_name,
+		campaign.id,
+		campaign.name,
+		campaign.status,
+		campaign.advertising_channel_type,
+		campaign.bidding_strategy_type,
+		campaign.start_date,
+		campaign.end_date,
+		campaign.campaign_budget,
+		campaign.serving_status,
+		campaign.optimization_score,
+		campaign_budget.resource_name,
+		campaign_budget.id,
+		campaign_budget.name,
+		campaign_budget.amount_micros,
+		campaign_budget.delivery_method,
+		campaign_budget.status
+	FROM campaign
+	WHERE campaign.name = '${escapedName}'`;
+
+	const response =
+		await makeGoogleAdsRequest<
+			GoogleAdsEndpointOutputs['campaignsGetByName']
+		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
+			method: 'POST',
+			body: { query },
+			developerToken: ctx.options?.developerToken,
+			loginCustomerId: ctx.options?.loginCustomerId,
+		});
+
+	await logEventFromContext(
+		ctx,
+		'googleads.campaigns.getByName',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};

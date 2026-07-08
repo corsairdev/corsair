@@ -4,6 +4,7 @@ dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
+import { googleads } from '@corsair-dev/googleads';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { hubspot } from '@corsair-dev/hubspot';
@@ -49,6 +50,10 @@ export const corsair = createCorsair({
 			},
 		}),
 		googlesheets(),
+		googleads({
+			developerToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN,
+			loginCustomerId: process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID,
+		}),
 		googlecalendar(),
 		gmail(),
 		linear(),
