@@ -20,7 +20,9 @@ export function decide(
 	if (serious.length === 0) return 'done';
 	if (round === 0) return 'comment';
 	if (round === 1) return 'fix';
-	return 'escalate';
+	if (round === 2) return 'escalate';
+	// Already escalated — stay silent no matter how many pushes follow.
+	return 'done';
 }
 
 function findingLines(findings: Finding[]): string[] {
