@@ -1,10 +1,10 @@
+import { restOperations } from '../operations/rest';
 import type { SupabaseEndpoint } from './factory';
 import {
 	logSupabaseOperation,
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { restOperations } from '../operations/rest';
 
 function getOperation(name: (typeof restOperations)[number]['name']) {
 	const operation = restOperations.find((candidate) => candidate.name === name);

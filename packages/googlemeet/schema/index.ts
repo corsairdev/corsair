@@ -1,10 +1,10 @@
 import {
-	GoogleMeetSpace,
 	GoogleMeetConferenceRecord,
 	GoogleMeetParticipant,
 	GoogleMeetRecording,
-	GoogleMeetTranscript,
 	GoogleMeetSmartNote,
+	GoogleMeetSpace,
+	GoogleMeetTranscript,
 } from './database';
 
 export const GoogleMeetSchema = {

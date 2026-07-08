@@ -19,6 +19,7 @@
     "./client.ts",
     "./error-handlers.ts",
     "./endpoints/**/*.ts",
+    "./operations/**/*.ts",
     "./schema/**/*.ts"
   ],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "jest.config.*"],

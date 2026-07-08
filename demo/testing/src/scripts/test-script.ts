@@ -1,13 +1,11 @@
 import dotenv from 'dotenv';
+
 dotenv.config({ path: '../.env' });
+
 import { corsair } from '@/server/corsair';
 
 async function setInstagramCredentials() {
-	const {
-		FACEBOOK_APP_ID,
-		FACEBOOK_APP_SECRET,
-		IG_ACCESS_TOKEN,
-	} = process.env;
+	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
 
 	if (FACEBOOK_APP_ID) {
 		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);

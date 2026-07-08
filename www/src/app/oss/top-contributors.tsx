@@ -1,5 +1,8 @@
 import Link from 'next/link';
 
+import { ContributorLink } from './contributor-link';
+import { formatPoints } from './integration-reward';
+
 type Contributor = {
 	rank: number;
 	userId: string;
@@ -8,8 +11,6 @@ type Contributor = {
 	totalPoints: number;
 	integrations: Array<{ id: string }>;
 };
-
-const numberFormatter = new Intl.NumberFormat('en-US');
 
 export function TopContributors({ items }: { items: Contributor[] }) {
 	if (items.length === 0) return null;
@@ -49,20 +50,16 @@ export function TopContributors({ items }: { items: Contributor[] }) {
 						)}
 						<span className="min-w-0 flex-1 truncate">
 							{entry.githubUsername ? (
-								<a
-									href={`https://github.com/${entry.githubUsername}`}
-									target="_blank"
-									rel="noreferrer"
-									className="font-medium text-[#1c1c1c] no-underline hover:underline"
-								>
-									{entry.githubUsername}
-								</a>
+								<ContributorLink
+									githubUsername={entry.githubUsername}
+									className="font-medium text-[#1c1c1c] hover:text-[#4a38f5]"
+								/>
 							) : (
 								<span className="text-[#1c1c1c66]">unknown</span>
 							)}
 						</span>
 						<span className="font-[family-name:var(--font-landing-mono)] text-[12px] font-medium tabular-nums text-[#1c1c1c]">
-							{numberFormatter.format(entry.totalPoints)}
+							{formatPoints(entry.totalPoints)}
 						</span>
 					</li>
 				))}

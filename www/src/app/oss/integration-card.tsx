@@ -1,8 +1,10 @@
 import Link from 'next/link';
-
 import type { IntegrationPhase } from '@/db/schema';
+import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 import { cn } from '@/lib/utils';
 import { ClaimIntegrationButton } from './claim-integration-button';
+import { ContributorLink } from './contributor-link';
+import { IntegrationRewardDisplay } from './integration-reward-display';
 import { buildOssIntegrationHref } from './oss-url';
 import { UnclaimIntegrationButton } from './unclaim-integration-button';
 
@@ -36,6 +38,7 @@ type IntegrationCardProps = {
 	index?: number;
 	activeSlug?: string;
 	wipIntegrationName?: string | null;
+	claimBlockReason?: ClaimBlockReason | null;
 };
 
 function StatusLabel({
@@ -72,6 +75,7 @@ export function IntegrationCard({
 	index,
 	activeSlug,
 	wipIntegrationName,
+	claimBlockReason,
 }: IntegrationCardProps) {
 	const isActive = activeSlug === integration.slug;
 
@@ -90,6 +94,7 @@ export function IntegrationCard({
 				<div className="flex flex-wrap items-baseline gap-x-2.5">
 					<Link
 						href={buildOssIntegrationHref(integration.slug)}
+						prefetch={false}
 						className={cn(
 							'text-[15px] font-medium no-underline underline-offset-2 hover:underline',
 							isActive ? 'text-[#4a38f5]' : 'text-[#1c1c1c]',
@@ -122,11 +127,9 @@ export function IntegrationCard({
 					status={integration.status}
 				/>
 				{integration.isClaimed && integration.claimerGithubUsername ? (
-					<a
-						href={`https://github.com/${integration.claimerGithubUsername}`}
-						target="_blank"
-						rel="noreferrer"
-						className="inline-flex items-center gap-1.5 whitespace-nowrap text-[#1c1c1c99] no-underline hover:text-[#1c1c1c] hover:underline"
+					<ContributorLink
+						githubUsername={integration.claimerGithubUsername}
+						className="inline-flex items-center gap-1.5 whitespace-nowrap text-[#1c1c1c99] hover:text-[#1c1c1c]"
 					>
 						{integration.claimerAvatarUrl ? (
 							<img
@@ -138,22 +141,20 @@ export function IntegrationCard({
 							/>
 						) : null}
 						@{integration.claimerGithubUsername}
-					</a>
+					</ContributorLink>
 				) : null}
 			</div>
 
 			<div className="col-start-2 row-start-1 flex items-center justify-end gap-3 sm:col-start-auto sm:row-start-auto">
-				<span
-					className={cn(
-						'font-[family-name:var(--font-landing-mono)] text-[13px] font-medium tabular-nums',
-						integration.isClaimed ? 'text-[#1c1c1c40]' : 'text-[#1c1c1c]',
-					)}
-				>
-					{integration.points}
-					<span className="ml-1 text-[10px] font-normal text-[#1c1c1c66]">
-						pts
-					</span>
-				</span>
+				<IntegrationRewardDisplay
+					points={integration.points}
+					amountClassName={
+						integration.isClaimed ? 'text-[#1c1c1c40]' : 'text-[#1c1c1c]'
+					}
+					labelClassName={
+						integration.isClaimed ? 'text-[#1c1c1c33]' : 'text-[#1c1c1c66]'
+					}
+				/>
 				{session && integration.claimedByCurrentUser ? (
 					<UnclaimIntegrationButton integrationId={integration.id} />
 				) : null}
@@ -163,6 +164,7 @@ export function IntegrationCard({
 						integrationSlug={integration.slug}
 						disabled={integration.userCanClaim === false}
 						wipIntegrationName={wipIntegrationName}
+						claimBlockReason={claimBlockReason}
 					/>
 				) : null}
 			</div>

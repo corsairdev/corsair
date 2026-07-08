@@ -1,10 +1,10 @@
+import { analyticsOperations } from '../operations/analytics';
 import type { SupabaseEndpoint } from './factory';
 import {
 	logSupabaseOperation,
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { analyticsOperations } from '../operations/analytics';
 
 function getOperation(name: (typeof analyticsOperations)[number]['name']) {
 	const operation = analyticsOperations.find(

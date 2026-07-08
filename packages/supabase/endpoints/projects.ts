@@ -1,10 +1,10 @@
+import { projectsOperations } from '../operations/projects';
 import type { SupabaseEndpoint } from './factory';
 import {
 	logSupabaseOperation,
 	requestSupabaseOperation,
 	syncSupabaseOperationResult,
 } from './factory';
-import { projectsOperations } from '../operations/projects';
 
 function getOperation(name: (typeof projectsOperations)[number]['name']) {
 	const operation = projectsOperations.find(

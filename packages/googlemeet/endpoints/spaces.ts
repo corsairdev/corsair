@@ -3,16 +3,17 @@ import { makeAuthenticatedGoogleMeetRequest } from '../client';
 import type { GoogleMeetEndpoints } from '../index';
 import type { GoogleMeetEndpointOutputs } from './types';
 
-export const create: GoogleMeetEndpoints['spacesCreate'] = async (ctx, input) => {
-	const result = await makeAuthenticatedGoogleMeetRequest<GoogleMeetEndpointOutputs['spacesCreate']>(
-		'/v2/spaces',
-		ctx,
-		{
-			method: 'POST',
-			body: input.space,
-			query: input.requestId ? { requestId: input.requestId } : undefined,
-		},
-	);
+export const create: GoogleMeetEndpoints['spacesCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedGoogleMeetRequest<
+		GoogleMeetEndpointOutputs['spacesCreate']
+	>('/v2/spaces', ctx, {
+		method: 'POST',
+		body: input.space,
+		query: input.requestId ? { requestId: input.requestId } : undefined,
+	});
 
 	if (result.name && ctx.db.spaces) {
 		try {
@@ -25,17 +26,20 @@ export const create: GoogleMeetEndpoints['spacesCreate'] = async (ctx, input) =>
 		}
 	}
 
-	await logEventFromContext(ctx, 'googlemeet.spaces.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'googlemeet.spaces.create',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
 export const get: GoogleMeetEndpoints['spacesGet'] = async (ctx, input) => {
 	const spaceName = input.name.replace('spaces/', '');
-	const result = await makeAuthenticatedGoogleMeetRequest<GoogleMeetEndpointOutputs['spacesGet']>(
-		`/v2/spaces/${spaceName}`,
-		ctx,
-		{ method: 'GET' },
-	);
+	const result = await makeAuthenticatedGoogleMeetRequest<
+		GoogleMeetEndpointOutputs['spacesGet']
+	>(`/v2/spaces/${spaceName}`, ctx, { method: 'GET' });
 
 	if (result.name && ctx.db.spaces) {
 		try {
@@ -48,7 +52,12 @@ export const get: GoogleMeetEndpoints['spacesGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'googlemeet.spaces.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'googlemeet.spaces.get',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
@@ -59,15 +68,13 @@ export const patch: GoogleMeetEndpoints['spacesPatch'] = async (ctx, input) => {
 		query.updateMask = input.updateMask;
 	}
 
-	const result = await makeAuthenticatedGoogleMeetRequest<GoogleMeetEndpointOutputs['spacesPatch']>(
-		`/v2/spaces/${spaceName}`,
-		ctx,
-		{
-			method: 'PATCH',
-			body: input.space,
-			query,
-		},
-	);
+	const result = await makeAuthenticatedGoogleMeetRequest<
+		GoogleMeetEndpointOutputs['spacesPatch']
+	>(`/v2/spaces/${spaceName}`, ctx, {
+		method: 'PATCH',
+		body: input.space,
+		query,
+	});
 
 	if (result.name && ctx.db.spaces) {
 		try {
@@ -80,17 +87,26 @@ export const patch: GoogleMeetEndpoints['spacesPatch'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'googlemeet.spaces.patch', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'googlemeet.spaces.patch',
+		{ ...input },
+		'completed',
+	);
 	return result;
 };
 
-export const endActiveConference: GoogleMeetEndpoints['spacesEndActiveConference'] = async (ctx, input) => {
-	const spaceName = input.name.replace('spaces/', '');
-	await makeAuthenticatedGoogleMeetRequest<GoogleMeetEndpointOutputs['spacesEndActiveConference']>(
-		`/v2/spaces/${spaceName}:endActiveConference`,
-		ctx,
-		{ method: 'POST' },
-	);
+export const endActiveConference: GoogleMeetEndpoints['spacesEndActiveConference'] =
+	async (ctx, input) => {
+		const spaceName = input.name.replace('spaces/', '');
+		await makeAuthenticatedGoogleMeetRequest<
+			GoogleMeetEndpointOutputs['spacesEndActiveConference']
+		>(`/v2/spaces/${spaceName}:endActiveConference`, ctx, { method: 'POST' });
 
-	await logEventFromContext(ctx, 'googlemeet.spaces.endActiveConference', { ...input }, 'completed');
-};
+		await logEventFromContext(
+			ctx,
+			'googlemeet.spaces.endActiveConference',
+			{ ...input },
+			'completed',
+		);
+	};

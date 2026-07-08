@@ -1,6 +1,8 @@
 import Link from 'next/link';
 
+import { ContributorLink } from './contributor-link';
 import { FramedPanel } from './framed-panel';
+import { formatPoints } from './integration-reward';
 
 type TableEntry = {
 	rank: number;
@@ -15,8 +17,6 @@ type TableEntry = {
 		points: number;
 	}>;
 };
-
-const numberFormatter = new Intl.NumberFormat('en-US');
 
 export function LeaderboardTable({ entries }: { entries: TableEntry[] }) {
 	if (entries.length === 0) return null;
@@ -59,14 +59,10 @@ export function LeaderboardTable({ entries }: { entries: TableEntry[] }) {
 										<span className="size-5 shrink-0 rounded-full border border-[#1c1c1c1a] bg-[#1c1c1c0d]" />
 									)}
 									{entry.githubUsername ? (
-										<a
-											href={`https://github.com/${entry.githubUsername}`}
-											target="_blank"
-											rel="noreferrer"
-											className="truncate font-medium text-[#1c1c1c] no-underline hover:underline"
-										>
-											{entry.githubUsername}
-										</a>
+										<ContributorLink
+											githubUsername={entry.githubUsername}
+											className="truncate font-medium text-[#1c1c1c] hover:text-[#4a38f5]"
+										/>
 									) : (
 										<span className="truncate text-[#1c1c1c66]">unknown</span>
 									)}
@@ -90,8 +86,10 @@ export function LeaderboardTable({ entries }: { entries: TableEntry[] }) {
 									) : null}
 								</span>
 							</td>
-							<td className="px-4 py-3 text-right font-[family-name:var(--font-landing-mono)] text-[13px] font-medium tabular-nums text-[#1c1c1c] sm:px-6">
-								{numberFormatter.format(entry.totalPoints)}
+							<td className="px-4 py-3 text-right sm:px-6">
+								<span className="font-[family-name:var(--font-landing-mono)] text-[13px] font-medium tabular-nums text-[#1c1c1c]">
+									{formatPoints(entry.totalPoints)}
+								</span>
 							</td>
 						</tr>
 					))}

@@ -1,54 +1,65 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
-import type { InstagramEndpoints, InstagramBoundEndpoints } from "../index"
-import type { InstagramEndpointOutputs } from "./types"
+import type { InstagramEndpoints } from '../index';
+import type { InstagramEndpointOutputs } from './types';
 
-export const story: InstagramEndpoints['CreateVideoStoryContainer'] = async (ctx, input) => {
+export const story: InstagramEndpoints['CreateVideoStoryContainer'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['CreateVideoStoryContainer']
+	>(`/${input.ig_id}/media`, ctx, {
+		method: 'POST',
+		body: {
+			video_url: input.video_url,
+			media_type: 'STORIES',
+			user_tags: input.user_tags?.length
+				? JSON.stringify(input.user_tags)
+				: undefined,
+		},
+	});
 
-    const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['CreateVideoStoryContainer']>
-        (`/${input.ig_id}/media`, ctx, {
-            method: 'POST',
-            body: {
-                video_url: input.video_url,
-                media_type: 'STORIES',
-                user_tags: input.user_tags?.length ? JSON.stringify(input.user_tags) : undefined,
-            }
-        });
+	await logEventFromContext(
+		ctx,
+		'instagram.image.story',
+		{ ...input },
+		'completed',
+	);
 
-    await logEventFromContext(
-        ctx,
-        'instagram.image.story',
-        { ...input },
-        'completed'
-    );
+	return result;
+};
 
-    return result;
+export const container: InstagramEndpoints['CreateVideoContainer'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['CreateVideoContainer']
+	>(`/${input.ig_id}/media`, ctx, {
+		method: 'POST',
+		body: {
+			media_type: 'VIDEO',
+			video_url: input.video_url,
+			is_carousel_item: true,
+			caption: input.caption,
+			alt_text: input.alt_text,
+			location_id: input.location_id,
+			user_tags: input.user_tags?.length
+				? JSON.stringify(input.user_tags)
+				: undefined,
+			product_tags: input.product_tags?.length
+				? JSON.stringify(input.product_tags)
+				: undefined,
+		},
+	});
 
-}
+	await logEventFromContext(
+		ctx,
+		'instagram.video.post',
+		{ ...input },
+		'completed',
+	);
 
-export const container: InstagramEndpoints['CreateVideoContainer'] = async (ctx, input) => {
-
-    const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['CreateVideoContainer']>
-        (`/${input.ig_id}/media`, ctx, {
-            method: 'POST',
-            body: {
-                media_type: 'VIDEO',
-                video_url: input.video_url,
-                is_carousel_item: true,
-                caption: input.caption,
-                alt_text: input.alt_text,
-                location_id: input.location_id,
-                user_tags: input.user_tags?.length ? JSON.stringify(input.user_tags) : undefined,
-                product_tags: input.product_tags?.length ? JSON.stringify(input.product_tags) : undefined
-            }
-        });
-
-    await logEventFromContext(
-        ctx,
-        'instagram.video.post',
-        { ...input },
-        'completed'
-    )
-
-    return result;
-}
+	return result;
+};

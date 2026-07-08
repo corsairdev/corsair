@@ -1,97 +1,114 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
-import type { InstagramEndpoints, InstagramBoundEndpoints } from "../index"
-import type { InstagramEndpointOutputs } from "./types"
-import { GetFacebookPages } from "./metaDataEndpoints"
-import type { FacebookPageSchema } from "../schema/database";
+import type { InstagramEndpoints } from '../index';
+import type { FacebookPageSchema } from '../schema/database';
+import { GetFacebookPages } from './metaDataEndpoints';
+import type { InstagramEndpointOutputs } from './types';
 
-export const list: InstagramEndpoints['GetInstagramConversations'] = async (ctx, input) => {
+export const list: InstagramEndpoints['GetInstagramConversations'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['GetInstagramConversations']
+	>(
+		`${input.page_id}/conversations`,
+		ctx,
+		{
+			method: 'GET',
+			query: {
+				platform: 'instagram',
+				fields: input.q,
+			},
+		},
+		async (userToken) => {
+			const key = userToken ?? ctx.key;
+			const res: FacebookPageSchema = await GetFacebookPages(
+				key,
+				'access_token',
+				input.page_id,
+			);
+			if (!res.access_token) {
+				throw new Error(`No page access token found for page`);
+			}
+			return res.access_token;
+		},
+	);
 
-    const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['GetInstagramConversations']>
-        (`${input.page_id}/conversations`, ctx, {
-            method: 'GET',
-            query: {
-                platform: 'instagram',
-                fields: input.q
-            }
-        },
-            async (userToken) => {
-                const key = userToken ?? ctx.key;
-        const res: FacebookPageSchema = await GetFacebookPages(key, 'access_token', input.page_id);
-        if (!res.access_token) {
-            throw new Error(`No page access token found for page`);
-        }
-        return res.access_token;
-}
-        );
+	if (result.data) {
+		for (const con of result.data) {
+			try {
+				await ctx.db.conversations.upsertByEntityId(con.id, {
+					conversationId: con.id,
+					pageId: input.page_id,
+				});
+			} catch (err) {
+				console.warn('faild to save conversations into database', err);
+			}
+		}
+	}
 
-    if (result.data) {
-        for (const con of result.data) {
+	await logEventFromContext(
+		ctx,
+		'instagram.conversations.list',
+		{ ...input },
+		'completed',
+	);
 
-            try {
-                await ctx.db.conversations.upsertByEntityId(con.id, {
-                    conversationId: con.id,
-                    pageId: input.page_id
-                })
-            } catch (err) {
-                console.warn('faild to save conversations into database', err);
-            }
-        }
-    }
+	return result;
+};
 
-    await logEventFromContext(
-        ctx,
-        'instagram.conversations.list',
-        { ...input },
-        'completed'
-    )
+export const get: InstagramEndpoints['GetConversationMessages'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['GetConversationMessages']
+	>(
+		`/${input.conversation_id}/messages`,
+		ctx,
+		{
+			method: 'GET',
+			query: {
+				fields: input.q,
+			},
+		},
+		async (userToken) => {
+			const key = userToken ?? ctx.key;
+			const res: FacebookPageSchema = await GetFacebookPages(
+				key,
+				'access_token',
+				input.page_id,
+			);
+			if (!res.access_token) {
+				throw new Error(`No page access token found for page`);
+			}
+			return res.access_token;
+		},
+	);
 
-    return result;
+	if (result.data) {
+		for (const msg of result.data) {
+			try {
+				await ctx.db.messages.upsertByEntityId(msg.id, {
+					messageId: msg.id,
+					conversationId: input.conversation_id,
+					senderId: msg.from?.id,
+					senderName: msg.from?.username,
+					message: msg.message,
+				});
+			} catch (err) {
+				console.warn('faild to save conversations into database', err);
+			}
+		}
+	}
 
-}
+	await logEventFromContext(
+		ctx,
+		'instagram.conversations.get',
+		{ ...input },
+		'completed',
+	);
 
-export const get: InstagramEndpoints['GetConversationMessages'] = async (ctx, input) => {
-
-    const result = await makeAuthenticatedInstagramRequest<InstagramEndpointOutputs['GetConversationMessages']>
-        (`/${input.conversation_id}/messages`, ctx, {
-            method: 'GET',
-            query: {
-                fields: input.q
-            }
-        },
-            async (userToken) => {
-                const key = userToken ?? ctx.key;
-                const res: FacebookPageSchema = await GetFacebookPages(key, 'access_token', input.page_id);
-                if (!res.access_token) {
-                    throw new Error(`No page access token found for page`);
-                }
-                return res.access_token;
-            }
-        );
-
-    if (result.data) {
-        for (const msg of result.data) {
-            try {
-                await ctx.db.messages.upsertByEntityId(msg.id, {
-                    messageId: msg.id,
-                    conversationId: input.conversation_id,
-                    senderId: msg.from?.id,
-                    senderName: msg.from?.username,
-                    message: msg.message
-                });
-            } catch (err) {
-                console.warn('faild to save conversations into database', err);
-            }
-        }
-    }
-
-    await logEventFromContext(
-        ctx,
-        'instagram.conversations.get',
-        { ...input },
-        'completed'
-    )
-
-    return result;
-
-}
+	return result;
+};
