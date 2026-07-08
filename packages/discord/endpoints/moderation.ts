@@ -1,7 +1,7 @@
-import type { DiscordContext } from '../index';
 import { makeDiscordRequest } from '../client';
-import type { DiscordEndpointOutputs } from './types';
+import type { DiscordContext } from '../index';
 import type {
+	DiscordEndpointOutputs,
 	GuildsBanAddInput,
 	GuildsBanGetInput,
 	GuildsBanRemoveInput,

@@ -27,8 +27,7 @@
   "pnpm": {
     "overrides": {
       "@types/react": "^19",
-      "@types/react-dom": "^19",
-      "zod": "4.1.13"
+      "@types/react-dom": "^19"
     },
     "onlyBuiltDependencies": [
       "better-sqlite3"

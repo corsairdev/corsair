@@ -1,6 +1,5 @@
-import type { DiscordContext } from '../index';
 import { makeDiscordRequest } from '../client';
-import type { DiscordEndpointOutputs } from './types';
+import type { DiscordContext } from '../index';
 import type {
 	CommandsCreateGlobalInput,
 	CommandsCreateGuildInput,
@@ -12,6 +11,7 @@ import type {
 	CommandsListGuildInput,
 	CommandsUpdateGlobalInput,
 	CommandsUpdateGuildInput,
+	DiscordEndpointOutputs,
 } from './types';
 
 export const commandsCreateGlobal = async (
