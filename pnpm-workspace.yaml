@@ -7,4 +7,4 @@ packages:
 
 catalog:
   typescript: ^5.9.3
-  zod: ^4.1.13
+  zod: ^4.4.3

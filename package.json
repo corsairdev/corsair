@@ -28,7 +28,7 @@
     "overrides": {
       "@types/react": "^19",
       "@types/react-dom": "^19",
-      "zod": "4.1.13"
+      "zod": "4.4.3"
     },
     "onlyBuiltDependencies": [
       "better-sqlite3"
