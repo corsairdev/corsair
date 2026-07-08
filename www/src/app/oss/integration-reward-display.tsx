@@ -52,7 +52,9 @@ export function IntegrationRewardDisplay({
 	}
 
 	return (
-		<span className={cn('inline-flex flex-col items-end leading-none', className)}>
+		<span
+			className={cn('inline-flex flex-col items-end leading-none', className)}
+		>
 			<span
 				className={cn(
 					'font-[family-name:var(--font-landing-mono)] text-[13px] font-medium tabular-nums',

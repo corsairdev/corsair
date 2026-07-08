@@ -1,8 +1,8 @@
+import { APP_URL, DOCS_URL } from '@/lib/site-links';
 import {
 	CopyableCodeSnippet,
 	LANDING_CTA_BOX_CLASS,
 } from '../copyable-code-snippet';
-import { APP_URL, DOCS_URL } from '@/lib/site-links';
 
 const SDK_INSTALL_COMMAND = 'npm install corsair';
 

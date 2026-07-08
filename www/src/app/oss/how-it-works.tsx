@@ -36,7 +36,9 @@ export function HowItWorks({ signedIn }: { signedIn: boolean }) {
 				))}
 			</ol>
 			<p className="mt-4 rounded-lg border border-[#4a38f5]/20 bg-[#4a38f508] px-3 py-2.5 text-[13px] leading-snug text-[#1c1c1c99]">
-				<span className="font-medium text-[#1c1c1c]">Your code, in production.</span>{' '}
+				<span className="font-medium text-[#1c1c1c]">
+					Your code, in production.
+				</span>{' '}
 				Merged plugins go into Corsair&apos;s open catalog and get used by
 				thousands of developers building agents.
 			</p>

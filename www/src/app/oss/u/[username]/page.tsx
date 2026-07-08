@@ -1,10 +1,9 @@
+import { TRPCError } from '@trpc/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { TRPCError } from '@trpc/server';
-
-import { ContributorProfile } from '../../contributor-profile';
 import { getCachedContributorProfile } from '@/server/oss-public-cache';
+import { ContributorProfile } from '../../contributor-profile';
 
 type PageProps = {
 	params: Promise<{ username: string }>;

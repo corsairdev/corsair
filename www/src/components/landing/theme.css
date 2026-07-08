@@ -27,12 +27,14 @@
 }
 
 @keyframes sparkle-glow {
-	0%, 100% {
+	0%,
+	100% {
 		filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.4));
 		opacity: 0.7;
 	}
 	50% {
-		filter: drop-shadow(0 0 6px rgba(255, 255, 255, 1)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.5));
+		filter: drop-shadow(0 0 6px rgba(255, 255, 255, 1))
+			drop-shadow(0 0 12px rgba(255, 255, 255, 0.5));
 		opacity: 1;
 	}
 }
@@ -44,12 +46,14 @@
 }
 
 @keyframes star-glow {
-	0%, 100% {
+	0%,
+	100% {
 		filter: drop-shadow(0 0 3px rgba(251, 191, 36, 0.55));
 		color: #f59e0b;
 	}
 	50% {
-		filter: drop-shadow(0 0 8px rgba(251, 191, 36, 1)) drop-shadow(0 0 18px rgba(251, 191, 36, 0.5));
+		filter: drop-shadow(0 0 8px rgba(251, 191, 36, 1))
+			drop-shadow(0 0 18px rgba(251, 191, 36, 0.5));
 		color: #fcd34d;
 	}
 }
@@ -61,8 +65,12 @@
 }
 
 @keyframes button-shine {
-	0% { transform: translateX(-120%) skewX(-20deg); }
-	100% { transform: translateX(420%) skewX(-20deg); }
+	0% {
+		transform: translateX(-120%) skewX(-20deg);
+	}
+	100% {
+		transform: translateX(420%) skewX(-20deg);
+	}
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -71,7 +79,7 @@
 		overflow: hidden;
 	}
 	.star-button-shine::after {
-		content: '';
+		content: "";
 		position: absolute;
 		inset: 0;
 		background: linear-gradient(
@@ -383,14 +391,21 @@
 }
 
 /* Nav links (Docs, Contribute, Github, Discord) */
-.site-menu-container nav a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not([aria-label="Discord"]) {
+.site-menu-container nav
+	a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not(
+		[aria-label="Discord"]
+	) {
 	transition:
 		padding 1.2s cubic-bezier(0.22, 1, 0.36, 1),
 		font-size 1.2s cubic-bezier(0.22, 1, 0.36, 1),
 		color 0.3s ease;
 }
 
-.site-menu-scrolled nav a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not([aria-label="Discord"]) {
+.site-menu-scrolled
+	nav
+	a:not(.group):not([aria-label="Corsair home"]):not([aria-label="GitHub"]):not(
+		[aria-label="Discord"]
+	) {
 	padding: 0.375rem 0.5rem;
 	font-size: 0.8125rem;
 }
