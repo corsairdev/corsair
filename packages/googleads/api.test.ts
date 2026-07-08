@@ -3,12 +3,15 @@ import { makeGoogleAdsRequest } from './client';
 import type { GoogleAdsEndpointOutputs } from './endpoints/types';
 import { GoogleAdsEndpointOutputSchemas } from './endpoints/types';
 
-const TEST_TOKEN = process.env.GOOGLE_ADS_ACCESS_TOKEN!;
-const TEST_DEVELOPER_TOKEN = process.env.GOOGLE_ADS_DEVELOPER_TOKEN!;
+const TEST_TOKEN = process.env.GOOGLE_ADS_ACCESS_TOKEN || '';
+const TEST_DEVELOPER_TOKEN = process.env.GOOGLE_ADS_DEVELOPER_TOKEN || '';
 const TEST_CUSTOMER_ID =
 	process.env.GOOGLE_ADS_CUSTOMER_ID || '1234567890';
 
-describe('Google Ads API Type Tests', () => {
+const runIntegrationTests = !!TEST_TOKEN;
+const describeIf = runIntegrationTests ? describe : describe.skip;
+
+describeIf('Google Ads API Type Tests', () => {
 	describe('campaigns', () => {
 		it('campaignsGetById returns correct type shape', async () => {
 			const query = `SELECT

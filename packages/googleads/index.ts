@@ -200,10 +200,7 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 	} satisfies InternalGoogleAdsPlugin;
 }
 
-export type {
-	ExampleEvent,
-	GoogleAdsWebhookOutputs,
-} from './webhooks/types';
+
 
 export type {
 	GoogleAdsEndpointInputs,
