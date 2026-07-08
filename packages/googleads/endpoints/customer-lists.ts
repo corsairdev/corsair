@@ -172,6 +172,7 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 				'jobResourceName',
 			);
 
+			let operationsAdded = false;
 			try {
 				// Step 2: Add operations to the job
 				// Using Record<string, unknown> because the addOperations response body is undocumented
@@ -189,6 +190,7 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 						loginCustomerId: ctx.options?.loginCustomerId,
 					},
 				);
+				operationsAdded = true;
 
 				// Step 3: Run the job
 				// Using Record<string, unknown> because the :run response is empty/undocumented
@@ -207,15 +209,16 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 				// Only API call failures are annotated with the orphaned job resource name.
 				// DB upsert or logging failures below should NOT be reported as orphaned jobs,
 				// since the Google Ads side effect has already completed at this point.
+				const jobState = operationsAdded ? 'Staged' : 'Orphaned';
 				if (error instanceof GoogleAdsAPIError) {
 					throw new GoogleAdsAPIError(
-						`${error.message} (Orphaned Job Resource Name: ${jobResourceName})`,
+						`${error.message} (${jobState} Job Resource Name: ${jobResourceName})`,
 						error.code,
 						error.retryAfter,
 					);
 				}
 				throw new Error(
-					`Orphaned Job: ${jobResourceName}. Original error: ${
+					`${jobState} Job: ${jobResourceName}. Original error: ${
 						error instanceof Error ? error.message : String(error)
 					}`,
 				);

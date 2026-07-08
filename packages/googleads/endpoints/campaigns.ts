@@ -47,8 +47,9 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 		if (response.results) {
 			for (const row of response.results) {
 				if (row.campaign?.id) {
+					const { campaignBudget: _apiBudget, ...campaignData } = row.campaign;
 					await ctx.db.campaigns.upsertByEntityId(row.campaign.id, {
-						...row.campaign,
+						...campaignData,
 						budgetAmountMicros: row.campaignBudget?.amountMicros,
 					});
 				}
@@ -100,7 +101,8 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 		campaign_budget.delivery_method,
 		campaign_budget.status
 	FROM campaign
-	WHERE campaign.name = '${escapedName}'`;
+	WHERE campaign.name = '${escapedName}'
+	LIMIT 1000`;
 
 		const response = await makeGoogleAdsRequest<
 			GoogleAdsEndpointOutputs['campaignsGetByName']
@@ -114,8 +116,9 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 		if (response.results) {
 			for (const row of response.results) {
 				if (row.campaign?.id) {
+					const { campaignBudget: _apiBudget, ...campaignData } = row.campaign;
 					await ctx.db.campaigns.upsertByEntityId(row.campaign.id, {
-						...row.campaign,
+						...campaignData,
 						budgetAmountMicros: row.campaignBudget?.amountMicros,
 					});
 				}

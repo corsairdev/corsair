@@ -161,6 +161,11 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	if (!options.developerToken) {
+		throw new Error(
+			'Google Ads: developerToken is required. Obtain one from the Google Ads API Center.',
+		);
+	}
 	return {
 		id: 'googleads',
 		authConfig: googleAdsAuthConfig,
