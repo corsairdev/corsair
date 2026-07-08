@@ -58,3 +58,18 @@ test('comment without severity badge is skipped', () => {
 	]);
 	assert.equal(findings.length, 0);
 });
+
+const ruleFixture = JSON.parse(
+	fs.readFileSync(
+		new URL('./fixtures/greptile-rule-comment.json', import.meta.url),
+		'utf8',
+	),
+);
+
+test('rule-based finding gets a real title, not "Rule Used:"', () => {
+	const findings = parseFindings(ruleFixture);
+	assert.equal(findings.length, 1);
+	assert.equal(findings[0].severity, 'P0');
+	assert.ok(!findings[0].title.includes('Rule Used'));
+	assert.ok(findings[0].title.includes('new Function()'));
+});

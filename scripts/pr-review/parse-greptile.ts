@@ -32,11 +32,19 @@ export function parseFindings(
 			| Finding['severity']
 			| undefined;
 		if (!sev) continue;
-		const title = c.body.match(/\*\*(.+?)\*\*/)?.[1] ?? '(untitled finding)';
-		const detail = c.body
-			.replace(/<a href[\s\S]*?<\/a>/, '')
-			.replace(/\*\*(.+?)\*\*/, '')
-			.trim();
+		// Strip badge anchors first. Title = leading bold when present;
+		// rule-based findings have no leading bold (their first bold is the
+		// "Rule Used:" label), so fall back to the first text line.
+		const stripped = c.body.replace(/<a href[\s\S]*?<\/a>\s*/g, '').trim();
+		const boldStart = stripped.match(/^\*\*(.+?)\*\*/);
+		const firstLine = (stripped.split('\n')[0] ?? '').trim();
+		const title =
+			boldStart?.[1] ?? (firstLine.slice(0, 120) || '(untitled finding)');
+		const detail = (
+			boldStart
+				? stripped.replace(/^\*\*(.+?)\*\*/, '')
+				: stripped.slice(firstLine.length)
+		).trim();
 		findings.push({
 			severity: sev,
 			title,
