@@ -121,6 +121,10 @@ const CustomerListsAddOrRemoveInputSchema = z.object({
 		),
 	userListResourceName: z
 		.string()
+		.regex(
+			/^customers\/\d+\/userLists\/\d+$/,
+			'Must be a valid user list resource name (e.g. "customers/1234567890/userLists/123456")',
+		)
 		.describe(
 			'Resource name of the user list. e.g. "customers/1234567890/userLists/123456"',
 		),

@@ -1,22 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAdsEndpoints } from '..';
 import { makeGoogleAdsRequest } from '../client';
+import { assertDigitsOnly, escapeGaqlString } from './gaql-utils';
 import type { GoogleAdsEndpointOutputs } from './types';
-
-/**
- * Escapes a string value for safe interpolation into a GAQL WHERE clause.
- * GAQL uses single-quoted string literals; this escapes backslashes and single quotes.
- */
-function escapeGaqlString(value: string): string {
-	return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}
-
-/** Defence-in-depth: asserts a value contains only ASCII digits. */
-function assertDigitsOnly(value: string, label: string): void {
-	if (!/^\d+$/.test(value)) {
-		throw new Error(`${label} must contain only digits, got: ${value}`);
-	}
-}
 
 export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 	ctx,

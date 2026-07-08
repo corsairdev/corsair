@@ -1,14 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAdsEndpoints } from '..';
 import { GoogleAdsAPIError, makeGoogleAdsRequest } from '../client';
+import { assertDigitsOnly, assertResourceNameFormat } from './gaql-utils';
 import type { GoogleAdsEndpointOutputs } from './types';
-
-/** Defence-in-depth: asserts a value contains only ASCII digits. */
-function assertDigitsOnly(value: string, label: string): void {
-	if (!/^\d+$/.test(value)) {
-		throw new Error(`${label} must contain only digits, got: ${value}`);
-	}
-}
 
 export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 	ctx,
@@ -169,9 +163,14 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 
 			const jobResourceName = createJobResult.resourceName;
 
-			if (!jobResourceName || !jobResourceName.startsWith('customers/')) {
-				throw new Error('API returned invalid job resource name');
+			if (!jobResourceName) {
+				throw new Error('API returned empty job resource name');
 			}
+			assertResourceNameFormat(
+				jobResourceName,
+				/^customers\/\d+\/offlineUserDataJobs\/\d+$/,
+				'jobResourceName',
+			);
 
 			try {
 				// Step 2: Add operations to the job

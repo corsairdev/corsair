@@ -16,7 +16,7 @@ const GOOGLEADS_API_BASE = 'https://googleads.googleapis.com/v18';
 
 export async function makeGoogleAdsRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		// Using `unknown` because request bodies differ per endpoint; callers are responsible for constructing valid payloads.
@@ -51,7 +51,7 @@ export async function makeGoogleAdsRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: accessToken,
 		HEADERS: headers,
 	};
 
