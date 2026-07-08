@@ -23,6 +23,12 @@ Corsair is an open-source integration layer for agents (~70 plugin packages).
 (scope, tests, description, demo video). Greptile + the gate job enforce it.
 Never auto-merge; never use `eval`/`new Function()` on generated content.
 
+## LLM gateway
+
+Model calls go through `llm.corsair.dev` (LiteLLM, OpenAI-compatible) with
+budget-limited keys — never provider SDKs or personal provider keys.
+Docs: docs.corsair.dev/llm-gateway.
+
 ## Product note
 
 The hosted product moved from `corsairdev/hosted` to `corsairdev/hub`.

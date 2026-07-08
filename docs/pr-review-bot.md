@@ -17,8 +17,10 @@ nothing merges automatically. Rules live in `.github/PLUGIN_PR_RULES.md`.
    - **Round 1** — posts one consolidated comment with every P0/P1 finding,
      gate failures, and P2s as optional. Templated, no LLM. Label `bot:round-1`.
    - **Round 2** — if P0/P1s remain after the contributor's next push AND the
-     gate passes, headless Claude Code fixes only the listed findings, runs
-     lint/typecheck, and pushes one commit. Label `bot:round-2`.
+     gate passes, Codex CLI (`codex exec`, sandboxed, network off) fixes only
+     the listed findings via the LLM gateway (`llm.corsair.dev`), runs
+     lint/typecheck, and pushes one commit. Label `bot:round-2`. The prompt
+     lives in `scripts/pr-review/fix-prompt.md`.
    - **Round 3** — hard stop: summary comment + `needs-maintainer` label.
      This label is the maintainer queue (syncs to the internal dashboard).
 
@@ -30,15 +32,29 @@ nothing merges automatically. Rules live in `.github/PLUGIN_PR_RULES.md`.
 - The fix round is deferred while the gate fails (incomplete PRs never spend
   LLM tokens).
 - Drafts are skipped everywhere. Greptile is free for this repo (OSS plan).
+- The bot's gateway key is budget-limited in LiteLLM — even a loop bug cannot
+  overspend it.
+
+## LLM gateway
+
+All model calls go through `llm.corsair.dev` (LiteLLM, OpenAI-compatible;
+docs: docs.corsair.dev/llm-gateway). No provider SDKs, no provider keys.
+
+- Repo variables: `LLM_GATEWAY_URL` (e.g. `https://llm.corsair.dev/v1`),
+  `LLM_MODEL` (default `gpt-5.3-codex`), `LLM_WIRE_API` (`responses`; use
+  `chat` + a chat model like `gpt-5.5` if the gateway's Responses passthrough
+  misbehaves).
+- Swapping model or provider is a variable change — no code changes.
 
 ## Operations
 
 - **Dry run:** repo variable `PR_BOT_DRY_RUN=true` makes the loop post what it
   *would* do as `<!-- corsair-review-bot dry-run -->` comments and never push.
   Flip with `gh variable set PR_BOT_DRY_RUN -R corsairdev/corsair --body "false"`.
-- **Secrets:** `ANTHROPIC_API_KEY` (fix step), `PR_BOT_PAT` (fine-grained PAT
-  with `contents: read/write` — the default `GITHUB_TOKEN` cannot push to fork
-  branches). Rotate via `gh secret set <NAME> -R corsairdev/corsair`.
+- **Secrets:** `CORSAIR_LLM_KEY` (budget-limited LiteLLM key for the fix
+  step), `PR_BOT_PAT` (fine-grained PAT with `contents: read/write` — the
+  default `GITHUB_TOKEN` cannot push to fork branches). Rotate via
+  `gh secret set <NAME> -R corsairdev/corsair`.
 - **Labels used:** `gate:failed`, `bot:round-1`, `bot:round-2`,
   `needs-maintainer`. Create once with `gh label create`.
 - **Required checks:** mark Greptile's status check and `Plugin PR Gate` as

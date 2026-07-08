@@ -75,27 +75,31 @@ jobs:
           name: findings-${{ github.event.pull_request.number }}
           path: /tmp
 
-      - name: Fetch rules file from base repo
-        run: curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/.github/PLUGIN_PR_RULES.md -o /tmp/PLUGIN_PR_RULES.md
-
-      - name: Run Claude Code fix
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      - name: Fetch rules and fix prompt from base repo
         run: |
-          npx -y @anthropic-ai/claude-code@latest -p "$(cat <<'EOF'
-          You are fixing specific code-review findings on an open-source PR.
-          The findings are in /tmp/findings.json (file, line, severity, title, detail).
-          The repo rules are in /tmp/PLUGIN_PR_RULES.md.
-          Fix ONLY the listed findings. Do not refactor, do not touch files
-          outside the plugin package the findings point at (plus
-          packages/corsair/core/constants.ts if a finding names it).
-          Never use eval or new Function. After fixing, run:
-            pnpm lint && pnpm typecheck
-          and fix any errors your changes introduced. Do not commit.
+          curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/.github/PLUGIN_PR_RULES.md -o /tmp/PLUGIN_PR_RULES.md
+          curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/scripts/pr-review/fix-prompt.md -o /tmp/fix-prompt.md
+
+      - name: Configure Codex for the LLM gateway
+        run: |
+          mkdir -p ~/.codex
+          cat > ~/.codex/config.toml <<EOF
+          model = "${{ vars.LLM_MODEL }}"
+          model_provider = "corsair"
+
+          [model_providers.corsair]
+          name = "corsair"
+          base_url = "${{ vars.LLM_GATEWAY_URL }}"
+          env_key = "CORSAIR_LLM_KEY"
+          wire_api = "${{ vars.LLM_WIRE_API }}"
           EOF
-          )" \
-          --allowedTools "Read,Edit,Write,Glob,Grep,Bash(pnpm lint),Bash(pnpm lint:fix),Bash(pnpm typecheck),Bash(pnpm test)" \
-          --max-turns 40
+
+      - name: Run agent fix
+        env:
+          CORSAIR_LLM_KEY: ${{ secrets.CORSAIR_LLM_KEY }}
+        run: |
+          npm install -g @openai/codex
+          codex exec --sandbox workspace-write "$(cat /tmp/fix-prompt.md)"
 
       - name: Commit and push (or dry-run comment)
         env:
