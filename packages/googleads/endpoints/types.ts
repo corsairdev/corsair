@@ -41,7 +41,10 @@ const CampaignsGetByIdInputSchema = z.object({
 		.describe(
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
-	campaignId: z.string().describe('The campaign ID to retrieve'),
+	campaignId: z
+		.string()
+		.regex(/^\d+$/, 'Campaign ID must contain only digits')
+		.describe('The campaign ID to retrieve'),
 });
 
 export type CampaignsGetByIdInput = z.infer<typeof CampaignsGetByIdInputSchema>;

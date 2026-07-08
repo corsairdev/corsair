@@ -42,6 +42,17 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 			loginCustomerId: ctx.options?.loginCustomerId,
 		});
 
+		if (response.results) {
+			for (const row of response.results) {
+				if (row.campaign?.id) {
+					await ctx.db.campaigns.upsertByEntityId(row.campaign.id, {
+						...row.campaign,
+						budgetAmountMicros: row.campaignBudget?.amountMicros,
+					});
+				}
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'googleads.campaigns.getById',
@@ -98,6 +109,17 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 			developerToken: ctx.options?.developerToken,
 			loginCustomerId: ctx.options?.loginCustomerId,
 		});
+
+		if (response.results) {
+			for (const row of response.results) {
+				if (row.campaign?.id) {
+					await ctx.db.campaigns.upsertByEntityId(row.campaign.id, {
+						...row.campaign,
+						budgetAmountMicros: row.campaignBudget?.amountMicros,
+					});
+				}
+			}
+		}
 
 		await logEventFromContext(
 			ctx,

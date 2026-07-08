@@ -38,6 +38,17 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 			loginCustomerId: ctx.options?.loginCustomerId,
 		});
 
+		if (response.results) {
+			for (const row of response.results) {
+				if (row.userList?.id) {
+					await ctx.db.customerLists.upsertByEntityId(
+						row.userList.id,
+						row.userList,
+					);
+				}
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'googleads.customerLists.getMany',
@@ -84,6 +95,25 @@ export const create: GoogleAdsEndpoints['customerListsCreate'] = async (
 			developerToken: ctx.options?.developerToken,
 			loginCustomerId: ctx.options?.loginCustomerId,
 		});
+
+		if (response.results) {
+			for (const result of response.results) {
+				if (result.resourceName) {
+					const id = result.resourceName.split('/').pop();
+					if (id) {
+						await ctx.db.customerLists.upsertByEntityId(id, {
+							id,
+							resourceName: result.resourceName,
+							name: input.listName,
+							description: input.description,
+							membershipLifeSpan: input.membershipLifeSpan
+								? String(input.membershipLifeSpan)
+								: undefined,
+						});
+					}
+				}
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -156,6 +186,14 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 						loginCustomerId: ctx.options?.loginCustomerId,
 					},
 				);
+
+				const id = input.userListResourceName.split('/').pop();
+				if (id) {
+					await ctx.db.customerLists.upsertByEntityId(id, {
+						id,
+						resourceName: input.userListResourceName,
+					});
+				}
 
 				await logEventFromContext(
 					ctx,
