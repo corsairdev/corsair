@@ -112,10 +112,18 @@ describe('input schemas accept documented shapes', () => {
 		expect(parsed.pageSize).toBe(200);
 	});
 
-	it('measurementProtocol events require an api secret and events', () => {
+	it('measurementProtocol events require an api secret, a stream id, and events', () => {
+		// missing apiSecret
 		expect(() =>
 			GoogleAnalyticsEndpointInputSchemas.measurementProtocolSendEvents.parse({
-				clientId: 'x',
+				measurementId: 'G-XXXX',
+				events: [{ name: 'login' }],
+			}),
+		).toThrow();
+		// missing both stream identifiers (measurementId and firebaseAppId)
+		expect(() =>
+			GoogleAnalyticsEndpointInputSchemas.measurementProtocolSendEvents.parse({
+				apiSecret: 'secret',
 				events: [{ name: 'login' }],
 			}),
 		).toThrow();

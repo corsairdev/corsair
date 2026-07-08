@@ -460,7 +460,17 @@ const MeasurementProtocolEventsInputSchema = z
 			z.object({ name: z.string(), params: ResourceBody.optional() }).loose(),
 		),
 	})
-	.loose();
+	.loose()
+	// GA4 requires exactly one stream identifier — measurementId (web) or
+	// firebaseAppId (Firebase app). Validate up front rather than let GA4
+	// return a 400 at runtime.
+	.refine(
+		(data) => Boolean(data.measurementId) !== Boolean(data.firebaseAppId),
+		{
+			message:
+				'Exactly one of measurementId (web) or firebaseAppId (Firebase app) is required',
+		},
+	);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Input / output schema maps
