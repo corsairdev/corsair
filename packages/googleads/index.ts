@@ -12,7 +12,6 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import type { AuthTypes } from 'corsair/core';
 import type {
@@ -23,17 +22,9 @@ import {
 	GoogleAdsEndpointInputSchemas,
 	GoogleAdsEndpointOutputSchemas,
 } from './endpoints/types';
-import type {
-	GoogleAdsWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 import { CampaignsEndpoints, CustomerListsEndpoints } from './endpoints';
 import { GoogleAdsSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
-import { matchGoogleAdsTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveGoogleAdsOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type GoogleAdsPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
@@ -42,9 +33,7 @@ export type GoogleAdsPluginOptions = {
 	developerToken?: string;
 	/** Login customer ID for manager account access (digits only, no dashes). Optional. */
 	loginCustomerId?: string;
-	webhookSecret?: string;
 	hooks?: InternalGoogleAdsPlugin['hooks'];
-	webhookHooks?: InternalGoogleAdsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof googleAdsEndpointsNested>;
 };
@@ -76,17 +65,6 @@ export type GoogleAdsEndpoints = {
 	customerListsAddOrRemove: GoogleAdsEndpoint<'customerListsAddOrRemove'>;
 };
 
-type GoogleAdsWebhook<
-	K extends keyof GoogleAdsWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<GoogleAdsContext, TEvent, GoogleAdsWebhookOutputs[K]>;
-
-export type GoogleAdsWebhooks = {
-	example: GoogleAdsWebhook<'example', ExampleEvent>;
-};
-
-export type GoogleAdsBoundWebhooks = BindWebhooks<GoogleAdsWebhooks>;
-
 const googleAdsEndpointsNested = {
 	campaigns: {
 		getById: CampaignsEndpoints.getById,
@@ -96,12 +74,6 @@ const googleAdsEndpointsNested = {
 		getMany: CustomerListsEndpoints.getMany,
 		create: CustomerListsEndpoints.create,
 		addOrRemove: CustomerListsEndpoints.addOrRemove,
-	},
-} as const;
-
-const googleAdsWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -128,16 +100,6 @@ export const googleAdsEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof googleAdsEndpointsNested
->;
-
-const googleAdsWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof googleAdsWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'oauth_2' as const;
@@ -179,7 +141,7 @@ export type BaseGoogleAdsPlugin<T extends GoogleAdsPluginOptions> =
 		'googleads',
 		typeof GoogleAdsSchema,
 		typeof googleAdsEndpointsNested,
-		typeof googleAdsWebhooksNested,
+		never,
 		T,
 		typeof defaultAuthType
 	>;
@@ -211,28 +173,14 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: googleAdsEndpointsNested,
-		webhooks: googleAdsWebhooksNested,
 		endpointMeta: googleAdsEndpointMeta,
 		endpointSchemas: googleAdsEndpointSchemas,
-		webhookSchemas: googleAdsWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-googleads-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchGoogleAdsTenantWebhook,
-		oauthWebhookTenantLinkResolver:
-			resolveGoogleAdsOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: GoogleAdsKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				return res ?? '';
