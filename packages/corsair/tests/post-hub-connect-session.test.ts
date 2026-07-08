@@ -64,11 +64,12 @@ describe('postHubConnectSession', () => {
 			VERCEL_URL: process.env.VERCEL_URL,
 		};
 		process.env.PORT = '3001';
-		// Assigning undefined would store the string "undefined" — delete instead.
-		delete process.env.CORSAIR_DELIVERY_URL;
-		delete process.env.APP_URL;
-		delete process.env.NEXT_PUBLIC_APP_URL;
-		delete process.env.VERCEL_URL;
+		// Assigning undefined to process.env stores the string "undefined";
+		// Reflect.deleteProperty removes the vars (biome noDelete-compliant).
+		Reflect.deleteProperty(process.env, 'CORSAIR_DELIVERY_URL');
+		Reflect.deleteProperty(process.env, 'APP_URL');
+		Reflect.deleteProperty(process.env, 'NEXT_PUBLIC_APP_URL');
+		Reflect.deleteProperty(process.env, 'VERCEL_URL');
 
 		const { fetchMock, getRequestBody } = mockHubConnectFetch();
 		global.fetch = fetchMock;
@@ -87,7 +88,7 @@ describe('postHubConnectSession', () => {
 		} finally {
 			for (const [key, value] of Object.entries(previousEnv)) {
 				if (value === undefined) {
-					delete process.env[key];
+					Reflect.deleteProperty(process.env, key);
 				} else {
 					process.env[key] = value;
 				}
