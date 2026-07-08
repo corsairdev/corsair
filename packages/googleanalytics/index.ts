@@ -912,7 +912,8 @@ export function googleanalytics<const T extends GoogleAnalyticsPluginOptions>(
 							await ctx.keys.set_refresh_token(currentRefreshToken);
 						}
 					}
-
+					// ctx is the public plugin context; _refreshAuth is a runtime-only hook
+					// the corsair host reads from the same object, so widen to assign it.
 					(ctx as Record<string, unknown>)._refreshAuth = async () => {
 						const freshResult = await getValidAccessToken({
 							accessToken: null,

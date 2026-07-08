@@ -13,6 +13,20 @@ import {
 const LooseObject = z.record(z.string(), z.unknown());
 export type GoogleAnalyticsLoose = z.infer<typeof LooseObject>;
 
+// GA create/update endpoints accept full resource bodies (custom dimensions,
+// audiences, roll-up properties, etc.) whose shapes are large and drift across
+// API versions. We forward them to Google verbatim instead of mirroring every
+// type, so they are modeled opaquely.
+const ResourceBody = z.unknown();
+
+// GA FilterExpression and dimension expressions are recursive AND/OR/NOT unions
+// that vary per field; forwarded opaquely.
+const FilterExpression = z.unknown();
+
+// GA report sub-structures (orderings, pivots, minute ranges, funnel, batch
+// pivot requests) are complex typed objects we forward without modeling.
+const ReportSubStructure = z.unknown();
+
 const ListParams = z.object({
 	pageSize: z.number().int().min(1).max(1000).optional(),
 	pageToken: z.string().optional(),
@@ -30,7 +44,7 @@ const DateRange = z
 const Dimension = z
 	.object({
 		name: z.string(),
-		dimensionExpression: z.unknown().optional(),
+		dimensionExpression: FilterExpression.optional(),
 	})
 	.loose();
 
@@ -62,7 +76,7 @@ const AccountsListSummariesInputSchema = ListParams.loose();
 const AccountsGetDataSharingSettingsInputSchema = NameInput;
 const AccountsProvisionAccountTicketInputSchema = z
 	.object({
-		account: z.unknown().optional(),
+		account: ResourceBody.optional(),
 		redirectUri: z.string().optional(),
 	})
 	.loose();
@@ -96,7 +110,7 @@ const PropertiesUpdateInputSchema = z
 	.loose();
 const PropertiesCreateRollupInputSchema = z
 	.object({
-		rollupProperty: z.unknown().optional(),
+		rollupProperty: ResourceBody.optional(),
 		sourceProperties: z.array(z.string()).optional(),
 	})
 	.loose();
@@ -117,7 +131,7 @@ const PropertiesListResponseSchema = z.object({
 const CustomDimensionsCreateInputSchema = z
 	.object({
 		parent: z.string(),
-		customDimension: z.unknown().optional(),
+		customDimension: ResourceBody.optional(),
 	})
 	.loose();
 const CustomDimensionsArchiveInputSchema = NameInput;
@@ -130,7 +144,7 @@ const CustomDimensionsListResponseSchema = z.object({
 const CustomMetricsCreateInputSchema = z
 	.object({
 		parent: z.string(),
-		customMetric: z.unknown().optional(),
+		customMetric: ResourceBody.optional(),
 	})
 	.loose();
 
@@ -166,7 +180,7 @@ const AudiencesListResponseSchema = z.object({
 const AudienceListCreateInputSchema = z
 	.object({
 		parent: z.string(),
-		audienceList: z.unknown().optional(),
+		audienceList: ResourceBody.optional(),
 	})
 	.loose();
 const AudienceListQueryInputSchema = z
@@ -186,7 +200,7 @@ const AudienceListsListResponseSchema = z.object({
 const AudienceExportCreateInputSchema = z
 	.object({
 		parent: z.string(),
-		audienceExport: z.unknown().optional(),
+		audienceExport: ResourceBody.optional(),
 	})
 	.loose();
 const AudienceExportQueryInputSchema = z
@@ -205,7 +219,7 @@ const AudienceExportsListResponseSchema = z.object({
 const RecurringAudienceListCreateInputSchema = z
 	.object({
 		parent: z.string(),
-		recurringAudienceList: z.unknown().optional(),
+		recurringAudienceList: ResourceBody.optional(),
 	})
 	.loose();
 
@@ -278,7 +292,7 @@ const SearchAds360LinksListResponseSchema = z.object({
 const ExpandedDataSetCreateInputSchema = z
 	.object({
 		parent: z.string(),
-		expandedDataSet: z.unknown().optional(),
+		expandedDataSet: ResourceBody.optional(),
 	})
 	.loose();
 
@@ -315,9 +329,9 @@ const ReportRequestBase = z.object({
 	dateRanges: z.array(DateRange).optional(),
 	dimensions: z.array(Dimension).optional(),
 	metrics: z.array(Metric).optional(),
-	dimensionFilter: z.unknown().optional(),
-	metricFilter: z.unknown().optional(),
-	orderBys: z.array(z.unknown()).optional(),
+	dimensionFilter: FilterExpression.optional(),
+	metricFilter: FilterExpression.optional(),
+	orderBys: z.array(ReportSubStructure).optional(),
 	limit: z.number().optional(),
 	offset: z.number().optional(),
 	metricAggregations: z.array(z.string()).optional(),
@@ -335,13 +349,13 @@ const ReportsRunRealtimeInputSchema = z
 		property: z.string(),
 		dimensions: z.array(Dimension).optional(),
 		metrics: z.array(Metric).optional(),
-		dimensionFilter: z.unknown().optional(),
-		metricFilter: z.unknown().optional(),
-		orderBys: z.array(z.unknown()).optional(),
+		dimensionFilter: FilterExpression.optional(),
+		metricFilter: FilterExpression.optional(),
+		orderBys: z.array(ReportSubStructure).optional(),
 		limit: z.number().optional(),
 		metricAggregations: z.array(z.string()).optional(),
 		returnPropertyQuota: z.boolean().optional(),
-		minuteRanges: z.array(z.unknown()).optional(),
+		minuteRanges: z.array(ReportSubStructure).optional(),
 	})
 	.loose();
 
@@ -351,10 +365,10 @@ const ReportsRunPivotInputSchema = z
 		dateRanges: z.array(DateRange).optional(),
 		dimensions: z.array(Dimension).optional(),
 		metrics: z.array(Metric).optional(),
-		pivots: z.array(z.unknown()).optional(),
-		dimensionFilter: z.unknown().optional(),
-		metricFilter: z.unknown().optional(),
-		orderBys: z.array(z.unknown()).optional(),
+		pivots: z.array(ReportSubStructure).optional(),
+		dimensionFilter: FilterExpression.optional(),
+		metricFilter: FilterExpression.optional(),
+		orderBys: z.array(ReportSubStructure).optional(),
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 		returnPropertyQuota: z.boolean().optional(),
@@ -364,7 +378,7 @@ const ReportsRunPivotInputSchema = z
 const ReportsRunFunnelInputSchema = z
 	.object({
 		property: z.string(),
-		funnel: z.unknown().optional(),
+		funnel: ReportSubStructure.optional(),
 	})
 	.loose();
 
@@ -378,7 +392,7 @@ const ReportsBatchRunInputSchema = z
 const ReportsBatchRunPivotInputSchema = z
 	.object({
 		property: z.string(),
-		requests: z.array(z.unknown()).optional(),
+		requests: z.array(ReportSubStructure).optional(),
 	})
 	.loose();
 
@@ -388,11 +402,11 @@ const ReportsCheckCompatibilityInputSchema = z
 		dateRanges: z.array(DateRange).optional(),
 		dimensions: z.array(Dimension).optional(),
 		metrics: z.array(Metric).optional(),
-		dimensionFilter: z.unknown().optional(),
-		metricFilter: z.unknown().optional(),
+		dimensionFilter: FilterExpression.optional(),
+		metricFilter: FilterExpression.optional(),
 		offset: z.number().optional(),
 		limit: z.number().optional(),
-		orderBys: z.array(z.unknown()).optional(),
+		orderBys: z.array(ReportSubStructure).optional(),
 		returnPropertyQuota: z.boolean().optional(),
 	})
 	.loose();
@@ -406,14 +420,14 @@ const ReportsGetMetadataInputSchema = NameInput;
 const ReportTaskCreateInputSchema = z
 	.object({
 		parent: z.string(),
-		reportTask: z.unknown().optional(),
+		reportTask: ResourceBody.optional(),
 	})
 	.loose();
 const ReportTaskQueryInputSchema = z
 	.object({
 		name: z.string(),
-		offset: z.string().optional(),
-		limit: z.string().optional(),
+		offset: z.number().optional(),
+		limit: z.number().optional(),
 	})
 	.loose();
 
@@ -438,10 +452,12 @@ const MeasurementProtocolEventsInputSchema = z
 		appInstanceId: z.string().optional(),
 		userId: z.string().optional(),
 		timestampMicros: z.number().optional(),
+		// userProperties (arbitrary property map), consent, and per-event params
+		// are free-form objects per the Measurement Protocol spec; forwarded verbatim.
 		userProperties: z.record(z.string(), z.unknown()).optional(),
-		consent: z.unknown().optional(),
+		consent: ResourceBody.optional(),
 		events: z.array(
-			z.object({ name: z.string(), params: z.unknown().optional() }).loose(),
+			z.object({ name: z.string(), params: ResourceBody.optional() }).loose(),
 		),
 	})
 	.loose();

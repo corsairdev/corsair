@@ -43,6 +43,8 @@ async function refreshAccessToken(
 		);
 	}
 
+	// response.json() is typed as unknown; Google's token endpoint has a fixed
+	// shape, so we narrow it directly rather than parse defensively.
 	return (await response.json()) as {
 		access_token: string;
 		expires_in: number;
@@ -141,6 +143,8 @@ export async function makeGoogleAnalyticsRequest<T>(
 }
 
 function isUnauthorizedError(error: unknown): boolean {
+	// corsair/http's ApiError carries a numeric status but is typed as Error here,
+	// so narrow to read it rather than importing the concrete class.
 	return (
 		error instanceof Error &&
 		'status' in error &&
@@ -224,6 +228,9 @@ export async function callMeasurementProtocol<T>(
 		);
 	}
 
+	// T is the caller's response type. The Measurement Protocol returns either
+	// an empty body (success), JSON (validation report), or non-JSON text, none
+	// of which we can construct generically, so each branch narrows to T.
 	if (!text) {
 		return {} as T;
 	}

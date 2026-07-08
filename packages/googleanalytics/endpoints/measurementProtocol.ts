@@ -5,6 +5,8 @@ import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // Builds the GA4 Measurement Protocol JSON body from the camelCase input.
 // apiSecret/measurementId/firebaseAppId travel as query params, not the body.
+// `consent` and per-event `params` are free-form objects per the Measurement
+// Protocol spec (consent settings, arbitrary event parameters); forwarded as-is.
 function buildPayload(input: {
 	clientId?: string;
 	appInstanceId?: string;
@@ -30,19 +32,22 @@ function buildPayload(input: {
 // empty on success; events surface in reports within 24-48h.
 export const sendEvents: GoogleAnalyticsEndpoints['measurementProtocolSendEvents'] =
 	async (ctx, input) => {
+		// Keep the per-stream secret out of the event log: pull the request
+		// options out of the input and log only the remaining (body) fields.
+		const { apiSecret, measurementId, firebaseAppId, ...loggable } = input;
 		const result = await callMeasurementProtocol<
 			GoogleAnalyticsEndpointOutputs['measurementProtocolSendEvents']
 		>(buildPayload(input), {
 			validate: false,
-			apiSecret: input.apiSecret,
-			measurementId: input.measurementId,
-			firebaseAppId: input.firebaseAppId,
+			apiSecret,
+			measurementId,
+			firebaseAppId,
 		});
 
 		await logEventFromContext(
 			ctx,
 			'googleanalytics.measurementProtocol.sendEvents',
-			{ ...input },
+			loggable,
 			'completed',
 		);
 		return result;
@@ -51,19 +56,20 @@ export const sendEvents: GoogleAnalyticsEndpoints['measurementProtocolSendEvents
 // Validate the same payload against the debug endpoint before sending.
 export const validateEvents: GoogleAnalyticsEndpoints['measurementProtocolValidateEvents'] =
 	async (ctx, input) => {
+		const { apiSecret, measurementId, firebaseAppId, ...loggable } = input;
 		const result = await callMeasurementProtocol<
 			GoogleAnalyticsEndpointOutputs['measurementProtocolValidateEvents']
 		>(buildPayload(input), {
 			validate: true,
-			apiSecret: input.apiSecret,
-			measurementId: input.measurementId,
-			firebaseAppId: input.firebaseAppId,
+			apiSecret,
+			measurementId,
+			firebaseAppId,
 		});
 
 		await logEventFromContext(
 			ctx,
 			'googleanalytics.measurementProtocol.validateEvents',
-			{ ...input },
+			loggable,
 			'completed',
 		);
 		return result;
