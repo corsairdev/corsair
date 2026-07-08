@@ -29,6 +29,7 @@ export const GoogleAdsCustomerList = z.object({
 	sizeForDisplay: z.string().optional(),
 	sizeForSearch: z.string().optional(),
 	membershipLifeSpan: z.string().optional(),
+	readOnly: z.boolean().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
 

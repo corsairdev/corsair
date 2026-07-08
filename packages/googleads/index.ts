@@ -188,7 +188,12 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new Error(
+						'Google Ads: no access token available. Ensure the user has completed OAuth.',
+					);
+				}
+				return res;
 			}
 
 			return '';

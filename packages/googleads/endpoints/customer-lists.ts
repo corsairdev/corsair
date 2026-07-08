@@ -3,11 +3,20 @@ import type { GoogleAdsEndpoints } from '..';
 import { GoogleAdsAPIError, makeGoogleAdsRequest } from '../client';
 import type { GoogleAdsEndpointOutputs } from './types';
 
+/** Defence-in-depth: asserts a value contains only ASCII digits. */
+function assertDigitsOnly(value: string, label: string): void {
+	if (!/^\d+$/.test(value)) {
+		throw new Error(`${label} must contain only digits, got: ${value}`);
+	}
+}
+
 export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 	ctx,
 	input,
 ) => {
 	try {
+		assertDigitsOnly(input.customerId, 'customerId');
+
 		const query = `SELECT
 			user_list.resource_name,
 			user_list.id,
@@ -73,6 +82,8 @@ export const create: GoogleAdsEndpoints['customerListsCreate'] = async (
 	input,
 ) => {
 	try {
+		assertDigitsOnly(input.customerId, 'customerId');
+
 		const response = await makeGoogleAdsRequest<
 			GoogleAdsEndpointOutputs['customerListsCreate']
 		>(`/customers/${input.customerId}/userLists:mutate`, ctx.key, {
@@ -137,6 +148,8 @@ export const create: GoogleAdsEndpoints['customerListsCreate'] = async (
 export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 	async (ctx, input) => {
 		try {
+			assertDigitsOnly(input.customerId, 'customerId');
+
 			// Step 1: Create an offline user data job
 			const createJobResult = await makeGoogleAdsRequest<{
 				resourceName: string;
