@@ -98,11 +98,13 @@ const issueComments = JSON.parse(
 ) as { body: string }[];
 const round = currentRound(issueComments);
 let decision = decide(round, findings);
+const seriousCount = findings.filter((f) => f.severity !== 'P2').length;
 
 // Cost guard: never spend an LLM run while the PR itself is incomplete
 // (missing tests/description/video). Stay at round 1 until the gate passes;
 // the loop re-fires on the contributor's next push.
-if (decision === 'fix' && gate.failures.length > 0) {
+const fixDeferred = decision === 'fix' && gate.failures.length > 0;
+if (fixDeferred) {
 	console.log(
 		`Fix round deferred — gate still failing (${gate.failures.map((f) => f.rule).join(', ')}).`,
 	);
@@ -123,6 +125,32 @@ function post(body: string): void {
 	]);
 }
 
+// Edits the existing comment carrying the marker instead of posting a new
+// one, so each round keeps a single live comment. Falls back to post.
+function upsert(marker: string, body: string): void {
+	if (dryRun) {
+		post(body);
+		return;
+	}
+	const existing = (
+		JSON.parse(
+			gh(['api', `repos/${repo}/issues/${pr}/comments`, '--paginate']),
+		) as { id: number; body: string }[]
+	).find((c) => c.body.startsWith(marker));
+	if (existing) {
+		gh([
+			'api',
+			'-X',
+			'PATCH',
+			`repos/${repo}/issues/comments/${existing.id}`,
+			'-f',
+			`body=${body}`,
+		]);
+	} else {
+		post(body);
+	}
+}
+
 function label(name: string): void {
 	if (dryRun) return;
 	gh([
@@ -135,9 +163,21 @@ function label(name: string): void {
 	]);
 }
 
+function unlabel(name: string): void {
+	if (dryRun) return;
+	try {
+		gh(['api', '-X', 'DELETE', `repos/${repo}/issues/${pr}/labels/${name}`]);
+	} catch {
+		// label was not present
+	}
+}
+
+const R1_MARKER = '<!-- corsair-review-bot round=1 -->';
+const R3_MARKER = '<!-- corsair-review-bot round=3 -->';
+
 switch (decision) {
 	case 'comment':
-		post(buildRoundOneComment(findings, gate.failures, author));
+		upsert(R1_MARKER, buildRoundOneComment(findings, gate.failures, author));
 		label('bot:round-1');
 		break;
 	case 'fix':
@@ -157,11 +197,25 @@ switch (decision) {
 		label('bot:round-2');
 		break;
 	case 'escalate':
-		post(buildEscalationComment(findings));
+		upsert(R3_MARKER, buildEscalationComment(findings));
 		label('needs-maintainer');
 		break;
 	case 'done':
-		console.log('Nothing to do this round.');
+		if (fixDeferred) {
+			// PR incomplete — keep the round-1 findings list current so the
+			// contributor always sees the latest state in one place.
+			upsert(R1_MARKER, buildRoundOneComment(findings, gate.failures, author));
+		} else if (round >= 3 && seriousCount > 0) {
+			// Escalated but still moving — refresh the escalation summary
+			// in place; never post new comments after escalation.
+			upsert(R3_MARKER, buildEscalationComment(findings));
+		} else if (round >= 3 && seriousCount === 0 && gate.failures.length === 0) {
+			// Escalated PR became clean — clear the maintainer flag so the
+			// queue reflects reality.
+			unlabel('needs-maintainer');
+		} else {
+			console.log('Nothing to do this round.');
+		}
 		break;
 }
 setOutput('decision', decision);
