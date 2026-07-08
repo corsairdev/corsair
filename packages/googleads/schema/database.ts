@@ -13,6 +13,7 @@ export const GoogleAdsCampaign = z.object({
 	endDate: z.string().optional(),
 	budgetAmountMicros: z.string().optional(),
 	servingStatus: z.string().optional(),
+	optimizationScore: z.number().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
 

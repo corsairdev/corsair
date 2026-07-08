@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAdsEndpoints } from '..';
-import { makeGoogleAdsRequest } from '../client';
+import { GoogleAdsAPIError, makeGoogleAdsRequest } from '../client';
 import type { GoogleAdsEndpointOutputs } from './types';
 
 export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
@@ -215,16 +215,23 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 					job: {
 						resourceName: jobResourceName,
 						type: 'CUSTOMER_MATCH_USER_LIST',
-						status: 'RUNNING',
 					},
 					message:
 						'Offline user data job created and started. Changes may take 6-12 hours to be reflected.',
 				};
 			} catch (error) {
-				if (error instanceof Error) {
-					error.message = `${error.message} (Orphaned Job Resource Name: ${jobResourceName})`;
+				if (error instanceof GoogleAdsAPIError) {
+					throw new GoogleAdsAPIError(
+						`${error.message} (Orphaned Job Resource Name: ${jobResourceName})`,
+						error.code,
+						error.retryAfter,
+					);
 				}
-				throw error;
+				throw new Error(
+					`Orphaned Job: ${jobResourceName}. Original error: ${
+						error instanceof Error ? error.message : String(error)
+					}`,
+				);
 			}
 		} catch (error) {
 			await logEventFromContext(
