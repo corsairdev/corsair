@@ -678,16 +678,32 @@ export * from './oauth-tenant-link';
 	);
 
 	// ── jest.config.cjs + starter test ────────────────────────────────────────
+	// Verbatim copy of packages/tavily/jest.config.cjs (a known-working plugin
+	// config) so scaffolds inherit every alias and transform real tests need.
 	writeFileSync(
 		join(pluginDir, 'jest.config.cjs'),
 		`module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
-	testMatch: ['**/*.test.ts', '**/tests/**/*.test.ts'],
+	testMatch: [
+		'**/*.test.ts',
+		'**/tests/**/*.test.ts',
+		'**/plugins/**/*.test.ts',
+		'**/setup/**/*.test.ts',
+	],
+	collectCoverageFrom: [
+		'**/*.ts',
+		'!**/*.d.ts',
+		'!**/node_modules/**',
+		'!**/dist/**',
+		'!jest.config.ts',
+		'!tests/**',
+	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
-		'^.+\\.ts$': [
+		'^.+\\\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
+		'^.+\\\\.ts$': [
 			'ts-jest',
 			{
 				useESM: true,
@@ -700,15 +716,25 @@ export * from './oauth-tenant-link';
 				},
 			},
 		],
+		'.*\\\\.js$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+				},
+			},
+		],
 	},
 	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
-		'^(\\.\\.?/.*)\\.js$': '$1',
+		'^(\\\\.\\\\.?/.*)\\\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
+	verbose: true,
 };
 `,
 	);
@@ -717,11 +743,19 @@ export * from './oauth-tenant-link';
 		`import { ${pascalName}Schema } from './schema';
 
 describe('${pascalName} schema', () => {
-	it('declares a version and entities map', () => {
-		expect(${pascalName}Schema.version).toBeDefined();
-		expect(typeof ${pascalName}Schema.entities).toBe('object');
-		expect(${pascalName}Schema.entities).not.toBeNull();
-	});
+\tit('declares a semver version', () => {
+\t\texpect(${pascalName}Schema.version).toBeDefined();
+\t\texpect(${pascalName}Schema.version).toMatch(/^\\d+\\.\\d+\\.\\d+$/);
+\t});
+
+\tit('declares an entities map', () => {
+\t\texpect(typeof ${pascalName}Schema.entities).toBe('object');
+\t\texpect(${pascalName}Schema.entities).not.toBeNull();
+\t\texpect(Array.isArray(Object.keys(${pascalName}Schema.entities))).toBe(true);
+\t\tfor (const entity of Object.values(${pascalName}Schema.entities)) {
+\t\t\texpect(entity).toBeDefined();
+\t\t}
+\t});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
