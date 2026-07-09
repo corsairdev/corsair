@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -28,6 +29,7 @@ import {
 	GoogleDocsEndpointInputSchemas,
 	GoogleDocsEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { GoogleDocsSchema } from './schema';
 import { ChangeWebhooks } from './webhooks';
 import { matchGoogleDocsTenantWebhook } from './webhooks/tenant-matcher';
@@ -94,6 +96,7 @@ export type GoogleDocsPluginOptions = {
 	key?: string;
 	hooks?: InternalGoogleDocsPlugin['hooks'];
 	webhookHooks?: InternalGoogleDocsPlugin['webhookHooks'];
+	errorHandlers?: CorsairErrorHandler;
 	/** Restrict which of the 10 triggers fire. Undefined = all enabled. */
 	webhookEvents?: GoogleDocsEventName[];
 	/** Parameters for the content-based triggers. */
@@ -349,6 +352,10 @@ export function googledocs<const T extends GoogleDocsPluginOptions>(
 		endpointMeta: googledocsEndpointMeta,
 		endpointSchemas: googledocsEndpointSchemas,
 		webhookSchemas: googledocsWebhookSchemas,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		keyBuilder: async (ctx: GoogleDocsKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;

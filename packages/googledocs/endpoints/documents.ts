@@ -309,11 +309,24 @@ export const updateDocumentBatch: GoogleDocsEndpoints['updateDocumentBatch'] =
 
 export const exportDocumentAsPdf: GoogleDocsEndpoints['exportDocumentAsPdf'] =
 	async (ctx, input) => {
+		// Export returns raw PDF bytes, so it cannot go through the JSON
+		// request helper; mirror its one-shot 401 force-refresh retry here.
 		const url = `${DRIVE_API_BASE}/files/${input.fileId}/export?mimeType=application/pdf`;
-		const response = await fetch(url, {
-			method: 'GET',
-			headers: { Authorization: `Bearer ${ctx.key}` },
-		});
+		const doFetch = (token: string) =>
+			fetch(url, {
+				method: 'GET',
+				headers: { Authorization: `Bearer ${token}` },
+			});
+
+		// _refreshAuth is attached ad hoc by the keyBuilder (see index.ts); it is
+		// not part of the typed plugin context, so read it structurally here.
+		const refreshAuth = (ctx as { _refreshAuth?: () => Promise<string> })
+			._refreshAuth;
+		let response = await doFetch(ctx.key);
+		if (response.status === 401 && refreshAuth) {
+			const freshToken = await refreshAuth();
+			response = await doFetch(freshToken);
+		}
 
 		if (!response.ok) {
 			const error = await response.text();
