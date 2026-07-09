@@ -702,9 +702,11 @@ export * from './oauth-tenant-link';
 		],
 	},
 	moduleNameMapper: {
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
+	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 };
@@ -722,9 +724,8 @@ describe('${pascalName} schema', () => {
 	});
 });
 
-// Replace with real endpoint tests as you implement the plugin —
-// every implemented endpoint needs a corresponding test (see
-// .github/PLUGIN_PR_RULES.md, R2).
+// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
+// needs a corresponding test.
 `,
 	);
 
