@@ -110,6 +110,18 @@ if (!gate.isPluginPr) {
 	process.exit(0);
 }
 
+// Fork PRs: the pull_request-triggered gate job has a read-only token and
+// cannot post; this workflow runs in base context, so it owns the scorecard
+// comment and the gate:failed label on every review.
+if (!dryRun) {
+	upsert('<!-- corsair-pr-gate -->', renderScorecard(gate));
+	if (gate.failures.length > 0) {
+		label('gate:failed');
+	} else {
+		unlabel('gate:failed');
+	}
+}
+
 const reviewComments = JSON.parse(
 	gh(['api', `repos/${repo}/pulls/${pr}/comments`, '--paginate']),
 ) as ReviewComment[];

@@ -186,3 +186,26 @@ export function runGate(input: GateInput): GateResult {
 
 	return { isPluginPr: true, plugin, checks, failures };
 }
+
+const STATUS_ICON = { pass: '✅', warn: '⚠️', fail: '❌' } as const;
+
+/** Renders the sticky scorecard comment body (marker included). */
+export function renderScorecard(result: GateResult): string {
+	const lines = [
+		'<!-- corsair-pr-gate -->',
+		`### Plugin PR scorecard — \`packages/${result.plugin}\``,
+		'',
+		'| Check | Status | Notes |',
+		'| --- | --- | --- |',
+	];
+	for (const c of result.checks) {
+		lines.push(
+			`| ${c.rule} — ${c.label} | ${STATUS_ICON[c.status]} | ${c.detail ?? ''} |`,
+		);
+	}
+	lines.push(
+		'',
+		`Rules: [PLUGIN_PR_RULES.md](https://github.com/${process.env.GITHUB_REPOSITORY ?? 'corsairdev/corsair'}/blob/main/.github/PLUGIN_PR_RULES.md) · re-runs on every push`,
+	);
+	return lines.join('\n');
+}
