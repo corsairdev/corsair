@@ -172,8 +172,8 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 		loginCustomerId,
 	};
 	if (!options.developerToken) {
-		console.warn(
-			'Google Ads: developerToken is missing. API calls will fail without it.',
+		throw new Error(
+			'Google Ads: developerToken is required. Obtain one from the Google Ads API Center.',
 		);
 	}
 	return {

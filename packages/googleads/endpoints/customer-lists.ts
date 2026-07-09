@@ -104,17 +104,8 @@ export const create: GoogleAdsEndpoints['customerListsCreate'] = async (
 			for (const result of response.results) {
 				if (result.resourceName) {
 					const id = result.resourceName.split('/').pop();
-					if (id) {
-						await ctx.db.customerLists.upsertByEntityId(`${input.customerId}:${id}`, {
-							id,
-							resourceName: result.resourceName,
-							name: input.listName,
-							description: input.description,
-							membershipLifeSpan: input.membershipLifeSpan
-								? String(input.membershipLifeSpan)
-								: undefined,
-						});
-					}
+					// Removed sparse upsert because the API only returns the resourceName,
+					// and upserting here overwrites richer data fetched by getMany.
 				}
 			}
 		}

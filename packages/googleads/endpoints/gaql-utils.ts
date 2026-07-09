@@ -3,7 +3,11 @@
  * GAQL uses single-quoted string literals; this escapes backslashes and single quotes.
  */
 export function escapeGaqlString(value: string): string {
-	return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+	// Strip control characters (0x00-0x1F and 0x7F) before escaping
+	return value
+		.replace(/[\x00-\x1F\x7F]/g, '')
+		.replace(/\\/g, '\\\\')
+		.replace(/'/g, "\\'");
 }
 
 /** Defence-in-depth: asserts a value contains only ASCII digits. */

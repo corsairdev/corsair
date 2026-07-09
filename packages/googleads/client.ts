@@ -85,7 +85,7 @@ export async function getValidAccessToken({
 	};
 }
 
-const GOOGLEADS_API_BASE = 'https://googleads.googleapis.com/v18';
+const GOOGLEADS_API_BASE = 'https://googleads.googleapis.com/v19';
 
 export async function makeGoogleAdsRequest<T>(
 	endpoint: string,

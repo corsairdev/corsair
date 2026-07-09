@@ -72,6 +72,10 @@ const CampaignsGetByNameInputSchema = z.object({
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
 	campaignName: z.string().describe('The exact campaign name to search for'),
+	pageToken: z
+		.string()
+		.optional()
+		.describe('Page token for pagination from a previous response'),
 });
 
 export type CampaignsGetByNameInput = z.infer<

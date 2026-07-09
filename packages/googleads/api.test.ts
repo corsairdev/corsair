@@ -111,6 +111,33 @@ describe('Google Ads Schema Validation', () => {
 		expect(result.results![0]!.campaign?.name).toBe('Test Campaign');
 	});
 
+	it('campaignsGetByName output schema validates populated response', () => {
+		const response = {
+			results: [
+				{
+					campaign: {
+						resourceName: 'customers/123/campaigns/456',
+						id: '456',
+						name: 'Test Campaign',
+						status: 'ENABLED',
+					},
+					campaignBudget: {
+						resourceName: 'customers/123/campaignBudgets/789',
+						id: '789',
+						amountMicros: '50000000',
+					},
+				},
+			],
+			fieldMask:
+				'campaign.resourceName,campaign.id,campaign.name,campaign.status',
+			totalResultsCount: '1',
+		};
+		const result =
+			GoogleAdsEndpointOutputSchemas.campaignsGetByName.parse(response);
+		expect(result.results).toHaveLength(1);
+		expect(result.results![0]!.campaign?.name).toBe('Test Campaign');
+	});
+
 	it('customerListsGetMany output schema validates populated response', () => {
 		const response = {
 			results: [

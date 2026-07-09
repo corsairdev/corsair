@@ -108,11 +108,16 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 	WHERE campaign.name = '${escapedName}'
 	LIMIT 1000`;
 
+		const body: Record<string, unknown> = { query };
+		if (input.pageToken) {
+			body.pageToken = input.pageToken;
+		}
+
 		const response = await makeGoogleAdsRequest<
 			GoogleAdsEndpointOutputs['campaignsGetByName']
 		>(`/customers/${input.customerId}/googleAds:search`, ctx.key, {
 			method: 'POST',
-			body: { query },
+			body,
 			developerToken: ctx.options?.developerToken,
 			loginCustomerId: ctx.options?.loginCustomerId,
 		});
