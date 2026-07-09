@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { Chat } from './chat';
+import { PerplexityAiEndpointInputSchemas } from './types';
 
 describe('Perplexity AI Chat Completions', () => {
 	it('should export the chat endpoint', () => {
@@ -12,7 +13,8 @@ describe('Perplexity AI Chat Completions', () => {
 			model: 'llama-3.1-sonar-small-128k-online',
 			messages: [{ role: 'user', content: 'Hello' }],
 		};
-		const parsed = Chat.completions.inputSchema.safeParse(input);
+		const parsed =
+			PerplexityAiEndpointInputSchemas.chatCompletions.safeParse(input);
 		expect(parsed.success).toBe(true);
 	});
 
@@ -23,7 +25,8 @@ describe('Perplexity AI Chat Completions', () => {
 			presence_penalty: 0.5,
 			frequency_penalty: 0.5,
 		};
-		const parsed = Chat.completions.inputSchema.safeParse(input);
+		const parsed =
+			PerplexityAiEndpointInputSchemas.chatCompletions.safeParse(input);
 		expect(parsed.success).toBe(false);
 	});
 });

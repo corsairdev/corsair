@@ -19,11 +19,10 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	const res = await corsair.perplexityai.api.chat.completions({
-		model: 'llama-3.1-sonar-small-128k-online',
-		messages: [{ role: 'user', content: 'What is the capital of France?' }],
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
 	});
-	console.log(JSON.stringify(res, null, 2));
 };
 
 main().catch((err) => {
