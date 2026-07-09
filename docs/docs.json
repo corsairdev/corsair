@@ -446,15 +446,6 @@
                 ]
               },
               {
-                "group": "Neon",
-                "pages": [
-                  "plugins/neon/overview",
-                  "plugins/neon/get-credentials",
-                  "plugins/neon/api",
-                  "plugins/neon/database"
-                ]
-              },
-              {
                 "group": "Notion",
                 "pages": [
                   "plugins/notion/overview",
