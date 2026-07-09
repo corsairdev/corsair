@@ -52,15 +52,15 @@ export function LandingHero({ starCount }: { starCount?: number | null }) {
 						className="star-button-shine group inline-flex items-center justify-center rounded-lg border border-amber-200/60 bg-gradient-to-b from-amber-50/80 to-white/60 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(251,191,36,0.12)] backdrop-blur-sm transition-all duration-300 ease-out hover:border-amber-300/80 hover:shadow-[0_4px_20px_rgba(251,191,36,0.22)] hover:-translate-y-0.5 active:translate-y-0"
 					>
 						<span className="inline-flex items-center gap-2 px-4 py-3">
-							<Star
-								weight="fill"
-								className="star-icon-glow size-4"
-							/>
+							<Star weight="fill" className="star-icon-glow size-4" />
 							Star on GitHub
 						</span>
 						{starCount != null ? (
 							<>
-								<span className="self-stretch w-px bg-amber-200/60" aria-hidden />
+								<span
+									className="self-stretch w-px bg-amber-200/60"
+									aria-hidden
+								/>
 								<span className="px-3.5 py-3 font-[family-name:var(--landing-font-mono)] text-[13px] font-semibold text-amber-600 tabular-nums">
 									{formatStarCount(starCount)}
 								</span>

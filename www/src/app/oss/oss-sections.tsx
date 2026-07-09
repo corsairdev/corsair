@@ -148,6 +148,7 @@ export async function OssIntegrationsSection({
 							session={Boolean(session)}
 							index={startIndex + index + 1}
 							wipIntegrationName={integrationsData.wipIntegrationName}
+							claimBlockReason={integrationsData.claimBlockReason}
 						/>
 					))}
 				</div>
@@ -225,7 +226,10 @@ export async function OssSidebarSection({ view }: OssSidebarSectionProps) {
 		]);
 
 	if (recentActivityResult.status === 'rejected') {
-		console.error('[oss sidebar] recent activity failed', recentActivityResult.reason);
+		console.error(
+			'[oss sidebar] recent activity failed',
+			recentActivityResult.reason,
+		);
 	}
 	if (leaderboardResult.status === 'rejected') {
 		console.error('[oss sidebar] leaderboard failed', leaderboardResult.reason);
