@@ -69,7 +69,7 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 			'googleads.campaigns.getById',
 			{ ...input },
 			'failed',
-		);
+		).catch(() => {});
 		throw error;
 	}
 };
@@ -138,7 +138,7 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 			'googleads.campaigns.getByName',
 			{ ...input },
 			'failed',
-		);
+		).catch(() => {});
 		throw error;
 	}
 };

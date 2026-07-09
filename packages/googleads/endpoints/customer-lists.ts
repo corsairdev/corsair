@@ -22,7 +22,8 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 			user_list.size_for_search,
 			user_list.membership_life_span,
 			user_list.read_only
-		FROM user_list`;
+		FROM user_list
+		LIMIT 1000`;
 
 		// Using `unknown` because the pageSize / pageToken fields are optional and their presence changes the shape.
 		const body: Record<string, unknown> = { query };
@@ -66,7 +67,7 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 			'googleads.customerLists.getMany',
 			{ ...input },
 			'failed',
-		);
+		).catch(() => {});
 		throw error;
 	}
 };
@@ -134,7 +135,7 @@ export const create: GoogleAdsEndpoints['customerListsCreate'] = async (
 			'googleads.customerLists.create',
 			{ ...input },
 			'failed',
-		);
+		).catch(() => {});
 		throw error;
 	}
 };
@@ -264,7 +265,7 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 					operationCount: input.operations.length,
 				},
 				'failed',
-			);
+			).catch(() => {});
 			throw error;
 		}
 	};

@@ -130,23 +130,29 @@ const CustomerListsAddOrRemoveInputSchema = z.object({
 		),
 	operations: z
 		.array(
-			z.object({
-				create: z
-					.object({
-						userIdentifiers: z.array(UserIdentifierSchema),
-					})
-					.optional()
-					.describe('Add users to the list'),
-				remove: z
-					.object({
-						userIdentifiers: z.array(UserIdentifierSchema),
-					})
-					.optional()
-					.describe('Remove users from the list'),
-			}),
+			z
+				.object({
+					create: z
+						.object({
+							userIdentifiers: z.array(UserIdentifierSchema),
+						})
+						.optional()
+						.describe('Add users to the list'),
+					remove: z
+						.object({
+							userIdentifiers: z.array(UserIdentifierSchema),
+						})
+						.optional()
+						.describe('Remove users from the list'),
+				})
+				.refine((op) => op.create || op.remove, {
+					message:
+						'Each operation must have at least one of "create" or "remove"',
+				}),
 		)
+		.min(1, 'At least one operation is required')
 		.describe(
-			'List of add/remove operations. Each operation should have either "create" or "remove".',
+			'List of add/remove operations. Each operation must have either "create" or "remove".',
 		),
 });
 
