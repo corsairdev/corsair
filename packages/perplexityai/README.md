@@ -3,7 +3,7 @@
 This package provides an official Perplexity AI integration for Corsair. 
 
 ## Features
-- Search and Chat completions powered by Perplexity's Sonar models.
+- Chat completions powered by Perplexity's Sonar models.
 - Support for beta features such as Citations and Images.
 
 ## Setup
