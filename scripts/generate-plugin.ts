@@ -728,6 +728,7 @@ export * from './oauth-tenant-link';
 		],
 	},
 	moduleNameMapper: {
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
 		'^(\\\\.\\\\.?/.*)\\\\.js$': '$1',
 	},
