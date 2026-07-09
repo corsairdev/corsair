@@ -46,11 +46,13 @@ export const getImages: LinkedInEndpoints['GetImages'] = async (ctx, input) => {
 
 export const initializeImageUpload: LinkedInEndpoints['InitializeImageUpload'] =
 	async (ctx, input) => {
+		// The Images API only exists on the versioned /rest surface, and the
+		// owner must be wrapped in an initializeUploadRequest envelope.
 		const result = await makeAuthenticatedLinkedInRequest<
 			LinkedInEndpointOutputs['InitializeImageUpload']
-		>('/v2/images?action=initializeUpload', ctx, {
+		>('/rest/images?action=initializeUpload', ctx, {
 			method: 'POST',
-			body: { owner: input.owner },
+			body: { initializeUploadRequest: { owner: input.owner } },
 		});
 
 		await logEventFromContext(
@@ -77,9 +79,10 @@ export const registerImageUpload: LinkedInEndpoints['RegisterImageUpload'] =
 			},
 		};
 
+		// registerUpload lives on the Assets API, not the Images API.
 		const result = await makeAuthenticatedLinkedInRequest<
 			LinkedInEndpointOutputs['RegisterImageUpload']
-		>('/v2/images?action=registerUpload', ctx, { method: 'POST', body });
+		>('/rest/assets?action=registerUpload', ctx, { method: 'POST', body });
 
 		await logEventFromContext(
 			ctx,

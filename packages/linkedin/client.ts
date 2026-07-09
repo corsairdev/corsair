@@ -111,7 +111,12 @@ export async function getValidLinkedInAccessToken({
 export type LinkedInRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
-	query?: Record<string, string | number | boolean | undefined>;
+	// Arrays serialize as repeated keys (role=A&role=B), which is how
+	// LinkedIn expects multi-value filters like organizationAcls roles.
+	query?: Record<
+		string,
+		string | number | boolean | ReadonlyArray<string> | undefined
+	>;
 };
 
 export async function makeLinkedInRequest<T>(

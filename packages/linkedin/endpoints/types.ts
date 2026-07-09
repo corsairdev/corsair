@@ -555,8 +555,10 @@ const InitializeImageUploadOutputSchema = z
 					.string()
 					.optional()
 					.describe('Presigned URL to PUT the image bytes to.'),
-				uploadToken: z.string().optional(),
-				uploadTokenExpiresAt: z.number().optional(),
+				uploadUrlExpiresAt: z
+					.number()
+					.optional()
+					.describe('Epoch millis when the upload URL expires.'),
 			})
 			.loose(),
 	})
@@ -567,11 +569,16 @@ const RegisterImageUploadOutputSchema = z
 	.object({
 		value: z
 			.object({
-				mediaAsset: z
+				asset: z
 					.string()
 					.describe('The digital media asset URN to reference in a post.'),
-				uploadToken: z.string().optional(),
-				uploadMechanism: z.record(z.string(), z.unknown()).optional(),
+				mediaArtifact: z.string().optional(),
+				uploadMechanism: z
+					.record(z.string(), z.unknown())
+					.optional()
+					.describe(
+						'Contains the uploadUrl under com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest.',
+					),
 			})
 			.loose(),
 	})

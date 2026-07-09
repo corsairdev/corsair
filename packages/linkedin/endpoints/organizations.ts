@@ -3,7 +3,10 @@ import { LinkedInAPIError, makeAuthenticatedLinkedInRequest } from '../client';
 import type { LinkedInEndpoints } from '../index';
 import type { LinkedInEndpointOutputs } from './types';
 
-type Query = Record<string, string | number | boolean | undefined>;
+type Query = Record<
+	string,
+	string | number | boolean | ReadonlyArray<string> | undefined
+>;
 
 export const getCompanyInfo: LinkedInEndpoints['GetCompanyInfo'] = async (
 	ctx,
@@ -30,7 +33,9 @@ export const getCompanyInfo: LinkedInEndpoints['GetCompanyInfo'] = async (
 		state: input.state ?? 'APPROVED',
 	};
 	if (input.role && input.role.length > 0) {
-		query.role = input.role.join(',');
+		// Pass the array through so it serializes as repeated role= keys;
+		// a comma-joined value is not parsed as multiple filters by LinkedIn.
+		query.role = input.role;
 	}
 
 	const result = await makeAuthenticatedLinkedInRequest<
