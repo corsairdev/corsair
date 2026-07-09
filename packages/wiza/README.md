@@ -2,7 +2,7 @@
 
 Wiza plugin for Corsair. Wiza finds and exports accurate contact data for
 prospects from LinkedIn — verified emails, phone numbers, and enriched
-professional information for outreach.
+professional information for sales outreach.
 
 ## Auth setup
 
