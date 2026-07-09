@@ -165,6 +165,10 @@ jobs:
           CORSAIR_LLM_KEY: ${{ secrets.CORSAIR_LLM_KEY }}
         run: codex exec --sandbox workspace-write "$(cat /tmp/fix-prompt.md)"
 
+      - name: Re-enable user namespace guard
+        if: always()
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
+
       # This job executed untrusted fork code (the agent's pnpm runs), so it
       # never sees PR_BOT_PAT. It only exports the diff; the push job below
       # runs on a fresh runner where no untrusted code executes.
