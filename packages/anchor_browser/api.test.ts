@@ -105,7 +105,9 @@ describe('AnchorBrowser endpoints', () => {
 	it('maps representative operations to API routes', async () => {
 		const plugin = anchor_browser({ key: 'test-api-key' });
 		// Test-only: narrow to representative session endpoints for route-mapping assertions.
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			sessions: {
 				listSessions: (
 					ctx: AnchorBrowserContext,

@@ -3,7 +3,8 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAnchorBrowserRequest } from '../client';
 import type { AnchorBrowserContext } from '../index';
 import { syncAnchorBrowserOperationCache } from './cache-sync';
-import { anchorBrowserRoutes, type AnchorBrowserRoute } from './routes';
+import type { AnchorBrowserRoute } from './routes';
+import { anchorBrowserRoutes } from './routes';
 import type { AnchorBrowserEndpointInput } from './types';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
@@ -34,7 +35,10 @@ export type AnchorBrowserEndpoint = CorsairEndpoint<
 >;
 
 function camelToSnake(value: string): string {
-	return value.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
+	return value
+		.replace(/([A-Z])/g, '_$1')
+		.replace(/^_/, '')
+		.toLowerCase();
 }
 
 function encodePathPart(value: unknown): string {
@@ -44,7 +48,10 @@ function encodePathPart(value: unknown): string {
 	return encodeURIComponent(String(value));
 }
 
-function resolvePathParam(input: AnchorBrowserEndpointInput, pathKey: string): unknown {
+function resolvePathParam(
+	input: AnchorBrowserEndpointInput,
+	pathKey: string,
+): unknown {
 	const snake = camelToSnake(pathKey);
 	const candidates = [pathKey, snake, ...(PATH_PARAM_ALIASES[pathKey] ?? [])];
 	for (const candidate of candidates) {
@@ -73,18 +80,23 @@ export function resolvePath(
 	});
 }
 
-function buildQuery(route: AnchorBrowserRoute, input: AnchorBrowserEndpointInput) {
+function buildQuery(
+	route: AnchorBrowserRoute,
+	input: AnchorBrowserEndpointInput,
+) {
 	const query: Record<string, unknown> = { ...(input.query ?? {}) };
 	for (const key of route.queryParams ?? []) {
 		const snake = camelToSnake(key);
-		const value =
-			input[snake] ?? input[key] ?? resolvePathParam(input, key);
+		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
 		if (value !== undefined) query[key] = value;
 	}
 	return Object.keys(query).length > 0 ? query : undefined;
 }
 
-function requestBody(route: AnchorBrowserRoute, input: AnchorBrowserEndpointInput) {
+function requestBody(
+	route: AnchorBrowserRoute,
+	input: AnchorBrowserEndpointInput,
+) {
 	if ('body' in input && input.body !== undefined) return input.body;
 	const pathParams = new Set(route.pathParams ?? []);
 	const queryParams = new Set(
@@ -104,7 +116,9 @@ function requestBody(route: AnchorBrowserRoute, input: AnchorBrowserEndpointInpu
 }
 
 export function getRoute(name: string): AnchorBrowserRoute {
-	const route = anchorBrowserRoutes.find((candidate) => candidate.name === name);
+	const route = anchorBrowserRoutes.find(
+		(candidate) => candidate.name === name,
+	);
 	if (!route) {
 		throw new Error(`[anchor_browser] missing route: ${name}`);
 	}
@@ -130,14 +144,18 @@ export async function requestAnchorBrowserOperation(
 	input: AnchorBrowserEndpointInput,
 	route: AnchorBrowserRoute,
 ) {
-	return makeAnchorBrowserRequest(resolvePath(route.path, input, route), ctx.key, {
-		method: route.method,
-		body: requestBody(route, input),
-		query: buildQuery(route, input),
-		// input.headers is unknown via the AnchorBrowserEndpointInput index signature;
-		// callers supply string-valued header maps validated by per-op Zod schemas.
-		headers: input.headers as Record<string, string> | undefined,
-	});
+	return makeAnchorBrowserRequest(
+		resolvePath(route.path, input, route),
+		ctx.key,
+		{
+			method: route.method,
+			body: requestBody(route, input),
+			query: buildQuery(route, input),
+			// input.headers is unknown via the AnchorBrowserEndpointInput index signature;
+			// callers supply string-valued header maps validated by per-op Zod schemas.
+			headers: input.headers as Record<string, string> | undefined,
+		},
+	);
 }
 
 export async function executeAnchorBrowserOperation(

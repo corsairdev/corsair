@@ -31,5 +31,5 @@ export const ProfilesEndpoints = {
 	deleteProfile,
 	getProfile,
 	listProfiles,
-	updateProfile
+	updateProfile,
 } as const;

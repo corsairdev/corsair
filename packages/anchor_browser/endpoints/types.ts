@@ -5,13 +5,17 @@ const AnchorBrowserResponseSchema = z.unknown();
 // Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
 const AnchorBrowserOptionalBodySchema = z.unknown().optional();
 // Optional query filters vary by endpoint; values are heterogeneous JSON filter objects.
-const AnchorBrowserQueryParamsSchema = z.record(z.string(), z.unknown()).optional();
+const AnchorBrowserQueryParamsSchema = z
+	.record(z.string(), z.unknown())
+	.optional();
 // Row/item arrays contain heterogeneous objects per Anchor Browser list and batch APIs.
 const AnchorBrowserBatchItemsSchema = z.array(z.unknown());
 const AnchorBrowserBatchItemsOptionalSchema = z.array(z.unknown()).optional();
 // Config/metadata objects are loosely typed in Anchor Browser API docs.
 const AnchorBrowserLooseRecordSchema = z.record(z.string(), z.unknown());
-const AnchorBrowserLooseRecordOptionalSchema = z.record(z.string(), z.unknown()).optional();
+const AnchorBrowserLooseRecordOptionalSchema = z
+	.record(z.string(), z.unknown())
+	.optional();
 
 // clickMouse
 const ClickMouseInputSchema = z.object({
@@ -36,7 +40,9 @@ const CopySelectedTextInputSchema = z.object({
 });
 export type CopySelectedTextInput = z.infer<typeof CopySelectedTextInputSchema>;
 const CopySelectedTextResponseSchema = AnchorBrowserResponseSchema;
-export type CopySelectedTextResponse = z.infer<typeof CopySelectedTextResponseSchema>;
+export type CopySelectedTextResponse = z.infer<
+	typeof CopySelectedTextResponseSchema
+>;
 
 // createIntegration
 const CreateIntegrationInputSchema = z.object({
@@ -47,9 +53,13 @@ const CreateIntegrationInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateIntegrationInput = z.infer<typeof CreateIntegrationInputSchema>;
+export type CreateIntegrationInput = z.infer<
+	typeof CreateIntegrationInputSchema
+>;
 const CreateIntegrationResponseSchema = AnchorBrowserResponseSchema;
-export type CreateIntegrationResponse = z.infer<typeof CreateIntegrationResponseSchema>;
+export type CreateIntegrationResponse = z.infer<
+	typeof CreateIntegrationResponseSchema
+>;
 
 // createOrUpdateTaskDraft
 const CreateOrUpdateTaskDraftInputSchema = z.object({
@@ -59,9 +69,13 @@ const CreateOrUpdateTaskDraftInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateOrUpdateTaskDraftInput = z.infer<typeof CreateOrUpdateTaskDraftInputSchema>;
+export type CreateOrUpdateTaskDraftInput = z.infer<
+	typeof CreateOrUpdateTaskDraftInputSchema
+>;
 const CreateOrUpdateTaskDraftResponseSchema = AnchorBrowserResponseSchema;
-export type CreateOrUpdateTaskDraftResponse = z.infer<typeof CreateOrUpdateTaskDraftResponseSchema>;
+export type CreateOrUpdateTaskDraftResponse = z.infer<
+	typeof CreateOrUpdateTaskDraftResponseSchema
+>;
 
 // createProfile
 const CreateProfileInputSchema = z.object({
@@ -102,7 +116,9 @@ const DeleteExtensionInputSchema = z.object({
 });
 export type DeleteExtensionInput = z.infer<typeof DeleteExtensionInputSchema>;
 const DeleteExtensionResponseSchema = AnchorBrowserResponseSchema;
-export type DeleteExtensionResponse = z.infer<typeof DeleteExtensionResponseSchema>;
+export type DeleteExtensionResponse = z.infer<
+	typeof DeleteExtensionResponseSchema
+>;
 
 // deleteIntegration
 const DeleteIntegrationInputSchema = z.object({
@@ -111,9 +127,13 @@ const DeleteIntegrationInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteIntegrationInput = z.infer<typeof DeleteIntegrationInputSchema>;
+export type DeleteIntegrationInput = z.infer<
+	typeof DeleteIntegrationInputSchema
+>;
 const DeleteIntegrationResponseSchema = AnchorBrowserResponseSchema;
-export type DeleteIntegrationResponse = z.infer<typeof DeleteIntegrationResponseSchema>;
+export type DeleteIntegrationResponse = z.infer<
+	typeof DeleteIntegrationResponseSchema
+>;
 
 // deleteProfile
 const DeleteProfileInputSchema = z.object({
@@ -145,9 +165,13 @@ const DeleteTaskVersionInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteTaskVersionInput = z.infer<typeof DeleteTaskVersionInputSchema>;
+export type DeleteTaskVersionInput = z.infer<
+	typeof DeleteTaskVersionInputSchema
+>;
 const DeleteTaskVersionResponseSchema = AnchorBrowserResponseSchema;
-export type DeleteTaskVersionResponse = z.infer<typeof DeleteTaskVersionResponseSchema>;
+export type DeleteTaskVersionResponse = z.infer<
+	typeof DeleteTaskVersionResponseSchema
+>;
 
 // deployTask
 const DeployTaskInputSchema = z.object({
@@ -175,7 +199,9 @@ const DoubleClickMouseInputSchema = z.object({
 });
 export type DoubleClickMouseInput = z.infer<typeof DoubleClickMouseInputSchema>;
 const DoubleClickMouseResponseSchema = AnchorBrowserResponseSchema;
-export type DoubleClickMouseResponse = z.infer<typeof DoubleClickMouseResponseSchema>;
+export type DoubleClickMouseResponse = z.infer<
+	typeof DoubleClickMouseResponseSchema
+>;
 
 // dragAndDrop
 const DragAndDropInputSchema = z.object({
@@ -200,7 +226,9 @@ const EndAllSessionsInputSchema = z.object({
 });
 export type EndAllSessionsInput = z.infer<typeof EndAllSessionsInputSchema>;
 const EndAllSessionsResponseSchema = AnchorBrowserResponseSchema;
-export type EndAllSessionsResponse = z.infer<typeof EndAllSessionsResponseSchema>;
+export type EndAllSessionsResponse = z.infer<
+	typeof EndAllSessionsResponseSchema
+>;
 
 // endBrowserSession
 const EndBrowserSessionInputSchema = z.object({
@@ -209,9 +237,13 @@ const EndBrowserSessionInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type EndBrowserSessionInput = z.infer<typeof EndBrowserSessionInputSchema>;
+export type EndBrowserSessionInput = z.infer<
+	typeof EndBrowserSessionInputSchema
+>;
 const EndBrowserSessionResponseSchema = AnchorBrowserResponseSchema;
-export type EndBrowserSessionResponse = z.infer<typeof EndBrowserSessionResponseSchema>;
+export type EndBrowserSessionResponse = z.infer<
+	typeof EndBrowserSessionResponseSchema
+>;
 
 // getBatchSessionStatus
 const GetBatchSessionStatusInputSchema = z.object({
@@ -220,9 +252,13 @@ const GetBatchSessionStatusInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetBatchSessionStatusInput = z.infer<typeof GetBatchSessionStatusInputSchema>;
+export type GetBatchSessionStatusInput = z.infer<
+	typeof GetBatchSessionStatusInputSchema
+>;
 const GetBatchSessionStatusResponseSchema = AnchorBrowserResponseSchema;
-export type GetBatchSessionStatusResponse = z.infer<typeof GetBatchSessionStatusResponseSchema>;
+export type GetBatchSessionStatusResponse = z.infer<
+	typeof GetBatchSessionStatusResponseSchema
+>;
 
 // getBrowserSession
 const GetBrowserSessionInputSchema = z.object({
@@ -231,9 +267,13 @@ const GetBrowserSessionInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetBrowserSessionInput = z.infer<typeof GetBrowserSessionInputSchema>;
+export type GetBrowserSessionInput = z.infer<
+	typeof GetBrowserSessionInputSchema
+>;
 const GetBrowserSessionResponseSchema = AnchorBrowserResponseSchema;
-export type GetBrowserSessionResponse = z.infer<typeof GetBrowserSessionResponseSchema>;
+export type GetBrowserSessionResponse = z.infer<
+	typeof GetBrowserSessionResponseSchema
+>;
 
 // getClipboardContent
 const GetClipboardContentInputSchema = z.object({
@@ -242,9 +282,13 @@ const GetClipboardContentInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetClipboardContentInput = z.infer<typeof GetClipboardContentInputSchema>;
+export type GetClipboardContentInput = z.infer<
+	typeof GetClipboardContentInputSchema
+>;
 const GetClipboardContentResponseSchema = AnchorBrowserResponseSchema;
-export type GetClipboardContentResponse = z.infer<typeof GetClipboardContentResponseSchema>;
+export type GetClipboardContentResponse = z.infer<
+	typeof GetClipboardContentResponseSchema
+>;
 
 // getLatestTaskVersion
 const GetLatestTaskVersionInputSchema = z.object({
@@ -253,9 +297,13 @@ const GetLatestTaskVersionInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetLatestTaskVersionInput = z.infer<typeof GetLatestTaskVersionInputSchema>;
+export type GetLatestTaskVersionInput = z.infer<
+	typeof GetLatestTaskVersionInputSchema
+>;
 const GetLatestTaskVersionResponseSchema = AnchorBrowserResponseSchema;
-export type GetLatestTaskVersionResponse = z.infer<typeof GetLatestTaskVersionResponseSchema>;
+export type GetLatestTaskVersionResponse = z.infer<
+	typeof GetLatestTaskVersionResponseSchema
+>;
 
 // getProfile
 const GetProfileInputSchema = z.object({
@@ -277,7 +325,9 @@ const GetSessionPagesInputSchema = z.object({
 });
 export type GetSessionPagesInput = z.infer<typeof GetSessionPagesInputSchema>;
 const GetSessionPagesResponseSchema = AnchorBrowserResponseSchema;
-export type GetSessionPagesResponse = z.infer<typeof GetSessionPagesResponseSchema>;
+export type GetSessionPagesResponse = z.infer<
+	typeof GetSessionPagesResponseSchema
+>;
 
 // getTaskDraft
 const GetTaskDraftInputSchema = z.object({
@@ -298,9 +348,13 @@ const GetTaskExecutionResultInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTaskExecutionResultInput = z.infer<typeof GetTaskExecutionResultInputSchema>;
+export type GetTaskExecutionResultInput = z.infer<
+	typeof GetTaskExecutionResultInputSchema
+>;
 const GetTaskExecutionResultResponseSchema = AnchorBrowserResponseSchema;
-export type GetTaskExecutionResultResponse = z.infer<typeof GetTaskExecutionResultResponseSchema>;
+export type GetTaskExecutionResultResponse = z.infer<
+	typeof GetTaskExecutionResultResponseSchema
+>;
 
 // getTaskMetadata
 const GetTaskMetadataInputSchema = z.object({
@@ -311,7 +365,9 @@ const GetTaskMetadataInputSchema = z.object({
 });
 export type GetTaskMetadataInput = z.infer<typeof GetTaskMetadataInputSchema>;
 const GetTaskMetadataResponseSchema = AnchorBrowserResponseSchema;
-export type GetTaskMetadataResponse = z.infer<typeof GetTaskMetadataResponseSchema>;
+export type GetTaskMetadataResponse = z.infer<
+	typeof GetTaskMetadataResponseSchema
+>;
 
 // getTaskVersion
 const GetTaskVersionInputSchema = z.object({
@@ -323,7 +379,9 @@ const GetTaskVersionInputSchema = z.object({
 });
 export type GetTaskVersionInput = z.infer<typeof GetTaskVersionInputSchema>;
 const GetTaskVersionResponseSchema = AnchorBrowserResponseSchema;
-export type GetTaskVersionResponse = z.infer<typeof GetTaskVersionResponseSchema>;
+export type GetTaskVersionResponse = z.infer<
+	typeof GetTaskVersionResponseSchema
+>;
 
 // getWebpageContent
 const GetWebpageContentInputSchema = z.object({
@@ -338,9 +396,13 @@ const GetWebpageContentInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetWebpageContentInput = z.infer<typeof GetWebpageContentInputSchema>;
+export type GetWebpageContentInput = z.infer<
+	typeof GetWebpageContentInputSchema
+>;
 const GetWebpageContentResponseSchema = AnchorBrowserResponseSchema;
-export type GetWebpageContentResponse = z.infer<typeof GetWebpageContentResponseSchema>;
+export type GetWebpageContentResponse = z.infer<
+	typeof GetWebpageContentResponseSchema
+>;
 
 // listAgentResources
 const ListAgentResourcesInputSchema = z.object({
@@ -349,9 +411,13 @@ const ListAgentResourcesInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListAgentResourcesInput = z.infer<typeof ListAgentResourcesInputSchema>;
+export type ListAgentResourcesInput = z.infer<
+	typeof ListAgentResourcesInputSchema
+>;
 const ListAgentResourcesResponseSchema = AnchorBrowserResponseSchema;
-export type ListAgentResourcesResponse = z.infer<typeof ListAgentResourcesResponseSchema>;
+export type ListAgentResourcesResponse = z.infer<
+	typeof ListAgentResourcesResponseSchema
+>;
 
 // listExtensions
 const ListExtensionsInputSchema = z.object({
@@ -361,7 +427,9 @@ const ListExtensionsInputSchema = z.object({
 });
 export type ListExtensionsInput = z.infer<typeof ListExtensionsInputSchema>;
 const ListExtensionsResponseSchema = AnchorBrowserResponseSchema;
-export type ListExtensionsResponse = z.infer<typeof ListExtensionsResponseSchema>;
+export type ListExtensionsResponse = z.infer<
+	typeof ListExtensionsResponseSchema
+>;
 
 // listIntegrations
 const ListIntegrationsInputSchema = z.object({
@@ -371,7 +439,9 @@ const ListIntegrationsInputSchema = z.object({
 });
 export type ListIntegrationsInput = z.infer<typeof ListIntegrationsInputSchema>;
 const ListIntegrationsResponseSchema = AnchorBrowserResponseSchema;
-export type ListIntegrationsResponse = z.infer<typeof ListIntegrationsResponseSchema>;
+export type ListIntegrationsResponse = z.infer<
+	typeof ListIntegrationsResponseSchema
+>;
 
 // listProfiles
 const ListProfilesInputSchema = z.object({
@@ -390,9 +460,13 @@ const ListSessionDownloadsInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListSessionDownloadsInput = z.infer<typeof ListSessionDownloadsInputSchema>;
+export type ListSessionDownloadsInput = z.infer<
+	typeof ListSessionDownloadsInputSchema
+>;
 const ListSessionDownloadsResponseSchema = AnchorBrowserResponseSchema;
-export type ListSessionDownloadsResponse = z.infer<typeof ListSessionDownloadsResponseSchema>;
+export type ListSessionDownloadsResponse = z.infer<
+	typeof ListSessionDownloadsResponseSchema
+>;
 
 // listSessionRecordings
 const ListSessionRecordingsInputSchema = z.object({
@@ -401,9 +475,13 @@ const ListSessionRecordingsInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListSessionRecordingsInput = z.infer<typeof ListSessionRecordingsInputSchema>;
+export type ListSessionRecordingsInput = z.infer<
+	typeof ListSessionRecordingsInputSchema
+>;
 const ListSessionRecordingsResponseSchema = AnchorBrowserResponseSchema;
-export type ListSessionRecordingsResponse = z.infer<typeof ListSessionRecordingsResponseSchema>;
+export type ListSessionRecordingsResponse = z.infer<
+	typeof ListSessionRecordingsResponseSchema
+>;
 
 // listSessions
 const ListSessionsInputSchema = z.object({
@@ -426,9 +504,13 @@ const ListTaskExecutionsInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListTaskExecutionsInput = z.infer<typeof ListTaskExecutionsInputSchema>;
+export type ListTaskExecutionsInput = z.infer<
+	typeof ListTaskExecutionsInputSchema
+>;
 const ListTaskExecutionsResponseSchema = AnchorBrowserResponseSchema;
-export type ListTaskExecutionsResponse = z.infer<typeof ListTaskExecutionsResponseSchema>;
+export type ListTaskExecutionsResponse = z.infer<
+	typeof ListTaskExecutionsResponseSchema
+>;
 
 // listTasks
 const ListTasksInputSchema = z.object({
@@ -451,7 +533,9 @@ const ListTaskVersionsInputSchema = z.object({
 });
 export type ListTaskVersionsInput = z.infer<typeof ListTaskVersionsInputSchema>;
 const ListTaskVersionsResponseSchema = AnchorBrowserResponseSchema;
-export type ListTaskVersionsResponse = z.infer<typeof ListTaskVersionsResponseSchema>;
+export type ListTaskVersionsResponse = z.infer<
+	typeof ListTaskVersionsResponseSchema
+>;
 
 // moveMouse
 const MoveMouseInputSchema = z.object({
@@ -508,9 +592,13 @@ const PauseSessionRecordingInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type PauseSessionRecordingInput = z.infer<typeof PauseSessionRecordingInputSchema>;
+export type PauseSessionRecordingInput = z.infer<
+	typeof PauseSessionRecordingInputSchema
+>;
 const PauseSessionRecordingResponseSchema = AnchorBrowserResponseSchema;
-export type PauseSessionRecordingResponse = z.infer<typeof PauseSessionRecordingResponseSchema>;
+export type PauseSessionRecordingResponse = z.infer<
+	typeof PauseSessionRecordingResponseSchema
+>;
 
 // performKeyboardShortcut
 const PerformKeyboardShortcutInputSchema = z.object({
@@ -521,9 +609,13 @@ const PerformKeyboardShortcutInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type PerformKeyboardShortcutInput = z.infer<typeof PerformKeyboardShortcutInputSchema>;
+export type PerformKeyboardShortcutInput = z.infer<
+	typeof PerformKeyboardShortcutInputSchema
+>;
 const PerformKeyboardShortcutResponseSchema = AnchorBrowserResponseSchema;
-export type PerformKeyboardShortcutResponse = z.infer<typeof PerformKeyboardShortcutResponseSchema>;
+export type PerformKeyboardShortcutResponse = z.infer<
+	typeof PerformKeyboardShortcutResponseSchema
+>;
 
 // performWebTask
 const PerformWebTaskInputSchema = z.object({
@@ -546,7 +638,9 @@ const PerformWebTaskInputSchema = z.object({
 });
 export type PerformWebTaskInput = z.infer<typeof PerformWebTaskInputSchema>;
 const PerformWebTaskResponseSchema = AnchorBrowserResponseSchema;
-export type PerformWebTaskResponse = z.infer<typeof PerformWebTaskResponseSchema>;
+export type PerformWebTaskResponse = z.infer<
+	typeof PerformWebTaskResponseSchema
+>;
 
 // pressMouseButton
 const PressMouseButtonInputSchema = z.object({
@@ -560,7 +654,9 @@ const PressMouseButtonInputSchema = z.object({
 });
 export type PressMouseButtonInput = z.infer<typeof PressMouseButtonInputSchema>;
 const PressMouseButtonResponseSchema = AnchorBrowserResponseSchema;
-export type PressMouseButtonResponse = z.infer<typeof PressMouseButtonResponseSchema>;
+export type PressMouseButtonResponse = z.infer<
+	typeof PressMouseButtonResponseSchema
+>;
 
 // publishTaskVersion
 const PublishTaskVersionInputSchema = z.object({
@@ -574,9 +670,13 @@ const PublishTaskVersionInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type PublishTaskVersionInput = z.infer<typeof PublishTaskVersionInputSchema>;
+export type PublishTaskVersionInput = z.infer<
+	typeof PublishTaskVersionInputSchema
+>;
 const PublishTaskVersionResponseSchema = AnchorBrowserResponseSchema;
-export type PublishTaskVersionResponse = z.infer<typeof PublishTaskVersionResponseSchema>;
+export type PublishTaskVersionResponse = z.infer<
+	typeof PublishTaskVersionResponseSchema
+>;
 
 // releaseMouseButton
 const ReleaseMouseButtonInputSchema = z.object({
@@ -588,9 +688,13 @@ const ReleaseMouseButtonInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ReleaseMouseButtonInput = z.infer<typeof ReleaseMouseButtonInputSchema>;
+export type ReleaseMouseButtonInput = z.infer<
+	typeof ReleaseMouseButtonInputSchema
+>;
 const ReleaseMouseButtonResponseSchema = AnchorBrowserResponseSchema;
-export type ReleaseMouseButtonResponse = z.infer<typeof ReleaseMouseButtonResponseSchema>;
+export type ReleaseMouseButtonResponse = z.infer<
+	typeof ReleaseMouseButtonResponseSchema
+>;
 
 // resumeAgent
 const ResumeAgentInputSchema = z.object({
@@ -610,9 +714,13 @@ const ResumeSessionRecordingInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ResumeSessionRecordingInput = z.infer<typeof ResumeSessionRecordingInputSchema>;
+export type ResumeSessionRecordingInput = z.infer<
+	typeof ResumeSessionRecordingInputSchema
+>;
 const ResumeSessionRecordingResponseSchema = AnchorBrowserResponseSchema;
-export type ResumeSessionRecordingResponse = z.infer<typeof ResumeSessionRecordingResponseSchema>;
+export type ResumeSessionRecordingResponse = z.infer<
+	typeof ResumeSessionRecordingResponseSchema
+>;
 
 // runTask
 const RunTaskInputSchema = z.object({
@@ -661,9 +769,13 @@ const ScreenshotWebpageInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ScreenshotWebpageInput = z.infer<typeof ScreenshotWebpageInputSchema>;
+export type ScreenshotWebpageInput = z.infer<
+	typeof ScreenshotWebpageInputSchema
+>;
 const ScreenshotWebpageResponseSchema = AnchorBrowserResponseSchema;
-export type ScreenshotWebpageResponse = z.infer<typeof ScreenshotWebpageResponseSchema>;
+export type ScreenshotWebpageResponse = z.infer<
+	typeof ScreenshotWebpageResponseSchema
+>;
 
 // scrollSession
 const ScrollSessionInputSchema = z.object({
@@ -690,9 +802,13 @@ const SetClipboardContentInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type SetClipboardContentInput = z.infer<typeof SetClipboardContentInputSchema>;
+export type SetClipboardContentInput = z.infer<
+	typeof SetClipboardContentInputSchema
+>;
 const SetClipboardContentResponseSchema = AnchorBrowserResponseSchema;
-export type SetClipboardContentResponse = z.infer<typeof SetClipboardContentResponseSchema>;
+export type SetClipboardContentResponse = z.infer<
+	typeof SetClipboardContentResponseSchema
+>;
 
 // signalEvent
 const SignalEventInputSchema = z.object({
@@ -716,9 +832,13 @@ const StartBrowserSessionInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type StartBrowserSessionInput = z.infer<typeof StartBrowserSessionInputSchema>;
+export type StartBrowserSessionInput = z.infer<
+	typeof StartBrowserSessionInputSchema
+>;
 const StartBrowserSessionResponseSchema = AnchorBrowserResponseSchema;
-export type StartBrowserSessionResponse = z.infer<typeof StartBrowserSessionResponseSchema>;
+export type StartBrowserSessionResponse = z.infer<
+	typeof StartBrowserSessionResponseSchema
+>;
 
 // takeScreenshot
 const TakeScreenshotInputSchema = z.object({
@@ -729,7 +849,9 @@ const TakeScreenshotInputSchema = z.object({
 });
 export type TakeScreenshotInput = z.infer<typeof TakeScreenshotInputSchema>;
 const TakeScreenshotResponseSchema = AnchorBrowserResponseSchema;
-export type TakeScreenshotResponse = z.infer<typeof TakeScreenshotResponseSchema>;
+export type TakeScreenshotResponse = z.infer<
+	typeof TakeScreenshotResponseSchema
+>;
 
 // typeText
 const TypeTextInputSchema = z.object({
@@ -767,9 +889,13 @@ const UpdateTaskMetadataInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateTaskMetadataInput = z.infer<typeof UpdateTaskMetadataInputSchema>;
+export type UpdateTaskMetadataInput = z.infer<
+	typeof UpdateTaskMetadataInputSchema
+>;
 const UpdateTaskMetadataResponseSchema = AnchorBrowserResponseSchema;
-export type UpdateTaskMetadataResponse = z.infer<typeof UpdateTaskMetadataResponseSchema>;
+export type UpdateTaskMetadataResponse = z.infer<
+	typeof UpdateTaskMetadataResponseSchema
+>;
 
 // uploadExtension
 const UploadExtensionInputSchema = z.object({
@@ -783,7 +909,9 @@ const UploadExtensionInputSchema = z.object({
 });
 export type UploadExtensionInput = z.infer<typeof UploadExtensionInputSchema>;
 const UploadExtensionResponseSchema = AnchorBrowserResponseSchema;
-export type UploadExtensionResponse = z.infer<typeof UploadExtensionResponseSchema>;
+export type UploadExtensionResponse = z.infer<
+	typeof UploadExtensionResponseSchema
+>;
 
 // uploadFile
 const UploadFileInputSchema = z.object({
@@ -806,9 +934,13 @@ const UploadFilesToSessionInputSchema = z.object({
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UploadFilesToSessionInput = z.infer<typeof UploadFilesToSessionInputSchema>;
+export type UploadFilesToSessionInput = z.infer<
+	typeof UploadFilesToSessionInputSchema
+>;
 const UploadFilesToSessionResponseSchema = AnchorBrowserResponseSchema;
-export type UploadFilesToSessionResponse = z.infer<typeof UploadFilesToSessionResponseSchema>;
+export type UploadFilesToSessionResponse = z.infer<
+	typeof UploadFilesToSessionResponseSchema
+>;
 
 // waitForEvent
 const WaitForEventInputSchema = z.object({
@@ -890,7 +1022,9 @@ export const AnchorBrowserEndpointInputSchemas = {
 } as const;
 
 export type AnchorBrowserEndpointInputs = {
-	[K in keyof typeof AnchorBrowserEndpointInputSchemas]: z.infer<(typeof AnchorBrowserEndpointInputSchemas)[K]>;
+	[K in keyof typeof AnchorBrowserEndpointInputSchemas]: z.infer<
+		(typeof AnchorBrowserEndpointInputSchemas)[K]
+	>;
 };
 
 export const AnchorBrowserEndpointOutputSchemas = {
@@ -961,10 +1095,13 @@ export const AnchorBrowserEndpointOutputSchemas = {
 } as const;
 
 export type AnchorBrowserEndpointOutputs = {
-	[K in keyof typeof AnchorBrowserEndpointOutputSchemas]: z.infer<(typeof AnchorBrowserEndpointOutputSchemas)[K]>;
+	[K in keyof typeof AnchorBrowserEndpointOutputSchemas]: z.infer<
+		(typeof AnchorBrowserEndpointOutputSchemas)[K]
+	>;
 };
 
-export type AnchorBrowserEndpointInput = AnchorBrowserEndpointInputs[keyof AnchorBrowserEndpointInputs] & {
-	// Passthrough for extra fields not yet mapped from Anchor Browser OpenAPI definitions.
-	[key: string]: unknown;
-};
+export type AnchorBrowserEndpointInput =
+	AnchorBrowserEndpointInputs[keyof AnchorBrowserEndpointInputs] & {
+		// Passthrough for extra fields not yet mapped from Anchor Browser OpenAPI definitions.
+		[key: string]: unknown;
+	};

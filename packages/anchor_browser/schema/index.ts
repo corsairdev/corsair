@@ -1,4 +1,8 @@
-import { AnchorBrowserProfile, AnchorBrowserSession, AnchorBrowserTask } from './database';
+import {
+	AnchorBrowserProfile,
+	AnchorBrowserSession,
+	AnchorBrowserTask,
+} from './database';
 
 export const AnchorBrowserSchema = {
 	version: '1.0.0',

@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { AgentEndpoints } from './agent';
 import { BatchSessionsEndpoints } from './batch-sessions';
 import { DownloadsEndpoints } from './downloads';
@@ -8,14 +9,16 @@ import { OsLevelEndpoints } from './os-level';
 import { PagesEndpoints } from './pages';
 import { ProfilesEndpoints } from './profiles';
 import { RecordingsEndpoints } from './recordings';
+import { anchorBrowserRoutes } from './routes';
 import { ScreenshotsEndpoints } from './screenshots';
 import { SessionsEndpoints } from './sessions';
 import { TasksEndpoints } from './tasks';
 import { ToolsEndpoints } from './tools';
+import {
+	AnchorBrowserEndpointInputSchemas,
+	AnchorBrowserEndpointOutputSchemas,
+} from './types';
 import { UploadsEndpoints } from './uploads';
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
-import { anchorBrowserRoutes } from './routes';
-import { AnchorBrowserEndpointInputSchemas, AnchorBrowserEndpointOutputSchemas } from './types';
 
 export const anchorBrowserEndpointsNested = {
 	agent: AgentEndpoints,
@@ -32,7 +35,7 @@ export const anchorBrowserEndpointsNested = {
 	sessions: SessionsEndpoints,
 	tasks: TasksEndpoints,
 	tools: ToolsEndpoints,
-	uploads: UploadsEndpoints
+	uploads: UploadsEndpoints,
 } as const;
 
 export const anchorBrowserEndpointMeta = Object.fromEntries(
@@ -57,6 +60,9 @@ export const anchorBrowserEndpointSchemas = Object.fromEntries(
 	]),
 );
 
-export { AnchorBrowserEndpointInputSchemas, AnchorBrowserEndpointOutputSchemas };
+export {
+	AnchorBrowserEndpointInputSchemas,
+	AnchorBrowserEndpointOutputSchemas,
+};
 export * from './routes';
 export * from './types';

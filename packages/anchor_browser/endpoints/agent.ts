@@ -2,7 +2,10 @@ import type { AnchorBrowserEndpoint } from './factory';
 import { executeAnchorBrowserOperation, getRoute } from './factory';
 
 const listAgentResourcesRoute = getRoute('listAgentResources');
-export const listAgentResources: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const listAgentResources: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, listAgentResourcesRoute);
 };
 
@@ -25,5 +28,5 @@ export const AgentEndpoints = {
 	listAgentResources,
 	pauseAgent,
 	resumeAgent,
-	uploadFile
+	uploadFile,
 } as const;

@@ -13,5 +13,5 @@ export const waitForEvent: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 
 export const EventsEndpoints = {
 	signalEvent,
-	waitForEvent
+	waitForEvent,
 } as const;

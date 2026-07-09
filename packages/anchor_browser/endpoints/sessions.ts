@@ -2,17 +2,26 @@ import type { AnchorBrowserEndpoint } from './factory';
 import { executeAnchorBrowserOperation, getRoute } from './factory';
 
 const endAllSessionsRoute = getRoute('endAllSessions');
-export const endAllSessions: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const endAllSessions: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, endAllSessionsRoute);
 };
 
 const endBrowserSessionRoute = getRoute('endBrowserSession');
-export const endBrowserSession: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const endBrowserSession: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, endBrowserSessionRoute);
 };
 
 const getBrowserSessionRoute = getRoute('getBrowserSession');
-export const getBrowserSession: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const getBrowserSession: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, getBrowserSessionRoute);
 };
 
@@ -22,7 +31,10 @@ export const listSessions: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 };
 
 const startBrowserSessionRoute = getRoute('startBrowserSession');
-export const startBrowserSession: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const startBrowserSession: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, startBrowserSessionRoute);
 };
 
@@ -31,5 +43,5 @@ export const SessionsEndpoints = {
 	endBrowserSession,
 	getBrowserSession,
 	listSessions,
-	startBrowserSession
+	startBrowserSession,
 } as const;

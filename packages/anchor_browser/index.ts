@@ -12,9 +12,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	anchorBrowserEndpointMeta as generatedAnchorBrowserEndpointMeta,
 	anchorBrowserEndpointSchemas,
 	anchorBrowserEndpointsNested,
+	anchorBrowserEndpointMeta as generatedAnchorBrowserEndpointMeta,
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { AnchorBrowserSchema } from './schema';
@@ -37,9 +37,12 @@ export type AnchorBrowserContext = CorsairPluginContext<
 	AnchorBrowserPluginOptions
 >;
 
-export type AnchorBrowserKeyBuilderContext = KeyBuilderContext<AnchorBrowserPluginOptions>;
+export type AnchorBrowserKeyBuilderContext =
+	KeyBuilderContext<AnchorBrowserPluginOptions>;
 
-export type AnchorBrowserBoundEndpoints = BindEndpoints<typeof anchorBrowserEndpointsNested>;
+export type AnchorBrowserBoundEndpoints = BindEndpoints<
+	typeof anchorBrowserEndpointsNested
+>;
 
 export type AnchorBrowserEndpoints = typeof anchorBrowserEndpointsNested;
 
@@ -49,22 +52,25 @@ export const anchorBrowserAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export type BaseAnchorBrowserPlugin<T extends AnchorBrowserPluginOptions> = CorsairPlugin<
-	'anchor_browser',
-	typeof AnchorBrowserSchema,
-	typeof anchorBrowserEndpointsNested,
-	{},
-	T,
-	typeof defaultAuthType
->;
+export type BaseAnchorBrowserPlugin<T extends AnchorBrowserPluginOptions> =
+	CorsairPlugin<
+		'anchor_browser',
+		typeof AnchorBrowserSchema,
+		typeof anchorBrowserEndpointsNested,
+		{},
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalAnchorBrowserPlugin = BaseAnchorBrowserPlugin<AnchorBrowserPluginOptions>;
+export type InternalAnchorBrowserPlugin =
+	BaseAnchorBrowserPlugin<AnchorBrowserPluginOptions>;
 
 export type ExternalAnchorBrowserPlugin<T extends AnchorBrowserPluginOptions> =
 	BaseAnchorBrowserPlugin<T>;
 
 export function anchor_browser<const T extends AnchorBrowserPluginOptions>(
-	incomingOptions: AnchorBrowserPluginOptions & T = {} as AnchorBrowserPluginOptions & T,
+	incomingOptions: AnchorBrowserPluginOptions &
+		T = {} as AnchorBrowserPluginOptions & T,
 ): ExternalAnchorBrowserPlugin<T> {
 	const options = {
 		...incomingOptions,

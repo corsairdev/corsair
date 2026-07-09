@@ -7,12 +7,18 @@ export const clickMouse: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 };
 
 const copySelectedTextRoute = getRoute('copySelectedText');
-export const copySelectedText: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const copySelectedText: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, copySelectedTextRoute);
 };
 
 const doubleClickMouseRoute = getRoute('doubleClickMouse');
-export const doubleClickMouse: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const doubleClickMouse: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, doubleClickMouseRoute);
 };
 
@@ -22,7 +28,10 @@ export const dragAndDrop: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 };
 
 const getClipboardContentRoute = getRoute('getClipboardContent');
-export const getClipboardContent: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const getClipboardContent: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, getClipboardContentRoute);
 };
 
@@ -42,17 +51,30 @@ export const pasteText: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 };
 
 const performKeyboardShortcutRoute = getRoute('performKeyboardShortcut');
-export const performKeyboardShortcut: AnchorBrowserEndpoint = async (ctx, input = {}) => {
-	return executeAnchorBrowserOperation(ctx, input, performKeyboardShortcutRoute);
+export const performKeyboardShortcut: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAnchorBrowserOperation(
+		ctx,
+		input,
+		performKeyboardShortcutRoute,
+	);
 };
 
 const pressMouseButtonRoute = getRoute('pressMouseButton');
-export const pressMouseButton: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const pressMouseButton: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, pressMouseButtonRoute);
 };
 
 const releaseMouseButtonRoute = getRoute('releaseMouseButton');
-export const releaseMouseButton: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const releaseMouseButton: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, releaseMouseButtonRoute);
 };
 
@@ -62,7 +84,10 @@ export const scrollSession: AnchorBrowserEndpoint = async (ctx, input = {}) => {
 };
 
 const setClipboardContentRoute = getRoute('setClipboardContent');
-export const setClipboardContent: AnchorBrowserEndpoint = async (ctx, input = {}) => {
+export const setClipboardContent: AnchorBrowserEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAnchorBrowserOperation(ctx, input, setClipboardContentRoute);
 };
 
@@ -85,5 +110,5 @@ export const OsLevelEndpoints = {
 	releaseMouseButton,
 	scrollSession,
 	setClipboardContent,
-	typeText
+	typeText,
 } as const;
