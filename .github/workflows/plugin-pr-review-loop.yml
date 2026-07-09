@@ -10,7 +10,7 @@ on:
     types: [created, edited]
 
 concurrency:
-  group: review-loop-${{ github.event.pull_request.number || github.event.issue.number }}
+  group: review-loop-${{ github.event.pull_request.number || github.event.issue.number }}-${{ github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.full_name != github.repository && 'fork-review' || 'base' }}
   cancel-in-progress: true
 
 permissions:
