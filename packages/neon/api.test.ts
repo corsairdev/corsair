@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { request } from 'corsair/http';
 import { makeNeonRequest } from './client';
+import { neonOperations } from './endpoints';
 import type { NeonContext } from './index';
 import { neon, neonEndpointSchemas } from './index';
 
@@ -150,6 +151,173 @@ describe('Neon endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockRequest.mockResolvedValue({ ok: true });
+	});
+
+	it('routes every operation to its declared path and method', async () => {
+		const plugin = neon({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as Record<
+			string,
+			Record<
+				string,
+				(ctx: NeonContext, input: Record<string, unknown>) => Promise<unknown>
+			>
+		>;
+
+		// the const-asserted operations array narrows away optional fields per
+		// member; widen once so the loop can treat every operation uniformly
+		const allOperations = neonOperations as readonly {
+			group: string;
+			name: string;
+			method: string;
+			path: string;
+			pathParams?: readonly string[];
+		}[];
+
+		for (const operation of allOperations) {
+			const handler = endpoints[operation.group]?.[operation.name];
+			if (!handler) {
+				throw new Error(
+					`[test] missing endpoint ${operation.group}.${operation.name}`,
+				);
+			}
+
+			// synthesize one value per declared path param; the factory must
+			// substitute all of them and reject none
+			const input: Record<string, unknown> = {};
+			let expectedUrl: string = operation.path;
+			for (const param of operation.pathParams ?? []) {
+				const value = `test-${param.replace(/_/g, '-')}`;
+				input[param] = value;
+				expectedUrl = expectedUrl.replace(`{${param}}`, value);
+			}
+
+			mockRequest.mockClear();
+			mockRequest.mockResolvedValue({ ok: true });
+			await handler(mockCtx, input);
+
+			const call = mockRequest.mock.calls[0]?.[1];
+			expect(call).toMatchObject({
+				method: operation.method,
+				url: expectedUrl,
+			});
+			// an unresolved placeholder means pathParams and the path template
+			// disagree — exactly the typo class this test exists to catch
+			expect(call.url).not.toContain('{');
+		}
+	});
+
+	it('maps auth, endpoints, orgs, dataApi, snapshots, users and regions to official routes', async () => {
+		const plugin = neon({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as Record<
+			string,
+			| Record<
+					string,
+					| ((
+							ctx: NeonContext,
+							input: Record<string, unknown>,
+					  ) => Promise<unknown>)
+					| undefined
+			  >
+			| undefined
+		>;
+
+		function call(group: string, name: string, input: Record<string, unknown>) {
+			const handler = endpoints[group]?.[name];
+			if (!handler) throw new Error(`[test] missing endpoint ${group}.${name}`);
+			return handler(mockCtx, input);
+		}
+
+		const projectId = 'summer-sound-12345678';
+		const branchId = 'br-aged-salad-637688';
+
+		await call('auth', 'getAuthDetails', {});
+		await call('auth', 'createNeonAuth', {
+			project_id: projectId,
+			branch_id: branchId,
+		});
+		await call('auth', 'deleteBranchNeonAuthUser', {
+			project_id: projectId,
+			branch_id: branchId,
+			auth_user_id: 'user-1',
+		});
+		await call('computeEndpoints', 'listProjectEndpoints', {
+			project_id: projectId,
+		});
+		await call('computeEndpoints', 'startProjectEndpoint', {
+			project_id: projectId,
+			endpoint_id: 'ep-cool-darkness-123456',
+		});
+		await call('organizations', 'getOrganization', {
+			org_id: 'org-cool-breeze-12345678',
+		});
+		await call('organizations', 'removeOrganizationMember', {
+			org_id: 'org-cool-breeze-12345678',
+			member_id: 'member-1',
+		});
+		await call('dataApi', 'createProjectBranchDataAPI', {
+			project_id: projectId,
+			branch_id: branchId,
+			database_name: 'neondb',
+		});
+		await call('snapshots', 'createSnapshot', {
+			project_id: projectId,
+			branch_id: branchId,
+		});
+		await call('snapshots', 'restoreSnapshot', {
+			project_id: projectId,
+			snapshot_id: 'snap-1',
+		});
+		await call('users', 'getCurrentUserInfo', {});
+		await call('users', 'getCurrentUserOrganizations', {});
+		await call('regions', 'getActiveRegions', {});
+
+		expect(mockRequest.mock.calls.map((c) => c[1])).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ method: 'GET', url: '/auth' }),
+				expect.objectContaining({
+					method: 'POST',
+					url: `/projects/${projectId}/branches/${branchId}/auth`,
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: `/projects/${projectId}/branches/${branchId}/auth/users/user-1`,
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: `/projects/${projectId}/endpoints`,
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: `/projects/${projectId}/endpoints/ep-cool-darkness-123456/start`,
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/organizations/org-cool-breeze-12345678',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/organizations/org-cool-breeze-12345678/members/member-1',
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: `/projects/${projectId}/branches/${branchId}/data-api/neondb`,
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: `/projects/${projectId}/branches/${branchId}/snapshot`,
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: `/projects/${projectId}/snapshots/snap-1/restore`,
+				}),
+				expect.objectContaining({ method: 'GET', url: '/users/me' }),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/users/me/organizations',
+				}),
+				expect.objectContaining({ method: 'GET', url: '/regions' }),
+			]),
+		);
 	});
 
 	it('maps representative operations to official API routes', async () => {
