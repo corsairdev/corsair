@@ -81,10 +81,19 @@ jobs:
           name: findings-${{ github.event.pull_request.number }}
           path: /tmp
 
-      - name: Fetch rules and fix prompt from base repo
+      # Passive checkout of the base repo (not the fork) — avoids the raw
+      # CDN, which caches 404s for freshly merged files.
+      - name: Checkout base repo rules
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: base-repo
+
+      - name: Stage rules and fix prompt
         run: |
-          curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/.github/PLUGIN_PR_RULES.md -o /tmp/PLUGIN_PR_RULES.md
-          curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/scripts/pr-review/fix-prompt.md -o /tmp/fix-prompt.md
+          cp base-repo/.github/PLUGIN_PR_RULES.md /tmp/PLUGIN_PR_RULES.md
+          cp base-repo/scripts/pr-review/fix-prompt.md /tmp/fix-prompt.md
+          rm -rf base-repo
 
       - name: Configure Codex for the LLM gateway
         run: |
