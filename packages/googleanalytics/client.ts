@@ -221,7 +221,7 @@ export async function callMeasurementProtocol<T>(
 	});
 
 	const text = await response.text();
-	if (!response.ok && response.status !== 204) {
+	if (!response.ok) {
 		throw new GoogleAnalyticsAPIError(
 			`Measurement Protocol request failed: ${response.status} ${text}`,
 			response.status,

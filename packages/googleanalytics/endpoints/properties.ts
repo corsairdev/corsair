@@ -2,8 +2,10 @@ import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	GOOGLE_ANALYTICS_DATA_BASE,
+	GoogleAnalyticsAPIError,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
+	propertyPath,
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
@@ -83,6 +85,15 @@ export const update: GoogleAnalyticsEndpoints['propertiesUpdate'] = async (
 	ctx,
 	input,
 ) => {
+	// Guard at runtime too: the shared property shape marks name optional, and
+	// interpolating a missing name would silently PATCH /v1beta/undefined.
+	const name = input.property?.name;
+	if (!name) {
+		throw new GoogleAnalyticsAPIError(
+			'propertiesUpdate requires property.name (e.g. "properties/123") to identify the property to update.',
+		);
+	}
+
 	const query: Record<string, string> = {};
 	if (input.updateMask) {
 		query.updateMask = input.updateMask;
@@ -90,7 +101,7 @@ export const update: GoogleAnalyticsEndpoints['propertiesUpdate'] = async (
 
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['propertiesUpdate']
-	>(`/v1beta/${input.property.name}`, ctx, {
+	>(`/v1beta/${propertyPath(name)}`, ctx, {
 		method: 'PATCH',
 		body: input.property,
 		query,

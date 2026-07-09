@@ -600,6 +600,25 @@ describe('endpoint routing hits the documented GA4 REST surface', () => {
 			updateMask: 'displayName',
 		});
 	});
+
+	it('propertiesUpdate rejects a missing property.name instead of PATCHing /v1beta/undefined', async () => {
+		const handler = endpoints.properties?.update;
+		if (!handler) throw new Error('[test] missing properties.update');
+		await expect(
+			handler(mockCtx, { property: { displayName: 'No name' } }),
+		).rejects.toThrow('propertiesUpdate requires property.name');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('propertiesUpdate normalizes a bare property id to properties/{id}', async () => {
+		const handler = endpoints.properties?.update;
+		if (!handler) throw new Error('[test] missing properties.update');
+		await handler(mockCtx, { property: { name: '100', displayName: 'P' } });
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'PATCH',
+			url: '/v1beta/properties/100',
+		});
+	});
 });
 
 describe('measurement protocol routing (fetch-based)', () => {
