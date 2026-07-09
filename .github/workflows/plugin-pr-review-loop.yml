@@ -109,6 +109,28 @@ jobs:
           wire_api = "${{ vars.LLM_WIRE_API }}"
           EOF
 
+      # The round=2 marker is the once-per-PR LLM ratchet. Posting it here —
+      # after all setup succeeded, right before the agent — means infra
+      # failures earlier in this job leave the round retryable.
+      - name: Mark fix round
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          BODY='<!-- corsair-review-bot round=2 -->
+          Remaining findings are being fixed by a bot commit — it will be re-reviewed automatically.'
+          if [ "$PR_BOT_DRY_RUN" = "true" ]; then
+            BODY="<!-- corsair-review-bot dry-run -->
+          <details><summary>DRY RUN — round 2 marker:</summary>
+
+          $BODY
+          </details>"
+          else
+            gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" -f 'labels[]=bot:round-2'
+          fi
+          gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -f "body=$BODY"
+
       - name: Run agent fix
         env:
           CORSAIR_LLM_KEY: ${{ secrets.CORSAIR_LLM_KEY }}
