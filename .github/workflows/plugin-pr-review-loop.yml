@@ -146,6 +146,9 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: read
+      # job-level permissions replace the workflow block, and the patch
+      # fallback posts a PR comment
+      issues: write
     steps:
       # Fresh runner: checkout is passive, no install, no script execution —
       # the PAT never coexists with running untrusted code.
