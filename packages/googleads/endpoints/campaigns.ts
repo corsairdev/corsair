@@ -52,6 +52,7 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 						`${input.customerId}:${row.campaign.id}`,
 						{
 							...campaignData,
+							id: row.campaign.id,
 							budgetAmountMicros: row.campaignBudget?.amountMicros,
 						},
 					);
@@ -124,6 +125,7 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 						`${input.customerId}:${row.campaign.id}`,
 						{
 							...campaignData,
+							id: row.campaign.id,
 							budgetAmountMicros: row.campaignBudget?.amountMicros,
 						},
 					);

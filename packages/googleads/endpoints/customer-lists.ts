@@ -45,7 +45,7 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 				if (row.userList?.id) {
 					await ctx.db.customerLists.upsertByEntityId(
 						`${input.customerId}:${row.userList.id}`,
-						row.userList,
+						{ ...row.userList, id: row.userList.id },
 					);
 				}
 			}
@@ -105,7 +105,7 @@ export const create: GoogleAdsEndpoints['customerListsCreate'] = async (
 				if (result.resourceName) {
 					const id = result.resourceName.split('/').pop();
 					if (id) {
-						await ctx.db.customerLists.upsertByEntityId(id, {
+						await ctx.db.customerLists.upsertByEntityId(`${input.customerId}:${id}`, {
 							id,
 							resourceName: result.resourceName,
 							name: input.listName,

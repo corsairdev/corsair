@@ -159,16 +159,21 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 	incomingOptions: GoogleAdsPluginOptions & T = {} as GoogleAdsPluginOptions &
 		T,
 ): ExternalGoogleAdsPlugin<T> {
+	const loginCustomerId = incomingOptions.loginCustomerId?.replace(/-/g, '');
+	if (loginCustomerId && !/^\d+$/.test(loginCustomerId)) {
+		throw new Error(
+			`Google Ads: loginCustomerId must contain only digits and dashes, got "${incomingOptions.loginCustomerId}"`,
+		);
+	}
+
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
-		// Strip dashes from loginCustomerId so callers can pass the common
-		// dashed format (e.g. "123-456-7890") without breaking the API header.
-		loginCustomerId: incomingOptions.loginCustomerId?.replace(/-/g, ''),
+		loginCustomerId,
 	};
 	if (!options.developerToken) {
-		throw new Error(
-			'Google Ads: developerToken is required. Obtain one from the Google Ads API Center.',
+		console.warn(
+			'Google Ads: developerToken is missing. API calls will fail without it.',
 		);
 	}
 	return {
@@ -238,7 +243,7 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 				return result.accessToken;
 			}
 
-			return '';
+			throw new AuthMissingError('googleads', ctx.authType);
 		},
 	} satisfies InternalGoogleAdsPlugin;
 }
