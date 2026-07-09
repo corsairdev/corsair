@@ -10,6 +10,8 @@ concurrency:
 
 permissions:
   contents: read
+  pull-requests: write
+  issues: write
 
 jobs:
   ci:
@@ -47,3 +49,20 @@ jobs:
         env:
           CI: true
           SKIP_PG_TESTS: 1
+
+  plugin-gate:
+    name: Plugin PR Gate
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Run plugin PR gate
+        run: node --experimental-strip-types scripts/pr-review/gate-main.ts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

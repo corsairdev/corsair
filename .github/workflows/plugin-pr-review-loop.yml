@@ -1,0 +1,200 @@
+name: Plugin PR Review Loop
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  group: review-loop-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  triage:
+    if: github.event.review.user.login == 'greptile-apps[bot]' && github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    outputs:
+      decision: ${{ steps.loop.outputs.decision }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Run review loop triage
+        id: loop
+        run: node --experimental-strip-types scripts/pr-review/loop-main.ts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
+
+      - name: Upload findings for fix job
+        if: steps.loop.outputs.decision == 'fix'
+        uses: actions/upload-artifact@v4
+        with:
+          name: findings-${{ github.event.pull_request.number }}
+          path: /tmp/findings.json
+
+  fix:
+    needs: triage
+    if: needs.triage.outputs.decision == 'fix'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          # PR head repos are public; no token needed to read, and
+          # persist-credentials: false keeps credentials out of .git/config
+          # while the agent runs over untrusted PR code.
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        # --ignore-scripts: the lockfile comes from the untrusted fork, so
+        # lifecycle scripts are attacker-controlled code. lint/typecheck
+        # (all the agent runs) need no native builds.
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Download findings
+        uses: actions/download-artifact@v4
+        with:
+          name: findings-${{ github.event.pull_request.number }}
+          path: /tmp
+
+      - name: Fetch rules and fix prompt from base repo
+        run: |
+          curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/.github/PLUGIN_PR_RULES.md -o /tmp/PLUGIN_PR_RULES.md
+          curl -sf https://raw.githubusercontent.com/${{ github.repository }}/main/scripts/pr-review/fix-prompt.md -o /tmp/fix-prompt.md
+
+      - name: Configure Codex for the LLM gateway
+        run: |
+          mkdir -p ~/.codex
+          cat > ~/.codex/config.toml <<EOF
+          model = "${{ vars.LLM_MODEL }}"
+          model_provider = "corsair"
+
+          [model_providers.corsair]
+          name = "corsair"
+          base_url = "${{ vars.LLM_GATEWAY_URL }}"
+          env_key = "CORSAIR_LLM_KEY"
+          wire_api = "${{ vars.LLM_WIRE_API }}"
+          EOF
+
+      - name: Run agent fix
+        env:
+          CORSAIR_LLM_KEY: ${{ secrets.CORSAIR_LLM_KEY }}
+        run: |
+          npm install -g @openai/codex@0.143.0
+          codex exec --sandbox workspace-write "$(cat /tmp/fix-prompt.md)"
+
+      # This job executed untrusted fork code (the agent's pnpm runs), so it
+      # never sees PR_BOT_PAT. It only exports the diff; the push job below
+      # runs on a fresh runner where no untrusted code executes.
+      - name: Export fix patch (or dry-run comment)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if git diff --quiet; then
+            echo "No changes produced"; exit 0
+          fi
+          git diff > /tmp/fix.patch
+          if [ "$PR_BOT_DRY_RUN" = "true" ]; then
+            {
+              echo '<!-- corsair-review-bot dry-run -->'
+              echo '<details><summary>DRY RUN — would push this fix commit:</summary>'
+              echo
+              echo '```diff'
+              head -c 60000 /tmp/fix.patch
+              echo '```'
+              echo '</details>'
+            } > /tmp/dry.md
+            gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -F body=@/tmp/dry.md
+          fi
+
+      - name: Upload fix patch
+        uses: actions/upload-artifact@v4
+        with:
+          name: fix-patch-${{ github.event.pull_request.number }}
+          path: /tmp/fix.patch
+          if-no-files-found: ignore
+
+  push:
+    needs: fix
+    if: vars.PR_BOT_DRY_RUN != 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      # job-level permissions replace the workflow block, and the patch
+      # fallback posts a PR comment
+      issues: write
+    steps:
+      # Fresh runner: checkout is passive, no install, no script execution —
+      # the PAT never coexists with running untrusted code.
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: false
+
+      - name: Download fix patch
+        id: patch
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: fix-patch-${{ github.event.pull_request.number }}
+          path: /tmp
+
+      - name: Apply, scan, and push
+        if: steps.patch.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_PAT: ${{ secrets.PR_BOT_PAT }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          [ -s /tmp/fix.patch ] || { echo "Empty patch"; exit 0; }
+          if grep -qE '(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[A-Z0-9]{16})' /tmp/fix.patch; then
+            echo "::error::Patch contains a credential-shaped string — refusing to push"; exit 1
+          fi
+          git config user.name "corsair-review-bot"
+          git config user.email "bot@corsair.dev"
+          git apply /tmp/fix.patch
+          git add -A
+          git commit -m "fix: address review findings (corsair review bot)"
+          if ! git push "https://x-access-token:${PR_BOT_PAT}@github.com/${HEAD_REPO}.git" "HEAD:${HEAD_REF}"; then
+            # Fork without "allow edits by maintainers" — deliver the fix as
+            # a patch comment instead of failing silently into escalation.
+            {
+              echo '<!-- corsair-review-bot patch-fallback -->'
+              echo 'The bot prepared a fix but cannot push to your branch (enable "Allow edits by maintainers" on this PR, or apply the patch below with `git apply`):'
+              echo
+              echo '```diff'
+              head -c 60000 /tmp/fix.patch
+              echo '```'
+            } > /tmp/fallback.md
+            gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -F body=@/tmp/fallback.md
+          fi
