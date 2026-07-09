@@ -44,7 +44,12 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
-		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		// Resolve corsair subpath imports to TS sources so jest.mock can
+		// intercept them without the prebuilt ESM dist.
+		'^corsair/(.*)$': [
+			'<rootDir>/../corsair/$1.ts',
+			'<rootDir>/../corsair/$1/index.ts',
+		],
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
