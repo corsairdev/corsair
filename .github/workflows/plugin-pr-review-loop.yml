@@ -116,6 +116,11 @@ jobs:
           cat > ~/.codex/config.toml <<EOF
           model = "${{ vars.LLM_MODEL }}"
           model_provider = "corsair"
+          # Azure Foundry /openai/v1/responses rejects replayed reasoning items
+          # (Codex sends them without ids; Azure's schema requires ids). With
+          # effort=none the model emits no reasoning items, so tool-call
+          # continuation turns pass. Verified locally end to end 2026-07-10.
+          model_reasoning_effort = "none"
 
           [model_providers.corsair]
           name = "corsair"
