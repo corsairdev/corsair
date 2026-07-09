@@ -342,15 +342,6 @@
                 ]
               },
               {
-                "group": "Google Docs",
-                "pages": [
-                  "plugins/googledocs/overview",
-                  "plugins/googledocs/api",
-                  "plugins/googledocs/database",
-                  "plugins/googledocs/webhooks"
-                ]
-              },
-              {
                 "group": "Google drive",
                 "pages": [
                   "plugins/googledrive/overview",
