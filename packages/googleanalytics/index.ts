@@ -857,7 +857,14 @@ export function googleanalytics<const T extends GoogleAnalyticsPluginOptions>(
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
-			scopes: ['https://www.googleapis.com/auth/analytics'],
+			scopes: [
+				// Data API (runReport, runRealtimeReport, ...)
+				'https://www.googleapis.com/auth/analytics',
+				// Admin API (accounts, properties, dimensions, metrics, ...)
+				// requires analytics.edit — the bare analytics scope only
+				// covers the Data API and Admin calls would 403 without it.
+				'https://www.googleapis.com/auth/analytics.edit',
+			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		hooks: options.hooks,
