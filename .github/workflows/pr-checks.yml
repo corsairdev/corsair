@@ -70,7 +70,7 @@ jobs:
           node-version: '24.x'
 
       - name: Typecheck review scripts
-        run: npx -y -p typescript@5.9.3 tsc -p scripts/pr-review
+        run: npx -y -p typescript@5.9.3 -p @types/node tsc -p scripts/pr-review
 
       - name: Run plugin PR gate
         run: node --experimental-strip-types scripts/pr-review/gate-main.ts
