@@ -1,10 +1,13 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "target": "esnext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "types": ["node"],
     "skipLibCheck": true
   },
