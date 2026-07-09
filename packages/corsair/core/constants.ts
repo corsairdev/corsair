@@ -52,6 +52,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'perplexityai',
 	'posthog',
 	'razorpay',
 	'reddit',
@@ -150,6 +151,7 @@ export const ProviderDisplayNames = {
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	instagram: 'Instagram',
+	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -199,6 +201,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'perplexityai'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
