@@ -132,6 +132,13 @@ jobs:
       - name: Install agent
         run: npm install -g @openai/codex@0.143.0
 
+      # Ubuntu 24.04 runners block unprivileged user namespaces via AppArmor,
+      # so Codex's bubblewrap sandbox fails every command with
+      # "bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted".
+      # Relaxing the restriction lets the sandbox itself work as designed.
+      - name: Allow unprivileged user namespaces for the agent sandbox
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
       # The round=2 marker is the once-per-PR LLM ratchet. Posting it here —
       # after all setup succeeded, right before the agent — means infra
       # failures earlier in this job leave the round retryable.
@@ -157,6 +164,10 @@ jobs:
         env:
           CORSAIR_LLM_KEY: ${{ secrets.CORSAIR_LLM_KEY }}
         run: codex exec --sandbox workspace-write "$(cat /tmp/fix-prompt.md)"
+
+      - name: Re-enable user namespace guard
+        if: always()
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
 
       # This job executed untrusted fork code (the agent's pnpm runs), so it
       # never sees PR_BOT_PAT. It only exports the diff; the push job below
