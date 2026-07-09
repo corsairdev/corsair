@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { getValidAccessToken } from './client';
 import { CampaignsEndpoints, CustomerListsEndpoints } from './endpoints';
 import type {
 	GoogleAdsEndpointInputs,
@@ -200,13 +202,40 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 						'Google Ads: key store is not available. Ensure the database/KEK-backed key manager is configured.',
 					);
 				}
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
+				const [accessToken, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+
+				if (!refreshToken) {
+					throw new AuthMissingError('googleads', 'oauth_2');
+				}
+
+				const res = await ctx.keys.get_integration_credentials();
+
+				if (!res.client_id || !res.client_secret) {
 					throw new Error(
-						'Google Ads: no access token available. Ensure the user has completed OAuth.',
+						'[corsair:googleads] No client id or client secret available for token refresh',
 					);
 				}
-				return res;
+
+				const result = await getValidAccessToken({
+					accessToken,
+					expiresAt,
+					refreshToken,
+					clientId: res.client_id,
+					clientSecret: res.client_secret,
+				});
+
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token(result.accessToken),
+						ctx.keys.set_expires_at(String(result.expiresAt)),
+					]);
+				}
+
+				return result.accessToken;
 			}
 
 			return '';

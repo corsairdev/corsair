@@ -48,10 +48,13 @@ export const getById: GoogleAdsEndpoints['campaignsGetById'] = async (
 			for (const row of response.results) {
 				if (row.campaign?.id) {
 					const { campaignBudget: _apiBudget, ...campaignData } = row.campaign;
-					await ctx.db.campaigns.upsertByEntityId(row.campaign.id, {
-						...campaignData,
-						budgetAmountMicros: row.campaignBudget?.amountMicros,
-					});
+					await ctx.db.campaigns.upsertByEntityId(
+						`${input.customerId}:${row.campaign.id}`,
+						{
+							...campaignData,
+							budgetAmountMicros: row.campaignBudget?.amountMicros,
+						},
+					);
 				}
 			}
 		}
@@ -117,10 +120,13 @@ export const getByName: GoogleAdsEndpoints['campaignsGetByName'] = async (
 			for (const row of response.results) {
 				if (row.campaign?.id) {
 					const { campaignBudget: _apiBudget, ...campaignData } = row.campaign;
-					await ctx.db.campaigns.upsertByEntityId(row.campaign.id, {
-						...campaignData,
-						budgetAmountMicros: row.campaignBudget?.amountMicros,
-					});
+					await ctx.db.campaigns.upsertByEntityId(
+						`${input.customerId}:${row.campaign.id}`,
+						{
+							...campaignData,
+							budgetAmountMicros: row.campaignBudget?.amountMicros,
+						},
+					);
 				}
 			}
 		}

@@ -44,7 +44,7 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 			for (const row of response.results) {
 				if (row.userList?.id) {
 					await ctx.db.customerLists.upsertByEntityId(
-						row.userList.id,
+						`${input.customerId}:${row.userList.id}`,
 						row.userList,
 					);
 				}
@@ -142,6 +142,14 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 		try {
 			assertDigitsOnly(input.customerId, 'customerId');
 
+			if (
+				!input.userListResourceName.startsWith(`customers/${input.customerId}/`)
+			) {
+				throw new Error(
+					'userListResourceName must belong to the specified customerId',
+				);
+			}
+
 			// Step 1: Create an offline user data job
 			const createJobResult = await makeGoogleAdsRequest<{
 				resourceName: string;
@@ -171,11 +179,14 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 			);
 
 			let operationsAdded = false;
+			let addOpsResponse:
+				| { partialFailureError?: { code: number; message: string } }
+				| undefined;
 			try {
 				// Step 2: Add operations to the job
 				// Capture response to check for partial failures — with enablePartialFailure: true,
 				// rejected identifiers are returned in the response body instead of throwing.
-				const addOpsResponse = await makeGoogleAdsRequest<{
+				addOpsResponse = await makeGoogleAdsRequest<{
 					partialFailureError?: { code: number; message: string };
 				}>(`/${jobResourceName}:addOperations`, ctx.key, {
 					method: 'POST',
