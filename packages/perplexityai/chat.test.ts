@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
-import { Chat } from './chat';
-import { PerplexityAiEndpointInputSchemas } from './types';
+import { Chat } from './endpoints/chat';
+import { PerplexityAiEndpointInputSchemas } from './endpoints/types';
 
 describe('Perplexity AI Chat Completions', () => {
 	it('should export the chat endpoint', () => {
