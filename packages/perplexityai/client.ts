@@ -5,6 +5,8 @@ export class PerplexityAiAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: string | null,
 	) {
 		super(message);
 		this.name = 'PerplexityAiAPIError';
@@ -50,10 +52,23 @@ export async function makePerplexityAiRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions);
-	} catch (error) {
+	} catch (error: any) {
+		const status = error?.status;
+		const retryAfter =
+			error?.response?.headers?.get?.('retry-after') || error?.body?.retryAfter;
 		if (error instanceof Error) {
-			throw new PerplexityAiAPIError(error.message);
+			throw new PerplexityAiAPIError(
+				error.message,
+				undefined,
+				status,
+				retryAfter,
+			);
 		}
-		throw new PerplexityAiAPIError('Unknown error');
+		throw new PerplexityAiAPIError(
+			'Unknown error',
+			undefined,
+			status,
+			retryAfter,
+		);
 	}
 }

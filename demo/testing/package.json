@@ -40,7 +40,6 @@
     "@corsair-dev/onedrive": "workspace:*",
     "@corsair-dev/openweathermap": "workspace:*",
     "@corsair-dev/outlook": "workspace:*",
-    "@corsair-dev/perplexityai": "workspace:*",
     "@corsair-dev/reddit": "workspace:*",
     "@corsair-dev/sharepoint": "workspace:*",
     "@corsair-dev/slack": "workspace:*",
