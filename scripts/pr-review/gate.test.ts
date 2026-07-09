@@ -32,6 +32,7 @@ const goodInput = {
 	prBody: goodBody,
 	isDraft: false,
 	readmeExists: true,
+	testFileCount: 2,
 	assertionCount: 12,
 };
 
@@ -73,12 +74,17 @@ test('R1: two plugins in one PR fails', () => {
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });
 
-test('R2: no test file fails', () => {
+test('R2: plugin with no test files fails', () => {
+	const r = runGate({ ...goodInput, testFileCount: 0 });
+	assert.ok(r.failures.some((f) => f.rule === 'R2'));
+});
+
+test('R2: update PR not touching tests passes when tests exist on disk', () => {
 	const r = runGate({
 		...goodInput,
 		changedFiles: goodFiles.filter((f) => !f.endsWith('.test.ts')),
 	});
-	assert.ok(r.failures.some((f) => f.rule === 'R2'));
+	assert.ok(!r.failures.some((f) => f.rule === 'R2'));
 });
 
 test('R2: tests without assertions fail', () => {
@@ -129,4 +135,14 @@ test('R4: missing demo link fails', () => {
 test('R7: missing README fails', () => {
 	const r = runGate({ ...goodInput, readmeExists: false });
 	assert.ok(r.failures.some((f) => f.rule === 'R7'));
+});
+
+test('nested comment markers cannot survive stripping (CodeQL js/incomplete-multi-character-sanitization)', () => {
+	const body = goodBody.replace(
+		'Adds the 1Password Connect plugin with vaults and items endpoints.',
+		'<!<!-- inner -->-- sneaky payload -->',
+	);
+	const r = runGate({ ...goodInput, prBody: body });
+	// After full stripping the description is empty → R3 must fail.
+	assert.ok(r.failures.some((f) => f.rule === 'R3'));
 });

@@ -14,23 +14,30 @@ function gh(args: string[]): string {
 	});
 }
 
-/** Counts expect()/assert() calls across a plugin's *.test.ts files on disk. */
-export function countAssertions(pluginDir: string): number {
-	if (!fs.existsSync(pluginDir)) return 0;
-	let count = 0;
+/** Counts *.test.ts files and their expect()/assert() calls on disk. */
+export function countTests(pluginDir: string): {
+	testFileCount: number;
+	assertionCount: number;
+} {
+	if (!fs.existsSync(pluginDir)) {
+		return { testFileCount: 0, assertionCount: 0 };
+	}
+	let testFileCount = 0;
+	let assertionCount = 0;
 	for (const entry of fs.readdirSync(pluginDir, {
 		recursive: true,
 		withFileTypes: true,
 	})) {
 		if (!entry.isFile() || !entry.name.endsWith('.test.ts')) continue;
 		if (entry.parentPath.includes('node_modules')) continue;
+		testFileCount += 1;
 		const content = fs.readFileSync(
 			path.join(entry.parentPath, entry.name),
 			'utf8',
 		);
-		count += content.match(/\b(expect|assert)\s*\(/g)?.length ?? 0;
+		assertionCount += content.match(/\b(expect|assert)\s*\(/g)?.length ?? 0;
 	}
-	return count;
+	return { testFileCount, assertionCount };
 }
 
 function renderComment(result: GateResult): string {
@@ -120,6 +127,9 @@ const changedFiles = execFileSync(
 	.filter(Boolean);
 
 const plugin = detectPlugin(changedFiles);
+const tests = plugin
+	? countTests(path.join('packages', plugin))
+	: { testFileCount: 0, assertionCount: 0 };
 const result = runGate({
 	changedFiles,
 	prBody: (event.pull_request.body as string) ?? '',
@@ -127,7 +137,8 @@ const result = runGate({
 	readmeExists: plugin
 		? fs.existsSync(path.join('packages', plugin, 'README.md'))
 		: false,
-	assertionCount: plugin ? countAssertions(path.join('packages', plugin)) : 0,
+	testFileCount: tests.testFileCount,
+	assertionCount: tests.assertionCount,
 });
 
 if (!result.isPluginPr) {

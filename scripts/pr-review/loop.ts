@@ -49,7 +49,7 @@ export function buildRoundOneComment(
 	if (gateFailures.length > 0) {
 		parts.push(
 			'',
-			'### PR requirements ([rules](../blob/main/.github/PLUGIN_PR_RULES.md))',
+			'### PR requirements ([rules](https://github.com/corsairdev/corsair/blob/main/.github/PLUGIN_PR_RULES.md))',
 			...gateFailures.map((g) => `- **${g.rule}** — ${g.message}`),
 		);
 	}

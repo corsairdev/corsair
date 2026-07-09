@@ -1,6 +1,6 @@
 const IGNORED_PACKAGES = ['corsair', 'cli', 'mcp', 'studio', 'ui', 'app'];
 const ALLOWED_EXTRA = ['packages/corsair/core/constants.ts', 'pnpm-lock.yaml'];
-const ASSERTION_WARN_FLOOR = 5;
+export const ASSERTION_WARN_FLOOR = 5;
 
 export interface GateInput {
 	changedFiles: string[];
@@ -8,6 +8,8 @@ export interface GateInput {
 	isDraft: boolean;
 	/** Whether packages/<plugin>/README.md exists in the checkout. */
 	readmeExists: boolean;
+	/** Number of *.test.ts files that exist in the plugin package. */
+	testFileCount: number;
 	/** Total expect(/assert( calls across the plugin's *.test.ts files. */
 	assertionCount: number;
 }
@@ -49,7 +51,16 @@ function section(body: string, heading: string): string {
 }
 
 function stripComments(s: string): string {
-	return s.replace(/<!--[\s\S]*?-->/g, '');
+	// Strip repeatedly until stable so nested/overlapping markers
+	// cannot reassemble into a live comment (CodeQL: incomplete
+	// multi-character sanitization).
+	let out = s;
+	let prev: string;
+	do {
+		prev = out;
+		out = out.replace(/<!--[\s\S]*?-->/g, '');
+	} while (out !== prev);
+	return out;
 }
 
 export function runGate(input: GateInput): GateResult {
@@ -89,11 +100,9 @@ export function runGate(input: GateInput): GateResult {
 		});
 	}
 
-	// R2 — tests with real assertions
-	const hasTest = input.changedFiles.some(
-		(f) => pluginOf(f) !== null && f.endsWith('.test.ts'),
-	);
-	if (!hasTest) {
+	// R2 — tests with real assertions (existence checked on the plugin
+	// package itself, not the diff — update PRs need not touch tests)
+	if (input.testFileCount === 0) {
 		checks.push({
 			rule: 'R2',
 			label: 'Tests present',

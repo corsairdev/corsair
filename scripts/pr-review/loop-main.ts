@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
-import { detectPlugin, runGate } from './gate.ts';
+import { ASSERTION_WARN_FLOOR, detectPlugin, runGate } from './gate.ts';
 import {
 	buildEscalationComment,
 	buildRoundOneComment,
@@ -64,7 +64,26 @@ function headFile(filePath: string): string | null {
 const plugin = detectPlugin(changedFiles);
 const readmeExists =
 	plugin !== null && headFile(`packages/${plugin}/README.md`) !== null;
-let assertionCount = 0;
+
+// Test existence comes from the head tree (update PRs need not touch
+// tests); assertion depth only inspects changed test files — the gate job
+// (full checkout) is authoritative for depth.
+let testFileCount = 0;
+if (plugin) {
+	try {
+		testFileCount = Number(
+			gh([
+				'api',
+				`repos/${headRepo}/contents/packages/${plugin}?ref=${headSha}`,
+				'--jq',
+				'[.[] | select(.name | endswith(".test.ts"))] | length',
+			]).trim(),
+		);
+	} catch {
+		testFileCount = 0;
+	}
+}
+let assertionCount = testFileCount > 0 ? ASSERTION_WARN_FLOOR : 0;
 for (const f of changedFiles) {
 	if (plugin && f.startsWith(`packages/${plugin}/`) && f.endsWith('.test.ts')) {
 		const b64 = headFile(f);
@@ -80,6 +99,7 @@ const gate = runGate({
 	prBody: (event.pull_request.body as string) ?? '',
 	isDraft: event.pull_request.draft as boolean,
 	readmeExists,
+	testFileCount,
 	assertionCount,
 });
 if (!gate.isPluginPr) {
