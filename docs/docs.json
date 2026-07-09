@@ -714,15 +714,6 @@
                 ]
               },
               {
-                "group": "Webflow",
-                "pages": [
-                  "plugins/webflow/overview",
-                  "plugins/webflow/get-credentials",
-                  "plugins/webflow/api",
-                  "plugins/webflow/database"
-                ]
-              },
-              {
                 "group": "Xquik",
                 "pages": [
                   "plugins/xquik/overview",
