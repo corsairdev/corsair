@@ -2,35 +2,50 @@ import { z } from 'zod';
 
 // ─── Shared sub-schemas ───────────────────────────────────────────────────────
 
-const UserIdentifierSchema = z.object({
-	hashedEmail: z
-		.string()
-		.optional()
-		.describe(
-			'SHA-256 hashed email address, lowercased and trimmed before hashing',
-		),
-	hashedPhoneNumber: z
-		.string()
-		.optional()
-		.describe('SHA-256 hashed phone number in E.164 format (e.g. +1234567890)'),
-	mobileId: z.string().optional().describe('Mobile device advertising ID'),
-	thirdPartyUserId: z
-		.string()
-		.optional()
-		.describe('Third-party user identifier'),
-	addressInfo: z
-		.object({
-			hashedFirstName: z.string().optional(),
-			hashedLastName: z.string().optional(),
-			city: z.string().optional(),
-			state: z.string().optional(),
-			countryCode: z.string().optional(),
-			postalCode: z.string().optional(),
-			hashedStreetAddress: z.string().optional(),
-		})
-		.optional()
-		.describe('Address-based user identifier with SHA-256 hashed fields'),
-});
+const UserIdentifierSchema = z
+	.object({
+		hashedEmail: z
+			.string()
+			.optional()
+			.describe(
+				'SHA-256 hashed email address, lowercased and trimmed before hashing',
+			),
+		hashedPhoneNumber: z
+			.string()
+			.optional()
+			.describe(
+				'SHA-256 hashed phone number in E.164 format (e.g. +1234567890)',
+			),
+		mobileId: z.string().optional().describe('Mobile device advertising ID'),
+		thirdPartyUserId: z
+			.string()
+			.optional()
+			.describe('Third-party user identifier'),
+		addressInfo: z
+			.object({
+				hashedFirstName: z.string().optional(),
+				hashedLastName: z.string().optional(),
+				city: z.string().optional(),
+				state: z.string().optional(),
+				countryCode: z.string().optional(),
+				postalCode: z.string().optional(),
+				hashedStreetAddress: z.string().optional(),
+			})
+			.optional()
+			.describe('Address-based user identifier with SHA-256 hashed fields'),
+	})
+	.refine(
+		(id) =>
+			id.hashedEmail ||
+			id.hashedPhoneNumber ||
+			id.mobileId ||
+			id.thirdPartyUserId ||
+			id.addressInfo,
+		{
+			message:
+				'At least one identifier field is required (hashedEmail, hashedPhoneNumber, mobileId, thirdPartyUserId, or addressInfo)',
+		},
+	);
 
 // ─── Input schemas ────────────────────────────────────────────────────────────
 
@@ -70,10 +85,6 @@ const CustomerListsGetManyInputSchema = z.object({
 		.describe(
 			'Google Ads customer ID (digits only, no dashes). e.g. "1234567890"',
 		),
-	pageSize: z
-		.number()
-		.optional()
-		.describe('Maximum number of results to return. Defaults to 1000.'),
 	pageToken: z
 		.string()
 		.optional()
@@ -134,13 +145,17 @@ const CustomerListsAddOrRemoveInputSchema = z.object({
 				.object({
 					create: z
 						.object({
-							userIdentifiers: z.array(UserIdentifierSchema),
+							userIdentifiers: z
+								.array(UserIdentifierSchema)
+								.min(1, 'At least one user identifier is required'),
 						})
 						.optional()
 						.describe('Add users to the list'),
 					remove: z
 						.object({
-							userIdentifiers: z.array(UserIdentifierSchema),
+							userIdentifiers: z
+								.array(UserIdentifierSchema)
+								.min(1, 'At least one user identifier is required'),
 						})
 						.optional()
 						.describe('Remove users from the list'),
@@ -270,6 +285,12 @@ const AddOrRemoveResponseSchema = z.object({
 			status: z.string().optional(),
 			type: z.string().optional(),
 			failureReason: z.string().optional(),
+		})
+		.optional(),
+	partialFailureError: z
+		.object({
+			code: z.number().optional(),
+			message: z.string().optional(),
 		})
 		.optional(),
 	message: z.string().optional(),

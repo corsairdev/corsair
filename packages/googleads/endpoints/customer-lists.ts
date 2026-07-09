@@ -25,11 +25,8 @@ export const getMany: GoogleAdsEndpoints['customerListsGetMany'] = async (
 		FROM user_list
 		LIMIT 1000`;
 
-		// Using `unknown` because the pageSize / pageToken fields are optional and their presence changes the shape.
+		// Using `unknown` because the pageToken field is optional and its presence changes the shape.
 		const body: Record<string, unknown> = { query };
-		if (input.pageSize) {
-			body.pageSize = input.pageSize;
-		}
 		if (input.pageToken) {
 			body.pageToken = input.pageToken;
 		}
@@ -176,21 +173,19 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 			let operationsAdded = false;
 			try {
 				// Step 2: Add operations to the job
-				// Using Record<string, unknown> because the addOperations response body is undocumented
-				// and not used - only the success/failure of the call matters here.
-				await makeGoogleAdsRequest<Record<string, unknown>>(
-					`/${jobResourceName}:addOperations`,
-					ctx.key,
-					{
-						method: 'POST',
-						body: {
-							enablePartialFailure: true,
-							operations: input.operations,
-						},
-						developerToken: ctx.options?.developerToken,
-						loginCustomerId: ctx.options?.loginCustomerId,
+				// Capture response to check for partial failures — with enablePartialFailure: true,
+				// rejected identifiers are returned in the response body instead of throwing.
+				const addOpsResponse = await makeGoogleAdsRequest<{
+					partialFailureError?: { code: number; message: string };
+				}>(`/${jobResourceName}:addOperations`, ctx.key, {
+					method: 'POST',
+					body: {
+						enablePartialFailure: true,
+						operations: input.operations,
 					},
-				);
+					developerToken: ctx.options?.developerToken,
+					loginCustomerId: ctx.options?.loginCustomerId,
+				});
 				operationsAdded = true;
 
 				// Step 3: Run the job
@@ -228,13 +223,9 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 			// DB upsert and logging are intentionally outside the inner try-catch.
 			// If these fail, the error correctly propagates without the misleading
 			// "Orphaned Job" annotation, since the Google Ads job completed successfully.
-			const id = input.userListResourceName.split('/').pop();
-			if (id) {
-				await ctx.db.customerLists.upsertByEntityId(id, {
-					id,
-					resourceName: input.userListResourceName,
-				});
-			}
+			// Note: we intentionally skip the cache upsert here because addOrRemove
+			// does not return any new list metadata. Upserting only id+resourceName
+			// would erase richer fields (name, description, sizes) previously cached by getMany.
 
 			await logEventFromContext(
 				ctx,
@@ -252,8 +243,13 @@ export const addOrRemove: GoogleAdsEndpoints['customerListsAddOrRemove'] =
 					resourceName: jobResourceName,
 					type: 'CUSTOMER_MATCH_USER_LIST',
 				},
-				message:
-					'Offline user data job created and started. Changes may take 6-12 hours to be reflected.',
+				// Surface partial failure info so callers can detect silently rejected operations.
+				...(addOpsResponse.partialFailureError && {
+					partialFailureError: addOpsResponse.partialFailureError,
+				}),
+				message: addOpsResponse.partialFailureError
+					? `Job started with partial failures: ${addOpsResponse.partialFailureError.message}`
+					: 'Offline user data job created and started. Changes may take 6-12 hours to be reflected.',
 			};
 		} catch (error) {
 			await logEventFromContext(
