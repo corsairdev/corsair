@@ -14,6 +14,9 @@ export const GoogleDocsDocument = z.object({
 	footnoteCount: z.number().optional(),
 	tableCount: z.number().optional(),
 	imageCount: z.number().optional(),
+	// Whether the configured trigger placeholder was present at last sight;
+	// lets documentPlaceholderFilled fire only on the present -> absent edge.
+	hasPlaceholder: z.boolean().optional(),
 	filePath: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });

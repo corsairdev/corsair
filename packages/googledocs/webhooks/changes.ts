@@ -43,6 +43,7 @@ type CachedDocument = {
 		footnoteCount?: number;
 		tableCount?: number;
 		imageCount?: number;
+		hasPlaceholder?: boolean;
 	};
 };
 
@@ -295,10 +296,35 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 				const structure = summarizeStructure(document);
 				const opts = ctx.options.triggers ?? {};
 
+				// Read the prior snapshot once; the placeholder and structure
+				// triggers both compare the new state against it.
+				const cached = (await ctx.db.documents?.findByEntityId?.(file.id)) as
+					| CachedDocument
+					| undefined;
+
+				const placeholderPresent =
+					!!opts.placeholder && text.includes(opts.placeholder);
+
+				// Persist the new placeholder state before any trigger can return,
+				// so the present -> absent edge fires exactly once instead of on
+				// every subsequent change to a document without the placeholder.
+				if (opts.placeholder && ctx.db.documents?.upsertByEntityId) {
+					try {
+						await ctx.db.documents.upsertByEntityId(file.id, {
+							...(cached?.data ?? {}),
+							id: file.id,
+							title: file.name,
+							hasPlaceholder: placeholderPresent,
+						});
+					} catch (error) {
+						console.warn(
+							`Failed to persist placeholder state for ${file.id}:`,
+							error,
+						);
+					}
+				}
+
 				if (isEnabled(ctx, 'documentStructureChanged')) {
-					const cached = (await ctx.db.documents?.findByEntityId?.(file.id)) as
-						| CachedDocument
-						| undefined;
 					if (structureChanged(cached, structure)) {
 						return emit(
 							ctx,
@@ -352,10 +378,14 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					}
 				}
 
+				// Fire only on the present -> absent edge: the placeholder was seen
+				// in the cached snapshot and is gone now. A document that never
+				// contained the placeholder must not trigger on every change.
 				if (
 					isEnabled(ctx, 'documentPlaceholderFilled') &&
 					opts.placeholder &&
-					!text.includes(opts.placeholder)
+					cached?.data?.hasPlaceholder === true &&
+					!placeholderPresent
 				) {
 					return emit(
 						ctx,
