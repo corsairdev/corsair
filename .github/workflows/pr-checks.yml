@@ -48,6 +48,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Typecheck review scripts
+        run: pnpm exec tsc -p scripts/pr-review
+
       - name: Build
         run: pnpm build
 
@@ -68,9 +71,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24.x'
-
-      - name: Typecheck review scripts
-        run: npx -y -p typescript@5.9.3 -p @types/node tsc -p scripts/pr-review
 
       - name: Run plugin PR gate
         run: node --experimental-strip-types scripts/pr-review/gate-main.ts
