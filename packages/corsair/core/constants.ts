@@ -109,11 +109,12 @@ export const ProviderDisplayNames = {
 	googleanalytics: 'Google Analytics',
 	googlecalendar: 'Google Calendar',
 	googledrive: 'Google Drive',
-	googlesheets: 'Google Sheets',
 	googlemeet: 'Google Meet',
+	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
+	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
@@ -151,7 +152,6 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
