@@ -104,7 +104,7 @@ jobs:
         env:
           CORSAIR_LLM_KEY: ${{ secrets.CORSAIR_LLM_KEY }}
         run: |
-          npm install -g @openai/codex
+          npm install -g @openai/codex@0.143.0
           codex exec --sandbox workspace-write "$(cat /tmp/fix-prompt.md)"
 
       # This job executed untrusted fork code (the agent's pnpm runs), so it

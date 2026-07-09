@@ -52,9 +52,11 @@ docs: docs.corsair.dev/llm-gateway). No provider SDKs, no provider keys.
   *would* do as `<!-- corsair-review-bot dry-run -->` comments and never push.
   Flip with `gh variable set PR_BOT_DRY_RUN -R corsairdev/corsair --body "false"`.
 - **Secrets:** `CORSAIR_LLM_KEY` (budget-limited LiteLLM key for the fix
-  step), `PR_BOT_PAT` (fine-grained PAT with `contents: read/write` — the
-  default `GITHUB_TOKEN` cannot push to fork branches). Rotate via
-  `gh secret set <NAME> -R corsairdev/corsair`.
+  step), `PR_BOT_PAT` (**classic** PAT with `public_repo` scope — neither the
+  default `GITHUB_TOKEN` nor fine-grained PATs can push to contributor fork
+  branches; pushing also requires the PR's "allow edits by maintainers",
+  otherwise the push job fails and the PR simply stays with the round-1
+  comment). Rotate via `gh secret set <NAME> -R corsairdev/corsair`.
 - **Labels used:** `gate:failed`, `bot:round-1`, `bot:round-2`,
   `needs-maintainer`. Create once with `gh label create`.
 - **Required checks:** mark Greptile's status check and `Plugin PR Gate` as
