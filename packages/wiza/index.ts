@@ -23,8 +23,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { WizaSchema } from './schema';
-import { resolveWizaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchWizaTenantWebhook } from './webhooks/tenant-matcher';
 
 export type WizaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -163,8 +161,6 @@ export function wiza<const T extends WizaPluginOptions>(
 		endpointSchemas: wizaEndpointSchemas,
 		webhookSchemas: {},
 		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchWizaTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveWizaOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

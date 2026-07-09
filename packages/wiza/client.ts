@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class WizaAPIError extends Error {
 	constructor(
@@ -11,8 +11,7 @@ export class WizaAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const WIZA_API_BASE = 'https://api.example.com';
+const WIZA_API_BASE = 'https://wiza.co';
 
 export async function makeWizaRequest<T>(
 	endpoint: string,
@@ -52,6 +51,9 @@ export async function makeWizaRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new WizaAPIError(error.message);
 		}
