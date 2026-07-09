@@ -22,7 +22,7 @@ export const errorHandlers = {
 			) {
 				const retryAfterVal = Number(error.retryAfter);
 				if (!isNaN(retryAfterVal)) {
-					retryAfterMs = retryAfterVal * 1000;
+					retryAfterMs = retryAfterVal;
 				}
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
