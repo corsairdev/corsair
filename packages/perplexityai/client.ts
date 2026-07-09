@@ -54,8 +54,7 @@ export async function makePerplexityAiRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error: any) {
 		const status = error?.status;
-		const retryAfter =
-			error?.response?.headers?.get?.('retry-after') || error?.body?.retryAfter;
+		const retryAfter = error?.retryAfter;
 		if (error instanceof Error) {
 			throw new PerplexityAiAPIError(
 				error.message,
