@@ -85,13 +85,17 @@ function generatePlugin(pluginName: string) {
 		scripts: {
 			build: 'rm -rf dist && tsc --build --force && tsup',
 			typecheck: 'tsc --noEmit',
+			test: 'jest',
 		},
 		peerDependencies: {
 			corsair: '>=0.1.0',
 			zod: '^4.1.13',
 		},
 		devDependencies: {
+			'@types/jest': '^29.5.14',
 			corsair: 'workspace:*',
+			jest: '^29.7.0',
+			'ts-jest': '^29.4.9',
 			tsup: '^8.0.1',
 			typescript: 'catalog:',
 			zod: '^4.1.13',
@@ -111,7 +115,7 @@ function generatePlugin(pluginName: string) {
 		extends: '../../tsconfig.base.json',
 		compilerOptions: {
 			lib: ['esnext'],
-			types: ['node'],
+			types: ['node', 'jest'],
 			module: 'ESNext',
 			moduleResolution: 'Bundler',
 			outDir: './dist',
@@ -673,6 +677,57 @@ export * from './oauth-tenant-link';
 `,
 	);
 
+	// ── jest.config.cjs + starter test ────────────────────────────────────────
+	writeFileSync(
+		join(pluginDir, 'jest.config.cjs'),
+		`module.exports = {
+	preset: 'ts-jest',
+	testEnvironment: 'node',
+	roots: ['<rootDir>'],
+	testMatch: ['**/*.test.ts', '**/tests/**/*.test.ts'],
+	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+	transform: {
+		'^.+\\.ts$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+				},
+			},
+		],
+	},
+	moduleNameMapper: {
+		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^(\\.\\.?/.*)\\.js$': '$1',
+	},
+	extensionsToTreatAsEsm: ['.ts'],
+	testTimeout: 30000,
+};
+`,
+	);
+	writeFileSync(
+		join(pluginDir, 'schema.test.ts'),
+		`import { ${pascalName}Schema } from './schema';
+
+describe('${pascalName} schema', () => {
+	it('declares a version and entities map', () => {
+		expect(${pascalName}Schema.version).toBeDefined();
+		expect(typeof ${pascalName}Schema.entities).toBe('object');
+		expect(${pascalName}Schema.entities).not.toBeNull();
+	});
+});
+
+// Replace with real endpoint tests as you implement the plugin —
+// every implemented endpoint needs a corresponding test (see
+// .github/PLUGIN_PR_RULES.md, R2).
+`,
+	);
+
 	// ── Update core/constants.ts to register the new provider ─────────────────
 	const constantsPath = join(packagesDir, 'corsair', 'core', 'constants.ts');
 	if (existsSync(constantsPath)) {
@@ -719,6 +774,24 @@ export * from './oauth-tenant-link';
 							newType,
 						);
 					}
+				}
+
+				const displayMatch = updated.match(
+					/export const ProviderDisplayNames = \{([\s\S]*?)\} as const satisfies/,
+				);
+				if (displayMatch?.[1]) {
+					const entries = displayMatch[1]
+						.split('\n')
+						.map((line) => line.trim())
+						.filter((line) => /^[a-z0-9]+: '/.test(line))
+						.map((line) => line.replace(/,$/, ''));
+					entries.push(`${lowerName}: '${pascalName}'`);
+					entries.sort();
+					const newMap = entries.map((e) => `\t${e},`).join('\n');
+					updated = updated.replace(
+						/export const ProviderDisplayNames = \{[\s\S]*?\} as const satisfies/,
+						`export const ProviderDisplayNames = {\n${newMap}\n} as const satisfies`,
+					);
 				}
 
 				writeFileSync(constantsPath, updated);
