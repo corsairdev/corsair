@@ -71,12 +71,14 @@ const readmeExists =
 let testFileCount = 0;
 if (plugin) {
 	try {
+		// Recursive tree so nested tests (e.g. tests/) count, matching the
+		// gate job's recursive disk scan.
 		testFileCount = Number(
 			gh([
 				'api',
-				`repos/${headRepo}/contents/packages/${plugin}?ref=${headSha}`,
+				`repos/${headRepo}/git/trees/${headSha}?recursive=1`,
 				'--jq',
-				'[.[] | select(.name | endswith(".test.ts"))] | length',
+				`[.tree[] | select(.path | startswith("packages/${plugin}/") and endswith(".test.ts"))] | length`,
 			]).trim(),
 		);
 	} catch {

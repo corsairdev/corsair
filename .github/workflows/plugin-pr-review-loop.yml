@@ -167,7 +167,9 @@ jobs:
       - name: Apply, scan, and push
         if: steps.patch.outcome == 'success'
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BOT_PAT: ${{ secrets.PR_BOT_PAT }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
@@ -180,4 +182,16 @@ jobs:
           git apply /tmp/fix.patch
           git add -A
           git commit -m "fix: address review findings (corsair review bot)"
-          git push "https://x-access-token:${PR_BOT_PAT}@github.com/${HEAD_REPO}.git" "HEAD:${HEAD_REF}"
+          if ! git push "https://x-access-token:${PR_BOT_PAT}@github.com/${HEAD_REPO}.git" "HEAD:${HEAD_REF}"; then
+            # Fork without "allow edits by maintainers" — deliver the fix as
+            # a patch comment instead of failing silently into escalation.
+            {
+              echo '<!-- corsair-review-bot patch-fallback -->'
+              echo 'The bot prepared a fix but cannot push to your branch (enable "Allow edits by maintainers" on this PR, or apply the patch below with `git apply`):'
+              echo
+              echo '```diff'
+              head -c 60000 /tmp/fix.patch
+              echo '```'
+            } > /tmp/fallback.md
+            gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -F body=@/tmp/fallback.md
+          fi
