@@ -1,12 +1,9 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { GateResult } from './gate.ts';
-import { detectPlugin, runGate } from './gate.ts';
+import { detectPlugin, renderScorecard, runGate } from './gate.ts';
 
 const MARKER = '<!-- corsair-pr-gate -->';
-const STATUS_ICON = { pass: '✅', warn: '⚠️', fail: '❌' } as const;
-
 function gh(args: string[]): string {
 	return execFileSync('gh', args, {
 		encoding: 'utf8',
@@ -38,26 +35,6 @@ export function countTests(pluginDir: string): {
 		assertionCount += content.match(/\b(expect|assert)\s*\(/g)?.length ?? 0;
 	}
 	return { testFileCount, assertionCount };
-}
-
-function renderComment(result: GateResult): string {
-	const lines = [
-		MARKER,
-		`### Plugin PR scorecard — \`packages/${result.plugin}\``,
-		'',
-		'| Check | Status | Notes |',
-		'| --- | --- | --- |',
-	];
-	for (const c of result.checks) {
-		lines.push(
-			`| ${c.rule} — ${c.label} | ${STATUS_ICON[c.status]} | ${c.detail ?? ''} |`,
-		);
-	}
-	lines.push(
-		'',
-		`Rules: [PLUGIN_PR_RULES.md](https://github.com/${process.env.GITHUB_REPOSITORY}/blob/main/.github/PLUGIN_PR_RULES.md) · re-runs on every push`,
-	);
-	return lines.join('\n');
 }
 
 function upsertComment(repo: string, pr: string, body: string): void {
@@ -115,13 +92,18 @@ const event = JSON.parse(
 );
 const repo = process.env.GITHUB_REPOSITORY ?? '';
 const pr = String(event.pull_request.number);
-const baseSha = event.pull_request.base.sha as string;
 
-const changedFiles = execFileSync(
-	'git',
-	['diff', '--name-only', `${baseSha}...HEAD`],
-	{ encoding: 'utf8' },
-)
+// The PR files API is the source of truth. Diffing against
+// event.pull_request.base.sha is wrong: that sha is recorded on the PR
+// object and lags behind the base branch, sweeping unrelated main-side
+// changes into the diff (seen live on #427 after #435 merged).
+const changedFiles = gh([
+	'api',
+	`repos/${repo}/pulls/${pr}/files`,
+	'--paginate',
+	'--jq',
+	'.[].filename',
+])
 	.trim()
 	.split('\n')
 	.filter(Boolean);
@@ -146,8 +128,20 @@ if (!result.isPluginPr) {
 	process.exit(0);
 }
 
-upsertComment(repo, pr, renderComment(result));
-setLabel(repo, pr, result.failures.length > 0);
+// Fork PRs get a read-only GITHUB_TOKEN regardless of workflow permissions;
+// degrade to log-only there — the loop workflow (base context) posts the
+// scorecard on each review, and this job's exit code enforces the check.
+try {
+	upsertComment(repo, pr, renderScorecard(result));
+	setLabel(repo, pr, result.failures.length > 0);
+} catch (error) {
+	console.log(
+		`::notice::Could not post scorecard (read-only token on fork PRs): ${
+			error instanceof Error ? error.message.split('\n')[0] : error
+		}`,
+	);
+	console.log(renderScorecard(result));
+}
 
 if (result.failures.length > 0) {
 	for (const f of result.failures) {
