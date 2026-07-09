@@ -428,12 +428,26 @@ export function googledocs<const T extends GoogleDocsPluginOptions>(
 
 			if (!isFromGoogle) return false;
 
+			// Docs rides the same Drive changes feed as googledrive, so a bare
+			// "resourceUri contains drive" check would claim googledrive's pushes
+			// too. The CLI prefixes Docs watch channel ids with "googledocs-";
+			// require that prefix (from the header on direct pushes, or the
+			// decoded channel id on Pub/Sub-wrapped ones) to claim the delivery.
+			const isDocsChannel = (channelId: unknown) =>
+				typeof channelId === 'string' && channelId.startsWith('googledocs-');
+
+			if (isDocsChannel(headers['x-goog-channel-id'])) return true;
+
 			const body = request.body as PubSubNotification;
 			if (!body?.message?.data) return false;
 
 			try {
 				const decoded = decodePubSubMessage(body.message.data);
-				return !!decoded.resourceUri && decoded.resourceUri.includes('drive');
+				return (
+					!!decoded.resourceUri &&
+					decoded.resourceUri.includes('drive') &&
+					isDocsChannel(decoded.id)
+				);
 			} catch {
 				return false;
 			}

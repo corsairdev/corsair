@@ -33,7 +33,10 @@ export async function setupDocsWatch(
 
 	watchSpin.message('Starting Google Docs watch...');
 
-	const channelId = crypto.randomUUID();
+	// Prefix the channel id so incoming pushes can be routed to googledocs
+	// instead of googledrive — both ride the same Drive changes feed and are
+	// otherwise indistinguishable at the webhook layer.
+	const channelId = `googledocs-${crypto.randomUUID()}`;
 
 	const watchRes = await fetch(
 		`${DRIVE_API_BASE}/changes/watch?pageToken=${startPageTokenData.startPageToken}`,
