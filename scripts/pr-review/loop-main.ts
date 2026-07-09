@@ -203,20 +203,13 @@ switch (decision) {
 		label('bot:round-1');
 		break;
 	case 'fix':
-		// The workflow's fix job consumes this artifact.
+		// The workflow's fix job consumes this artifact. The round=2 marker
+		// (the once-per-PR LLM ratchet) is posted by the fix job right
+		// before the agent runs, so infra failures don't burn the round.
 		fs.writeFileSync(
 			'/tmp/findings.json',
 			JSON.stringify(findings.filter((f) => f.severity !== 'P2')),
 		);
-		// The round=2 marker is the ratchet that guarantees the LLM fix runs
-		// at most once per PR: the next Greptile review can only escalate.
-		post(
-			[
-				'<!-- corsair-review-bot round=2 -->',
-				'Remaining findings are being fixed by a bot commit — it will be re-reviewed automatically.',
-			].join('\n'),
-		);
-		label('bot:round-2');
 		break;
 	case 'escalate':
 		upsert(R3_MARKER, buildEscalationComment(findings));

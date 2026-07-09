@@ -109,12 +109,34 @@ jobs:
           wire_api = "${{ vars.LLM_WIRE_API }}"
           EOF
 
+      - name: Install agent
+        run: npm install -g @openai/codex@0.143.0
+
+      # The round=2 marker is the once-per-PR LLM ratchet. Posting it here —
+      # after all setup succeeded, right before the agent — means infra
+      # failures earlier in this job leave the round retryable.
+      - name: Mark fix round
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "$PR_BOT_DRY_RUN" = "true" ]; then
+            # Defused text (no parseable marker) so dry runs never consume
+            # real round state.
+            BODY='<!-- corsair-review-bot dry-run -->
+          DRY RUN — would mark round 2 and run the fix agent now.'
+          else
+            BODY='<!-- corsair-review-bot round=2 -->
+          Remaining findings are being fixed by a bot commit — it will be re-reviewed automatically.'
+            gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/labels" -f 'labels[]=bot:round-2'
+          fi
+          gh api -X POST "repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" -f "body=$BODY"
+
       - name: Run agent fix
         env:
           CORSAIR_LLM_KEY: ${{ secrets.CORSAIR_LLM_KEY }}
-        run: |
-          npm install -g @openai/codex@0.143.0
-          codex exec --sandbox workspace-write "$(cat /tmp/fix-prompt.md)"
+        run: codex exec --sandbox workspace-write "$(cat /tmp/fix-prompt.md)"
 
       # This job executed untrusted fork code (the agent's pnpm runs), so it
       # never sees PR_BOT_PAT. It only exports the diff; the push job below
