@@ -301,6 +301,128 @@ describe('Webflow endpoints', () => {
 		);
 	});
 
+	it('routes collectionFields, pages, comments, and forms operations', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionFields: {
+				createCollectionField: (
+					ctx: WebflowContext,
+					input: { collection_id: string; body: unknown },
+				) => Promise<unknown>;
+				updateCollectionField: (
+					ctx: WebflowContext,
+					input: { collection_id: string; field_id: string; body: unknown },
+				) => Promise<unknown>;
+				deleteCollectionField: (
+					ctx: WebflowContext,
+					input: { collection_id: string; field_id: string },
+				) => Promise<unknown>;
+			};
+			pages: {
+				listPages: (
+					ctx: WebflowContext,
+					input: { site_id: string },
+				) => Promise<unknown>;
+				getPage: (
+					ctx: WebflowContext,
+					input: { page_id: string },
+				) => Promise<unknown>;
+				getPageDom: (
+					ctx: WebflowContext,
+					input: { page_id: string },
+				) => Promise<unknown>;
+				updatePageMetadata: (
+					ctx: WebflowContext,
+					input: { page_id: string; body: unknown },
+				) => Promise<unknown>;
+			};
+			comments: {
+				listCommentThreads: (
+					ctx: WebflowContext,
+					input: { site_id: string },
+				) => Promise<unknown>;
+			};
+			forms: {
+				listFormSubmissions: (
+					ctx: WebflowContext,
+					input: { site_id: string },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+
+		const collectionId = '580e63fc8c9a982ac9b8b745';
+		const fieldId = '75821f618da60c18383330ed';
+		const siteId = '580e63e98c9a982ac9b8b741';
+		const pageId = '6596da6045e56dee495bcbba';
+
+		await endpoints.collectionFields.createCollectionField(mockCtx, {
+			collection_id: collectionId,
+			body: { type: 'PlainText', displayName: 'Subtitle' },
+		});
+		await endpoints.collectionFields.updateCollectionField(mockCtx, {
+			collection_id: collectionId,
+			field_id: fieldId,
+			body: { displayName: 'Renamed' },
+		});
+		await endpoints.collectionFields.deleteCollectionField(mockCtx, {
+			collection_id: collectionId,
+			field_id: fieldId,
+		});
+		await endpoints.pages.listPages(mockCtx, { site_id: siteId });
+		await endpoints.pages.getPage(mockCtx, { page_id: pageId });
+		await endpoints.pages.getPageDom(mockCtx, { page_id: pageId });
+		await endpoints.pages.updatePageMetadata(mockCtx, {
+			page_id: pageId,
+			body: { title: 'New Title' },
+		});
+		await endpoints.comments.listCommentThreads(mockCtx, {
+			site_id: siteId,
+		});
+		await endpoints.forms.listFormSubmissions(mockCtx, {
+			site_id: siteId,
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(9);
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual([
+			expect.objectContaining({
+				method: 'POST',
+				url: `/collections/${collectionId}/fields`,
+				body: { type: 'PlainText', displayName: 'Subtitle' },
+			}),
+			expect.objectContaining({
+				method: 'PATCH',
+				url: `/collections/${collectionId}/fields/${fieldId}`,
+				body: { displayName: 'Renamed' },
+			}),
+			expect.objectContaining({
+				method: 'DELETE',
+				url: `/collections/${collectionId}/fields/${fieldId}`,
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: `/sites/${siteId}/pages`,
+			}),
+			expect.objectContaining({ method: 'GET', url: `/pages/${pageId}` }),
+			expect.objectContaining({
+				method: 'GET',
+				url: `/pages/${pageId}/dom`,
+			}),
+			expect.objectContaining({
+				method: 'PUT',
+				url: `/pages/${pageId}`,
+				body: { title: 'New Title' },
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: `/sites/${siteId}/comments`,
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: `/sites/${siteId}/form_submissions`,
+			}),
+		]);
+	});
+
 	it('folds extra GET inputs into the query string', async () => {
 		const plugin = webflow({ key: 'test-token' });
 		const endpoints = endpointsAs<{

@@ -46,7 +46,7 @@ registered). The flow requests these scopes: `authorized_user:read`,
 | `token`            | `getTokenAuthorizedBy`                                                                                                                                                                                                                                                                                                                                                                                        |
 
 Read results are cached locally for 8 entity types (sites, collections,
-collection items, assets, pages, orders, webhooks, comments); write
+collection items, assets, asset folders, pages, orders, webhooks); write
 operations evict or update the affected cache entries, including
 cascade-eviction of items when their parent collection is deleted.
 
