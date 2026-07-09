@@ -1,7 +1,5 @@
-import { get as exampleGet } from './example';
-
-export const Example = {
-	get: exampleGet,
-};
-
+export { Credits } from './credits';
+export { IndividualReveals } from './individual-reveals';
+export { Lists } from './lists';
+export { Prospects } from './prospects';
 export * from './types';

@@ -1,21 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { Credits, IndividualReveals, Lists, Prospects } from './endpoints';
 import type {
 	WizaEndpointInputs,
 	WizaEndpointOutputs,
@@ -26,18 +23,13 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { WizaSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
 import { resolveWizaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchWizaTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, WizaWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type WizaPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalWizaPlugin['hooks'];
-	webhookHooks?: InternalWizaPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof wizaEndpointsNested>;
 };
@@ -58,62 +50,83 @@ type WizaEndpoint<K extends keyof WizaEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type WizaEndpoints = {
-	exampleGet: WizaEndpoint<'exampleGet'>;
+	creditsGet: WizaEndpoint<'creditsGet'>;
+	individualRevealsStart: WizaEndpoint<'individualRevealsStart'>;
+	individualRevealsGet: WizaEndpoint<'individualRevealsGet'>;
+	listsGet: WizaEndpoint<'listsGet'>;
+	prospectsSearch: WizaEndpoint<'prospectsSearch'>;
 };
-
-type WizaWebhook<K extends keyof WizaWebhookOutputs, TEvent> = CorsairWebhook<
-	WizaContext,
-	TEvent,
-	WizaWebhookOutputs[K]
->;
-
-export type WizaWebhooks = {
-	example: WizaWebhook<'example', ExampleEvent>;
-};
-
-export type WizaBoundWebhooks = BindWebhooks<WizaWebhooks>;
 
 const wizaEndpointsNested = {
-	example: {
-		get: Example.get,
+	credits: {
+		get: Credits.get,
 	},
-} as const;
-
-const wizaWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	individualReveals: {
+		start: IndividualReveals.start,
+		get: IndividualReveals.get,
+	},
+	lists: {
+		get: Lists.get,
+	},
+	prospects: {
+		search: Prospects.search,
 	},
 } as const;
 
 export const wizaEndpointSchemas = {
-	'example.get': {
-		input: WizaEndpointInputSchemas.exampleGet,
-		output: WizaEndpointOutputSchemas.exampleGet,
+	'credits.get': {
+		input: WizaEndpointInputSchemas.creditsGet,
+		output: WizaEndpointOutputSchemas.creditsGet,
+	},
+	'individualReveals.start': {
+		input: WizaEndpointInputSchemas.individualRevealsStart,
+		output: WizaEndpointOutputSchemas.individualRevealsStart,
+	},
+	'individualReveals.get': {
+		input: WizaEndpointInputSchemas.individualRevealsGet,
+		output: WizaEndpointOutputSchemas.individualRevealsGet,
+	},
+	'lists.get': {
+		input: WizaEndpointInputSchemas.listsGet,
+		output: WizaEndpointOutputSchemas.listsGet,
+	},
+	'prospects.search': {
+		input: WizaEndpointInputSchemas.prospectsSearch,
+		output: WizaEndpointOutputSchemas.prospectsSearch,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof wizaEndpointsNested>;
-
-const wizaWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof wizaWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const wizaEndpointMeta = {
-	'example.get': {
+	'credits.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'Get the number of remaining API credits (emails, phones, exports) in your Wiza account',
+	},
+	'individualReveals.start': {
+		riskLevel: 'write',
+		description:
+			'Start an individual reveal to enrich a single contact in real time (consumes credits)',
+	},
+	'individualReveals.get': {
+		riskLevel: 'read',
+		description:
+			'Get the status and enriched results of an individual reveal by ID',
+	},
+	'lists.get': {
+		riskLevel: 'read',
+		description: 'Get the processing status and details of a list by ID',
+	},
+	'prospects.search': {
+		riskLevel: 'read',
+		description:
+			'Search for prospects matching filters (job title, location, company, industry)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof wizaEndpointsNested>;
 
 export const wizaAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -122,7 +135,7 @@ export type BaseWizaPlugin<T extends WizaPluginOptions> = CorsairPlugin<
 	'wiza',
 	typeof WizaSchema,
 	typeof wizaEndpointsNested,
-	typeof wizaWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -144,17 +157,12 @@ export function wiza<const T extends WizaPluginOptions>(
 		schema: WizaSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: wizaEndpointsNested,
-		webhooks: wizaWebhooksNested,
+		webhooks: {},
 		endpointMeta: wizaEndpointMeta,
 		endpointSchemas: wizaEndpointSchemas,
-		webhookSchemas: wizaWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-wiza-signature' in headers;
-		},
+		webhookSchemas: {},
+		pluginWebhookMatcher: () => false,
 		pluginTenantWebhookMatcher: matchWizaTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveWizaOAuthWebhookTenantLink,
 		errorHandlers: {
@@ -162,15 +170,6 @@ export function wiza<const T extends WizaPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: WizaKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -180,23 +179,22 @@ export function wiza<const T extends WizaPluginOptions>(
 				return res ?? '';
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
 			return '';
 		},
 	} satisfies InternalWizaPlugin;
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
+	GetCreditsInput,
+	GetCreditsResponse,
+	GetIndividualRevealInput,
+	GetIndividualRevealResponse,
+	GetListInput,
+	GetListResponse,
+	ProspectSearchInput,
+	ProspectSearchResponse,
+	StartIndividualRevealInput,
+	StartIndividualRevealResponse,
 	WizaEndpointInputs,
 	WizaEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	WizaWebhookOutputs,
-} from './webhooks/types';
