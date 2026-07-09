@@ -160,9 +160,9 @@ const CustomerListsAddOrRemoveInputSchema = z.object({
 						.optional()
 						.describe('Remove users from the list'),
 				})
-				.refine((op) => op.create || op.remove, {
+				.refine((op) => (op.create ? !op.remove : !!op.remove), {
 					message:
-						'Each operation must have at least one of "create" or "remove"',
+						'Each operation must have exactly one of "create" or "remove", not both',
 				}),
 		)
 		.min(1, 'At least one operation is required')

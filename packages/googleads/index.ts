@@ -160,6 +160,9 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
+		// Strip dashes from loginCustomerId so callers can pass the common
+		// dashed format (e.g. "123-456-7890") without breaking the API header.
+		loginCustomerId: incomingOptions.loginCustomerId?.replace(/-/g, ''),
 	};
 	if (!options.developerToken) {
 		throw new Error(
@@ -192,6 +195,11 @@ export function googleads<const T extends GoogleAdsPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				if (!ctx.keys) {
+					throw new Error(
+						'Google Ads: key store is not available. Ensure the database/KEK-backed key manager is configured.',
+					);
+				}
 				const res = await ctx.keys.get_access_token();
 				if (!res) {
 					throw new Error(

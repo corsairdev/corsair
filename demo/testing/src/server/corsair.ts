@@ -50,10 +50,14 @@ export const corsair = createCorsair({
 			},
 		}),
 		googlesheets(),
-		googleads({
-			developerToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN,
-			loginCustomerId: process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID,
-		}),
+		...(process.env.GOOGLE_ADS_DEVELOPER_TOKEN
+			? [
+					googleads({
+						developerToken: process.env.GOOGLE_ADS_DEVELOPER_TOKEN,
+						loginCustomerId: process.env.GOOGLE_ADS_LOGIN_CUSTOMER_ID,
+					}),
+				]
+			: []),
 		googlecalendar(),
 		gmail(),
 		linear(),
