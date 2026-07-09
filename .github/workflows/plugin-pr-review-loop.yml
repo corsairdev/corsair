@@ -3,9 +3,14 @@ name: Plugin PR Review Loop
 on:
   pull_request_review:
     types: [submitted]
+  # Fork PRs: pull_request_review runs get a read-only token and no
+  # secrets/vars. Greptile edits its summary comment every review, and
+  # issue_comment runs in base context with full permissions for any PR.
+  issue_comment:
+    types: [created, edited]
 
 concurrency:
-  group: review-loop-${{ github.event.pull_request.number }}
+  group: review-loop-${{ github.event.pull_request.number || github.event.issue.number }}
   cancel-in-progress: true
 
 permissions:
@@ -15,10 +20,20 @@ permissions:
 
 jobs:
   triage:
-    if: github.event.review.user.login == 'greptile-apps[bot]' && github.event.pull_request.draft == false
+    if: >-
+      (github.event_name == 'pull_request_review' &&
+       github.event.review.user.login == 'greptile-apps[bot]' &&
+       github.event.pull_request.draft == false &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.comment.user.login == 'greptile-apps[bot]' &&
+       github.event.issue.pull_request != null)
     runs-on: ubuntu-24.04
     outputs:
       decision: ${{ steps.loop.outputs.decision }}
+      pr_number: ${{ steps.loop.outputs.pr_number }}
+      head_repo: ${{ steps.loop.outputs.head_repo }}
+      head_ref: ${{ steps.loop.outputs.head_ref }}
     steps:
       - uses: actions/checkout@v4
 
@@ -37,7 +52,7 @@ jobs:
         if: steps.loop.outputs.decision == 'fix'
         uses: actions/upload-artifact@v4
         with:
-          name: findings-${{ github.event.pull_request.number }}
+          name: findings-${{ steps.loop.outputs.pr_number }}
           path: /tmp/findings.json
 
   fix:
@@ -52,8 +67,8 @@ jobs:
       - name: Checkout PR head
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ needs.triage.outputs.head_repo }}
+          ref: ${{ needs.triage.outputs.head_ref }}
           # PR head repos are public; no token needed to read, and
           # persist-credentials: false keeps credentials out of .git/config
           # while the agent runs over untrusted PR code.
@@ -78,7 +93,7 @@ jobs:
       - name: Download findings
         uses: actions/download-artifact@v4
         with:
-          name: findings-${{ github.event.pull_request.number }}
+          name: findings-${{ needs.triage.outputs.pr_number }}
           path: /tmp
 
       # Passive checkout of the base repo (not the fork) — avoids the raw
@@ -119,9 +134,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ needs.triage.outputs.pr_number }}
         run: |
-          if [ "$PR_BOT_DRY_RUN" = "true" ]; then
+          if [ "$PR_BOT_DRY_RUN" != "false" ]; then
             # Defused text (no parseable marker) so dry runs never consume
             # real round state.
             BODY='<!-- corsair-review-bot dry-run -->
@@ -145,13 +160,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ needs.triage.outputs.pr_number }}
         run: |
           if git diff --quiet; then
             echo "No changes produced"; exit 0
           fi
           git diff > /tmp/fix.patch
-          if [ "$PR_BOT_DRY_RUN" = "true" ]; then
+          if [ "$PR_BOT_DRY_RUN" != "false" ]; then
             {
               echo '<!-- corsair-review-bot dry-run -->'
               echo '<details><summary>DRY RUN — would push this fix commit:</summary>'
@@ -167,13 +182,13 @@ jobs:
       - name: Upload fix patch
         uses: actions/upload-artifact@v4
         with:
-          name: fix-patch-${{ github.event.pull_request.number }}
+          name: fix-patch-${{ needs.triage.outputs.pr_number }}
           path: /tmp/fix.patch
           if-no-files-found: ignore
 
   push:
-    needs: fix
-    if: vars.PR_BOT_DRY_RUN != 'true'
+    needs: [triage, fix]
+    if: vars.PR_BOT_DRY_RUN == 'false'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -186,8 +201,8 @@ jobs:
       - name: Checkout PR head
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ needs.fix.outputs.head_repo || needs.triage.outputs.head_repo }}
+          ref: ${{ needs.fix.outputs.head_ref || needs.triage.outputs.head_ref }}
           persist-credentials: false
 
       - name: Download fix patch
@@ -195,7 +210,7 @@ jobs:
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          name: fix-patch-${{ github.event.pull_request.number }}
+          name: fix-patch-${{ needs.triage.outputs.pr_number }}
           path: /tmp
 
       - name: Apply, scan, and push
@@ -203,9 +218,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_BOT_PAT: ${{ secrets.PR_BOT_PAT }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ needs.triage.outputs.pr_number }}
+          HEAD_REPO: ${{ needs.triage.outputs.head_repo }}
+          HEAD_REF: ${{ needs.triage.outputs.head_ref }}
         run: |
           [ -s /tmp/fix.patch ] || { echo "Empty patch"; exit 0; }
           if grep -qE '(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[A-Z0-9]{16})' /tmp/fix.patch; then

@@ -1,6 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
-import { ASSERTION_WARN_FLOOR, detectPlugin, runGate } from './gate.ts';
+import {
+	ASSERTION_WARN_FLOOR,
+	detectPlugin,
+	renderScorecard,
+	runGate,
+} from './gate.ts';
 import {
 	buildEscalationComment,
 	buildRoundOneComment,
@@ -27,10 +32,47 @@ const event = JSON.parse(
 	fs.readFileSync(process.env.GITHUB_EVENT_PATH ?? '', 'utf8'),
 );
 const repo = process.env.GITHUB_REPOSITORY ?? '';
-const dryRun = process.env.PR_BOT_DRY_RUN === 'true';
+
+// Triggered either by pull_request_review (same-repo PRs) or issue_comment
+// (Greptile edits its summary comment each review; this event runs with
+// base-repo permissions even for fork PRs). Normalize to a PR object.
+if (!event.pull_request && event.issue?.pull_request) {
+	event.pull_request = JSON.parse(
+		gh(['api', `repos/${repo}/pulls/${event.issue.number}`]),
+	);
+}
+if (!event.pull_request) {
+	console.log('No pull request in event — skipped.');
+	process.exit(0);
+}
+if (!event.review) {
+	const latest = JSON.parse(
+		gh([
+			'api',
+			`repos/${repo}/pulls/${event.pull_request.number}/reviews`,
+			'--paginate',
+		]),
+	)
+		.filter(
+			(r: { user: { login: string } }) => r.user.login === 'greptile-apps[bot]',
+		)
+		.pop();
+	if (!latest) {
+		console.log('No greptile review yet — skipped.');
+		process.exit(0);
+	}
+	event.review = latest;
+}
+// Fail closed: fork-triggered runs don't receive repo variables, so an
+// unset flag must mean dry-run, never live.
+const dryRun = process.env.PR_BOT_DRY_RUN !== 'false';
 const pr = event.pull_request.number as number;
 const reviewId = event.review.id as number;
 const author = event.pull_request.user.login as string;
+
+setOutput('pr_number', String(event.pull_request.number));
+setOutput('head_repo', event.pull_request.head.repo.full_name);
+setOutput('head_ref', event.pull_request.head.ref);
 
 const changedFiles = gh([
 	'api',
@@ -108,6 +150,18 @@ if (!gate.isPluginPr) {
 	console.log('Not a plugin PR (or draft) — loop skipped.');
 	setOutput('decision', 'skip');
 	process.exit(0);
+}
+
+// Fork PRs: the pull_request-triggered gate job has a read-only token and
+// cannot post; this workflow runs in base context, so it owns the scorecard
+// comment and the gate:failed label on every review.
+if (!dryRun) {
+	upsert('<!-- corsair-pr-gate -->', renderScorecard(gate));
+	if (gate.failures.length > 0) {
+		label('gate:failed');
+	} else {
+		unlabel('gate:failed');
+	}
 }
 
 const reviewComments = JSON.parse(

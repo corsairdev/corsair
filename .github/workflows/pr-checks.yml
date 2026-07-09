@@ -48,6 +48,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Typecheck review scripts
+        run: pnpm exec tsc -p scripts/pr-review
+
       - name: Build
         run: pnpm build
 
