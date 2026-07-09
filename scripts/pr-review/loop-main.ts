@@ -1,6 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
-import { ASSERTION_WARN_FLOOR, detectPlugin, runGate } from './gate.ts';
+import {
+	ASSERTION_WARN_FLOOR,
+	detectPlugin,
+	renderScorecard,
+	runGate,
+} from './gate.ts';
 import {
 	buildEscalationComment,
 	buildRoundOneComment,
