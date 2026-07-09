@@ -14,16 +14,35 @@ export default async function OssIntegrationsLayout({
 	children: ReactNode;
 }) {
 	const session = await getSession();
-	const [profile, activeDeadlineClaim] = session
-		? await Promise.all([
+
+	let profile: Awaited<ReturnType<typeof getCurrentProfile>> = null;
+	let activeDeadlineClaim: Awaited<
+		ReturnType<
+			Awaited<ReturnType<typeof getApi>>['integrations']['activeDeadlineClaim']
+		>
+	> = null;
+
+	if (session) {
+		try {
+			const api = await getApi();
+			[profile, activeDeadlineClaim] = await Promise.all([
 				getCurrentProfile(),
-				(await getApi()).integrations.activeDeadlineClaim(),
-			])
-		: [null, null];
+				api.integrations.activeDeadlineClaim(),
+			]);
+		} catch (error) {
+			console.error('[oss layout] signed-in header data failed', error);
+		}
+	}
+
 	const githubUsername = profile?.githubUsername ?? null;
-	const githubAvatarUrl = githubUsername
-		? await getGithubUserAvatar(githubUsername)
-		: null;
+	let githubAvatarUrl: string | null = null;
+	if (githubUsername) {
+		try {
+			githubAvatarUrl = await getGithubUserAvatar(githubUsername);
+		} catch (error) {
+			console.error('[oss layout] avatar lookup failed', error);
+		}
+	}
 
 	return (
 		<div className="min-h-screen bg-[#f4f4f4] font-[family-name:var(--font-landing-sans)] text-[#1c1c1c]">
