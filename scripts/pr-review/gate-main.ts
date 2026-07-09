@@ -92,13 +92,18 @@ const event = JSON.parse(
 );
 const repo = process.env.GITHUB_REPOSITORY ?? '';
 const pr = String(event.pull_request.number);
-const baseSha = event.pull_request.base.sha as string;
 
-const changedFiles = execFileSync(
-	'git',
-	['diff', '--name-only', `${baseSha}...HEAD`],
-	{ encoding: 'utf8' },
-)
+// The PR files API is the source of truth. Diffing against
+// event.pull_request.base.sha is wrong: that sha is recorded on the PR
+// object and lags behind the base branch, sweeping unrelated main-side
+// changes into the diff (seen live on #427 after #435 merged).
+const changedFiles = gh([
+	'api',
+	`repos/${repo}/pulls/${pr}/files`,
+	'--paginate',
+	'--jq',
+	'.[].filename',
+])
 	.trim()
 	.split('\n')
 	.filter(Boolean);
