@@ -1,0 +1,6 @@
+{
+  "name": "@corsair-dev/faketestplugin",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Planted test plugin for review loop dogfood - do not merge"
+}
