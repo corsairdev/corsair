@@ -210,9 +210,6 @@ importers:
       '@corsair-dev/vapi':
         specifier: workspace:*
         version: link:../../packages/vapi
-      '@corsair-dev/wiza':
-        specifier: workspace:*
-        version: link:../../packages/wiza
       '@corsair-dev/xquik':
         specifier: workspace:*
         version: link:../../packages/xquik
