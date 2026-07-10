@@ -41,6 +41,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'hashnode',
 	'hubspot',
 	'instagram',
 	'intercom',
@@ -111,6 +112,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	hashnode: 'Hashnode',
 	hubspot: 'HubSpot',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -188,6 +190,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'hashnode'
 	| 'hubspot'
 	| 'instagram'
 	| 'intercom'
