@@ -1973,7 +1973,7 @@ export const activeTrailRoutes = [
 		path: '/api/webhooks/{id}/parameters/{parameterid}',
 		description:
 			'Tool to update an existing webhook parameter in your ActiveTrail account. Use when you need to modify parameter properties such as key, value, type, or field mappings for webhook events.',
-		pathParams: ['webhook_id', 'parameterid'],
+		pathParams: ['webhook_id', 'parameter_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
