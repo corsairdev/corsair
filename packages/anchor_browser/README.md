@@ -38,9 +38,18 @@ The plugin exposes **64 operations** covering these endpoint groups:
 
 ## Demo
 
-Verified end-to-end: a browser session is started and a screenshot is captured through the plugin's request client (`makeAnchorBrowserRequest` → `POST /sessions` then `GET /sessions/{id}/screenshot`):
+Verified end-to-end: a real browser session is started, navigated to `https://example.com`, and a screenshot is captured through the plugin's request client (`makeAnchorBrowserRequest` → `POST /sessions` → `POST /sessions/{id}/goto` → `GET /sessions/{id}/screenshot`). The screenshot below is captured live by `scripts/demo-live-screenshot.mjs` against the Anchor Browser API (not a placeholder):
 
 ![Anchor Browser session screenshot captured via the plugin](./scripts/demo-session-screenshot.png)
+
+To reproduce the capture locally:
+
+```sh
+export ANCHOR_BROWSER_API_KEY="your-key-here"
+pnpm --filter @corsair-dev/anchor_browser exec tsx scripts/demo-live-screenshot.mjs
+```
+
+The script prints the real JSON responses from `startBrowserSession` / `navigateToUrl` / `endBrowserSession` and writes a fresh `scripts/demo-session-screenshot.png`.
 - **downloads / uploads**: manage transfers
 - **events**: event streams and polling helpers
 - **extensions / integrations**: manage browser add-ons and external integrations
