@@ -29,7 +29,7 @@
     "ts-jest": "^29.4.9",
     "tsup": "^8.0.1",
     "typescript": "catalog:",
-    "zod": "catalog:"
+    "zod": "^4.1.13"
   },
   "keywords": [
     "corsair",
