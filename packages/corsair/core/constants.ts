@@ -151,7 +151,6 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram',
 	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
