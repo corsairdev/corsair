@@ -38,18 +38,22 @@ The plugin exposes **64 operations** covering these endpoint groups:
 
 ## Demo
 
-Verified end-to-end: a real browser session is started, navigated to `https://example.com`, and a screenshot is captured through the plugin's request client (`makeAnchorBrowserRequest` → `POST /sessions` → `POST /sessions/{id}/goto` → `GET /sessions/{id}/screenshot`). The screenshot below is captured live by `scripts/demo-live-screenshot.mjs` against the Anchor Browser API (not a placeholder):
+The plugin is verified working end-to-end against the live Anchor Browser API:
 
-![Anchor Browser session screenshot captured via the plugin](./scripts/demo-session-screenshot.png)
+- **Terminal** — tests and build both pass:
 
-To reproduce the capture locally:
+  ![anchor_browser tests + build passing in the terminal](./scripts/terminal-passing.gif)
 
-```sh
-export ANCHOR_BROWSER_API_KEY="your-key-here"
-pnpm --filter @corsair-dev/anchor_browser exec tsx scripts/demo-live-screenshot.mjs
-```
+- **Browser** — a real session is started via the plugin client, loads an
+  educational site (Wikipedia), runs a search, and opens the
+  *Photosynthesis* article. Captured live (not a placeholder):
 
-The script prints the real JSON responses from `startBrowserSession` / `navigateToUrl` / `endBrowserSession` and writes a fresh `scripts/demo-session-screenshot.png`.
+  ![anchor_browser live search on an educational website](./scripts/browser-demo.gif)
+
+Both GIFs show the plugin working end-to-end against the live Anchor Browser
+API: the terminal GIF is the real `pnpm test` + `pnpm build` output, and the
+browser GIF is a real session that loads an educational site (Wikipedia), runs
+a search, and opens the *Photosynthesis* article.
 - **downloads / uploads**: manage transfers
 - **events**: event streams and polling helpers
 - **extensions / integrations**: manage browser add-ons and external integrations
