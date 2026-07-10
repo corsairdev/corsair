@@ -45,6 +45,7 @@ export const BaseProviders = [
 	'jira',
 	'linear',
 	'monday',
+	'neon',
 	'notion',
 	'onedrive',
 	'openweathermap',
@@ -113,6 +114,7 @@ export const ProviderDisplayNames = {
 	linear: 'Linear',
 	monday: 'Monday',
 	notion: 'Notion',
+	neon: 'Neon',
 	onedrive: 'OneDrive',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
@@ -186,6 +188,7 @@ export type AllProviders =
 	| 'jira'
 	| 'linear'
 	| 'monday'
+	| 'neon'
 	| 'notion'
 	| 'onedrive'
 	| 'openweathermap'
