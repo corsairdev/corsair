@@ -35,6 +35,12 @@ The plugin exposes **64 operations** covering these endpoint groups:
 - **pages**: page navigation and state
 - **screenshots**: capture screenshots
 - **recordings**: manage recordings
+
+## Demo
+
+Verified end-to-end: a browser session is started and a screenshot is captured through the plugin's request client (`makeAnchorBrowserRequest` → `POST /sessions` then `GET /sessions/{id}/screenshot`):
+
+![Anchor Browser session screenshot captured via the plugin](./scripts/demo-session-screenshot.png)
 - **downloads / uploads**: manage transfers
 - **events**: event streams and polling helpers
 - **extensions / integrations**: manage browser add-ons and external integrations
