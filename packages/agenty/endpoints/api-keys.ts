@@ -1,9 +1,18 @@
 import type { AgentyEndpoint } from './factory';
 import { executeAgentyOperation, getRoute } from './factory';
 
-const apiKeysControllerCreateApiKeysRoute = getRoute('apiKeysControllerCreateApiKeys');
-export const apiKeysControllerCreateApiKeys: AgentyEndpoint = async (ctx, input = {}) => {
-	return executeAgentyOperation(ctx, input, apiKeysControllerCreateApiKeysRoute);
+const apiKeysControllerCreateApiKeysRoute = getRoute(
+	'apiKeysControllerCreateApiKeys',
+);
+export const apiKeysControllerCreateApiKeys: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAgentyOperation(
+		ctx,
+		input,
+		apiKeysControllerCreateApiKeysRoute,
+	);
 };
 
 const apiKeysDeleteByIdRoute = getRoute('apiKeysDeleteById');
@@ -37,7 +46,10 @@ export const apiKeysUpdateById: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const changeApiKeyStatusByIdRoute = getRoute('changeApiKeyStatusById');
-export const changeApiKeyStatusById: AgentyEndpoint = async (ctx, input = {}) => {
+export const changeApiKeyStatusById: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, changeApiKeyStatusByIdRoute);
 };
 
@@ -49,5 +61,5 @@ export const ApiKeysEndpoints = {
 	apiKeysGetById,
 	apiKeysResetById,
 	apiKeysUpdateById,
-	changeApiKeyStatusById
+	changeApiKeyStatusById,
 } as const;

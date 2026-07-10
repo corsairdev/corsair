@@ -7,5 +7,5 @@ export const connectionsGetAll: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 export const ConnectionsEndpoints = {
-	connectionsGetAll
+	connectionsGetAll,
 } as const;

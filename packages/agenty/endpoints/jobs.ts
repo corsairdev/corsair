@@ -22,12 +22,18 @@ export const jobsDownload: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const jobsDownloadFilesByIdRoute = getRoute('jobsDownloadFilesById');
-export const jobsDownloadFilesById: AgentyEndpoint = async (ctx, input = {}) => {
+export const jobsDownloadFilesById: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, jobsDownloadFilesByIdRoute);
 };
 
 const jobsDownloadResultByIdRoute = getRoute('jobsDownloadResultById');
-export const jobsDownloadResultById: AgentyEndpoint = async (ctx, input = {}) => {
+export const jobsDownloadResultById: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, jobsDownloadResultByIdRoute);
 };
 
@@ -73,5 +79,5 @@ export const JobsEndpoints = {
 	jobsGetLogsById,
 	jobsListFilesById,
 	jobsStart,
-	jobsStopById
+	jobsStopById,
 } as const;

@@ -16,9 +16,18 @@ export const projectsAddAgents: AgentyEndpoint = async (ctx, input = {}) => {
 	return executeAgentyOperation(ctx, input, projectsAddAgentsRoute);
 };
 
-const projectsControllerCreateProjectRoute = getRoute('projectsControllerCreateProject');
-export const projectsControllerCreateProject: AgentyEndpoint = async (ctx, input = {}) => {
-	return executeAgentyOperation(ctx, input, projectsControllerCreateProjectRoute);
+const projectsControllerCreateProjectRoute = getRoute(
+	'projectsControllerCreateProject',
+);
+export const projectsControllerCreateProject: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAgentyOperation(
+		ctx,
+		input,
+		projectsControllerCreateProjectRoute,
+	);
 };
 
 const projectsGetAllRoute = getRoute('projectsGetAll');
@@ -27,7 +36,10 @@ export const projectsGetAll: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const removeAgentFromProjectRoute = getRoute('removeAgentFromProject');
-export const removeAgentFromProject: AgentyEndpoint = async (ctx, input = {}) => {
+export const removeAgentFromProject: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, removeAgentFromProjectRoute);
 };
 
@@ -43,5 +55,5 @@ export const ProjectsEndpoints = {
 	projectsControllerCreateProject,
 	projectsGetAll,
 	removeAgentFromProject,
-	updateProject
+	updateProject,
 } as const;

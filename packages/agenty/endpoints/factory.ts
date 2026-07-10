@@ -3,7 +3,8 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAgentyRequest } from '../client';
 import type { AgentyContext } from '../index';
 import { syncAgentyOperationCache } from './cache-sync';
-import { agentyRoutes, type AgentyRoute } from './routes';
+import type { AgentyRoute } from './routes';
+import { agentyRoutes } from './routes';
 import type { AgentyEndpointInput } from './types';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
@@ -26,7 +27,10 @@ export type AgentyEndpoint = CorsairEndpoint<
 >;
 
 function camelToSnake(value: string): string {
-	return value.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
+	return value
+		.replace(/([A-Z])/g, '_$1')
+		.replace(/^_/, '')
+		.toLowerCase();
 }
 
 function encodePathPart(value: unknown): string {
@@ -36,7 +40,10 @@ function encodePathPart(value: unknown): string {
 	return encodeURIComponent(String(value));
 }
 
-function resolvePathParam(input: AgentyEndpointInput, pathKey: string): unknown {
+function resolvePathParam(
+	input: AgentyEndpointInput,
+	pathKey: string,
+): unknown {
 	const snake = camelToSnake(pathKey);
 	const candidates = [pathKey, snake, ...(PATH_PARAM_ALIASES[pathKey] ?? [])];
 	for (const candidate of candidates) {
@@ -69,8 +76,7 @@ function buildQuery(route: AgentyRoute, input: AgentyEndpointInput) {
 	const query: Record<string, unknown> = { ...(input.query ?? {}) };
 	for (const key of route.queryParams ?? []) {
 		const snake = camelToSnake(key);
-		const value =
-			input[snake] ?? input[key] ?? resolvePathParam(input, key);
+		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
 		if (value !== undefined) query[key] = value;
 	}
 	return Object.keys(query).length > 0 ? query : undefined;

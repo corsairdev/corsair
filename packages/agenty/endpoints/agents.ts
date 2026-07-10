@@ -1,13 +1,23 @@
 import type { AgentyEndpoint } from './factory';
 import { executeAgentyOperation, getRoute } from './factory';
 
-const agentsControllerCreateAgentRoute = getRoute('agentsControllerCreateAgent');
-export const agentsControllerCreateAgent: AgentyEndpoint = async (ctx, input = {}) => {
+const agentsControllerCreateAgentRoute = getRoute(
+	'agentsControllerCreateAgent',
+);
+export const agentsControllerCreateAgent: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, agentsControllerCreateAgentRoute);
 };
 
-const agentsControllerGetTemplatesRoute = getRoute('agentsControllerGetTemplates');
-export const agentsControllerGetTemplates: AgentyEndpoint = async (ctx, input = {}) => {
+const agentsControllerGetTemplatesRoute = getRoute(
+	'agentsControllerGetTemplates',
+);
+export const agentsControllerGetTemplates: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, agentsControllerGetTemplatesRoute);
 };
 
@@ -37,7 +47,10 @@ export const copyAgent: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const transferAgentOwnershipRoute = getRoute('transferAgentOwnership');
-export const transferAgentOwnership: AgentyEndpoint = async (ctx, input = {}) => {
+export const transferAgentOwnership: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, transferAgentOwnershipRoute);
 };
 
@@ -49,5 +62,5 @@ export const AgentsEndpoints = {
 	agentsGetById,
 	agentsUpdateById,
 	copyAgent,
-	transferAgentOwnership
+	transferAgentOwnership,
 } as const;

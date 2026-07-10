@@ -25,5 +25,5 @@ export const UsersEndpoints = {
 	downloadUsers,
 	getAllTeamMembers,
 	getUserById,
-	updateUserById
+	updateUserById,
 } as const;

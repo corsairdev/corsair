@@ -7,11 +7,14 @@ export const inputsGetByAgentId: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const inputsUpdateByAgentIdRoute = getRoute('inputsUpdateByAgentId');
-export const inputsUpdateByAgentId: AgentyEndpoint = async (ctx, input = {}) => {
+export const inputsUpdateByAgentId: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, inputsUpdateByAgentIdRoute);
 };
 
 export const InputsEndpoints = {
 	inputsGetByAgentId,
-	inputsUpdateByAgentId
+	inputsUpdateByAgentId,
 } as const;

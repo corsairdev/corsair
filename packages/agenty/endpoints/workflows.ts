@@ -37,5 +37,5 @@ export const WorkflowsEndpoints = {
 	downloadWorkflows,
 	getWorkflowById,
 	patchWorkflow,
-	updateWorkflow
+	updateWorkflow,
 } as const;

@@ -12,9 +12,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	agentyEndpointMeta as generatedAgentyEndpointMeta,
 	agentyEndpointSchemas,
 	agentyEndpointsNested,
+	agentyEndpointMeta as generatedAgentyEndpointMeta,
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { AgentySchema } from './schema';

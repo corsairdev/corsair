@@ -37,7 +37,10 @@ export const listsClearRows: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const listsControllerCreateListRoute = getRoute('listsControllerCreateList');
-export const listsControllerCreateList: AgentyEndpoint = async (ctx, input = {}) => {
+export const listsControllerCreateList: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, listsControllerCreateListRoute);
 };
 
@@ -91,5 +94,5 @@ export const ListsEndpoints = {
 	listsGetRowsById,
 	listsUpdateById,
 	listsUploadCsv,
-	updateListRow
+	updateListRow,
 } as const;

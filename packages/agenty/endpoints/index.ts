@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { AgentsEndpoints } from './agents';
 import { ApiKeysEndpoints } from './api-keys';
 import { BrowserEndpoints } from './browser';
@@ -7,12 +8,14 @@ import { InputsEndpoints } from './inputs';
 import { JobsEndpoints } from './jobs';
 import { ListsEndpoints } from './lists';
 import { ProjectsEndpoints } from './projects';
+import { agentyRoutes } from './routes';
 import { SchedulerEndpoints } from './scheduler';
+import {
+	AgentyEndpointInputSchemas,
+	AgentyEndpointOutputSchemas,
+} from './types';
 import { UsersEndpoints } from './users';
 import { WorkflowsEndpoints } from './workflows';
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
-import { agentyRoutes } from './routes';
-import { AgentyEndpointInputSchemas, AgentyEndpointOutputSchemas } from './types';
 
 export const agentyEndpointsNested = {
 	agents: AgentsEndpoints,
@@ -26,7 +29,7 @@ export const agentyEndpointsNested = {
 	projects: ProjectsEndpoints,
 	scheduler: SchedulerEndpoints,
 	users: UsersEndpoints,
-	workflows: WorkflowsEndpoints
+	workflows: WorkflowsEndpoints,
 } as const;
 
 export const agentyEndpointMeta = Object.fromEntries(
@@ -38,7 +41,7 @@ export const agentyEndpointMeta = Object.fromEntries(
 			description: route.description,
 		},
 	]),
-// Object.fromEntries loses the literal endpoint-meta shape; cast satisfies RequiredPluginEndpointMeta.
+	// Object.fromEntries loses the literal endpoint-meta shape; cast satisfies RequiredPluginEndpointMeta.
 ) as RequiredPluginEndpointMeta<typeof agentyEndpointsNested>;
 
 export const agentyEndpointSchemas = Object.fromEntries(

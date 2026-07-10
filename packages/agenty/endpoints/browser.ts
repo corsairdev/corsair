@@ -6,8 +6,13 @@ export const captureScreenshot: AgentyEndpoint = async (ctx, input = {}) => {
 	return executeAgentyOperation(ctx, input, captureScreenshotRoute);
 };
 
-const captureScreenshotWithOptionsRoute = getRoute('captureScreenshotWithOptions');
-export const captureScreenshotWithOptions: AgentyEndpoint = async (ctx, input = {}) => {
+const captureScreenshotWithOptionsRoute = getRoute(
+	'captureScreenshotWithOptions',
+);
+export const captureScreenshotWithOptions: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, captureScreenshotWithOptionsRoute);
 };
 
@@ -17,17 +22,28 @@ export const convertUrlToPdf: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const convertUrlToPdfWithOptionsRoute = getRoute('convertUrlToPdfWithOptions');
-export const convertUrlToPdfWithOptions: AgentyEndpoint = async (ctx, input = {}) => {
+export const convertUrlToPdfWithOptions: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, convertUrlToPdfWithOptionsRoute);
 };
 
-const extractBrowserStructuredDataRoute = getRoute('extractBrowserStructuredData');
-export const extractBrowserStructuredData: AgentyEndpoint = async (ctx, input = {}) => {
+const extractBrowserStructuredDataRoute = getRoute(
+	'extractBrowserStructuredData',
+);
+export const extractBrowserStructuredData: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, extractBrowserStructuredDataRoute);
 };
 
 const extractStructuredDataRoute = getRoute('extractStructuredData');
-export const extractStructuredData: AgentyEndpoint = async (ctx, input = {}) => {
+export const extractStructuredData: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, extractStructuredDataRoute);
 };
 
@@ -42,12 +58,18 @@ export const getPageContent: AgentyEndpoint = async (ctx, input = {}) => {
 };
 
 const getPageContentWithOptionsRoute = getRoute('getPageContentWithOptions');
-export const getPageContentWithOptions: AgentyEndpoint = async (ctx, input = {}) => {
+export const getPageContentWithOptions: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, getPageContentWithOptionsRoute);
 };
 
 const getRedirectsWithOptionsRoute = getRoute('getRedirectsWithOptions');
-export const getRedirectsWithOptions: AgentyEndpoint = async (ctx, input = {}) => {
+export const getRedirectsWithOptions: AgentyEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgentyOperation(ctx, input, getRedirectsWithOptionsRoute);
 };
 
@@ -67,5 +89,5 @@ export const BrowserEndpoints = {
 	getPageContent,
 	getPageContentWithOptions,
 	getRedirectsWithOptions,
-	scrapeWebpageData
+	scrapeWebpageData,
 } as const;

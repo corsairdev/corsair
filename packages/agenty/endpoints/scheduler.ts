@@ -25,5 +25,5 @@ export const SchedulerEndpoints = {
 	deleteSchedule,
 	getSchedule,
 	toggleSchedule,
-	updateSchedule
+	updateSchedule,
 } as const;

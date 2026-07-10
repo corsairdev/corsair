@@ -100,9 +100,14 @@ describe('Agenty endpoints', () => {
 
 	it('maps representative operations to API routes', async () => {
 		const plugin = agenty({ key: 'test-api-key' });
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			agents: {
-				agentsGetAll: (ctx: AgentyContext, input: { limit?: number }) => Promise<unknown>;
+				agentsGetAll: (
+					ctx: AgentyContext,
+					input: { limit?: number },
+				) => Promise<unknown>;
 			};
 			jobs: {
 				jobsStart: (
@@ -137,7 +142,9 @@ describe('Agenty endpoints', () => {
 	it('resolves workflow_id into workflow path segments', async () => {
 		const plugin = agenty({ key: 'test-api-key' });
 		// Test-only: narrow to workflow endpoints for path-param resolution assertions.
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			workflows: {
 				getWorkflowById: (
 					ctx: AgentyContext,
@@ -150,8 +157,12 @@ describe('Agenty endpoints', () => {
 			};
 		};
 
-		await endpoints.workflows.getWorkflowById(mockCtx, { workflow_id: 'wf-123' });
-		await endpoints.workflows.deleteWorkflow(mockCtx, { workflow_id: 'wf-456' });
+		await endpoints.workflows.getWorkflowById(mockCtx, {
+			workflow_id: 'wf-123',
+		});
+		await endpoints.workflows.deleteWorkflow(mockCtx, {
+			workflow_id: 'wf-456',
+		});
 
 		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
 			expect.arrayContaining([
@@ -170,7 +181,9 @@ describe('Agenty endpoints', () => {
 	it('resolves list_id and key_id into path segments', async () => {
 		const plugin = agenty({ key: 'test-api-key' });
 		// Test-only: narrow to list/apiKey endpoints for path-param resolution assertions.
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			lists: {
 				listsDeleteById: (
 					ctx: AgentyContext,

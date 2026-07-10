@@ -26,7 +26,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/lists/{list_id}/rows',
 		hostType: 'main',
-		description: "Tool to add new rows to a list. Use when you need to insert one or more data rows into an existing list. Column names in row objects must match the list's schema.",
+		description:
+			"Tool to add new rows to a list. Use when you need to insert one or more data rows into an existing list. Column names in row objects must match the list's schema.",
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -38,7 +39,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/agents',
 		hostType: 'main',
-		description: "Creates a new Agenty agent for web scraping, change detection, crawling, map monitoring, or brand monitoring. Use this tool to set up automated data extraction agents. Requires: - name: A descriptive name for the agent - type: One of 'scraping', 'changedetection', 'crawling', 'mapmonitoring', 'brandmonitoring' - config: Configuration object with url, browser, and collections defining what data to extract The config.collections array contains field definitions with CSS selectors or other extraction methods. Each field specifies what data to extract and how (TEXT content, ATTR for attributes, etc.). Optional: Set start=true to immediately run the agent after creation, or configure a scheduler for recurring runs. Returns the created agent with its unique agent_id for future reference.",
+		description:
+			"Creates a new Agenty agent for web scraping, change detection, crawling, map monitoring, or brand monitoring. Use this tool to set up automated data extraction agents. Requires: - name: A descriptive name for the agent - type: One of 'scraping', 'changedetection', 'crawling', 'mapmonitoring', 'brandmonitoring' - config: Configuration object with url, browser, and collections defining what data to extract The config.collections array contains field definitions with CSS selectors or other extraction methods. Each field specifies what data to extract and how (TEXT content, ATTR for attributes, etc.). Optional: Set start=true to immediately run the agent after creation, or configure a scheduler for recurring runs. Returns the created agent with its unique agent_id for future reference.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -50,7 +52,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/agents/templates',
 		hostType: 'main',
-		description: 'Tool to fetch all public agent templates and sample agents. Use when listing available templates for users to select.',
+		description:
+			'Tool to fetch all public agent templates and sample agents. Use when listing available templates for users to select.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -62,7 +65,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/agents/{agent_id}',
 		hostType: 'main',
-		description: 'Tool to delete a single agent by its ID. Use when you need to permanently remove an agent after confirming it exists.',
+		description:
+			'Tool to delete a single agent by its ID. Use when you need to permanently remove an agent after confirming it exists.',
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -75,7 +79,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/agents',
 		hostType: 'main',
-		description: 'Tool to fetch all active agents under an account. Use after authenticating when you need to list agents with pagination and sorting.',
+		description:
+			'Tool to fetch all active agents under an account. Use after authenticating when you need to list agents with pagination and sorting.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -87,7 +92,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/agents/{agent_id}',
 		hostType: 'main',
-		description: 'Retrieves complete details of a specific agent including its configuration, input settings, scheduler, and metadata. Use this tool when you need to: - View full agent configuration and settings - Check agent type and current version - Access scheduler and script configurations - Verify agent status before executing jobs - Retrieve agent metadata for updates or cloning',
+		description:
+			'Retrieves complete details of a specific agent including its configuration, input settings, scheduler, and metadata. Use this tool when you need to: - View full agent configuration and settings - Check agent type and current version - Access scheduler and script configurations - Verify agent status before executing jobs - Retrieve agent metadata for updates or cloning',
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -99,7 +105,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/agents/{agent_id}',
 		hostType: 'main',
-		description: 'Updates an existing agent\'s configuration, settings, and metadata. Use this tool to modify an agent\'s properties such as name, type, config, tags, scheduler, scripts, or visibility settings. The API only returns the fields that were updated in the response, not the complete agent object. To get the full updated agent details, use the \'Get Agent by ID\' action after updating. Example uses: - "Update agent abc123 to change its name to \'Production Scraper\'" - "Enable scheduling for agent xyz789 with a cron expression \'0 */6 * * *\'" - "Update agent def456 config to scrape a different URL"',
+		description:
+			"Updates an existing agent's configuration, settings, and metadata. Use this tool to modify an agent's properties such as name, type, config, tags, scheduler, scripts, or visibility settings. The API only returns the fields that were updated in the response, not the complete agent object. To get the full updated agent details, use the 'Get Agent by ID' action after updating. Example uses: - \"Update agent abc123 to change its name to 'Production Scraper'\" - \"Enable scheduling for agent xyz789 with a cron expression '0 */6 * * *'\" - \"Update agent def456 config to scrape a different URL\"",
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -111,7 +118,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/apikeys',
 		hostType: 'main',
-		description: 'Creates a new API key for programmatic access to the Agenty API. The generated API key can be used to authenticate API requests with different permission levels (Owner, Admin, or Manager). The key is returned in the response and should be securely stored as it provides access to your Agenty account.',
+		description:
+			'Creates a new API key for programmatic access to the Agenty API. The generated API key can be used to authenticate API requests with different permission levels (Owner, Admin, or Manager). The key is returned in the response and should be securely stored as it provides access to your Agenty account.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -123,7 +131,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/apikeys/{key_id}',
 		hostType: 'main',
-		description: 'Delete an API key by its unique identifier. Use this tool to permanently revoke access for a specific API key. The key_id can be obtained from the "Get all API keys" or "Create API key" actions. This action cannot be undone.',
+		description:
+			'Delete an API key by its unique identifier. Use this tool to permanently revoke access for a specific API key. The key_id can be obtained from the "Get all API keys" or "Create API key" actions. This action cannot be undone.',
 		pathParams: ['key_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -136,7 +145,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/apikeys/download',
 		hostType: 'main',
-		description: 'Tool to download all API keys under an account in CSV format. Use when you need a complete list of API keys for export or backup.',
+		description:
+			'Tool to download all API keys under an account in CSV format. Use when you need a complete list of API keys for export or backup.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -148,7 +158,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/apikeys',
 		hostType: 'main',
-		description: 'Tool to retrieve all API keys under an account. Use after authentication when you need to list API keys with pagination and sorting.',
+		description:
+			'Tool to retrieve all API keys under an account. Use after authentication when you need to list API keys with pagination and sorting.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -160,7 +171,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/apikeys/{key_id}',
 		hostType: 'main',
-		description: "Retrieves detailed information about a specific API key by its ID. Use this action when you need to: - Get the full details of an API key including its value, role, and status - Verify the existence and properties of a specific API key - Check if an API key is enabled or disabled The key_id can be obtained from the 'Get all API keys' action or when creating a new API key.",
+		description:
+			"Retrieves detailed information about a specific API key by its ID. Use this action when you need to: - Get the full details of an API key including its value, role, and status - Verify the existence and properties of a specific API key - Check if an API key is enabled or disabled The key_id can be obtained from the 'Get all API keys' action or when creating a new API key.",
 		pathParams: ['key_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -172,7 +184,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/apikeys/{key_id}/reset',
 		hostType: 'main',
-		description: "Resets (regenerates) the secret value of an existing API key. The old secret becomes invalid immediately. Important: This action only confirms the reset was successful but does NOT return the new secret. After resetting, use the 'Get API Key By ID' action to retrieve the new secret value. Use this when you need to: - Rotate API key secrets for security - Invalidate a compromised API key and generate a new secret - Update credentials as part of security maintenance",
+		description:
+			"Resets (regenerates) the secret value of an existing API key. The old secret becomes invalid immediately. Important: This action only confirms the reset was successful but does NOT return the new secret. After resetting, use the 'Get API Key By ID' action to retrieve the new secret value. Use this when you need to: - Rotate API key secrets for security - Invalidate a compromised API key and generate a new secret - Update credentials as part of security maintenance",
 		pathParams: ['key_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -184,7 +197,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/apikeys/{key_id}',
 		hostType: 'main',
-		description: "Updates an existing API key's name and role by its unique identifier. This action allows you to modify the display name and permission level of an API key. Only the name and role fields can be updated; other properties are read-only. After updating, the action automatically fetches and returns the complete updated API key details. Use this when you need to: - Rename an API key for better identification - Change the permission level (Owner, Admin, or Manager) of an API key - Update multiple properties of an API key at once",
+		description:
+			"Updates an existing API key's name and role by its unique identifier. This action allows you to modify the display name and permission level of an API key. Only the name and role fields can be updated; other properties are read-only. After updating, the action automatically fetches and returns the complete updated API key details. Use this when you need to: - Rename an API key for better identification - Change the permission level (Owner, Admin, or Manager) of an API key - Update multiple properties of an API key at once",
 		pathParams: ['key_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -196,7 +210,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/screenshot',
 		hostType: 'browser',
-		description: 'Tool to capture a full-page or visible screenshot of any webpage URL. Use when you need to capture visual representation of a webpage as an image file. The screenshot is captured using browser automation with default settings.',
+		description:
+			'Tool to capture a full-page or visible screenshot of any webpage URL. Use when you need to capture visual representation of a webpage as an image file. The screenshot is captured using browser automation with default settings.',
 		pathParams: [],
 		queryParams: ['url'],
 		riskLevel: 'read' as const,
@@ -208,7 +223,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/screenshot',
 		hostType: 'browser',
-		description: 'Tool to capture webpage screenshots with extensive customization options including full-page capture, image format, quality settings, viewport configuration, and post-processing. Use when you need to take screenshots of web pages with specific requirements for size, format, or rendering behavior.',
+		description:
+			'Tool to capture webpage screenshots with extensive customization options including full-page capture, image format, quality settings, viewport configuration, and post-processing. Use when you need to take screenshots of web pages with specific requirements for size, format, or rendering behavior.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -220,7 +236,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/apikeys/{key_id}/status',
 		hostType: 'main',
-		description: 'Toggles the enabled/disabled status of an API key. This endpoint switches the key between enabled and disabled states - if the key is currently enabled, it will be disabled, and vice versa. Returns a confirmation message upon successful status change. Use this after retrieving the key_id from the list or get API key endpoints.',
+		description:
+			'Toggles the enabled/disabled status of an API key. This endpoint switches the key between enabled and disabled states - if the key is currently enabled, it will be disabled, and vice versa. Returns a confirmation message upon successful status change. Use this after retrieving the key_id from the list or get API key endpoints.',
 		pathParams: ['key_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -232,7 +249,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/connections',
 		hostType: 'main',
-		description: 'Retrieves all connections from your Agenty account. Supports pagination via limit/offset and sorting by field name. Returns an empty list if no connections exist.',
+		description:
+			'Retrieves all connections from your Agenty account. Supports pagination via limit/offset and sorting by field name. Returns an empty list if no connections exist.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -244,7 +262,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/pdf',
 		hostType: 'browser',
-		description: 'Tool to convert a webpage URL to a PDF document. Use when you need to generate a PDF file from a web page for archival, reporting, or offline viewing purposes.',
+		description:
+			'Tool to convert a webpage URL to a PDF document. Use when you need to generate a PDF file from a web page for archival, reporting, or offline viewing purposes.',
 		pathParams: [],
 		queryParams: ['url'],
 		riskLevel: 'read' as const,
@@ -256,7 +275,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/pdf',
 		hostType: 'browser',
-		description: 'Tool to convert a URL or raw HTML to PDF with customizable options. Use when you need to generate PDFs with specific formatting requirements like custom page sizes, margins, headers/footers, or orientation. Supports both URL-based and HTML content conversion.',
+		description:
+			'Tool to convert a URL or raw HTML to PDF with customizable options. Use when you need to generate PDFs with specific formatting requirements like custom page sizes, margins, headers/footers, or orientation. Supports both URL-based and HTML content conversion.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -268,7 +288,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/agents/{agent_id}/clone',
 		hostType: 'main',
-		description: "Tool to copy an existing agent by its ID, creating a duplicate with optionally a new name. Use when you need to duplicate an agent's configuration to create a similar agent without starting from scratch.",
+		description:
+			"Tool to copy an existing agent by its ID, creating a duplicate with optionally a new name. Use when you need to duplicate an agent's configuration to create a similar agent without starting from scratch.",
 		pathParams: ['agent_id'],
 		queryParams: ['name'],
 		riskLevel: 'read' as const,
@@ -280,7 +301,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/workflows',
 		hostType: 'main',
-		description: 'Creates a new workflow in Agenty to automate actions based on agent events. Use this to set up automated responses like sending emails, triggering webhooks, or notifications when specific agent events occur (e.g., job completed, job failed).',
+		description:
+			'Creates a new workflow in Agenty to automate actions based on agent events. Use this to set up automated responses like sending emails, triggering webhooks, or notifications when specific agent events occur (e.g., job completed, job failed).',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -292,7 +314,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/dashboard',
 		hostType: 'main',
-		description: 'Tool to fetch account reports like pages used by agent, date, and product. Use when analyzing usage over a date range.',
+		description:
+			'Tool to fetch account reports like pages used by agent, date, and product. Use when analyzing usage over a date range.',
 		pathParams: [],
 		queryParams: ['end', 'start'],
 		riskLevel: 'read' as const,
@@ -304,7 +327,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/lists/{list_id}/rows/{id}',
 		hostType: 'main',
-		description: 'Tool to delete a specific row from a list by its unique identifier. Use when you need to permanently remove a single row from a list.',
+		description:
+			'Tool to delete a specific row from a list by its unique identifier. Use when you need to permanently remove a single row from a list.',
 		pathParams: ['list_id', 'id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -317,7 +341,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/lists/{list_id}/rows',
 		hostType: 'main',
-		description: 'Tool to delete specific rows from a list by their IDs. Use when you need to remove one or more rows from a list by providing their unique identifiers.',
+		description:
+			'Tool to delete specific rows from a list by their IDs. Use when you need to remove one or more rows from a list by providing their unique identifiers.',
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -330,7 +355,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/projects',
 		hostType: 'main',
-		description: 'Tool to delete a project by its ID. Use when you need to permanently remove a project. This action cannot be undone, so ensure the project ID is correct before deletion.',
+		description:
+			'Tool to delete a project by its ID. Use when you need to permanently remove a project. This action cannot be undone, so ensure the project ID is correct before deletion.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -343,7 +369,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/scheduler/{agent_id}',
 		hostType: 'main',
-		description: 'Tool to delete a schedule for an agent by its agent ID. Use when you need to remove scheduled automation for a specific agent.',
+		description:
+			'Tool to delete a schedule for an agent by its agent ID. Use when you need to remove scheduled automation for a specific agent.',
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -356,7 +383,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/workflows/{id}',
 		hostType: 'main',
-		description: 'Tool to delete a workflow by its ID. Use when you need to permanently remove a workflow after confirming it exists.',
+		description:
+			'Tool to delete a workflow by its ID. Use when you need to permanently remove a workflow after confirming it exists.',
 		pathParams: ['workflow_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -369,9 +397,18 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/results/{agent_id}/download',
 		hostType: 'main',
-		description: 'Tool to download agent results by agent ID in CSV, TSV or JSON format. Use when you need to export or analyze agent execution results as a file.',
+		description:
+			'Tool to download agent results by agent ID in CSV, TSV or JSON format. Use when you need to export or analyze agent execution results as a file.',
 		pathParams: ['agent_id'],
-		queryParams: ['sort', 'limit', 'order', 'format', 'offset', 'search', 'collection'],
+		queryParams: [
+			'sort',
+			'limit',
+			'order',
+			'format',
+			'offset',
+			'search',
+			'collection',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -381,7 +418,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/lists/{list_id}/rows/download',
 		hostType: 'main',
-		description: 'Tool to download list rows as CSV file. Use when you need to export or backup all rows from a specific list.',
+		description:
+			'Tool to download list rows as CSV file. Use when you need to export or backup all rows from a specific list.',
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -393,7 +431,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/users/download',
 		hostType: 'main',
-		description: 'Tool to download users list in CSV format. Use when you need to export or backup the complete list of team members and users.',
+		description:
+			'Tool to download users list in CSV format. Use when you need to export or backup the complete list of team members and users.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -405,7 +444,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/workflows/download',
 		hostType: 'main',
-		description: 'Tool to download all workflows in CSV format. Use when you need to export or backup all workflows from your account. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Tool to download all workflows in CSV format. Use when you need to export or backup all workflows from your account. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -417,7 +457,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/extract',
 		hostType: 'browser',
-		description: 'Tool to auto-extract structured data from a webpage including schema.org, RDFa, Microdata, and JSON-LD formats. Use when you need to automatically extract semantic markup from web pages without writing custom scraping rules. The API returns organized structured data in four categories: metatags, microdata, rdfa, and jsonld.',
+		description:
+			'Tool to auto-extract structured data from a webpage including schema.org, RDFa, Microdata, and JSON-LD formats. Use when you need to automatically extract semantic markup from web pages without writing custom scraping rules. The API returns organized structured data in four categories: metatags, microdata, rdfa, and jsonld.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -429,7 +470,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/extract',
 		hostType: 'browser',
-		description: 'Tool to auto-extract structured data from a webpage URL. Use when you need to extract schema.org, RDFa, Microdata, or JSON-LD structured data from web pages.',
+		description:
+			'Tool to auto-extract structured data from a webpage URL. Use when you need to extract schema.org, RDFa, Microdata, or JSON-LD structured data from web pages.',
 		pathParams: [],
 		queryParams: ['url'],
 		riskLevel: 'read' as const,
@@ -441,7 +483,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/results/{agent_id}',
 		hostType: 'main',
-		description: "Tool to get the most recent result data for an agent. Use when you need to retrieve and view the scraped/collected data from an agent's latest execution. Returns result data with pagination support.",
+		description:
+			"Tool to get the most recent result data for an agent. Use when you need to retrieve and view the scraped/collected data from an agent's latest execution. Returns result data with pagination support.",
 		pathParams: ['agent_id'],
 		queryParams: ['sort', 'limit', 'order', 'offset', 'search', 'collection'],
 		riskLevel: 'read' as const,
@@ -453,7 +496,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/users',
 		hostType: 'main',
-		description: 'Tool to retrieve all team members (users) under an account. Use after authentication when you need to list team members with pagination, sorting, and search filtering.',
+		description:
+			'Tool to retrieve all team members (users) under an account. Use after authentication when you need to list team members with pagination, sorting, and search filtering.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset', 'search'],
 		riskLevel: 'read' as const,
@@ -465,7 +509,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/redirects',
 		hostType: 'browser',
-		description: 'Tool to get the complete redirect chain for a URL. Use when you need to trace how a URL redirects, including both server-side (HTTP 3xx redirects) and client-side redirects (JavaScript, meta tags). Returns an ordered list of all redirect steps from the original URL to the final destination.',
+		description:
+			'Tool to get the complete redirect chain for a URL. Use when you need to trace how a URL redirects, including both server-side (HTTP 3xx redirects) and client-side redirects (JavaScript, meta tags). Returns an ordered list of all redirect steps from the original URL to the final destination.',
 		pathParams: [],
 		queryParams: ['url'],
 		riskLevel: 'read' as const,
@@ -477,9 +522,18 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/{job_id}/result',
 		hostType: 'main',
-		description: 'Tool to get the result data from a completed job. Use when you need to retrieve and view the scraped/collected data from a finished job. Returns result data with pagination support.',
+		description:
+			'Tool to get the result data from a completed job. Use when you need to retrieve and view the scraped/collected data from a finished job. Returns result data with pagination support.',
 		pathParams: ['job_id'],
-		queryParams: ['sort', 'limit', 'order', 'format', 'offset', 'search', 'collection'],
+		queryParams: [
+			'sort',
+			'limit',
+			'order',
+			'format',
+			'offset',
+			'search',
+			'collection',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -489,7 +543,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/lists/{list_id}',
 		hostType: 'main',
-		description: "Retrieves detailed information about a specific list by its ID. Use this action when you need to: - Get the full details of a list including its name, description, and metadata - Verify the existence of a specific list - Check when a list was created or last updated - Access additional data associated with a list The list_id can be obtained from the 'Get all lists' action or when creating a new list.",
+		description:
+			"Retrieves detailed information about a specific list by its ID. Use this action when you need to: - Get the full details of a list including its name, description, and metadata - Verify the existence of a specific list - Check when a list was created or last updated - Access additional data associated with a list The list_id can be obtained from the 'Get all lists' action or when creating a new list.",
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -501,7 +556,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/lists/{list_id}/rows/{id}',
 		hostType: 'main',
-		description: 'Tool to fetch a specific row by its ID from a list. Use when you need to retrieve a single data entry from a list using its unique identifier.',
+		description:
+			'Tool to fetch a specific row by its ID from a list. Use when you need to retrieve a single data entry from a list using its unique identifier.',
 		pathParams: ['list_id', 'id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -513,7 +569,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/content',
 		hostType: 'browser',
-		description: "Tool to fetch the complete HTML content of any webpage URL. Use this when you need to retrieve the full HTML source code of a page, including content rendered after JavaScript execution. The API navigates to the URL using proxies and captures the page's source content.",
+		description:
+			"Tool to fetch the complete HTML content of any webpage URL. Use this when you need to retrieve the full HTML source code of a page, including content rendered after JavaScript execution. The API navigates to the URL using proxies and captures the page's source content.",
 		pathParams: [],
 		queryParams: ['url'],
 		riskLevel: 'read' as const,
@@ -525,7 +582,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/content',
 		hostType: 'browser',
-		description: 'Tool to fetch HTML content of a webpage with custom options including ad blocking. Use this when you need to retrieve the full HTML source of a webpage, particularly for web scraping or content analysis tasks. The tool supports ad blocking to speed up page loads and reduce unnecessary content.',
+		description:
+			'Tool to fetch HTML content of a webpage with custom options including ad blocking. Use this when you need to retrieve the full HTML source of a webpage, particularly for web scraping or content analysis tasks. The tool supports ad blocking to speed up page loads and reduce unnecessary content.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -537,7 +595,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/projects/{id}',
 		hostType: 'main',
-		description: 'Retrieves complete details of a specific project by its ID, including name, description, creator information, and timestamps. Use this to get project metadata before adding agents, checking project existence, or verifying project details for updates.',
+		description:
+			'Retrieves complete details of a specific project by its ID, including name, description, creator information, and timestamps. Use this to get project metadata before adding agents, checking project existence, or verifying project details for updates.',
 		pathParams: ['id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -549,7 +608,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/redirects',
 		hostType: 'browser',
-		description: 'Tool to get the complete redirect chain of a URL with custom navigation options. Use when you need to trace URL redirects including both server-side (3xx) and client-side redirects (JavaScript, meta tags). Supports custom timeout and navigation wait conditions to ensure all redirects are captured.',
+		description:
+			'Tool to get the complete redirect chain of a URL with custom navigation options. Use when you need to trace URL redirects including both server-side (3xx) and client-side redirects (JavaScript, meta tags). Supports custom timeout and navigation wait conditions to ensure all redirects are captured.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -561,7 +621,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/scheduler/{agent_id}',
 		hostType: 'main',
-		description: 'Tool to retrieve the schedule configuration for a specific agent. Use when you need to check the current scheduling settings for an agent.',
+		description:
+			'Tool to retrieve the schedule configuration for a specific agent. Use when you need to check the current scheduling settings for an agent.',
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -573,7 +634,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/users/{user_id}',
 		hostType: 'main',
-		description: 'Tool to retrieve detailed information about a user by their ID. Use this to fetch user profile data including email, role, status, and activity timestamps.',
+		description:
+			'Tool to retrieve detailed information about a user by their ID. Use this to fetch user profile data including email, role, status, and activity timestamps.',
 		pathParams: ['user_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -585,7 +647,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/workflows/{id}',
 		hostType: 'main',
-		description: 'Retrieves complete details of a specific workflow by its ID. Use this to view workflow configuration including agents, triggers, and actions before updating or deleting.',
+		description:
+			'Retrieves complete details of a specific workflow by its ID. Use this to view workflow configuration including agents, triggers, and actions before updating or deleting.',
 		pathParams: ['workflow_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -597,7 +660,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/inputs/{agent_id}',
 		hostType: 'main',
-		description: "Retrieves the input configuration for a specific agent by its ID. Returns the input source type (URL, manual list, saved list reference, or another agent's output) and associated configuration details. Use this to inspect an agent's current input setup before modifying it or starting a job, or to verify what data sources an agent will process.",
+		description:
+			"Retrieves the input configuration for a specific agent by its ID. Returns the input source type (URL, manual list, saved list reference, or another agent's output) and associated configuration details. Use this to inspect an agent's current input setup before modifying it or starting a job, or to verify what data sources an agent will process.",
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -609,7 +673,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/inputs/{agent_id}',
 		hostType: 'main',
-		description: "Updates the input configuration for a specific agent in Agenty. This tool modifies where an agent gets its input data from. You can configure the agent to: - Pull from a URL feed (type='url') - Use a manually specified list of URLs (type='manual') - Reference data from an Agenty list (type='list') - Use output from another agent (type='agent') Use this after creating or identifying an agent to set up its data source before running jobs.",
+		description:
+			"Updates the input configuration for a specific agent in Agenty. This tool modifies where an agent gets its input data from. You can configure the agent to: - Pull from a URL feed (type='url') - Use a manually specified list of URLs (type='manual') - Reference data from an Agenty list (type='list') - Use output from another agent (type='agent') Use this after creating or identifying an agent to set up its data source before running jobs.",
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -621,7 +686,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/download',
 		hostType: 'main',
-		description: 'Tool to download all jobs in CSV format. Use when you need a complete list of jobs for export or analysis.',
+		description:
+			'Tool to download all jobs in CSV format. Use when you need a complete list of jobs for export or analysis.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset', 'agent_id'],
 		riskLevel: 'read' as const,
@@ -633,7 +699,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/{job_id}/files/download',
 		hostType: 'main',
-		description: 'Tool to download output files by job ID. Use when you need to fetch a specific output file after a job completes.',
+		description:
+			'Tool to download output files by job ID. Use when you need to fetch a specific output file after a job completes.',
 		pathParams: ['job_id'],
 		queryParams: ['name'],
 		riskLevel: 'read' as const,
@@ -645,7 +712,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/{job_id}/result/download',
 		hostType: 'main',
-		description: 'Tool to download the agent output result by job ID. Use when you need to fetch the final output of a completed job in CSV, TSV, or JSON format.',
+		description:
+			'Tool to download the agent output result by job ID. Use when you need to fetch the final output of a completed job in CSV, TSV, or JSON format.',
 		pathParams: ['job_id'],
 		queryParams: ['sort', 'limit', 'order', 'format', 'offset', 'collection'],
 		riskLevel: 'read' as const,
@@ -657,7 +725,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs',
 		hostType: 'main',
-		description: 'Tool to fetch all jobs under an account. Use when you need to view and filter the list of jobs with pagination and sorting.',
+		description:
+			'Tool to fetch all jobs under an account. Use when you need to view and filter the list of jobs with pagination and sorting.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset', 'agent_id'],
 		riskLevel: 'read' as const,
@@ -669,7 +738,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/{job_id}',
 		hostType: 'main',
-		description: 'Retrieves comprehensive details about a specific job including its status, progress metrics (pages processed/succeeded/failed), timing information (created/started/completed times), resource consumption (page credits), and any error messages. Use this action to check job status, monitor execution progress, or diagnose job failures. Returns complete job metadata needed before downloading results.',
+		description:
+			'Retrieves comprehensive details about a specific job including its status, progress metrics (pages processed/succeeded/failed), timing information (created/started/completed times), resource consumption (page credits), and any error messages. Use this action to check job status, monitor execution progress, or diagnose job failures. Returns complete job metadata needed before downloading results.',
 		pathParams: ['job_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -681,7 +751,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/{job_id}/logs',
 		hostType: 'main',
-		description: 'Tool to fetch logs for a given job by its ID. Use when you need to review or debug job execution logs with pagination support.',
+		description:
+			'Tool to fetch logs for a given job by its ID. Use when you need to review or debug job execution logs with pagination support.',
 		pathParams: ['job_id'],
 		queryParams: ['limit', 'offset'],
 		riskLevel: 'read' as const,
@@ -693,7 +764,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/{job_id}/files',
 		hostType: 'main',
-		description: 'Lists all output files generated by a specific job. Returns file names and sizes for available downloads including CSV/JSON/TSV data exports and compressed logs. Use this after a job completes to discover what output files are available before downloading them.',
+		description:
+			'Lists all output files generated by a specific job. Returns file names and sizes for available downloads including CSV/JSON/TSV data exports and compressed logs. Use this after a job completes to discover what output files are available before downloading them.',
 		pathParams: ['job_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -705,7 +777,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/jobs/start',
 		hostType: 'main',
-		description: 'Tool to start a new agent job. Use when you need to trigger execution of an existing agent.',
+		description:
+			'Tool to start a new agent job. Use when you need to trigger execution of an existing agent.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -717,7 +790,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/jobs/{job_id}/stop',
 		hostType: 'main',
-		description: 'Tool to stop a running job by job ID. Use when you need to halt an in-progress job before it completes. Confirm the job ID beforehand to avoid unintended stops.',
+		description:
+			'Tool to stop a running job by job ID. Use when you need to halt an in-progress job before it completes. Confirm the job ID beforehand to avoid unintended stops.',
 		pathParams: ['job_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -729,7 +803,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/lists/{list_id}/rows/clear',
 		hostType: 'main',
-		description: 'Tool to clear all rows in a list by its ID. Use when you need to wipe out all data in a list before re-populating (e.g., "Clear all rows in list 123").',
+		description:
+			'Tool to clear all rows in a list by its ID. Use when you need to wipe out all data in a list before re-populating (e.g., "Clear all rows in list 123").',
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -742,7 +817,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/lists',
 		hostType: 'main',
-		description: 'Tool to create a new list. Use after preparing the list name and optional description. Example: "Create a list named \'Contacts\' with description \'Potential leads\'."',
+		description:
+			"Tool to create a new list. Use after preparing the list name and optional description. Example: \"Create a list named 'Contacts' with description 'Potential leads'.\"",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -754,7 +830,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/lists/{id}',
 		hostType: 'main',
-		description: 'Tool to delete a specific list by its ID. Use when you need to permanently remove a list after confirming it exists.',
+		description:
+			'Tool to delete a specific list by its ID. Use when you need to permanently remove a list after confirming it exists.',
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -767,7 +844,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/lists/download',
 		hostType: 'main',
-		description: 'Tool to download all lists in CSV format. Use when you need a complete set of lists for export or backup.',
+		description:
+			'Tool to download all lists in CSV format. Use when you need a complete set of lists for export or backup.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -779,7 +857,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/lists',
 		hostType: 'main',
-		description: 'Tool to retrieve all lists under an account. Use after authentication when you need to list lists with pagination and sorting.',
+		description:
+			'Tool to retrieve all lists under an account. Use after authentication when you need to list lists with pagination and sorting.',
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -791,7 +870,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/lists/{list_id}/rows',
 		hostType: 'main',
-		description: 'Tool to fetch all rows in a specified list. Use when you need to retrieve all data entries from a list with optional pagination and sorting. Example: "Fetch rows from list \'61db...\' with limit=50".',
+		description:
+			'Tool to fetch all rows in a specified list. Use when you need to retrieve all data entries from a list with optional pagination and sorting. Example: "Fetch rows from list \'61db...\' with limit=50".',
 		pathParams: ['list_id'],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -803,7 +883,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/lists/{list_id}',
 		hostType: 'main',
-		description: 'Tool to update a list\'s name and optionally description by list ID. The name field is always required. Use when you need to modify list metadata after confirming its ID. Example: "Update list 123 with name \'My Updated List\' and description \'New description\'".',
+		description:
+			"Tool to update a list's name and optionally description by list ID. The name field is always required. Use when you need to modify list metadata after confirming its ID. Example: \"Update list 123 with name 'My Updated List' and description 'New description'\".",
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -815,7 +896,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/lists/{list_id}/upload',
 		hostType: 'main',
-		description: "Tool to upload a CSV file to an Agenty list for bulk import of data rows. Use this action when you need to: - Import multiple rows of data into an existing list from a CSV file - Bulk update list data - Add structured tabular data to a list Prerequisites: The target list must already exist. Use the 'Create List' action first if needed.",
+		description:
+			"Tool to upload a CSV file to an Agenty list for bulk import of data rows. Use this action when you need to: - Import multiple rows of data into an existing list from a CSV file - Bulk update list data - Add structured tabular data to a list Prerequisites: The target list must already exist. Use the 'Create List' action first if needed.",
 		pathParams: ['list_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -827,7 +909,8 @@ export const agentyRoutes = [
 		method: 'PATCH',
 		path: '/workflows/{id}',
 		hostType: 'main',
-		description: 'Tool to partially update a workflow by ID. Use when you need to update specific fields of a workflow without replacing the entire workflow object. This action performs a PATCH operation, allowing you to update only the fields you specify (e.g., just the name) without affecting other workflow properties. Currently supports updating the workflow name.',
+		description:
+			'Tool to partially update a workflow by ID. Use when you need to update specific fields of a workflow without replacing the entire workflow object. This action performs a PATCH operation, allowing you to update only the fields you specify (e.g., just the name) without affecting other workflow properties. Currently supports updating the workflow name.',
 		pathParams: ['id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -839,7 +922,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/projects/{id}/add',
 		hostType: 'main',
-		description: 'Add one or more agents to an Agenty project to organize and group related agents together. This action associates agents with a project, allowing better organization and management of your automation workflows. The response includes the complete updated project information with all associated agents. Prerequisites: - Project must exist (use projects_get_all to find valid project IDs) - Agent(s) must exist (use agents_get_all to find valid agent IDs) Example usage: "Add agents [\'tx8lubfbun\', \'o3xuc2n8es\'] to project 7"',
+		description:
+			"Add one or more agents to an Agenty project to organize and group related agents together. This action associates agents with a project, allowing better organization and management of your automation workflows. The response includes the complete updated project information with all associated agents. Prerequisites: - Project must exist (use projects_get_all to find valid project IDs) - Agent(s) must exist (use agents_get_all to find valid agent IDs) Example usage: \"Add agents ['tx8lubfbun', 'o3xuc2n8es'] to project 7\"",
 		pathParams: ['project_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -851,7 +935,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/projects',
 		hostType: 'main',
-		description: 'Creates a new project in Agenty. Use this to initialize a project with a name and optional description.',
+		description:
+			'Creates a new project in Agenty. Use this to initialize a project with a name and optional description.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -863,7 +948,8 @@ export const agentyRoutes = [
 		method: 'GET',
 		path: '/projects',
 		hostType: 'main',
-		description: "Retrieve all projects in the authenticated user's account. Returns a paginated list of projects with metadata (total count, pagination info). Use this to discover available projects, check project existence, or get project IDs for other operations. Supports sorting by fields like 'name' or 'created_at'.",
+		description:
+			"Retrieve all projects in the authenticated user's account. Returns a paginated list of projects with metadata (total count, pagination info). Use this to discover available projects, check project existence, or get project IDs for other operations. Supports sorting by fields like 'name' or 'created_at'.",
 		pathParams: [],
 		queryParams: ['sort', 'limit', 'order', 'offset'],
 		riskLevel: 'read' as const,
@@ -875,7 +961,8 @@ export const agentyRoutes = [
 		method: 'DELETE',
 		path: '/projects/{id}/delete',
 		hostType: 'main',
-		description: "Remove an agent from an Agenty project. Use when you need to disassociate an agent from a project while keeping both the agent and project intact. The agent will no longer be part of the project's organization structure.",
+		description:
+			"Remove an agent from an Agenty project. Use when you need to disassociate an agent from a project while keeping both the agent and project intact. The agent will no longer be part of the project's organization structure.",
 		pathParams: ['project_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -888,7 +975,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/scrape',
 		hostType: 'browser',
-		description: 'Tool to scrape data from any webpage using jQuery/CSS selectors. Use when you need to extract specific data from web pages by defining jQuery selector expressions. Each query field maps a name to a jQuery expression (e.g., "$(\'h1\').text()" extracts the h1 text). The browser will load the page, execute JavaScript, and run your jQuery queries to extract the data.',
+		description:
+			'Tool to scrape data from any webpage using jQuery/CSS selectors. Use when you need to extract specific data from web pages by defining jQuery selector expressions. Each query field maps a name to a jQuery expression (e.g., "$(\'h1\').text()" extracts the h1 text). The browser will load the page, execute JavaScript, and run your jQuery queries to extract the data.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -900,7 +988,8 @@ export const agentyRoutes = [
 		method: 'PATCH',
 		path: '/scheduler/{agent_id}',
 		hostType: 'main',
-		description: "Tool to toggle schedule on/off for an agent. Use when you need to enable or disable an agent's scheduled execution without modifying other agent settings.",
+		description:
+			"Tool to toggle schedule on/off for an agent. Use when you need to enable or disable an agent's scheduled execution without modifying other agent settings.",
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -912,7 +1001,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/agents/{agent_id}/transfer',
 		hostType: 'main',
-		description: "Tool to transfer agent ownership to another Agenty account. Use when you need to move an agent to a different user's account by specifying their email address.",
+		description:
+			"Tool to transfer agent ownership to another Agenty account. Use when you need to move an agent to a different user's account by specifying their email address.",
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -924,7 +1014,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/lists/{list_id}/rows/{id}',
 		hostType: 'main',
-		description: "Tool to update a specific row in a list by list ID and row ID. Use when you need to modify existing data in a list row. The row_data must include the '_id' field and any column fields (col1, col2, etc.) you want to update.",
+		description:
+			"Tool to update a specific row in a list by list ID and row ID. Use when you need to modify existing data in a list row. The row_data must include the '_id' field and any column fields (col1, col2, etc.) you want to update.",
 		pathParams: ['list_id', 'id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -936,7 +1027,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/projects/{id}',
 		hostType: 'main',
-		description: "Update an existing project's name and description in Agenty. Use this to modify project details such as changing the project name or updating its description.",
+		description:
+			"Update an existing project's name and description in Agenty. Use this to modify project details such as changing the project name or updating its description.",
 		pathParams: ['id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -948,7 +1040,8 @@ export const agentyRoutes = [
 		method: 'POST',
 		path: '/scheduler/{agent_id}',
 		hostType: 'main',
-		description: 'Updates the schedule configuration for a specific agent. Use when you need to modify how often an agent runs automatically.',
+		description:
+			'Updates the schedule configuration for a specific agent. Use when you need to modify how often an agent runs automatically.',
 		pathParams: ['agent_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -960,7 +1053,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/users/{user_id}',
 		hostType: 'main',
-		description: "Tool to update a user's information by user ID. Use this to modify user properties including email, role, status, name, and subscription settings. Email, role, and status are required fields.",
+		description:
+			"Tool to update a user's information by user ID. Use this to modify user properties including email, role, status, name, and subscription settings. Email, role, and status are required fields.",
 		pathParams: ['user_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -972,7 +1066,8 @@ export const agentyRoutes = [
 		method: 'PUT',
 		path: '/workflows/{id}',
 		hostType: 'main',
-		description: "Tool to update an existing workflow's configuration by workflow ID. Use this to modify workflow properties including name, agent selection, trigger conditions, and actions to execute. Workflows automate responses to agent events such as job completion, errors, or change detection. Common use cases include sending notifications, triggering webhooks, or updating external systems.",
+		description:
+			"Tool to update an existing workflow's configuration by workflow ID. Use this to modify workflow properties including name, agent selection, trigger conditions, and actions to execute. Workflows automate responses to agent events such as job completion, errors, or change detection. Common use cases include sending notifications, triggering webhooks, or updating external systems.",
 		pathParams: ['id'],
 		queryParams: [],
 		riskLevel: 'write' as const,

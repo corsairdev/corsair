@@ -11,7 +11,9 @@ const AgentyBatchItemsSchema = z.array(z.unknown());
 const AgentyBatchItemsOptionalSchema = z.array(z.unknown()).optional();
 // Config/scheduler/script objects are loosely typed in Agenty API docs.
 const AgentyLooseRecordSchema = z.record(z.string(), z.unknown());
-const AgentyLooseRecordOptionalSchema = z.record(z.string(), z.unknown()).optional();
+const AgentyLooseRecordOptionalSchema = z
+	.record(z.string(), z.unknown())
+	.optional();
 
 // addListRows
 const AddListRowsInputSchema = z.object({
@@ -49,9 +51,13 @@ const AgentsControllerCreateAgentInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type AgentsControllerCreateAgentInput = z.infer<typeof AgentsControllerCreateAgentInputSchema>;
+export type AgentsControllerCreateAgentInput = z.infer<
+	typeof AgentsControllerCreateAgentInputSchema
+>;
 const AgentsControllerCreateAgentResponseSchema = AgentyResponseSchema;
-export type AgentsControllerCreateAgentResponse = z.infer<typeof AgentsControllerCreateAgentResponseSchema>;
+export type AgentsControllerCreateAgentResponse = z.infer<
+	typeof AgentsControllerCreateAgentResponseSchema
+>;
 
 // agentsControllerGetTemplates
 const AgentsControllerGetTemplatesInputSchema = z.object({
@@ -63,9 +69,13 @@ const AgentsControllerGetTemplatesInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type AgentsControllerGetTemplatesInput = z.infer<typeof AgentsControllerGetTemplatesInputSchema>;
+export type AgentsControllerGetTemplatesInput = z.infer<
+	typeof AgentsControllerGetTemplatesInputSchema
+>;
 const AgentsControllerGetTemplatesResponseSchema = AgentyResponseSchema;
-export type AgentsControllerGetTemplatesResponse = z.infer<typeof AgentsControllerGetTemplatesResponseSchema>;
+export type AgentsControllerGetTemplatesResponse = z.infer<
+	typeof AgentsControllerGetTemplatesResponseSchema
+>;
 
 // agentsDeleteById
 const AgentsDeleteByIdInputSchema = z.object({
@@ -76,7 +86,9 @@ const AgentsDeleteByIdInputSchema = z.object({
 });
 export type AgentsDeleteByIdInput = z.infer<typeof AgentsDeleteByIdInputSchema>;
 const AgentsDeleteByIdResponseSchema = AgentyResponseSchema;
-export type AgentsDeleteByIdResponse = z.infer<typeof AgentsDeleteByIdResponseSchema>;
+export type AgentsDeleteByIdResponse = z.infer<
+	typeof AgentsDeleteByIdResponseSchema
+>;
 
 // agentsGetAll
 const AgentsGetAllInputSchema = z.object({
@@ -128,7 +140,9 @@ const AgentsUpdateByIdInputSchema = z.object({
 });
 export type AgentsUpdateByIdInput = z.infer<typeof AgentsUpdateByIdInputSchema>;
 const AgentsUpdateByIdResponseSchema = AgentyResponseSchema;
-export type AgentsUpdateByIdResponse = z.infer<typeof AgentsUpdateByIdResponseSchema>;
+export type AgentsUpdateByIdResponse = z.infer<
+	typeof AgentsUpdateByIdResponseSchema
+>;
 
 // apiKeysControllerCreateApiKeys
 const ApiKeysControllerCreateApiKeysInputSchema = z.object({
@@ -139,9 +153,13 @@ const ApiKeysControllerCreateApiKeysInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ApiKeysControllerCreateApiKeysInput = z.infer<typeof ApiKeysControllerCreateApiKeysInputSchema>;
+export type ApiKeysControllerCreateApiKeysInput = z.infer<
+	typeof ApiKeysControllerCreateApiKeysInputSchema
+>;
 const ApiKeysControllerCreateApiKeysResponseSchema = AgentyResponseSchema;
-export type ApiKeysControllerCreateApiKeysResponse = z.infer<typeof ApiKeysControllerCreateApiKeysResponseSchema>;
+export type ApiKeysControllerCreateApiKeysResponse = z.infer<
+	typeof ApiKeysControllerCreateApiKeysResponseSchema
+>;
 
 // apiKeysDeleteById
 const ApiKeysDeleteByIdInputSchema = z.object({
@@ -150,9 +168,13 @@ const ApiKeysDeleteByIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ApiKeysDeleteByIdInput = z.infer<typeof ApiKeysDeleteByIdInputSchema>;
+export type ApiKeysDeleteByIdInput = z.infer<
+	typeof ApiKeysDeleteByIdInputSchema
+>;
 const ApiKeysDeleteByIdResponseSchema = AgentyResponseSchema;
-export type ApiKeysDeleteByIdResponse = z.infer<typeof ApiKeysDeleteByIdResponseSchema>;
+export type ApiKeysDeleteByIdResponse = z.infer<
+	typeof ApiKeysDeleteByIdResponseSchema
+>;
 
 // apiKeysDownload
 const ApiKeysDownloadInputSchema = z.object({
@@ -166,7 +188,9 @@ const ApiKeysDownloadInputSchema = z.object({
 });
 export type ApiKeysDownloadInput = z.infer<typeof ApiKeysDownloadInputSchema>;
 const ApiKeysDownloadResponseSchema = AgentyResponseSchema;
-export type ApiKeysDownloadResponse = z.infer<typeof ApiKeysDownloadResponseSchema>;
+export type ApiKeysDownloadResponse = z.infer<
+	typeof ApiKeysDownloadResponseSchema
+>;
 
 // apiKeysGetAll
 const ApiKeysGetAllInputSchema = z.object({
@@ -191,7 +215,9 @@ const ApiKeysGetByIdInputSchema = z.object({
 });
 export type ApiKeysGetByIdInput = z.infer<typeof ApiKeysGetByIdInputSchema>;
 const ApiKeysGetByIdResponseSchema = AgentyResponseSchema;
-export type ApiKeysGetByIdResponse = z.infer<typeof ApiKeysGetByIdResponseSchema>;
+export type ApiKeysGetByIdResponse = z.infer<
+	typeof ApiKeysGetByIdResponseSchema
+>;
 
 // apiKeysResetById
 const ApiKeysResetByIdInputSchema = z.object({
@@ -202,7 +228,9 @@ const ApiKeysResetByIdInputSchema = z.object({
 });
 export type ApiKeysResetByIdInput = z.infer<typeof ApiKeysResetByIdInputSchema>;
 const ApiKeysResetByIdResponseSchema = AgentyResponseSchema;
-export type ApiKeysResetByIdResponse = z.infer<typeof ApiKeysResetByIdResponseSchema>;
+export type ApiKeysResetByIdResponse = z.infer<
+	typeof ApiKeysResetByIdResponseSchema
+>;
 
 // apiKeysUpdateById
 const ApiKeysUpdateByIdInputSchema = z.object({
@@ -213,9 +241,13 @@ const ApiKeysUpdateByIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ApiKeysUpdateByIdInput = z.infer<typeof ApiKeysUpdateByIdInputSchema>;
+export type ApiKeysUpdateByIdInput = z.infer<
+	typeof ApiKeysUpdateByIdInputSchema
+>;
 const ApiKeysUpdateByIdResponseSchema = AgentyResponseSchema;
-export type ApiKeysUpdateByIdResponse = z.infer<typeof ApiKeysUpdateByIdResponseSchema>;
+export type ApiKeysUpdateByIdResponse = z.infer<
+	typeof ApiKeysUpdateByIdResponseSchema
+>;
 
 // captureScreenshot
 const CaptureScreenshotInputSchema = z.object({
@@ -224,9 +256,13 @@ const CaptureScreenshotInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CaptureScreenshotInput = z.infer<typeof CaptureScreenshotInputSchema>;
+export type CaptureScreenshotInput = z.infer<
+	typeof CaptureScreenshotInputSchema
+>;
 const CaptureScreenshotResponseSchema = AgentyResponseSchema;
-export type CaptureScreenshotResponse = z.infer<typeof CaptureScreenshotResponseSchema>;
+export type CaptureScreenshotResponse = z.infer<
+	typeof CaptureScreenshotResponseSchema
+>;
 
 // captureScreenshotWithOptions
 const CaptureScreenshotWithOptionsInputSchema = z.object({
@@ -243,9 +279,13 @@ const CaptureScreenshotWithOptionsInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CaptureScreenshotWithOptionsInput = z.infer<typeof CaptureScreenshotWithOptionsInputSchema>;
+export type CaptureScreenshotWithOptionsInput = z.infer<
+	typeof CaptureScreenshotWithOptionsInputSchema
+>;
 const CaptureScreenshotWithOptionsResponseSchema = AgentyResponseSchema;
-export type CaptureScreenshotWithOptionsResponse = z.infer<typeof CaptureScreenshotWithOptionsResponseSchema>;
+export type CaptureScreenshotWithOptionsResponse = z.infer<
+	typeof CaptureScreenshotWithOptionsResponseSchema
+>;
 
 // changeApiKeyStatusById
 const ChangeApiKeyStatusByIdInputSchema = z.object({
@@ -254,9 +294,13 @@ const ChangeApiKeyStatusByIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ChangeApiKeyStatusByIdInput = z.infer<typeof ChangeApiKeyStatusByIdInputSchema>;
+export type ChangeApiKeyStatusByIdInput = z.infer<
+	typeof ChangeApiKeyStatusByIdInputSchema
+>;
 const ChangeApiKeyStatusByIdResponseSchema = AgentyResponseSchema;
-export type ChangeApiKeyStatusByIdResponse = z.infer<typeof ChangeApiKeyStatusByIdResponseSchema>;
+export type ChangeApiKeyStatusByIdResponse = z.infer<
+	typeof ChangeApiKeyStatusByIdResponseSchema
+>;
 
 // connectionsGetAll
 const ConnectionsGetAllInputSchema = z.object({
@@ -268,9 +312,13 @@ const ConnectionsGetAllInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ConnectionsGetAllInput = z.infer<typeof ConnectionsGetAllInputSchema>;
+export type ConnectionsGetAllInput = z.infer<
+	typeof ConnectionsGetAllInputSchema
+>;
 const ConnectionsGetAllResponseSchema = AgentyResponseSchema;
-export type ConnectionsGetAllResponse = z.infer<typeof ConnectionsGetAllResponseSchema>;
+export type ConnectionsGetAllResponse = z.infer<
+	typeof ConnectionsGetAllResponseSchema
+>;
 
 // convertUrlToPdf
 const ConvertUrlToPdfInputSchema = z.object({
@@ -281,7 +329,9 @@ const ConvertUrlToPdfInputSchema = z.object({
 });
 export type ConvertUrlToPdfInput = z.infer<typeof ConvertUrlToPdfInputSchema>;
 const ConvertUrlToPdfResponseSchema = AgentyResponseSchema;
-export type ConvertUrlToPdfResponse = z.infer<typeof ConvertUrlToPdfResponseSchema>;
+export type ConvertUrlToPdfResponse = z.infer<
+	typeof ConvertUrlToPdfResponseSchema
+>;
 
 // convertUrlToPdfWithOptions
 const ConvertUrlToPdfWithOptionsInputSchema = z.object({
@@ -298,9 +348,13 @@ const ConvertUrlToPdfWithOptionsInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ConvertUrlToPdfWithOptionsInput = z.infer<typeof ConvertUrlToPdfWithOptionsInputSchema>;
+export type ConvertUrlToPdfWithOptionsInput = z.infer<
+	typeof ConvertUrlToPdfWithOptionsInputSchema
+>;
 const ConvertUrlToPdfWithOptionsResponseSchema = AgentyResponseSchema;
-export type ConvertUrlToPdfWithOptionsResponse = z.infer<typeof ConvertUrlToPdfWithOptionsResponseSchema>;
+export type ConvertUrlToPdfWithOptionsResponse = z.infer<
+	typeof ConvertUrlToPdfWithOptionsResponseSchema
+>;
 
 // copyAgent
 const CopyAgentInputSchema = z.object({
@@ -326,7 +380,9 @@ const CreateWorkflowInputSchema = z.object({
 });
 export type CreateWorkflowInput = z.infer<typeof CreateWorkflowInputSchema>;
 const CreateWorkflowResponseSchema = AgentyResponseSchema;
-export type CreateWorkflowResponse = z.infer<typeof CreateWorkflowResponseSchema>;
+export type CreateWorkflowResponse = z.infer<
+	typeof CreateWorkflowResponseSchema
+>;
 
 // dashboardGetReportsUsage
 const DashboardGetReportsUsageInputSchema = z.object({
@@ -336,9 +392,13 @@ const DashboardGetReportsUsageInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DashboardGetReportsUsageInput = z.infer<typeof DashboardGetReportsUsageInputSchema>;
+export type DashboardGetReportsUsageInput = z.infer<
+	typeof DashboardGetReportsUsageInputSchema
+>;
 const DashboardGetReportsUsageResponseSchema = AgentyResponseSchema;
-export type DashboardGetReportsUsageResponse = z.infer<typeof DashboardGetReportsUsageResponseSchema>;
+export type DashboardGetReportsUsageResponse = z.infer<
+	typeof DashboardGetReportsUsageResponseSchema
+>;
 
 // deleteListRow
 const DeleteListRowInputSchema = z.object({
@@ -362,7 +422,9 @@ const DeleteListRowsInputSchema = z.object({
 });
 export type DeleteListRowsInput = z.infer<typeof DeleteListRowsInputSchema>;
 const DeleteListRowsResponseSchema = AgentyResponseSchema;
-export type DeleteListRowsResponse = z.infer<typeof DeleteListRowsResponseSchema>;
+export type DeleteListRowsResponse = z.infer<
+	typeof DeleteListRowsResponseSchema
+>;
 
 // deleteProject
 const DeleteProjectInputSchema = z.object({
@@ -384,7 +446,9 @@ const DeleteScheduleInputSchema = z.object({
 });
 export type DeleteScheduleInput = z.infer<typeof DeleteScheduleInputSchema>;
 const DeleteScheduleResponseSchema = AgentyResponseSchema;
-export type DeleteScheduleResponse = z.infer<typeof DeleteScheduleResponseSchema>;
+export type DeleteScheduleResponse = z.infer<
+	typeof DeleteScheduleResponseSchema
+>;
 
 // deleteWorkflow
 const DeleteWorkflowInputSchema = z.object({
@@ -396,7 +460,9 @@ const DeleteWorkflowInputSchema = z.object({
 });
 export type DeleteWorkflowInput = z.infer<typeof DeleteWorkflowInputSchema>;
 const DeleteWorkflowResponseSchema = AgentyResponseSchema;
-export type DeleteWorkflowResponse = z.infer<typeof DeleteWorkflowResponseSchema>;
+export type DeleteWorkflowResponse = z.infer<
+	typeof DeleteWorkflowResponseSchema
+>;
 
 // downloadAgentResult
 const DownloadAgentResultInputSchema = z.object({
@@ -412,9 +478,13 @@ const DownloadAgentResultInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DownloadAgentResultInput = z.infer<typeof DownloadAgentResultInputSchema>;
+export type DownloadAgentResultInput = z.infer<
+	typeof DownloadAgentResultInputSchema
+>;
 const DownloadAgentResultResponseSchema = AgentyResponseSchema;
-export type DownloadAgentResultResponse = z.infer<typeof DownloadAgentResultResponseSchema>;
+export type DownloadAgentResultResponse = z.infer<
+	typeof DownloadAgentResultResponseSchema
+>;
 
 // downloadListRows
 const DownloadListRowsInputSchema = z.object({
@@ -425,7 +495,9 @@ const DownloadListRowsInputSchema = z.object({
 });
 export type DownloadListRowsInput = z.infer<typeof DownloadListRowsInputSchema>;
 const DownloadListRowsResponseSchema = AgentyResponseSchema;
-export type DownloadListRowsResponse = z.infer<typeof DownloadListRowsResponseSchema>;
+export type DownloadListRowsResponse = z.infer<
+	typeof DownloadListRowsResponseSchema
+>;
 
 // downloadUsers
 const DownloadUsersInputSchema = z.object({
@@ -447,9 +519,13 @@ const DownloadWorkflowsInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DownloadWorkflowsInput = z.infer<typeof DownloadWorkflowsInputSchema>;
+export type DownloadWorkflowsInput = z.infer<
+	typeof DownloadWorkflowsInputSchema
+>;
 const DownloadWorkflowsResponseSchema = AgentyResponseSchema;
-export type DownloadWorkflowsResponse = z.infer<typeof DownloadWorkflowsResponseSchema>;
+export type DownloadWorkflowsResponse = z.infer<
+	typeof DownloadWorkflowsResponseSchema
+>;
 
 // extractBrowserStructuredData
 const ExtractBrowserStructuredDataInputSchema = z.object({
@@ -459,9 +535,13 @@ const ExtractBrowserStructuredDataInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ExtractBrowserStructuredDataInput = z.infer<typeof ExtractBrowserStructuredDataInputSchema>;
+export type ExtractBrowserStructuredDataInput = z.infer<
+	typeof ExtractBrowserStructuredDataInputSchema
+>;
 const ExtractBrowserStructuredDataResponseSchema = AgentyResponseSchema;
-export type ExtractBrowserStructuredDataResponse = z.infer<typeof ExtractBrowserStructuredDataResponseSchema>;
+export type ExtractBrowserStructuredDataResponse = z.infer<
+	typeof ExtractBrowserStructuredDataResponseSchema
+>;
 
 // extractStructuredData
 const ExtractStructuredDataInputSchema = z.object({
@@ -470,9 +550,13 @@ const ExtractStructuredDataInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ExtractStructuredDataInput = z.infer<typeof ExtractStructuredDataInputSchema>;
+export type ExtractStructuredDataInput = z.infer<
+	typeof ExtractStructuredDataInputSchema
+>;
 const ExtractStructuredDataResponseSchema = AgentyResponseSchema;
-export type ExtractStructuredDataResponse = z.infer<typeof ExtractStructuredDataResponseSchema>;
+export type ExtractStructuredDataResponse = z.infer<
+	typeof ExtractStructuredDataResponseSchema
+>;
 
 // getAgentResult
 const GetAgentResultInputSchema = z.object({
@@ -489,7 +573,9 @@ const GetAgentResultInputSchema = z.object({
 });
 export type GetAgentResultInput = z.infer<typeof GetAgentResultInputSchema>;
 const GetAgentResultResponseSchema = AgentyResponseSchema;
-export type GetAgentResultResponse = z.infer<typeof GetAgentResultResponseSchema>;
+export type GetAgentResultResponse = z.infer<
+	typeof GetAgentResultResponseSchema
+>;
 
 // getAllTeamMembers
 const GetAllTeamMembersInputSchema = z.object({
@@ -502,9 +588,13 @@ const GetAllTeamMembersInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAllTeamMembersInput = z.infer<typeof GetAllTeamMembersInputSchema>;
+export type GetAllTeamMembersInput = z.infer<
+	typeof GetAllTeamMembersInputSchema
+>;
 const GetAllTeamMembersResponseSchema = AgentyResponseSchema;
-export type GetAllTeamMembersResponse = z.infer<typeof GetAllTeamMembersResponseSchema>;
+export type GetAllTeamMembersResponse = z.infer<
+	typeof GetAllTeamMembersResponseSchema
+>;
 
 // getBrowserRedirects
 const GetBrowserRedirectsInputSchema = z.object({
@@ -513,9 +603,13 @@ const GetBrowserRedirectsInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetBrowserRedirectsInput = z.infer<typeof GetBrowserRedirectsInputSchema>;
+export type GetBrowserRedirectsInput = z.infer<
+	typeof GetBrowserRedirectsInputSchema
+>;
 const GetBrowserRedirectsResponseSchema = AgentyResponseSchema;
-export type GetBrowserRedirectsResponse = z.infer<typeof GetBrowserRedirectsResponseSchema>;
+export type GetBrowserRedirectsResponse = z.infer<
+	typeof GetBrowserRedirectsResponseSchema
+>;
 
 // getJobResult
 const GetJobResultInputSchema = z.object({
@@ -556,7 +650,9 @@ const GetListRowByIdInputSchema = z.object({
 });
 export type GetListRowByIdInput = z.infer<typeof GetListRowByIdInputSchema>;
 const GetListRowByIdResponseSchema = AgentyResponseSchema;
-export type GetListRowByIdResponse = z.infer<typeof GetListRowByIdResponseSchema>;
+export type GetListRowByIdResponse = z.infer<
+	typeof GetListRowByIdResponseSchema
+>;
 
 // getPageContent
 const GetPageContentInputSchema = z.object({
@@ -567,7 +663,9 @@ const GetPageContentInputSchema = z.object({
 });
 export type GetPageContentInput = z.infer<typeof GetPageContentInputSchema>;
 const GetPageContentResponseSchema = AgentyResponseSchema;
-export type GetPageContentResponse = z.infer<typeof GetPageContentResponseSchema>;
+export type GetPageContentResponse = z.infer<
+	typeof GetPageContentResponseSchema
+>;
 
 // getPageContentWithOptions
 const GetPageContentWithOptionsInputSchema = z.object({
@@ -577,9 +675,13 @@ const GetPageContentWithOptionsInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetPageContentWithOptionsInput = z.infer<typeof GetPageContentWithOptionsInputSchema>;
+export type GetPageContentWithOptionsInput = z.infer<
+	typeof GetPageContentWithOptionsInputSchema
+>;
 const GetPageContentWithOptionsResponseSchema = AgentyResponseSchema;
-export type GetPageContentWithOptionsResponse = z.infer<typeof GetPageContentWithOptionsResponseSchema>;
+export type GetPageContentWithOptionsResponse = z.infer<
+	typeof GetPageContentWithOptionsResponseSchema
+>;
 
 // getProjectById
 const GetProjectByIdInputSchema = z.object({
@@ -590,7 +692,9 @@ const GetProjectByIdInputSchema = z.object({
 });
 export type GetProjectByIdInput = z.infer<typeof GetProjectByIdInputSchema>;
 const GetProjectByIdResponseSchema = AgentyResponseSchema;
-export type GetProjectByIdResponse = z.infer<typeof GetProjectByIdResponseSchema>;
+export type GetProjectByIdResponse = z.infer<
+	typeof GetProjectByIdResponseSchema
+>;
 
 // getRedirectsWithOptions
 const GetRedirectsWithOptionsInputSchema = z.object({
@@ -600,9 +704,13 @@ const GetRedirectsWithOptionsInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetRedirectsWithOptionsInput = z.infer<typeof GetRedirectsWithOptionsInputSchema>;
+export type GetRedirectsWithOptionsInput = z.infer<
+	typeof GetRedirectsWithOptionsInputSchema
+>;
 const GetRedirectsWithOptionsResponseSchema = AgentyResponseSchema;
-export type GetRedirectsWithOptionsResponse = z.infer<typeof GetRedirectsWithOptionsResponseSchema>;
+export type GetRedirectsWithOptionsResponse = z.infer<
+	typeof GetRedirectsWithOptionsResponseSchema
+>;
 
 // getSchedule
 const GetScheduleInputSchema = z.object({
@@ -636,7 +744,9 @@ const GetWorkflowByIdInputSchema = z.object({
 });
 export type GetWorkflowByIdInput = z.infer<typeof GetWorkflowByIdInputSchema>;
 const GetWorkflowByIdResponseSchema = AgentyResponseSchema;
-export type GetWorkflowByIdResponse = z.infer<typeof GetWorkflowByIdResponseSchema>;
+export type GetWorkflowByIdResponse = z.infer<
+	typeof GetWorkflowByIdResponseSchema
+>;
 
 // inputsGetByAgentId
 const InputsGetByAgentIdInputSchema = z.object({
@@ -645,9 +755,13 @@ const InputsGetByAgentIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type InputsGetByAgentIdInput = z.infer<typeof InputsGetByAgentIdInputSchema>;
+export type InputsGetByAgentIdInput = z.infer<
+	typeof InputsGetByAgentIdInputSchema
+>;
 const InputsGetByAgentIdResponseSchema = AgentyResponseSchema;
-export type InputsGetByAgentIdResponse = z.infer<typeof InputsGetByAgentIdResponseSchema>;
+export type InputsGetByAgentIdResponse = z.infer<
+	typeof InputsGetByAgentIdResponseSchema
+>;
 
 // inputsUpdateByAgentId
 const InputsUpdateByAgentIdInputSchema = z.object({
@@ -661,9 +775,13 @@ const InputsUpdateByAgentIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type InputsUpdateByAgentIdInput = z.infer<typeof InputsUpdateByAgentIdInputSchema>;
+export type InputsUpdateByAgentIdInput = z.infer<
+	typeof InputsUpdateByAgentIdInputSchema
+>;
 const InputsUpdateByAgentIdResponseSchema = AgentyResponseSchema;
-export type InputsUpdateByAgentIdResponse = z.infer<typeof InputsUpdateByAgentIdResponseSchema>;
+export type InputsUpdateByAgentIdResponse = z.infer<
+	typeof InputsUpdateByAgentIdResponseSchema
+>;
 
 // jobsDownload
 const JobsDownloadInputSchema = z.object({
@@ -688,9 +806,13 @@ const JobsDownloadFilesByIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type JobsDownloadFilesByIdInput = z.infer<typeof JobsDownloadFilesByIdInputSchema>;
+export type JobsDownloadFilesByIdInput = z.infer<
+	typeof JobsDownloadFilesByIdInputSchema
+>;
 const JobsDownloadFilesByIdResponseSchema = AgentyResponseSchema;
-export type JobsDownloadFilesByIdResponse = z.infer<typeof JobsDownloadFilesByIdResponseSchema>;
+export type JobsDownloadFilesByIdResponse = z.infer<
+	typeof JobsDownloadFilesByIdResponseSchema
+>;
 
 // jobsDownloadResultById
 const JobsDownloadResultByIdInputSchema = z.object({
@@ -705,9 +827,13 @@ const JobsDownloadResultByIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type JobsDownloadResultByIdInput = z.infer<typeof JobsDownloadResultByIdInputSchema>;
+export type JobsDownloadResultByIdInput = z.infer<
+	typeof JobsDownloadResultByIdInputSchema
+>;
 const JobsDownloadResultByIdResponseSchema = AgentyResponseSchema;
-export type JobsDownloadResultByIdResponse = z.infer<typeof JobsDownloadResultByIdResponseSchema>;
+export type JobsDownloadResultByIdResponse = z.infer<
+	typeof JobsDownloadResultByIdResponseSchema
+>;
 
 // jobsGetAll
 const JobsGetAllInputSchema = z.object({
@@ -746,7 +872,9 @@ const JobsGetLogsByIdInputSchema = z.object({
 });
 export type JobsGetLogsByIdInput = z.infer<typeof JobsGetLogsByIdInputSchema>;
 const JobsGetLogsByIdResponseSchema = AgentyResponseSchema;
-export type JobsGetLogsByIdResponse = z.infer<typeof JobsGetLogsByIdResponseSchema>;
+export type JobsGetLogsByIdResponse = z.infer<
+	typeof JobsGetLogsByIdResponseSchema
+>;
 
 // jobsListFilesById
 const JobsListFilesByIdInputSchema = z.object({
@@ -755,9 +883,13 @@ const JobsListFilesByIdInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type JobsListFilesByIdInput = z.infer<typeof JobsListFilesByIdInputSchema>;
+export type JobsListFilesByIdInput = z.infer<
+	typeof JobsListFilesByIdInputSchema
+>;
 const JobsListFilesByIdResponseSchema = AgentyResponseSchema;
-export type JobsListFilesByIdResponse = z.infer<typeof JobsListFilesByIdResponseSchema>;
+export type JobsListFilesByIdResponse = z.infer<
+	typeof JobsListFilesByIdResponseSchema
+>;
 
 // jobsStart
 const JobsStartInputSchema = z.object({
@@ -790,7 +922,9 @@ const ListsClearRowsInputSchema = z.object({
 });
 export type ListsClearRowsInput = z.infer<typeof ListsClearRowsInputSchema>;
 const ListsClearRowsResponseSchema = AgentyResponseSchema;
-export type ListsClearRowsResponse = z.infer<typeof ListsClearRowsResponseSchema>;
+export type ListsClearRowsResponse = z.infer<
+	typeof ListsClearRowsResponseSchema
+>;
 
 // listsControllerCreateList
 const ListsControllerCreateListInputSchema = z.object({
@@ -800,9 +934,13 @@ const ListsControllerCreateListInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListsControllerCreateListInput = z.infer<typeof ListsControllerCreateListInputSchema>;
+export type ListsControllerCreateListInput = z.infer<
+	typeof ListsControllerCreateListInputSchema
+>;
 const ListsControllerCreateListResponseSchema = AgentyResponseSchema;
-export type ListsControllerCreateListResponse = z.infer<typeof ListsControllerCreateListResponseSchema>;
+export type ListsControllerCreateListResponse = z.infer<
+	typeof ListsControllerCreateListResponseSchema
+>;
 
 // listsDeleteById
 const ListsDeleteByIdInputSchema = z.object({
@@ -814,7 +952,9 @@ const ListsDeleteByIdInputSchema = z.object({
 });
 export type ListsDeleteByIdInput = z.infer<typeof ListsDeleteByIdInputSchema>;
 const ListsDeleteByIdResponseSchema = AgentyResponseSchema;
-export type ListsDeleteByIdResponse = z.infer<typeof ListsDeleteByIdResponseSchema>;
+export type ListsDeleteByIdResponse = z.infer<
+	typeof ListsDeleteByIdResponseSchema
+>;
 
 // listsDownload
 const ListsDownloadInputSchema = z.object({
@@ -857,7 +997,9 @@ const ListsGetRowsByIdInputSchema = z.object({
 });
 export type ListsGetRowsByIdInput = z.infer<typeof ListsGetRowsByIdInputSchema>;
 const ListsGetRowsByIdResponseSchema = AgentyResponseSchema;
-export type ListsGetRowsByIdResponse = z.infer<typeof ListsGetRowsByIdResponseSchema>;
+export type ListsGetRowsByIdResponse = z.infer<
+	typeof ListsGetRowsByIdResponseSchema
+>;
 
 // listsUpdateById
 const ListsUpdateByIdInputSchema = z.object({
@@ -870,7 +1012,9 @@ const ListsUpdateByIdInputSchema = z.object({
 });
 export type ListsUpdateByIdInput = z.infer<typeof ListsUpdateByIdInputSchema>;
 const ListsUpdateByIdResponseSchema = AgentyResponseSchema;
-export type ListsUpdateByIdResponse = z.infer<typeof ListsUpdateByIdResponseSchema>;
+export type ListsUpdateByIdResponse = z.infer<
+	typeof ListsUpdateByIdResponseSchema
+>;
 
 // listsUploadCsv
 const ListsUploadCsvInputSchema = z.object({
@@ -882,7 +1026,9 @@ const ListsUploadCsvInputSchema = z.object({
 });
 export type ListsUploadCsvInput = z.infer<typeof ListsUploadCsvInputSchema>;
 const ListsUploadCsvResponseSchema = AgentyResponseSchema;
-export type ListsUploadCsvResponse = z.infer<typeof ListsUploadCsvResponseSchema>;
+export type ListsUploadCsvResponse = z.infer<
+	typeof ListsUploadCsvResponseSchema
+>;
 
 // patchWorkflow
 const PatchWorkflowInputSchema = z.object({
@@ -904,9 +1050,13 @@ const ProjectsAddAgentsInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ProjectsAddAgentsInput = z.infer<typeof ProjectsAddAgentsInputSchema>;
+export type ProjectsAddAgentsInput = z.infer<
+	typeof ProjectsAddAgentsInputSchema
+>;
 const ProjectsAddAgentsResponseSchema = AgentyResponseSchema;
-export type ProjectsAddAgentsResponse = z.infer<typeof ProjectsAddAgentsResponseSchema>;
+export type ProjectsAddAgentsResponse = z.infer<
+	typeof ProjectsAddAgentsResponseSchema
+>;
 
 // projectsControllerCreateProject
 const ProjectsControllerCreateProjectInputSchema = z.object({
@@ -916,9 +1066,13 @@ const ProjectsControllerCreateProjectInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ProjectsControllerCreateProjectInput = z.infer<typeof ProjectsControllerCreateProjectInputSchema>;
+export type ProjectsControllerCreateProjectInput = z.infer<
+	typeof ProjectsControllerCreateProjectInputSchema
+>;
 const ProjectsControllerCreateProjectResponseSchema = AgentyResponseSchema;
-export type ProjectsControllerCreateProjectResponse = z.infer<typeof ProjectsControllerCreateProjectResponseSchema>;
+export type ProjectsControllerCreateProjectResponse = z.infer<
+	typeof ProjectsControllerCreateProjectResponseSchema
+>;
 
 // projectsGetAll
 const ProjectsGetAllInputSchema = z.object({
@@ -932,7 +1086,9 @@ const ProjectsGetAllInputSchema = z.object({
 });
 export type ProjectsGetAllInput = z.infer<typeof ProjectsGetAllInputSchema>;
 const ProjectsGetAllResponseSchema = AgentyResponseSchema;
-export type ProjectsGetAllResponse = z.infer<typeof ProjectsGetAllResponseSchema>;
+export type ProjectsGetAllResponse = z.infer<
+	typeof ProjectsGetAllResponseSchema
+>;
 
 // removeAgentFromProject
 const RemoveAgentFromProjectInputSchema = z.object({
@@ -942,9 +1098,13 @@ const RemoveAgentFromProjectInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type RemoveAgentFromProjectInput = z.infer<typeof RemoveAgentFromProjectInputSchema>;
+export type RemoveAgentFromProjectInput = z.infer<
+	typeof RemoveAgentFromProjectInputSchema
+>;
 const RemoveAgentFromProjectResponseSchema = AgentyResponseSchema;
-export type RemoveAgentFromProjectResponse = z.infer<typeof RemoveAgentFromProjectResponseSchema>;
+export type RemoveAgentFromProjectResponse = z.infer<
+	typeof RemoveAgentFromProjectResponseSchema
+>;
 
 // scrapeWebpageData
 const ScrapeWebpageDataInputSchema = z.object({
@@ -957,9 +1117,13 @@ const ScrapeWebpageDataInputSchema = z.object({
 	body: AgentyOptionalBodySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ScrapeWebpageDataInput = z.infer<typeof ScrapeWebpageDataInputSchema>;
+export type ScrapeWebpageDataInput = z.infer<
+	typeof ScrapeWebpageDataInputSchema
+>;
 const ScrapeWebpageDataResponseSchema = AgentyResponseSchema;
-export type ScrapeWebpageDataResponse = z.infer<typeof ScrapeWebpageDataResponseSchema>;
+export type ScrapeWebpageDataResponse = z.infer<
+	typeof ScrapeWebpageDataResponseSchema
+>;
 
 // toggleSchedule
 const ToggleScheduleInputSchema = z.object({
@@ -971,7 +1135,9 @@ const ToggleScheduleInputSchema = z.object({
 });
 export type ToggleScheduleInput = z.infer<typeof ToggleScheduleInputSchema>;
 const ToggleScheduleResponseSchema = AgentyResponseSchema;
-export type ToggleScheduleResponse = z.infer<typeof ToggleScheduleResponseSchema>;
+export type ToggleScheduleResponse = z.infer<
+	typeof ToggleScheduleResponseSchema
+>;
 
 // transferAgentOwnership
 const TransferAgentOwnershipInputSchema = z.object({
@@ -981,9 +1147,13 @@ const TransferAgentOwnershipInputSchema = z.object({
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type TransferAgentOwnershipInput = z.infer<typeof TransferAgentOwnershipInputSchema>;
+export type TransferAgentOwnershipInput = z.infer<
+	typeof TransferAgentOwnershipInputSchema
+>;
 const TransferAgentOwnershipResponseSchema = AgentyResponseSchema;
-export type TransferAgentOwnershipResponse = z.infer<typeof TransferAgentOwnershipResponseSchema>;
+export type TransferAgentOwnershipResponse = z.infer<
+	typeof TransferAgentOwnershipResponseSchema
+>;
 
 // updateListRow
 const UpdateListRowInputSchema = z.object({
@@ -1025,7 +1195,9 @@ const UpdateScheduleInputSchema = z.object({
 });
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleInputSchema>;
 const UpdateScheduleResponseSchema = AgentyResponseSchema;
-export type UpdateScheduleResponse = z.infer<typeof UpdateScheduleResponseSchema>;
+export type UpdateScheduleResponse = z.infer<
+	typeof UpdateScheduleResponseSchema
+>;
 
 // updateUserById
 const UpdateUserByIdInputSchema = z.object({
@@ -1043,7 +1215,9 @@ const UpdateUserByIdInputSchema = z.object({
 });
 export type UpdateUserByIdInput = z.infer<typeof UpdateUserByIdInputSchema>;
 const UpdateUserByIdResponseSchema = AgentyResponseSchema;
-export type UpdateUserByIdResponse = z.infer<typeof UpdateUserByIdResponseSchema>;
+export type UpdateUserByIdResponse = z.infer<
+	typeof UpdateUserByIdResponseSchema
+>;
 
 // updateWorkflow
 const UpdateWorkflowInputSchema = z.object({
@@ -1058,7 +1232,9 @@ const UpdateWorkflowInputSchema = z.object({
 });
 export type UpdateWorkflowInput = z.infer<typeof UpdateWorkflowInputSchema>;
 const UpdateWorkflowResponseSchema = AgentyResponseSchema;
-export type UpdateWorkflowResponse = z.infer<typeof UpdateWorkflowResponseSchema>;
+export type UpdateWorkflowResponse = z.infer<
+	typeof UpdateWorkflowResponseSchema
+>;
 
 export const AgentyEndpointInputSchemas = {
 	addListRows: AddListRowsInputSchema,
@@ -1143,7 +1319,9 @@ export const AgentyEndpointInputSchemas = {
 } as const;
 
 export type AgentyEndpointInputs = {
-	[K in keyof typeof AgentyEndpointInputSchemas]: z.infer<(typeof AgentyEndpointInputSchemas)[K]>;
+	[K in keyof typeof AgentyEndpointInputSchemas]: z.infer<
+		(typeof AgentyEndpointInputSchemas)[K]
+	>;
 };
 
 export const AgentyEndpointOutputSchemas = {
@@ -1215,7 +1393,8 @@ export const AgentyEndpointOutputSchemas = {
 	listsUploadCsv: ListsUploadCsvResponseSchema,
 	patchWorkflow: PatchWorkflowResponseSchema,
 	projectsAddAgents: ProjectsAddAgentsResponseSchema,
-	projectsControllerCreateProject: ProjectsControllerCreateProjectResponseSchema,
+	projectsControllerCreateProject:
+		ProjectsControllerCreateProjectResponseSchema,
 	projectsGetAll: ProjectsGetAllResponseSchema,
 	removeAgentFromProject: RemoveAgentFromProjectResponseSchema,
 	scrapeWebpageData: ScrapeWebpageDataResponseSchema,
@@ -1229,10 +1408,13 @@ export const AgentyEndpointOutputSchemas = {
 } as const;
 
 export type AgentyEndpointOutputs = {
-	[K in keyof typeof AgentyEndpointOutputSchemas]: z.infer<(typeof AgentyEndpointOutputSchemas)[K]>;
+	[K in keyof typeof AgentyEndpointOutputSchemas]: z.infer<
+		(typeof AgentyEndpointOutputSchemas)[K]
+	>;
 };
 
-export type AgentyEndpointInput = AgentyEndpointInputs[keyof AgentyEndpointInputs] & {
-	// Index signature required: factory helpers access fields by dynamic string keys across 79 ops.
-	[key: string]: unknown;
-};
+export type AgentyEndpointInput =
+	AgentyEndpointInputs[keyof AgentyEndpointInputs] & {
+		// Index signature required: factory helpers access fields by dynamic string keys across 79 ops.
+		[key: string]: unknown;
+	};
