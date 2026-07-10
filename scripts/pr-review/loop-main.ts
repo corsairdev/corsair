@@ -104,8 +104,6 @@ function headFile(filePath: string): string | null {
 }
 
 const plugin = detectPlugin(changedFiles);
-const readmeExists =
-	plugin !== null && headFile(`packages/${plugin}/README.md`) !== null;
 
 // Test existence comes from the head tree (update PRs need not touch
 // tests); assertion depth only inspects changed test files — the gate job
@@ -142,7 +140,6 @@ const gate = runGate({
 	changedFiles,
 	prBody: (event.pull_request.body as string) ?? '',
 	isDraft: event.pull_request.draft as boolean,
-	readmeExists,
 	testFileCount,
 	assertionCount,
 });

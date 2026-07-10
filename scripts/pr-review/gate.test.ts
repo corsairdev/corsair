@@ -31,7 +31,6 @@ const goodInput = {
 	changedFiles: goodFiles,
 	prBody: goodBody,
 	isDraft: false,
-	readmeExists: true,
 	testFileCount: 2,
 	assertionCount: 12,
 };
@@ -41,7 +40,7 @@ test('clean plugin PR passes every check', () => {
 	assert.equal(r.isPluginPr, true);
 	assert.equal(r.plugin, 'onepassword');
 	assert.deepEqual(r.failures, []);
-	assert.ok(r.checks.length >= 6);
+	assert.ok(r.checks.length >= 5);
 	assert.ok(r.checks.every((c) => c.status === 'pass'));
 });
 
@@ -130,11 +129,6 @@ test('R4: missing demo link fails', () => {
 	);
 	const r = runGate({ ...goodInput, prBody: body });
 	assert.ok(r.failures.some((f) => f.rule === 'R4'));
-});
-
-test('R7: missing README fails', () => {
-	const r = runGate({ ...goodInput, readmeExists: false });
-	assert.ok(r.failures.some((f) => f.rule === 'R7'));
 });
 
 test('nested comment markers cannot survive stripping (CodeQL js/incomplete-multi-character-sanitization)', () => {

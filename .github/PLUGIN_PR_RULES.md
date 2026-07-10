@@ -49,13 +49,7 @@ No `eval`, no `new Function()`, no execution of dynamically-generated code.
 No hardcoded secrets, tokens, or API keys anywhere. Bots never edit outside
 the PR's plugin scope. Nothing is ever auto-merged.
 
-## R7 — Documentation
-
-`packages/<plugin>/README.md` is required: auth/credential setup, an overview
-of the endpoints provided, and any provider quirks. It must match what the
-code actually implements.
-
-## R8 — Production quality
+## R7 — Production quality
 
 - Inputs and outputs validated with zod schemas on every endpoint.
 - Errors routed through the plugin's `error-handlers.ts`, including

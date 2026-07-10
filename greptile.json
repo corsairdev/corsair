@@ -29,7 +29,7 @@
       },
       {
         "scope": ["packages/**"],
-        "rule": "Verify the implementation matches the PR description: every endpoint the description claims must exist and work as described, and the plugin README.md must accurately document the implemented endpoints and auth setup. Flag mismatches as P1."
+        "rule": "Verify the implementation matches the PR description: every endpoint the description claims must exist and work as described. Flag mismatches as P1."
       },
       {
         "scope": ["packages/**"],
