@@ -353,11 +353,11 @@ export const agentyRoutes = [
 		group: 'projects',
 		name: 'deleteProject',
 		method: 'DELETE',
-		path: '/projects',
+		path: '/projects/{id}',
 		hostType: 'main',
 		description:
 			'Tool to delete a project by its ID. Use when you need to permanently remove a project. This action cannot be undone, so ensure the project ID is correct before deletion.',
-		pathParams: [],
+		pathParams: ['id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
