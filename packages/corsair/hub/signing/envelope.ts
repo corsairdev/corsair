@@ -50,6 +50,10 @@ export type ServerDeliveryAckBody = {
 	status?: string;
 	/** Human-readable error when delivery was rejected by the app. */
 	error?: string;
+	/** Hosted connect URL returned by connect.create_link deliveries. */
+	connectUrl?: string;
+	/** ISO expiry for connect.create_link deliveries. */
+	expiresAt?: string;
 };
 
 function parseSignatureHeader(

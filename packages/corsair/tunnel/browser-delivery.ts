@@ -6,12 +6,6 @@ export {
 	verifyBrowserDeliveryToken,
 } from '../hub/signing/browser-delivery';
 
-export function isConnectStatusBrowserDelivery(
-	payload: import('../hub/contracts/tunnel').BrowserDeliveryPayload,
-): boolean {
-	return payload.deliveryMode === 'connect.status';
-}
-
 export function isAuthCredentialsBrowserDelivery(
 	payload: import('../hub/contracts/tunnel').BrowserDeliveryPayload,
 ): boolean {
@@ -39,7 +33,6 @@ export function isByoOAuthBrowserDelivery(
 	return (
 		payload.deliveryMode === 'oauth.callback' ||
 		(payload.deliveryMode === undefined &&
-			!isConnectStatusBrowserDelivery(payload) &&
 			!isAuthCredentialsBrowserDelivery(payload) &&
 			!isPermissionBrowserDelivery(payload) &&
 			!isManagedBrowserDelivery(payload))

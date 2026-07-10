@@ -6,6 +6,20 @@ import {
 	verifyAndDecodeState,
 } from '../core/auth/state';
 import { bindEndpointsRecursively } from '../core/endpoints/bind';
+import type { CorsairPlugin } from '../core/plugins';
+import type { HubConfig } from '../hub';
+
+const mockHubConnectSession = {
+	connectUrl: 'https://hub.example/connect/sess-1',
+	token: 'hub-connect-token',
+	projectId: 'proj-1',
+	environmentId: 'env_dev_1',
+	expiresAt: '2099-01-01T00:00:00.000Z',
+};
+
+jest.mock('../hub/connect', () => ({
+	createHubConnectSessionForPlugin: jest.fn(async () => mockHubConnectSession),
+}));
 
 describe('AuthMissingError', () => {
 	it('sets name, pluginId, authType, and default message', () => {
@@ -72,9 +86,32 @@ describe('OAuth state utilities', () => {
 describe('connect-link generation in endpoint binding', () => {
 	const kek = 'test-kek-for-connect-link';
 
+	const hubConfig: HubConfig = {
+		apiUrl: 'https://hub.example',
+		projectApiKey: 'ck_dev_test_key',
+		signingSecret: 'signing-secret',
+	};
+
+	const slackPlugin = {
+		id: 'slack',
+		options: { authType: 'oauth_2' },
+	} as unknown as CorsairPlugin;
+
+	const gmailPlugin = {
+		id: 'gmail',
+		options: { authType: 'oauth_2' },
+	} as unknown as CorsairPlugin;
+
+	const githubPlugin = {
+		id: 'github',
+		options: { authType: 'managed' },
+	} as unknown as CorsairPlugin;
+
 	function createBoundEndpoint(opts: {
 		keyBuilder?: (ctx: any, source: string) => Promise<string>;
 		manualConfig?: any;
+		hubConfig?: HubConfig;
+		plugin?: CorsairPlugin;
 	}) {
 		const endpoints = {
 			sendEmail: async (_ctx: any, _args: any) => 'sent',
@@ -91,6 +128,11 @@ describe('connect-link generation in endpoint binding', () => {
 			currentPath: [],
 			keyBuilder: opts.keyBuilder,
 			manualConfig: opts.manualConfig,
+			hubConfig: opts.hubConfig,
+			plugin: opts.plugin,
+			kek,
+			allPlugins: opts.plugin ? [opts.plugin] : undefined,
+			database: {} as never,
 		});
 
 		return tree.sendEmail as (args?: unknown) => Promise<unknown>;
@@ -116,7 +158,7 @@ describe('connect-link generation in endpoint binding', () => {
 		expect(result).toBe('sent');
 	});
 
-	it('generates connect link when keyBuilder throws AuthMissingError', async () => {
+	it('returns connect link message when keyBuilder throws AuthMissingError', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new AuthMissingError('gmail', 'oauth_2');
@@ -133,13 +175,9 @@ describe('connect-link generation in endpoint binding', () => {
 			},
 		});
 
-		try {
-			await boundFn();
-			fail('Expected error to be thrown');
-		} catch (err: any) {
-			expect(err.message).toContain('[auth-missing:gmail]');
-			expect(err.message).toContain('https://myapp.com/connect');
-		}
+		const result = await boundFn();
+		expect(result).toContain('[auth-missing:gmail]');
+		expect(result).toContain('https://myapp.com/connect');
 	});
 
 	it('propagates non-AuthMissingError from keyBuilder even with manualConfig', async () => {
@@ -187,13 +225,9 @@ describe('connect-link generation in endpoint binding', () => {
 			},
 		});
 
-		try {
-			await boundFn();
-			fail('Expected error to be thrown');
-		} catch (err: any) {
-			expect(err.message).toContain('Please connect gmail');
-			expect(err.message).toContain('https://myapp.com/connect');
-		}
+		const result = await boundFn();
+		expect(result).toContain('Please connect gmail');
+		expect(result).toContain('https://myapp.com/connect');
 	});
 
 	it('does not intercept errors when manualConfig is not set', async () => {
@@ -243,7 +277,7 @@ describe('connect-link generation in endpoint binding', () => {
 		await expect(boundFn()).rejects.toThrow('Network timeout');
 	});
 
-	it('does not generate connect link for api_key AuthMissingError', async () => {
+	it('does not generate connect link for api_key AuthMissingError in manual mode', async () => {
 		const boundFn = createBoundEndpoint({
 			keyBuilder: async () => {
 				throw new AuthMissingError('slack', 'api_key');
@@ -260,6 +294,58 @@ describe('connect-link generation in endpoint binding', () => {
 			},
 		});
 
-		await expect(boundFn()).rejects.toThrow('[auth-missing:slack:api_key]');
+		const result = await boundFn();
+		expect(result).toBe('[auth-missing:slack:api_key]');
+	});
+
+	it('returns hub connect link message when keyBuilder throws AuthMissingError', async () => {
+		const boundFn = createBoundEndpoint({
+			keyBuilder: async () => {
+				throw new AuthMissingError('gmail', 'oauth_2');
+			},
+			hubConfig,
+			plugin: gmailPlugin,
+		});
+
+		const result = await boundFn();
+		expect(result).toContain('[auth-missing:gmail]');
+		expect(result).toContain('https://hub.example/connect/sess-1');
+	});
+
+	it('returns hub connect link message for managed AuthMissingError', async () => {
+		const boundFn = createBoundEndpoint({
+			keyBuilder: async () => {
+				throw new AuthMissingError('github', 'managed');
+			},
+			hubConfig,
+			plugin: githubPlugin,
+		});
+
+		const result = await boundFn();
+		expect(result).toContain('https://hub.example/connect/sess-1');
+	});
+
+	it('returns hub connect link message for api_key AuthMissingError', async () => {
+		const boundFn = createBoundEndpoint({
+			keyBuilder: async () => {
+				throw new AuthMissingError('slack', 'api_key');
+			},
+			hubConfig,
+			plugin: slackPlugin,
+		});
+
+		const result = await boundFn();
+		expect(result).toContain('https://hub.example/connect/sess-1');
+	});
+
+	it('returns plain auth-missing tag when hub config is missing', async () => {
+		const boundFn = createBoundEndpoint({
+			keyBuilder: async () => {
+				throw new AuthMissingError('gmail', 'oauth_2');
+			},
+		});
+
+		const result = await boundFn();
+		expect(result).toBe('[auth-missing:gmail:oauth_2]');
 	});
 });

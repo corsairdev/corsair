@@ -28,3 +28,13 @@ export function getAccountFields(
 	const extraFields = authConfig?.[authType]?.account ?? [];
 	return [...baseFields, ...extraFields];
 }
+
+export function getIntegrationFields(
+	plugin: CorsairPlugin,
+	authType: AuthTypes,
+): readonly string[] {
+	const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
+	const baseFields = BASE_AUTH_FIELDS[authType].integration;
+	const extraFields = authConfig?.[authType]?.integration ?? [];
+	return [...baseFields, ...extraFields];
+}

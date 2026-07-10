@@ -39,10 +39,7 @@ export const list: GithubEndpoints['pullRequestsList'] = async (ctx, input) => {
 export const get: GithubEndpoints['pullRequestsGet'] = async (ctx, input) => {
 	const { owner, repo, pullNumber } = input;
 	const endpoint = `/repos/${owner}/${repo}/pulls/${pullNumber}`;
-	const result = await makeGithubRequest<PullRequestGetResponse>(
-		endpoint,
-		ctx,
-	);
+	const result = await makeGithubRequest<PullRequestGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.pullRequests) {
 		try {

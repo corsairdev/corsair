@@ -4,6 +4,7 @@ import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db } from '@/db';
 import { auth } from '@/lib/auth';
 import { getSession } from '@/lib/auth-server';
+import { isOssAdminEmail } from '@/lib/oss-admin';
 
 export const createTRPCContext = async (opts: FetchCreateContextFnOptions) => {
 	const session = await auth.api.getSession({
@@ -37,4 +38,15 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 			user: ctx.session.user,
 		},
 	});
+});
+
+export const ossAdminProcedure = protectedProcedure.use(({ ctx, next }) => {
+	if (!isOssAdminEmail(ctx.user.email)) {
+		throw new TRPCError({
+			code: 'FORBIDDEN',
+			message: 'Admin access required',
+		});
+	}
+
+	return next({ ctx });
 });

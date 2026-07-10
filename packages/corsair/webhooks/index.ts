@@ -147,10 +147,6 @@ function buildGoogleChannelBody(
 	};
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main Function
-// ─────────────────────────────────────────────────────────────────────────────
-
 /**
  * Filters an incoming webhook request through all plugins in a corsair instance.
  *

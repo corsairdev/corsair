@@ -388,9 +388,9 @@ export async function oauthCallbackHandler(req: Request, res: Response) {
 
 ## Hub mode
 
-If you prefer Corsair to host the connect UI, use `hub: { ... }` instead of `manual`. You only mint a link and mount a delivery endpoint — no connect page or callback route needed.
+If you prefer Corsair to host the connect UI, use `hub: { ... }` instead of `manual`. You only mint a link and mount a delivery endpoint — no connect page or callback route needed. Hub stores none of your credentials; tokens still land in your database.
 
-See [Connect / OAuth](/management/connect) for the full hub setup.
+See [Hub overview](/hub/overview) for the model, [Manual or Hub](/hub/manual-vs-hub) for a side-by-side, and [Connect / OAuth](/management/connect) for the API.
 
 ---
 

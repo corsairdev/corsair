@@ -181,12 +181,13 @@ export function ContributorWorkflowSteps({
 	}
 
 	const pluginName = integrationToPluginName(integrationName, integrationSlug);
+	const cloneDirectory = `corsair-${integrationSlug}`;
 	const cloneCommand = githubUsername
-		? `git clone https://github.com/${githubUsername}/corsair.git
-cd corsair
+		? `git clone https://github.com/${githubUsername}/corsair.git ${cloneDirectory}
+cd ${cloneDirectory}
 pnpm install`
-		: `git clone https://github.com/<your-username>/corsair.git
-cd corsair
+		: `git clone https://github.com/<your-username>/corsair.git ${cloneDirectory}
+cd ${cloneDirectory}
 pnpm install`;
 	const branchCommand = `git checkout -b feat/${integrationSlug}-plugin`;
 	const generateCommand = `pnpm run generate:plugin ${pluginName}`;
@@ -250,20 +251,32 @@ pnpm test`;
 
 				{selectedStep === 1 ? (
 					<>
+						<p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-[13px] leading-snug text-[#1c1c1c99]">
+							<strong className="font-medium text-[#1c1c1c]">
+								Start fresh every time.
+							</strong>{' '}
+							For each new integration, delete any existing Corsair fork on
+							GitHub, fork again from upstream, and clone into a new local
+							directory. Reusing an old fork or clone causes merge conflicts on
+							your PR.
+						</p>
 						<ol className="m-0 list-decimal space-y-4 pl-5">
 							<li>
 								<strong className="font-medium text-[#1c1c1c]">
-									Fork and clone the repo.
+									Fork and clone a fresh repo.
 								</strong>{' '}
+								If you already forked corsair for a previous integration, delete
+								that fork first. Then{' '}
 								<a
 									href={`${GITHUB_URL}/fork`}
 									className="font-medium text-[#1c1c1c] underline-offset-2 hover:underline"
 									target="_blank"
 									rel="noreferrer"
 								>
-									Fork corsair on GitHub
-								</a>
-								, then clone your fork and install dependencies:
+									fork corsair on GitHub
+								</a>{' '}
+								again from upstream, clone into a new directory, and install
+								dependencies:
 								<CopyableCommand command={cloneCommand} />
 							</li>
 							<li>

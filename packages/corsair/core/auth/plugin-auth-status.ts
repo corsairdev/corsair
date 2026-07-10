@@ -64,9 +64,7 @@ function isRequiredAccountField(field: string): boolean {
 
 // Core account fields that mean "connected" for connection-status APIs.
 // Plugin-specific extras (team_id, installation_id, …) can still be missing.
-function getConnectionCredentialFields(
-	authType: AuthTypes,
-): readonly string[] {
+function getConnectionCredentialFields(authType: AuthTypes): readonly string[] {
 	switch (authType) {
 		case 'oauth_2':
 		case 'managed':

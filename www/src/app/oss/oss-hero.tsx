@@ -5,24 +5,40 @@ import { FramedPanel } from './framed-panel';
 type OssHeroProps = {
 	signedIn: boolean;
 	stats: {
-		total: number;
-		claimed: number;
-		finished: number;
-		inProgress: number;
 		unclaimed: number;
-		contributors: number;
 	};
 };
 
 const numberFormatter = new Intl.NumberFormat('en-US');
 
-function StatBlock({ label, value }: { label: string; value: number }) {
+const heroSteps: Array<{ label: string; accent?: boolean }> = [
+	{ label: 'Ship a plugin' },
+	{ label: 'Get it merged' },
+	{ label: 'Earn AI credits', accent: true },
+	{ label: 'Watch your code be used by thousands' },
+];
+
+function HeroStatBlock({
+	label,
+	value,
+	accent = false,
+}: {
+	label: string;
+	value: string;
+	accent?: boolean;
+}) {
 	return (
-		<div className="bg-white px-5 py-4 sm:px-6">
-			<p className="font-[family-name:var(--font-landing-mono)] text-[26px] font-light leading-none tabular-nums text-[#1c1c1c]">
-				{numberFormatter.format(value)}
+		<div className="flex min-h-[140px] flex-col justify-center bg-white px-6 py-8 sm:px-8">
+			<p
+				className={
+					accent
+						? 'font-[family-name:var(--font-landing-mono)] text-[clamp(1.75rem,3.5vw,2.25rem)] font-light leading-none tabular-nums tracking-[-0.02em] text-[#4a38f5]'
+						: 'font-[family-name:var(--font-landing-mono)] text-[clamp(1.75rem,3.5vw,2.25rem)] font-light leading-none tabular-nums tracking-[-0.02em] text-[#1c1c1c]'
+				}
+			>
+				{value}
 			</p>
-			<p className="mt-2 font-[family-name:var(--font-landing-mono)] text-[10px] font-medium tracking-[0.08em] text-[#1c1c1c99] uppercase">
+			<p className="mt-3 font-[family-name:var(--font-landing-mono)] text-[10px] font-medium tracking-[0.08em] text-[#1c1c1c99] uppercase">
 				{label}
 			</p>
 		</div>
@@ -30,31 +46,48 @@ function StatBlock({ label, value }: { label: string; value: number }) {
 }
 
 export function OssHero({ signedIn, stats }: OssHeroProps) {
-	const shippedPct = stats.total > 0 ? (stats.finished / stats.total) * 100 : 0;
-	const inProgressPct =
-		stats.total > 0 ? (stats.inProgress / stats.total) * 100 : 0;
-
 	return (
 		<section className="pt-12 pb-10 sm:pt-16 sm:pb-14">
 			<div className="grid gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:items-center lg:gap-16">
 				<div>
-					<p className="font-[family-name:var(--font-landing-mono)] text-xs font-medium tracking-[0.02em] text-[#1c1c1c99] uppercase">
-						The OSS program
-					</p>
-					<h1 className="mt-5 text-[clamp(2rem,4.5vw,3.25rem)] font-light leading-[1.1] tracking-[-0.02em] text-[#1c1c1c]">
-						<span className="font-[family-name:var(--landing-font-serif)] italic">
-							Every integration,
-						</span>
-						<br />
-						<span className="font-[family-name:var(--landing-font-sans)] tracking-[-0.04em]">
-							built in the open.
-						</span>
+					<h1 className="flex max-w-[520px] flex-col font-[family-name:var(--landing-font-sans)] text-[clamp(1.375rem,2.8vw,1.875rem)] font-light leading-snug tracking-[-0.02em]">
+						{heroSteps.map((step, index) => {
+							const isLast = index === heroSteps.length - 1;
+
+							return (
+								<span
+									key={step.label}
+									className={`flex gap-4 ${isLast ? '' : 'pb-3.5'}`}
+								>
+									<span
+										className="relative flex w-3.5 shrink-0 flex-col items-center"
+										aria-hidden
+									>
+										<span
+											className={
+												step.accent
+													? 'mt-2 size-2.5 shrink-0 rounded-full bg-[#4a38f5]'
+													: 'mt-2 size-2.5 shrink-0 rounded-full border border-[#1c1c1c]/20 bg-white'
+											}
+										/>
+										{!isLast ? (
+											<span className="mt-1 w-px flex-1 bg-[#1c1c1c]/12" />
+										) : null}
+									</span>
+									<span
+										className={
+											step.accent
+												? 'pb-0.5 font-medium text-[#4a38f5]'
+												: 'text-[#1c1c1c]'
+										}
+									>
+										{step.label}
+									</span>
+								</span>
+							);
+						})}
 					</h1>
-					<p className="mt-5 max-w-[460px] text-[15px] leading-[1.65] text-[#1c1c1c99]">
-						Claim an integration, ship the plugin, climb the leaderboard.
-						Everything you ship goes live in the open catalog — powering real
-						agents, in real products, from day one.
-					</p>
+
 					<div className="mt-7 flex flex-wrap items-center gap-3">
 						<Link
 							href={signedIn ? '#integrations' : '/oss/sign-in'}
@@ -74,56 +107,12 @@ export function OssHero({ signedIn, stats }: OssHeroProps) {
 				</div>
 
 				<FramedPanel>
-					<div className="grid grid-cols-2 gap-px bg-[#1c1c1c1a] sm:grid-cols-4">
-						<StatBlock label="Shipped" value={stats.finished} />
-						<StatBlock label="In progress" value={stats.inProgress} />
-						<StatBlock label="Up for grabs" value={stats.unclaimed} />
-						<StatBlock label="Contributors" value={stats.contributors} />
-					</div>
-					<div className="border-t border-[#1c1c1c1a] px-5 py-4 sm:px-6">
-						<svg
-							className="block h-[8px] w-full"
-							preserveAspectRatio="none"
-							role="progressbar"
-							aria-valuenow={stats.finished}
-							aria-valuemin={0}
-							aria-valuemax={stats.total}
-							aria-label="Integrations shipped"
-						>
-							<line
-								x1="0"
-								y1="4"
-								x2="100%"
-								y2="4"
-								stroke="#1c1c1c33"
-								strokeWidth="1.5"
-								strokeDasharray="3 6"
-							/>
-							<line
-								x1="0"
-								y1="4"
-								x2={`${shippedPct + inProgressPct}%`}
-								y2="4"
-								stroke="#8174f8"
-								strokeWidth="2"
-								strokeDasharray="4 6"
-							/>
-							<line
-								x1="0"
-								y1="4"
-								x2={`${shippedPct}%`}
-								y2="4"
-								stroke="#4a38f5"
-								strokeWidth="2"
-							/>
-						</svg>
-						<div className="mt-2.5 flex items-baseline justify-between font-[family-name:var(--font-landing-mono)] text-[11px] text-[#1c1c1c99]">
-							<span>
-								{numberFormatter.format(stats.finished)} shipped /{' '}
-								{numberFormatter.format(stats.inProgress)} in flight
-							</span>
-							<span>{numberFormatter.format(stats.total)} total</span>
-						</div>
+					<div className="grid grid-cols-1 gap-px bg-[#1c1c1c1a] sm:grid-cols-2">
+						<HeroStatBlock accent value="$30,000+" label="AI credits to earn" />
+						<HeroStatBlock
+							value={numberFormatter.format(stats.unclaimed)}
+							label="Integrations available"
+						/>
 					</div>
 				</FramedPanel>
 			</div>

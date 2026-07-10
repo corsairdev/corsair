@@ -43,9 +43,7 @@ function createHandlerContext(
 			messages: {
 				existsByEntityId: jest.fn().mockResolvedValue(false),
 				findIdByEntityId: jest.fn().mockResolvedValue('internal-id-1'),
-				upsertByEntityId: jest
-					.fn()
-					.mockResolvedValue({ id: 'internal-id-1' }),
+				upsertByEntityId: jest.fn().mockResolvedValue({ id: 'internal-id-1' }),
 				deleteByEntityId: jest.fn().mockResolvedValue(undefined),
 			},
 		},
@@ -59,27 +57,29 @@ function mockHistoryResponse(
 		labelsAdded?: Array<{ message?: { id?: string } }>;
 	}>,
 ) {
-	mockMakeGmailRequest.mockImplementation(async (path, _credentials, options) => {
-		if (path.includes('/history')) {
-			return { history };
-		}
+	mockMakeGmailRequest.mockImplementation(
+		async (path, _credentials, options) => {
+			if (path.includes('/history')) {
+				return { history };
+			}
 
-		if (path.endsWith('/messages') && options?.method === 'GET') {
-			return {
-				messages: [{ id: 'fallback-msg-1' }],
-			};
-		}
+			if (path.endsWith('/messages') && options?.method === 'GET') {
+				return {
+					messages: [{ id: 'fallback-msg-1' }],
+				};
+			}
 
-		if (path.includes('/messages/fallback-msg-1')) {
-			return { id: 'fallback-msg-1', historyId: '1000' };
-		}
+			if (path.includes('/messages/fallback-msg-1')) {
+				return { id: 'fallback-msg-1', historyId: '1000' };
+			}
 
-		if (path.includes('/messages/deleted-msg-1')) {
-			return { id: 'deleted-msg-1', historyId: '1000' };
-		}
+			if (path.includes('/messages/deleted-msg-1')) {
+				return { id: 'deleted-msg-1', historyId: '1000' };
+			}
 
-		return {};
-	});
+			return {};
+		},
+	);
 }
 
 describe('Gmail messageChanged webhook event filtering', () => {
@@ -163,37 +163,39 @@ describe('Gmail messageChanged webhook event filtering', () => {
 
 	it('uses the fallback path when history is empty', async () => {
 		mockHistoryResponse([]);
-		mockMakeGmailRequest.mockImplementation(async (path, _credentials, options) => {
-			if (path.includes('/history')) {
-				return { history: [] };
-			}
-
-			if (path.endsWith('/messages') && options?.method === 'GET') {
-				return {
-					messages: [{ id: 'fallback-msg-1' }],
-				};
-			}
-
-			if (path.includes('/messages/fallback-msg-1')) {
-				if (options?.query?.format === 'minimal') {
-					return { id: 'fallback-msg-1', historyId: '1000' };
+		mockMakeGmailRequest.mockImplementation(
+			async (path, _credentials, options) => {
+				if (path.includes('/history')) {
+					return { history: [] };
 				}
 
-				return {
-					id: 'fallback-msg-1',
-					historyId: '1000',
-					payload: {
-						headers: [
-							{ name: 'Subject', value: 'Hello' },
-							{ name: 'From', value: 'sender@example.com' },
-							{ name: 'To', value: 'user@example.com' },
-						],
-					},
-				};
-			}
+				if (path.endsWith('/messages') && options?.method === 'GET') {
+					return {
+						messages: [{ id: 'fallback-msg-1' }],
+					};
+				}
 
-			return {};
-		});
+				if (path.includes('/messages/fallback-msg-1')) {
+					if (options?.query?.format === 'minimal') {
+						return { id: 'fallback-msg-1', historyId: '1000' };
+					}
+
+					return {
+						id: 'fallback-msg-1',
+						historyId: '1000',
+						payload: {
+							headers: [
+								{ name: 'Subject', value: 'Hello' },
+								{ name: 'From', value: 'sender@example.com' },
+								{ name: 'To', value: 'user@example.com' },
+							],
+						},
+					};
+				}
+
+				return {};
+			},
+		);
 
 		const context = createHandlerContext(['messageReceived']);
 		const response = await messageChanged.handler(

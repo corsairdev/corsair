@@ -19,7 +19,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "SDK",
+        "tab": "Docs",
         "groups": [
           {
             "group": "Get Started",
@@ -30,110 +30,93 @@
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Concepts",
             "pages": [
-              "concepts/integrations",
-              "concepts/auth",
-              "concepts/permissions",
-              "concepts/database",
-              "concepts/webhooks",
-              "concepts/hooks",
-              "concepts/multi-tenancy",
-              "concepts/api",
-              "concepts/error-handling",
-              "concepts/typescript"
+              {
+                "group": "Core Concepts",
+                "pages": [
+                  "concepts/integrations",
+                  "concepts/auth",
+                  "concepts/permissions",
+                  "concepts/multi-tenancy",
+                  "concepts/database",
+                  "concepts/webhooks",
+                  "concepts/hooks",
+                  "concepts/api",
+                  "concepts/error-handling",
+                  "concepts/typescript"
+                ]
+              },
+              {
+                "group": "Authentication",
+                "pages": [
+                  "concepts/api-key",
+                  "concepts/oauth",
+                  "production/oauth-process",
+                  "production/tenant-provisioning"
+                ]
+              }
             ]
           },
           {
-            "group": "MCP Adapters",
+            "group": "Adapters",
             "pages": [
-              "mcp-adapters/mcp-adapters",
-              "mcp-adapters/anthropic-sdk",
-              "mcp-adapters/claude-sdk",
-              "mcp-adapters/openai-agents",
-              "mcp-adapters/vercel-ai",
-              "mcp-adapters/mastra",
-              "mcp-adapters/openai"
+              {
+                "group": "MCP",
+                "pages": [
+                  "mcp-adapters/mcp-adapters",
+                  "mcp-adapters/anthropic-sdk",
+                  "mcp-adapters/claude-sdk",
+                  "mcp-adapters/openai-agents",
+                  "mcp-adapters/vercel-ai",
+                  "mcp-adapters/mastra",
+                  "mcp-adapters/openai"
+                ]
+              },
+              {
+                "group": "Coding Agents",
+                "pages": [
+                  "mcp-adapters/coding-agents",
+                  "mcp-adapters/claude-code",
+                  "mcp-adapters/cursor"
+                ]
+              },
+              {
+                "group": "Workflow Engines",
+                "pages": [
+                  "guides/inngest",
+                  "guides/temporal",
+                  "guides/trigger-dev",
+                  "guides/hatchet"
+                ]
+              }
             ]
           },
           {
-            "group": "Coding Agents",
+            "group": "Reference",
             "pages": [
-              "mcp-adapters/coding-agents",
-              "mcp-adapters/claude-code",
-              "mcp-adapters/cursor"
+              {
+                "group": "Client",
+                "expanded": false,
+                "pages": [
+                  "management/overview",
+                  "management/handler",
+                  "management/client",
+                  "management/react",
+                  "management/connect"
+                ]
+              }
             ]
           },
           {
-            "group": "Studio",
-            "pages": ["studio/overview"]
-          },
-          {
-            "group": "Auth Types",
-            "pages": ["concepts/api-key", "concepts/oauth"]
-          },
-          {
-            "group": "Management API",
+            "group": "Hub",
             "pages": [
-              "management/overview",
-              "management/handler",
-              "management/client",
-              "management/react",
-              "management/connect"
-            ]
-          },
-          {
-            "group": "Production",
-            "pages": [
-              "production/oauth-process",
-              "production/tenant-provisioning"
-            ]
-          },
-          {
-            "group": "Workflow Engines",
-            "pages": [
-              "guides/inngest",
-              "guides/temporal",
-              "guides/trigger-dev",
-              "guides/hatchet"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "App",
-        "pages": [
-          "app/home",
-          "app/agent-setup",
-          {
-            "group": "Get started",
-            "pages": [
-              "app/coding-agents",
-              "app/agent-sdks",
-              "app/direct-execution"
-            ]
-          },
-          {
-            "group": "Coding agents",
-            "pages": [
-              "app/coding-agents/cursor",
-              "app/coding-agents/claude-code",
-              "app/coding-agents/codex",
-              "app/coding-agents/antigravity",
-              "app/coding-agents/custom-connector"
-            ]
-          },
-          {
-            "group": "Agent SDKs",
-            "pages": ["app/vercel-ai", "app/openai", "app/claude"]
-          },
-          {
-            "group": "SDK Concepts",
-            "pages": [
-              "app/installation",
-              "app/instances-and-plugins",
-              "app/tenants-and-auth",
-              "app/types-and-errors"
+              "hub/overview",
+              "hub/environments",
+              "hub/dashboard",
+              "hub/manual-vs-hub",
+              "hub/delivery-urls",
+              "hub/permissions"
             ]
           }
         ]
@@ -366,6 +349,14 @@
                   "plugins/googledrive/api",
                   "plugins/googledrive/database",
                   "plugins/googledrive/webhooks"
+                ]
+              },
+              {
+                "group": "Google Meet",
+                "pages": [
+                  "plugins/googlemeet/overview",
+                  "plugins/googlemeet/api",
+                  "plugins/googlemeet/database"
                 ]
               },
               {
@@ -608,6 +599,15 @@
                 ]
               },
               {
+                "group": "Supabase",
+                "pages": [
+                  "plugins/supabase/overview",
+                  "plugins/supabase/get-credentials",
+                  "plugins/supabase/api",
+                  "plugins/supabase/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
@@ -770,10 +770,10 @@
           {
             "group": "Guides",
             "pages": [
-              "guides/webhooks",
-              "guides/workflows",
               "guides/dashboard",
-              "guides/plugin-credentials"
+              "guides/plugin-credentials",
+              "guides/webhooks",
+              "guides/workflows"
             ]
           }
         ]
@@ -781,85 +781,169 @@
     ]
   },
   "redirects": [
-    { "source": "/", "destination": "/getting-started/introduction" },
+    {
+      "source": "/",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/studio/overview",
+      "destination": "/getting-started/introduction"
+    },
     {
       "source": "/getting-started/installation",
       "destination": "/getting-started/setup"
     },
-    { "source": "/app/introduction", "destination": "/app/home" },
-    { "source": "/hosted-sdk/overview", "destination": "/app/home" },
-    { "source": "/hosted-sdk/quickstart", "destination": "/app/installation" },
     {
-      "source": "/hosted-sdk/instances-and-plugins",
-      "destination": "/app/instances-and-plugins"
+      "source": "/app/home",
+      "destination": "/getting-started/introduction"
     },
     {
-      "source": "/hosted-sdk/tenants-and-auth",
-      "destination": "/app/tenants-and-auth"
+      "source": "/app/introduction",
+      "destination": "/getting-started/introduction"
     },
     {
-      "source": "/hosted-sdk/mcp-and-run",
-      "destination": "/app/agent-sdks"
+      "source": "/app/agent-setup",
+      "destination": "/getting-started/setup"
     },
     {
-      "source": "/hosted-sdk/types-and-errors",
-      "destination": "/app/types-and-errors"
+      "source": "/app/installation",
+      "destination": "/getting-started/setup"
     },
     {
-      "source": "/hosted-mcp/overview",
-      "destination": "/app/agent-sdks"
+      "source": "/app/coding-agents",
+      "destination": "/mcp-adapters/coding-agents"
     },
     {
-      "source": "/hosted-mcp/vercel-ai",
-      "destination": "/app/vercel-ai"
+      "source": "/app/coding-agents/cursor",
+      "destination": "/mcp-adapters/cursor"
     },
     {
-      "source": "/hosted-mcp/openai",
-      "destination": "/app/openai"
+      "source": "/app/coding-agents/claude-code",
+      "destination": "/mcp-adapters/claude-code"
     },
     {
-      "source": "/hosted-mcp/claude",
-      "destination": "/app/claude"
+      "source": "/app/coding-agents/codex",
+      "destination": "/mcp-adapters/coding-agents"
     },
     {
-      "source": "/hosted-mcp/custom-connector",
-      "destination": "/app/coding-agents/custom-connector"
+      "source": "/app/coding-agents/antigravity",
+      "destination": "/mcp-adapters/coding-agents"
+    },
+    {
+      "source": "/app/coding-agents/custom-connector",
+      "destination": "/mcp-adapters/coding-agents"
     },
     {
       "source": "/app/custom-connector",
-      "destination": "/app/coding-agents/custom-connector"
+      "destination": "/mcp-adapters/coding-agents"
+    },
+    {
+      "source": "/app/agent-sdks",
+      "destination": "/mcp-adapters/mcp-adapters"
+    },
+    {
+      "source": "/app/vercel-ai",
+      "destination": "/mcp-adapters/vercel-ai"
+    },
+    {
+      "source": "/app/openai",
+      "destination": "/mcp-adapters/openai"
+    },
+    {
+      "source": "/app/claude",
+      "destination": "/mcp-adapters/claude-sdk"
+    },
+    {
+      "source": "/app/direct-execution",
+      "destination": "/concepts/api"
+    },
+    {
+      "source": "/app/instances-and-plugins",
+      "destination": "/concepts/integrations"
+    },
+    {
+      "source": "/app/tenants-and-auth",
+      "destination": "/concepts/multi-tenancy"
+    },
+    {
+      "source": "/app/types-and-errors",
+      "destination": "/concepts/typescript"
+    },
+    {
+      "source": "/hosted-sdk/overview",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/hosted-sdk/quickstart",
+      "destination": "/getting-started/setup"
+    },
+    {
+      "source": "/hosted-sdk/instances-and-plugins",
+      "destination": "/concepts/integrations"
+    },
+    {
+      "source": "/hosted-sdk/tenants-and-auth",
+      "destination": "/concepts/multi-tenancy"
+    },
+    {
+      "source": "/hosted-sdk/mcp-and-run",
+      "destination": "/mcp-adapters/mcp-adapters"
+    },
+    {
+      "source": "/hosted-sdk/types-and-errors",
+      "destination": "/concepts/typescript"
+    },
+    {
+      "source": "/hosted-mcp/overview",
+      "destination": "/mcp-adapters/mcp-adapters"
+    },
+    {
+      "source": "/hosted-mcp/vercel-ai",
+      "destination": "/mcp-adapters/vercel-ai"
+    },
+    {
+      "source": "/hosted-mcp/openai",
+      "destination": "/mcp-adapters/openai"
+    },
+    {
+      "source": "/hosted-mcp/claude",
+      "destination": "/mcp-adapters/claude-sdk"
+    },
+    {
+      "source": "/hosted-mcp/custom-connector",
+      "destination": "/mcp-adapters/coding-agents"
     },
     {
       "source": "/app/mcp/vercel-ai",
-      "destination": "/app/vercel-ai"
+      "destination": "/mcp-adapters/vercel-ai"
     },
     {
       "source": "/app/mcp/openai",
-      "destination": "/app/openai"
+      "destination": "/mcp-adapters/openai"
     },
     {
       "source": "/app/mcp/claude",
-      "destination": "/app/claude"
+      "destination": "/mcp-adapters/claude-sdk"
     },
     {
       "source": "/app/mcp/custom-connector",
-      "destination": "/app/custom-connector"
+      "destination": "/mcp-adapters/coding-agents"
     },
     {
       "source": "/app/sdk/installation",
-      "destination": "/app/installation"
+      "destination": "/getting-started/setup"
     },
     {
       "source": "/app/sdk/instances-and-plugins",
-      "destination": "/app/instances-and-plugins"
+      "destination": "/concepts/integrations"
     },
     {
       "source": "/app/sdk/tenants-and-auth",
-      "destination": "/app/tenants-and-auth"
+      "destination": "/concepts/multi-tenancy"
     },
     {
       "source": "/app/sdk/types-and-errors",
-      "destination": "/app/types-and-errors"
+      "destination": "/concepts/typescript"
     }
   ]
 }

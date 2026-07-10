@@ -4,7 +4,6 @@ import {
 	applyPermissionDecision,
 	isAuthCredentialsBrowserDelivery,
 	isByoOAuthBrowserDelivery,
-	isConnectStatusBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	processCorsair,
@@ -12,7 +11,6 @@ import {
 } from '../tunnel';
 import { buildClientBridgePostMessageHtml } from './browser-delivery-html';
 import { getHubConfig, HubNotConfiguredError } from './config';
-import { getConnectStatusForTenant } from './connect-status';
 import { BROWSER_DELIVERY_TTL_MS } from './contracts/tunnel';
 import { processAuthCredentialsDelivery } from './credentials-delivery';
 import {
@@ -108,28 +106,6 @@ export async function handleHubDeliveryGet(
 	}
 
 	try {
-		if (isConnectStatusBrowserDelivery(payload)) {
-			if (!payload.hubSuccessUrl) {
-				return {
-					type: 'json',
-					status: 400,
-					body: { error: 'Connect status delivery missing hubSuccessUrl' },
-				};
-			}
-
-			const tenantId = payload.tenantId?.trim() || 'default';
-			const status = await getConnectStatusForTenant(corsair, tenantId, {
-				pluginIds: payload.statusPlugins,
-			});
-
-			return {
-				type: 'redirect',
-				url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
-					status,
-				}),
-			};
-		}
-
 		if (isAuthCredentialsBrowserDelivery(payload)) {
 			if (!payload.hubSuccessUrl) {
 				return {
@@ -214,11 +190,7 @@ export async function handleHubDeliveryGet(
 		const message =
 			error instanceof Error ? error.message : 'Hub delivery failed';
 
-		if (
-			(isConnectStatusBrowserDelivery(payload) ||
-				isAuthCredentialsBrowserDelivery(payload)) &&
-			payload.hubSuccessUrl
-		) {
+		if (isAuthCredentialsBrowserDelivery(payload) && payload.hubSuccessUrl) {
 			return {
 				type: 'redirect',
 				url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
@@ -228,8 +200,7 @@ export async function handleHubDeliveryGet(
 		}
 
 		if (
-			(isConnectStatusBrowserDelivery(payload) ||
-				isAuthCredentialsBrowserDelivery(payload)) &&
+			isAuthCredentialsBrowserDelivery(payload) &&
 			payload.hubOrigin &&
 			payload.requestId
 		) {
@@ -274,6 +245,18 @@ export async function handleHubDeliveryPost(
 	}
 
 	const webhookResponse = ack.webhookResponse;
+	if (ack.connectLink) {
+		return {
+			type: 'json',
+			status: 200,
+			body: {
+				status: 'ok',
+				connectUrl: ack.connectLink.connectUrl,
+				expiresAt: ack.connectLink.expiresAt,
+			},
+		};
+	}
+
 	if (!webhookResponse) {
 		return {
 			type: 'json',

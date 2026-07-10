@@ -1,8 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGmailRequest } from '../client';
 import type { GmailWebhooks } from '../index';
-import type { GmailWebhookEventType } from './types';
 import type { HistoryListResponse, Message, MessagePart } from '../types';
+import type { GmailWebhookEventType } from './types';
 import { createGmailWebhookMatcher, decodePubSubMessage } from './types';
 
 const HISTORY_MAX_RESULTS = 100;

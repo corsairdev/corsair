@@ -14,8 +14,21 @@ export type TunnelType =
 	| 'permission.approve'
 	| 'permission.deny'
 	| 'auth.credentials'
-	| 'connect.status'
+	| 'integration.credentials'
+	| 'connect.create_link'
 	| 'run';
+
+/** Inbound tunnel types the app accepts (write-only — no credential reads). */
+export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
+	'oauth.callback',
+	'oauth.tokens',
+	'webhook',
+	'permission.approve',
+	'permission.deny',
+	'auth.credentials',
+	'integration.credentials',
+	'connect.create_link',
+]);
 
 /**
  * JSON body of a server-side delivery POST from the hub.
@@ -39,7 +52,6 @@ export type BrowserDeliveryMode =
 	| 'oauth.tokens'
 	| 'permission.approve'
 	| 'permission.deny'
-	| 'connect.status'
 	| 'auth.credentials';
 
 /**
@@ -88,8 +100,6 @@ export type BrowserDeliveryPayload = {
 	hubOrigin?: string;
 	/** Optional correlation id for debugging. */
 	requestId?: string;
-	/** Plugins to include in a connect status introspection response. */
-	statusPlugins?: string[];
 	/** API key / bot token fields (`deliveryMode: auth.credentials`). */
 	credentials?: Record<string, string>;
 };

@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
+import { isOssAdminEmail } from '@/lib/oss-admin';
 
+import { buildOssContributorHref } from './oss-url';
 import { SignOutButton } from './sign-out-button';
 
 type Session = {
@@ -22,10 +23,9 @@ export function OssBarAuth({
 	githubUsername: string | null;
 	githubAvatarUrl: string | null;
 }) {
-	const pathname = usePathname();
-	const hideSignIn = !session?.user && pathname.startsWith('/oss/waitlist');
-
 	if (session?.user) {
+		const showAdminLink = isOssAdminEmail(session.user.email);
+
 		return (
 			<>
 				<div className="hidden items-center gap-2 sm:flex">
@@ -33,20 +33,26 @@ export function OssBarAuth({
 						{session.user.email}
 					</Badge>
 					{githubUsername ? (
-						<a
-							href={`https://github.com/${githubUsername}`}
-							className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium transition-colors hover:bg-muted/80"
-							target="_blank"
+						<Link
+							href={buildOssContributorHref(githubUsername)}
+							className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium transition-colors hover:bg-muted/80 no-underline"
 						>
 							@{githubUsername}
-						</a>
+						</Link>
 					) : null}
 				</div>
+				{showAdminLink ? (
+					<Link
+						href="/oss/admin"
+						className="inline-flex items-center rounded-lg border border-[#4a38f5]/20 bg-[#4a38f508] px-3 py-1.5 text-xs font-medium text-[#4a38f5] no-underline transition-colors hover:bg-[#4a38f512]"
+					>
+						Admin
+					</Link>
+				) : null}
 				{githubAvatarUrl ? (
 					githubUsername ? (
-						<a
-							href={`https://github.com/${githubUsername}`}
-							target="_blank"
+						<Link
+							href={buildOssContributorHref(githubUsername)}
 							className="inline-flex shrink-0"
 						>
 							<img
@@ -56,7 +62,7 @@ export function OssBarAuth({
 								height={28}
 								className="rounded-full ring-2 ring-border/60 transition-all hover:ring-border"
 							/>
-						</a>
+						</Link>
 					) : (
 						<img
 							src={githubAvatarUrl}
@@ -70,10 +76,6 @@ export function OssBarAuth({
 				<SignOutButton />
 			</>
 		);
-	}
-
-	if (hideSignIn) {
-		return null;
 	}
 
 	return (
