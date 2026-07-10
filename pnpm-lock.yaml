@@ -144,9 +144,9 @@ importers:
       '@anthropic-ai/claude-agent-sdk':
         specifier: ^0.2.0
         version: 0.2.71(zod@4.4.3)
-      '@corsair-dev/active_trail':
+      '@corsair-dev/activetrail':
         specifier: workspace:*
-        version: link:../../packages/active_trail
+        version: link:../../packages/activetrail
       '@corsair-dev/agentql':
         specifier: workspace:*
         version: link:../../packages/agentql
@@ -284,7 +284,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/active_trail:
+  packages/activetrail:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14

@@ -13,7 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'active_trail',
+	'activetrail',
 	'agentql',
 	'ahrefs',
 	'airtable',
@@ -84,7 +84,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
-	active_trail: 'ActiveTrail',
+	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
@@ -162,7 +162,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
-	| 'active_trail'
+	| 'activetrail'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
