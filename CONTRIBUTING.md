@@ -27,6 +27,9 @@ If you want to contribute a new plugin, please start with the issue first. The i
 
 ## Fork and Local Setup
 
+Prerequisites: Node.js 22 or newer (the plugin generator uses
+`--experimental-strip-types`) and pnpm 10.
+
 For each new integration, start from a fresh fork and a new local clone. If you already forked corsair for a previous integration, delete that fork on GitHub before forking again. Reusing an old fork or local checkout causes merge conflicts when you open a PR.
 
 1. Delete any existing corsair fork on GitHub (if this is not your first integration).

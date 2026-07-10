@@ -3,7 +3,7 @@ import { revalidateTag, unstable_cache } from 'next/cache';
 import { db } from '@/db';
 import {
 	getActiveClaimsForUser,
-	getUserWipClaim,
+	getUserClaimEligibility,
 } from '@/db/integration-status';
 import { appRouter } from '@/server/api/root';
 
@@ -87,16 +87,17 @@ export async function getIntegrationListForPage(
 	if (!userId) return list;
 
 	try {
-		const [claims, wipClaim] = await Promise.all([
+		const [claims, claimEligibility] = await Promise.all([
 			getActiveClaimsForUser(db, userId),
-			getUserWipClaim(db, userId),
+			getUserClaimEligibility(db, userId),
 		]);
 		const claimedIds = new Set(claims.map((claim) => claim.integrationId));
-		const userCanClaim = wipClaim == null;
+		const userCanClaim = claimEligibility.canClaim;
 
 		return {
 			...list,
-			wipIntegrationName: wipClaim?.name ?? null,
+			wipIntegrationName: claimEligibility.wipIntegrationName,
+			claimBlockReason: claimEligibility.blockReason,
 			items: list.items.map((item) => ({
 				...item,
 				claimedByCurrentUser: claimedIds.has(item.id),
@@ -109,6 +110,7 @@ export async function getIntegrationListForPage(
 		return {
 			...list,
 			wipIntegrationName: null,
+			claimBlockReason: null,
 			items: list.items.map((item) => ({
 				...item,
 				userCanClaim: false,
