@@ -1,5 +1,5 @@
 {
-  "name": "@corsair-dev/anchor_browser",
+  "name": "@corsair-dev/anchorbrowser",
   "version": "0.1.0",
   "description": "Anchor Browser plugin for Corsair",
   "type": "module",
@@ -33,7 +33,7 @@
   },
   "keywords": [
     "corsair",
-    "anchor_browser",
+    "anchorbrowser",
     "browser",
     "automation",
     "plugin"

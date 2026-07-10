@@ -1,7 +1,7 @@
 import { request } from 'corsair/http';
 import { makeAnchorBrowserRequest } from './client';
 import type { AnchorBrowserContext } from './index';
-import { anchor_browser, anchorBrowserEndpointSchemas } from './index';
+import { anchorBrowserEndpointSchemas, anchorbrowser } from './index';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -47,7 +47,7 @@ const mockCtx = {
 
 describe('AnchorBrowser plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {
-		const plugin = anchor_browser();
+		const plugin = anchorbrowser();
 		// Test-only: treat nested endpoints as a tree for leaf-count traversal.
 		const endpoints = plugin.endpoints as Record<string, unknown>;
 		const paths = endpointPaths(endpoints).sort();
@@ -62,7 +62,7 @@ describe('AnchorBrowser plugin shape', () => {
 	});
 
 	it('supports api key auth configuration', () => {
-		const plugin = anchor_browser();
+		const plugin = anchorbrowser();
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({ api_key: {} });
 	});
@@ -103,7 +103,7 @@ describe('AnchorBrowser endpoints', () => {
 	});
 
 	it('maps representative operations to API routes', async () => {
-		const plugin = anchor_browser({ key: 'test-api-key' });
+		const plugin = anchorbrowser({ key: 'test-api-key' });
 		// Test-only: narrow to representative session endpoints for route-mapping assertions.
 		const endpoints = plugin.endpoints as NonNullable<
 			typeof plugin.endpoints

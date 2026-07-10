@@ -106,9 +106,6 @@ export async function syncAnchorBrowserOperationCache(
 			await client.upsertByEntityId(entityId, item);
 		}
 	} catch (error) {
-		console.warn(
-			`[anchor_browser] Failed to sync ${rule.entity} cache:`,
-			error,
-		);
+		console.warn(`[anchorbrowser] Failed to sync ${rule.entity} cache:`, error);
 	}
 }

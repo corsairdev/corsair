@@ -13,7 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
-	'anchor_browser',
+	'anchorbrowser',
 	'agentql',
 	'ahrefs',
 	'airtable',
@@ -84,7 +84,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
-	anchor_browser: 'Anchor Browser',
+	anchorbrowser: 'Anchor Browser',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
@@ -162,7 +162,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
-	| 'anchor_browser'
+	| 'anchorbrowser'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'

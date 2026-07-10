@@ -1,4 +1,4 @@
-# `@corsair-dev/anchor_browser`
+# `@corsair-dev/anchorbrowser`
 
 Anchor Browser integration plugin for Corsair.
 
@@ -12,11 +12,11 @@ Provide the key either:
 
 ```ts
 import { createCorsair } from "corsair";
-import { anchor_browser } from "@corsair-dev/anchor_browser";
+import { anchorbrowser } from "@corsair-dev/anchorbrowser";
 
 export const corsair = createCorsair({
   integrations: [
-    anchor_browser({
+    anchorbrowser({
       key: process.env.ANCHOR_BROWSER_API_KEY,
     }),
   ],
@@ -42,13 +42,13 @@ The plugin is verified working end-to-end against the live Anchor Browser API:
 
 - **Terminal** — tests and build both pass:
 
-  ![anchor_browser tests + build passing in the terminal](./scripts/terminal-passing.gif)
+  ![anchorbrowser tests + build passing in the terminal](./scripts/terminal-passing.gif)
 
 - **Browser** — a real session is started via the plugin client, loads an
   educational site (Wikipedia), runs a search, and opens the
   *Photosynthesis* article. Captured live (not a placeholder):
 
-  ![anchor_browser live search on an educational website](./scripts/browser-demo.gif)
+  ![anchorbrowser live search on an educational website](./scripts/browser-demo.gif)
 
 Both GIFs show the plugin working end-to-end against the live Anchor Browser
 API: the terminal GIF is the real `pnpm test` + `pnpm build` output, and the

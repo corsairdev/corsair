@@ -43,7 +43,7 @@ function camelToSnake(value: string): string {
 
 function encodePathPart(value: unknown): string {
 	if (value === undefined || value === null || value === '') {
-		throw new Error('[anchor_browser] missing required path parameter');
+		throw new Error('[anchorbrowser] missing required path parameter');
 	}
 	return encodeURIComponent(String(value));
 }
@@ -120,7 +120,7 @@ export function getRoute(name: string): AnchorBrowserRoute {
 		(candidate) => candidate.name === name,
 	);
 	if (!route) {
-		throw new Error(`[anchor_browser] missing route: ${name}`);
+		throw new Error(`[anchorbrowser] missing route: ${name}`);
 	}
 	return route;
 }
@@ -133,7 +133,7 @@ export async function logAnchorBrowserOperation(
 ) {
 	await logEventFromContext(
 		ctx,
-		`anchor_browser.${route.group}.${route.name}`,
+		`anchorbrowser.${route.group}.${route.name}`,
 		{ method: route.method, path: route.path },
 		status,
 	);

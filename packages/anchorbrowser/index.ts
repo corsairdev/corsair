@@ -54,7 +54,7 @@ export const anchorBrowserAuthConfig = {
 
 export type BaseAnchorBrowserPlugin<T extends AnchorBrowserPluginOptions> =
 	CorsairPlugin<
-		'anchor_browser',
+		'anchorbrowser',
 		typeof AnchorBrowserSchema,
 		typeof anchorBrowserEndpointsNested,
 		{},
@@ -68,7 +68,7 @@ export type InternalAnchorBrowserPlugin =
 export type ExternalAnchorBrowserPlugin<T extends AnchorBrowserPluginOptions> =
 	BaseAnchorBrowserPlugin<T>;
 
-export function anchor_browser<const T extends AnchorBrowserPluginOptions>(
+export function anchorbrowser<const T extends AnchorBrowserPluginOptions>(
 	incomingOptions: AnchorBrowserPluginOptions &
 		T = {} as AnchorBrowserPluginOptions & T,
 ): ExternalAnchorBrowserPlugin<T> {
@@ -77,7 +77,7 @@ export function anchor_browser<const T extends AnchorBrowserPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
-		id: 'anchor_browser',
+		id: 'anchorbrowser',
 		schema: AnchorBrowserSchema,
 		options,
 		authConfig: anchorBrowserAuthConfig,
@@ -102,7 +102,7 @@ export function anchor_browser<const T extends AnchorBrowserPluginOptions>(
 					console.error(
 						'[ANCHORBROWSER] API key missing — connect Anchor Browser or pass key in plugin options.',
 					);
-					throw new AuthMissingError('anchor_browser', 'api_key');
+					throw new AuthMissingError('anchorbrowser', 'api_key');
 				}
 				return res;
 			}
@@ -110,7 +110,7 @@ export function anchor_browser<const T extends AnchorBrowserPluginOptions>(
 			console.error(
 				'[ANCHORBROWSER] Authentication required for Anchor Browser API requests.',
 			);
-			throw new AuthMissingError('anchor_browser', 'api_key');
+			throw new AuthMissingError('anchorbrowser', 'api_key');
 		},
 	} satisfies InternalAnchorBrowserPlugin;
 }
