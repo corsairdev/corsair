@@ -24,18 +24,36 @@ async function persistDocument(
 	try {
 		const text = extractPlainText(document);
 		const structure = summarizeStructure(document);
+		const triggers = ctx.options.triggers ?? {};
+
+		// Merge with the prior record instead of replacing it: a full replace
+		// would wipe webhook-maintained fields (like the placeholder baseline)
+		// that the edge-based triggers compare against.
+		const prior = (await ctx.db.documents.findByEntityId?.(
+			document.documentId,
+		)) as { data?: Record<string, unknown> } | undefined;
+
 		await ctx.db.documents.upsertByEntityId(document.documentId, {
+			createdAt: new Date(),
+			...(prior?.data ?? {}),
 			id: document.documentId,
 			documentId: document.documentId,
 			title: document.title,
 			revisionId: document.revisionId,
-			wordCount: countWords(text),
+			// Use the same metric the webhook persists so the threshold
+			// trigger's baseline stays comparable across both write paths.
+			wordCount:
+				triggers.countBy === 'characters' ? text.length : countWords(text),
 			headerCount: structure.headers,
 			footerCount: structure.footers,
 			footnoteCount: structure.footnotes,
 			tableCount: structure.tables,
 			imageCount: structure.images,
-			createdAt: new Date(),
+			// We have the full document text here, so refresh the placeholder
+			// baseline rather than letting it go stale until the next webhook.
+			...(triggers.placeholder
+				? { hasPlaceholder: text.includes(triggers.placeholder) }
+				: {}),
 		});
 	} catch (error) {
 		console.warn('Failed to save document to database:', error);

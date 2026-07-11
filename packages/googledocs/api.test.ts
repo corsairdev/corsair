@@ -653,6 +653,70 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 				DocumentsEndpoints.getDocument(failingCtx, { documentId: 'doc1' }),
 			).resolves.toMatchObject({ documentId: 'doc1' });
 		});
+
+		it('persistDocument merges prior cached fields instead of replacing them', async () => {
+			mockRequest.mockResolvedValue(minimalDocument);
+			const upsert = jest.fn().mockResolvedValue({ id: 'entity-1' });
+			const mergeCtx = testContext({
+				db: {
+					documents: {
+						// the webhook wrote this placeholder baseline; an endpoint
+						// refresh must not wipe it with a full-replacement upsert
+						findByEntityId: jest.fn().mockResolvedValue({
+							data: { hasPlaceholder: true, url: 'https://docs.example/doc1' },
+						}),
+						upsertByEntityId: upsert,
+					},
+				},
+			});
+
+			await DocumentsEndpoints.getDocument(mergeCtx, { documentId: 'doc1' });
+
+			expect(upsert).toHaveBeenCalledWith(
+				'doc1',
+				expect.objectContaining({
+					hasPlaceholder: true,
+					url: 'https://docs.example/doc1',
+					title: 'Test Doc',
+				}),
+			);
+		});
+
+		it('persistDocument refreshes the placeholder baseline when configured', async () => {
+			mockRequest.mockResolvedValue({
+				...minimalDocument,
+				body: {
+					content: [
+						{
+							paragraph: {
+								elements: [{ textRun: { content: 'fill {{name}} here' } }],
+							},
+						},
+					],
+				},
+			});
+			const upsert = jest.fn().mockResolvedValue({ id: 'entity-1' });
+			const placeholderCtx = testContext({
+				options: { triggers: { placeholder: '{{name}}' } },
+				db: {
+					documents: {
+						findByEntityId: jest
+							.fn()
+							.mockResolvedValue({ data: { hasPlaceholder: false } }),
+						upsertByEntityId: upsert,
+					},
+				},
+			});
+
+			await DocumentsEndpoints.getDocument(placeholderCtx, {
+				documentId: 'doc1',
+			});
+
+			expect(upsert).toHaveBeenCalledWith(
+				'doc1',
+				expect.objectContaining({ hasPlaceholder: true }),
+			);
+		});
 	});
 });
 

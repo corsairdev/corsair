@@ -43,6 +43,7 @@ type CachedDocument = {
 		footnoteCount?: number;
 		tableCount?: number;
 		imageCount?: number;
+		wordCount?: number;
 		hasPlaceholder?: boolean;
 	};
 };
@@ -322,6 +323,11 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 				const placeholderPresent =
 					!!opts.placeholder && text.includes(opts.placeholder);
 
+				// Measured with the configured countBy so the persisted baseline and
+				// the threshold comparison below always use the same metric.
+				const measuredCount =
+					opts.countBy === 'characters' ? text.length : countWords(text);
+
 				// Persist the new content snapshot (structure counts + placeholder
 				// state) before any trigger can return, so edge-based triggers fire
 				// once per actual change instead of on every delivery.
@@ -336,6 +342,7 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 							footnoteCount: structure.footnotes,
 							tableCount: structure.tables,
 							imageCount: structure.images,
+							wordCount: measuredCount,
 							...(opts.placeholder
 								? { hasPlaceholder: placeholderPresent }
 								: {}),
@@ -385,16 +392,22 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					isEnabled(ctx, 'documentWordCountThreshold') &&
 					opts.wordCountThreshold !== undefined
 				) {
-					const count =
-						opts.countBy === 'characters' ? text.length : countWords(text);
-					if (count >= opts.wordCountThreshold) {
+					// Fire only on the below -> at/above crossing edge. Without the
+					// cached baseline this would re-fire on every delivery for any
+					// document already past the threshold.
+					const priorCount = cached?.data?.wordCount;
+					const crossedThreshold =
+						priorCount !== undefined &&
+						priorCount < opts.wordCountThreshold &&
+						measuredCount >= opts.wordCountThreshold;
+					if (crossedThreshold) {
 						return emit(
 							ctx,
 							{
 								type: 'documentWordCountThreshold',
 								documentId: file.id,
 								title: file.name,
-								wordCount: count,
+								wordCount: measuredCount,
 								matchedValue: String(opts.wordCountThreshold),
 							},
 							corsairEntityId,
