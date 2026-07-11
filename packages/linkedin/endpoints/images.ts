@@ -79,10 +79,11 @@ export const registerImageUpload: LinkedInEndpoints['RegisterImageUpload'] =
 			},
 		};
 
-		// registerUpload lives on the Assets API, not the Images API.
+		// registerUpload lives on the legacy Assets API, which is only served
+		// from the /v2 surface — only Images/Videos moved to versioned /rest.
 		const result = await makeAuthenticatedLinkedInRequest<
 			LinkedInEndpointOutputs['RegisterImageUpload']
-		>('/rest/assets?action=registerUpload', ctx, { method: 'POST', body });
+		>('/v2/assets?action=registerUpload', ctx, { method: 'POST', body });
 
 		await logEventFromContext(
 			ctx,

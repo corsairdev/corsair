@@ -265,7 +265,8 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 
 			expect(lastCall().options).toMatchObject({
 				method: 'POST',
-				url: '/rest/assets?action=registerUpload',
+				// the legacy Assets API is on /v2, not the versioned /rest surface
+				url: '/v2/assets?action=registerUpload',
 				body: {
 					registerUploadRequest: {
 						recipes: ['urn:li:digitalmediaRecipe:feedshare-image'],
