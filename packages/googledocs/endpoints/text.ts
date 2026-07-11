@@ -152,6 +152,7 @@ export const insertPageBreak: GoogleDocsEndpoints['insertPageBreak'] = async (
 	input,
 ) => {
 	let startIndex = input.insertionIndex;
+	let writeControl: Record<string, unknown> | undefined;
 	if (startIndex === undefined) {
 		if (!input.appendToEnd) {
 			throw new Error(
@@ -163,17 +164,28 @@ export const insertPageBreak: GoogleDocsEndpoints['insertPageBreak'] = async (
 		>(DOCS_API_BASE, `/documents/${input.documentId}`, ctx, { method: 'GET' });
 		const content = document.body?.content ?? [];
 		startIndex = (content[content.length - 1]?.endIndex ?? 1) - 1;
+		// Pin the write to the revision the index was computed from: a
+		// concurrent edit between the GET and the batchUpdate would shift the
+		// indices and silently misplace the page break.
+		if (document.revisionId) {
+			writeControl = { requiredRevisionId: document.revisionId };
+		}
 	}
 
-	const response = await runBatchUpdate(ctx, input.documentId, [
-		{
-			updateParagraphStyle: {
-				range: { startIndex, endIndex: startIndex + 1 },
-				fields: 'pageBreakBefore',
-				paragraphStyle: { pageBreakBefore: true },
+	const response = await runBatchUpdate(
+		ctx,
+		input.documentId,
+		[
+			{
+				updateParagraphStyle: {
+					range: { startIndex, endIndex: startIndex + 1 },
+					fields: 'pageBreakBefore',
+					paragraphStyle: { pageBreakBefore: true },
+				},
 			},
-		},
-	]);
+		],
+		writeControl,
+	);
 
 	await logEventFromContext(
 		ctx,

@@ -466,6 +466,28 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 				fields: 'pageBreakBefore',
 			});
 		});
+
+		it('insertPageBreak with appendToEnd pins the write to the fetched revision', async () => {
+			mockRequest
+				.mockResolvedValueOnce(minimalDocument)
+				.mockResolvedValueOnce(emptyBatchResponse);
+			await TextEndpoints.insertPageBreak(ctx, {
+				documentId: 'doc1',
+				appendToEnd: true,
+			});
+
+			const { options } = lastCall();
+			// endIndex 25 from the fixture -> paragraph start at 24
+			expect(options.body.requests[0].updateParagraphStyle.range).toEqual({
+				startIndex: 24,
+				endIndex: 25,
+			});
+			// same TOCTOU guard as updateDocumentMarkdown: a concurrent edit
+			// between the GET and this POST must fail, not misplace the break
+			expect(options.body.writeControl).toEqual({
+				requiredRevisionId: 'rev1',
+			});
+		});
 	});
 
 	describe('structure', () => {
