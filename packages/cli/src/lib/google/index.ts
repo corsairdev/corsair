@@ -9,7 +9,6 @@ import {
 import { getCorsairInstance } from '../../utils/corsair-instance';
 import { promptTenantId } from '../../utils/prompts';
 import { setupCalendarWatch } from './calendar';
-import { setupDocsWatch } from './docs';
 import { setupDriveWatch } from './drive';
 import { setupGmailWatch } from './gmail';
 import { refreshGoogleAccessToken } from './shared';
@@ -20,7 +19,6 @@ const GOOGLE_PLUGINS = [
 	'googledrive',
 	'googlecalendar',
 	'googlesheets',
-	'googledocs',
 ] as const;
 type GooglePlugin = (typeof GOOGLE_PLUGINS)[number];
 
@@ -256,23 +254,6 @@ export async function runGoogleSubscribe({
 			await saveGoogleTenantLink({
 				linkType: 'channel_id',
 				externalId: calendarWatch.channelId,
-			});
-		} else if (pluginType === 'googledocs') {
-			const webhookUrl = await p.text({
-				message: 'Enter webhook URL:',
-				placeholder: 'https://example.com/api/webhook',
-				validate: (v) => {
-					if (!v || v.trim().length === 0) return 'Webhook URL is required';
-				},
-			});
-			if (p.isCancel(webhookUrl)) {
-				p.cancel('Operation cancelled.');
-				process.exit(0);
-			}
-			const docsWatch = await setupDocsWatch(accessToken, webhookUrl as string);
-			await saveGoogleTenantLink({
-				linkType: 'channel_id',
-				externalId: docsWatch.channelId,
 			});
 		} else {
 			p.log.error(`Unsupported Google plugin: ${pluginType}`);
