@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ApiError, request } from 'corsair/http';
 import { makeWebflowRequest, WebflowAPIError } from './client';
+import { webflowOperations } from './endpoints/operations';
 import type { WebflowContext } from './index';
 import { webflow, webflowEndpointSchemas } from './index';
 
@@ -423,6 +424,68 @@ describe('Webflow endpoints', () => {
 		]);
 	});
 
+	it('routes every operation to its declared path and method', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints =
+			endpointsAs<
+				Record<
+					string,
+					| Record<
+							string,
+							| ((
+									ctx: WebflowContext,
+									input: Record<string, unknown>,
+							  ) => Promise<unknown>)
+							| undefined
+					  >
+					| undefined
+				>
+			>(plugin);
+
+		// the const-asserted operations array narrows away optional fields per
+		// member; widen once so the loop can treat every operation uniformly
+		const allOperations = webflowOperations as readonly {
+			group: string;
+			name: string;
+			method: string;
+			path: string;
+			pathParams?: readonly string[];
+		}[];
+		expect(allOperations).toHaveLength(52);
+
+		for (const operation of allOperations) {
+			const handler = endpoints[operation.group]?.[operation.name];
+			if (!handler) {
+				throw new Error(
+					`[test] missing endpoint ${operation.group}.${operation.name}`,
+				);
+			}
+
+			// synthesize one value per declared path param; the factory must
+			// substitute all of them and leave no unresolved placeholder
+			const input: Record<string, unknown> = {};
+			let expectedUrl: string = operation.path;
+			for (const param of operation.pathParams ?? []) {
+				const value = `test-${param.replace(/_/g, '-')}`;
+				input[param] = value;
+				expectedUrl = expectedUrl.replace(`{${param}}`, value);
+			}
+
+			mockRequest.mockClear();
+			mockRequest.mockResolvedValue({ ok: true });
+			await handler(mockCtx, input);
+
+			const call = mockRequest.mock.calls[0]?.[1];
+			expect(call).toMatchObject({
+				method: operation.method,
+				url: expectedUrl,
+			});
+			// an unresolved placeholder means pathParams and the path template
+			// disagree — exactly the typo class this test exists to catch
+			expect(call.url).not.toContain('{');
+		}
+	});
+
 	it('folds extra GET inputs into the query string', async () => {
 		const plugin = webflow({ key: 'test-token' });
 		const endpoints = endpointsAs<{
@@ -617,6 +680,50 @@ describe('Webflow endpoints', () => {
 		});
 
 		// webflow bulk deletes require the target ids in a DELETE body
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'DELETE',
+			url: '/collections/580e63fc8c9a982ac9b8b745/items',
+			body: {
+				items: [
+					{ id: '580e64008c9a982ac9b8b754' },
+					{ id: '580e64008c9a982ac9b8b755' },
+				],
+			},
+		});
+		expect(ctxWithDb.db.collectionItems.deleteByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b754',
+		);
+		expect(ctxWithDb.db.collectionItems.deleteByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b755',
+		);
+	});
+
+	it('evicts bulk-deleted items when callers use the extra-fields shorthand', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionItems: {
+				deleteCollectionItems: (
+					ctx: WebflowContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const ctxWithDb = testContext({
+			db: {
+				collectionItems: { deleteByEntityId: jest.fn() },
+			},
+		});
+
+		// no explicit body: the factory folds the extra items field into the
+		// request body, so eviction must read the same ids from the shorthand
+		await endpoints.collectionItems.deleteCollectionItems(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			items: [
+				{ id: '580e64008c9a982ac9b8b754' },
+				{ id: '580e64008c9a982ac9b8b755' },
+			],
+		});
+
 		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
 			method: 'DELETE',
 			url: '/collections/580e63fc8c9a982ac9b8b745/items',

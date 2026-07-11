@@ -357,11 +357,22 @@ function cacheDeleteEntityId(input: WebflowEndpointInput, rule: CacheRule) {
 }
 
 function cacheDeleteBodyIds(input: WebflowEndpointInput, rule: CacheRule) {
-	if (!rule.deleteBodyItemsKeys?.length || !isRecord(input.body)) return [];
+	if (!rule.deleteBodyItemsKeys?.length) return [];
+
+	// Mirror requestBody's resolution: an explicit `body` wins, otherwise the
+	// extra top-level input fields are the body (the shorthand callers use),
+	// so eviction sees the same ids the API request actually carried.
+	let body: Record<string, unknown>;
+	if ('body' in input) {
+		if (!isRecord(input.body)) return [];
+		body = input.body;
+	} else {
+		body = input;
+	}
 
 	const ids: string[] = [];
 	for (const key of rule.deleteBodyItemsKeys) {
-		const items = input.body[key];
+		const items = body[key];
 		if (!Array.isArray(items)) continue;
 		for (const item of items) {
 			// bulk deletes and locale-aware publishes send { id } records,
