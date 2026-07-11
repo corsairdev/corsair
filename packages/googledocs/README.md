@@ -43,9 +43,12 @@ changes watch channel** narrowed to Docs mime types. Supported events:
 `documentWordCountThreshold`, `documentPlaceholderFilled`,
 `keywordDetected`, `docChanged`, `folderCreated`
 
-Drive watch channels expire (max ~24h) and must be renewed; the CLI's
-subscribe flow sets up the channel and the webhook handler resumes from
-the stored page token on each notification.
+Drive watch channels expire (max ~24h) and must be renewed. Create the
+channel via the Drive API (`changes.watch`) with a channel ID prefixed
+`googledocs-` — the plugin's webhook matcher requires that prefix to
+tell Docs deliveries apart from `googledrive`, which rides the same
+changes feed. The webhook handler resumes from the stored page token on
+each notification.
 
 ## Provider quirks
 
