@@ -222,6 +222,15 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 				if (ctx.db.documents?.upsertByEntityId && file.id) {
 					try {
 						if (removed || trashed) {
+							// Capture the cache record's corsair entity id before it is
+							// deleted; without this documentDeleted always emits with an
+							// empty entity id (only the upsert branch set the variable).
+							const existing = (await ctx.db.documents.findByEntityId?.(
+								file.id,
+							)) as { id?: string } | undefined;
+							if (!corsairEntityId && existing?.id) {
+								corsairEntityId = existing.id;
+							}
 							await ctx.db.documents.deleteByEntityId(file.id);
 						} else {
 							// Merge with the prior record: replacing it here would wipe
@@ -446,12 +455,15 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					);
 				}
 
+				// Match against the title or the document body: the fetched text is
+				// already in scope, and a search trigger that ignores content would
+				// silently miss every body-only match.
+				const searchQueryLower = opts.searchQuery?.toLowerCase();
 				if (
 					isEnabled(ctx, 'documentSearchUpdate') &&
-					opts.searchQuery &&
-					(file.name ?? '')
-						.toLowerCase()
-						.includes(opts.searchQuery.toLowerCase())
+					searchQueryLower &&
+					((file.name ?? '').toLowerCase().includes(searchQueryLower) ||
+						text.toLowerCase().includes(searchQueryLower))
 				) {
 					return emit(
 						ctx,
