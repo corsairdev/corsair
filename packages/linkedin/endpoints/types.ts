@@ -311,8 +311,10 @@ const GetOrgPageStatsInputSchema = z
 		),
 		time_integrated: z
 			.object({
-				start: z.string().optional(),
-				end: z.string().optional(),
+				// Epoch milliseconds — LinkedIn's timeIntervals timeDuration takes
+				// numeric start/end values, and strings would serialize malformed.
+				start: z.number().optional(),
+				end: z.number().optional(),
 			})
 			.optional()
 			.describe('Optional time range for time-bound (aggregate) statistics.'),
@@ -328,8 +330,9 @@ const GetShareStatsInputSchema = z
 		),
 		time_integrated: z
 			.object({
-				start: z.string().optional(),
-				end: z.string().optional(),
+				// Epoch milliseconds, matching the timeIntervals serialization.
+				start: z.number().optional(),
+				end: z.number().optional(),
 			})
 			.optional()
 			.describe('Optional time range to filter statistics.'),
