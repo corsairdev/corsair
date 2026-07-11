@@ -758,6 +758,39 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 				expect.objectContaining({ hasKeyword: true }),
 			);
 		});
+
+		it('searchDocuments merges prior cached fields instead of replacing them', async () => {
+			mockRequest.mockResolvedValue({
+				files: [{ id: 'doc1', name: 'Found Doc' }],
+			});
+			const upsert = jest.fn().mockResolvedValue({ id: 'entity-1' });
+			const searchCtx = testContext({
+				db: {
+					documents: {
+						// baselines written by the webhook; a search result carries only
+						// id and name and must not wipe them
+						findByEntityId: jest.fn().mockResolvedValue({
+							data: { headerCount: 2, wordCount: 40, hasPlaceholder: true },
+						}),
+						upsertByEntityId: upsert,
+					},
+				},
+			});
+
+			await DocumentsEndpoints.searchDocuments(searchCtx, {
+				q: "name contains 'Found'",
+			});
+
+			expect(upsert).toHaveBeenCalledWith(
+				'doc1',
+				expect.objectContaining({
+					headerCount: 2,
+					wordCount: 40,
+					hasPlaceholder: true,
+					title: 'Found Doc',
+				}),
+			);
+		});
 	});
 });
 

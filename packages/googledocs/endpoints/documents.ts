@@ -411,10 +411,17 @@ export const searchDocuments: GoogleDocsEndpoints['searchDocuments'] = async (
 		try {
 			for (const file of result.files) {
 				if (file.id) {
+					// Merge with the prior record: search results only carry id and
+					// name, and replacing the record would wipe the structure-count
+					// and trigger baselines the webhook comparisons depend on.
+					const prior = (await ctx.db.documents.findByEntityId?.(file.id)) as
+						| { data?: Record<string, unknown> }
+						| undefined;
 					await ctx.db.documents.upsertByEntityId(file.id, {
+						createdAt: new Date(),
+						...(prior?.data ?? {}),
 						id: file.id,
 						title: file.name,
-						createdAt: new Date(),
 					});
 				}
 			}
