@@ -123,6 +123,16 @@ function structureChanged(
 ): boolean {
 	const data = cached?.data;
 	if (!data) return false;
+	// Only compare against a recorded baseline. A record written by the
+	// lifecycle sync alone (id/title) has no counts, and defaulting those to
+	// zero would misfire for every document that has any structure at all.
+	const hasBaseline =
+		data.headerCount !== undefined ||
+		data.footerCount !== undefined ||
+		data.footnoteCount !== undefined ||
+		data.tableCount !== undefined ||
+		data.imageCount !== undefined;
+	if (!hasBaseline) return false;
 	return (
 		Number(data.headerCount ?? 0) !== structure.headers ||
 		Number(data.footerCount ?? 0) !== structure.footers ||
@@ -212,10 +222,17 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 						if (removed || trashed) {
 							await ctx.db.documents.deleteByEntityId(file.id);
 						} else {
+							// Merge with the prior record: replacing it here would wipe
+							// the structure counts and placeholder flag the content
+							// triggers below use as their comparison baseline.
+							const prior = (await ctx.db.documents.findByEntityId?.(
+								file.id,
+							)) as CachedDocument | undefined;
 							const entity = await ctx.db.documents.upsertByEntityId(file.id, {
+								createdAt: new Date(),
+								...(prior?.data ?? {}),
 								id: file.id,
 								title: file.name,
-								createdAt: new Date(),
 							});
 							if (!corsairEntityId && entity?.id) corsairEntityId = entity.id;
 						}
@@ -305,20 +322,27 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 				const placeholderPresent =
 					!!opts.placeholder && text.includes(opts.placeholder);
 
-				// Persist the new placeholder state before any trigger can return,
-				// so the present -> absent edge fires exactly once instead of on
-				// every subsequent change to a document without the placeholder.
-				if (opts.placeholder && ctx.db.documents?.upsertByEntityId) {
+				// Persist the new content snapshot (structure counts + placeholder
+				// state) before any trigger can return, so edge-based triggers fire
+				// once per actual change instead of on every delivery.
+				if (ctx.db.documents?.upsertByEntityId) {
 					try {
 						await ctx.db.documents.upsertByEntityId(file.id, {
 							...(cached?.data ?? {}),
 							id: file.id,
 							title: file.name,
-							hasPlaceholder: placeholderPresent,
+							headerCount: structure.headers,
+							footerCount: structure.footers,
+							footnoteCount: structure.footnotes,
+							tableCount: structure.tables,
+							imageCount: structure.images,
+							...(opts.placeholder
+								? { hasPlaceholder: placeholderPresent }
+								: {}),
 						});
 					} catch (error) {
 						console.warn(
-							`Failed to persist placeholder state for ${file.id}:`,
+							`Failed to persist content snapshot for ${file.id}:`,
 							error,
 						);
 					}

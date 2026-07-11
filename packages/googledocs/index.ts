@@ -342,6 +342,9 @@ export function googledocs<const T extends GoogleDocsPluginOptions>(
 			scopes: [
 				'https://www.googleapis.com/auth/documents',
 				'https://www.googleapis.com/auth/drive',
+				// listSpreadsheetCharts reads via the Sheets API, which does not
+				// accept Docs/Drive scopes; without this every call 403s.
+				'https://www.googleapis.com/auth/spreadsheets.readonly',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},

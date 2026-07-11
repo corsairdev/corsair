@@ -68,11 +68,13 @@ describe('Google Docs plugin shape', () => {
 		expect(Object.keys(googledocsEndpointSchemas)).toHaveLength(35);
 	});
 
-	it('requests the documents and drive OAuth scopes', () => {
+	it('requests the documents, drive, and sheets-read OAuth scopes', () => {
 		const plugin = googledocs();
 		expect(plugin.oauthConfig?.scopes).toEqual([
 			'https://www.googleapis.com/auth/documents',
 			'https://www.googleapis.com/auth/drive',
+			// required by listSpreadsheetCharts, which reads via the Sheets API
+			'https://www.googleapis.com/auth/spreadsheets.readonly',
 		]);
 	});
 
