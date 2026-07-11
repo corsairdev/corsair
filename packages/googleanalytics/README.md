@@ -63,8 +63,12 @@ webhook handlers.
 ## Provider quirks
 
 - Admin API resource names are hierarchical
-  (`properties/{propertyId}/customDimensions/{id}` etc.); endpoints take
-  the numeric IDs and build the resource paths internally.
+  (`properties/{propertyId}/customDimensions/{id}` etc.). Pass the full
+  resource name to `name`/`parent` inputs — for example
+  `parent: "properties/123"` or
+  `name: "properties/123/customDimensions/456"`; a bare numeric ID will 404. The exceptions are the Data API `property` parameter (reports) and
+  `properties.update`, which accept either `properties/123` or a bare
+  `123`.
 - Measurement Protocol requires exactly one stream identifier —
   `measurementId` or `firebaseAppId`; the input schema enforces this.
 - `validateEvents` hits the validation endpoint and does not record data;
