@@ -69,7 +69,9 @@ const ruleFixture = JSON.parse(
 test('rule-based finding gets a real title, not "Rule Used:"', () => {
 	const findings = parseFindings(ruleFixture);
 	assert.equal(findings.length, 1);
-	assert.equal(findings[0].severity, 'P0');
-	assert.ok(!findings[0].title.includes('Rule Used'));
-	assert.ok(findings[0].title.includes('new Function()'));
+	const finding = findings[0];
+	assert.ok(finding);
+	assert.equal(finding.severity, 'P0');
+	assert.ok(!finding.title.includes('Rule Used'));
+	assert.ok(finding.title.includes('new Function()'));
 });
