@@ -619,6 +619,15 @@ describe('endpoint routing hits the documented GA4 REST surface', () => {
 			url: '/v1beta/properties/100',
 		});
 	});
+
+	it('rejects endpoints longer than the URL bound before any request', async () => {
+		const handler = endpoints.properties?.get;
+		if (!handler) throw new Error('[test] missing properties.get');
+		await expect(
+			handler(mockCtx, { name: `properties/${'1'.repeat(4096)}` }),
+		).rejects.toThrow(/exceeds 2048 characters/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('measurement protocol routing (fetch-based)', () => {

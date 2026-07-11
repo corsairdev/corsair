@@ -104,11 +104,20 @@ type GoogleAnalyticsRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
+// Well above any real Analytics API path; bounds the string handed to the
+// shared URL-template parser so pathological inputs cannot degrade it.
+const MAX_ENDPOINT_LENGTH = 2048;
+
 export async function makeGoogleAnalyticsRequest<T>(
 	endpoint: string,
 	credentials: string,
 	options: GoogleAnalyticsRequestOptions = {},
 ): Promise<T> {
+	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
+		throw new GoogleAnalyticsAPIError(
+			`Google Analytics endpoint exceeds ${MAX_ENDPOINT_LENGTH} characters`,
+		);
+	}
 	const {
 		base = GOOGLE_ANALYTICS_ADMIN_BASE,
 		method = 'GET',
