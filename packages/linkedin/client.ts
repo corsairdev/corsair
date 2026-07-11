@@ -122,11 +122,20 @@ export type LinkedInRequestOptions = {
 	>;
 };
 
+// Well above any real LinkedIn REST path; bounds the string handed to the
+// shared URL-template parser so pathological inputs cannot degrade it.
+const MAX_ENDPOINT_LENGTH = 2048;
+
 export async function makeLinkedInRequest<T>(
 	endpoint: string,
 	accessToken: string,
 	options: LinkedInRequestOptions = {},
 ): Promise<T> {
+	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
+		throw new LinkedInAPIError(
+			`LinkedIn endpoint exceeds ${MAX_ENDPOINT_LENGTH} characters`,
+		);
+	}
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
