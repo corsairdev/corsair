@@ -50,9 +50,17 @@ async function persistDocument(
 			tableCount: structure.tables,
 			imageCount: structure.images,
 			// We have the full document text here, so refresh the placeholder
-			// baseline rather than letting it go stale until the next webhook.
+			// and keyword baselines rather than letting them go stale until the
+			// next webhook delivery.
 			...(triggers.placeholder
 				? { hasPlaceholder: text.includes(triggers.placeholder) }
+				: {}),
+			...(triggers.keyword
+				? {
+						hasKeyword: text
+							.toLowerCase()
+							.includes(triggers.keyword.toLowerCase()),
+					}
 				: {}),
 		});
 	} catch (error) {
@@ -225,11 +233,22 @@ export const updateDocumentMarkdown: GoogleDocsEndpoints['updateDocumentMarkdown
 		>(DOCS_API_BASE, `/documents/${input.documentId}`, ctx, { method: 'GET' });
 
 		const endIndex = documentEndIndex(document);
-		// Delete the body first (indices are still valid), then insert the new content at 1.
-		const response = await runBatchUpdate(ctx, input.documentId, [
-			{ deleteContentRange: { range: { startIndex: 1, endIndex } } },
-			{ insertText: { location: { index: 1 }, text: input.markdown } },
-		]);
+		// Delete the body first (indices are still valid), then insert the new
+		// content at 1. Pin the batchUpdate to the revision we just read: if a
+		// collaborator edits between the GET and this POST, the indices are stale
+		// and the write would silently leave old tail content behind — better to
+		// fail the request than corrupt the document.
+		const response = await runBatchUpdate(
+			ctx,
+			input.documentId,
+			[
+				{ deleteContentRange: { range: { startIndex: 1, endIndex } } },
+				{ insertText: { location: { index: 1 }, text: input.markdown } },
+			],
+			document.revisionId
+				? { requiredRevisionId: document.revisionId }
+				: undefined,
+		);
 
 		await logEventFromContext(
 			ctx,

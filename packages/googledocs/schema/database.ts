@@ -17,6 +17,9 @@ export const GoogleDocsDocument = z.object({
 	// Whether the configured trigger placeholder was present at last sight;
 	// lets documentPlaceholderFilled fire only on the present -> absent edge.
 	hasPlaceholder: z.boolean().optional(),
+	// Whether the configured trigger keyword was present at last sight;
+	// lets keywordDetected fire only on the absent -> present edge.
+	hasKeyword: z.boolean().optional(),
 	filePath: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });

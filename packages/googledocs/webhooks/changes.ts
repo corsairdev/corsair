@@ -45,6 +45,7 @@ type CachedDocument = {
 		imageCount?: number;
 		wordCount?: number;
 		hasPlaceholder?: boolean;
+		hasKeyword?: boolean;
 	};
 };
 
@@ -323,6 +324,10 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 				const placeholderPresent =
 					!!opts.placeholder && text.includes(opts.placeholder);
 
+				const keywordPresent =
+					!!opts.keyword &&
+					text.toLowerCase().includes(opts.keyword.toLowerCase());
+
 				// Measured with the configured countBy so the persisted baseline and
 				// the threshold comparison below always use the same metric.
 				const measuredCount =
@@ -346,6 +351,7 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 							...(opts.placeholder
 								? { hasPlaceholder: placeholderPresent }
 								: {}),
+							...(opts.keyword ? { hasKeyword: keywordPresent } : {}),
 						});
 					} catch (error) {
 						console.warn(
@@ -371,10 +377,14 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					}
 				}
 
+				// Fire only on the absent -> present edge: the cached snapshot must
+				// say the keyword was not there before. A document that already
+				// contained the keyword must not re-trigger on every Drive push.
 				if (
 					isEnabled(ctx, 'keywordDetected') &&
 					opts.keyword &&
-					text.toLowerCase().includes(opts.keyword.toLowerCase())
+					keywordPresent &&
+					cached?.data?.hasKeyword === false
 				) {
 					return emit(
 						ctx,

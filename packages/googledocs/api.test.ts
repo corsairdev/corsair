@@ -239,6 +239,12 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 				endIndex: 25,
 			});
 			expect(options.body.requests[1].insertText.text).toBe('new content');
+			// The rewrite must be pinned to the revision the endIndex was read
+			// from, otherwise a concurrent edit between the GET and this POST
+			// would silently leave stale tail content in the document.
+			expect(options.body.writeControl).toEqual({
+				requiredRevisionId: 'rev1',
+			});
 		});
 
 		it('updateDocumentSectionMarkdown scopes the delete to the section range', async () => {
@@ -715,6 +721,41 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 			expect(upsert).toHaveBeenCalledWith(
 				'doc1',
 				expect.objectContaining({ hasPlaceholder: true }),
+			);
+		});
+
+		it('persistDocument refreshes the keyword baseline when configured', async () => {
+			mockRequest.mockResolvedValue({
+				...minimalDocument,
+				body: {
+					content: [
+						{
+							paragraph: {
+								elements: [{ textRun: { content: 'shipping the LAUNCH now' } }],
+							},
+						},
+					],
+				},
+			});
+			const upsert = jest.fn().mockResolvedValue({ id: 'entity-1' });
+			const keywordCtx = testContext({
+				options: { triggers: { keyword: 'launch' } },
+				db: {
+					documents: {
+						findByEntityId: jest
+							.fn()
+							.mockResolvedValue({ data: { hasKeyword: false } }),
+						upsertByEntityId: upsert,
+					},
+				},
+			});
+
+			await DocumentsEndpoints.getDocument(keywordCtx, { documentId: 'doc1' });
+
+			// matching is case-insensitive, mirroring the webhook trigger
+			expect(upsert).toHaveBeenCalledWith(
+				'doc1',
+				expect.objectContaining({ hasKeyword: true }),
 			);
 		});
 	});
