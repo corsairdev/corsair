@@ -314,6 +314,20 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 			});
 		});
 
+		it('getCompanyInfo forwards start/count pagination params', async () => {
+			await call('organizations', 'getCompanyInfo', {
+				role_assignee: PERSON_URN,
+				start: 10,
+				count: 5,
+			});
+
+			expect(lastCall().options).toMatchObject({
+				method: 'GET',
+				url: '/v2/organizationAcls',
+				query: expect.objectContaining({ start: 10, count: 5 }),
+			});
+		});
+
 		it('getCompanyInfo resolves the member URN via /v2/userinfo when no assignee is given', async () => {
 			mockRequest.mockResolvedValueOnce({ sub: 'abc123' });
 			mockRequest.mockResolvedValueOnce({ elements: [] });

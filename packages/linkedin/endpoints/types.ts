@@ -291,6 +291,18 @@ const GetCompanyInfoInputSchema = z
 			.enum(['APPROVED', 'PENDING', 'REVOKED'])
 			.optional()
 			.describe('Filter to ACLs in a given state. Defaults to APPROVED.'),
+		start: z
+			.number()
+			.int()
+			.min(0)
+			.optional()
+			.describe('Zero-based pagination offset into the role list.'),
+		count: z
+			.number()
+			.int()
+			.min(1)
+			.optional()
+			.describe('Maximum number of roles to return per page.'),
 	})
 	.describe(
 		'Retrieve organizations where the authenticated user has specific roles (ACLs).',

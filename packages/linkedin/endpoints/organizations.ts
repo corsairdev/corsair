@@ -37,6 +37,10 @@ export const getCompanyInfo: LinkedInEndpoints['GetCompanyInfo'] = async (
 		// a comma-joined value is not parsed as multiple filters by LinkedIn.
 		query.role = input.role;
 	}
+	// organizationAcls is paginated; without start/count LinkedIn returns
+	// only the first page, silently truncating members with many roles.
+	if (input.start !== undefined) query.start = input.start;
+	if (input.count !== undefined) query.count = input.count;
 
 	const result = await makeAuthenticatedLinkedInRequest<
 		LinkedInEndpointOutputs['GetCompanyInfo']
