@@ -58,6 +58,21 @@ const CACHE_RULES: Record<string, CacheRule> = {
 	},
 	createCollection: { entity: 'collections', idKeys: ['id'] },
 	getCollection: { entity: 'collections', idKeys: ['id'] },
+	createCollectionField: {
+		entity: 'collections',
+		idKeys: ['id'],
+		deleteInputKeys: ['collection_id'],
+	},
+	updateCollectionField: {
+		entity: 'collections',
+		idKeys: ['id'],
+		deleteInputKeys: ['collection_id'],
+	},
+	deleteCollectionField: {
+		entity: 'collections',
+		idKeys: ['id'],
+		deleteInputKeys: ['collection_id'],
+	},
 	deleteCollection: {
 		entity: 'collections',
 		idKeys: ['id'],
