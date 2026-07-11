@@ -106,10 +106,29 @@ function isEnabled(ctx: GoogleDocsContext, name: GoogleDocsEventName): boolean {
 	return configured.includes(name);
 }
 
-function isRootFolder(file: DriveFile): boolean {
-	return (
-		!file.parents || file.parents.length === 0 || file.parents.includes('root')
-	);
+async function isRootFolder(
+	credentials: string,
+	file: DriveFile,
+	rootIdCache: { id?: string },
+): Promise<boolean> {
+	// Orphaned folders carry no parents at all.
+	if (!file.parents || file.parents.length === 0) return true;
+	// Drive API v3 puts real folder IDs in parents — never the 'root' alias —
+	// so resolve the actual root ID once per delivery and compare against it.
+	if (!rootIdCache.id) {
+		try {
+			const root = await makeGoogleDriveRequest<{ id?: string }>(
+				'/files/root',
+				credentials,
+				{ method: 'GET', query: { fields: 'id' } },
+			);
+			rootIdCache.id = root.id;
+		} catch (error) {
+			console.warn('Failed to resolve Drive root folder id:', error);
+			return false;
+		}
+	}
+	return rootIdCache.id ? file.parents.includes(rootIdCache.id) : false;
 }
 
 function isRecentlyCreated(file: DriveFile, change: DriveChange): boolean {
@@ -185,6 +204,8 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 			const changesResponse = await fetchChanges(credentials, pageToken);
 			const changes = changesResponse.changes ?? [];
 			let corsairEntityId = '';
+			// Root folder id resolved lazily, at most once per delivery.
+			const rootIdCache: { id?: string } = {};
 
 			for (const change of changes) {
 				if (!change.fileId) continue;
@@ -195,8 +216,8 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 				if (file.mimeType === FOLDER_MIME_TYPE) {
 					if (
 						!change.removed &&
-						isRootFolder(file) &&
-						isEnabled(ctx, 'folderCreated')
+						isEnabled(ctx, 'folderCreated') &&
+						(await isRootFolder(credentials, file, rootIdCache))
 					) {
 						return emit(
 							ctx,
@@ -293,18 +314,13 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 							corsairEntityId,
 						);
 					}
-				} else if (isEnabled(ctx, 'documentUpdated')) {
-					return emit(
-						ctx,
-						{
-							type: 'documentUpdated',
-							documentId: file.id,
-							title: file.name,
-							changeType: 'updated',
-						},
-						corsairEntityId,
-					);
 				}
+
+				// documentUpdated must not return here: it would starve the five
+				// content triggers below, which are more specific and get first
+				// claim. It fires as the fallback after none of them match.
+				const wantsDocumentUpdated =
+					!created && isEnabled(ctx, 'documentUpdated');
 
 				// Content triggers need the full document; skip the fetch if none are on.
 				const contentTriggersOn = (
@@ -316,10 +332,39 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 						'documentSearchUpdate',
 					] as GoogleDocsEventName[]
 				).some((t) => isEnabled(ctx, t));
-				if (!contentTriggersOn) continue;
+				if (!contentTriggersOn) {
+					if (wantsDocumentUpdated) {
+						return emit(
+							ctx,
+							{
+								type: 'documentUpdated',
+								documentId: file.id,
+								title: file.name,
+								changeType: 'updated',
+							},
+							corsairEntityId,
+						);
+					}
+					continue;
+				}
 
 				const document = await fetchDocument(credentials, file.id);
-				if (!document) continue;
+				if (!document) {
+					// The content fetch failing should not swallow the lifecycle event.
+					if (wantsDocumentUpdated) {
+						return emit(
+							ctx,
+							{
+								type: 'documentUpdated',
+								documentId: file.id,
+								title: file.name,
+								changeType: 'updated',
+							},
+							corsairEntityId,
+						);
+					}
+					continue;
+				}
 				const text = extractPlainText(document);
 				const structure = summarizeStructure(document);
 				const opts = ctx.options.triggers ?? {};
@@ -473,6 +518,20 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 							title: file.name,
 							matchedValue: opts.searchQuery,
 							changeType: created ? 'created' : 'updated',
+						},
+						corsairEntityId,
+					);
+				}
+
+				// Fallback: none of the content triggers claimed this update.
+				if (wantsDocumentUpdated) {
+					return emit(
+						ctx,
+						{
+							type: 'documentUpdated',
+							documentId: file.id,
+							title: file.name,
+							changeType: 'updated',
 						},
 						corsairEntityId,
 					);
