@@ -6,6 +6,9 @@ export class LinkedInAPIError extends Error {
 		message: string,
 		public readonly status?: number,
 		public readonly code?: string,
+		// Retry-After from the wrapped ApiError (ms), so the rate-limit
+		// error handler can honor LinkedIn's requested backoff.
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'LinkedInAPIError';
@@ -158,7 +161,12 @@ export async function makeLinkedInRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new LinkedInAPIError(error.message, error.status);
+			throw new LinkedInAPIError(
+				error.message,
+				error.status,
+				undefined,
+				error.retryAfter,
+			);
 		}
 		if (error instanceof Error) {
 			throw new LinkedInAPIError(error.message);
