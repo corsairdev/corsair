@@ -16,6 +16,7 @@ export type TunnelType =
 	| 'auth.credentials'
 	| 'integration.credentials'
 	| 'connect.create_link'
+	| 'connections.sync'
 	| 'run';
 
 /** Inbound tunnel types the app accepts (write-only — no credential reads). */
@@ -28,6 +29,7 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 	'auth.credentials',
 	'integration.credentials',
 	'connect.create_link',
+	'connections.sync',
 ]);
 
 /**

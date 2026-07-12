@@ -41,6 +41,10 @@ export {
 } from './connect-status';
 export { listHubProjectConnections } from './connections';
 export {
+	isConnectionsSyncRetryableError,
+	processConnectionsSyncDelivery,
+} from './connections-sync-delivery';
+export {
 	type ConnectAuthKind,
 	type ConnectPluginManifestEntry,
 	parseConnectSessionResponse,
@@ -117,12 +121,14 @@ export {
 	deliverSignedEnvelope,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractSyncFromDeliveryAck,
 	formatServerDeliveryError,
 	getConnectSessionExpiryMs,
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
 	parseServerDeliveryAckBody,
+	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,
 	type SignedDeliveryHeaders,
 	type SignedEnvelopeDeliveryResult,
@@ -139,6 +145,14 @@ export {
 	verifySignedToken,
 	verifySignedTunnelDelivery,
 } from './signing';
+export {
+	type ConnectionsSyncManifest,
+	type ConnectionsSyncPlugin,
+	decryptSyncManifest,
+	type EncryptedSyncPayload,
+	encryptSyncManifest,
+	parseSyncDeliveryBody,
+} from './sync-payload';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
