@@ -54,7 +54,8 @@ export type BrowserDeliveryMode =
 	| 'oauth.tokens'
 	| 'permission.approve'
 	| 'permission.deny'
-	| 'auth.credentials';
+	| 'auth.credentials'
+	| 'connections.sync';
 
 /**
  * Decoded payload inside a browser delivery token (`?d=` query param).

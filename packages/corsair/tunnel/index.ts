@@ -38,6 +38,7 @@ export {
 	type BrowserDeliveryPayload,
 	isAuthCredentialsBrowserDelivery,
 	isByoOAuthBrowserDelivery,
+	isConnectionsSyncBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,

@@ -12,6 +12,12 @@ export function isAuthCredentialsBrowserDelivery(
 	return payload.deliveryMode === 'auth.credentials';
 }
 
+export function isConnectionsSyncBrowserDelivery(
+	payload: import('../hub/contracts/tunnel').BrowserDeliveryPayload,
+): boolean {
+	return payload.deliveryMode === 'connections.sync';
+}
+
 export function isPermissionBrowserDelivery(
 	payload: import('../hub/contracts/tunnel').BrowserDeliveryPayload,
 ): boolean {
@@ -34,6 +40,7 @@ export function isByoOAuthBrowserDelivery(
 		payload.deliveryMode === 'oauth.callback' ||
 		(payload.deliveryMode === undefined &&
 			!isAuthCredentialsBrowserDelivery(payload) &&
+			!isConnectionsSyncBrowserDelivery(payload) &&
 			!isPermissionBrowserDelivery(payload) &&
 			!isManagedBrowserDelivery(payload))
 	);
