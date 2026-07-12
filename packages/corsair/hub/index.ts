@@ -40,6 +40,7 @@ export {
 	getConnectStatusForTenant,
 } from './connect-status';
 export { listHubProjectConnections } from './connections';
+export { processConnectionsSyncDelivery } from './connections-sync-delivery';
 export {
 	type ConnectAuthKind,
 	type ConnectPluginManifestEntry,
@@ -139,6 +140,14 @@ export {
 	verifySignedToken,
 	verifySignedTunnelDelivery,
 } from './signing';
+export {
+	type ConnectionsSyncManifest,
+	type ConnectionsSyncPlugin,
+	decryptSyncManifest,
+	type EncryptedSyncPayload,
+	encryptSyncManifest,
+	parseSyncDeliveryBody,
+} from './sync-payload';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
