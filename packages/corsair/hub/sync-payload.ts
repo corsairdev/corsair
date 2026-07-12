@@ -4,6 +4,7 @@ import {
 	randomBytes,
 	scryptSync,
 } from 'node:crypto';
+import { parseSyncFromDeliveryBody } from './signing/envelope';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12;
@@ -142,29 +143,6 @@ export function decryptSyncManifest(
 export function parseSyncDeliveryBody(
 	body: string,
 ): EncryptedSyncPayload | null {
-	if (!body.trim()) return null;
-
-	let parsed: unknown;
-	try {
-		parsed = JSON.parse(body);
-	} catch {
-		return null;
-	}
-
-	if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-		return null;
-	}
-
-	const record = parsed as Record<string, unknown>;
-	const sync = record.sync;
-	if (!sync || typeof sync !== 'object' || Array.isArray(sync)) {
-		return null;
-	}
-
-	const encrypted = (sync as { encrypted?: unknown }).encrypted;
-	if (typeof encrypted !== 'string' || !encrypted.trim()) {
-		return null;
-	}
-
-	return { encrypted };
+	const sync = parseSyncFromDeliveryBody(body);
+	return sync ? { encrypted: sync.encrypted } : null;
 }

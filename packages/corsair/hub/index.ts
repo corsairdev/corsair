@@ -40,7 +40,10 @@ export {
 	getConnectStatusForTenant,
 } from './connect-status';
 export { listHubProjectConnections } from './connections';
-export { processConnectionsSyncDelivery } from './connections-sync-delivery';
+export {
+	isConnectionsSyncRetryableError,
+	processConnectionsSyncDelivery,
+} from './connections-sync-delivery';
 export {
 	type ConnectAuthKind,
 	type ConnectPluginManifestEntry,
@@ -118,12 +121,14 @@ export {
 	deliverSignedEnvelope,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractSyncFromDeliveryAck,
 	formatServerDeliveryError,
 	getConnectSessionExpiryMs,
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
 	parseServerDeliveryAckBody,
+	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,
 	type SignedDeliveryHeaders,
 	type SignedEnvelopeDeliveryResult,

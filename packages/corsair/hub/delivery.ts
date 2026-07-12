@@ -257,17 +257,6 @@ export async function handleHubDeliveryPost(
 		};
 	}
 
-	if (ack.syncManifest) {
-		return {
-			type: 'json',
-			status: 200,
-			body: {
-				status: 'ok',
-				sync: ack.syncManifest,
-			},
-		};
-	}
-
 	if (!webhookResponse) {
 		return {
 			type: 'json',

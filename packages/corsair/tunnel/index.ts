@@ -1,7 +1,10 @@
 import type { CorsairInternalConfig } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
-import { processConnectionsSyncDelivery } from '../hub/connections-sync-delivery';
+import {
+	isConnectionsSyncRetryableError,
+	processConnectionsSyncDelivery,
+} from '../hub/connections-sync-delivery';
 import type { TunnelEnvelope } from '../hub/contracts/tunnel';
 import {
 	INBOUND_TUNNEL_TYPES,
@@ -11,6 +14,7 @@ import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
+import type { ServerDeliveryAckBody } from '../hub/signing/envelope';
 import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 import { processOAuthCallback } from '../oauth';
 import { processWebhook } from '../webhooks';
@@ -46,9 +50,6 @@ export type TunnelAck = {
 	connectLink?: {
 		connectUrl: string;
 		expiresAt?: string;
-	};
-	syncManifest?: {
-		encrypted: string;
 	};
 	webhookResponse?: {
 		status?: number;
@@ -115,12 +116,18 @@ async function handleConnectionsSyncTunnel(
 		);
 		return {
 			status: 'ok',
-			syncManifest: { encrypted },
+			webhookResponse: {
+				status: 200,
+				body: {
+					status: 'ok',
+					sync: { encrypted },
+				} satisfies ServerDeliveryAckBody,
+			},
 		};
 	} catch (error) {
 		return {
 			status: 'failed',
-			retryable: false,
+			retryable: isConnectionsSyncRetryableError(error),
 			error:
 				error instanceof Error
 					? error.message
