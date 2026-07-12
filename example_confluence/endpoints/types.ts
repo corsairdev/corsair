@@ -22,8 +22,8 @@ export const ConfluencePageSchema = z.object({
 	status: z.string().optional(),
 	title: z.string(),
 	spaceId: z.string().optional(),
-	parentId: z.string().nullable().optional(),
-	parentType: z.string().nullable().optional(),
+	parentId: z.string().optional(),
+	parentType: z.string().optional(),
 	authorId: z.string().optional(),
 	createdAt: z.string().optional(),
 	version: z

@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -14,24 +15,28 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { ConfluenceEndpointInputs, ConfluenceEndpointOutputs } from './endpoints/types';
-import { ConfluenceEndpointInputSchemas, ConfluenceEndpointOutputSchemas } from './endpoints/types';
+import { Pages, Spaces } from './endpoints';
 import type {
-	ConfluenceWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
+	ConfluenceEndpointInputs,
+	ConfluenceEndpointOutputs,
+} from './endpoints/types';
+import {
+	ConfluenceEndpointInputSchemas,
+	ConfluenceEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { ConfluenceSchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
-import { matchConfluenceTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveConfluenceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchConfluenceTenantWebhook } from './webhooks/tenant-matcher';
+import type { ConfluenceWebhookOutputs, ExampleEvent } from './webhooks/types';
+import { ExampleEventSchema } from './webhooks/types';
 
 export type ConfluencePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	/** Confluence Cloud URL, e.g. 'https://your-domain.atlassian.net'. */
+	cloudUrl?: string;
 	webhookSecret?: string;
 	hooks?: InternalConfluencePlugin['hooks'];
 	webhookHooks?: InternalConfluencePlugin['webhookHooks'];
@@ -41,23 +46,30 @@ export type ConfluencePluginOptions = {
 
 export type ConfluenceContext = CorsairPluginContext<
 	typeof ConfluenceSchema,
-	ConfluencePluginOptions
+	ConfluencePluginOptions,
+	undefined,
+	typeof confluenceAuthConfig
 >;
 
-export type ConfluenceKeyBuilderContext = KeyBuilderContext<ConfluencePluginOptions>;
-
-export type ConfluenceBoundEndpoints = BindEndpoints<typeof confluenceEndpointsNested>;
-
-type ConfluenceEndpoint<
-	K extends keyof ConfluenceEndpointOutputs,
-> = CorsairEndpoint<
-	ConfluenceContext,
-	ConfluenceEndpointInputs[K],
-	ConfluenceEndpointOutputs[K]
+export type ConfluenceKeyBuilderContext = KeyBuilderContext<
+	ConfluencePluginOptions,
+	typeof confluenceAuthConfig
 >;
+
+export type ConfluenceBoundEndpoints = BindEndpoints<
+	typeof confluenceEndpointsNested
+>;
+
+type ConfluenceEndpoint<K extends keyof ConfluenceEndpointOutputs> =
+	CorsairEndpoint<
+		ConfluenceContext,
+		ConfluenceEndpointInputs[K],
+		ConfluenceEndpointOutputs[K]
+	>;
 
 export type ConfluenceEndpoints = {
-	exampleGet: ConfluenceEndpoint<'exampleGet'>;
+	pagesList: ConfluenceEndpoint<'pagesList'>;
+	spacesList: ConfluenceEndpoint<'spacesList'>;
 };
 
 type ConfluenceWebhook<
@@ -72,8 +84,11 @@ export type ConfluenceWebhooks = {
 export type ConfluenceBoundWebhooks = BindWebhooks<ConfluenceWebhooks>;
 
 const confluenceEndpointsNested = {
-	example: {
-		get: Example.get,
+	pages: {
+		list: Pages.list,
+	},
+	spaces: {
+		list: Spaces.list,
 	},
 } as const;
 
@@ -84,11 +99,17 @@ const confluenceWebhooksNested = {
 } as const;
 
 export const confluenceEndpointSchemas = {
-	'example.get': {
-		input: ConfluenceEndpointInputSchemas.exampleGet,
-		output: ConfluenceEndpointOutputSchemas.exampleGet,
+	'pages.list': {
+		input: ConfluenceEndpointInputSchemas.pagesList,
+		output: ConfluenceEndpointOutputSchemas.pagesList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof confluenceEndpointsNested>;
+	'spaces.list': {
+		input: ConfluenceEndpointInputSchemas.spacesList,
+		output: ConfluenceEndpointOutputSchemas.spacesList,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof confluenceEndpointsNested
+>;
 
 const confluenceWebhookSchemas = {
 	'example.example': {
@@ -96,42 +117,54 @@ const confluenceWebhookSchemas = {
 		payload: ExampleEventSchema,
 		response: ExampleEventSchema,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof confluenceWebhooksNested>;
+} as const satisfies RequiredPluginWebhookSchemas<
+	typeof confluenceWebhooksNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const confluenceEndpointMeta = {
-	'example.get': {
+	'pages.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List Confluence pages',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof confluenceEndpointsNested>;
+	'spaces.list': {
+		riskLevel: 'read',
+		description: 'List Confluence spaces',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof confluenceEndpointsNested
+>;
 
 export const confluenceAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['cloud_url'] as const,
 	},
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseConfluencePlugin<T extends ConfluencePluginOptions> = CorsairPlugin<
-	'confluence',
-	typeof ConfluenceSchema,
-	typeof confluenceEndpointsNested,
-	typeof confluenceWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseConfluencePlugin<T extends ConfluencePluginOptions> =
+	CorsairPlugin<
+		'confluence',
+		typeof ConfluenceSchema,
+		typeof confluenceEndpointsNested,
+		typeof confluenceWebhooksNested,
+		T,
+		typeof defaultAuthType,
+		typeof confluenceAuthConfig
+	>;
 
-export type InternalConfluencePlugin = BaseConfluencePlugin<ConfluencePluginOptions>;
+export type InternalConfluencePlugin =
+	BaseConfluencePlugin<ConfluencePluginOptions>;
 
 export type ExternalConfluencePlugin<T extends ConfluencePluginOptions> =
 	BaseConfluencePlugin<T>;
 
 export function confluence<const T extends ConfluencePluginOptions>(
-	incomingOptions: ConfluencePluginOptions & T = {} as ConfluencePluginOptions & T,
+	incomingOptions: ConfluencePluginOptions & T = {} as ConfluencePluginOptions &
+		T,
 ): ExternalConfluencePlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -190,13 +223,14 @@ export function confluence<const T extends ConfluencePluginOptions>(
 }
 
 export type {
-	ExampleEvent,
-	ConfluenceWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	ConfluenceEndpointInputs,
 	ConfluenceEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	PagesListInput,
+	PagesListResponse,
+	SpacesListInput,
+	SpacesListResponse,
 } from './endpoints/types';
+export type {
+	ConfluenceWebhookOutputs,
+	ExampleEvent,
+} from './webhooks/types';

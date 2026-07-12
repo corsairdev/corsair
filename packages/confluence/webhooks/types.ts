@@ -1,4 +1,8 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
 
 export const ConfluenceWebhookPayloadSchema = z.object({
@@ -30,7 +34,9 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
 				? (parsed as Record<string, unknown>)
 				: null;
 		} catch {
@@ -42,7 +48,9 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-export function createConfluenceMatch(eventType: string): CorsairWebhookMatcher {
+export function createConfluenceMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
 		return parsedBody !== null && parsedBody.type === eventType;

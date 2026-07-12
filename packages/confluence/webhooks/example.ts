@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConfluenceWebhooks } from '..';
-import { createConfluenceMatch, verifyConfluenceWebhookSignature } from './types';
+import {
+	createConfluenceMatch,
+	verifyConfluenceWebhookSignature,
+} from './types';
 
 export const example: ConfluenceWebhooks['example'] = {
 	match: createConfluenceMatch('example'),
@@ -20,7 +23,12 @@ export const example: ConfluenceWebhooks['example'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'confluence.webhook.example', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'confluence.webhook.example',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},
