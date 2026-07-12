@@ -1,4 +1,5 @@
 import { createCorsair } from '../core';
+import { InvalidCorsairInstanceError } from '../core/utils/corsair-instance';
 import { isConnectionsSyncRetryableError } from '../hub/connections-sync-delivery';
 import { handleHubDeliveryPost } from '../hub/delivery';
 import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
@@ -67,6 +68,23 @@ describe('isConnectionsSyncRetryableError', () => {
 				new Error(
 					'A database must be configured to sync connections from the app',
 				),
+			),
+		).toBe(false);
+	});
+
+	it('marks InvalidCorsairInstanceError as non-retryable', () => {
+		expect(
+			isConnectionsSyncRetryableError(new InvalidCorsairInstanceError()),
+		).toBe(false);
+		expect(
+			isConnectionsSyncRetryableError(new Error('Invalid corsair instance')),
+		).toBe(false);
+	});
+
+	it('marks setupCorsair invalid-instance errors as non-retryable', () => {
+		expect(
+			isConnectionsSyncRetryableError(
+				new Error('setupCorsair: invalid corsair instance'),
 			),
 		).toBe(false);
 	});

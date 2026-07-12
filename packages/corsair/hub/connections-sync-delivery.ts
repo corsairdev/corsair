@@ -1,22 +1,31 @@
 import { listPlugins, listTenants } from '../core/management/operations';
-import { getCorsairInternal } from '../core/utils/corsair-instance';
+import {
+	getCorsairInternal,
+	InvalidCorsairInstanceError,
+} from '../core/utils/corsair-instance';
 import { setupCorsair } from '../setup';
 import type { ConnectionsSyncManifest } from './sync-payload';
 import { encryptSyncManifest } from './sync-payload';
 
 const NON_RETRYABLE_SYNC_FRAGMENTS = [
 	'invalid corsair instance',
-	'A database must be configured to sync connections from the app',
-	'Signing secret is required to encrypt sync manifest',
+	'a database must be configured to sync connections from the app',
+	'a database must be configured on the corsair instance',
+	'signing secret is required to encrypt sync manifest',
 ] as const;
 
 export function isConnectionsSyncRetryableError(error: unknown): boolean {
+	if (error instanceof InvalidCorsairInstanceError) {
+		return false;
+	}
+
 	if (!(error instanceof Error)) {
 		return true;
 	}
 
+	const message = error.message.toLowerCase();
 	return !NON_RETRYABLE_SYNC_FRAGMENTS.some((fragment) =>
-		error.message.includes(fragment),
+		message.includes(fragment),
 	);
 }
 
