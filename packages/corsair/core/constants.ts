@@ -24,6 +24,7 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'cloudflare',
+	'confluence',
 	'cursor',
 	'discord',
 	'dodopayments',
@@ -94,6 +95,7 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
+	confluence: 'Confluence',
 	cursor: 'Cursor',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
@@ -171,6 +173,7 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'cloudflare'
+	| 'confluence'
 	| 'cursor'
 	| 'discord'
 	| 'dodopayments'
