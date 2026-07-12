@@ -119,6 +119,7 @@ export {
 	decodeConnectTokenFromPath,
 	decodePermissionTokenFromPath,
 	deliverSignedEnvelope,
+	describeDeliveryNetworkError,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
 	extractSyncFromDeliveryAck,
