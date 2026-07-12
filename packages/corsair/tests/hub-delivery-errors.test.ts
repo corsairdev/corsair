@@ -41,7 +41,7 @@ describe('formatServerDeliveryError', () => {
 		expect(formatted).toContain('connection refused');
 	});
 
-	it('formats app-side auth failures', () => {
+	it('formats app-side auth failures with signing-secret remediation', () => {
 		const formatted = formatServerDeliveryError({
 			deliveryUrl: 'https://app.example.com/api/corsair',
 			status: 401,
@@ -51,6 +51,7 @@ describe('formatServerDeliveryError', () => {
 
 		expect(formatted).toContain('Invalid tunnel signature');
 		expect(formatted).toContain('HTTP 401');
+		expect(formatted).toContain('Verify hub.signingSecret');
 	});
 
 	it('formats missing delivery route', () => {

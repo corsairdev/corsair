@@ -123,6 +123,7 @@ export {
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
 	extractSyncFromDeliveryAck,
+	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
 	getConnectSessionExpiryMs,
 	getConnectTokenExpiryMs,

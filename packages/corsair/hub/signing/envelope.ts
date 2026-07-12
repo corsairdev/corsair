@@ -271,8 +271,22 @@ function truncateDeliveryBody(body: string, max = 200): string {
 	return `${trimmed.slice(0, max)}…`;
 }
 
+const SIGNING_SECRET_REMEDIATION =
+	'Verify hub.signingSecret in your app matches the signing secret shown in Hub project settings.';
+
+function formatAuthDeliveryError(input: {
+	deliveryUrl: string;
+	status: number;
+	ack: ServerDeliveryAckBody;
+}): string {
+	const base = input.ack.error
+		? `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`
+		: `App rejected the signed delivery (HTTP ${input.status} from ${input.deliveryUrl})`;
+	return `${base}. ${SIGNING_SECRET_REMEDIATION}`;
+}
+
 /**
- * Turns a fetch/network failure into a user-facing delivery error with dev hints.
+ * Formats a fetch/network failure into a user-facing delivery reachability error.
  */
 export function describeDeliveryNetworkError(
 	deliveryUrl: string,
@@ -315,14 +329,21 @@ export function describeDeliveryNetworkError(
 }
 
 /**
- * Formats a user-facing error when server delivery fails (network, HTTP error, or app rejection).
+ * Input to {@link formatServerDeliveryError}.
  */
-export function formatServerDeliveryError(input: {
+export type FormatServerDeliveryErrorInput = {
 	deliveryUrl: string;
 	status: number;
 	body: string;
 	ack: ServerDeliveryAckBody;
-}): string {
+};
+
+/**
+ * Formats a user-facing error when server delivery fails (network, HTTP error, or app rejection).
+ */
+export function formatServerDeliveryError(
+	input: FormatServerDeliveryErrorInput,
+): string {
 	if (input.status === 0) {
 		if (input.ack.error) {
 			return input.ack.error;
@@ -336,12 +357,12 @@ export function formatServerDeliveryError(input: {
 		);
 	}
 
-	if (input.ack.error) {
-		return `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`;
+	if (input.status === 401 || input.status === 403) {
+		return formatAuthDeliveryError(input);
 	}
 
-	if (input.status === 401 || input.status === 403) {
-		return `App rejected the signed delivery (HTTP ${input.status}). Verify hub.signingSecret in your app matches the signing secret shown in Hub project settings.`;
+	if (input.ack.error) {
+		return `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`;
 	}
 
 	if (input.status === 404) {
