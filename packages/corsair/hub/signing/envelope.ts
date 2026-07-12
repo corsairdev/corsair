@@ -274,6 +274,9 @@ function truncateDeliveryBody(body: string, max = 200): string {
 const SIGNING_SECRET_REMEDIATION =
 	'Verify hub.signingSecret in your app matches the signing secret shown in Hub project settings.';
 
+const DELIVERY_URL_REMEDIATION =
+	'Check the delivery URL configured for this environment.';
+
 function formatAuthDeliveryError(input: {
 	deliveryUrl: string;
 	status: number;
@@ -283,6 +286,16 @@ function formatAuthDeliveryError(input: {
 		? `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`
 		: `App rejected the signed delivery (HTTP ${input.status} from ${input.deliveryUrl})`;
 	return `${base}. ${SIGNING_SECRET_REMEDIATION}`;
+}
+
+function formatNotFoundDeliveryError(input: {
+	deliveryUrl: string;
+	ack: ServerDeliveryAckBody;
+}): string {
+	const base = input.ack.error
+		? `${input.ack.error} (HTTP 404 from ${input.deliveryUrl})`
+		: `Delivery endpoint not found at ${input.deliveryUrl} (HTTP 404)`;
+	return `${base}. ${DELIVERY_URL_REMEDIATION}`;
 }
 
 /**
@@ -361,12 +374,12 @@ export function formatServerDeliveryError(
 		return formatAuthDeliveryError(input);
 	}
 
-	if (input.ack.error) {
-		return `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`;
+	if (input.status === 404) {
+		return formatNotFoundDeliveryError(input);
 	}
 
-	if (input.status === 404) {
-		return `Delivery endpoint not found at ${input.deliveryUrl} (HTTP 404). Check the delivery URL configured for this environment.`;
+	if (input.ack.error) {
+		return `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`;
 	}
 
 	if (input.status >= 500) {

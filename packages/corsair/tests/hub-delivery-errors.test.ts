@@ -65,4 +65,17 @@ describe('formatServerDeliveryError', () => {
 		expect(formatted).toContain('HTTP 404');
 		expect(formatted).toContain('Check the delivery URL configured');
 	});
+
+	it('formats structured 404 errors with delivery-url guidance', () => {
+		const formatted = formatServerDeliveryError({
+			deliveryUrl: 'https://app.example.com/api/corsair',
+			status: 404,
+			body: '{"error":"Not Found"}',
+			ack: { error: 'Not Found' },
+		});
+
+		expect(formatted).toContain('Not Found');
+		expect(formatted).toContain('HTTP 404');
+		expect(formatted).toContain('Check the delivery URL configured');
+	});
 });
