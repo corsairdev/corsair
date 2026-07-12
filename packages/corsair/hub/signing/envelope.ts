@@ -54,6 +54,10 @@ export type ServerDeliveryAckBody = {
 	connectUrl?: string;
 	/** ISO expiry for connect.create_link deliveries. */
 	expiresAt?: string;
+	/** Encrypted tenant/plugin manifest returned by connections.sync deliveries. */
+	sync?: {
+		encrypted: string;
+	};
 };
 
 function parseSignatureHeader(
@@ -219,6 +223,28 @@ export function isServerDeliveryAckSuccessful(input: {
 			input.body.status === 'ok' ||
 			input.body.ok === true)
 	);
+}
+
+/**
+ * Reads the encrypted connections.sync payload from a parsed delivery ack body.
+ */
+export function extractSyncFromDeliveryAck(
+	body: ServerDeliveryAckBody,
+): { encrypted: string } | null {
+	const encrypted = body.sync?.encrypted;
+	if (typeof encrypted !== 'string' || !encrypted.trim()) {
+		return null;
+	}
+	return { encrypted: encrypted.trim() };
+}
+
+/**
+ * Parses sync payload from a raw delivery HTTP body using the standard ack contract.
+ */
+export function parseSyncFromDeliveryBody(
+	body: string,
+): { encrypted: string } | null {
+	return extractSyncFromDeliveryAck(parseServerDeliveryAckBody(body));
 }
 
 /**
