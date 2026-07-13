@@ -3,26 +3,31 @@ import { makeConfluenceRequest } from '../client';
 import type { ConfluenceEndpoints } from '../index';
 import type { ConfluenceEndpointOutputs } from './types';
 
-export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
+export const search: ConfluenceEndpoints['pagesSearch'] = async (
+	ctx,
+	input,
+) => {
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 
 	const result = await makeConfluenceRequest<
-		ConfluenceEndpointOutputs['pagesGet']
-	>('../../api/v2/pages', ctx.key, cloudUrl, {
+		ConfluenceEndpointOutputs['pagesSearch']
+	>('search', ctx.key, cloudUrl, {
 		method: 'GET',
 		query: {
-			...(input.space_id && { 'space-id': input.space_id }),
-			...(input.title && { title: input.title }),
-			...(input.status && { status: input.status }),
-			...(input.cursor && { cursor: input.cursor }),
+			cql: input.cql,
+			...(input.cqlcontext && { cqlcontext: input.cqlcontext }),
+			...(input.includeArchivedSpaces !== undefined && {
+				includeArchivedSpaces: input.includeArchivedSpaces,
+			}),
 			...(input.limit !== undefined && { limit: input.limit }),
+			...(input.start !== undefined && { start: input.start }),
 		},
 	});
 
 	await logEventFromContext(
 		ctx,
-		'confluence.pages.get',
+		'confluence.pages.search',
 		{ ...input },
 		'completed',
 	);

@@ -103,7 +103,7 @@ export const SpacesListResponseSchema = z.object({
 });
 export type SpacesListResponse = z.infer<typeof SpacesListResponseSchema>;
 
-export const PagesListInputSchema = z.object({
+export const PagesGetInputSchema = z.object({
 	space_id: z.string().optional().describe('Filter by space ID'),
 	title: z.string().optional().describe('Filter pages by title'),
 	status: z
@@ -119,9 +119,9 @@ export const PagesListInputSchema = z.object({
 		.optional()
 		.describe('Maximum number of pages to return'),
 });
-export type PagesListInput = z.infer<typeof PagesListInputSchema>;
+export type PagesGetInput = z.infer<typeof PagesGetInputSchema>;
 
-export const PagesListResponseSchema = z.object({
+export const PagesGetResponseSchema = z.object({
 	results: z.array(ConfluencePageSchema),
 	_links: z
 		.object({
@@ -131,24 +131,107 @@ export const PagesListResponseSchema = z.object({
 		})
 		.optional(),
 });
-export type PagesListResponse = z.infer<typeof PagesListResponseSchema>;
+export type PagesGetResponse = z.infer<typeof PagesGetResponseSchema>;
+
+export const ConfluenceSearchContentSchema = z.object({
+	id: z.string(),
+	type: z.string(),
+	status: z.string().optional(),
+	title: z.string(),
+	childTypes: z.record(z.string(), z.unknown()).optional(),
+	macroRenderedOutput: z.record(z.string(), z.unknown()).optional(),
+	restrictions: z.record(z.string(), z.unknown()).optional(),
+	_expandable: ConfluenceExpandableSchema,
+	_links: z
+		.object({
+			webui: z.string().optional(),
+			self: z.string().optional(),
+			tinyui: z.string().optional(),
+		})
+		.optional(),
+});
+
+export const ConfluenceSearchResultSchema = z.object({
+	content: ConfluenceSearchContentSchema,
+	title: z.string(),
+	excerpt: z.string().optional(),
+	url: z.string().optional(),
+	resultGlobalContainer: z
+		.object({
+			title: z.string(),
+			displayUrl: z.string(),
+		})
+		.optional(),
+	breadcrumbs: z.array(z.unknown()).optional(),
+	entityType: z.string().optional(),
+	iconCssClass: z.string().optional(),
+	lastModified: z.string().optional(),
+	friendlyLastModified: z.string().optional(),
+	score: z.number().optional(),
+});
+
+export const PagesSearchInputSchema = z.object({
+	cql: z.string().describe('Confluence Query Language (CQL) query string'),
+	cqlcontext: z.string().optional().describe('Context for the CQL query'),
+	includeArchivedSpaces: z
+		.boolean()
+		.optional()
+		.describe('Include archived spaces in results'),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(250)
+		.optional()
+		.describe('Maximum results'),
+	start: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Pagination offset for the first result'),
+});
+export type PagesSearchInput = z.infer<typeof PagesSearchInputSchema>;
+
+export const PagesSearchResponseSchema = z.object({
+	results: z.array(ConfluenceSearchResultSchema),
+	start: z.number(),
+	limit: z.number(),
+	size: z.number(),
+	totalSize: z.number().optional(),
+	cqlQuery: z.string().optional(),
+	searchDuration: z.number().optional(),
+	archivedResultCount: z.number().optional(),
+	_links: z
+		.object({
+			base: z.string().optional(),
+			context: z.string().optional(),
+			self: z.string().optional(),
+		})
+		.optional(),
+});
+export type PagesSearchResponse = z.infer<typeof PagesSearchResponseSchema>;
 
 export type ConfluenceEndpointInputs = {
-	pagesList: PagesListInput;
+	pagesGet: PagesGetInput;
 	spacesList: SpacesListInput;
+	pagesSearch: PagesSearchInput;
 };
 
 export type ConfluenceEndpointOutputs = {
-	pagesList: PagesListResponse;
+	pagesGet: PagesGetResponse;
 	spacesList: SpacesListResponse;
+	pagesSearch: PagesSearchResponse;
 };
 
 export const ConfluenceEndpointInputSchemas = {
-	pagesList: PagesListInputSchema,
+	pagesGet: PagesGetInputSchema,
 	spacesList: SpacesListInputSchema,
+	pagesSearch: PagesSearchInputSchema,
 };
 
 export const ConfluenceEndpointOutputSchemas = {
-	pagesList: PagesListResponseSchema,
+	pagesGet: PagesGetResponseSchema,
 	spacesList: SpacesListResponseSchema,
+	pagesSearch: PagesSearchResponseSchema,
 };

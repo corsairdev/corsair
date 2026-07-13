@@ -68,7 +68,8 @@ type ConfluenceEndpoint<K extends keyof ConfluenceEndpointOutputs> =
 	>;
 
 export type ConfluenceEndpoints = {
-	pagesList: ConfluenceEndpoint<'pagesList'>;
+	pagesGet: ConfluenceEndpoint<'pagesGet'>;
+	pagesSearch: ConfluenceEndpoint<'pagesSearch'>;
 	spacesList: ConfluenceEndpoint<'spacesList'>;
 };
 
@@ -85,7 +86,8 @@ export type ConfluenceBoundWebhooks = BindWebhooks<ConfluenceWebhooks>;
 
 const confluenceEndpointsNested = {
 	pages: {
-		list: Pages.list,
+		get: Pages.get,
+		search: Pages.search,
 	},
 	spaces: {
 		list: Spaces.list,
@@ -99,9 +101,13 @@ const confluenceWebhooksNested = {
 } as const;
 
 export const confluenceEndpointSchemas = {
-	'pages.list': {
-		input: ConfluenceEndpointInputSchemas.pagesList,
-		output: ConfluenceEndpointOutputSchemas.pagesList,
+	'pages.get': {
+		input: ConfluenceEndpointInputSchemas.pagesGet,
+		output: ConfluenceEndpointOutputSchemas.pagesGet,
+	},
+	'pages.search': {
+		input: ConfluenceEndpointInputSchemas.pagesSearch,
+		output: ConfluenceEndpointOutputSchemas.pagesSearch,
 	},
 	'spaces.list': {
 		input: ConfluenceEndpointInputSchemas.spacesList,
@@ -124,7 +130,11 @@ const confluenceWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const confluenceEndpointMeta = {
-	'pages.list': {
+	'pages.get': {
+		riskLevel: 'read',
+		description: 'List Confluence pages',
+	},
+	'pages.search': {
 		riskLevel: 'read',
 		description: 'List Confluence pages',
 	},
@@ -225,8 +235,10 @@ export function confluence<const T extends ConfluencePluginOptions>(
 export type {
 	ConfluenceEndpointInputs,
 	ConfluenceEndpointOutputs,
-	PagesListInput,
-	PagesListResponse,
+	PagesGetInput,
+	PagesGetResponse,
+	PagesSearchInput,
+	PagesSearchResponse,
 	SpacesListInput,
 	SpacesListResponse,
 } from './endpoints/types';

@@ -1,8 +1,10 @@
-import { list as pagesList } from './pages';
+import { get as pagesGet } from './pages';
+import { search as pagesSearch } from './search';
 import { list as spacesList } from './spaces';
 
 export const Pages = {
-	list: pagesList,
+	get: pagesGet,
+	search: pagesSearch,
 };
 
 export const Spaces = {
