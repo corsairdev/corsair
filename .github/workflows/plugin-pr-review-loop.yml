@@ -242,11 +242,11 @@ jobs:
           if grep -qE '(sk-[A-Za-z0-9_-]{16,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[A-Z0-9]{16})' /tmp/fix.patch; then
             echo "::error::Patch contains a credential-shaped string — refusing to push"; exit 1
           fi
-          git config user.name "corsair-review-bot"
-          git config user.email "bot@corsair.dev"
+          git config user.name "corsair-team"
+          git config user.email "team@corsair.dev"
           git apply /tmp/fix.patch
           git add -A
-          git commit -m "fix: address review findings (corsair review bot)"
+          git commit -m "fix: address review findings (@corsair-team)"
           if ! git push "https://x-access-token:${PR_BOT_PAT}@github.com/${HEAD_REPO}.git" "HEAD:${HEAD_REF}"; then
             # Fork without "allow edits by maintainers" — deliver the fix as
             # a patch comment instead of failing silently into escalation.
