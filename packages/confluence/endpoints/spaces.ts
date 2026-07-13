@@ -12,7 +12,7 @@ export const list: ConfluenceEndpoints['spacesList'] = async (ctx, input) => {
 	>('space', ctx.key, cloudUrl, {
 		method: 'GET',
 		query: {
-			...(input.key && { spaceKey: input.key }),
+			...(input.key && { key: input.key }),
 			...(input.type && { type: input.type }),
 			...(input.status && { status: input.status }),
 			...(input.label && { label: input.label }),
