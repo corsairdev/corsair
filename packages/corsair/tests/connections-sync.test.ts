@@ -1,8 +1,10 @@
 import { createCorsair } from '../core';
 import { InvalidCorsairInstanceError } from '../core/utils/corsair-instance';
+import { CLIENT_BRIDGE_MESSAGE_TYPE } from '../hub/browser-delivery-html';
 import { isConnectionsSyncRetryableError } from '../hub/connections-sync-delivery';
-import { handleHubDeliveryPost } from '../hub/delivery';
+import { handleHubDeliveryGet, handleHubDeliveryPost } from '../hub/delivery';
 import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
+import { signBrowserDeliveryToken } from '../hub/signing/browser-delivery';
 import {
 	extractSyncFromDeliveryAck,
 	parseServerDeliveryAckBody,
@@ -236,5 +238,60 @@ describe('processCorsair — connections.sync', () => {
 
 		expect(ack.status).toBe('failed');
 		expect(ack.retryable).toBe(false);
+	});
+
+	it('returns encrypted manifest via browser delivery client bridge', async () => {
+		const corsair = createCorsair({
+			plugins: [slackOAuth],
+			database: env.db,
+			kek: 'test-kek-connections-sync',
+			hub: {
+				projectApiKey: 'ck_dev_test_key',
+				signingSecret: 'signing-secret',
+			},
+		} as any);
+
+		await setupCorsair(corsair, { silent: true });
+
+		const requestId = 'sync-request-1';
+		const token = signBrowserDeliveryToken(
+			{
+				connectJti: requestId,
+				projectId: 'proj_test',
+				plugin: 'connections.sync',
+				tenantId: '*',
+				hubSuccessUrl: 'http://localhost:3000',
+				deliveryMode: 'connections.sync',
+				hubOrigin: 'http://localhost:3000',
+				requestId,
+			},
+			'signing-secret',
+		);
+
+		const result = await handleHubDeliveryGet(
+			corsair,
+			`http://localhost:3001/api/corsair?d=${encodeURIComponent(token)}`,
+		);
+
+		expect(result.type).toBe('text');
+		if (result.type !== 'text' || !result.body) return;
+
+		expect(result.body).toContain(CLIENT_BRIDGE_MESSAGE_TYPE);
+		expect(result.body).toContain(requestId);
+
+		const messageMatch = result.body.match(/var message = (\{.*?\});/s);
+		expect(messageMatch?.[1]).toBeTruthy();
+		const message = JSON.parse(messageMatch![1]!) as {
+			ok: boolean;
+			body: { sync?: { encrypted?: string } };
+		};
+		expect(message.ok).toBe(true);
+		expect(message.body.sync?.encrypted).toBeTruthy();
+
+		const manifest = decryptSyncManifest(
+			message.body.sync!.encrypted!,
+			'signing-secret',
+		);
+		expect(manifest.plugins.some((plugin) => plugin.id === 'slack')).toBe(true);
 	});
 });

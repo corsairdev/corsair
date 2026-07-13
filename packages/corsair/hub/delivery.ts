@@ -9,8 +9,10 @@ import {
 	processCorsair,
 	verifyBrowserDeliveryToken,
 } from '../tunnel';
+import { isConnectionsSyncBrowserDelivery } from '../tunnel/browser-delivery';
 import { buildClientBridgePostMessageHtml } from './browser-delivery-html';
 import { getHubConfig, HubNotConfiguredError } from './config';
+import { processConnectionsSyncDelivery } from './connections-sync-delivery';
 import { BROWSER_DELIVERY_TTL_MS } from './contracts/tunnel';
 import { processAuthCredentialsDelivery } from './credentials-delivery';
 import {
@@ -106,6 +108,39 @@ export async function handleHubDeliveryGet(
 	}
 
 	try {
+		if (isConnectionsSyncBrowserDelivery(payload)) {
+			if (!payload.hubOrigin || !payload.requestId) {
+				return {
+					type: 'json',
+					status: 400,
+					body: {
+						error:
+							'Connections sync delivery requires hubOrigin and requestId for client bridge',
+					},
+				};
+			}
+
+			const encrypted = await processConnectionsSyncDelivery(
+				corsair,
+				hub.signingSecret,
+			);
+
+			return {
+				type: 'text',
+				status: 200,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: true,
+					body: {
+						status: 'ok',
+						sync: { encrypted },
+					},
+				}),
+			};
+		}
+
 		if (isAuthCredentialsBrowserDelivery(payload)) {
 			if (!payload.hubSuccessUrl) {
 				return {
@@ -189,6 +224,24 @@ export async function handleHubDeliveryGet(
 	} catch (error) {
 		const message =
 			error instanceof Error ? error.message : 'Hub delivery failed';
+
+		if (
+			isConnectionsSyncBrowserDelivery(payload) &&
+			payload.hubOrigin &&
+			payload.requestId
+		) {
+			return {
+				type: 'text',
+				status: 400,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: false,
+					error: message,
+				}),
+			};
+		}
 
 		if (isAuthCredentialsBrowserDelivery(payload) && payload.hubSuccessUrl) {
 			return {
