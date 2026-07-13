@@ -35,7 +35,9 @@ export {
 } from './connect-token';
 export {
 	deliverSignedEnvelope,
+	describeDeliveryNetworkError,
 	extractSyncFromDeliveryAck,
+	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
 	isServerDeliveryAckSuccessful,
 	parseServerDeliveryAckBody,
