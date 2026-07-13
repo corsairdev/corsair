@@ -29,6 +29,18 @@
 - [OAuth process](https://docs.corsair.dev/production/oauth-process.md): Production OAuth flow and connect links.
 - [Tenant provisioning](https://docs.corsair.dev/production/tenant-provisioning.md): Provision tenants in production with `setupCorsair`.
 
+## Hub
+
+Optional hosted relay for the parts of Corsair that need a public URL — OAuth callbacks, connect pages, approvals. Stores none of your credentials.
+
+- [Overview](https://docs.corsair.dev/hub/overview.md): What Hub is and why it stores no credentials.
+- [Setup](https://docs.corsair.dev/hub/setup.md): Wire the SDK into your app — install, /api/corsair route, keys, self-registration.
+- [Environments](https://docs.corsair.dev/hub/environments.md): Development vs production keys.
+- [Delivery URLs](https://docs.corsair.dev/hub/delivery-urls.md): How Hub delivers results; dev self-registration and production POST.
+- [Dashboard](https://docs.corsair.dev/hub/dashboard.md): Manage keys, connections, and delivery URLs.
+- [Manual or Hub](https://docs.corsair.dev/hub/manual-vs-hub.md): What you build in each mode.
+- [Permissions](https://docs.corsair.dev/hub/permissions.md): Scope what each environment can do.
+
 ## Use with AI
 
 Expose Corsair tools to agents over MCP, or wire them into agent SDKs and coding agents.

@@ -112,6 +112,7 @@
             "group": "Hub",
             "pages": [
               "hub/overview",
+              "hub/setup",
               "hub/environments",
               "hub/dashboard",
               "hub/manual-vs-hub",
