@@ -1,5 +1,6 @@
 import { makeWhatsappRequest } from './client';
 import { Messages } from './endpoints/index';
+import { MessagesSendInputSchema } from './endpoints/types';
 
 jest.mock('./client', () => ({
 	makeWhatsappRequest: jest.fn(),
@@ -114,6 +115,26 @@ describe('WhatsApp API Endpoints', () => {
 					text: 'Look at this!',
 				}),
 			);
+		});
+	});
+
+	describe('Message validation', () => {
+		it('validates derived media schemas after omitting unsupported fields', () => {
+			expect(
+				MessagesSendInputSchema.safeParse({
+					to: '1234567890',
+					type: 'audio',
+					audio: { link: 'https://example.com/audio.mp3' },
+				}).success,
+			).toBe(true);
+
+			expect(
+				MessagesSendInputSchema.safeParse({
+					to: '1234567890',
+					type: 'video',
+					video: { id: 'media-id', link: 'https://example.com/video.mp4' },
+				}).success,
+			).toBe(false);
 		});
 	});
 });

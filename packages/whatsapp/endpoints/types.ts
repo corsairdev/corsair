@@ -3,21 +3,28 @@ import { z } from 'zod';
 const PhoneNumberIdSchema = z.string().min(1).optional();
 const RecipientSchema = z.string().min(1);
 
-const MediaSourceSchema = z
-	.object({
-		id: z.string().min(1).optional(),
-		link: z.url().optional(),
-		caption: z.string().optional(),
-		filename: z.string().optional(),
-	})
-	.superRefine((media, ctx) => {
-		if ((media.id ? 1 : 0) + (media.link ? 1 : 0) !== 1) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Exactly one of media.id or media.link is required',
-			});
-		}
-	});
+const MediaSourceBaseSchema = z.object({
+	id: z.string().min(1).optional(),
+	link: z.url().optional(),
+	caption: z.string().optional(),
+	filename: z.string().optional(),
+});
+
+const requireSingleMediaSource = (
+	media: { id?: string; link?: string },
+	ctx: z.RefinementCtx,
+) => {
+	if ((media.id ? 1 : 0) + (media.link ? 1 : 0) !== 1) {
+		ctx.addIssue({
+			code: 'custom',
+			message: 'Exactly one of media.id or media.link is required',
+		});
+	}
+};
+
+const MediaSourceSchema = MediaSourceBaseSchema.superRefine(
+	requireSingleMediaSource,
+);
 
 const BaseMessageSchema = z.object({
 	phoneNumberId: PhoneNumberIdSchema,
@@ -46,7 +53,10 @@ const ImageMessageSchema = BaseMessageSchema.extend({
 
 const AudioMessageSchema = BaseMessageSchema.extend({
 	type: z.literal('audio'),
-	audio: MediaSourceSchema.omit({ caption: true, filename: true }),
+	audio: MediaSourceBaseSchema.omit({
+		caption: true,
+		filename: true,
+	}).superRefine(requireSingleMediaSource),
 });
 
 const DocumentMessageSchema = BaseMessageSchema.extend({
@@ -56,7 +66,9 @@ const DocumentMessageSchema = BaseMessageSchema.extend({
 
 const VideoMessageSchema = BaseMessageSchema.extend({
 	type: z.literal('video'),
-	video: MediaSourceSchema.omit({ filename: true }),
+	video: MediaSourceBaseSchema.omit({ filename: true }).superRefine(
+		requireSingleMediaSource,
+	),
 });
 
 const TemplateMessageSchema = BaseMessageSchema.extend({
