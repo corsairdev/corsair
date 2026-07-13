@@ -714,15 +714,6 @@
                 ]
               },
               {
-                "group": "WhatsApp",
-                "pages": [
-                  "plugins/whatsapp/overview",
-                  "plugins/whatsapp/api",
-                  "plugins/whatsapp/database",
-                  "plugins/whatsapp/webhooks"
-                ]
-              },
-              {
                 "group": "Xquik",
                 "pages": [
                   "plugins/xquik/overview",

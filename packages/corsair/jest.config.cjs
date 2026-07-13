@@ -70,9 +70,6 @@ module.exports = {
 		'^@corsair-dev/slack/schema$': '<rootDir>/../slack/schema/index.ts',
 		'^@corsair-dev/slack/error-handlers$':
 			'<rootDir>/../slack/error-handlers.ts',
-		'^@corsair-dev/whatsapp$': '<rootDir>/../whatsapp/index.ts',
-		'^@corsair-dev/whatsapp/error-handlers$':
-			'<rootDir>/../whatsapp/error-handlers.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],

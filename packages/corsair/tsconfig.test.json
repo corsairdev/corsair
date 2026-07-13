@@ -11,13 +11,7 @@
     "rootDir": "../",
     "paths": {
       "@corsair-dev/slack": ["../slack/index.ts"],
-      "@corsair-dev/slack/client": ["../slack/client.ts"],
-      "@corsair-dev/slack/error-handlers": ["../slack/error-handlers.ts"],
-      "@corsair-dev/slack/schema": ["../slack/schema/index.ts"],
-      "@corsair-dev/linear": ["../linear/index.ts"],
-      "@corsair-dev/linear/error-handlers": ["../linear/error-handlers.ts"],
-      "@corsair-dev/whatsapp": ["../whatsapp/index.ts"],
-      "@corsair-dev/whatsapp/error-handlers": ["../whatsapp/error-handlers.ts"]
+      "@corsair-dev/linear": ["../linear/index.ts"]
     }
   },
   "include": ["./tests/**/*.ts", "./setup/**/*.ts", "./yaml.d.ts"],
