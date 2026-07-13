@@ -10,6 +10,7 @@ import {
 	verifyBrowserDeliveryToken,
 } from '../tunnel';
 import { isConnectionsSyncBrowserDelivery } from '../tunnel/browser-delivery';
+import { announceAppFromRequest } from './announce';
 import { buildClientBridgePostMessageHtml } from './browser-delivery-html';
 import { getHubConfig, HubNotConfiguredError } from './config';
 import { processConnectionsSyncDelivery } from './connections-sync-delivery';
@@ -405,6 +406,10 @@ export async function respondToHubDeliveryFromRequest(
 	corsair: unknown,
 	request: Request,
 ): Promise<Response> {
+	// A request reaching the corsair route proves the app is live and serving —
+	// register its (trusted, config-derived) delivery URL with Hub.
+	announceAppFromRequest(corsair);
+
 	const method = request.method.toUpperCase();
 	const corsHeaders = resolveHubBrowserDeliveryCorsHeaders(
 		request.headers.get('origin'),
