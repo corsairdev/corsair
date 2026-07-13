@@ -60,12 +60,7 @@ export const list: GithubEndpoints['eventsList'] = async (ctx, input) => {
 
 	await saveEvents(ctx, result, { source: 'public' });
 
-	await logEventFromContext(
-		ctx,
-		'github.events.list',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'github.events.list', { ...input }, 'completed');
 	return result;
 };
 
@@ -121,9 +116,11 @@ export const listForRepository: GithubEndpoints['eventsListForRepository'] =
 	async (ctx, input) => {
 		const { owner, repo, ...queryParams } = input;
 		const endpoint = `/repos/${owner}/${repo}/events`;
-		const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
-			query: queryParams,
-		});
+		const result = await makeGithubRequest<EventsListResponse>(
+			endpoint,
+			ctx,
+			{ query: queryParams },
+		);
 
 		await saveEvents(ctx, result, {
 			source: 'repository',
@@ -192,9 +189,11 @@ export const listPublicForUser: GithubEndpoints['eventsListPublicForUser'] =
 	async (ctx, input) => {
 		const { username, ...queryParams } = input;
 		const endpoint = `/users/${username}/events/public`;
-		const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
-			query: queryParams,
-		});
+		const result = await makeGithubRequest<EventsListResponse>(
+			endpoint,
+			ctx,
+			{ query: queryParams },
+		);
 
 		await saveEvents(ctx, result, {
 			source: 'userPublic',
@@ -214,9 +213,11 @@ export const listReceivedForUser: GithubEndpoints['eventsListReceivedForUser'] =
 	async (ctx, input) => {
 		const { username, ...queryParams } = input;
 		const endpoint = `/users/${username}/received_events`;
-		const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
-			query: queryParams,
-		});
+		const result = await makeGithubRequest<EventsListResponse>(
+			endpoint,
+			ctx,
+			{ query: queryParams },
+		);
 
 		await saveEvents(ctx, result, {
 			source: 'received',
@@ -236,9 +237,11 @@ export const listPublicReceivedForUser: GithubEndpoints['eventsListPublicReceive
 	async (ctx, input) => {
 		const { username, ...queryParams } = input;
 		const endpoint = `/users/${username}/received_events/public`;
-		const result = await makeGithubRequest<EventsListResponse>(endpoint, ctx, {
-			query: queryParams,
-		});
+		const result = await makeGithubRequest<EventsListResponse>(
+			endpoint,
+			ctx,
+			{ query: queryParams },
+		);
 
 		await saveEvents(ctx, result, {
 			source: 'receivedPublic',

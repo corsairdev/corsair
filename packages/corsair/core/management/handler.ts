@@ -1,5 +1,5 @@
-import { respondToHubDeliveryFromRequest } from '../../hub/delivery';
 import type { CorsairInternalConfig } from '..';
+import { respondToHubDeliveryFromRequest } from '../../hub/delivery';
 import { getCorsairInternal } from '../utils/corsair-instance';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
@@ -240,7 +240,11 @@ export function managementHandler(
 
 			// Hub delivery is mounted at the base path (e.g. GET /api/corsair?d=…,
 			// POST signed envelopes). OPTIONS supports browser-delivery CORS preflight.
-			if (method === 'OPTIONS' || pathname === '/' || pathname === '') {
+			if (
+				method === 'OPTIONS' ||
+				pathname === '/' ||
+				pathname === ''
+			) {
 				return await respondToHubDeliveryFromRequest(corsair, req);
 			}
 

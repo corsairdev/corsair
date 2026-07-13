@@ -75,10 +75,7 @@ export const postType = defineType({
 										type: 'url',
 										title: 'URL',
 										validation: (rule) =>
-											rule.uri({
-												allowRelative: true,
-												scheme: ['http', 'https', 'mailto'],
-											}),
+											rule.uri({ allowRelative: true, scheme: ['http', 'https', 'mailto'] }),
 									}),
 								],
 							},
@@ -113,9 +110,7 @@ export const postType = defineType({
 			publishedAt: 'publishedAt',
 		},
 		prepare({ title, author, publishedAt }) {
-			const subtitle = [author, publishedAt?.slice(0, 10)]
-				.filter(Boolean)
-				.join(' · ');
+			const subtitle = [author, publishedAt?.slice(0, 10)].filter(Boolean).join(' · ');
 			return { title, subtitle };
 		},
 	},

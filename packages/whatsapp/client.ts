@@ -61,8 +61,8 @@ export type WhatsappRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	// Graph request bodies can vary by endpoint; endpoint schemas validate them before this boundary.
 	body?: Record<string, unknown>;
+	// FormData values can be strings, blobs, or provider-specific upload parts; the shared HTTP layer serializes them.
 	formData?: Record<string, unknown>;
-	mediaType?: string;
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
@@ -75,28 +75,27 @@ export async function makeWhatsappRequest<T>(
 		throw new WhatsappAPIError('WhatsApp access token is required', 401);
 	}
 
-	const { method = 'GET', body, query, formData, mediaType } = options;
+	const { method = 'GET', body, query, formData } = options;
+	const isFormRequest = formData !== undefined;
 	const config: OpenAPIConfig = {
 		BASE: WHATSAPP_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: accessToken,
-		HEADERS:
-			mediaType === 'multipart/form-data'
-				? {} // Let the HTTP client set the appropriate boundary headers for FormData
-				: { 'Content-Type': mediaType || 'application/json' },
+		HEADERS: isFormRequest ? {} : { 'Content-Type': 'application/json' },
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: `/${WHATSAPP_GRAPH_API_VERSION}/${endpoint.replace(/^\//, '')}`,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			!isFormRequest &&
+			(method === 'POST' || method === 'PUT' || method === 'PATCH')
 				? body
 				: undefined,
 		formData,
-		mediaType: mediaType || 'application/json; charset=utf-8',
+		mediaType: isFormRequest ? undefined : 'application/json; charset=utf-8',
 		query: method === 'GET' ? query : undefined,
 	};
 

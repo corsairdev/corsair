@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeWhatsappRequest } from '../client';
 import type { WhatsappEndpoints } from '../index';
+import { resolveBusinessAccountId } from './message-templates';
 import { resolvePhoneNumberId } from './messages';
 import type { WhatsappEndpointOutputs } from './types';
 
@@ -66,7 +67,6 @@ export const listPhoneNumbers: WhatsappEndpoints['phoneNumbersList'] = async (
 	ctx,
 	input,
 ) => {
-	const { resolveBusinessAccountId } = await import('./message-templates');
 	const businessAccountId = await resolveBusinessAccountId(
 		ctx,
 		input.businessAccountId,

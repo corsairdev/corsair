@@ -1,6 +1,5 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { parseBody } from 'next-sanity/webhook';
 
 type SanityWebhookPayload = {
@@ -27,10 +26,7 @@ export async function POST(request: NextRequest) {
 		);
 
 		if (!isValidSignature) {
-			return NextResponse.json(
-				{ message: 'Invalid signature' },
-				{ status: 401 },
-			);
+			return NextResponse.json({ message: 'Invalid signature' }, { status: 401 });
 		}
 
 		if (body?._type === 'post') {

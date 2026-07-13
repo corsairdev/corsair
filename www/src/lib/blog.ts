@@ -1,11 +1,12 @@
 import type { PortableTextBlock } from '@portabletext/types';
+
+import { sanityProjectId } from '../../sanity/env';
 import { getSanityClient } from '@/lib/sanity/client';
 import {
 	allPostSlugsQuery,
 	allPostsQuery,
 	postBySlugQuery,
 } from '@/lib/sanity/queries';
-import { sanityProjectId } from '../../sanity/env';
 
 export type BlogPostMeta = {
 	slug: string;

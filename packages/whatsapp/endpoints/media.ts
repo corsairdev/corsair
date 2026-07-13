@@ -19,7 +19,6 @@ export const uploadMedia: WhatsappEndpoints['mediaUpload'] = async (
 			type: input.type,
 			messaging_product: 'whatsapp',
 		},
-		mediaType: 'multipart/form-data',
 	});
 
 	await logEventFromContext(

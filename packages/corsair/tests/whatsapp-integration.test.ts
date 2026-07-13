@@ -67,7 +67,7 @@ describe('WhatsApp Integration Tests', () => {
 
 	afterEach(() => {
 		global.fetch = originalFetch;
-		testDb.cleanup();
+		testDb?.cleanup();
 	});
 
 	describe('Core API Routing (Outbound Messages)', () => {

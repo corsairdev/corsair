@@ -1,7 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAgentQLRequest } from '../client';
 import type { AgentQLEndpoints } from '../index';
-import { buildQueryDocumentCacheKey, hashFileContent } from './cache-keys';
+import {
+	buildQueryDocumentCacheKey,
+	hashFileContent,
+} from './cache-keys';
 import type { AgentQLQueryDocumentResponse } from './types';
 
 export const queryDocument: AgentQLEndpoints['queryDocument'] = async (
