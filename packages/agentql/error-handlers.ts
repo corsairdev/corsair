@@ -28,7 +28,9 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (getStatus(error) === 401) return true;
 			const message = error.message.toLowerCase();
-			return message.includes('unauthorized') || message.includes('invalid_auth');
+			return (
+				message.includes('unauthorized') || message.includes('invalid_auth')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

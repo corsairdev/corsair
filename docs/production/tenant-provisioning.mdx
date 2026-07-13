@@ -57,6 +57,11 @@ await processOAuthCallback(corsair, { code, state, redirectUri });
 // creates account row for that plugin if missing
 ```
 
+On success, `processOAuthCallback` stores the OAuth credentials in the
+tenant's `corsair_accounts` row. The encrypted account `config` includes
+`access_token`, plus `refresh_token` when the provider returns one and
+`expires_at` when `expires_in` is returned.
+
 Full routes: [OAuth process](/production/oauth-process).
 
 **Runtime:**

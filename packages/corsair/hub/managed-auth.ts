@@ -70,12 +70,7 @@ export async function getManagedAccessToken(
 		}
 	}
 
-	const tokens = await hubApiPost({
-		hub,
-		path: '/oauth/refresh',
-		body: { plugin, tenantId },
-		parseResponse: parseOAuthRefreshResponse,
-	});
+	const tokens = await refreshManagedTokensFromHub(hub, plugin, tenantId);
 
 	const nextExpiresAt = tokens.expires_in
 		? now + tokens.expires_in
@@ -97,6 +92,34 @@ export async function getManagedAccessToken(
 		expiresAt: nextExpiresAt,
 		refreshed: true,
 	};
+}
+
+function isManagedConnectionMissingOnHub(message: string): boolean {
+	return (
+		message.includes('Managed OAuth connection not found') ||
+		message.includes('Managed OAuth connection has no tokens')
+	);
+}
+
+async function refreshManagedTokensFromHub(
+	hub: HubConfig,
+	plugin: string,
+	tenantId: string,
+) {
+	try {
+		return await hubApiPost({
+			hub,
+			path: '/oauth/refresh',
+			body: { plugin, tenantId },
+			parseResponse: parseOAuthRefreshResponse,
+		});
+	} catch (error) {
+		const message = error instanceof Error ? error.message : '';
+		if (isManagedConnectionMissingOnHub(message)) {
+			throw new AuthMissingError(plugin, 'managed');
+		}
+		throw error;
+	}
 }
 
 // Attaches a `_refreshAuth` helper on the keyBuilder context for 401 retries.

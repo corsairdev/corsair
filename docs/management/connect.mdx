@@ -12,6 +12,10 @@ The same API works in both modes — **`hub`** or **`manual`** config on `create
 | `hub: { ... }` | Corsair Hub hosted UI | Delivery endpoint only |
 | `manual: { baseUrl, redirectUri }` | Your app's connect page | Connect page + OAuth callback |
 
+<Info>
+New to the difference? [Hub overview](/hub/overview) explains the relay model and [Manual or Hub](/hub/manual-vs-hub) compares the two side by side. This page is the API reference for both.
+</Info>
+
 ## Response shape
 
 Every `createLink` call returns:
@@ -37,10 +41,11 @@ export const corsair = createCorsair({
   hub: {
     projectApiKey: process.env.CORSAIR_API_KEY!,
     signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-    deliveryUrl: `${appUrl}/api/corsair`,
   },
 });
 ```
+
+Use a **development** key (`ck_dev_…`) locally and a **production** key (`ck_prod_…`) when deployed. See [Environments](/hub/environments).
 
 Mount one route (optional catch-all so bare `/api/corsair` hits hub delivery too):
 
@@ -71,10 +76,9 @@ Hub-specific optional overrides (ignored in manual mode):
 | ----- | ------- |
 | `plugin` | Optional — omit to show all configured plugins |
 | `oauthMode` | Optional — inferred from plugin `authType` when omitted |
-| `source` | Optional — inferred from `deliveryUrl` when omitted |
 | `providerName` | Optional — override provider display name in Hub UI |
 
-Hub delivers tokens to your `deliveryUrl`. You do **not** call `resolve` or `oauthCallback`.
+Hub delivers results to your handler. In development the SDK auto-detects the delivery URL; in production it uses the URL registered in the [Hub dashboard](/hub/dashboard). You do **not** call `resolve` or `oauthCallback`.
 
 ## Manual mode (self-hosted)
 

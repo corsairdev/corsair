@@ -1,60 +1,73 @@
 # Corsair
 
-> Corsair lets your app integrate with hundreds of services (Gmail, Slack, GitHub, Linear, Google Calendar, and more). Use it from coding agents over MCP, from agent SDKs in your backend, or with direct API execution.
+> Corsair is an open-source SDK that lets your app integrate with hundreds of services (Gmail, Slack, GitHub, Linear, Google Calendar, and more). Run it in your own process: install plugins, sync data to your database, expose tools to agents over MCP, or call operations directly.
 
-## Get started (Corsair App)
+## Get started
 
-- [Agent setup](https://docs.corsair.dev/app/agent-setup.md): **Start here for coding agents** — clarify intent, provision instance/plugins/tenant via SDK, ask when ambiguous.
-- [Introduction](https://docs.corsair.dev/app/home.md): What Corsair is, agentic vs deterministic usage, and install `@corsair-dev/app` (humans).
+- [Introduction](https://docs.corsair.dev/getting-started/introduction.md): What Corsair is, how the SDK works, and when to use it.
+- [Quick start](https://docs.corsair.dev/getting-started/quick-start.md): Get a local Corsair instance running.
+- [Setup](https://docs.corsair.dev/getting-started/setup.md): Integrations, accounts, tenants, the CLI, and `setupCorsair`.
+- [Comparison](https://docs.corsair.dev/getting-started/comparison.md): How Corsair compares to other integration platforms.
 
-### Use Corsair in chat (MCP)
+## Core concepts
 
-Give Cursor, Claude Code, Codex, or any MCP client a tenant-scoped HTTP endpoint.
+- [Integrations](https://docs.corsair.dev/concepts/integrations.md): Instances, plugins, permissions, and root credentials.
+- [Auth](https://docs.corsair.dev/concepts/auth.md): How Corsair authenticates to third-party services.
+- [Permissions](https://docs.corsair.dev/concepts/permissions.md): Scope what each instance and tenant can do.
+- [Multi-tenancy](https://docs.corsair.dev/concepts/multi-tenancy.md): Tenants, connect links, and per-customer credentials.
+- [Database](https://docs.corsair.dev/concepts/database.md): Synced cache, schemas, and reading data.
+- [Webhooks](https://docs.corsair.dev/concepts/webhooks.md): Receive and route provider webhooks.
+- [Hooks](https://docs.corsair.dev/concepts/hooks.md): Run logic on Corsair events.
+- [API](https://docs.corsair.dev/concepts/api.md): Call plugin operations directly with `tenant.run()`.
+- [Error handling](https://docs.corsair.dev/concepts/error-handling.md): `CorsairApiError` and failure modes.
+- [TypeScript](https://docs.corsair.dev/concepts/typescript.md): Generated types and Zod schemas.
 
-- [Coding agents overview](https://docs.corsair.dev/app/coding-agents.md): Hosted MCP for agents — get URL + bearer token from the dashboard.
-- [Cursor](https://docs.corsair.dev/app/coding-agents/cursor.md): `.cursor/mcp.json` with URL and Authorization header.
-- [Claude Code](https://docs.corsair.dev/app/coding-agents/claude-code.md): `.mcp.json` or `claude mcp add --transport http`.
-- [Codex](https://docs.corsair.dev/app/coding-agents/codex.md): Streamable HTTP in Codex UI, CLI, or `~/.codex/config.toml`.
-- [Antigravity](https://docs.corsair.dev/app/coding-agents/antigravity.md): `~/.gemini/antigravity/mcp_config.json` with `serverUrl`.
-- [Custom connector](https://docs.corsair.dev/app/coding-agents/custom-connector.md): Any HTTP MCP client — URL + bearer token.
+## Authentication
 
-### Use Corsair in agent SDKs
+- [API key](https://docs.corsair.dev/concepts/api-key.md): API-key based auth for providers.
+- [OAuth](https://docs.corsair.dev/concepts/oauth.md): OAuth-based auth for providers.
+- [OAuth process](https://docs.corsair.dev/production/oauth-process.md): Production OAuth flow and connect links.
+- [Tenant provisioning](https://docs.corsair.dev/production/tenant-provisioning.md): Provision tenants in production with `setupCorsair`.
 
-Wire Corsair into Vercel AI SDK, OpenAI, or Claude Agent SDK from your backend.
+## Use with AI
 
-- [Agent SDKs overview](https://docs.corsair.dev/app/agent-sdks.md): MCP tools in harnesses via `tenant.mcp.createVercelClient()` or tenant MCP keys.
-- [Vercel AI SDK](https://docs.corsair.dev/app/vercel-ai.md): `streamText` / `generateText` with `createVercelClient` or `createVercelAiMcpClient`.
-- [OpenAI](https://docs.corsair.dev/app/openai.md): Responses API and OpenAI Agents SDK with `getOpenAiMcpConfig` / `createOpenAiMcpServer`.
-- [Claude Agent SDK](https://docs.corsair.dev/app/claude.md): `claudeMcpServerConfig` and `query()`.
+Expose Corsair tools to agents over MCP, or wire them into agent SDKs and coding agents.
 
-### Use Corsair in your UI (direct execution)
+- [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters.md): Local stdio MCP for agents and clients.
+- [Anthropic SDK](https://docs.corsair.dev/mcp-adapters/anthropic-sdk.md): Use Corsair tools with the Anthropic SDK.
+- [Claude Agent SDK](https://docs.corsair.dev/mcp-adapters/claude-sdk.md): `claudeMcpServerConfig` and `query()`.
+- [OpenAI Agents](https://docs.corsair.dev/mcp-adapters/openai-agents.md): Corsair tools in the OpenAI Agents SDK.
+- [Vercel AI SDK](https://docs.corsair.dev/mcp-adapters/vercel-ai.md): `streamText` / `generateText` with Corsair MCP tools.
+- [Mastra](https://docs.corsair.dev/mcp-adapters/mastra.md): Corsair tools in Mastra.
+- [OpenAI](https://docs.corsair.dev/mcp-adapters/openai.md): Responses API with Corsair MCP.
+- [Coding agents](https://docs.corsair.dev/mcp-adapters/coding-agents.md): Give Cursor, Claude Code, and other clients a local MCP server.
+- [Claude Code](https://docs.corsair.dev/mcp-adapters/claude-code.md): `.mcp.json` or `claude mcp add`.
+- [Cursor](https://docs.corsair.dev/mcp-adapters/cursor.md): `.cursor/mcp.json` configuration.
 
-Call plugin operations from your backend without an agent loop. **Read feeds from `*.db.*`; refresh with `*.api.*`.**
+## Management API
 
-- [Direct execution](https://docs.corsair.dev/app/direct-execution.md): `tenant.run()` — API vs DB paths, Resync pattern, writes, UI actions.
+- [Overview](https://docs.corsair.dev/management/overview.md): Manage instances, tenants, and connections programmatically.
+- [Handler](https://docs.corsair.dev/management/handler.md): Mount the management handler in your backend.
+- [Client](https://docs.corsair.dev/management/client.md): Call the management API from the client.
+- [React](https://docs.corsair.dev/management/react.md): React hooks for management.
+- [Connect](https://docs.corsair.dev/management/connect.md): Connect link flow.
 
-### Provision and manage (@corsair-dev/app)
+## Workflow engines
 
-Provision via the SDK after the user creates a developer API key at [app.corsair.dev/api-keys](https://app.corsair.dev/api-keys). After setup, call `t.connectLink.create()` and send the URL to the user.
+- [Inngest](https://docs.corsair.dev/guides/inngest.md): Run Corsair operations from Inngest functions.
+- [Temporal](https://docs.corsair.dev/guides/temporal.md): Use Corsair in Temporal workflows.
+- [Trigger.dev](https://docs.corsair.dev/guides/trigger-dev.md): Use Corsair in Trigger.dev tasks.
+- [Hatchet](https://docs.corsair.dev/guides/hatchet.md): Use Corsair in Hatchet workflows.
 
-- [Installation](https://docs.corsair.dev/app/installation.md): Install `@corsair-dev/app` and minimal provisioning.
-- [Instances and plugins](https://docs.corsair.dev/app/instances-and-plugins.md): Create instances, install plugins, permissions, root credentials.
-- [Tenants and auth](https://docs.corsair.dev/app/tenants-and-auth.md): Tenants, connect links, API keys, OAuth per customer.
-- [Types and errors](https://docs.corsair.dev/app/types-and-errors.md): Generated types, Zod schemas, `CorsairApiError`.
+## Plugins
 
-## Integrations catalog
+- [Plugins guide](https://docs.corsair.dev/guides/plugins.md): The Corsair plugin catalog and how to use plugins.
+- [Create your own plugin](https://docs.corsair.dev/guides/create-your-own-plugin.md): Build a custom plugin.
+- [Plugin credentials](https://docs.corsair.dev/guides/plugin-credentials.md): Configure credentials for plugins.
+- [Integrations catalog](https://api.corsair.dev/md/integrations): Complete Corsair integration catalog (Markdown).
 
-Full list of available plugins and operations.
+## Guides
 
-- [Integrations](https://api.corsair.dev/md/integrations): Complete Corsair integration catalog (Markdown).
-
-## Self-hosted SDK (optional)
-
-Run Corsair in your own process with the open-source SDK — local MCP, plugins, and database sync.
-
-- [SDK introduction](https://docs.corsair.dev/getting-started/introduction.md): Self-hosted Corsair overview.
-- [SDK quick start](https://docs.corsair.dev/getting-started/quick-start.md): Local setup.
-- [SDK setup](https://docs.corsair.dev/getting-started/setup.md): Integrations, accounts, tenants, CLI, and setupCorsair.
-- [Tenant provisioning](https://docs.corsair.dev/production/tenant-provisioning.md): Provision tenants in production with setupCorsair.
-- [Plugins guide](https://docs.corsair.dev/guides/plugins.md): Self-hosted plugin catalog.
-- [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters.md): Local stdio MCP for coding agents (not hosted App).
+- [Webhooks](https://docs.corsair.dev/guides/webhooks.md): End-to-end webhook setup.
+- [Workflows](https://docs.corsair.dev/guides/workflows.md): Build workflows with Corsair.
+- [Dashboard](https://docs.corsair.dev/guides/dashboard.md): Use the Corsair dashboard.

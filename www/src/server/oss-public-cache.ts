@@ -1,7 +1,10 @@
 import { revalidateTag, unstable_cache } from 'next/cache';
 
 import { db } from '@/db';
-import { getActiveClaimsForUser } from '@/db/integration-status';
+import {
+	getActiveClaimsForUser,
+	getUserClaimEligibility,
+} from '@/db/integration-status';
 import { appRouter } from '@/server/api/root';
 
 export const OSS_CACHE_TAGS = {
@@ -10,6 +13,7 @@ export const OSS_CACHE_TAGS = {
 	tags: 'oss:tags',
 	leaderboard: 'oss:leaderboard',
 	list: 'oss:list',
+	contributors: 'oss:contributors',
 } as const;
 
 export function revalidateOssWriteSurface() {
@@ -17,6 +21,7 @@ export function revalidateOssWriteSurface() {
 	revalidateTag(OSS_CACHE_TAGS.activity);
 	revalidateTag(OSS_CACHE_TAGS.leaderboard);
 	revalidateTag(OSS_CACHE_TAGS.list);
+	revalidateTag(OSS_CACHE_TAGS.contributors);
 }
 
 const MAX_CACHE_Q_LENGTH = 64;
@@ -81,14 +86,42 @@ export async function getIntegrationListForPage(
 
 	if (!userId) return list;
 
-	const claims = await getActiveClaimsForUser(db, userId);
-	const claimedIds = new Set(claims.map((claim) => claim.integrationId));
+	try {
+		const [claims, claimEligibility] = await Promise.all([
+			getActiveClaimsForUser(db, userId),
+			getUserClaimEligibility(db, userId),
+		]);
+		const claimedIds = new Set(claims.map((claim) => claim.integrationId));
+		const userCanClaim = claimEligibility.canClaim;
 
-	return {
-		...list,
-		items: list.items.map((item) => ({
-			...item,
-			claimedByCurrentUser: claimedIds.has(item.id),
-		})),
-	};
+		return {
+			...list,
+			wipIntegrationName: claimEligibility.wipIntegrationName,
+			claimBlockReason: claimEligibility.blockReason,
+			items: list.items.map((item) => ({
+				...item,
+				claimedByCurrentUser: claimedIds.has(item.id),
+				userCanClaim,
+			})),
+		};
+	} catch (error) {
+		console.error('[oss] claim overlay failed', error);
+		// Fail safe: disable claim buttons rather than showing stale public-cache state.
+		return {
+			...list,
+			wipIntegrationName: null,
+			claimBlockReason: null,
+			items: list.items.map((item) => ({
+				...item,
+				userCanClaim: false,
+			})),
+		};
+	}
 }
+
+export const getCachedContributorProfile = unstable_cache(
+	async (username: string) =>
+		createPublicCaller().contributors.byGithubUsername({ username }),
+	['oss-contributor-profile'],
+	{ revalidate: 30, tags: [OSS_CACHE_TAGS.contributors] },
+);

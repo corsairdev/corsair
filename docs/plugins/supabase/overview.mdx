@@ -1,0 +1,157 @@
+---
+title: Overview
+description: 'Supabase plugin for Corsair'
+---
+
+Use **Supabase** through Corsair: one client, typed API calls, optional local DB sync.
+
+Supabase exposes project, database, auth, functions, storage, and infrastructure workflows. Use Corsair permissions for destructive actions such as deleting projects, resetting branches, restoring backups, or changing network restrictions.
+
+**What you get:**
+
+- 121 typed API operations
+- 7 database entities synced for fast `.search()` / `.list()` queries
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/supabase
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { supabase } from '@corsair-dev/supabase';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [supabase()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { supabase } from '@corsair-dev/supabase';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [supabase()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/supabase/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --supabase api_key=<supabase_pat>
+```
+
+Use the key names documented in [Get Credentials](/plugins/supabase/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --tenant=<tenantId> --supabase api_key=<supabase_pat>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+supabase()
+```
+
+Store credentials with `pnpm corsair setup --supabase api_key=<supabase_pat>` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+```ts corsair.ts
+supabase({
+  authType: 'oauth_2',
+})
+```
+
+Store credentials with `pnpm corsair setup --supabase client_id=<client_id> --supabase client_secret=<client_secret>` (see [Get Credentials](/plugins/supabase/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+## Query synced data
+
+Synced entities support `corsair.supabase.db.<entity>.search()` and `.list()`. See [Database](/plugins/supabase/database) for filters and operators.
+
+## Example API calls
+
+**Read-style (read):** `advisors.getPerformanceAdvisors`
+
+```ts
+await corsair.supabase.api.advisors.getPerformanceAdvisors({
+  ref: 'abcdefghijklmnopqrst',
+})
+```
+
+**Write-style (write):** `auth.createProjectSigningKey`
+
+```ts
+await corsair.supabase.api.auth.createProjectSigningKey({
+  ref: 'abcdefghijklmnopqrst',
+})
+```
+
+See the full list on the [API](/plugins/supabase/api) page. Use `pnpm corsair list --plugin=supabase` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic       | Link                                                 |
+| ----------- | ---------------------------------------------------- |
+| API         | [API](/plugins/supabase/api)                         |
+| Database    | [Database](/plugins/supabase/database)               |
+| Credentials | [Get credentials](/plugins/supabase/get-credentials) |

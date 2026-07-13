@@ -4,15 +4,12 @@
  *
  * ## Delivery transports
  *
- * The app's `deliveryUrl` (e.g. `/api/corsair`) receives hub payloads two ways:
+ * Development and production are separate environments with distinct API keys:
  *
- * - **Browser delivery (GET `?d=<token>`)** — used for local dev and `source: "client"`.
- *   The hub redirects the user's browser with a signed token; OAuth codes/tokens and
- *   permission decisions are applied, then the user is redirected to the hub success page.
- *
- * - **Server delivery (POST, HMAC-signed envelope)** — used in production with a public
- *   `deliveryUrl`. The hub POSTs signed JSON (`oauth.callback`, `oauth.tokens`,
- *   `webhook`, `permission.approve|deny`, `auth.credentials`) to the app.
+ * - **Development (`ck_dev_`)** — browser delivery (GET `?d=<token>`). The SDK
+ *   auto-detects your localhost delivery URL.
+ * - **Production (`ck_prod_`)** — server delivery (POST, HMAC-signed envelope) to
+ *   the delivery URL registered in the hub dashboard.
  *
  * ## Connect flow
  *
@@ -30,6 +27,7 @@ export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
 	HubNotConfiguredError,
+	inferHubEnvironmentSlug,
 	normalizeHubConfig,
 	resolveHubOAuthCallbackUrl,
 } from './config';
@@ -41,6 +39,11 @@ export {
 	type ConnectStatusResponse,
 	getConnectStatusForTenant,
 } from './connect-status';
+export { listHubProjectConnections } from './connections';
+export {
+	isConnectionsSyncRetryableError,
+	processConnectionsSyncDelivery,
+} from './connections-sync-delivery';
 export {
 	type ConnectAuthKind,
 	type ConnectPluginManifestEntry,
@@ -49,13 +52,14 @@ export {
 	parseHubApiErrorBody,
 	parseOAuthRefreshResponse,
 	parsePermissionSessionResponse,
+	parseProjectConnectionsResponse,
 } from './contracts/connect-api';
 export {
-	isLoopbackDeliveryUrl,
-	resolveConnectSourceFromDeliveryUrl,
-	shouldUseBrowserDelivery,
-	validateExplicitConnectSource,
-} from './contracts/delivery-mode';
+	isLoopbackUrl,
+	resolveDeliveryTransport,
+	usesBrowserDelivery,
+	validateProductionDeliveryUrl,
+} from './contracts/environment';
 export {
 	type BrowserDeliveryMode,
 	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
@@ -70,6 +74,10 @@ export {
 	respondToHubDelivery,
 	respondToHubDeliveryFromRequest,
 } from './delivery';
+export {
+	IntegrationCredentialsDeliveryError,
+	processIntegrationCredentialsDelivery,
+} from './integration-credentials-delivery';
 export {
 	attachManagedRefreshAuth,
 	getManagedAccessToken,
@@ -86,6 +94,16 @@ export {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from './permission';
+export type { ReportConnectionStatusInput } from './report-connection-status';
+export {
+	reportConnectionStatus,
+	reportConnectionStatusForHub,
+	reportPluginConnectionAuthMissing,
+	reportPluginConnectionStatus,
+	reportPluginConnectionStatusFromBinding,
+	reportPluginConnectionVerified,
+} from './report-connection-status';
+export { resolveHubDeliveryUrl } from './resolve-delivery-url';
 export { createHubRouteHandlers } from './route-handlers';
 export {
 	BROWSER_DELIVERY_TTL_MS,
@@ -101,14 +119,18 @@ export {
 	decodeConnectTokenFromPath,
 	decodePermissionTokenFromPath,
 	deliverSignedEnvelope,
+	describeDeliveryNetworkError,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractSyncFromDeliveryAck,
+	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
 	getConnectSessionExpiryMs,
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
 	parseServerDeliveryAckBody,
+	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,
 	type SignedDeliveryHeaders,
 	type SignedEnvelopeDeliveryResult,
@@ -125,19 +147,29 @@ export {
 	verifySignedToken,
 	verifySignedTunnelDelivery,
 } from './signing';
+export {
+	type ConnectionsSyncManifest,
+	type ConnectionsSyncPlugin,
+	decryptSyncManifest,
+	type EncryptedSyncPayload,
+	encryptSyncManifest,
+	parseSyncDeliveryBody,
+} from './sync-payload';
 export type {
-	ConnectSourceValidationError,
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
+	DeliveryTransport,
 	HubConfig,
 	HubConfigInput,
 	HubConnectSessionInput,
 	HubConnectSessionResult,
-	HubConnectSource,
+	HubEnvironmentSlug,
+	HubListProjectConnectionsInput,
 	HubOAuthMode,
 	HubOAuthRefreshResponse,
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
+	HubProjectConnection,
 	TunnelEnvelope,
 	TunnelType,
 } from './types';

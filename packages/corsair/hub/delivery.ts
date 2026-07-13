@@ -4,15 +4,16 @@ import {
 	applyPermissionDecision,
 	isAuthCredentialsBrowserDelivery,
 	isByoOAuthBrowserDelivery,
-	isConnectStatusBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	processCorsair,
 	verifyBrowserDeliveryToken,
 } from '../tunnel';
+import { isConnectionsSyncBrowserDelivery } from '../tunnel/browser-delivery';
+import { announceAppFromRequest } from './announce';
 import { buildClientBridgePostMessageHtml } from './browser-delivery-html';
 import { getHubConfig, HubNotConfiguredError } from './config';
-import { getConnectStatusForTenant } from './connect-status';
+import { processConnectionsSyncDelivery } from './connections-sync-delivery';
 import { BROWSER_DELIVERY_TTL_MS } from './contracts/tunnel';
 import { processAuthCredentialsDelivery } from './credentials-delivery';
 import {
@@ -108,24 +109,35 @@ export async function handleHubDeliveryGet(
 	}
 
 	try {
-		if (isConnectStatusBrowserDelivery(payload)) {
-			if (!payload.hubSuccessUrl) {
+		if (isConnectionsSyncBrowserDelivery(payload)) {
+			if (!payload.hubOrigin || !payload.requestId) {
 				return {
 					type: 'json',
 					status: 400,
-					body: { error: 'Connect status delivery missing hubSuccessUrl' },
+					body: {
+						error:
+							'Connections sync delivery requires hubOrigin and requestId for client bridge',
+					},
 				};
 			}
 
-			const tenantId = payload.tenantId?.trim() || 'default';
-			const status = await getConnectStatusForTenant(corsair, tenantId, {
-				pluginIds: payload.statusPlugins,
-			});
+			const encrypted = await processConnectionsSyncDelivery(
+				corsair,
+				hub.signingSecret,
+			);
 
 			return {
-				type: 'redirect',
-				url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
-					status,
+				type: 'text',
+				status: 200,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: true,
+					body: {
+						status: 'ok',
+						sync: { encrypted },
+					},
 				}),
 			};
 		}
@@ -215,10 +227,24 @@ export async function handleHubDeliveryGet(
 			error instanceof Error ? error.message : 'Hub delivery failed';
 
 		if (
-			(isConnectStatusBrowserDelivery(payload) ||
-				isAuthCredentialsBrowserDelivery(payload)) &&
-			payload.hubSuccessUrl
+			isConnectionsSyncBrowserDelivery(payload) &&
+			payload.hubOrigin &&
+			payload.requestId
 		) {
+			return {
+				type: 'text',
+				status: 400,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: false,
+					error: message,
+				}),
+			};
+		}
+
+		if (isAuthCredentialsBrowserDelivery(payload) && payload.hubSuccessUrl) {
 			return {
 				type: 'redirect',
 				url: buildBrowserDeliveryReturnUrl(payload.hubSuccessUrl, {
@@ -228,8 +254,7 @@ export async function handleHubDeliveryGet(
 		}
 
 		if (
-			(isConnectStatusBrowserDelivery(payload) ||
-				isAuthCredentialsBrowserDelivery(payload)) &&
+			isAuthCredentialsBrowserDelivery(payload) &&
 			payload.hubOrigin &&
 			payload.requestId
 		) {
@@ -274,6 +299,18 @@ export async function handleHubDeliveryPost(
 	}
 
 	const webhookResponse = ack.webhookResponse;
+	if (ack.connectLink) {
+		return {
+			type: 'json',
+			status: 200,
+			body: {
+				status: 'ok',
+				connectUrl: ack.connectLink.connectUrl,
+				expiresAt: ack.connectLink.expiresAt,
+			},
+		};
+	}
+
 	if (!webhookResponse) {
 		return {
 			type: 'json',
@@ -369,6 +406,10 @@ export async function respondToHubDeliveryFromRequest(
 	corsair: unknown,
 	request: Request,
 ): Promise<Response> {
+	// A request reaching the corsair route proves the app is live and serving —
+	// register its (trusted, config-derived) delivery URL with Hub.
+	announceAppFromRequest(corsair);
+
 	const method = request.method.toUpperCase();
 	const corsHeaders = resolveHubBrowserDeliveryCorsHeaders(
 		request.headers.get('origin'),

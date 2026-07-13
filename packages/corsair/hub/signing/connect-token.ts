@@ -7,7 +7,7 @@
  * covers the multi-plugin connect page URL.
  */
 
-import type { HubConnectSource, HubOAuthMode } from '../types';
+import type { HubOAuthMode } from '../types';
 import {
 	createSignedTokenJti,
 	decodeTokenFromPath,
@@ -40,8 +40,6 @@ export type ConnectTokenPayload = {
 	redirectUri: string;
 	/** App delivery endpoint for credential transfer after OAuth completes. */
 	deliveryUrl: string;
-	/** Whether credentials are delivered via browser redirect or server POST. */
-	source: HubConnectSource;
 	/** BYO (app holds OAuth app) vs managed (hub holds OAuth app). */
 	oauthMode: HubOAuthMode;
 	/** Unix expiry (seconds). */
@@ -71,7 +69,7 @@ export function signConnectToken(
 }
 
 /**
- * Verifies a connect OAuth token (e.g. to read `source` and `oauthMode` during callback).
+ * Verifies a connect OAuth token (e.g. to read `oauthMode` during callback).
  */
 export function verifyConnectToken(
 	token: string,
