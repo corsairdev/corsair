@@ -1,60 +1,146 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class DatadogAPIError extends Error {
+	public readonly status?: number;
+	public readonly statusText?: string;
+	// Using unknown because Datadog API error response bodies vary by endpoint
+	// and API version (v1 returns { errors: string[] }, v2 returns
+	// { errors: [{ detail }] }), making a strict type infeasible here.
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+	public readonly rateLimitReset?: number;
+	public readonly rateLimitRemaining?: number;
+	public readonly rateLimitLimit?: number;
+
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly code?: number,
+		options?: { cause?: Error },
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'DatadogAPIError';
+
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+			this.rateLimitReset = options.cause.rateLimitReset;
+			this.rateLimitRemaining = options.cause.rateLimitRemaining;
+			this.rateLimitLimit = options.cause.rateLimitLimit;
+		}
 	}
 }
 
-// TODO: Update with your API base URL
-const DATADOG_API_BASE = 'https://api.example.com';
+/** Datadog region site, e.g. datadoghq.com (US1), datadoghq.eu (EU1), us3.datadoghq.com, us5.datadoghq.com, ap1.datadoghq.com. */
+export const DEFAULT_DATADOG_SITE = 'datadoghq.com';
+
+export type DatadogCredentials = {
+	/** Datadog API key — required for every request (DD-API-KEY header). */
+	apiKey: string;
+	/** Datadog application key — required by most management endpoints (DD-APPLICATION-KEY header). */
+	appKey?: string;
+	/** Region site controlling the API host: https://api.<site>. Defaults to datadoghq.com. */
+	site?: string;
+};
+
+/**
+ * The keyBuilder packs both Datadog keys and the region site into a single
+ * JSON string because ctx.key is a string. A bare (non-JSON) key is accepted
+ * as an API key alone so `datadog({ key: '...' })` keeps working.
+ */
+export function packDatadogKey(credentials: DatadogCredentials): string {
+	return JSON.stringify(credentials);
+}
+
+export function parseDatadogKey(key: string): DatadogCredentials {
+	try {
+		const parsed: unknown = JSON.parse(key);
+		if (
+			typeof parsed === 'object' &&
+			parsed !== null &&
+			'apiKey' in parsed &&
+			typeof parsed.apiKey === 'string'
+		) {
+			const credentials = parsed as DatadogCredentials;
+			return {
+				apiKey: credentials.apiKey,
+				appKey: credentials.appKey,
+				site: credentials.site,
+			};
+		}
+	} catch {
+		// Not JSON — treat the whole string as a bare API key below.
+	}
+	return { apiKey: key };
+}
+
+const DATADOG_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+		limit: 'X-RateLimit-Limit',
+		remaining: 'X-RateLimit-Remaining',
+		resetTime: 'X-RateLimit-Reset',
+	},
+};
+
+export type DatadogQueryValue = string | number | boolean | undefined;
+
+export type DatadogRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	query?: Record<string, DatadogQueryValue>;
+	body?: Record<string, unknown>;
+};
 
 export async function makeDatadogRequest<T>(
 	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	key: string,
+	options: DatadogRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { apiKey, appKey, site } = parseDatadogKey(key);
+	const { method = 'GET', query, body } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: DATADOG_API_BASE,
+		BASE: `https://api.${site || DEFAULT_DATADOG_SITE}`,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
+			'DD-API-KEY': apiKey,
+			...(appKey ? { 'DD-APPLICATION-KEY': appKey } : {}),
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
+		body: method === 'GET' || method === 'DELETE' ? undefined : body,
+		mediaType: 'application/json',
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: DATADOG_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
-		if (error instanceof Error) {
-			throw new DatadogAPIError(error.message);
+		if (error instanceof ApiError) {
+			throw new DatadogAPIError(error.message, error.status, { cause: error });
 		}
-		throw new DatadogAPIError('Unknown error');
+		if (error instanceof Error) {
+			throw new DatadogAPIError(error.message, undefined, { cause: error });
+		}
+		throw new DatadogAPIError('Unknown Datadog API error');
 	}
 }
