@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Corsair",
-  "theme": "luma",
+  "theme": "aspen",
   "favicon": "/favicon.ico",
   "logo": {
-    "light": "/images/corsair-icon.png",
-    "dark": "/images/corsair-icon.png"
+    "light": "/images/logo-light.svg",
+    "dark": "/images/logo-dark.svg"
   },
   "colors": {
     "primary": "#2d7387",
