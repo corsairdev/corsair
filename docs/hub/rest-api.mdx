@@ -1,0 +1,45 @@
+---
+title: Hub REST API
+description: Integrate Corsair Hub from any language over plain HTTP — no SDK required.
+---
+
+The Corsair SDK is TypeScript-only, but Hub itself is a plain HTTP service. A Go, Python, or Ruby backend integrates by calling these endpoints directly. Credentials are still delivered to **your** endpoint and stored in **your** database — Hub stores none.
+
+Every request authenticates with your project API key:
+
+```http
+Authorization: Bearer ck_dev_...
+```
+
+## Create a connect session
+
+```http
+POST https://auth.corsair.dev/connect/sessions
+Authorization: Bearer ck_dev_...
+Content-Type: application/json
+
+{
+  "tenantId": "user_123",
+  "deliveryUrl": "https://yourapp.com/api/corsair",
+  "plugins": [{ "plugin": "github", "oauthMode": "managed" }]
+}
+```
+
+Returns `{ "connectUrl", "token", "projectId", "expiresAt" }`. Redirect the user's browser to `connectUrl`. Hub hosts the connect page and the OAuth callback.
+
+## Receive the delivery
+
+When the user finishes connecting, Hub sends a signed envelope to your `deliveryUrl`. Verify the HMAC signature with your signing secret before trusting the body, then persist the credential. See [Delivery URLs](/hub/delivery-urls) for the envelope shape and signature scheme.
+
+## List connections
+
+```http
+GET https://auth.corsair.dev/projects/{projectId}/connections
+Authorization: Bearer ck_dev_...
+```
+
+Returns an array of `{ tenantId, plugin, status, authKind, connectedAt, expiresAt }`, deduplicated by `tenantId:plugin`.
+
+## Rate limits
+
+Connect and permission session creation share a limit of **100 sessions per hour per project**. Over the limit returns HTTP 429. Malformed requests do not consume quota.

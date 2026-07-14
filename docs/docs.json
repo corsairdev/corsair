@@ -30,6 +30,7 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
+              "getting-started/set-up-with-your-agent",
               "getting-started/comparison"
             ]
           },
@@ -51,7 +52,8 @@
               "hub/dashboard",
               "hub/manual-vs-hub",
               "hub/delivery-urls",
-              "hub/permissions"
+              "hub/permissions",
+              "hub/rest-api"
             ]
           },
           {

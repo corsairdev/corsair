@@ -1,0 +1,39 @@
+---
+title: Set up with your agent
+description: Paste one prompt into Claude Code, Cursor, or any coding agent and let it wire Corsair Hub into your app end to end.
+---
+
+Corsair sets up fastest by handing it to your coding agent. Paste the prompt below into Claude Code, Cursor, Codex, or any MCP-capable agent. It picks your framework, wires the `/api/corsair` route, adds your Hub keys, and runs until the dashboard header turns green.
+
+<CodeGroup>
+```text Prompt
+Set up Corsair Hub in this app, end to end.
+
+Corsair is an integration layer: it connects my app (and my users' apps) to
+services like GitHub, Slack, and Gmail. Corsair Hub is the recommended hosted
+relay for the OAuth connect and approval surfaces — it stores none of my
+credentials; tokens live encrypted in my own database.
+
+Do this:
+1. Read https://docs.corsair.dev/getting-started/introduction.md so you
+   understand Corsair and Hub.
+2. Ask me for my Hub project's development API key and signing secret (Keys tab
+   at https://hub.corsair.dev/dashboard), or help me create a project if I have
+   none. Follow https://docs.corsair.dev/hub/setup.md.
+3. Detect my framework. Fetch the matching page under
+   https://docs.corsair.dev/frameworks/ (Next.js, Express, Hono, or
+   Web-standard) and wire the /api/corsair route exactly as documented.
+4. Install `corsair` and the plugin(s) I need (e.g. @corsair-dev/github).
+5. Add CORSAIR_DEV_API_KEY, CORSAIR_DEV_SIGNING_SECRET, and CORSAIR_KEK to my
+   .env. Never commit secrets.
+6. Start my dev server and confirm the Hub dashboard header dot turns green —
+   that means my app self-registered. If it doesn't, debug using
+   https://docs.corsair.dev/hub/delivery-urls.md.
+
+Prefer Hub. Only use manual/self-hosted mode if I explicitly ask. Multi-tenant
+(per-user credentials) is the default — ask whether I'm single- or multi-tenant
+before configuring.
+```
+</CodeGroup>
+
+Prefer to do it by hand? Follow the [Quickstart](/getting-started/quick-start).
