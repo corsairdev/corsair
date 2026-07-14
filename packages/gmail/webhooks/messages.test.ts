@@ -218,3 +218,228 @@ describe('Gmail messageChanged webhook event filtering', () => {
 		);
 	});
 });
+
+function createHandlerContextWithKeys(
+	lastHistoryId: string | null,
+	webhookEvents?: Array<
+		'messageReceived' | 'messageDeleted' | 'messageLabelChanged'
+	>,
+) {
+	const keys = {
+		get_last_history_id: jest.fn().mockResolvedValue(lastHistoryId),
+		set_last_history_id: jest.fn().mockResolvedValue(undefined),
+	};
+	const ctx = createHandlerContext(webhookEvents);
+	(ctx as unknown as { keys: typeof keys }).keys = keys;
+	return { ctx, keys };
+}
+
+describe('Gmail messageChanged webhook history sync', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('syncs new messages when the same batch also contains label changes', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return {
+					history: [
+						{
+							id: '1001',
+							labelsAdded: [{ message: { id: 'labeled-msg-1' } }],
+						},
+						{
+							id: '1002',
+							messagesAdded: [{ message: { id: 'new-msg-1' } }],
+						},
+					],
+				};
+			}
+			if (path.includes('/messages/new-msg-1')) {
+				return { id: 'new-msg-1', historyId: '1002' };
+			}
+			if (path.includes('/messages/labeled-msg-1')) {
+				return { id: 'labeled-msg-1', historyId: '1001' };
+			}
+			return {};
+		});
+
+		const context = createHandlerContext();
+		const response = await messageChanged.handler(
+			context,
+			createWebhookRequest('1002'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.data).toEqual(
+			expect.objectContaining({ type: 'messageReceived' }),
+		);
+		expect(context.db.messages.upsertByEntityId).toHaveBeenCalledWith(
+			'new-msg-1',
+			expect.objectContaining({ id: 'new-msg-1' }),
+		);
+		expect(context.db.messages.upsertByEntityId).toHaveBeenCalledWith(
+			'labeled-msg-1',
+			expect.objectContaining({ id: 'labeled-msg-1' }),
+		);
+	});
+
+	it('handles numeric historyId values from real Pub/Sub payloads', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return {
+					history: [
+						{
+							id: '585184',
+							messagesAdded: [{ message: { id: 'num-msg-1' } }],
+						},
+					],
+				};
+			}
+			return { id: 'num-msg-1', historyId: '585184' };
+		});
+
+		const request = {
+			payload: {
+				message: {
+					data: Buffer.from(
+						JSON.stringify({
+							emailAddress: 'user@example.com',
+							historyId: 585184,
+						}),
+					).toString('base64'),
+				},
+			},
+			headers: {},
+		} as Parameters<typeof messageChanged.handler>[1];
+
+		const context = createHandlerContext();
+		const response = await messageChanged.handler(context, request);
+
+		expect(response.success).toBe(true);
+		expect(response.data).toEqual(
+			expect.objectContaining({
+				type: 'messageReceived',
+				historyId: '585184',
+			}),
+		);
+	});
+
+	it('scans from the stored history cursor and advances it', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return {
+					history: [
+						{
+							id: '955',
+							messagesAdded: [{ message: { id: 'cursor-msg-1' } }],
+						},
+					],
+				};
+			}
+			return { id: 'cursor-msg-1', historyId: '955' };
+		});
+
+		const { ctx, keys } = createHandlerContextWithKeys('900');
+		const response = await messageChanged.handler(
+			ctx,
+			createWebhookRequest('956'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(mockMakeGmailRequest).toHaveBeenCalledWith(
+			'/users/user@example.com/history',
+			'test-token',
+			expect.objectContaining({
+				query: expect.objectContaining({ startHistoryId: '900' }),
+			}),
+		);
+		expect(keys.set_last_history_id).toHaveBeenCalledWith('955');
+	});
+
+	it('skips the recent-messages fallback when a cursor exists', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return { history: [] };
+			}
+			return {};
+		});
+
+		const { ctx, keys } = createHandlerContextWithKeys('900');
+		const response = await messageChanged.handler(
+			ctx,
+			createWebhookRequest('1000'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.data).toBeUndefined();
+		expect(mockMakeGmailRequest).not.toHaveBeenCalledWith(
+			'/users/user@example.com/messages',
+			expect.anything(),
+			expect.anything(),
+		);
+		// The cursor stays put so a lagging history record is retried next push
+		expect(keys.set_last_history_id).not.toHaveBeenCalled();
+	});
+
+	it('rescans from the push when the stored cursor has expired', async () => {
+		mockMakeGmailRequest.mockImplementation(
+			async (path, _credentials, options) => {
+				if (path.includes('/history')) {
+					if (options?.query?.startHistoryId === '100') {
+						throw Object.assign(new Error('Requested entity was not found.'), {
+							status: 404,
+						});
+					}
+					return {
+						history: [
+							{
+								id: '1000',
+								messagesAdded: [{ message: { id: 'retry-msg-1' } }],
+							},
+						],
+					};
+				}
+				return { id: 'retry-msg-1', historyId: '1000' };
+			},
+		);
+
+		const { ctx, keys } = createHandlerContextWithKeys('100');
+		const response = await messageChanged.handler(
+			ctx,
+			createWebhookRequest('1000'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.data).toEqual(
+			expect.objectContaining({ type: 'messageReceived' }),
+		);
+		expect(ctx.db.messages.upsertByEntityId).toHaveBeenCalledWith(
+			'retry-msg-1',
+			expect.objectContaining({ id: 'retry-msg-1' }),
+		);
+		expect(keys.set_last_history_id).toHaveBeenCalledWith('1000');
+	});
+
+	it('initializes the cursor just before the first push when nothing is visible yet', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return { history: [] };
+			}
+			if (path.endsWith('/messages')) {
+				return { messages: [] };
+			}
+			return {};
+		});
+
+		const { ctx, keys } = createHandlerContextWithKeys(null);
+		const response = await messageChanged.handler(
+			ctx,
+			createWebhookRequest('585184'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.data).toBeUndefined();
+		expect(keys.set_last_history_id).toHaveBeenCalledWith('585183');
+	});
+});

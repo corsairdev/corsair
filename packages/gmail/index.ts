@@ -50,11 +50,13 @@ import {
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
  * - integration: topic_id (Google Cloud Pub/Sub topic for push notifications)
+ * - account: email_address (mailbox identity), last_history_id (cursor of the
+ *   last processed history record, used as startHistoryId for webhook syncs)
  */
 export const gmailAuthConfig = {
 	oauth_2: {
 		integration: ['topic_id'] as const,
-		account: ['email_address'] as const,
+		account: ['email_address', 'last_history_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
