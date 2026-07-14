@@ -56,20 +56,34 @@
             ]
           },
           {
-            "group": "Core Concepts",
+            "group": "Concepts",
             "pages": [
-              "concepts/integrations",
-              "concepts/auth",
-              "concepts/api-key",
-              "concepts/oauth",
-              "concepts/permissions",
-              "concepts/multi-tenancy",
-              "concepts/database",
-              "concepts/webhooks",
-              "concepts/hooks",
-              "concepts/api",
-              "concepts/error-handling",
-              "concepts/typescript"
+              {
+                "group": "Core",
+                "expanded": false,
+                "pages": [
+                  "concepts/integrations",
+                  "concepts/database",
+                  "concepts/api",
+                  "concepts/typescript",
+                  "concepts/error-handling"
+                ]
+              },
+              {
+                "group": "Authentication",
+                "expanded": false,
+                "pages": ["concepts/auth", "concepts/api-key", "concepts/oauth"]
+              },
+              {
+                "group": "Building",
+                "expanded": false,
+                "pages": [
+                  "concepts/permissions",
+                  "concepts/multi-tenancy",
+                  "concepts/webhooks",
+                  "concepts/hooks"
+                ]
+              }
             ]
           },
           {
