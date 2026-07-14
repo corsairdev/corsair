@@ -101,25 +101,12 @@ describe('hub environment delivery', () => {
 		);
 	});
 
-	it('appends delivery path for APP_URL base URLs', () => {
+	it('ignores APP_URL — CORSAIR_DELIVERY_URL is the only env knob', () => {
 		withEnv(
 			{
 				CORSAIR_DELIVERY_URL: undefined,
-				APP_URL: 'http://localhost:3000',
-			},
-			() => {
-				expect(resolveHubDeliveryUrl()).toBe(
-					'http://localhost:3000/api/corsair',
-				);
-			},
-		);
-	});
-
-	it('handles APP_URL with a trailing slash', () => {
-		withEnv(
-			{
-				CORSAIR_DELIVERY_URL: undefined,
-				APP_URL: 'http://localhost:3000/',
+				APP_URL: 'http://localhost:9999',
+				PORT: undefined,
 			},
 			() => {
 				expect(resolveHubDeliveryUrl()).toBe(
