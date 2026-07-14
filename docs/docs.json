@@ -47,12 +47,24 @@
             "pages": [
               "hub/overview",
               "hub/setup",
-              "hub/environments",
-              "hub/dashboard",
-              "hub/manual-vs-hub",
-              "hub/delivery-urls",
-              "hub/permissions",
-              "hub/rest-api"
+              {
+                "group": "Configure",
+                "expanded": false,
+                "pages": [
+                  "hub/environments",
+                  "hub/delivery-urls",
+                  "hub/dashboard"
+                ]
+              },
+              {
+                "group": "Reference",
+                "expanded": false,
+                "pages": [
+                  "hub/manual-vs-hub",
+                  "hub/permissions",
+                  "hub/rest-api"
+                ]
+              }
             ]
           },
           {
@@ -116,9 +128,12 @@
             "pages": [
               "management/overview",
               "management/handler",
-              "management/client",
-              "management/react",
-              "management/connect"
+              "management/connect",
+              {
+                "group": "Clients",
+                "expanded": false,
+                "pages": ["management/client", "management/react"]
+              }
             ]
           },
           {
