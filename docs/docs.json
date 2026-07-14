@@ -30,7 +30,6 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/setup",
               "getting-started/comparison"
             ]
           },
@@ -102,7 +101,8 @@
             "group": "Going to Production",
             "pages": [
               "production/oauth-process",
-              "production/tenant-provisioning"
+              "production/tenant-provisioning",
+              "going-to-production/provisioning-cli"
             ]
           },
           {
@@ -947,6 +947,10 @@
     {
       "source": "/app/sdk/types-and-errors",
       "destination": "/concepts/typescript"
+    },
+    {
+      "source": "/getting-started/setup",
+      "destination": "/going-to-production/provisioning-cli"
     }
   ]
 }
