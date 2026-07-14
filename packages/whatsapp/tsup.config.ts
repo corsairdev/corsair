@@ -11,5 +11,8 @@ export default defineConfig({
 	minify: true,
 	outDir: 'dist',
 	external: ['corsair', 'zod'],
-	entry: ['index.ts', 'error-handlers.ts'],
+	entry: {
+		index: 'index.ts',
+		'error-handlers': 'error-handlers.ts',
+	},
 });
