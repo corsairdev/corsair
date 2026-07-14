@@ -7,7 +7,6 @@
 - [Introduction](https://docs.corsair.dev/getting-started/introduction.md): What Corsair is, how the SDK works, and when to use it.
 - [Quick start](https://docs.corsair.dev/getting-started/quick-start.md): Get a local Corsair instance running with Hub.
 - [Set up with your agent](https://docs.corsair.dev/getting-started/set-up-with-your-agent.md): One prompt that wires Corsair Hub into your app end to end.
-- [Comparison](https://docs.corsair.dev/getting-started/comparison.md): How Corsair compares to other integration platforms.
 
 ## Frameworks
 

@@ -30,8 +30,7 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/set-up-with-your-agent",
-              "getting-started/comparison"
+              "getting-started/set-up-with-your-agent"
             ]
           },
           {
@@ -962,6 +961,10 @@
     {
       "source": "/getting-started/setup",
       "destination": "/going-to-production/provisioning-cli"
+    },
+    {
+      "source": "/getting-started/comparison",
+      "destination": "/getting-started/introduction"
     }
   ]
 }

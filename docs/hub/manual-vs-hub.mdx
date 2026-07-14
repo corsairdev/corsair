@@ -9,8 +9,8 @@ import CreateCorsairManual from '/snippets/create-corsair-manual.mdx';
 
 Corsair only differs between modes in one place: the surfaces that need a public URL (OAuth callbacks, approval pages). Everything else (calling APIs, `withTenant`, hooks, the database layer, encryption) is identical.
 
-- **Manual** is the default. You host the connect, callback, and approval surfaces yourself. Fully featured, no external dependency.
-- **Hub** is an optional upgrade. Corsair hosts those surfaces for you. It stores none of your credentials. See [Hub overview](/hub/overview).
+- **Hub** is the recommended path. Corsair hosts the connect, callback, and approval surfaces for you, and stores none of your credentials. See [Hub overview](/hub/overview).
+- **Manual** is the self-hosted alternative. You host those surfaces yourself — fully featured, no external dependency.
 
 The picker is config on `createCorsair`: pass `manual` or `hub`.
 
