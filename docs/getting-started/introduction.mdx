@@ -48,7 +48,7 @@ can accept it. Let me know when he does.
 
 One prompt, four integrations, and Corsair handles the rest.
 
-Corsair runs entirely in your own app and stores credentials in your own database. When you would rather not host the connect, approval, and webhook surfaces yourself, [Hub](/hub/overview) is an optional relay that provides them, and it still stores none of your credentials.
+Corsair runs in your own app and stores credentials in your own database. **[Corsair Hub](/hub/overview) is the recommended way to run it** — connect your app, or your users' apps, without hosting the OAuth connect, approval, and webhook surfaces yourself. Hub relays those surfaces and still stores none of your credentials; tokens stay encrypted in your database. Prefer to host those surfaces yourself? That path stays [fully supported](/hub/manual-vs-hub).
 
 <IntroFeatures />
 
@@ -56,13 +56,13 @@ Corsair runs entirely in your own app and stores credentials in your own databas
 
 <CardGroup cols={2}>
   <Card title="Quick start" icon="rocket" href="/getting-started/quick-start">
-    Install, migrate, and run your first integration in minutes.
+    Install and run your first integration with Hub in minutes.
   </Card>
-  <Card title="Setup" icon="wrench" href="/going-to-production/provisioning-cli">
-    Integrations, accounts, tenants, CLI, and setupCorsair.
+  <Card title="Set up with your agent" icon="sparkles" href="/getting-started/set-up-with-your-agent">
+    Paste one prompt and let your coding agent wire Corsair Hub end to end.
   </Card>
-  <Card title="MCP adapters" icon="robot" href="/mcp-adapters/mcp-adapters">
-    Connect your agent framework and start prompting across every plugin.
+  <Card title="Hub overview" icon="cloud" href="/hub/overview">
+    The hosted relay for connect and approvals — and why it stores no credentials.
   </Card>
   <Card title="Browse plugins" icon="grid" href="/guides/plugins">
     Slack, Linear, Gmail, GitHub, HubSpot, Stripe, and hundreds more.
