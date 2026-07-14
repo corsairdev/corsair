@@ -16,7 +16,7 @@ export function resolveHubDeliveryUrl(input?: {
 	const explicit =
 		input?.deliveryUrl?.trim() || process.env.CORSAIR_DELIVERY_URL?.trim();
 	if (explicit) {
-		const absolute = explicit.startsWith('http')
+		const absolute = /^https?:\/\//i.test(explicit)
 			? explicit
 			: `https://${explicit}`;
 		return stripTrailingSlash(absolute);

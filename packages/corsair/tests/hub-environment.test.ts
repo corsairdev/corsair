@@ -101,6 +101,14 @@ describe('hub environment delivery', () => {
 		);
 	});
 
+	it('does not double-prefix uppercase schemes', () => {
+		expect(
+			resolveHubDeliveryUrl({
+				deliveryUrl: 'HTTPS://app.example.com/api/corsair',
+			}),
+		).toBe('HTTPS://app.example.com/api/corsair');
+	});
+
 	it('ignores APP_URL — CORSAIR_DELIVERY_URL is the only env knob', () => {
 		withEnv(
 			{
