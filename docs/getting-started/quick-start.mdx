@@ -5,6 +5,7 @@ description: A working integration in five steps, powered by Hub.
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
+import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 
 The quickest path to a working integration is **Hub**. It hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are still encrypted and stored in your own database — Hub stores none.
 
@@ -176,14 +177,7 @@ export const corsair = createCorsair({
 
 Mount the handler once — it serves Hub delivery and the management API. In development, Hub auto-detects your localhost delivery URL:
 
-```ts app/api/corsair/[[...path]]/route.ts
-import { toNextJsHandler } from 'corsair';
-import { corsair } from '@/server/corsair';
-
-export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
-    basePath: '/api/corsair',
-});
-```
+<MountHandlerNextjs />
 
 Add more plugins later — `slack()`, `linear()`, `gmail()` — by appending to the array.
 

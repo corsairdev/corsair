@@ -4,21 +4,14 @@ sidebarTitle: Overview
 description: An optional hosted relay for the parts of Corsair that need a public URL — connect flows and approvals. It stores none of your credentials.
 ---
 
+import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
+import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
+
 Corsair runs entirely in your own app. A few things, though, need a stable public URL that a third party can reach: OAuth callbacks and approval pages. In a self-hosted setup you build and host those yourself. **Hub is an optional hosted relay that provides them for you** so you can skip the boilerplate.
 
 Hub is not a separate product or a separate SDK. It is the same `createCorsair` instance with one extra config block. Leave it out and you run fully self-hosted (the default). Add it and Corsair routes the public-URL surfaces through Corsair's hosted endpoint.
 
-```ts corsair.ts
-export const corsair = createCorsair({
-    plugins: [github(), slack()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
-    hub: {
-        projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-        signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
-    },
-});
-```
+<CreateCorsairHub />
 
 <Info>
 Self-hosted (`manual`) is the default and is fully featured. Hub is a convenience upgrade, not a requirement. See [Manual or Hub](/hub/manual-vs-hub) for a side-by-side.
@@ -125,14 +118,7 @@ Optional: `apiUrl` (self-hosted Hub API), `oauthCallbackUrl` (override callback 
 
 Mount the handler once and it serves both Hub delivery and the [management API](/management/overview):
 
-```ts app/api/corsair/[[...path]]/route.ts
-import { toNextJsHandler } from "corsair";
-import { corsair } from "@/server";
-
-export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
-    basePath: "/api/corsair",
-});
-```
+<MountHandlerNextjs />
 
 From there, minting a connect link is identical to the self-hosted path. The same `createLink` API is used in both modes; only where the link points changes. See [Connect / OAuth](/management/connect) for the reference.
 
