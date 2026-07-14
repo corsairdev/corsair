@@ -114,17 +114,21 @@ Synced entities support `corsair.fireflies.db.<entity>.search()` and `.list()`. 
 
 ## Example API calls
 
-**Read-style (read):** `aiApp.getOutputs`
+**Read-style (read):** `askFred.getThread`
 
 ```ts
-await corsair.fireflies.api.aiApp.getOutputs({});
+await corsair.fireflies.api.askFred.getThread({
+	threadId: 'example_threadid',
+});
 ```
 
 
-**Write-style (write):** `askFred.continueThread`
+**Write-style (write):** `askFred.createThread`
 
 ```ts
-await corsair.fireflies.api.askFred.continueThread({});
+await corsair.fireflies.api.askFred.createThread({
+	query: 'example_query',
+});
 ```
 
 

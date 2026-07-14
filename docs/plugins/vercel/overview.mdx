@@ -106,23 +106,23 @@ Synced entities support `corsair.vercel.db.<entity>.search()` and `.list()`. See
 
 ## Example API calls
 
-**Read-style (read):** `projects.getProjects`
+**Read-style (read):** `deployments.getDeployment`
 
 ```ts
-await corsair.vercel.api.projects.getProjects({});
-```
-
-**Write-style (destructive):** `envs.createEnvVariable`
-
-```ts
-await corsair.vercel.api.envs.createEnvVariable({
-    idOrName: 'my-project',
-    key: 'MY_VAR',
-    value: 'secret_value',
-    type: 'secret',
-    target: ['production']
+await corsair.vercel.api.deployments.getDeployment({
+	idOrUrl: 'https://example.com',
 });
 ```
+
+
+**Write-style (write):** `deployments.createDeployment`
+
+```ts
+await corsair.vercel.api.deployments.createDeployment({
+	name: 'example_name',
+});
+```
+
 
 See the full list on the [API](/plugins/vercel/api) page. Use `pnpm corsair list --plugin=vercel` and `pnpm corsair schema <path>` locally to inspect schemas.
 

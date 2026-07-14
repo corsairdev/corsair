@@ -117,14 +117,20 @@ Synced entities support `corsair.teams.db.<entity>.search()` and `.list()`. See 
 **Read-style (read):** `channels.get`
 
 ```ts
-await corsair.teams.api.channels.get({});
+await corsair.teams.api.channels.get({
+	teamId: 'T0123456789',
+	channelId: 'C0123456789',
+});
 ```
 
 
 **Write-style (write):** `channels.create`
 
 ```ts
-await corsair.teams.api.channels.create({});
+await corsair.teams.api.channels.create({
+	teamId: 'T0123456789',
+	displayName: 'example_displayname',
+});
 ```
 
 

@@ -114,17 +114,22 @@ Synced entities support `corsair.googledrive.db.<entity>.search()` and `.list()`
 
 ## Example API calls
 
-**Read-style (read):** `files.download`
+**Read-style (read):** `files.get`
 
 ```ts
-await corsair.googledrive.api.files.download({});
+await corsair.googledrive.api.files.get({
+	fileId: 'example_fileid',
+});
 ```
 
 
-**Write-style (write):** `files.copy`
+**Write-style (write):** `files.createFromText`
 
 ```ts
-await corsair.googledrive.api.files.copy({});
+await corsair.googledrive.api.files.createFromText({
+	name: 'example_name',
+	content: 'example_content',
+});
 ```
 
 

@@ -114,17 +114,21 @@ Synced entities support `corsair.xquik.db.<entity>.search()` and `.list()`. See 
 
 ## Example API calls
 
-**Read-style (read):** `media.download`
+**Read-style (read):** `tweets.get`
 
 ```ts
-await corsair.xquik.api.media.download({});
+await corsair.xquik.api.tweets.get({
+	id: 'example_id',
+});
 ```
 
 
-**Write-style (write):** `media.uploadFromUrl`
+**Write-style (write):** `tweets.create`
 
 ```ts
-await corsair.xquik.api.media.uploadFromUrl({});
+await corsair.xquik.api.tweets.create({
+	account: 'example_account',
+});
 ```
 
 

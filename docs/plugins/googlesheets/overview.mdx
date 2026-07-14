@@ -117,14 +117,18 @@ Synced entities support `corsair.googlesheets.db.<entity>.search()` and `.list()
 **Read-style (read):** `sheets.getRows`
 
 ```ts
-await corsair.googlesheets.api.sheets.getRows({});
+await corsair.googlesheets.api.sheets.getRows({
+	spreadsheetId: 'example_spreadsheetid',
+});
 ```
 
 
-**Write-style (write):** `sheets.appendOrUpdateRow`
+**Write-style (write):** `sheets.createSheet`
 
 ```ts
-await corsair.googlesheets.api.sheets.appendOrUpdateRow({});
+await corsair.googlesheets.api.sheets.createSheet({
+	spreadsheetId: 'example_spreadsheetid',
+});
 ```
 
 

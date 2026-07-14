@@ -126,17 +126,19 @@ Synced entities support `corsair.supabase.db.<entity>.search()` and `.list()`. S
 
 ```ts
 await corsair.supabase.api.advisors.getPerformanceAdvisors({
-  ref: 'abcdefghijklmnopqrst',
-})
+	ref: 'example_ref',
+});
 ```
+
 
 **Write-style (write):** `auth.createProjectSigningKey`
 
 ```ts
 await corsair.supabase.api.auth.createProjectSigningKey({
-  ref: 'abcdefghijklmnopqrst',
-})
+	ref: 'example_ref',
+});
 ```
+
 
 See the full list on the [API](/plugins/supabase/api) page. Use `pnpm corsair list --plugin=supabase` and `pnpm corsair schema <path>` locally to inspect schemas.
 

@@ -110,14 +110,22 @@ Synced entities support `corsair.cloudflare.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `dns.get`
 
 ```ts
-await corsair.cloudflare.api.dns.get({});
+await corsair.cloudflare.api.dns.get({
+	zone_id: 'example_zone_id',
+	dns_record_id: 'example_dns_record_id',
+});
 ```
 
 
 **Write-style (write):** `dns.create`
 
 ```ts
-await corsair.cloudflare.api.dns.create({});
+await corsair.cloudflare.api.dns.create({
+	zone_id: 'example_zone_id',
+	type: 'example_type',
+	name: 'example_name',
+	content: 'example_content',
+});
 ```
 
 

@@ -114,17 +114,23 @@ Synced entities support `corsair.figma.db.<entity>.search()` and `.list()`. See 
 
 ## Example API calls
 
-**Read-style (read):** `activityLogs.list`
+**Read-style (read):** `comments.getReactions`
 
 ```ts
-await corsair.figma.api.activityLogs.list({});
+await corsair.figma.api.comments.getReactions({
+	file_key: 'example_file_key',
+	comment_id: 'example_comment_id',
+});
 ```
 
 
 **Write-style (write):** `comments.add`
 
 ```ts
-await corsair.figma.api.comments.add({});
+await corsair.figma.api.comments.add({
+	message: 'example_message',
+	file_key: 'example_file_key',
+});
 ```
 
 

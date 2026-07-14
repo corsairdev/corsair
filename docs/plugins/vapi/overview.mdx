@@ -117,14 +117,18 @@ Synced entities support `corsair.vapi.db.<entity>.search()` and `.list()`. See [
 **Read-style (read):** `assistants.get`
 
 ```ts
-await corsair.vapi.api.assistants.get({});
+await corsair.vapi.api.assistants.get({
+	id: 'example_id',
+});
 ```
 
 
-**Write-style (write):** `assistants.create`
+**Write-style (write):** `assistants.update`
 
 ```ts
-await corsair.vapi.api.assistants.create({});
+await corsair.vapi.api.assistants.update({
+	id: 'example_id',
+});
 ```
 
 

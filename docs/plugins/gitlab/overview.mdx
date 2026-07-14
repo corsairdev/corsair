@@ -130,14 +130,21 @@ Synced entities support `corsair.gitlab.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `branches.get`
 
 ```ts
-await corsair.gitlab.api.branches.get({});
+await corsair.gitlab.api.branches.get({
+	project_id: 'example_project_id',
+	branch: 'example_branch',
+});
 ```
 
 
 **Write-style (write):** `branches.create`
 
 ```ts
-await corsair.gitlab.api.branches.create({});
+await corsair.gitlab.api.branches.create({
+	project_id: 'example_project_id',
+	branch: 'example_branch',
+	ref: 'example_ref',
+});
 ```
 
 

@@ -114,17 +114,21 @@ Synced entities support `corsair.dropbox.db.<entity>.search()` and `.list()`. Se
 
 ## Example API calls
 
-**Read-style (read):** `files.download`
+**Read-style (read):** `folders.list`
 
 ```ts
-await corsair.dropbox.api.files.download({});
+await corsair.dropbox.api.folders.list({
+	path: 'example_path',
+});
 ```
 
 
-**Write-style (write):** `files.copy`
+**Write-style (write):** `folders.create`
 
 ```ts
-await corsair.dropbox.api.files.copy({});
+await corsair.dropbox.api.folders.create({
+	path: 'example_path',
+});
 ```
 
 

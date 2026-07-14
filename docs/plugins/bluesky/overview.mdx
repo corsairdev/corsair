@@ -107,17 +107,21 @@ Synced entities support `corsair.bluesky.db.<entity>.search()` and `.list()`. Se
 
 ## Example API calls
 
-**Read-style (read):** `feeds.getTimeline`
+**Read-style (read):** `profiles.get`
 
 ```ts
-await corsair.bluesky.api.feeds.getTimeline({});
+await corsair.bluesky.api.profiles.get({
+	actor: 'example_actor',
+});
 ```
 
 
 **Write-style (write):** `posts.create`
 
 ```ts
-await corsair.bluesky.api.posts.create({});
+await corsair.bluesky.api.posts.create({
+	text: 'example_text',
+});
 ```
 
 

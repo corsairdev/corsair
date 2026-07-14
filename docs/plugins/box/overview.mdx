@@ -114,17 +114,22 @@ Synced entities support `corsair.box.db.<entity>.search()` and `.list()`. See [D
 
 ## Example API calls
 
-**Read-style (read):** `files.download`
+**Read-style (read):** `files.get`
 
 ```ts
-await corsair.box.api.files.download({});
+await corsair.box.api.files.get({
+	file_id: 'example_file_id',
+});
 ```
 
 
-**Write-style (write):** `files.copy`
+**Write-style (write):** `folders.create`
 
 ```ts
-await corsair.box.api.files.copy({});
+await corsair.box.api.folders.create({
+	name: 'example_name',
+	parent_id: 'example_parent_id',
+});
 ```
 
 

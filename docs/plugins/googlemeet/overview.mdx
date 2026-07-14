@@ -110,14 +110,18 @@ Synced entities support `corsair.googlemeet.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `conferenceRecords.get`
 
 ```ts
-await corsair.googlemeet.api.conferenceRecords.get({});
+await corsair.googlemeet.api.conferenceRecords.get({
+	name: 'example_name',
+});
 ```
 
 
-**Write-style (write):** `spaces.create`
+**Write-style (write):** `spaces.patch`
 
 ```ts
-await corsair.googlemeet.api.spaces.create({});
+await corsair.googlemeet.api.spaces.patch({
+	name: 'example_name',
+});
 ```
 
 

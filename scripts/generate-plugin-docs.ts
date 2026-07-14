@@ -23,9 +23,13 @@ import type {
 	DocSchemaShape,
 	DocsApiEndpoint,
 	DocsWebhook,
+	FormFieldSchema,
 	PluginDocsIntrospection,
 } from '../packages/corsair/core/inspect/index.ts';
-import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
+import {
+	getStructuredSchema,
+	introspectPluginForDocs,
+} from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
@@ -328,17 +332,308 @@ function pluginDocData(
 	return { ...data, webhooks: [] };
 }
 
+function endpointMethodSegment(shortPath: string): string {
+	const i = shortPath.lastIndexOf('.');
+	return i === -1 ? shortPath : shortPath.slice(i + 1);
+}
+
+function endpointMethodMatches(
+	endpoint: DocsApiEndpoint,
+	pattern: RegExp,
+): boolean {
+	return pattern.test(endpointMethodSegment(endpoint.shortPath));
+}
+
+function endpointHasKnownInput(endpoint: DocsApiEndpoint): boolean {
+	return !(
+		endpoint.input.kind === 'inline' && endpoint.input.type === 'unknown'
+	);
+}
+
+function endpointHasRequiredInput(endpoint: DocsApiEndpoint): boolean {
+	if (endpoint.input.kind === 'inline') {
+		return endpoint.input.type !== '{}' && endpoint.input.type !== 'unknown';
+	}
+	return endpoint.input.fields.some((field) => !field.optional);
+}
+
 function pickExampleEndpoints(api: DocsApiEndpoint[]): {
 	read?: DocsApiEndpoint;
 	write?: DocsApiEndpoint;
 } {
+	const readMethods = api.filter((e) =>
+		endpointMethodMatches(e, /^(list|get|search)/i),
+	);
+	const safeWriteMethods = api.filter(
+		(e) =>
+			e.riskLevel === 'write' &&
+			endpointMethodMatches(e, /^(create|post|update|send|add|set|start)/i),
+	);
+	const writeMethods = api.filter(
+		(e) =>
+			(e.riskLevel === 'write' || e.riskLevel === 'destructive') &&
+			endpointMethodMatches(
+				e,
+				/^(create|post|update|send|add|set|start|delete)/i,
+			),
+	);
 	const read =
-		api.find((e) => e.riskLevel === 'read') ??
-		api.find((e) => /^(list|get|search)/i.test(e.shortPath));
+		readMethods.find(
+			(e) => e.riskLevel === 'read' && endpointHasRequiredInput(e),
+		) ??
+		readMethods.find((e) => endpointHasRequiredInput(e)) ??
+		readMethods.find(
+			(e) => e.riskLevel === 'read' && endpointHasKnownInput(e),
+		) ??
+		readMethods.find((e) => endpointHasKnownInput(e)) ??
+		api.find((e) => e.riskLevel === 'read' && endpointHasKnownInput(e));
 	const write =
-		api.find((e) => e.riskLevel === 'write' || e.riskLevel === 'destructive') ??
-		api.find((e) => /^(create|post|update|delete|send)/i.test(e.shortPath));
+		safeWriteMethods.find((e) => endpointHasRequiredInput(e)) ??
+		api.find((e) => e.riskLevel === 'write' && endpointHasRequiredInput(e)) ??
+		safeWriteMethods.find((e) => endpointHasKnownInput(e)) ??
+		api.find((e) => e.riskLevel === 'write' && endpointHasKnownInput(e)) ??
+		api.find(
+			(e) => e.riskLevel === 'destructive' && endpointHasRequiredInput(e),
+		) ??
+		api.find(
+			(e) => e.riskLevel === 'destructive' && endpointHasKnownInput(e),
+		) ??
+		writeMethods.find((e) => endpointHasRequiredInput(e)) ??
+		writeMethods.find((e) => endpointHasKnownInput(e));
 	return { read, write };
+}
+
+function codeObjectKey(key: string): string {
+	return /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(key) ? key : JSON.stringify(key);
+}
+
+function placeholderStringForKey(key: string): string {
+	const lower = key.toLowerCase();
+	if (lower.includes('channel')) return 'C0123456789';
+	if (lower.includes('user')) return 'U0123456789';
+	if (lower.includes('team')) return 'T0123456789';
+	if (lower.includes('email')) return 'user@example.com';
+	if (
+		lower.includes('url') ||
+		lower.includes('uri') ||
+		lower.includes('link')
+	) {
+		return 'https://example.com';
+	}
+	if (lower.includes('timezone') || lower.includes('time_zone')) {
+		return 'America/New_York';
+	}
+	if (lower.includes('date') || lower.includes('time') || lower === 'ts') {
+		return '2026-01-01T00:00:00Z';
+	}
+	if (lower === 'id' || lower.endsWith('_id') || lower.endsWith('id')) {
+		return `example_${lower.replace(/[^a-z0-9]+/g, '_')}`;
+	}
+	return `example_${lower.replace(/[^a-z0-9]+/g, '_')}`;
+}
+
+function quotedStringLiteral(value: string): string {
+	return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
+function unknownPlaceholderForKey(key: string): string {
+	const lower = key.toLowerCase();
+	if (
+		lower.includes('field') ||
+		lower.includes('propert') ||
+		lower.includes('event') ||
+		lower.includes('snippet') ||
+		lower.includes('payload') ||
+		lower.includes('metadata') ||
+		lower.includes('data')
+	) {
+		return '{}';
+	}
+	return quotedStringLiteral(placeholderStringForKey(key));
+}
+
+function fieldEntriesForExampleObject(
+	fields: Record<string, FormFieldSchema>,
+	parentKey: string,
+	description: string | undefined,
+): [string, FormFieldSchema][] {
+	const requiredFields = Object.entries(fields).filter(
+		([, field]) => !field.optional,
+	);
+	if (requiredFields.length > 0) {
+		return requiredFields;
+	}
+
+	const lowerParentKey = parentKey.toLowerCase();
+	if (
+		lowerParentKey === 'start' ||
+		lowerParentKey === 'end' ||
+		lowerParentKey === 'originalstarttime'
+	) {
+		const key = fields.dateTime ? 'dateTime' : fields.date ? 'date' : undefined;
+		return key ? [[key, fields[key]!]] : [];
+	}
+	if (lowerParentKey.includes('attendee') && fields.email) {
+		return [['email', fields.email]];
+	}
+
+	const hintKeys: string[] = [];
+	for (const match of description?.matchAll(/["`]([^"`]+)["`]/g) ?? []) {
+		const key = match[1];
+		if (key && fields[key] && !hintKeys.includes(key)) {
+			hintKeys.push(key);
+		}
+	}
+
+	return hintKeys.map((key) => [key, fields[key]!]);
+}
+
+function placeholderValueForFormField(
+	field: FormFieldSchema,
+	key: string,
+	depth = 0,
+	parentDescription?: string,
+): string {
+	switch (field.kind) {
+		case 'string':
+			return quotedStringLiteral(
+				field.enum?.[0] ?? placeholderStringForKey(key),
+			);
+		case 'number':
+			return '1';
+		case 'boolean':
+			return 'true';
+		case 'literal':
+			return typeof field.value === 'string'
+				? quotedStringLiteral(field.value)
+				: JSON.stringify(field.value);
+		case 'object':
+			return exampleInputObjectFromFormFields(
+				field.fields,
+				depth,
+				key,
+				field.description ?? parentDescription,
+			);
+		case 'array':
+			return `[${placeholderValueForFormField(
+				field.items,
+				key,
+				depth,
+				field.description,
+			)}]`;
+		case 'unknown':
+			return unknownPlaceholderForKey(key);
+	}
+}
+
+function exampleInputObjectFromFormFields(
+	fields: Record<string, FormFieldSchema>,
+	depth = 0,
+	parentKey = 'input',
+	description?: string,
+): string {
+	const exampleFields = fieldEntriesForExampleObject(
+		fields,
+		parentKey,
+		description,
+	);
+	if (exampleFields.length === 0) return '{}';
+	const pad = '\t'.repeat(depth + 1);
+	const closePad = '\t'.repeat(depth);
+	const rows = exampleFields.map(
+		([key, field]) =>
+			`${pad}${codeObjectKey(key)}: ${placeholderValueForFormField(
+				field,
+				key,
+				depth + 1,
+			)},`,
+	);
+	return `{\n${rows.join('\n')}\n${closePad}}`;
+}
+
+function exampleInputObjectFromFormField(
+	field: FormFieldSchema | null,
+): string {
+	if (field === null) return '{}';
+	if (field.kind === 'object') {
+		return exampleInputObjectFromFormFields(field.fields);
+	}
+	return placeholderValueForFormField(field, 'input');
+}
+
+function placeholderValueForType(type: string, key: string): string {
+	const t = type.trim();
+	if (t.endsWith('[]')) {
+		const itemType = t.slice(0, -2).trim();
+		return `[${placeholderValueForType(itemType, key)}]`;
+	}
+	if (t.startsWith('{')) return '{}';
+	if (t === 'Date') return 'new Date()';
+	if (/\bboolean\b/.test(t)) return 'true';
+	if (/\bnumber\b/.test(t)) return '1';
+	if (/\bstring\b/.test(t))
+		return quotedStringLiteral(placeholderStringForKey(key));
+	if (t.includes('|')) {
+		const first = t
+			.split('|')
+			.map((part) => part.trim())
+			.find((part) => part !== 'null' && part !== 'undefined');
+		if (first) {
+			if (first === 'true' || first === 'false') return first;
+			if (/^-?\d+(\.\d+)?$/.test(first)) return first;
+			return quotedStringLiteral(first.replace(/^['"]|['"]$/g, ''));
+		}
+	}
+	if (t === 'null') return 'null';
+	return quotedStringLiteral(placeholderStringForKey(key));
+}
+
+function exampleInputObjectFromDocShape(shape: DocSchemaShape): string {
+	if (shape.kind === 'inline') {
+		return shape.type === '{}'
+			? '{}'
+			: placeholderValueForType(shape.type, 'input');
+	}
+	const requiredFields = shape.fields.filter((f) => !f.optional);
+	if (requiredFields.length === 0) return '{}';
+	const rows = requiredFields.map(
+		(f) =>
+			`\t${codeObjectKey(f.key)}: ${placeholderValueForType(f.type, f.key)},`,
+	);
+	return `{\n${rows.join('\n')}\n}`;
+}
+
+function exampleInputObject(
+	endpoint: DocsApiEndpoint,
+	exampleInputsByPath: ReadonlyMap<string, FormFieldSchema>,
+): string {
+	const structuredInput = exampleInputsByPath.get(endpoint.path);
+	if (structuredInput) {
+		return exampleInputObjectFromFormField(structuredInput);
+	}
+	return exampleInputObjectFromDocShape(endpoint.input);
+}
+
+function exampleApiCall(
+	pluginId: string,
+	endpoint: DocsApiEndpoint,
+	exampleInputsByPath: ReadonlyMap<string, FormFieldSchema>,
+): string {
+	return `\`\`\`ts
+await corsair.${pluginId}.api.${endpoint.shortPath}(${exampleInputObject(endpoint, exampleInputsByPath)});
+\`\`\`
+`;
+}
+
+function destructiveExampleWarning(endpoint: DocsApiEndpoint): string {
+	if (endpoint.riskLevel !== 'destructive' && endpoint.irreversible !== true) {
+		return '';
+	}
+	return `<Warning>
+This example can modify or delete provider data. Confirm credentials, permissions, and approval hooks before running it. See [Permissions](/concepts/permissions) and [Hooks](/concepts/hooks).
+</Warning>
+
+`;
 }
 
 function buildMainMdx(opts: {
@@ -348,6 +643,7 @@ function buildMainMdx(opts: {
 	npmPackageName: string;
 	frontmatterDescription: string;
 	data: PluginDocsIntrospection;
+	exampleInputsByPath: ReadonlyMap<string, FormFieldSchema>;
 	authTypes: string[];
 	defaultAuthType: string | undefined;
 	overviewNote?: string;
@@ -359,6 +655,7 @@ function buildMainMdx(opts: {
 		npmPackageName,
 		frontmatterDescription,
 		data,
+		exampleInputsByPath,
 		authTypes,
 		defaultAuthType,
 		overviewNote,
@@ -446,17 +743,11 @@ Synced entities support \`corsair.${pluginId}.db.<entity>.search()\` and \`.list
 `;
 
 	const exampleRead = exRead
-		? `\`\`\`ts
-await corsair.${pluginId}.api.${exRead.shortPath}({});
-\`\`\`
-`
+		? exampleApiCall(pluginId, exRead, exampleInputsByPath)
 		: '_No read-style endpoint inferred; pick any operation from the reference below._\n';
 
 	const exampleWrite = exWrite
-		? `\`\`\`ts
-await corsair.${pluginId}.api.${exWrite.shortPath}({});
-\`\`\`
-`
+		? `${destructiveExampleWarning(exWrite)}${exampleApiCall(pluginId, exWrite, exampleInputsByPath)}`
 		: '_No write-style endpoint inferred; pick any operation from the reference below._\n';
 
 	return `---
@@ -1219,6 +1510,13 @@ async function generatePluginDocsForEntry(
 	}
 	const { data } = result;
 	const docData = pluginDocData(data, pluginId);
+	const exampleInputsByPath = new Map<string, FormFieldSchema>();
+	for (const endpoint of docData.api) {
+		const structuredInput = getStructuredSchema([plugin], endpoint.path)?.input;
+		if (structuredInput) {
+			exampleInputsByPath.set(endpoint.path, structuredInput);
+		}
+	}
 
 	const outDir = join(docsRoot(root), pluginId);
 	mkdirSync(outDir, { recursive: true });
@@ -1242,6 +1540,7 @@ async function generatePluginDocsForEntry(
 				npmPackageName: pkgMeta.npmName,
 				frontmatterDescription,
 				data: docData,
+				exampleInputsByPath,
 				authTypes,
 				defaultAuthType,
 				overviewNote: docsConfig.overviewNote?.trim(),

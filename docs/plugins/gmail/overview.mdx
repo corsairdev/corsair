@@ -117,14 +117,18 @@ Synced entities support `corsair.gmail.db.<entity>.search()` and `.list()`. See 
 **Read-style (read):** `drafts.get`
 
 ```ts
-await corsair.gmail.api.drafts.get({});
+await corsair.gmail.api.drafts.get({
+	id: 'example_id',
+});
 ```
 
 
-**Write-style (write):** `drafts.create`
+**Write-style (write):** `drafts.update`
 
 ```ts
-await corsair.gmail.api.drafts.create({});
+await corsair.gmail.api.drafts.update({
+	id: 'example_id',
+});
 ```
 
 

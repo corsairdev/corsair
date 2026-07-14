@@ -114,17 +114,23 @@ Synced entities support `corsair.twitterapiio.db.<entity>.search()` and `.list()
 
 ## Example API calls
 
-**Read-style (read):** `api.webhooks.getRules`
+**Read-style (read):** `communities.getById`
 
 ```ts
-await corsair.twitterapiio.api.api.webhooks.getRules({});
+await corsair.twitterapiio.api.communities.getById({
+	communityId: 'example_communityid',
+});
 ```
 
 
 **Write-style (write):** `api.webhooks.addRule`
 
 ```ts
-await corsair.twitterapiio.api.api.webhooks.addRule({});
+await corsair.twitterapiio.api.api.webhooks.addRule({
+	tag: 'example_tag',
+	value: 'example_value',
+	intervalSeconds: 1,
+});
 ```
 
 
