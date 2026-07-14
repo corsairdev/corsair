@@ -30,40 +30,41 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/setup"
+              "getting-started/setup",
+              "getting-started/comparison"
             ]
           },
           {
-            "group": "Concepts",
+            "group": "Hub",
             "pages": [
-              {
-                "group": "Core Concepts",
-                "pages": [
-                  "concepts/integrations",
-                  "concepts/auth",
-                  "concepts/permissions",
-                  "concepts/multi-tenancy",
-                  "concepts/database",
-                  "concepts/webhooks",
-                  "concepts/hooks",
-                  "concepts/api",
-                  "concepts/error-handling",
-                  "concepts/typescript"
-                ]
-              },
-              {
-                "group": "Authentication",
-                "pages": [
-                  "concepts/api-key",
-                  "concepts/oauth",
-                  "production/oauth-process",
-                  "production/tenant-provisioning"
-                ]
-              }
+              "hub/overview",
+              "hub/setup",
+              "hub/environments",
+              "hub/dashboard",
+              "hub/manual-vs-hub",
+              "hub/delivery-urls",
+              "hub/permissions"
             ]
           },
           {
-            "group": "Adapters",
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/integrations",
+              "concepts/auth",
+              "concepts/api-key",
+              "concepts/oauth",
+              "concepts/permissions",
+              "concepts/multi-tenancy",
+              "concepts/database",
+              "concepts/webhooks",
+              "concepts/hooks",
+              "concepts/api",
+              "concepts/error-handling",
+              "concepts/typescript"
+            ]
+          },
+          {
+            "group": "AI Agents",
             "pages": [
               {
                 "group": "MCP",
@@ -84,7 +85,29 @@
                   "mcp-adapters/claude-code",
                   "mcp-adapters/cursor"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "group": "Management API",
+            "pages": [
+              "management/overview",
+              "management/handler",
+              "management/client",
+              "management/react",
+              "management/connect"
+            ]
+          },
+          {
+            "group": "Going to Production",
+            "pages": [
+              "production/oauth-process",
+              "production/tenant-provisioning"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
               {
                 "group": "Workflow Engines",
                 "pages": [
@@ -95,34 +118,6 @@
                 ]
               }
             ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              {
-                "group": "Client",
-                "expanded": false,
-                "pages": [
-                  "management/overview",
-                  "management/handler",
-                  "management/client",
-                  "management/react",
-                  "management/connect"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Hub",
-            "pages": [
-              "hub/overview",
-              "hub/setup",
-              "hub/environments",
-              "hub/dashboard",
-              "hub/manual-vs-hub",
-              "hub/delivery-urls",
-              "hub/permissions"
-            ]
           }
         ]
       },
@@ -131,7 +126,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
