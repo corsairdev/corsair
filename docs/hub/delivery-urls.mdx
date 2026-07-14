@@ -39,25 +39,25 @@ You do **not** put the delivery URL in your `hub` config. It is resolved per env
 When your app uses a **development** API key (`ck_dev_…`), the SDK auto-detects where to deliver:
 
 ```bash .env.local
-CORSAIR_API_KEY=ck_dev_...
-CORSAIR_SIGNING_SECRET=...
+CORSAIR_DEV_API_KEY=ck_dev_...
+CORSAIR_DEV_SIGNING_SECRET=...
 # Optional override:
 CORSAIR_DELIVERY_URL=http://localhost:3001/api/corsair
 ```
 
-Detection order: `CORSAIR_DELIVERY_URL` → `APP_URL` / `NEXT_PUBLIC_APP_URL` / `VERCEL_URL` (with `/api/corsair`) → `http://localhost:{PORT}/api/corsair`.
+Detection order: `CORSAIR_DELIVERY_URL` (full endpoint URL) → `http://localhost:{PORT}/api/corsair`.
 
 Hub **redirects the user's browser** to that URL with a signed payload (`?d=…`). Because delivery is browser-mediated, it reaches `localhost` without a tunnel like ngrok.
 
-No dashboard registration is required for development.
+No dashboard registration is required for development. On its first request, your app **self-registers** this URL with Hub — derived from the app's own config, never from an inbound request — so the dashboard's **App sync** indicator shows it live and turns green while your app is reachable. Pin it with `CORSAIR_DELIVERY_URL`, or edit it in the dashboard.
 
 ## Production delivery
 
 When your app uses a **production** API key (`ck_prod_…`), Hub POSTs a **signed JSON envelope** to the delivery URL registered in the [Hub dashboard](/hub/dashboard) (**Delivery URLs** tab → Activate production).
 
 ```bash
-CORSAIR_API_KEY=ck_prod_...
-CORSAIR_SIGNING_SECRET=...
+CORSAIR_PROD_API_KEY=ck_prod_...
+CORSAIR_PROD_SIGNING_SECRET=...
 ```
 
 The URL must be a public HTTPS endpoint (not localhost). Hub signs each POST with your `signingSecret`; your handler verifies the signature before accepting it.

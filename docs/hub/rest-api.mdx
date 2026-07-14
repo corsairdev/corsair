@@ -1,0 +1,68 @@
+---
+title: Hub REST API
+description: Integrate Corsair Hub from any language over plain HTTP — no SDK required.
+---
+
+The Corsair SDK is TypeScript-only, but Hub itself is a plain HTTP service. A Go, Python, or Ruby backend integrates by calling these endpoints directly. Credentials are still delivered to **your** endpoint and stored in **your** database — Hub stores none.
+
+Every request authenticates with your project API key:
+
+```http
+Authorization: Bearer ck_dev_...
+```
+
+## Create a connect session
+
+```http
+POST https://auth.corsair.dev/connect/sessions
+Authorization: Bearer ck_dev_...
+Content-Type: application/json
+
+{
+  "tenantId": "user_123",
+  "deliveryUrl": "https://yourapp.com/api/corsair",
+  "plugins": [{ "plugin": "github", "oauthMode": "managed" }]
+}
+```
+
+Returns `{ "connectUrl", "token", "projectId", "expiresAt" }`. Redirect the user's browser to `connectUrl`. Hub hosts the connect page and the OAuth callback.
+
+## Receive the delivery
+
+When the user finishes connecting, Hub POSTs a signed JSON envelope to your `deliveryUrl`. The body is `{ "type", "payload" }`, with these headers:
+
+| Header | Value |
+|--------|-------|
+| `x-corsair-signature` | `sha256=<hex>` — HMAC-SHA256 of the **raw request body**, keyed with your signing secret |
+| `x-corsair-timestamp` | Unix seconds when Hub sent it; reject if older than a few minutes (replay guard) |
+| `x-corsair-project` | Your project id |
+| `x-corsair-nonce` | Unique per delivery |
+
+Verify before trusting the body — recompute the HMAC over the raw bytes and compare in constant time:
+
+```python
+import hashlib, hmac, time
+
+def verify(raw_body: bytes, headers, signing_secret: str) -> bool:
+    sig = headers["x-corsair-signature"].removeprefix("sha256=")
+    ts = int(headers["x-corsair-timestamp"])
+    if abs(time.time() - ts) > 300:            # reject stale deliveries
+        return False
+    expected = hmac.new(signing_secret.encode(), raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(sig, expected)   # constant-time compare
+```
+
+Only after `verify` passes: parse the body, exchange or store the credential, and respond `200`.
+
+## List connections
+
+```http
+GET https://auth.corsair.dev/projects/{projectId}/connections
+Authorization: Bearer ck_dev_...
+```
+
+Returns an array of `{ tenantId, plugin, status, authKind, connectedAt, expiresAt }`, deduplicated by `tenantId:plugin`.
+
+## Rate limits
+
+Connect and permission session creation share a limit of **100 sessions per hour per project**. Over the limit returns HTTP 429. Malformed requests do not consume quota.

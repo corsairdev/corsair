@@ -1,27 +1,20 @@
 ---
 title: Hub
 sidebarTitle: Overview
-description: An optional hosted relay for the parts of Corsair that need a public URL — connect flows and approvals. It stores none of your credentials.
+description: The hosted relay for the parts of Corsair that need a public URL — connect flows and approvals. It stores none of your credentials.
 ---
 
-Corsair runs entirely in your own app. A few things, though, need a stable public URL that a third party can reach: OAuth callbacks and approval pages. In a self-hosted setup you build and host those yourself. **Hub is an optional hosted relay that provides them for you** so you can skip the boilerplate.
+import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
+import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 
-Hub is not a separate product or a separate SDK. It is the same `createCorsair` instance with one extra config block. Leave it out and you run fully self-hosted (the default). Add it and Corsair routes the public-URL surfaces through Corsair's hosted endpoint.
+Corsair runs in your own app. A few things, though, need a stable public URL a third party can reach: OAuth callbacks and approval pages. **Hub is the recommended way to handle them** — a hosted relay that provides those surfaces so you skip the boilerplate.
 
-```ts corsair.ts
-export const corsair = createCorsair({
-    plugins: [github(), slack()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
-    hub: {
-        projectApiKey: process.env.CORSAIR_API_KEY!,
-        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-    },
-});
-```
+Hub is not a separate product or a separate SDK. It is the same `createCorsair` instance with one extra config block: add it and Corsair routes the public-URL surfaces through Hub.
+
+<CreateCorsairHub />
 
 <Info>
-Self-hosted (`manual`) is the default and is fully featured. Hub is a convenience upgrade, not a requirement. See [Manual or Hub](/hub/manual-vs-hub) for a side-by-side.
+Want to own those surfaces instead? Self-hosted (`manual`) mode is fully featured — you host the connect, callback, and approval pages yourself. See [Manual or Hub](/hub/manual-vs-hub).
 </Info>
 
 ## Hub stores none of your credentials
@@ -60,23 +53,12 @@ Three surfaces normally need a public URL. Hub hosts all three:
 
 ## Connecting an account
 
-When an agent or app hits an action that needs a connection the user has not made yet, the call throws an auth-missing error. You call `createLink()` to mint a Hub sign-in link and send the user to it. Hub hosts the connect page, so there is no "connect this first" UI to build. The user follows the link, connects, and retries the original action.
+When an action needs a connection the user hasn't made yet, recover in four steps:
 
-```mermaid
-sequenceDiagram
-    actor User
-    participant App as Your App
-    participant Corsair
-    participant Hub as Hub sign-in
-
-    App->>Corsair: action needs GitHub
-    Corsair-->>App: throws auth-missing (no connection for this tenant)
-    App->>Corsair: createLink() — mint a sign-in link
-    App->>User: "Connect GitHub to continue"
-    User->>Hub: approve
-    Hub-->>App: connected (tokens to your DB)
-    App->>Corsair: retry — succeeds
-```
+1. Corsair throws an auth-missing error — no connection for this tenant.
+2. Call `createLink()` to mint a Hub sign-in link and send the user to it.
+3. The user connects on Hub's hosted page. Tokens land encrypted in your database.
+4. Retry the original action — it succeeds.
 
 You can also copy sign-in links from the [Hub dashboard](/hub/dashboard) without writing code.
 
@@ -98,8 +80,8 @@ Set up a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), then
     Open the **Keys** tab (development environment). Add the API key and signing secret to your local env. Use development keys locally; switch to production keys when you deploy.
 
     ```bash .env.local
-    CORSAIR_API_KEY=ck_dev_...
-    CORSAIR_SIGNING_SECRET=...
+    CORSAIR_DEV_API_KEY=ck_dev_...
+    CORSAIR_DEV_SIGNING_SECRET=...
     CORSAIR_KEK=...
     ```
   </Step>
@@ -125,14 +107,7 @@ Optional: `apiUrl` (self-hosted Hub API), `oauthCallbackUrl` (override callback 
 
 Mount the handler once and it serves both Hub delivery and the [management API](/management/overview):
 
-```ts app/api/corsair/[[...path]]/route.ts
-import { toNextJsHandler } from "corsair";
-import { corsair } from "@/server";
-
-export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
-    basePath: "/api/corsair",
-});
-```
+<MountHandlerNextjs />
 
 From there, minting a connect link is identical to the self-hosted path. The same `createLink` API is used in both modes; only where the link points changes. See [Connect / OAuth](/management/connect) for the reference.
 

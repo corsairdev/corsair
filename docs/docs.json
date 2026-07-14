@@ -1,14 +1,18 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Corsair",
-  "theme": "luma",
+  "theme": "aspen",
   "favicon": "/favicon.ico",
+  "logo": {
+    "light": "/images/logo-light.svg",
+    "dark": "/images/logo-dark.svg"
+  },
   "colors": {
     "primary": "#2d7387",
     "light": "#95cbcf"
   },
   "appearance": {
-    "default": "dark"
+    "default": "light"
   },
   "navbar": {
     "primary": {
@@ -26,40 +30,76 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/setup"
+              "getting-started/set-up-with-your-agent"
+            ]
+          },
+          {
+            "group": "Frameworks",
+            "pages": [
+              "frameworks/nextjs",
+              "frameworks/express",
+              "frameworks/hono",
+              "frameworks/web-standard"
+            ]
+          },
+          {
+            "group": "Hub",
+            "pages": [
+              "hub/overview",
+              "hub/setup",
+              {
+                "group": "Configure",
+                "expanded": false,
+                "pages": [
+                  "hub/environments",
+                  "hub/delivery-urls",
+                  "hub/dashboard"
+                ]
+              },
+              {
+                "group": "Reference",
+                "expanded": false,
+                "pages": [
+                  "hub/manual-vs-hub",
+                  "hub/permissions",
+                  "hub/rest-api"
+                ]
+              }
             ]
           },
           {
             "group": "Concepts",
             "pages": [
               {
-                "group": "Core Concepts",
+                "group": "Core",
+                "expanded": false,
                 "pages": [
                   "concepts/integrations",
-                  "concepts/auth",
-                  "concepts/permissions",
-                  "concepts/multi-tenancy",
                   "concepts/database",
-                  "concepts/webhooks",
-                  "concepts/hooks",
                   "concepts/api",
-                  "concepts/error-handling",
-                  "concepts/typescript"
+                  "concepts/typescript",
+                  "concepts/error-handling"
                 ]
               },
               {
                 "group": "Authentication",
+                "expanded": false,
+                "pages": ["concepts/auth", "concepts/api-key", "concepts/oauth"]
+              },
+              {
+                "group": "Building",
+                "expanded": false,
                 "pages": [
-                  "concepts/api-key",
-                  "concepts/oauth",
-                  "production/oauth-process",
-                  "production/tenant-provisioning"
+                  "concepts/permissions",
+                  "concepts/multi-tenancy",
+                  "concepts/webhooks",
+                  "concepts/hooks"
                 ]
               }
             ]
           },
           {
-            "group": "Adapters",
+            "group": "AI Agents",
             "pages": [
               {
                 "group": "MCP",
@@ -80,7 +120,33 @@
                   "mcp-adapters/claude-code",
                   "mcp-adapters/cursor"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "group": "Management API",
+            "pages": [
+              "management/overview",
+              "management/handler",
+              "management/connect",
+              {
+                "group": "Clients",
+                "expanded": false,
+                "pages": ["management/client", "management/react"]
+              }
+            ]
+          },
+          {
+            "group": "Going to Production",
+            "pages": [
+              "production/oauth-process",
+              "production/tenant-provisioning",
+              "going-to-production/provisioning-cli"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
               {
                 "group": "Workflow Engines",
                 "pages": [
@@ -90,33 +156,6 @@
                   "guides/hatchet"
                 ]
               }
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              {
-                "group": "Client",
-                "expanded": false,
-                "pages": [
-                  "management/overview",
-                  "management/handler",
-                  "management/client",
-                  "management/react",
-                  "management/connect"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Hub",
-            "pages": [
-              "hub/overview",
-              "hub/environments",
-              "hub/dashboard",
-              "hub/manual-vs-hub",
-              "hub/delivery-urls",
-              "hub/permissions"
             ]
           }
         ]
@@ -944,6 +983,14 @@
     {
       "source": "/app/sdk/types-and-errors",
       "destination": "/concepts/typescript"
+    },
+    {
+      "source": "/getting-started/setup",
+      "destination": "/going-to-production/provisioning-cli"
+    },
+    {
+      "source": "/getting-started/comparison",
+      "destination": "/getting-started/introduction"
     }
   ]
 }
