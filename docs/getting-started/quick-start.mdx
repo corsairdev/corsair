@@ -45,8 +45,8 @@ Create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard) and c
 
 ```bash .env
 CORSAIR_KEK=your-generated-kek
-CORSAIR_API_KEY=ck_dev_...
-CORSAIR_SIGNING_SECRET=...
+CORSAIR_DEV_API_KEY=ck_dev_...
+CORSAIR_DEV_SIGNING_SECRET=...
 APP_URL=http://localhost:3000
 ```
 
@@ -168,8 +168,8 @@ export const corsair = createCorsair({
     database: db,
     kek: process.env.CORSAIR_KEK!,
     hub: {
-        projectApiKey: process.env.CORSAIR_API_KEY!,
-        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+        projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+        signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
     },
 });
 ```
