@@ -53,23 +53,12 @@ Three surfaces normally need a public URL. Hub hosts all three:
 
 ## Connecting an account
 
-When an agent or app hits an action that needs a connection the user has not made yet, the call throws an auth-missing error. You call `createLink()` to mint a Hub sign-in link and send the user to it. Hub hosts the connect page, so there is no "connect this first" UI to build. The user follows the link, connects, and retries the original action.
+When an action needs a connection the user hasn't made yet, recover in four steps:
 
-```mermaid
-sequenceDiagram
-    actor User
-    participant App as Your App
-    participant Corsair
-    participant Hub as Hub sign-in
-
-    App->>Corsair: action needs GitHub
-    Corsair-->>App: throws auth-missing (no connection for this tenant)
-    App->>Corsair: createLink() — mint a sign-in link
-    App->>User: "Connect GitHub to continue"
-    User->>Hub: approve
-    Hub-->>App: connected (tokens to your DB)
-    App->>Corsair: retry — succeeds
-```
+1. Corsair throws an auth-missing error — no connection for this tenant.
+2. Call `createLink()` to mint a Hub sign-in link and send the user to it.
+3. The user connects on Hub's hosted page. Tokens land encrypted in your database.
+4. Retry the original action — it succeeds.
 
 You can also copy sign-in links from the [Hub dashboard](/hub/dashboard) without writing code.
 
