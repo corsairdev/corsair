@@ -421,6 +421,94 @@ describe('Gmail messageChanged webhook history sync', () => {
 		expect(keys.set_last_history_id).toHaveBeenCalledWith('1000');
 	});
 
+	it('holds the cursor back when a deletion fails to apply', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return {
+					history: [
+						{
+							id: '950',
+							messagesDeleted: [{ message: { id: 'stuck-msg-1' } }],
+						},
+					],
+				};
+			}
+			return { id: 'stuck-msg-1', historyId: '950' };
+		});
+
+		const { ctx, keys } = createHandlerContextWithKeys('900');
+		(ctx.db.messages.deleteByEntityId as jest.Mock).mockRejectedValue(
+			new Error('db unavailable'),
+		);
+
+		const response = await messageChanged.handler(
+			ctx,
+			createWebhookRequest('951'),
+		);
+
+		expect(response.success).toBe(true);
+		// The cursor must not move past the failed deletion so the next push
+		// re-scans this range and retries it
+		expect(keys.set_last_history_id).not.toHaveBeenCalled();
+	});
+
+	it('holds the cursor back when an added message fails to sync', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return {
+					history: [
+						{
+							id: '960',
+							messagesAdded: [{ message: { id: 'flaky-msg-1' } }],
+						},
+					],
+				};
+			}
+			throw Object.assign(new Error('upstream unavailable'), { status: 503 });
+		});
+
+		const { ctx, keys } = createHandlerContextWithKeys('900');
+		const response = await messageChanged.handler(
+			ctx,
+			createWebhookRequest('961'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(keys.set_last_history_id).not.toHaveBeenCalled();
+	});
+
+	it('advances the cursor past intentionally filtered categories', async () => {
+		mockMakeGmailRequest.mockImplementation(async (path) => {
+			if (path.includes('/history')) {
+				return {
+					history: [
+						{
+							id: '950',
+							messagesDeleted: [{ message: { id: 'ignored-msg-1' } }],
+						},
+					],
+				};
+			}
+			return {};
+		});
+
+		const { ctx, keys } = createHandlerContextWithKeys('900', [
+			'messageReceived',
+		]);
+		const response = await messageChanged.handler(
+			ctx,
+			createWebhookRequest('951'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.data).toBeUndefined();
+		expect(ctx.db.messages.deleteByEntityId).not.toHaveBeenCalled();
+		// Filtered categories are skipped by configuration, not failure, so the
+		// cursor advances — holding it back would rescan the same records on
+		// every future push
+		expect(keys.set_last_history_id).toHaveBeenCalledWith('950');
+	});
+
 	it('initializes the cursor just before the first push when nothing is visible yet', async () => {
 		mockMakeGmailRequest.mockImplementation(async (path) => {
 			if (path.includes('/history')) {

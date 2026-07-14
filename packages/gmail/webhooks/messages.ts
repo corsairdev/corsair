@@ -441,14 +441,22 @@ async function resolveAndCategorizeMessageIds(
 	return { added, modified };
 }
 
+type ProcessResult = {
+	message: Message | null;
+	corsairEntityId: string;
+	/** Messages that could not be fetched or persisted; holds the cursor back so the next push retries them. */
+	failedCount: number;
+};
+
 async function processAddedMessages(
 	ctx: MessageChangedContext,
 	credentials: string,
 	emailAddress: string,
 	messageIds: string[],
-): Promise<{ message: Message | null; corsairEntityId: string }> {
+): Promise<ProcessResult> {
 	let firstMessage: Message | null = null;
 	let corsairEntityId = '';
+	let failedCount = 0;
 
 	for (const messageId of messageIds) {
 		try {
@@ -480,11 +488,12 @@ async function processAddedMessages(
 				throw dbError;
 			}
 		} catch (error) {
+			failedCount++;
 			console.warn(`Failed to process message ${messageId}:`, error);
 		}
 	}
 
-	return { message: firstMessage, corsairEntityId };
+	return { message: firstMessage, corsairEntityId, failedCount };
 }
 
 async function processDeletedMessages(
@@ -492,12 +501,13 @@ async function processDeletedMessages(
 	credentials: string,
 	emailAddress: string,
 	deletedIds: string[],
-): Promise<{ message: Message | null; corsairEntityId: string }> {
+): Promise<ProcessResult> {
 	let firstMessage: Message | null = null;
 	let corsairEntityId = '';
+	let failedCount = 0;
 
 	if (!ctx.db?.messages) {
-		return { message: null, corsairEntityId };
+		return { message: null, corsairEntityId, failedCount };
 	}
 
 	for (const messageId of deletedIds) {
@@ -533,6 +543,7 @@ async function processDeletedMessages(
 
 			await ctx.db.messages.deleteByEntityId(messageId);
 		} catch (deleteError) {
+			failedCount++;
 			console.warn(
 				`Failed to delete message ${messageId} from database:`,
 				deleteError,
@@ -540,7 +551,7 @@ async function processDeletedMessages(
 		}
 	}
 
-	return { message: firstMessage, corsairEntityId };
+	return { message: firstMessage, corsairEntityId, failedCount };
 }
 
 async function processModifiedMessages(
@@ -548,12 +559,13 @@ async function processModifiedMessages(
 	credentials: string,
 	emailAddress: string,
 	modifiedIds: string[],
-): Promise<{ message: Message | null; corsairEntityId: string }> {
+): Promise<ProcessResult> {
 	let firstMessage: Message | null = null;
 	let corsairEntityId = '';
+	let failedCount = 0;
 
 	if (!ctx.db?.messages) {
-		return { message: null, corsairEntityId };
+		return { message: null, corsairEntityId, failedCount };
 	}
 
 	for (const messageId of modifiedIds) {
@@ -586,11 +598,12 @@ async function processModifiedMessages(
 				throw dbError;
 			}
 		} catch (error) {
+			failedCount++;
 			console.warn(`Failed to process message ${messageId}:`, error);
 		}
 	}
 
-	return { message: firstMessage, corsairEntityId };
+	return { message: firstMessage, corsairEntityId, failedCount };
 }
 
 export const messageChanged: GmailWebhooks['messageChanged'] = {
@@ -700,23 +713,43 @@ export const messageChanged: GmailWebhooks['messageChanged'] = {
 						)
 					: null;
 
-			const latestRecordId = maxHistoryRecordId(history);
-			if (latestRecordId) {
-				await advanceHistoryCursor(ctx, latestRecordId, storedHistoryId);
-			} else if (usedFallback && (added.length > 0 || modified.length > 0)) {
-				// The fallback already handled everything up to this push.
-				await advanceHistoryCursor(ctx, historyId, storedHistoryId);
-			} else if (!storedHistoryId) {
-				// Nothing visible yet: start the cursor just before this push so
-				// the next one re-scans anything Gmail had not indexed in time.
-				await advanceHistoryCursor(
-					ctx,
-					computePreviousHistoryId(historyId),
-					storedHistoryId,
-				);
+			const failedCount =
+				(addedResult?.failedCount ?? 0) +
+				(deletedResult?.failedCount ?? 0) +
+				(modifiedResult?.failedCount ?? 0);
+
+			if (failedCount > 0) {
+				// A fetch, upsert, or delete failed: hold the cursor back so the
+				// next push re-scans this history range and retries. Re-processing
+				// the successful entries is idempotent (upsert / delete by entity
+				// id). Without a cursor yet, park it just before this push so the
+				// retry range stays covered.
+				if (!storedHistoryId) {
+					await advanceHistoryCursor(
+						ctx,
+						computePreviousHistoryId(historyId),
+						storedHistoryId,
+					);
+				}
+			} else {
+				const latestRecordId = maxHistoryRecordId(history);
+				if (latestRecordId) {
+					await advanceHistoryCursor(ctx, latestRecordId, storedHistoryId);
+				} else if (usedFallback && (added.length > 0 || modified.length > 0)) {
+					// The fallback already handled everything up to this push.
+					await advanceHistoryCursor(ctx, historyId, storedHistoryId);
+				} else if (!storedHistoryId) {
+					// Nothing visible yet: start the cursor just before this push so
+					// the next one re-scans anything Gmail had not indexed in time.
+					await advanceHistoryCursor(
+						ctx,
+						computePreviousHistoryId(historyId),
+						storedHistoryId,
+					);
+				}
+				// With a cursor and no new records, the cursor stays put so a
+				// lagging record is picked up by the next push.
 			}
-			// With a cursor and no new records, the cursor stays put so a
-			// lagging record is picked up by the next push.
 
 			// The response carries a single event: a received message is the most
 			// significant outcome of a batch, then a deletion, then a label change.
