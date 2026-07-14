@@ -3,12 +3,16 @@
   "name": "Corsair",
   "theme": "luma",
   "favicon": "/favicon.ico",
+  "logo": {
+    "light": "/images/corsair-logo.png",
+    "dark": "/images/corsair-logo.png"
+  },
   "colors": {
     "primary": "#2d7387",
     "light": "#95cbcf"
   },
   "appearance": {
-    "default": "dark"
+    "default": "light"
   },
   "navbar": {
     "primary": {
