@@ -51,6 +51,20 @@ export const prerender = false;
 ```
 
   </Tab>
+  <Tab title="Nuxt">
+
+```ts server/routes/api/corsair/[...path].ts
+import { fromWebHandler } from 'h3';
+import { managementHandler } from 'corsair';
+import { corsair } from '~/server/corsair';
+
+// h3's fromWebHandler adapts the (Request) => Response handler to Nitro.
+export default fromWebHandler(
+    managementHandler(corsair, { basePath: '/api/corsair' }),
+);
+```
+
+  </Tab>
   <Tab title="Workers / Bun / Deno">
 
 ```ts

@@ -29,7 +29,30 @@ Returns `{ "connectUrl", "token", "projectId", "expiresAt" }`. Redirect the user
 
 ## Receive the delivery
 
-When the user finishes connecting, Hub sends a signed envelope to your `deliveryUrl`. Verify the HMAC signature with your signing secret before trusting the body, then persist the credential. See [Delivery URLs](/hub/delivery-urls) for the envelope shape and signature scheme.
+When the user finishes connecting, Hub POSTs a signed JSON envelope to your `deliveryUrl`. The body is `{ "type", "payload" }`, with these headers:
+
+| Header | Value |
+|--------|-------|
+| `x-corsair-signature` | `sha256=<hex>` — HMAC-SHA256 of the **raw request body**, keyed with your signing secret |
+| `x-corsair-timestamp` | Unix seconds when Hub sent it; reject if older than a few minutes (replay guard) |
+| `x-corsair-project` | Your project id |
+| `x-corsair-nonce` | Unique per delivery |
+
+Verify before trusting the body — recompute the HMAC over the raw bytes and compare in constant time:
+
+```python
+import hashlib, hmac, time
+
+def verify(raw_body: bytes, headers, signing_secret: str) -> bool:
+    sig = headers["x-corsair-signature"].removeprefix("sha256=")
+    ts = int(headers["x-corsair-timestamp"])
+    if abs(time.time() - ts) > 300:            # reject stale deliveries
+        return False
+    expected = hmac.new(signing_secret.encode(), raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(sig, expected)   # constant-time compare
+```
+
+Only after `verify` passes: parse the body, exchange or store the credential, and respond `200`.
 
 ## List connections
 
