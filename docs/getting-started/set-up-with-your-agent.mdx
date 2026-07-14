@@ -3,46 +3,37 @@ title: Set up with your agent
 description: Hand Corsair Hub to your coding agent. One prompt takes it from an empty app to a working, connected integration.
 ---
 
-The fastest way to add Corsair is to let your coding agent do it. Paste the prompt below into Claude Code, Cursor, Codex, or any MCP-capable agent. It reads the docs, asks the two questions that actually matter (your framework and whether you're multi-tenant), wires the `/api/corsair` route, and doesn't stop until a real integration works end to end.
+The fastest way to add Corsair is to let your coding agent do it. Paste the prompt below into Claude Code, Cursor, Codex, or any MCP-capable agent — it talks you through the two choices that matter, wires the route, and doesn't stop until a real integration works.
 
 <CodeGroup>
 ```text Prompt
-Set up Corsair Hub in my app, end to end. Work with me conversationally —
-recommend the right path, don't interrogate me with yes/no questions.
+Help me set up Corsair Hub and get my first integration working end to end.
 
-What Corsair is: an integration layer that connects my app (and, if I'm building
-a product, my users' accounts) to services like GitHub, Slack, Gmail, and Linear.
-It handles OAuth, token refresh, webhooks, and rate limits, runs inside my own
-app, and stores every credential encrypted in my own database. Corsair Hub is the
-hosted piece that owns the surfaces needing a public URL — the OAuth connect page,
-callbacks, and approvals — so I don't build them. Hub relays; it stores none of my
-credentials.
+Corsair is an open-source integration layer for apps and AI agents. It connects me —
+or my users — to services like GitHub, Slack, and Gmail, and handles the OAuth, token
+refresh, webhooks, and rate limits. It runs inside my own app and stores every
+credential encrypted in my own database. Corsair Hub is the hosted piece that owns the
+surfaces needing a public URL: the OAuth connect page, callbacks, and approvals. Hub
+relays those; it stores none of my credentials.
 
-Do this:
-1. Read https://docs.corsair.dev/getting-started/introduction.md and
-   https://docs.corsair.dev/hub/overview.md before you touch my code.
-2. Ask me two things up front: (a) am I connecting only my own app's tools, or my
-   end users' accounts (multi-tenant)? (b) what framework am I on? If I'm unsure
-   on the first, assume multi-tenant — it's the common case.
-3. Get my Hub keys. If I have a project, I'll paste the development API key and
-   signing secret from the Keys tab at https://hub.corsair.dev/dashboard. If I
-   don't, walk me through creating one. Follow https://docs.corsair.dev/hub/setup.md.
-4. Install `corsair` plus a plugin for each service I name (e.g. @corsair-dev/github).
-   Look up ids in https://api.corsair.dev/md/integrations — don't guess them.
-5. Create corsair.ts and wire the /api/corsair route using the page for my exact
-   framework under https://docs.corsair.dev/frameworks/ (Next.js, Express, Hono,
-   or Web-standard for anything else). Follow it exactly — the adapter and base
-   path matter. Non-JS backend? Use https://docs.corsair.dev/hub/rest-api.md instead.
-6. Add CORSAIR_DEV_API_KEY, CORSAIR_DEV_SIGNING_SECRET, and CORSAIR_KEK to my .env.
-   Generate the KEK if I don't have one. Never print or commit these.
-7. Start my dev server and hit the app once. On the first request it self-registers
-   with Hub and the dashboard header dot turns green — that's the done signal. If it
-   stays grey, debug with https://docs.corsair.dev/hub/delivery-urls.md before moving on.
-8. Don't stop at "the server runs." Connect one integration for real: mint a connect
-   link (https://docs.corsair.dev/management/connect.md), send me through it, and
-   confirm a live API call returns data.
+Start by figuring out two things with me — chat about them, don't fire yes/no questions
+at me. First: am I connecting just my own app's tools, or my end users' accounts? The
+second is multi-tenant, and it's the common case, so lean that way if I'm unsure.
+Second: what framework am I on? That's what decides how the route gets mounted.
 
-Prefer Hub throughout. Only set up manual/self-hosted mode if I explicitly ask.
+Once that's clear, walk me through it. Read the intro and Hub pages listed at
+https://docs.corsair.dev/llms.txt so you understand the model first. Help me get a dev
+API key, a signing secret, and a KEK into my .env — I'll copy the keys from the Keys tab
+at https://hub.corsair.dev/dashboard, or you help me create a project if I don't have
+one. Install `corsair` plus a plugin for each service I named, then wire the /api/corsair
+route using the page for my exact framework at https://docs.corsair.dev/frameworks/.
+
+Terms you'll come across: a tenant is one of my users; a plugin is one service; the
+delivery URL is where Hub sends results — it self-registers on the first request, and my
+dashboard's header dot turning green is how we know it worked. Don't stop at "the server
+runs" — mint a connect link, send me through it, and confirm a real API call returns data.
+
+Prefer Hub. Only set up manual, self-hosted mode if I ask for it.
 ```
 </CodeGroup>
 

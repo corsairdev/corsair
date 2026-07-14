@@ -4,8 +4,8 @@
   "theme": "luma",
   "favicon": "/favicon.ico",
   "logo": {
-    "light": "/images/corsair-logo.png",
-    "dark": "/images/corsair-logo.png"
+    "light": "/images/corsair-icon.png",
+    "dark": "/images/corsair-icon.png"
   },
   "colors": {
     "primary": "#2d7387",
