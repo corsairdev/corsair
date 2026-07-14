@@ -45,7 +45,7 @@ CORSAIR_DEV_SIGNING_SECRET=...
 CORSAIR_DELIVERY_URL=http://localhost:3001/api/corsair
 ```
 
-Detection order: `CORSAIR_DELIVERY_URL` → `APP_URL` / `NEXT_PUBLIC_APP_URL` / `VERCEL_URL` (with `/api/corsair`) → `http://localhost:{PORT}/api/corsair`.
+Detection order: `CORSAIR_DELIVERY_URL` (full endpoint URL) → `http://localhost:{PORT}/api/corsair`.
 
 Hub **redirects the user's browser** to that URL with a signed payload (`?d=…`). Because delivery is browser-mediated, it reaches `localhost` without a tunnel like ngrok.
 
