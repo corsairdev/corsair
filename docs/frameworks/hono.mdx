@@ -1,0 +1,25 @@
+---
+title: Hono
+description: Mount the Corsair /api/corsair route in a Hono app.
+---
+
+import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
+
+## Configure Corsair
+
+<CreateCorsairHub />
+
+## Mount the route
+
+```ts index.ts
+import { Hono } from 'hono';
+import { toHonoHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const app = new Hono();
+app.all('/api/corsair/*', toHonoHandler(corsair, { basePath: '/api/corsair' }));
+```
+
+## Run and go green
+
+On the first request to `/api/corsair`, your app self-registers its delivery URL with Hub. See [Delivery URLs](/hub/delivery-urls).

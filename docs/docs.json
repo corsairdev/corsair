@@ -34,6 +34,15 @@
             ]
           },
           {
+            "group": "Frameworks",
+            "pages": [
+              "frameworks/nextjs",
+              "frameworks/express",
+              "frameworks/hono",
+              "frameworks/web-standard"
+            ]
+          },
+          {
             "group": "Hub",
             "pages": [
               "hub/overview",

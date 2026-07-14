@@ -1,0 +1,25 @@
+---
+title: Express
+description: Mount the Corsair /api/corsair route in an Express app.
+---
+
+import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
+
+## Configure Corsair
+
+<CreateCorsairHub />
+
+## Mount the route
+
+```ts server.ts
+import express from 'express';
+import { toExpressHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const app = express();
+app.use('/api/corsair', toExpressHandler(corsair, { basePath: '/api/corsair' }));
+```
+
+## Run and go green
+
+On the first request to `/api/corsair`, your app self-registers its delivery URL with Hub. See [Delivery URLs](/hub/delivery-urls).
