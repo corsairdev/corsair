@@ -6,6 +6,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from 'corsair/core';
+import { registerHubWebhookTenantLink } from 'corsair/hub';
 import { getCorsairInstance } from '../../utils/corsair-instance';
 import { promptTenantId } from '../../utils/prompts';
 import { setupCalendarWatch } from './calendar';
@@ -170,6 +171,16 @@ export async function runGoogleSubscribe({
 			linkType: string;
 			externalId: string;
 		}) => {
+			// Hub mode: forward so Hub can route inbound notifications to this tenant.
+			// Awaited so the registration completes before this short-lived CLI exits.
+			if (internal.hub) {
+				await registerHubWebhookTenantLink(internal.hub, {
+					plugin: pluginType,
+					tenantId,
+					link,
+				});
+			}
+
 			await setWebhookTenantLink({
 				database,
 				kek,

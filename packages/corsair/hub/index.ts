@@ -96,6 +96,8 @@ export {
 } from './permission';
 export type { ReportConnectionStatusInput } from './report-connection-status';
 export {
+	buildWebhookLinkReport,
+	registerHubWebhookTenantLink,
 	reportConnectionStatus,
 	reportConnectionStatusForHub,
 	reportPluginConnectionAuthMissing,
