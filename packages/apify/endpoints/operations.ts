@@ -769,6 +769,13 @@ export const apifyOperations = {
 			riskLevel: 'write',
 			description: 'Abort run',
 		},
+		chargePost: {
+			method: 'POST',
+			path: '/v2/actor-runs/{runId}/charge',
+			pathParams: ['runId'],
+			riskLevel: 'write',
+			description: 'Charge events in run',
+		},
 		datasetDelete: {
 			method: 'DELETE',
 			path: '/v2/actor-runs/{runId}/dataset',
@@ -1082,6 +1089,21 @@ export const apifyOperations = {
 			queryParams: ['clientKey'],
 			riskLevel: 'write',
 			description: 'Unlock requests in default request queue',
+		},
+		resurrectPost: {
+			method: 'POST',
+			path: '/v2/actor-runs/{runId}/resurrect',
+			pathParams: ['runId'],
+			queryParams: [
+				'build',
+				'timeout',
+				'memory',
+				'maxItems',
+				'maxTotalChargeUsd',
+				'restartOnError',
+			],
+			riskLevel: 'write',
+			description: 'Resurrect run',
 		},
 	},
 	actorRuns: {
@@ -1879,28 +1901,6 @@ export const apifyOperations = {
 			riskLevel: 'read',
 			description: 'Get log',
 		},
-	},
-	postChargeRun: {
-		method: 'POST',
-		path: '/v2/actor-runs/{runId}/charge',
-		pathParams: ['runId'],
-		riskLevel: 'write',
-		description: 'Charge events in run',
-	},
-	postResurrectRun: {
-		method: 'POST',
-		path: '/v2/actor-runs/{runId}/resurrect',
-		pathParams: ['runId'],
-		queryParams: [
-			'build',
-			'timeout',
-			'memory',
-			'maxItems',
-			'maxTotalChargeUsd',
-			'restartOnError',
-		],
-		riskLevel: 'write',
-		description: 'Resurrect run',
 	},
 	requestQueue: {
 		delete: {
