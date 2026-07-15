@@ -301,7 +301,7 @@ await corsair.zohomail.api.messages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountId` | `string` | No | Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically. |
-| `folderId` | `string` | Yes | Folder to list emails from (required). |
+| `folderId` | `string` | No | Folder to list emails from. Defaults to the Inbox when omitted. |
 | `start` | `number` | No | Starting sequence number (default 1). |
 | `limit` | `number` | No | Number of emails to retrieve, 1-200 (default 10). |
 | `status` | `read \| unread \| all` | No | — |

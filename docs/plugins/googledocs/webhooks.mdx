@@ -1,0 +1,108 @@
+---
+title: Webhooks
+description: "Google Docs incoming webhooks: event paths, payloads, and response data."
+---
+
+The Google Docs plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/googledocs/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `docChanged` (`docChanged`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Doc Changed
+
+### Doc Changed
+
+`docChanged`
+
+A Google Doc was created, updated, deleted, or matched a content trigger
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | No | — |
+| `subscription` | `string` | No | — |
+| `event` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  data?: string,
+  attributes?: {
+  },
+  messageId?: string,
+  publishTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: documentCreated | documentAdded | documentUpdated | documentDeleted | documentStructureChanged | keywordDetected | documentWordCountThreshold | documentPlaceholderFilled | documentSearchUpdate | folderCreated,
+  documentId?: string,
+  title?: string,
+  changeType?: created | updated | deleted | trashed,
+  matchedValue?: string,
+  wordCount?: number,
+  structure?: {
+    headers: number,
+    footers: number,
+    footnotes: number,
+    tables: number,
+    images: number,
+    positionedObjects: number,
+    namedRanges: number
+  },
+  document?: custom
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+googledocs({
+    webhookHooks: {
+        docChanged: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

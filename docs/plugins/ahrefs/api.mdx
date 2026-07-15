@@ -1,166 +1,95 @@
 ---
 title: API
-description: "Ahrefs API endpoints through Corsair"
+description: "API reference for Ahrefs: every `ahrefs.api.*` operation with input and output types."
 ---
 
-All Ahrefs API calls are available under `corsair.ahrefs.api.*`. Every method is fully typed, validates inputs with Zod, and surfaces Ahrefs request failures through the plugin error handlers.
+Every `ahrefs.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
-## Site Explorer
-
-### getDomainRating
-
-Get Ahrefs Domain Rating and Ahrefs Rank for a target domain.
-
-```ts
-const result = await corsair.ahrefs.api.siteExplorer.getDomainRating({
-  target: 'example.com',
-  date: '2024-01-01',
-  protocol: 'https', // optional: 'http' | 'https' | 'both'
-});
-
-console.log(result.domain_rating.domain_rating); // 0-100
-console.log(result.domain_rating.ahrefs_rank); // global rank
-```
-
-**Risk Level:** `read`
-
----
-
-### backlinksStats
-
-Get live and all-time backlink and referring-domain counts for a target.
-
-```ts
-const result = await corsair.ahrefs.api.siteExplorer.backlinksStats({
-  target: 'example.com',
-  date: '2024-01-01',
-  mode: 'domain', // optional: 'exact' | 'prefix' | 'domain' | 'subdomains'
-  protocol: 'https', // optional
-});
-
-console.log(result.metrics.live); // live backlinks count
-console.log(result.metrics.live_refdomains); // live referring domains
-console.log(result.metrics.all_time); // all-time backlinks
-console.log(result.metrics.all_time_refdomains); // all-time referring domains
-```
-
-**Risk Level:** `read`
-
----
-
-### organicKeywords
-
-List organic keywords a target ranks for, including positions and traffic metrics.
-
-```ts
-const result = await corsair.ahrefs.api.siteExplorer.organicKeywords({
-  target: 'example.com',
-  country: 'us',
-  date: '2024-01-01',
-  select: 'keyword,volume,best_position,sum_traffic',
-  limit: 100, // optional, default 1000
-  order_by: 'sum_traffic:desc', // optional
-  mode: 'domain', // optional: 'exact' | 'prefix' | 'domain' | 'subdomains'
-});
-
-result.keywords.forEach(keyword => {
-  console.log(keyword.keyword);
-  console.log(keyword.volume); // monthly search volume
-  console.log(keyword.best_position); // ranking position
-  console.log(keyword.sum_traffic); // estimated traffic
-});
-```
-
-**Risk Level:** `read`
-
----
-
-### refdomains
-
-List referring domains linking to a target.
-
-```ts
-const result = await corsair.ahrefs.api.siteExplorer.refdomains({
-  target: 'example.com',
-  date: '2024-01-01',
-  select: 'domain,domain_rating,links,dofollow_links',
-  limit: 100, // optional
-  history: 'all_time', // optional
-  mode: 'domain', // optional
-});
-
-result.refdomains.forEach(refdomain => {
-  console.log(refdomain.domain);
-  console.log(refdomain.domain_rating);
-  console.log(refdomain.links); // total links from this domain
-});
-```
-
-**Risk Level:** `read`
-
----
-
-### topPages
-
-List top organic pages for a target with traffic, keyword, and link metrics.
-
-```ts
-const result = await corsair.ahrefs.api.siteExplorer.topPages({
-  target: 'example.com',
-  country: 'us',
-  date: '2024-01-01',
-  select: 'raw_url,sum_traffic,keywords,referring_domains',
-  limit: 100, // optional
-  mode: 'domain', // optional
-});
-
-result.pages.forEach(page => {
-  console.log(page.raw_url);
-  console.log(page.sum_traffic); // estimated traffic
-  console.log(page.keywords); // number of ranking keywords
-  console.log(page.referring_domains); // referring domains count
-});
-```
-
-**Risk Level:** `read`
-
----
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
 
 ## Keywords Explorer
 
 ### overview
 
-Get keyword metrics such as volume, difficulty, CPC, clicks, and traffic potential.
+`keywordsExplorer.overview`
+
+Get keyword metrics such as volume, difficulty, CPC, clicks, and traffic potential
+
+**Risk:** `read`
 
 ```ts
-const result = await corsair.ahrefs.api.keywordsExplorer.overview({
-  select: 'keyword,volume,difficulty,cpc,clicks,traffic_potential',
-  keywords: 'seo tools', // can also be an array: ['seo tools', 'backlink checker']
-  country: 'us', // 2-letter country code
-  limit: 100, // optional
-  order_by: 'volume:desc', // optional
-});
-
-result.keywords.forEach(keyword => {
-  console.log(keyword.keyword);
-  console.log(keyword.volume); // monthly search volume
-  console.log(keyword.difficulty); // keyword difficulty (0-100)
-  console.log(keyword.cpc); // cost per click
-  console.log(keyword.clicks); // estimated clicks
-  console.log(keyword.traffic_potential); // traffic potential
-});
+await corsair.ahrefs.api.keywordsExplorer.overview({});
 ```
 
-**Risk Level:** `read`
+**Input**
 
-**Optional Parameters:**
-- `target`: Filter by target domain
-- `target_mode`: 'exact' | 'prefix' | 'domain' | 'subdomains'
-- `target_position`: 'in_top10' | 'in_top100'
-- `keyword_list_id`: Filter by keyword list ID
-- `where`: Custom SQL-like filter
-- `volume_monthly_date_from`: Start date for historical volume
-- `volume_monthly_date_to`: End date for historical volume
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeout` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order_by` | `string` | No | — |
+| `where` | `string` | No | — |
+| `select` | `string` | Yes | — |
+| `volume_monthly_date_to` | `string` | No | — |
+| `volume_monthly_date_from` | `string` | No | — |
+| `target_mode` | `exact \| prefix \| domain \| subdomains` | No | — |
+| `target` | `string` | No | — |
+| `target_position` | `in_top10 \| in_top100` | No | — |
+| `country` | `string` | Yes | — |
+| `keywords` | `string \| string[]` | No | — |
+| `keyword_list_id` | `number` | No | — |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  clicks?: number | null,
+  cpc?: number | null,
+  cps?: number | null,
+  difficulty?: number | null,
+  first_seen?: string | null,
+  global_volume?: number | null,
+  intents?: {
+    informational?: boolean,
+    navigational?: boolean,
+    commercial?: boolean,
+    transactional?: boolean,
+    branded?: boolean,
+    local?: boolean
+  } | null,
+  keyword: string,
+  parent_topic?: string | null,
+  parent_volume?: number | null,
+  searches_pct_clicks_organic_and_paid?: number | null,
+  searches_pct_clicks_organic_only?: number | null,
+  searches_pct_clicks_paid_only?: number | null,
+  serp_features?: string[],
+  serp_last_update?: string | null,
+  traffic_potential?: number | null,
+  volume?: number | null,
+  volume_desktop_pct?: number | null,
+  volume_mobile_pct?: number | null,
+  volume_monthly?: number | null,
+  volume_monthly_history?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
 
 ---
 
@@ -168,56 +97,394 @@ result.keywords.forEach(keyword => {
 
 ### overview
 
-Get Rank Tracker keyword overview data for a project and device.
+`rankTracker.overview`
+
+Get Rank Tracker keyword overview data for a project and device
+
+**Risk:** `read`
 
 ```ts
-const result = await corsair.ahrefs.api.rankTracker.overview({
-  project_id: 123456, // your Ahrefs project ID
-  device: 'desktop', // 'desktop' | 'mobile'
-  date: '2024-01-01',
-  select: 'keyword,position,previous_position,url,traffic',
-  limit: 100, // optional
-});
-
-result.overviews.forEach(row => {
-  console.log(row.keyword);
-  console.log(row.position); // current position
-  console.log(row.previous_position); // previous position
-  console.log(row.url); // ranking URL
-  console.log(row.traffic); // estimated traffic
-});
+await corsair.ahrefs.api.rankTracker.overview({});
 ```
 
-**Risk Level:** `read`
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeout` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order_by` | `string` | No | — |
+| `where` | `string` | No | — |
+| `select` | `string` | Yes | — |
+| `date_compared` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `device` | `desktop \| mobile` | Yes | — |
+| `project_id` | `number` | Yes | — |
+| `volume_mode` | `monthly \| average` | No | — |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `overviews` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="overviews full type">
+
+```ts
+{
+  keyword?: string | null,
+  country?: string,
+  device?: string,
+  position?: number | null,
+  previous_position?: number | null,
+  best_position_kind?: string | null,
+  clicks?: number | null,
+  volume?: number | null,
+  traffic?: number | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
 
 ---
 
-## SERP Overview
+## Serp
 
 ### overview
 
-Get SERP positions for a keyword and country, including ranking page metrics.
+`serp.overview`
+
+Get SERP positions for a keyword and country, including ranking page metrics
+
+**Risk:** `read`
 
 ```ts
-const result = await corsair.ahrefs.api.serp.overview({
-  keyword: 'seo tools',
-  country: 'us',
-  select: 'position,url,title,domain_rating,backlinks,traffic',
-  top_positions: 10, // optional, default all
-  date: '2024-01-01', // optional, default latest
-});
-
-result.positions.forEach(position => {
-  console.log(position.position); // SERP position (1, 2, 3...)
-  console.log(position.url); // ranking URL
-  console.log(position.title); // page title
-  console.log(position.domain_rating); // Ahrefs Domain Rating
-  console.log(position.backlinks); // backlinks to this page
-  console.log(position.traffic); // estimated traffic
-});
+await corsair.ahrefs.api.serp.overview({});
 ```
 
-**Risk Level:** `read`
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | — |
+| `top_positions` | `number` | No | — |
+| `date` | `string` | No | — |
+| `country` | `string` | Yes | — |
+| `keyword` | `string` | Yes | — |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `positions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="positions full type">
+
+```ts
+{
+  position: number,
+  url?: string | null,
+  title?: string | null,
+  type?: string[],
+  domain_rating?: number | null,
+  ahrefs_rank?: number | null,
+  backlinks?: number | null,
+  refdomains?: number | null,
+  traffic?: number | null,
+  value?: number | null,
+  update_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Site Explorer
+
+### backlinksStats
+
+`siteExplorer.backlinksStats`
+
+Get live and all-time backlink and referring-domain counts for a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.backlinksStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `protocol` | `both \| http \| https` | No | — |
+| `target` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `output` | `json` | No | — |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  all_time?: number | null,
+  all_time_refdomains?: number | null,
+  live?: number | null,
+  live_refdomains?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDomainRating
+
+`siteExplorer.getDomainRating`
+
+Get Ahrefs Domain Rating and Ahrefs Rank for a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.getDomainRating({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `protocol` | `both \| http \| https` | No | — |
+| `target` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_rating` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain_rating full type">
+
+```ts
+{
+  ahrefs_rank?: number | null,
+  domain_rating?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### organicKeywords
+
+`siteExplorer.organicKeywords`
+
+List organic keywords a target ranks for, including positions and traffic metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.organicKeywords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `protocol` | `both \| http \| https` | No | — |
+| `target` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `output` | `json` | No | — |
+| `timeout` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order_by` | `string` | No | — |
+| `where` | `string` | No | — |
+| `select` | `string` | Yes | — |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | — |
+| `country` | `string` | Yes | — |
+| `date_compared` | `string` | No | — |
+| `volume_mode` | `monthly \| average` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  keyword?: string | null,
+  keyword_country?: string,
+  best_position?: number | null,
+  best_position_url?: string | null,
+  keyword_difficulty?: number | null,
+  volume?: number | null,
+  cpc?: number | null,
+  sum_traffic?: number | null,
+  serp_features?: string[],
+  last_update?: string | null,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refdomains
+
+`siteExplorer.refdomains`
+
+List referring domains linking to a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.refdomains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `protocol` | `both \| http \| https` | No | — |
+| `target` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `output` | `json` | No | — |
+| `timeout` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order_by` | `string` | No | — |
+| `where` | `string` | No | — |
+| `select` | `string` | Yes | — |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | — |
+| `history` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refdomains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="refdomains full type">
+
+```ts
+{
+  domain: string,
+  domain_rating?: number | null,
+  dofollow_links?: number | null,
+  dofollow_refdomains?: number | null,
+  links?: number | null,
+  refdomains?: number | null,
+  first_seen?: string | null,
+  last_visited?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topPages
+
+`siteExplorer.topPages`
+
+List top organic pages for a target with traffic, keyword, and link metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.topPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `protocol` | `both \| http \| https` | No | — |
+| `target` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
+| `output` | `json` | No | — |
+| `timeout` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order_by` | `string` | No | — |
+| `where` | `string` | No | — |
+| `select` | `string` | Yes | — |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | — |
+| `country` | `string` | Yes | — |
+| `date_compared` | `string` | No | — |
+| `volume_mode` | `monthly \| average` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  raw_url: string,
+  keywords?: number | null,
+  referring_domains?: number | null,
+  sum_traffic?: number | null,
+  value?: number | null,
+  page_type?: string | null,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
 
 ---
 
@@ -225,65 +492,48 @@ result.positions.forEach(position => {
 
 ### limitsAndUsage
 
-Get Ahrefs subscription limits and API unit usage.
+`subscriptionInfo.limitsAndUsage`
+
+Get Ahrefs subscription limits and API unit usage
+
+**Risk:** `read`
 
 ```ts
-const result = await corsair.ahrefs.api.subscriptionInfo.limitsAndUsage({});
-
-console.log(result.limits_and_usage.subscription); // subscription type
-console.log(result.limits_and_usage.units_limit_api_key); // API key limit
-console.log(result.limits_and_usage.units_usage_api_key); // API key usage
-console.log(result.limits_and_usage.usage_reset_date); // usage reset date
-console.log(result.limits_and_usage.api_key_expiration_date); // key expiration
+await corsair.ahrefs.api.subscriptionInfo.limitsAndUsage({});
 ```
 
-**Risk Level:** `read`
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limits_and_usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="limits_and_usage full type">
+
+```ts
+{
+  api_key_expiration_date: string,
+  subscription: string,
+  units_limit_api_key?: number | null,
+  units_limit_workspace?: number | null,
+  units_usage_api_key: number,
+  units_usage_workspace?: number | null,
+  usage_reset_date: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
 
 ---
 
-## Error Handling
-
-All API calls can throw an error from the underlying Ahrefs request:
-
-```ts
-try {
-  const result = await corsair.ahrefs.api.siteExplorer.getDomainRating({
-    target: 'example.com',
-    date: '2024-01-01',
-  });
-} catch (error) {
-  if (error instanceof Error) {
-    console.error('Message:', error.message);
-  }
-}
-```
-
-## Rate Limiting
-
-Corsair automatically handles Ahrefs rate limits:
-- Retries HTTP 429 responses
-- Uses `Retry-After` when Ahrefs sends it
-- Configurable retry strategy (default: 3 retries)
-
-You can customize rate limit behavior:
-
-```ts
-import { ahrefs } from '@corsair-dev/ahrefs';
-
-export const corsair = createCorsair({
-  plugins: [
-    ahrefs({
-      // custom error handlers
-      errorHandlers: {
-        RATE_LIMIT_ERROR: {
-          match: (error) => error.message.includes('429'),
-          handler: async (error, context) => ({
-            maxRetries: 5,
-            retryStrategy: 'exponential_backoff_jitter',
-          }),
-        },
-      },
-    }),
-  ],
-});
-```

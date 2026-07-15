@@ -3,13 +3,12 @@ title: Overview
 description: "Ahrefs plugin for Corsair"
 ---
 
-Use **Ahrefs** through Corsair: one client, typed API calls, optional local DB sync for SEO metrics.
+Use **Ahrefs** through Corsair: one client, typed API calls, optional local DB sync.
 
 **What you get:**
 
 - 9 typed API operations
 - 7 database entities synced for fast `.search()` / `.list()` queries
-- 0 incoming webhook event types
 
 ## Setup
 
@@ -32,7 +31,7 @@ import { ahrefs } from '@corsair-dev/ahrefs';
 export const corsair = createCorsair({
 	// ... other config options,
 	multiTenancy: false,
-	plugins: [ahrefs()],
+    plugins: [ahrefs()],
 });
 ```
 </Tab>
@@ -43,8 +42,8 @@ import { ahrefs } from '@corsair-dev/ahrefs';
 
 export const corsair = createCorsair({
 	// ... other config options,
-	multiTenancy: true,
-	plugins: [ahrefs()],
+    multiTenancy: true,
+    plugins: [ahrefs()],
 });
 ```
 
@@ -64,14 +63,14 @@ Follow [Get Credentials](/plugins/ahrefs/get-credentials) if you need help getti
 <Tabs>
 <Tab title="Solo">
 ```bash
-pnpm corsair setup --plugin=ahrefs api_key=your-api-key
+pnpm corsair setup --plugin=ahrefs
 ```
 
-Use the `api_key` credential documented in [Get Credentials](/plugins/ahrefs/get-credentials).
+Use the key names documented in [Get Credentials](/plugins/ahrefs/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
-pnpm corsair setup --plugin=ahrefs api_key=their-api-key --tenant=<tenantId>
+pnpm corsair setup --plugin=ahrefs --tenant=<tenantId>
 ```
 
 Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
@@ -93,12 +92,13 @@ Each tab shows how to register the plugin for that authentication method. The de
 ahrefs()
 ```
 
-Store credentials with `pnpm corsair setup --plugin=ahrefs api_key=your-api-key` (see [Get Credentials](/plugins/ahrefs/get-credentials) for details).
+Store credentials with `pnpm corsair setup --plugin=ahrefs` (see [Get Credentials](/plugins/ahrefs/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
+
 
 ## Query synced data
 
@@ -107,96 +107,16 @@ Synced entities support `corsair.ahrefs.db.<entity>.search()` and `.list()`. See
 
 ## Example API calls
 
-**Site Explorer - Domain Rating:**
+**Read-style (read):** `keywordsExplorer.overview`
 
 ```ts
-await corsair.ahrefs.api.siteExplorer.getDomainRating({
-  target: 'example.com',
-  date: '2024-01-01',
-});
+await corsair.ahrefs.api.keywordsExplorer.overview({});
 ```
 
-**Site Explorer - Backlinks Stats:**
 
-```ts
-await corsair.ahrefs.api.siteExplorer.backlinksStats({
-  target: 'example.com',
-  date: '2024-01-01',
-  mode: 'domain',
-});
-```
+**Write-style (write):** `—`
 
-**Site Explorer - Organic Keywords:**
-
-```ts
-await corsair.ahrefs.api.siteExplorer.organicKeywords({
-  target: 'example.com',
-  country: 'us',
-  date: '2024-01-01',
-  select: 'keyword,volume,best_position',
-  limit: 100,
-});
-```
-
-**Site Explorer - Referring Domains:**
-
-```ts
-await corsair.ahrefs.api.siteExplorer.refdomains({
-  target: 'example.com',
-  date: '2024-01-01',
-  select: 'domain,domain_rating,links',
-  limit: 100,
-});
-```
-
-**Site Explorer - Top Pages:**
-
-```ts
-await corsair.ahrefs.api.siteExplorer.topPages({
-  target: 'example.com',
-  country: 'us',
-  date: '2024-01-01',
-  select: 'raw_url,sum_traffic,keywords',
-  limit: 100,
-});
-```
-
-**Keywords Explorer - Overview:**
-
-```ts
-await corsair.ahrefs.api.keywordsExplorer.overview({
-  select: 'keyword,volume,difficulty,cpc',
-  keywords: 'seo tools',
-  country: 'us',
-});
-```
-
-**Rank Tracker - Overview:**
-
-```ts
-await corsair.ahrefs.api.rankTracker.overview({
-  project_id: 123456,
-  device: 'desktop',
-  date: '2024-01-01',
-  select: 'keyword,position,url',
-});
-```
-
-**SERP Overview:**
-
-```ts
-await corsair.ahrefs.api.serp.overview({
-  keyword: 'seo tools',
-  country: 'us',
-  select: 'position,url,title,domain_rating',
-});
-```
-
-**Subscription Info - Limits and Usage:**
-
-```ts
-await corsair.ahrefs.api.subscriptionInfo.limitsAndUsage({});
-```
+_No write-style endpoint inferred; pick any operation from the reference below._
 
 
 See the full list on the [API](/plugins/ahrefs/api) page. Use `pnpm corsair list --plugin=ahrefs` and `pnpm corsair schema <path>` locally to inspect schemas.
@@ -205,7 +125,7 @@ See the full list on the [API](/plugins/ahrefs/api) page. Use `pnpm corsair list
 
 ## Hooks
 
-Use `hooks` on API calls for logging, approvals, or side effects. See [Hooks](/concepts/hooks).
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
 
 ---
 
@@ -216,3 +136,4 @@ Use `hooks` on API calls for logging, approvals, or side effects. See [Hooks](/c
 | API | [API](/plugins/ahrefs/api) |
 | Database | [Database](/plugins/ahrefs/database) |
 | Credentials | [Get credentials](/plugins/ahrefs/get-credentials) |
+

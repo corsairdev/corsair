@@ -171,6 +171,14 @@
             "group": "Plugins",
             "pages": [
               {
+                "group": "AgentQL",
+                "pages": [
+                  "plugins/agentql/overview",
+                  "plugins/agentql/api",
+                  "plugins/agentql/database"
+                ]
+              },
+              {
                 "group": "Ahrefs",
                 "pages": [
                   "plugins/ahrefs/overview",
@@ -381,6 +389,15 @@
                 ]
               },
               {
+                "group": "Google Docs",
+                "pages": [
+                  "plugins/googledocs/overview",
+                  "plugins/googledocs/api",
+                  "plugins/googledocs/database",
+                  "plugins/googledocs/webhooks"
+                ]
+              },
+              {
                 "group": "Google drive",
                 "pages": [
                   "plugins/googledrive/overview",
@@ -436,6 +453,15 @@
                 ]
               },
               {
+                "group": "Instagram",
+                "pages": [
+                  "plugins/instagram/overview",
+                  "plugins/instagram/api",
+                  "plugins/instagram/database",
+                  "plugins/instagram/webhooks"
+                ]
+              },
+              {
                 "group": "Intercom",
                 "pages": [
                   "plugins/intercom/overview",
@@ -466,6 +492,14 @@
                 ]
               },
               {
+                "group": "LinkedIn",
+                "pages": [
+                  "plugins/linkedin/overview",
+                  "plugins/linkedin/api",
+                  "plugins/linkedin/database"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -482,6 +516,14 @@
                   "plugins/monday/api",
                   "plugins/monday/database",
                   "plugins/monday/webhooks"
+                ]
+              },
+              {
+                "group": "Neon",
+                "pages": [
+                  "plugins/neon/overview",
+                  "plugins/neon/api",
+                  "plugins/neon/database"
                 ]
               },
               {

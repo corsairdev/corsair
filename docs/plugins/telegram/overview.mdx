@@ -7,6 +7,7 @@ Use **Telegram** through Corsair: one client, typed API calls, optional local DB
 
 **What you get:**
 
+- 24 typed API operations
 - 5 database entities synced for fast `.search()` / `.list()` queries
 - 9 incoming webhook event types
 
@@ -128,14 +129,18 @@ Synced entities support `corsair.telegram.db.<entity>.search()` and `.list()`. S
 
 ## Example API calls
 
-**Read-style (read):** `—`
+**Read-style (read):** `chat.getChat`
 
-_No read-style endpoint inferred; pick any operation from the reference below._
+```ts
+await corsair.telegram.api.chat.getChat({});
+```
 
 
-**Write-style (write):** `—`
+**Write-style (write):** `callback.answerCallbackQuery`
 
-_No write-style endpoint inferred; pick any operation from the reference below._
+```ts
+await corsair.telegram.api.callback.answerCallbackQuery({});
+```
 
 
 See the full list on the [API](/plugins/telegram/api) page. Use `pnpm corsair list --plugin=telegram` and `pnpm corsair schema <path>` locally to inspect schemas.
