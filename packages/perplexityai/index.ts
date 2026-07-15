@@ -1,12 +1,10 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
