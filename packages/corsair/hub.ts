@@ -76,6 +76,7 @@ export {
 	parseServerDeliveryAckBody,
 	parseSyncFromDeliveryBody,
 	processManagedOAuthDelivery,
+	registerHubWebhookTenantLink,
 	resolveDeliveryTransport,
 	resolveHubDeliveryUrl,
 	resolveHubOAuthCallbackUrl,
