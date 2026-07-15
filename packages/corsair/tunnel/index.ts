@@ -277,14 +277,16 @@ async function handleOAuthCallbackTunnel(
 	corsair: unknown,
 	payload: OAuthCallbackTunnelPayload,
 ): Promise<TunnelAck> {
-	// Envelope signature already verified by processCorsair before dispatch.
+	// Envelope signature already verified by processCorsair before dispatch. Take
+	// the trusted path only when Hub supplied plugin/tenant; otherwise fall back
+	// to HMAC state verification (a Hub deployed before the companion change).
 	await processOAuthCallback(corsair, {
 		code: payload.code,
 		state: payload.state,
 		redirectUri: payload.redirectUri,
-		trusted: true,
-		plugin: payload.plugin,
-		tenantId: payload.tenantId,
+		...(payload.plugin && payload.tenantId
+			? { trusted: true, plugin: payload.plugin, tenantId: payload.tenantId }
+			: {}),
 	});
 	return { status: 'ok' };
 }
