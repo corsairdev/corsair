@@ -2122,8 +2122,7 @@ export const apifyOperations = {
 			path: '/v2/browser-info',
 			pathParams: [],
 			queryParams: ['skipHeaders', 'rawHeaders'],
-			riskLevel: 'destructive',
-			irreversible: true,
+			riskLevel: 'write',
 			description: 'Get browser info',
 		},
 		browserInfoGet: {
