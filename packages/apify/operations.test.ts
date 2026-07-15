@@ -1,3 +1,4 @@
+import { request } from 'corsair/http';
 import type { ApifyOperationDefinition } from './endpoints';
 import {
 	ApifyEndpoints,
@@ -9,6 +10,21 @@ import {
 	ApifyOperationInputSchema,
 	ApifyOperationOutputSchema,
 } from './endpoints/types';
+import type { ApifyContext } from './index';
+import { apify } from './index';
+
+// Mock the shared HTTP transport so endpoint invocations exercise the full
+// request-building path (makeApifyRequest → buildBody/buildQuery/pickDefined)
+// without hitting the network.
+jest.mock('corsair/http', () => {
+	const original = jest.requireActual('corsair/http');
+	return {
+		...original,
+		request: jest.fn(),
+	};
+});
+
+const mockRequest = request as jest.MockedFunction<typeof request>;
 
 type OperationEntry = { path: string; def: ApifyOperationDefinition };
 
@@ -170,5 +186,155 @@ describe('apify endpoint meta', () => {
 	it('tags actor delete as irreversible', () => {
 		expect(metaMap['act.delete']?.riskLevel).toBe('destructive');
 		expect(metaMap['act.delete']?.irreversible).toBe(true);
+	});
+});
+
+// A minimal context carrying just the fields the endpoint closures read.
+// makeApifyRequest consumes ctx.key; logEventFromContext reads ctx for logging.
+function makeCtx(key = 'test-token'): ApifyContext {
+	return { key } as unknown as ApifyContext;
+}
+
+describe('apify endpoint invocation', () => {
+	beforeEach(() => mockRequest.mockReset());
+
+	it('routes an endpoint call to makeApifyRequest with the right method, path, and bearer token', async () => {
+		mockRequest.mockResolvedValue({ id: 'actor-1' });
+
+		const result = await (
+			ApifyEndpoints as unknown as {
+				act: { get: (ctx: ApifyContext, input: unknown) => Promise<unknown> };
+			}
+		).act.get(makeCtx(), { actorId: 'abc123' });
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [config, requestOptions] = mockRequest.mock.calls[0] ?? [];
+		expect(config).toMatchObject({
+			BASE: 'https://api.apify.com',
+			TOKEN: 'test-token',
+		});
+		expect(requestOptions).toMatchObject({
+			method: 'GET',
+			url: '/v2/actors/{actorId}',
+		});
+		expect(requestOptions?.path).toEqual({ actorId: 'abc123' });
+		// GET requests carry no body.
+		expect(requestOptions?.body).toBeUndefined();
+		expect(result).toEqual({ id: 'actor-1' });
+	});
+
+	it('builds a JSON body from non-reserved input fields on POST', async () => {
+		mockRequest.mockResolvedValue({ ok: true });
+
+		await (
+			ApifyEndpoints as unknown as {
+				actorRun: {
+					chargePost: (ctx: ApifyContext, input: unknown) => Promise<unknown>;
+				};
+			}
+		).actorRun.chargePost(makeCtx(), { runId: 'r1', events: [{ e: 1 }] });
+
+		const requestOptions = mockRequest.mock.calls[0]?.[1];
+		expect(requestOptions).toMatchObject({
+			method: 'POST',
+			url: '/v2/actor-runs/{runId}/charge',
+			body: { events: [{ e: 1 }] },
+		});
+		expect(requestOptions?.path).toEqual({ runId: 'r1' });
+	});
+
+	it('passes query params through without polluting the body', async () => {
+		mockRequest.mockResolvedValue([]);
+
+		await (
+			ApifyEndpoints as unknown as {
+				act: {
+					buildsGet: (ctx: ApifyContext, input: unknown) => Promise<unknown>;
+				};
+			}
+		).act.buildsGet(makeCtx(), { actorId: 'a1', limit: 5, offset: 10 });
+
+		const requestOptions = mockRequest.mock.calls[0]?.[1];
+		expect(requestOptions?.query).toMatchObject({ limit: 5, offset: 10 });
+		// Query/path params are excluded from the body.
+		expect(requestOptions?.body).toBeUndefined();
+	});
+
+	it('returns { success: true } for an empty response on non-HEAD requests', async () => {
+		mockRequest.mockResolvedValue(undefined);
+
+		const result = await (
+			ApifyEndpoints as unknown as {
+				actorRun: {
+					delete: (ctx: ApifyContext, input: unknown) => Promise<unknown>;
+				};
+			}
+		).actorRun.delete(makeCtx(), { runId: 'r1' });
+
+		expect(result).toEqual({ success: true });
+	});
+
+	it('wraps non-Api errors in ApifyAPIError before surfacing them', async () => {
+		mockRequest.mockRejectedValue(new Error('network down'));
+
+		await expect(
+			(
+				ApifyEndpoints as unknown as {
+					act: { get: (ctx: ApifyContext, input: unknown) => Promise<unknown> };
+				}
+			).act.get(makeCtx(), { actorId: 'abc123' }),
+		).rejects.toThrow('network down');
+	});
+});
+
+describe('apify plugin factory', () => {
+	it('routes the inline key through keyBuilder before any request', async () => {
+		const plugin = apify({ key: 'inline-key' });
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: jest.fn().mockResolvedValue('stored-key') },
+		};
+		const keyBuilder = plugin.keyBuilder as unknown as (
+			ctx: { authType: string; keys: { get_api_key: () => Promise<string> } },
+			source: string,
+		) => Promise<string>;
+
+		const key = await keyBuilder(ctx, 'endpoint');
+		expect(key).toBe('inline-key');
+	});
+
+	it('falls back to the key store when no inline key is set', async () => {
+		const plugin = apify({});
+		const getApiKey = jest.fn().mockResolvedValue('stored-key');
+		const ctx = { authType: 'api_key', keys: { get_api_key: getApiKey } };
+		const keyBuilder = plugin.keyBuilder as unknown as (
+			ctx: { authType: string; keys: { get_api_key: () => Promise<string> } },
+			source: string,
+		) => Promise<string>;
+
+		const key = await keyBuilder(ctx, 'endpoint');
+		expect(getApiKey).toHaveBeenCalled();
+		expect(key).toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when no key is available', async () => {
+		const plugin = apify({});
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: jest.fn().mockResolvedValue(undefined) },
+		};
+		const keyBuilder = plugin.keyBuilder as unknown as (
+			ctx: { authType: string; keys: { get_api_key: () => Promise<unknown> } },
+			source: string,
+		) => Promise<string>;
+
+		await expect(keyBuilder(ctx, 'endpoint')).rejects.toThrow('api_key');
+	});
+
+	it('registers error handlers covering rate-limit and auth errors', () => {
+		const plugin = apify({});
+		expect(plugin.errorHandlers?.RATE_LIMIT_ERROR).toBeDefined();
+		expect(plugin.errorHandlers?.AUTH_ERROR).toBeDefined();
+		expect(plugin.errorHandlers?.DEFAULT).toBeDefined();
 	});
 });
