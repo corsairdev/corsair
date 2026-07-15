@@ -7,7 +7,7 @@ Corsair catches all API errors and routes them through a hierarchical error hand
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
-import { slack } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
 
 export const corsair = createCorsair({
     plugins: [

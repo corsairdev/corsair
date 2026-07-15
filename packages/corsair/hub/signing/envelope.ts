@@ -54,6 +54,10 @@ export type ServerDeliveryAckBody = {
 	connectUrl?: string;
 	/** ISO expiry for connect.create_link deliveries. */
 	expiresAt?: string;
+	/** Encrypted tenant/plugin manifest returned by connections.sync deliveries. */
+	sync?: {
+		encrypted: string;
+	};
 };
 
 function parseSignatureHeader(
@@ -222,18 +226,175 @@ export function isServerDeliveryAckSuccessful(input: {
 }
 
 /**
- * Formats a user-facing error when server delivery fails (network, HTTP error, or app rejection).
+ * Reads the encrypted connections.sync payload from a parsed delivery ack body.
  */
-export function formatServerDeliveryError(input: {
+export function extractSyncFromDeliveryAck(
+	body: ServerDeliveryAckBody,
+): { encrypted: string } | null {
+	const encrypted = body.sync?.encrypted;
+	if (typeof encrypted !== 'string' || !encrypted.trim()) {
+		return null;
+	}
+	return { encrypted: encrypted.trim() };
+}
+
+/**
+ * Parses sync payload from a raw delivery HTTP body using the standard ack contract.
+ */
+export function parseSyncFromDeliveryBody(
+	body: string,
+): { encrypted: string } | null {
+	return extractSyncFromDeliveryAck(parseServerDeliveryAckBody(body));
+}
+
+function getErrorCauseCode(error: unknown): string | undefined {
+	let current: unknown = error;
+	while (current) {
+		if (current instanceof Error) {
+			const code = (current as NodeJS.ErrnoException).code;
+			if (typeof code === 'string') return code;
+			current = current.cause;
+			continue;
+		}
+		if (typeof current === 'object' && current !== null && 'code' in current) {
+			const code = (current as { code?: unknown }).code;
+			if (typeof code === 'string') return code;
+		}
+		break;
+	}
+	return undefined;
+}
+
+function truncateDeliveryBody(body: string, max = 200): string {
+	const trimmed = body.trim();
+	if (trimmed.length <= max) return trimmed;
+	return `${trimmed.slice(0, max)}…`;
+}
+
+const SIGNING_SECRET_REMEDIATION =
+	'Verify hub.signingSecret in your app matches the signing secret shown in Hub project settings.';
+
+const DELIVERY_URL_REMEDIATION =
+	'Check the delivery URL configured for this environment.';
+
+function formatAuthDeliveryError(input: {
+	deliveryUrl: string;
+	status: number;
+	ack: ServerDeliveryAckBody;
+}): string {
+	const base = input.ack.error
+		? `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`
+		: `App rejected the signed delivery (HTTP ${input.status} from ${input.deliveryUrl})`;
+	return `${base}. ${SIGNING_SECRET_REMEDIATION}`;
+}
+
+function formatNotFoundDeliveryError(input: {
+	deliveryUrl: string;
+	ack: ServerDeliveryAckBody;
+}): string {
+	const base = input.ack.error
+		? `${input.ack.error} (HTTP 404 from ${input.deliveryUrl})`
+		: `Delivery endpoint not found at ${input.deliveryUrl} (HTTP 404)`;
+	return `${base}. ${DELIVERY_URL_REMEDIATION}`;
+}
+
+/**
+ * Formats a fetch/network failure into a user-facing delivery reachability error.
+ */
+export function describeDeliveryNetworkError(
+	deliveryUrl: string,
+	error: unknown,
+): string {
+	const code = getErrorCauseCode(error);
+	const rootMessage =
+		error instanceof Error ? error.message : 'Delivery request failed';
+
+	let detail: string;
+	switch (code) {
+		case 'ECONNREFUSED':
+			detail =
+				'connection refused — nothing accepted a TCP connection on that host and port';
+			break;
+		case 'ENOTFOUND':
+			detail = 'host not found — DNS could not resolve the hostname';
+			break;
+		case 'ETIMEDOUT':
+		case 'UND_ERR_CONNECT_TIMEOUT':
+			detail = 'connection timed out before the app responded';
+			break;
+		case 'ECONNRESET':
+			detail = 'connection reset while talking to the app';
+			break;
+		case 'CERT_HAS_EXPIRED':
+		case 'UNABLE_TO_VERIFY_LEAF_SIGNATURE':
+		case 'DEPTH_ZERO_SELF_SIGNED_CERT':
+			detail = `TLS certificate error (${code})`;
+			break;
+		default:
+			detail =
+				rootMessage === 'fetch failed' && code
+					? `${rootMessage} (${code})`
+					: rootMessage;
+	}
+
+	const message = [`Could not reach ${deliveryUrl}`, detail];
+	return message.join('. ');
+}
+
+/**
+ * Input to {@link formatServerDeliveryError}.
+ */
+export type FormatServerDeliveryErrorInput = {
 	deliveryUrl: string;
 	status: number;
 	body: string;
 	ack: ServerDeliveryAckBody;
-}): string {
+};
+
+/**
+ * Formats a user-facing error when server delivery fails (network, HTTP error, or app rejection).
+ */
+export function formatServerDeliveryError(
+	input: FormatServerDeliveryErrorInput,
+): string {
 	if (input.status === 0) {
-		return `Could not reach delivery URL (${input.deliveryUrl}): ${input.ack.error ?? input.body}`;
+		if (input.ack.error) {
+			return input.ack.error;
+		}
+		if (input.body.startsWith('Could not reach')) {
+			return input.body;
+		}
+		return describeDeliveryNetworkError(
+			input.deliveryUrl,
+			new Error(input.body || 'Delivery request failed'),
+		);
 	}
-	return input.ack.error ?? input.body ?? `HTTP ${input.status}`;
+
+	if (input.status === 401 || input.status === 403) {
+		return formatAuthDeliveryError(input);
+	}
+
+	if (input.status === 404) {
+		return formatNotFoundDeliveryError(input);
+	}
+
+	if (input.ack.error) {
+		return `${input.ack.error} (HTTP ${input.status} from ${input.deliveryUrl})`;
+	}
+
+	if (input.status >= 500) {
+		const body = input.body.trim();
+		return body
+			? `App failed while processing the delivery (HTTP ${input.status} from ${input.deliveryUrl}): ${truncateDeliveryBody(body)}`
+			: `App failed while processing the delivery (HTTP ${input.status} from ${input.deliveryUrl})`;
+	}
+
+	const body = input.body.trim();
+	if (body) {
+		return `${truncateDeliveryBody(body)} (HTTP ${input.status} from ${input.deliveryUrl})`;
+	}
+
+	return `Delivery failed with HTTP ${input.status} from ${input.deliveryUrl}`;
 }
 
 /**
@@ -261,8 +422,10 @@ export async function deliverSignedEnvelope(input: {
 		const text = await response.text();
 		return { ok: response.ok, status: response.status, body: text };
 	} catch (error) {
-		const message =
-			error instanceof Error ? error.message : 'Delivery request failed';
-		return { ok: false, status: 0, body: message };
+		return {
+			ok: false,
+			status: 0,
+			body: describeDeliveryNetworkError(input.deliveryUrl, error),
+		};
 	}
 }
