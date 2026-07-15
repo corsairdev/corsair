@@ -24,6 +24,15 @@ function logError(plugin: string, message: string, fix?: string) {
 for (const plugin of plugins) {
 	const pluginPath = path.join(PACKAGES_DIR, plugin);
 
+	// 0. Folder name must be lowercase alphanumeric (no underscores/hyphens)
+	if (!/^[a-z0-9]+$/.test(plugin)) {
+		logError(
+			plugin,
+			'Plugin folder name must be lowercase alphanumeric only (no underscores or hyphens)',
+			'Rename e.g. active_trail -> activetrail (like googlecalendar, dodopayments)',
+		);
+	}
+
 	// 1. Check package.json
 	const packageJsonPath = path.join(pluginPath, 'package.json');
 	if (!fs.existsSync(packageJsonPath)) {
