@@ -11,7 +11,9 @@ Call `setupCorsair({ tenantId })` on signup — no deploy per tenant. Idempotent
 
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
-import { github, slack, linear } from 'corsair';
+import { github } from '@corsair-dev/github';
+import { slack } from '@corsair-dev/slack';
+import { linear } from '@corsair-dev/linear';
 
 export const corsair = createCorsair({
     multiTenancy: true,
@@ -146,4 +148,4 @@ API keys require `setupCorsair({ tenantId })` first — `keys.set_*()` throws wi
 | `pnpm corsair setup --tenant=<id>` | Local / ops |
 | `pnpm corsair ui` | Dev exploration |
 
-Basics: [Setup](/getting-started/setup).
+Basics: [Provisioning & CLI](/going-to-production/provisioning-cli).
