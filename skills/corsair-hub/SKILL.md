@@ -29,6 +29,7 @@ The `/api/corsair` route holds the signing secret and receives Hub's server-to-s
 ## Reference
 
 - Setup guide (canonical): https://docs.corsair.dev/hub/setup.md
+- Framework route (all stacks, tabbed): https://docs.corsair.dev/adapters/handlers.md
 - Hub REST API (non-JS backends): https://docs.corsair.dev/hub/rest-api.md
 - Delivery URLs (dev self-registration, production POST): https://docs.corsair.dev/hub/delivery-urls.md
 - Environments (dev vs prod keys): https://docs.corsair.dev/hub/environments.md
