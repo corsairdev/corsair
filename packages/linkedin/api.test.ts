@@ -272,6 +272,16 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 			});
 		});
 
+		it('images.list queries by owner with q=owner', async () => {
+			await call('images', 'list', { owner: PERSON_URN });
+
+			expect(lastCall().options).toMatchObject({
+				method: 'GET',
+				url: '/v2/images',
+				query: { q: 'owner', owner: PERSON_URN },
+			});
+		});
+
 		it('images.list rejects calls with no owner or urns before hitting LinkedIn', async () => {
 			await expect(call('images', 'list', {})).rejects.toThrow(
 				/requires owner or a non-empty urns list/,
@@ -336,6 +346,16 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 					q: 'urns',
 					urns: ['urn:li:video:a', 'urn:li:video:b'],
 				},
+			});
+		});
+
+		it('videos.list queries by owner with q=owner', async () => {
+			await call('videos', 'list', { owner: PERSON_URN });
+
+			expect(lastCall().options).toMatchObject({
+				method: 'GET',
+				url: '/v2/videos',
+				query: { q: 'owner', owner: PERSON_URN },
 			});
 		});
 

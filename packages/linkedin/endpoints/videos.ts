@@ -21,7 +21,7 @@ export const getVideos: LinkedInEndpoints['GetVideos'] = async (ctx, input) => {
 		query.urns = input.urns;
 	} else if (input.owner) {
 		query.q = 'owner';
-		query.owners = input.owner;
+		query.owner = input.owner;
 	} else {
 		// LinkedIn's Videos finder requires q=urns|owner; calling without it
 		// returns a 400. Schema refine should catch this first.
