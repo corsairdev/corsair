@@ -15,7 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { Usage } from './endpoints';
 import type {
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
@@ -62,7 +62,7 @@ type RetailedEndpoint<K extends keyof RetailedEndpointOutputs> =
 	>;
 
 export type RetailedEndpoints = {
-	exampleGet: RetailedEndpoint<'exampleGet'>;
+	getUsage: RetailedEndpoint<'getUsage'>;
 };
 
 type RetailedWebhook<
@@ -77,8 +77,8 @@ export type RetailedWebhooks = {
 export type RetailedBoundWebhooks = BindWebhooks<RetailedWebhooks>;
 
 const retailedEndpointsNested = {
-	example: {
-		get: Example.get,
+	usage: {
+		get: Usage.get,
 	},
 } as const;
 
@@ -89,9 +89,9 @@ const retailedWebhooksNested = {
 } as const;
 
 export const retailedEndpointSchemas = {
-	'example.get': {
-		input: RetailedEndpointInputSchemas.exampleGet,
-		output: RetailedEndpointOutputSchemas.exampleGet,
+	'usage.get': {
+		input: RetailedEndpointInputSchemas.getUsage,
+		output: RetailedEndpointOutputSchemas.getUsage,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof retailedEndpointsNested
@@ -110,9 +110,9 @@ const retailedWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const retailedEndpointMeta = {
-	'example.get': {
+	'usage.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get API usage information',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof retailedEndpointsNested>;
 
@@ -199,8 +199,8 @@ export function retailed<const T extends RetailedPluginOptions>(
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
+	GetUsageInput,
+	GetUsageResponse,
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
 } from './endpoints/types';
