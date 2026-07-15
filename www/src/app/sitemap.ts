@@ -16,6 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'weekly',
 			priority: 0.8,
 		},
+		{
+			url: 'https://corsair.dev/privacy-policy',
+			changeFrequency: 'yearly',
+			priority: 0.3,
+		},
 		...posts.map((post) => ({
 			url: `https://corsair.dev/blog/${post.slug}`,
 			lastModified: post.publishedAt,
