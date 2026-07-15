@@ -11,38 +11,38 @@ import {
 	get as audienceExportsGet,
 	list as audienceExportsList,
 	query as audienceExportsQuery,
-} from './audienceExports';
+} from './audience-exports';
 import {
 	create as audienceListsCreate,
 	get as audienceListsGet,
 	list as audienceListsList,
 	query as audienceListsQuery,
-} from './audienceLists';
+} from './audience-lists';
 import { get as audiencesGet, list as audiencesList } from './audiences';
-import { list as calculatedMetricsList } from './calculatedMetrics';
-import { list as channelGroupsList } from './channelGroups';
-import { list as conversionEventsList } from './conversionEvents';
+import { list as calculatedMetricsList } from './calculated-metrics';
+import { list as channelGroupsList } from './channel-groups';
+import { list as conversionEventsList } from './conversion-events';
 import {
 	archive as customDimensionsArchive,
 	create as customDimensionsCreate,
 	get as customDimensionsGet,
 	list as customDimensionsList,
-} from './customDimensions';
+} from './custom-dimensions';
 import {
 	create as customMetricsCreate,
 	list as customMetricsList,
-} from './customMetrics';
+} from './custom-metrics';
 import {
 	list as dataStreamsList,
 	listEventCreateRules as dataStreamsListEventCreateRules,
 	listMeasurementProtocolSecrets as dataStreamsListMeasurementProtocolSecrets,
 	listSKAdNetworkConversionValueSchemas as dataStreamsListSKAdNetworkConversionValueSchemas,
-} from './dataStreams';
+} from './data-streams';
 import {
 	create as expandedDataSetsCreate,
 	list as expandedDataSetsList,
-} from './expandedDataSets';
-import { get as keyEventsGet, list as keyEventsList } from './keyEvents';
+} from './expanded-data-sets';
+import { get as keyEventsGet, list as keyEventsList } from './key-events';
 import {
 	listAdSense as linksListAdSense,
 	listBigQuery as linksListBigQuery,
@@ -55,7 +55,7 @@ import {
 import {
 	sendEvents as measurementProtocolSendEvents,
 	validateEvents as measurementProtocolValidateEvents,
-} from './measurementProtocol';
+} from './measurement-protocol';
 import {
 	createRollup as propertiesCreateRollup,
 	get as propertiesGet,
@@ -71,12 +71,12 @@ import {
 	create as recurringAudienceListsCreate,
 	get as recurringAudienceListsGet,
 	list as recurringAudienceListsList,
-} from './recurringAudienceLists';
+} from './recurring-audience-lists';
 import {
 	listAnnotations as reportingDataListAnnotations,
 	listSubpropertyEventFilters as reportingDataListSubpropertyEventFilters,
 	listSubpropertySyncConfigs as reportingDataListSubpropertySyncConfigs,
-} from './reportingData';
+} from './reporting-data';
 import {
 	batchRun as reportsBatchRun,
 	batchRunPivot as reportsBatchRunPivot,
@@ -92,7 +92,7 @@ import {
 	get as reportTasksGet,
 	list as reportTasksList,
 	query as reportTasksQuery,
-} from './reportTasks';
+} from './report-tasks';
 
 export const AccountsEndpoints = {
 	get: accountsGet,
