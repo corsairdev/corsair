@@ -510,12 +510,14 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					);
 				}
 
-				// Fire only on the absent -> present edge: a document that already
-				// matched the searchQuery must not re-trigger on every Drive push.
+				// Fire only on the absent -> present edge: the cached snapshot must
+				// say the searchQuery did not match before. A document that already
+				// matched must not re-trigger on every Drive push (including the
+				// first delivery with no prior baseline).
 				if (
 					isEnabled(ctx, 'documentSearchUpdate') &&
 					searchMatchPresent &&
-					cached?.data?.hasSearchMatch !== true
+					cached?.data?.hasSearchMatch === false
 				) {
 					return emit(
 						ctx,
