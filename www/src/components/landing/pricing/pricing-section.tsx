@@ -29,7 +29,7 @@ const TIERS = [
 		description: 'For teams in production',
 		cta: {
 			label: 'Get started',
-			href: APP_URL,
+			href: `${APP_URL}/login?redirect=${encodeURIComponent('/upgrade')}`,
 			external: true,
 			variant: 'link' as const,
 		},
