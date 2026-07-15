@@ -20,6 +20,9 @@ export const GoogleDocsDocument = z.object({
 	// Whether the configured trigger keyword was present at last sight;
 	// lets keywordDetected fire only on the absent -> present edge.
 	hasKeyword: z.boolean().optional(),
+	// Whether the configured searchQuery matched title or body at last sight;
+	// lets documentSearchUpdate fire only on the absent -> present edge.
+	hasSearchMatch: z.boolean().optional(),
 	filePath: z.string().optional(),
 	createdAt: z.coerce.date().optional(),
 });

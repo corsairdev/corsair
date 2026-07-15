@@ -62,6 +62,15 @@ async function persistDocument(
 							.includes(triggers.keyword.toLowerCase()),
 					}
 				: {}),
+			...(triggers.searchQuery
+				? {
+						hasSearchMatch:
+							(document.title ?? '')
+								.toLowerCase()
+								.includes(triggers.searchQuery.toLowerCase()) ||
+							text.toLowerCase().includes(triggers.searchQuery.toLowerCase()),
+					}
+				: {}),
 		});
 	} catch (error) {
 		console.warn('Failed to save document to database:', error);

@@ -781,6 +781,42 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 			);
 		});
 
+		it('persistDocument refreshes the searchMatch baseline when configured', async () => {
+			mockRequest.mockResolvedValue({
+				...minimalDocument,
+				title: 'Quarterly PLAN review',
+				body: {
+					content: [
+						{
+							paragraph: {
+								elements: [{ textRun: { content: 'plain body' } }],
+							},
+						},
+					],
+				},
+			});
+			const upsert = jest.fn().mockResolvedValue({ id: 'entity-1' });
+			const searchCtx = testContext({
+				options: { triggers: { searchQuery: 'plan' } },
+				db: {
+					documents: {
+						findByEntityId: jest
+							.fn()
+							.mockResolvedValue({ data: { hasSearchMatch: false } }),
+						upsertByEntityId: upsert,
+					},
+				},
+			});
+
+			await DocumentsEndpoints.getDocument(searchCtx, { documentId: 'doc1' });
+
+			// title match is enough; mirrors webhook title-or-body matching
+			expect(upsert).toHaveBeenCalledWith(
+				'doc1',
+				expect.objectContaining({ hasSearchMatch: true }),
+			);
+		});
+
 		it('searchDocuments merges prior cached fields instead of replacing them', async () => {
 			mockRequest.mockResolvedValue({
 				files: [{ id: 'doc1', name: 'Found Doc' }],

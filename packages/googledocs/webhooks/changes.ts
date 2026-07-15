@@ -46,6 +46,7 @@ type CachedDocument = {
 		wordCount?: number;
 		hasPlaceholder?: boolean;
 		hasKeyword?: boolean;
+		hasSearchMatch?: boolean;
 	};
 };
 
@@ -382,6 +383,12 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					!!opts.keyword &&
 					text.toLowerCase().includes(opts.keyword.toLowerCase());
 
+				const searchQueryLower = opts.searchQuery?.toLowerCase();
+				const searchMatchPresent =
+					!!searchQueryLower &&
+					((file.name ?? '').toLowerCase().includes(searchQueryLower) ||
+						text.toLowerCase().includes(searchQueryLower));
+
 				// Measured with the configured countBy so the persisted baseline and
 				// the threshold comparison below always use the same metric.
 				const measuredCount =
@@ -406,6 +413,9 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 								? { hasPlaceholder: placeholderPresent }
 								: {}),
 							...(opts.keyword ? { hasKeyword: keywordPresent } : {}),
+							...(opts.searchQuery
+								? { hasSearchMatch: searchMatchPresent }
+								: {}),
 						});
 					} catch (error) {
 						console.warn(
@@ -500,15 +510,12 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					);
 				}
 
-				// Match against the title or the document body: the fetched text is
-				// already in scope, and a search trigger that ignores content would
-				// silently miss every body-only match.
-				const searchQueryLower = opts.searchQuery?.toLowerCase();
+				// Fire only on the absent -> present edge: a document that already
+				// matched the searchQuery must not re-trigger on every Drive push.
 				if (
 					isEnabled(ctx, 'documentSearchUpdate') &&
-					searchQueryLower &&
-					((file.name ?? '').toLowerCase().includes(searchQueryLower) ||
-						text.toLowerCase().includes(searchQueryLower))
+					searchMatchPresent &&
+					cached?.data?.hasSearchMatch !== true
 				) {
 					return emit(
 						ctx,
