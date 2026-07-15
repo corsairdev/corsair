@@ -157,7 +157,11 @@ const CACHE_RULES: Record<string, CacheRule> = {
 		idKeys: ['id'],
 		deleteInputKeys: ['endpoint_id'],
 	},
-	getOrganization: { entity: 'organizations', idKeys: ['id'] },
+	getOrganization: {
+		entity: 'organizations',
+		idKeys: ['id'],
+		itemKeys: ['organization'],
+	},
 	getCurrentUserOrganizations: {
 		entity: 'organizations',
 		idKeys: ['id'],

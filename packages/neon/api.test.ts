@@ -554,6 +554,39 @@ describe('Neon endpoints', () => {
 		);
 	});
 
+	it('getOrganization unwraps the organization envelope into the cache', async () => {
+		const plugin = neon({ key: 'test-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			organizations: {
+				getOrganization: (
+					ctx: NeonContext,
+					input: { org_id: string },
+				) => Promise<unknown>;
+			};
+		};
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				organizations: { upsertByEntityId: jest.fn() },
+			},
+		} as unknown as NeonContext;
+
+		mockRequest.mockResolvedValueOnce({
+			organization: { id: 'org-cool-breeze-12345678', name: 'Acme' },
+		});
+
+		await endpoints.organizations.getOrganization(ctxWithDb, {
+			org_id: 'org-cool-breeze-12345678',
+		});
+
+		expect(ctxWithDb.db.organizations.upsertByEntityId).toHaveBeenCalledWith(
+			'org-cool-breeze-12345678',
+			expect.objectContaining({ name: 'Acme' }),
+		);
+	});
+
 	it('never caches the plaintext token returned by createApiKey', async () => {
 		const plugin = neon({ key: 'test-token' });
 		const endpoints = plugin.endpoints as NonNullable<
