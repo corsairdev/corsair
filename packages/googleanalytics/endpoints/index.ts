@@ -73,6 +73,12 @@ import {
 	list as recurringAudienceListsList,
 } from './recurring-audience-lists';
 import {
+	create as reportTasksCreate,
+	get as reportTasksGet,
+	list as reportTasksList,
+	query as reportTasksQuery,
+} from './report-tasks';
+import {
 	listAnnotations as reportingDataListAnnotations,
 	listSubpropertyEventFilters as reportingDataListSubpropertyEventFilters,
 	listSubpropertySyncConfigs as reportingDataListSubpropertySyncConfigs,
@@ -87,12 +93,6 @@ import {
 	runPivot as reportsRunPivot,
 	runRealtime as reportsRunRealtime,
 } from './reports';
-import {
-	create as reportTasksCreate,
-	get as reportTasksGet,
-	list as reportTasksList,
-	query as reportTasksQuery,
-} from './report-tasks';
 
 export const AccountsEndpoints = {
 	get: accountsGet,
