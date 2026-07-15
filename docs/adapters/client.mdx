@@ -1,6 +1,6 @@
 ---
 title: Vanilla Client
-description: createCorsairClient is a typed fetch wrapper for the management API. No React, no framework, just types.
+description: createCorsairClient is a typed fetch wrapper for the management API. No React, no framework — types only.
 ---
 
 `createCorsairClient({ baseURL })` returns a typed client that mirrors every route on the [handler](/management/handler). Use it from a Node script, a CLI, a worker, or a non-React frontend.
@@ -11,7 +11,7 @@ import { createCorsairClient } from "corsair";
 const client = createCorsairClient({ baseURL: "/api/corsair" });
 ```
 
-For React, prefer [`createCorsairReactClient`](/management/react) — it wraps this one and adds hooks.
+For React, prefer [`createCorsairReactClient`](/adapters/react) — it wraps this one and adds hooks.
 
 ## Reading
 

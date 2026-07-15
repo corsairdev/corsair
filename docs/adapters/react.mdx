@@ -3,7 +3,7 @@ title: React Hooks
 description: createCorsairReactClient returns typed React hooks over the management API — useTenants, useConnectionStatus, useOAuthCallback, and friends.
 ---
 
-`createCorsairReactClient({ baseURL })` returns a bag of typed React hooks built on top of [`createCorsairClient`](/management/client). One factory call per app — use the returned hooks anywhere in your component tree.
+`createCorsairReactClient({ baseURL })` returns a bag of typed React hooks built on top of [`createCorsairClient`](/adapters/client). One factory call per app — use the returned hooks anywhere in your component tree.
 
 ```tsx corsair-client.ts
 "use client";
@@ -19,7 +19,7 @@ export const {
 } = createCorsairReactClient({ baseURL: "/api/corsair" });
 ```
 
-React 18+ is a peer dependency. If you aren't on React, use the [vanilla client](/management/client).
+React 18+ is a peer dependency. If you aren't on React, use the [vanilla client](/adapters/client).
 
 ## Read hooks
 
@@ -107,7 +107,7 @@ const handleClick = async () => {
 };
 ```
 
-It is exactly the [vanilla client](/management/client), sharing the same `baseURL`.
+It is exactly the [vanilla client](/adapters/client), sharing the same `baseURL`.
 
 ## What this is not
 
