@@ -75,6 +75,13 @@ export type OAuthCallbackTunnelPayload = {
 	code: string;
 	state: string;
 	redirectUri: string;
+	/**
+	 * Set by Hub, which authenticates the delivery envelope with the signing
+	 * secret and cannot sign a Corsair `state`. When present, the callback is
+	 * processed against these instead of decoding `state`.
+	 */
+	plugin?: string;
+	tenantId?: string;
 };
 
 export type OAuthTokensTunnelPayload = {
@@ -270,7 +277,15 @@ async function handleOAuthCallbackTunnel(
 	corsair: unknown,
 	payload: OAuthCallbackTunnelPayload,
 ): Promise<TunnelAck> {
-	await processOAuthCallback(corsair, payload);
+	// Envelope signature already verified by processCorsair before dispatch.
+	await processOAuthCallback(corsair, {
+		code: payload.code,
+		state: payload.state,
+		redirectUri: payload.redirectUri,
+		trusted: true,
+		plugin: payload.plugin,
+		tenantId: payload.tenantId,
+	});
 	return { status: 'ok' };
 }
 
