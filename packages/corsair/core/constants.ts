@@ -47,6 +47,7 @@ export const BaseProviders = [
 	'intercom',
 	'jira',
 	'linear',
+	'linkedin',
 	'monday',
 	'neon',
 	'notion',
@@ -119,6 +120,7 @@ export const ProviderDisplayNames = {
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
+	linkedin: 'LinkedIn',
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
@@ -198,6 +200,7 @@ export type AllProviders =
 	| 'intercom'
 	| 'jira'
 	| 'linear'
+	| 'linkedin'
 	| 'monday'
 	| 'neon'
 	| 'notion'
