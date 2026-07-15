@@ -1,8 +1,37 @@
 import { parseHubApiErrorBody } from '../contracts/connect-api';
+import { resolveHubDeliveryUrl } from '../resolve-delivery-url';
 import type { HubConfig } from '../types';
 
 export function normalizeHubApiUrl(apiUrl: string): string {
 	return apiUrl.replace(/\/$/, '');
+}
+
+/**
+ * The delivery URL this app should advertise to Hub, or null if there's nothing
+ * to send. Only development keys self-register: Hub applies the delivery URL for
+ * development environments only, so advertising anything on a production key is a
+ * no-op. Production delivery URLs are set deliberately in the dashboard.
+ */
+export function deliveryUrlToAdvertise(hub: HubConfig): string | null {
+	if (!hub.projectApiKey.startsWith('ck_dev_')) {
+		return null;
+	}
+	try {
+		return resolveHubDeliveryUrl();
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Every SDK call tells Hub where this app lives, so nobody has to type the
+ * delivery URL into the dashboard. The URL comes from the app's own trusted
+ * config (CORSAIR_DELIVERY_URL / APP_URL / PORT) — never from inbound request
+ * headers. Hub applies it for development keys only.
+ */
+export function appDeliveryUrlHeader(hub: HubConfig): Record<string, string> {
+	const url = deliveryUrlToAdvertise(hub);
+	return url ? { 'x-corsair-delivery-url': url } : {};
 }
 
 export async function readHubJsonResponse(
@@ -61,6 +90,7 @@ export async function hubApiPost<T>(input: {
 		headers: {
 			'content-type': 'application/json',
 			authorization: `Bearer ${input.hub.projectApiKey}`,
+			...appDeliveryUrlHeader(input.hub),
 		},
 		body: JSON.stringify(input.body),
 	});
@@ -87,6 +117,7 @@ export async function hubApiGet<T>(input: {
 		method: 'GET',
 		headers: {
 			authorization: `Bearer ${input.hub.projectApiKey}`,
+			...appDeliveryUrlHeader(input.hub),
 		},
 	});
 

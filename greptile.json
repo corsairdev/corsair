@@ -1,0 +1,52 @@
+{
+  "strictness": 2,
+  "commentTypes": ["logic", "syntax"],
+  "statusCheck": true,
+  "triggerOnUpdates": true,
+  "triggerOnDrafts": false,
+  "ignorePatterns": "pnpm-lock.yaml\n**/dist/**",
+  "customContext": {
+    "rules": [
+      {
+        "scope": ["packages/**"],
+        "rule": "A plugin PR must only modify files inside a single packages/<plugin>/ directory, plus packages/corsair/core/constants.ts and pnpm-lock.yaml. Flag any other modified file as a critical (P0) issue."
+      },
+      {
+        "scope": ["packages/**"],
+        "rule": "Plugin packages must include at least one *.test.ts file with real assertions against the plugin's endpoints. Flag missing, empty, or assertion-free tests as P1."
+      },
+      {
+        "scope": ["packages/**"],
+        "rule": "Flag boilerplate residue from the plugin generator as P1: placeholder base URLs, commented-out Authorization headers, leftover endpoints/example.ts files, and TODO stubs."
+      },
+      {
+        "scope": ["**"],
+        "rule": "Flag any use of eval, new Function(), or execution of dynamically generated code as a critical (P0) issue. Flag hardcoded secrets, tokens, or API keys as P0."
+      },
+      {
+        "scope": ["packages/**"],
+        "rule": "Every endpoint must validate inputs and outputs with zod schemas, route errors through the plugin's error-handlers.ts including rate-limit (429) handling, and support pagination on list endpoints when the provider API offers it. Flag violations as P1."
+      },
+      {
+        "scope": ["packages/**"],
+        "rule": "Verify the implementation matches the PR description: every endpoint the description claims must exist and work as described. Flag mismatches as P1."
+      },
+      {
+        "scope": ["packages/**"],
+        "rule": "Flag `any` types on exported or public surfaces as P2, and every implemented endpoint lacking a corresponding test as P1."
+      }
+    ],
+    "files": [
+      {
+        "scope": ["packages/**"],
+        "path": ".github/PLUGIN_PR_RULES.md",
+        "description": "The canonical rules every plugin PR must satisfy"
+      },
+      {
+        "scope": ["packages/**"],
+        "path": "CONTRIBUTING.md",
+        "description": "Contributor guide"
+      }
+    ]
+  }
+}

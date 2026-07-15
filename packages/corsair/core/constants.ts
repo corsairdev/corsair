@@ -37,6 +37,7 @@ export const BaseProviders = [
 	'gitlab',
 	'gmail',
 	'googlecalendar',
+	'googledocs',
 	'googledrive',
 	'googlemeet',
 	'googlesheets',
@@ -47,7 +48,9 @@ export const BaseProviders = [
 	'intercom',
 	'jira',
 	'linear',
+	'linkedin',
 	'monday',
+	'neon',
 	'notion',
 	'onedrive',
 	'openweathermap',
@@ -108,16 +111,20 @@ export const ProviderDisplayNames = {
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
 	googlecalendar: 'Google Calendar',
+	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
-	googlesheets: 'Google Sheets',
 	googlemeet: 'Google Meet',
+	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
+	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
+	linkedin: 'LinkedIn',
 	monday: 'Monday',
+	neon: 'Neon',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
 	openweathermap: 'OpenWeatherMap',
@@ -151,7 +158,6 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -186,6 +192,7 @@ export type AllProviders =
 	| 'gitlab'
 	| 'gmail'
 	| 'googlecalendar'
+	| 'googledocs'
 	| 'googledrive'
 	| 'googlemeet'
 	| 'googlesheets'
@@ -196,7 +203,9 @@ export type AllProviders =
 	| 'intercom'
 	| 'jira'
 	| 'linear'
+	| 'linkedin'
 	| 'monday'
+	| 'neon'
 	| 'notion'
 	| 'onedrive'
 	| 'openweathermap'

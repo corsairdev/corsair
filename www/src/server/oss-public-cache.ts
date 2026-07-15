@@ -1,7 +1,10 @@
 import { revalidateTag, unstable_cache } from 'next/cache';
 
 import { db } from '@/db';
-import { getActiveClaimsForUser } from '@/db/integration-status';
+import {
+	getActiveClaimsForUser,
+	getUserClaimEligibility,
+} from '@/db/integration-status';
 import { appRouter } from '@/server/api/root';
 
 export const OSS_CACHE_TAGS = {
@@ -83,16 +86,37 @@ export async function getIntegrationListForPage(
 
 	if (!userId) return list;
 
-	const claims = await getActiveClaimsForUser(db, userId);
-	const claimedIds = new Set(claims.map((claim) => claim.integrationId));
+	try {
+		const [claims, claimEligibility] = await Promise.all([
+			getActiveClaimsForUser(db, userId),
+			getUserClaimEligibility(db, userId),
+		]);
+		const claimedIds = new Set(claims.map((claim) => claim.integrationId));
+		const userCanClaim = claimEligibility.canClaim;
 
-	return {
-		...list,
-		items: list.items.map((item) => ({
-			...item,
-			claimedByCurrentUser: claimedIds.has(item.id),
-		})),
-	};
+		return {
+			...list,
+			wipIntegrationName: claimEligibility.wipIntegrationName,
+			claimBlockReason: claimEligibility.blockReason,
+			items: list.items.map((item) => ({
+				...item,
+				claimedByCurrentUser: claimedIds.has(item.id),
+				userCanClaim,
+			})),
+		};
+	} catch (error) {
+		console.error('[oss] claim overlay failed', error);
+		// Fail safe: disable claim buttons rather than showing stale public-cache state.
+		return {
+			...list,
+			wipIntegrationName: null,
+			claimBlockReason: null,
+			items: list.items.map((item) => ({
+				...item,
+				userCanClaim: false,
+			})),
+		};
+	}
 }
 
 export const getCachedContributorProfile = unstable_cache(

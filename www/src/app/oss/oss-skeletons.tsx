@@ -9,24 +9,15 @@ export function OssHeroSkeleton() {
 		<section className="pt-12 pb-10 sm:pt-16 sm:pb-14">
 			<div className="grid gap-10 lg:grid-cols-[minmax(0,6fr)_minmax(0,5fr)] lg:items-center lg:gap-16">
 				<div>
-					<p className="font-[family-name:var(--font-landing-mono)] text-xs font-medium tracking-[0.02em] text-[#1c1c1c99] uppercase">
-						Open source contributor program
-					</p>
-					<h1 className="mt-5 text-[clamp(2rem,4.5vw,3.25rem)] font-light leading-[1.1] tracking-[-0.02em] text-[#1c1c1c]">
-						<span className="font-[family-name:var(--landing-font-serif)] italic">
-							Every integration,
-						</span>
-						<br />
-						<span className="font-[family-name:var(--landing-font-sans)] tracking-[-0.04em]">
-							built in the open.
-						</span>
-					</h1>
-					<p className="mt-4 max-w-[520px] text-[clamp(1.125rem,2vw,1.375rem)] font-light leading-[1.35] text-[#1c1c1c]">
-						Ship a plugin, get it merged — earn AI credits.
-					</p>
-					<div className="mt-5 space-y-2">
-						<Pulse className="h-4 w-full max-w-md rounded" />
-						<Pulse className="h-4 w-full max-w-sm rounded" />
+					<div className="max-w-[520px] space-y-3.5" aria-hidden>
+						{Array.from({ length: 4 }, (_, index) => (
+							<div key={index} className="flex gap-4">
+								<Pulse className="mt-2 size-2.5 shrink-0 rounded-full" />
+								<Pulse
+									className={`h-6 rounded ${index === 2 ? 'w-36' : index === 3 ? 'w-56' : 'w-32'}`}
+								/>
+							</div>
+						))}
 					</div>
 					<div className="mt-7 flex flex-wrap gap-3">
 						<Pulse className="h-10 w-36 rounded-lg" />
