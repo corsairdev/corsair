@@ -72,7 +72,7 @@ function buildConnectionStatusReport(input: {
  * OAuth completes (email-style links) and after a watch/subscription is created
  * (channel_id / subscription_id). No-op unless Hub is configured.
  */
-export function registerHubWebhookTenantLink(
+export async function registerHubWebhookTenantLink(
 	hub: HubConfig,
 	input: {
 		plugin: string;
@@ -80,8 +80,16 @@ export function registerHubWebhookTenantLink(
 		link: WebhookTenantLink;
 		authType?: AuthTypes;
 	},
-): void {
-	reportConnectionStatusForHub(hub, buildWebhookLinkReport(input));
+): Promise<void> {
+	// Awaitable (unlike the fire-and-forget status reports) so short-lived CLI
+	// callers can ensure the registration completes before the process exits.
+	// Never throws — Hub availability must not break connect/subscribe flows.
+	await hubApiPost({
+		hub,
+		path: '/connections/report',
+		body: buildWebhookLinkReport(input),
+		parseResponse: () => ({ ok: true as const }),
+	}).catch(() => {});
 }
 
 function fireAndForgetReport(

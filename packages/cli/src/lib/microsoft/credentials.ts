@@ -191,8 +191,9 @@ export async function saveSubscriptionTenantLink(
 	};
 
 	// Hub mode: forward so Hub can route inbound Graph notifications to this tenant.
+	// Awaited so the registration completes before this short-lived CLI exits.
 	if (options.internal.hub) {
-		registerHubWebhookTenantLink(options.internal.hub, {
+		await registerHubWebhookTenantLink(options.internal.hub, {
 			plugin: options.pluginId,
 			tenantId: options.tenantId,
 			link,

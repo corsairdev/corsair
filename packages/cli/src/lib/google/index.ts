@@ -172,8 +172,9 @@ export async function runGoogleSubscribe({
 			externalId: string;
 		}) => {
 			// Hub mode: forward so Hub can route inbound notifications to this tenant.
+			// Awaited so the registration completes before this short-lived CLI exits.
 			if (internal.hub) {
-				registerHubWebhookTenantLink(internal.hub, {
+				await registerHubWebhookTenantLink(internal.hub, {
 					plugin: pluginType,
 					tenantId,
 					link,

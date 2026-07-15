@@ -134,8 +134,9 @@ export async function processManagedOAuthDelivery(
 			}
 
 			// Hub mode: forward the identity so Hub can route inbound webhooks.
+			// Fire-and-forget: never block the OAuth delivery on Hub availability.
 			if (internal.hub) {
-				registerHubWebhookTenantLink(internal.hub, {
+				void registerHubWebhookTenantLink(internal.hub, {
 					plugin: pluginId,
 					tenantId,
 					link: tenantLink,
