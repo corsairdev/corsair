@@ -264,7 +264,8 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 				url: '/v2/images',
 				query: {
 					q: 'urns',
-					urns: 'urn:li:image:a,urn:li:image:b',
+					// arrays pass through so the HTTP layer emits repeated urns= keys
+					urns: ['urn:li:image:a', 'urn:li:image:b'],
 					start: 5,
 					count: 20,
 				},
@@ -320,6 +321,21 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 				method: 'GET',
 				url: '/v2/videos',
 				query: { q: 'urns', urns: 'urn:li:video:v1' },
+			});
+		});
+
+		it('videos.list batches URNs as a repeated query array', async () => {
+			await call('videos', 'list', {
+				urns: ['urn:li:video:a', 'urn:li:video:b'],
+			});
+
+			expect(lastCall().options).toMatchObject({
+				method: 'GET',
+				url: '/v2/videos',
+				query: {
+					q: 'urns',
+					urns: ['urn:li:video:a', 'urn:li:video:b'],
+				},
 			});
 		});
 

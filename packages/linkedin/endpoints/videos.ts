@@ -3,15 +3,22 @@ import { LinkedInAPIError, makeAuthenticatedLinkedInRequest } from '../client';
 import type { LinkedInEndpoints } from '../index';
 import type { LinkedInEndpointOutputs } from './types';
 
+type Query = Record<
+	string,
+	string | number | boolean | ReadonlyArray<string> | undefined
+>;
+
 export const getVideos: LinkedInEndpoints['GetVideos'] = async (ctx, input) => {
-	const query: Record<string, string | number | boolean | undefined> = {};
+	const query: Query = {};
 
 	if (input.video_urn) {
 		query.q = 'urns';
 		query.urns = input.video_urn;
 	} else if (input.urns && input.urns.length > 0) {
 		query.q = 'urns';
-		query.urns = input.urns.join(',');
+		// Pass the array through so the HTTP layer emits repeated urns= keys;
+		// a comma-joined value is not a valid Restli multi-value for this finder.
+		query.urns = input.urns;
 	} else if (input.owner) {
 		query.q = 'owner';
 		query.owners = input.owner;
