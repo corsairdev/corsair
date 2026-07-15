@@ -1,29 +1,31 @@
 import { z } from 'zod';
 
-const ExampleGetInputSchema = z.object({
-	id: z.string(),
+/* -------------------------------------------------------------------------- */
+/*                                   Usage                                    */
+/* -------------------------------------------------------------------------- */
+
+const GetUsageInputSchema = z.object({});
+
+const GetUsageResponseSchema = z.object({
+	plan: z.string(),
+	remaining: z.string(),
 });
 
-export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
-
-const ExampleGetResponseSchema = z.object({
-	id: z.string(),
-});
-
-export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
+export type GetUsageInput = z.infer<typeof GetUsageInputSchema>;
+export type GetUsageResponse = z.infer<typeof GetUsageResponseSchema>;
 
 export type RetailedEndpointInputs = {
-	exampleGet: ExampleGetInput;
+	getUsage: GetUsageInput;
 };
 
 export type RetailedEndpointOutputs = {
-	exampleGet: ExampleGetResponse;
+	getUsage: GetUsageResponse;
 };
 
 export const RetailedEndpointInputSchemas = {
-	exampleGet: ExampleGetInputSchema,
+	getUsage: GetUsageInputSchema,
 } as const;
 
 export const RetailedEndpointOutputSchemas = {
-	exampleGet: ExampleGetResponseSchema,
+	getUsage: GetUsageResponseSchema,
 } as const;
