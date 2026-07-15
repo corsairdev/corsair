@@ -14,6 +14,7 @@ export const search: ConfluenceEndpoints['pagesSearch'] = async (
 		ConfluenceEndpointOutputs['pagesSearch']
 	>('search', ctx.key, cloudUrl, {
 		method: 'GET',
+		authType: ctx.options.authType,
 		query: {
 			cql: input.cql,
 			...(input.cqlcontext && { cqlcontext: input.cqlcontext }),

@@ -11,6 +11,7 @@ export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
 		ConfluenceEndpointOutputs['pagesGet']
 	>('../../api/v2/pages', ctx.key, cloudUrl, {
 		method: 'GET',
+		authType: ctx.options.authType,
 		query: {
 			...(input.space_id && { 'space-id': input.space_id }),
 			...(input.title && { title: input.title }),

@@ -11,6 +11,7 @@ export const list: ConfluenceEndpoints['spacesList'] = async (ctx, input) => {
 		ConfluenceEndpointOutputs['spacesList']
 	>('space', ctx.key, cloudUrl, {
 		method: 'GET',
+		authType: ctx.options.authType,
 		query: {
 			...(input.key && { key: input.key }),
 			...(input.type && { type: input.type }),

@@ -23,9 +23,19 @@ export async function makeConfluenceRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		/**
+		 * When 'oauth_2', the Authorization header uses Bearer scheme.
+		 * Otherwise (api_key or static key), Basic auth is used.
+		 */
+		authType?: 'api_key' | 'oauth_2';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, authType } = options;
+
+	const authorization =
+		authType === 'oauth_2'
+			? `Bearer ${apiKey}`
+			: `Basic ${Buffer.from(apiKey).toString('base64')}`;
 
 	const config: OpenAPIConfig = {
 		BASE: `${cloudUrl}/wiki/rest/api`,
@@ -36,7 +46,7 @@ export async function makeConfluenceRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
-			Authorization: `Basic ${Buffer.from(apiKey).toString('base64')}`,
+			Authorization: authorization,
 		},
 	};
 	const requestOptions: ApiRequestOptions = {
