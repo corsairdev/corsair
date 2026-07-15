@@ -20,6 +20,7 @@ import {
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
+import { registerHubWebhookTenantLink } from '../hub/report-connection-status';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
@@ -331,6 +332,17 @@ export async function processOAuthCallback(
 					`[corsair:oauth] Failed to persist webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
 					error,
 				);
+			}
+
+			// Hub mode: forward the identity so Hub can route inbound webhooks.
+			// Fire-and-forget: never block the OAuth callback on Hub availability.
+			if (internal.hub) {
+				void registerHubWebhookTenantLink(internal.hub, {
+					plugin: pluginId,
+					tenantId,
+					link: tenantLink,
+					authType: 'oauth_2',
+				});
 			}
 		}
 	} catch (error) {

@@ -1,0 +1,2006 @@
+---
+title: API
+description: "API reference for Google Docs: every `googledocs.api.*` operation with input and output types."
+---
+
+Every `googledocs.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Documents
+
+### copyDocument
+
+`documents.copyDocument`
+
+Copy an existing Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.copyDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `parents` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `mimeType` | `string` | No | — |
+| `parents` | `string[]` | No | — |
+| `trashed` | `boolean` | No | — |
+| `createdTime` | `string` | No | — |
+| `modifiedTime` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `size` | `string` | No | — |
+| `owners` | `any[]` | No | — |
+
+
+
+---
+
+### createBlankDocument
+
+`documents.createBlankDocument`
+
+Create a blank Google Doc [DEPRECATED: prefer documents.createDocument]
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.createBlankDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `title` | `string` | No | — |
+| `revisionId` | `string` | No | — |
+| `body` | `any` | No | — |
+| `headers` | `any` | No | — |
+| `footers` | `any` | No | — |
+| `footnotes` | `any` | No | — |
+| `inlineObjects` | `any` | No | — |
+| `positionedObjects` | `any` | No | — |
+| `namedRanges` | `any` | No | — |
+| `lists` | `any` | No | — |
+| `documentStyle` | `any` | No | — |
+| `suggestionsViewMode` | `string` | No | — |
+
+
+
+---
+
+### createDocument
+
+`documents.createDocument`
+
+Create a Google Doc with an optional title and initial text
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.createDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `title` | `string` | No | — |
+| `revisionId` | `string` | No | — |
+| `body` | `any` | No | — |
+| `headers` | `any` | No | — |
+| `footers` | `any` | No | — |
+| `footnotes` | `any` | No | — |
+| `inlineObjects` | `any` | No | — |
+| `positionedObjects` | `any` | No | — |
+| `namedRanges` | `any` | No | — |
+| `lists` | `any` | No | — |
+| `documentStyle` | `any` | No | — |
+| `suggestionsViewMode` | `string` | No | — |
+
+
+
+---
+
+### createDocumentMarkdown
+
+`documents.createDocumentMarkdown`
+
+Create a Google Doc initialized from Markdown text
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.createDocumentMarkdown({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `markdown` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `title` | `string` | No | — |
+| `revisionId` | `string` | No | — |
+| `body` | `any` | No | — |
+| `headers` | `any` | No | — |
+| `footers` | `any` | No | — |
+| `footnotes` | `any` | No | — |
+| `inlineObjects` | `any` | No | — |
+| `positionedObjects` | `any` | No | — |
+| `namedRanges` | `any` | No | — |
+| `lists` | `any` | No | — |
+| `documentStyle` | `any` | No | — |
+| `suggestionsViewMode` | `string` | No | — |
+
+
+
+---
+
+### exportDocumentAsPdf
+
+`documents.exportDocumentAsPdf`
+
+Export a Google Doc as PDF (Drive enforces a 10MB limit)
+
+**Risk:** `read`
+
+```ts
+await corsair.googledocs.api.documents.exportDocumentAsPdf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `mimeType` | `string` | Yes | — |
+| `data` | `string` | Yes | — |
+
+
+
+---
+
+### getDocument
+
+`documents.getDocument`
+
+Retrieve a Google Doc by id
+
+**Risk:** `read`
+
+```ts
+await corsair.googledocs.api.documents.getDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `title` | `string` | No | — |
+| `revisionId` | `string` | No | — |
+| `body` | `any` | No | — |
+| `headers` | `any` | No | — |
+| `footers` | `any` | No | — |
+| `footnotes` | `any` | No | — |
+| `inlineObjects` | `any` | No | — |
+| `positionedObjects` | `any` | No | — |
+| `namedRanges` | `any` | No | — |
+| `lists` | `any` | No | — |
+| `documentStyle` | `any` | No | — |
+| `suggestionsViewMode` | `string` | No | — |
+
+
+
+---
+
+### getDocumentPlaintext
+
+`documents.getDocumentPlaintext`
+
+Retrieve a Google Doc as best-effort plain text
+
+**Risk:** `read`
+
+```ts
+await corsair.googledocs.api.documents.getDocumentPlaintext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `text` | `string` | Yes | — |
+| `wordCount` | `number` | Yes | — |
+
+
+
+---
+
+### listSpreadsheetCharts
+
+`documents.listSpreadsheetCharts`
+
+List charts in a Google Sheets spreadsheet for embedding
+
+**Risk:** `read`
+
+```ts
+await corsair.googledocs.api.documents.listSpreadsheetCharts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `spreadsheetId` | `string` | No | — |
+| `sheets` | `any[]` | No | — |
+
+
+
+---
+
+### searchDocuments
+
+`documents.searchDocuments`
+
+Search Google Docs by name, content, or date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.googledocs.api.documents.searchDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `orderBy` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `incompleteSearch` | `boolean` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  mimeType?: string,
+  parents?: string[],
+  trashed?: boolean,
+  createdTime?: string,
+  modifiedTime?: string,
+  webViewLink?: string,
+  size?: string,
+  owners?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDocumentBatch
+
+`documents.updateDocumentBatch`
+
+Apply batchUpdate edits [DEPRECATED: prefer documents.updateExistingDocument]
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.updateDocumentBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `requests` | `object[]` | Yes | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDocumentMarkdown
+
+`documents.updateDocumentMarkdown`
+
+Replace a Google Doc content with Markdown text
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.updateDocumentMarkdown({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `markdown` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDocumentSectionMarkdown
+
+`documents.updateDocumentSectionMarkdown`
+
+Replace a section of a Google Doc with Markdown text
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.updateDocumentSectionMarkdown({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `markdown` | `string` | Yes | — |
+| `startIndex` | `number` | Yes | — |
+| `endIndex` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDocumentStyle
+
+`documents.updateDocumentStyle`
+
+Update the page size, margins, and global document style
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.updateDocumentStyle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `documentStyle` | `object` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="documentStyle full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateExistingDocument
+
+`documents.updateExistingDocument`
+
+Apply batchUpdate edits (insert/delete/format) to a Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.documents.updateExistingDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `requests` | `object[]` | Yes | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Structure
+
+### createFooter
+
+`structure.createFooter`
+
+Create a footer
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.structure.createFooter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `type` | `DEFAULT \| FIRST_PAGE \| EVEN_PAGE` | No | — |
+| `sectionBreakLocation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sectionBreakLocation full type">
+
+```ts
+{
+  index: number,
+  segmentId?: string,
+  tabId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFootnote
+
+`structure.createFootnote`
+
+Create a footnote
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.structure.createFootnote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `location` | `object` | No | — |
+| `endOfSegmentLocation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  index: number,
+  segmentId?: string,
+  tabId?: string
+}
+```
+</Accordion>
+
+<Accordion title="endOfSegmentLocation full type">
+
+```ts
+{
+  segmentId?: string,
+  tabId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createHeader
+
+`structure.createHeader`
+
+Create a header
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.structure.createHeader({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `type` | `DEFAULT \| FIRST_PAGE \| EVEN_PAGE` | No | — |
+| `sectionBreakLocation` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sectionBreakLocation full type">
+
+```ts
+{
+  index: number,
+  segmentId?: string,
+  tabId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createNamedRange
+
+`structure.createNamedRange`
+
+Create a named range
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.structure.createNamedRange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `startIndex` | `number` | Yes | — |
+| `endIndex` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createParagraphBullets
+
+`structure.createParagraphBullets`
+
+Add bullets to a range of paragraphs
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.structure.createParagraphBullets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `startIndex` | `number` | Yes | — |
+| `endIndex` | `number` | Yes | — |
+| `bulletPreset` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteFooter
+
+`structure.deleteFooter`
+
+Delete a footer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googledocs.api.structure.deleteFooter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `footerId` | `string` | Yes | — |
+| `type` | `DEFAULT \| FIRST_PAGE \| EVEN_PAGE` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteHeader
+
+`structure.deleteHeader`
+
+Delete a header
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googledocs.api.structure.deleteHeader({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `headerId` | `string` | Yes | — |
+| `type` | `DEFAULT \| FIRST_PAGE \| EVEN_PAGE` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteNamedRange
+
+`structure.deleteNamedRange`
+
+Delete a named range by id or name
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googledocs.api.structure.deleteNamedRange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `namedRangeId` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteParagraphBullets
+
+`structure.deleteParagraphBullets`
+
+Remove bullets from a range of paragraphs
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.structure.deleteParagraphBullets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `startIndex` | `number` | Yes | — |
+| `endIndex` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tables
+
+### deleteTableColumn
+
+`tables.deleteTableColumn`
+
+Delete a column from a table
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googledocs.api.tables.deleteTableColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `tableCellLocation` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tableCellLocation full type">
+
+```ts
+{
+  tableStartLocation: {
+    index: number,
+    segmentId?: string,
+    tabId?: string
+  },
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTableRow
+
+`tables.deleteTableRow`
+
+Delete a row from a table
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googledocs.api.tables.deleteTableRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `tableCellLocation` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tableCellLocation full type">
+
+```ts
+{
+  tableStartLocation: {
+    index: number,
+    segmentId?: string,
+    tabId?: string
+  },
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertTable
+
+`tables.insertTable`
+
+Insert a table into a Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.tables.insertTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `rows` | `number` | Yes | — |
+| `columns` | `number` | Yes | — |
+| `insertionIndex` | `number` | No | — |
+| `appendToEnd` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertTableColumn
+
+`tables.insertTableColumn`
+
+Insert a column into a table
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.tables.insertTableColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `tableCellLocation` | `object` | Yes | — |
+| `insertRight` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tableCellLocation full type">
+
+```ts
+{
+  tableStartLocation: {
+    index: number,
+    segmentId?: string,
+    tabId?: string
+  },
+  rowIndex: number,
+  columnIndex: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unmergeTableCells
+
+`tables.unmergeTableCells`
+
+Unmerge previously merged table cells
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.tables.unmergeTableCells({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `tableRange` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tableRange full type">
+
+```ts
+{
+  tableCellLocation: {
+    tableStartLocation: {
+      index: number,
+      segmentId?: string,
+      tabId?: string
+    },
+    rowIndex: number,
+    columnIndex: number
+  },
+  rowSpan: number,
+  columnSpan: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTableRowStyle
+
+`tables.updateTableRowStyle`
+
+Update the style of table rows
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.tables.updateTableRowStyle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `tableStartLocation` | `object` | Yes | — |
+| `rowIndices` | `number[]` | Yes | — |
+| `tableRowStyle` | `object` | No | — |
+| `fields` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tableStartLocation full type">
+
+```ts
+{
+  index: number,
+  segmentId?: string,
+  tabId?: string
+}
+```
+</Accordion>
+
+<Accordion title="tableRowStyle full type">
+
+```ts
+{
+  minRowHeight?: {
+    magnitude?: number,
+    unit?: string
+  },
+  tableHeader?: boolean,
+  preventOverflow?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Text
+
+### deleteContentRange
+
+`text.deleteContentRange`
+
+Delete a content range from a Google Doc
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googledocs.api.text.deleteContentRange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `startIndex` | `number` | Yes | — |
+| `endIndex` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertInlineImage
+
+`text.insertInlineImage`
+
+Insert an inline image from a URI into a Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.text.insertInlineImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `uri` | `string` | Yes | — |
+| `insertionIndex` | `number` | No | — |
+| `appendToEnd` | `boolean` | No | — |
+| `size` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="size full type">
+
+```ts
+{
+  height?: {
+    magnitude?: number,
+    unit?: string
+  },
+  width?: {
+    magnitude?: number,
+    unit?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertPageBreak
+
+`text.insertPageBreak`
+
+Start a new page at a location in a Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.text.insertPageBreak({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `insertionIndex` | `number` | No | — |
+| `appendToEnd` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertText
+
+`text.insertText`
+
+Insert text at a location or append to the end of a Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.text.insertText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `insertionIndex` | `number` | No | — |
+| `appendToEnd` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replaceAllText
+
+`text.replaceAllText`
+
+Replace all occurrences of a string in a Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.text.replaceAllText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `find` | `string` | Yes | — |
+| `replace` | `string` | Yes | — |
+| `matchCase` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replaceImage
+
+`text.replaceImage`
+
+Replace an existing image in a Google Doc
+
+**Risk:** `write`
+
+```ts
+await corsair.googledocs.api.text.replaceImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | Yes | — |
+| `imageObjectId` | `string` | Yes | — |
+| `uri` | `string` | Yes | — |
+| `imageReplaceMethod` | `CENTER_CROP` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string` | No | — |
+| `replies` | `object[]` | No | — |
+| `writeControl` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="writeControl full type">
+
+```ts
+{
+  requiredRevisionId?: string,
+  targetRevisionId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
