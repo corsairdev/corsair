@@ -201,21 +201,28 @@ const DeleteParagraphBulletsInputSchema = z.object({
 
 const DeleteHeaderInputSchema = z.object({
 	documentId: z.string(),
-	headerId: z.string().optional(),
+	// Docs DeleteHeaderRequest requires the header id; omitting it 400s at runtime.
+	headerId: z.string(),
 	type: HeaderFooterTypeSchema.optional(),
 });
 
 const DeleteFooterInputSchema = z.object({
 	documentId: z.string(),
-	footerId: z.string().optional(),
+	// Docs DeleteFooterRequest requires the footer id; omitting it 400s at runtime.
+	footerId: z.string(),
 	type: HeaderFooterTypeSchema.optional(),
 });
 
-const DeleteNamedRangeInputSchema = z.object({
-	documentId: z.string(),
-	namedRangeId: z.string().optional(),
-	name: z.string().optional(),
-});
+const DeleteNamedRangeInputSchema = z
+	.object({
+		documentId: z.string(),
+		namedRangeId: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.refine((data) => !!(data.namedRangeId || data.name), {
+		message:
+			'deleteNamedRange requires namedRangeId or name — Docs rejects an empty DeleteNamedRangeRequest',
+	});
 
 const InsertTableInputSchema = z.object({
 	documentId: z.string(),

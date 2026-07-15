@@ -7,7 +7,10 @@ import {
 	TablesEndpoints,
 	TextEndpoints,
 } from './endpoints';
-import { GoogleDocsEndpointOutputSchemas } from './endpoints/types';
+import {
+	GoogleDocsEndpointInputSchemas,
+	GoogleDocsEndpointOutputSchemas,
+} from './endpoints/types';
 import type { GoogleDocsContext } from './index';
 import { googledocs, googledocsEndpointSchemas } from './index';
 import type { Document, DriveFileList } from './types';
@@ -573,6 +576,42 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 			expect(
 				lastCall().options.body.requests[0].deleteNamedRange.namedRangeId,
 			).toBe('nr1');
+		});
+
+		it('deleteHeader input schema requires headerId', () => {
+			expect(
+				GoogleDocsEndpointInputSchemas.deleteHeader.safeParse({
+					documentId: 'doc1',
+				}).success,
+			).toBe(false);
+			expect(
+				GoogleDocsEndpointInputSchemas.deleteHeader.safeParse({
+					documentId: 'doc1',
+					headerId: 'h1',
+				}).success,
+			).toBe(true);
+		});
+
+		it('deleteFooter input schema requires footerId', () => {
+			expect(
+				GoogleDocsEndpointInputSchemas.deleteFooter.safeParse({
+					documentId: 'doc1',
+				}).success,
+			).toBe(false);
+		});
+
+		it('deleteNamedRange input schema requires namedRangeId or name', () => {
+			expect(
+				GoogleDocsEndpointInputSchemas.deleteNamedRange.safeParse({
+					documentId: 'doc1',
+				}).success,
+			).toBe(false);
+			expect(
+				GoogleDocsEndpointInputSchemas.deleteNamedRange.safeParse({
+					documentId: 'doc1',
+					name: 'MyRange',
+				}).success,
+			).toBe(true);
 		});
 	});
 
