@@ -285,7 +285,80 @@ describe('apify endpoint invocation', () => {
 			).act.get(makeCtx(), { actorId: 'abc123' }),
 		).rejects.toThrow('network down');
 	});
+
+	// Drive one endpoint from EVERY top-level namespace so request-building
+	// (path/query/body wiring) is exercised across the full registered surface,
+	// not just act.* and actorRun.*.
+	it('routes the first operation of every namespace to its declared path and method', async () => {
+		mockRequest.mockResolvedValue({ ok: true });
+		const endpoints = ApifyEndpoints as unknown as Record<
+			string,
+			Record<string, (ctx: ApifyContext, input: unknown) => Promise<unknown>>
+		>;
+
+		for (const sample of sampleOperationPerNamespace()) {
+			const { namespace, opName, def } = sample;
+			const nsEndpoints = endpoints[namespace];
+			expect(nsEndpoints).toBeDefined();
+			const endpointFn = nsEndpoints?.[opName];
+			expect(endpointFn).toBeDefined();
+			mockRequest.mockClear();
+			// Build a deterministic input: a string value for each declared path param.
+			const input: Record<string, string> = {};
+			for (const param of def.pathParams) {
+				input[param] = `sample-${param}`;
+			}
+			// Invoke the endpoint closure — this exercises makeApifyRequest's
+			// full request-building path (pickDefined/buildQuery/buildBody).
+			await endpointFn?.(makeCtx(), input);
+
+			const requestOptions = mockRequest.mock.calls[0]?.[1];
+			expect(requestOptions?.method).toBe(def.method);
+			expect(requestOptions?.url).toBe(def.path);
+		}
+	});
 });
+
+// For every top-level namespace, pick its first leaf operation. Returns the
+// namespace, the operation name, and the operation definition so the caller can
+// build an input and assert the routed request.
+function sampleOperationPerNamespace(): Array<{
+	namespace: string;
+	opName: string;
+	def: ApifyOperationDefinition;
+}> {
+	const out: Array<{
+		namespace: string;
+		opName: string;
+		def: ApifyOperationDefinition;
+	}> = [];
+	const root = apifyOperations as unknown as Record<string, unknown>;
+	for (const [namespace, node] of Object.entries(root)) {
+		const entry = firstLeaf(node);
+		if (entry) out.push({ namespace, opName: entry.opName, def: entry.def });
+	}
+	return out;
+}
+
+function firstLeaf(
+	node: unknown,
+): { opName: string; def: ApifyOperationDefinition } | undefined {
+	if (typeof node !== 'object' || node === null) return undefined;
+	for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+		if (
+			typeof value === 'object' &&
+			value !== null &&
+			'method' in value &&
+			'path' in value
+		) {
+			return { opName: key, def: value as unknown as ApifyOperationDefinition };
+		}
+		// Descend into subtrees.
+		const nested = firstLeaf(value);
+		if (nested) return nested;
+	}
+	return undefined;
+}
 
 describe('apify plugin factory', () => {
 	it('routes the inline key through keyBuilder before any request', async () => {
