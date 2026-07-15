@@ -21,3 +21,10 @@ export type ApifyOperationOutput = z.infer<typeof ApifyOperationOutputSchema>;
 
 export type ApifyEndpointInputs = Record<string, ApifyOperationInput>;
 export type ApifyEndpointOutputs = Record<string, ApifyOperationOutput>;
+
+// Generic schemas exposed under the conventional names expected by the plugin
+// validator. Per-operation schemas are built dynamically in endpoints/index.ts
+// (see buildApifyEndpointSchemas); these are the shared shapes every operation
+// derives from.
+export const EndpointInputSchemas = ApifyOperationInputSchema;
+export const EndpointOutputSchemas = ApifyOperationOutputSchema;
