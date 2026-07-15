@@ -254,6 +254,7 @@ export const docChanged: GoogleDocsWebhooks['docChanged'] = {
 					if (
 						!change.removed &&
 						isEnabled(ctx, 'folderCreated') &&
+						isRecentlyCreated(file, change) &&
 						(await isRootFolder(credentials, file, rootIdCache))
 					) {
 						return emit(
