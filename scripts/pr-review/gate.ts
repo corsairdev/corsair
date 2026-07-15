@@ -6,8 +6,6 @@ export interface GateInput {
 	changedFiles: string[];
 	prBody: string;
 	isDraft: boolean;
-	/** Whether packages/<plugin>/README.md exists in the checkout. */
-	readmeExists: boolean;
 	/** Number of *.test.ts files that exist in the plugin package. */
 	testFileCount: number;
 	/** Total expect(/assert( calls across the plugin's *.test.ts files. */
@@ -34,9 +32,9 @@ export interface GateResult {
 }
 
 function pluginOf(file: string): string | null {
-	const m = file.match(/^packages\/([^/]+)\//);
-	if (!m) return null;
-	return IGNORED_PACKAGES.includes(m[1]) ? null : m[1];
+	const name = file.match(/^packages\/([^/]+)\//)?.[1];
+	if (!name) return null;
+	return IGNORED_PACKAGES.includes(name) ? null : name;
 }
 
 /** The plugin a PR targets, or null if it touches no plugin packages. */
@@ -170,19 +168,32 @@ export function runGate(input: GateInput): GateResult {
 			: 'Required in "Screenshots / Demos" before a maintainer reviews',
 	});
 
-	// R7 — plugin README
-	checks.push({
-		rule: 'R7',
-		label: 'Plugin README',
-		status: input.readmeExists ? 'pass' : 'fail',
-		detail: input.readmeExists
-			? undefined
-			: `packages/${plugin}/README.md is missing (auth setup + endpoints overview)`,
-	});
-
 	const failures = checks
 		.filter((c) => c.status === 'fail')
 		.map((c) => ({ rule: c.rule, message: c.detail ?? c.label }));
 
-	return { isPluginPr: true, plugin, checks, failures };
+	return { isPluginPr: true, plugin: plugin ?? null, checks, failures };
+}
+
+const STATUS_ICON = { pass: '✅', warn: '⚠️', fail: '❌' } as const;
+
+/** Renders the sticky scorecard comment body (marker included). */
+export function renderScorecard(result: GateResult): string {
+	const lines = [
+		'<!-- corsair-pr-gate -->',
+		`### Plugin PR scorecard — \`packages/${result.plugin}\``,
+		'',
+		'| Check | Status | Notes |',
+		'| --- | --- | --- |',
+	];
+	for (const c of result.checks) {
+		lines.push(
+			`| ${c.rule} — ${c.label} | ${STATUS_ICON[c.status]} | ${c.detail ?? ''} |`,
+		);
+	}
+	lines.push(
+		'',
+		`Rules: [PLUGIN_PR_RULES.md](https://github.com/${process.env.GITHUB_REPOSITORY ?? 'corsairdev/corsair'}/blob/main/.github/PLUGIN_PR_RULES.md) · re-runs on every push`,
+	);
+	return lines.join('\n');
 }

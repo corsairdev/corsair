@@ -1,0 +1,14 @@
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+
+export const corsair = createCorsair({
+    plugins: [github({ authType: 'managed' })],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+    hub: {
+        projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+        signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+    },
+});
+```
