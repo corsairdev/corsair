@@ -1,7 +1,8 @@
-import { APP_URL, ENTERPRISE_CONTACT_URL } from '@/lib/site-links';
+import { APP_URL } from '@/lib/site-links';
 import { PlusCorner } from '../icons';
 import { FeatureInfoPopover } from './feature-info-popover';
 import { PRICING_FEATURE_INFO } from './pricing-feature-info';
+import { PricingTierCta } from './pricing-tier-cta';
 
 type TierId = 'hobby' | 'pro' | 'enterprise';
 
@@ -11,8 +12,13 @@ const TIERS = [
 		name: 'Hobby',
 		price: '$0',
 		priceSuffix: '/mo',
-		description: 'For getting started',
-		cta: { label: 'Get started', href: APP_URL, external: true },
+		description: 'For small projects',
+		cta: {
+			label: 'Get started',
+			href: APP_URL,
+			external: true,
+			variant: 'link' as const,
+		},
 		highlighted: false,
 	},
 	{
@@ -21,7 +27,12 @@ const TIERS = [
 		price: '$200',
 		priceSuffix: '/mo',
 		description: 'For teams in production',
-		cta: { label: 'Get started', href: APP_URL, external: true },
+		cta: {
+			label: 'Get started',
+			href: APP_URL,
+			external: true,
+			variant: 'link' as const,
+		},
 		highlighted: true,
 	},
 	{
@@ -30,7 +41,7 @@ const TIERS = [
 		price: 'Custom',
 		priceSuffix: null,
 		description: 'For custom needs',
-		cta: { label: 'Contact us', href: ENTERPRISE_CONTACT_URL, external: false },
+		cta: { label: 'Contact us', variant: 'dialog' as const },
 		highlighted: false,
 	},
 ] as const;
@@ -119,42 +130,8 @@ const FEATURE_ROWS: FeatureRow[] = [
 const GRID_COLS =
 	'grid grid-cols-[minmax(9rem,1.15fr)_repeat(3,minmax(7rem,1fr))]';
 
-function tierCellClass(tierId: TierId, highlighted: boolean) {
+function tierCellClass(_tierId: TierId, highlighted: boolean) {
 	return highlighted ? 'border-x border-[#4a38f5]/25 bg-[#4a38f5]/[0.04]' : '';
-}
-
-function PricingCta({
-	label,
-	href,
-	external,
-}: {
-	label: string;
-	href: string;
-	external: boolean;
-}) {
-	const className =
-		'inline-flex w-full max-w-[140px] items-center justify-center rounded-full border border-[#1c1c1c] bg-white px-4 py-2 text-[11px] font-medium uppercase tracking-[0.06em] text-[#1c1c1c] no-underline transition-colors hover:bg-[#1c1c1c] hover:text-white font-[family-name:var(--landing-font-sans)]';
-
-	if (!href) {
-		return (
-			<span
-				className={`${className} cursor-default opacity-50`}
-				aria-disabled="true"
-			>
-				{label}
-			</span>
-		);
-	}
-
-	return (
-		<a
-			href={href}
-			{...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-			className={className}
-		>
-			{label}
-		</a>
-	);
 }
 
 function FeatureValue({ value }: { value: string }) {
@@ -247,10 +224,13 @@ export function PricingSection() {
 											</p>
 										</div>
 
-										<PricingCta
+										<PricingTierCta
 											label={tier.cta.label}
-											href={tier.cta.href}
-											external={tier.cta.external}
+											href={'href' in tier.cta ? tier.cta.href : undefined}
+											external={
+												'external' in tier.cta ? tier.cta.external : undefined
+											}
+											variant={tier.cta.variant}
 										/>
 									</div>
 								))}
