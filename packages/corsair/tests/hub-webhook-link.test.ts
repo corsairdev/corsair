@@ -19,14 +19,16 @@ describe('buildWebhookLinkReport', () => {
 		});
 	});
 
-	it('lets the caller override authType (e.g. subscription-time MS links)', () => {
+	it('lets the caller override authType (defaults to oauth_2)', () => {
 		const report = buildWebhookLinkReport({
 			plugin: 'outlook',
 			tenantId: 'user_2',
 			link: { linkType: 'subscription_id', externalId: 'sub-1' },
-			authType: 'oauth_2',
+			authType: 'managed',
 		});
 
+		// Non-default value proves the override actually flows through.
+		expect(report.authType).toBe('managed');
 		expect(report.webhookLink).toEqual({
 			linkType: 'subscription_id',
 			externalId: 'sub-1',
