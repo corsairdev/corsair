@@ -11,6 +11,7 @@ import { GoogleDocsEndpointOutputSchemas } from './endpoints/types';
 import type { GoogleDocsContext } from './index';
 import { googledocs, googledocsEndpointSchemas } from './index';
 import type { Document, DriveFileList } from './types';
+import { __testOnly as changesTestOnly } from './webhooks/changes';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -849,6 +850,53 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 				}),
 			);
 		});
+	});
+});
+
+describe('Drive changes pagination (mocked HTTP)', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	it('fetchChanges follows nextPageToken until the list is complete', async () => {
+		mockRequest
+			.mockResolvedValueOnce({
+				changes: [{ fileId: 'a' }, { fileId: 'b' }],
+				nextPageToken: 'page-2',
+			})
+			.mockResolvedValueOnce({
+				changes: [{ fileId: 'c' }],
+				nextPageToken: 'page-3',
+			})
+			.mockResolvedValueOnce({
+				changes: [{ fileId: 'd' }],
+				newStartPageToken: 'start-next',
+			});
+
+		const result = await changesTestOnly.fetchChanges('tok', 'page-1');
+
+		expect(result.changes?.map((c) => c.fileId)).toEqual(['a', 'b', 'c', 'd']);
+		expect(result.newStartPageToken).toBe('start-next');
+		expect(mockRequest).toHaveBeenCalledTimes(3);
+		expect(mockRequest.mock.calls.map((c) => c[1].query.pageToken)).toEqual([
+			'page-1',
+			'page-2',
+			'page-3',
+		]);
+		// pageSize uses the API maximum so busy Drives need fewer round-trips
+		expect(mockRequest.mock.calls[0]?.[1].query.pageSize).toBe(1000);
+	});
+
+	it('fetchChanges stops if Drive repeats a pageToken', async () => {
+		mockRequest.mockResolvedValue({
+			changes: [{ fileId: 'a' }],
+			nextPageToken: 'loop',
+		});
+
+		const result = await changesTestOnly.fetchChanges('tok', 'loop');
+
+		expect(result.changes?.map((c) => c.fileId)).toEqual(['a']);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
 	});
 });
 

@@ -90,16 +90,52 @@ async function fetchChanges(
 	credentials: string,
 	pageToken: string,
 ): Promise<DriveChangeList> {
-	return makeGoogleDriveRequest<DriveChangeList>('/changes', credentials, {
-		method: 'GET',
-		query: {
-			pageToken,
-			pageSize: 100,
-			includeRemoved: true,
-			supportsAllDrives: true,
-		},
-	});
+	// Drive returns at most pageSize changes per call. If nextPageToken is
+	// present the page is incomplete — keep fetching until it is absent or we
+	// would silently drop documentCreated/Updated/Deleted events on busy Drives.
+	const allChanges: DriveChange[] = [];
+	let token: string | undefined = pageToken;
+	let newStartPageToken: string | undefined;
+	const seenTokens = new Set<string>();
+
+	while (token) {
+		if (seenTokens.has(token)) {
+			console.warn(
+				'Drive changes.list repeated a pageToken; stopping pagination to avoid a loop',
+			);
+			break;
+		}
+		seenTokens.add(token);
+
+		const page: DriveChangeList = await makeGoogleDriveRequest<DriveChangeList>(
+			'/changes',
+			credentials,
+			{
+				method: 'GET',
+				query: {
+					pageToken: token,
+					// API max is 1000; fewer round-trips on large deliveries.
+					pageSize: 1000,
+					includeRemoved: true,
+					supportsAllDrives: true,
+				},
+			},
+		);
+
+		if (page.changes?.length) {
+			allChanges.push(...page.changes);
+		}
+		if (page.newStartPageToken) {
+			newStartPageToken = page.newStartPageToken;
+		}
+		token = page.nextPageToken;
+	}
+
+	return { changes: allChanges, newStartPageToken };
 }
+
+/** @internal Exported for unit tests covering Drive changes pagination. */
+export const __testOnly = { fetchChanges };
 
 function isEnabled(ctx: GoogleDocsContext, name: GoogleDocsEventName): boolean {
 	const configured = ctx.options.webhookEvents;
