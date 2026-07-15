@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAuthenticatedLinkedInRequest } from '../client';
+import { LinkedInAPIError, makeAuthenticatedLinkedInRequest } from '../client';
 import type { LinkedInEndpoints } from '../index';
 import type { LinkedInEndpointOutputs } from './types';
 
@@ -15,6 +15,12 @@ export const getVideos: LinkedInEndpoints['GetVideos'] = async (ctx, input) => {
 	} else if (input.owner) {
 		query.q = 'owner';
 		query.owners = input.owner;
+	} else {
+		// LinkedIn's Videos finder requires q=urns|owner; calling without it
+		// returns a 400. Schema refine should catch this first.
+		throw new LinkedInAPIError(
+			'getVideos requires video_urn, owner, or a non-empty urns list',
+		);
 	}
 
 	if (input.start !== undefined) query.start = input.start;

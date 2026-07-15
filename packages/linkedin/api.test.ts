@@ -271,6 +271,16 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 			});
 		});
 
+		it('images.list rejects calls with no owner or urns before hitting LinkedIn', async () => {
+			await expect(call('images', 'list', {})).rejects.toThrow(
+				/requires owner or a non-empty urns list/,
+			);
+			expect(mockRequest).not.toHaveBeenCalled();
+			expect(LinkedInEndpointInputSchemas.GetImages.safeParse({}).success).toBe(
+				false,
+			);
+		});
+
 		it('images.initializeUpload wraps the owner in initializeUploadRequest on /rest/images', async () => {
 			await call('images', 'initializeUpload', { owner: PERSON_URN });
 
@@ -311,6 +321,16 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 				url: '/v2/videos',
 				query: { q: 'urns', urns: 'urn:li:video:v1' },
 			});
+		});
+
+		it('videos.list rejects calls with no finder before hitting LinkedIn', async () => {
+			await expect(call('videos', 'list', {})).rejects.toThrow(
+				/requires video_urn, owner, or a non-empty urns list/,
+			);
+			expect(mockRequest).not.toHaveBeenCalled();
+			expect(LinkedInEndpointInputSchemas.GetVideos.safeParse({}).success).toBe(
+				false,
+			);
 		});
 	});
 
@@ -412,6 +432,24 @@ describe('LinkedIn endpoint behavior (mocked HTTP)', () => {
 					}),
 				}),
 			]);
+		});
+
+		it('getPageStats forwards start/count pagination params', async () => {
+			await call('organizations', 'getPageStats', {
+				organization_urn: ORG_URN,
+				start: 10,
+				count: 25,
+			});
+
+			expect(lastCall().options).toMatchObject({
+				method: 'GET',
+				url: '/v2/organizationPageStatistics',
+				query: expect.objectContaining({
+					organization: ORG_URN,
+					start: 10,
+					count: 25,
+				}),
+			});
 		});
 	});
 

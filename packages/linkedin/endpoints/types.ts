@@ -225,6 +225,10 @@ const GetImagesInputSchema = z
 		start: z.number().optional().describe('Pagination start index.'),
 		count: z.number().optional().describe('Number of images per page.'),
 	})
+	.refine((data) => !!(data.owner || (data.urns && data.urns.length > 0)), {
+		message:
+			'getImages requires owner or a non-empty urns list — LinkedIn rejects /v2/images without a q finder.',
+	})
 	.describe(
 		'Retrieve LinkedIn image metadata (download URLs, status, dimensions).',
 	);
@@ -265,6 +269,14 @@ const GetVideosInputSchema = z
 		start: z.number().optional().describe('Pagination start index.'),
 		count: z.number().optional().describe('Number of videos per page.'),
 	})
+	.refine(
+		(data) =>
+			!!(data.video_urn || data.owner || (data.urns && data.urns.length > 0)),
+		{
+			message:
+				'getVideos requires video_urn, owner, or a non-empty urns list — LinkedIn rejects /v2/videos without a q finder.',
+		},
+	)
 	.describe(
 		'Retrieve LinkedIn video metadata (duration, dimensions, download URLs).',
 	);
@@ -330,6 +342,8 @@ const GetOrgPageStatsInputSchema = z
 			})
 			.optional()
 			.describe('Optional time range for time-bound (aggregate) statistics.'),
+		start: z.number().optional().describe('Pagination start index.'),
+		count: z.number().optional().describe('Number of results per page.'),
 	})
 	.describe(
 		'Retrieve page statistics (page views, custom button clicks) for a LinkedIn organization.',
