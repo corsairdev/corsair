@@ -2,11 +2,14 @@ import { logEventFromContext } from 'corsair/core';
 import { makeConfluenceRequest } from '../client';
 import type { ConfluenceEndpoints } from '../index';
 import type { ConfluenceEndpointOutputs } from './types';
+import { PagesSearchInputSchema } from './types';
 
 export const search: ConfluenceEndpoints['pagesSearch'] = async (
 	ctx,
 	input,
 ) => {
+	const validated = PagesSearchInputSchema.parse(input);
+
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 
@@ -16,20 +19,20 @@ export const search: ConfluenceEndpoints['pagesSearch'] = async (
 		method: 'GET',
 		authType: ctx.options.authType,
 		query: {
-			cql: input.cql,
-			...(input.cqlcontext && { cqlcontext: input.cqlcontext }),
-			...(input.includeArchivedSpaces !== undefined && {
-				includeArchivedSpaces: input.includeArchivedSpaces,
+			cql: validated.cql,
+			...(validated.cqlcontext && { cqlcontext: validated.cqlcontext }),
+			...(validated.includeArchivedSpaces !== undefined && {
+				includeArchivedSpaces: validated.includeArchivedSpaces,
 			}),
-			...(input.limit !== undefined && { limit: input.limit }),
-			...(input.start !== undefined && { start: input.start }),
+			...(validated.limit !== undefined && { limit: validated.limit }),
+			...(validated.start !== undefined && { start: validated.start }),
 		},
 	});
 
 	await logEventFromContext(
 		ctx,
 		'confluence.pages.search',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 

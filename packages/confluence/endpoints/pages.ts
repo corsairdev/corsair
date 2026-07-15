@@ -2,8 +2,11 @@ import { logEventFromContext } from 'corsair/core';
 import { makeConfluenceRequest } from '../client';
 import type { ConfluenceEndpoints } from '../index';
 import type { ConfluenceEndpointOutputs } from './types';
+import { PagesGetInputSchema } from './types';
 
 export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
+	const validated = PagesGetInputSchema.parse(input);
+
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 
@@ -13,18 +16,18 @@ export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
 		method: 'GET',
 		authType: ctx.options.authType,
 		query: {
-			...(input.space_id && { 'space-id': input.space_id }),
-			...(input.title && { title: input.title }),
-			...(input.status && { status: input.status }),
-			...(input.cursor && { cursor: input.cursor }),
-			...(input.limit !== undefined && { limit: input.limit }),
+			...(validated.space_id && { 'space-id': validated.space_id }),
+			...(validated.title && { title: validated.title }),
+			...(validated.status && { status: validated.status }),
+			...(validated.cursor && { cursor: validated.cursor }),
+			...(validated.limit !== undefined && { limit: validated.limit }),
 		},
 	});
 
 	await logEventFromContext(
 		ctx,
 		'confluence.pages.get',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 
