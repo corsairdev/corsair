@@ -1,0 +1,115 @@
+<Tabs>
+  <Tab title="Next.js">
+
+```ts app/api/corsair/[[...path]]/route.ts
+import { toNextJsHandler } from 'corsair';
+import { corsair } from '@/server/corsair';
+
+export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
+    basePath: '/api/corsair',
+});
+```
+
+<Note>Pages Router? Export a catch-all API route at `pages/api/corsair/[...path].ts` and forward `req`/`res` through the same `toNextJsHandler`. The App Router is the supported default.</Note>
+
+  </Tab>
+  <Tab title="Express">
+
+```ts server.ts
+import express from 'express';
+import { toExpressHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const app = express();
+
+// Required: Hub delivers results as JSON POSTs. The adapter reads the parsed
+// body, so express.json() must run before the Corsair route.
+app.use(express.json());
+app.use('/api/corsair', toExpressHandler(corsair, { basePath: '/api/corsair' }));
+
+app.listen(3000);
+```
+
+<Warning>Mount `express.json()` **before** the Corsair route. Without it, `req.body` is undefined and Hub's delivery POSTs arrive empty — connects will look like they hang.</Warning>
+
+  </Tab>
+  <Tab title="Hono">
+
+```ts index.ts
+import { Hono } from 'hono';
+import { toHonoHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const app = new Hono();
+
+// Wildcard: Corsair routes several paths under the base (delivery, connect,
+// tenants). Match them all with `/*`, and keep basePath in sync with the mount.
+app.all('/api/corsair/*', toHonoHandler(corsair, { basePath: '/api/corsair' }));
+
+export default app;
+```
+
+  </Tab>
+  <Tab title="Web-standard">
+
+Every adapter wraps one primitive: `managementHandler(corsair)` returns `(request: Request) => Promise<Response>`. Any framework whose routes speak the Fetch API calls it directly — no adapter needed.
+
+<CodeGroup>
+
+```ts SvelteKit
+// src/routes/api/corsair/[...path]/+server.ts
+import { managementHandler } from 'corsair';
+import { corsair } from '$lib/server/corsair';
+
+const handler = managementHandler(corsair, { basePath: '/api/corsair' });
+export const GET = ({ request }) => handler(request);
+export const POST = ({ request }) => handler(request);
+```
+
+```ts Remix
+// app/routes/api.corsair.$.ts
+import { managementHandler } from 'corsair';
+import { corsair } from '~/server/corsair';
+
+const handler = managementHandler(corsair, { basePath: '/api/corsair' });
+export const loader = ({ request }) => handler(request);
+export const action = ({ request }) => handler(request);
+```
+
+```ts Astro
+// src/pages/api/corsair/[...path].ts
+import { managementHandler } from 'corsair';
+import { corsair } from '../../../server/corsair';
+
+const handler = managementHandler(corsair, { basePath: '/api/corsair' });
+export const GET = ({ request }) => handler(request);
+export const POST = ({ request }) => handler(request);
+export const prerender = false;
+```
+
+```ts Nuxt
+// server/routes/api/corsair/[...path].ts
+import { fromWebHandler } from 'h3';
+import { managementHandler } from 'corsair';
+import { corsair } from '~/server/corsair';
+
+// h3's fromWebHandler adapts the (Request) => Response handler to Nitro.
+export default fromWebHandler(
+    managementHandler(corsair, { basePath: '/api/corsair' }),
+);
+```
+
+```ts Workers / Bun / Deno
+import { managementHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const handler = managementHandler(corsair, { basePath: '/api/corsair' });
+export default { fetch: (request: Request) => handler(request) };
+```
+
+</CodeGroup>
+
+<Note>Backend not in JavaScript? Corsair's SDK is TypeScript-only. Integrate over the [Hub REST API](/hub/rest-api) instead.</Note>
+
+  </Tab>
+</Tabs>
