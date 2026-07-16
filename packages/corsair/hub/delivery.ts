@@ -216,10 +216,15 @@ export async function handleHubDeliveryGet(
 					body: { error: 'Invalid BYO OAuth delivery token' },
 				};
 			}
+			// Browser delivery token already verified above; Hub's `state` is an
+			// opaque session id it cannot sign, so trust the payload's plugin/tenant.
 			await processOAuthCallback(corsair, {
 				code: payload.code,
 				state: payload.state,
 				redirectUri: payload.redirectUri,
+				trusted: true,
+				plugin: payload.plugin,
+				tenantId: payload.tenantId,
 			});
 		}
 	} catch (error) {
