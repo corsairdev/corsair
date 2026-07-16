@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleSheetsEndpointInputs,
@@ -159,7 +160,7 @@ const googleSheetsWebhooksNested = {
 } as const;
 
 export type GoogleSheetsPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleSheetsPlugin['hooks'];
 	webhookHooks?: InternalGoogleSheetsPlugin['webhookHooks'];
@@ -300,6 +301,24 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 
 			if (options.key) {
 				return options.key;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new AuthMissingError('googlesheets', 'managed');
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googlesheets',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(
+					ctx as Record<string, unknown>,
+					managedContext,
+				);
+				return result.accessToken;
 			}
 
 			if (ctx.authType === 'oauth_2') {

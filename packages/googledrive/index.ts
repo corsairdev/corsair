@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleDriveEndpointInputs,
@@ -224,7 +225,7 @@ const googleDriveWebhooksNested = {
 } as const;
 
 export type GoogleDrivePluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleDrivePlugin['hooks'];
 	webhookHooks?: InternalGoogleDrivePlugin['webhookHooks'];
@@ -394,6 +395,24 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 
 			if (options.key) {
 				return options.key;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new AuthMissingError('googledrive', 'managed');
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googledrive',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(
+					ctx as Record<string, unknown>,
+					managedContext,
+				);
+				return result.accessToken;
 			}
 
 			if (ctx.authType === 'oauth_2') {

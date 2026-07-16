@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import type {
 	GoogleCalendarEndpointInputs,
@@ -130,7 +131,7 @@ const googleCalendarWebhooksNested = {
 } as const;
 
 export type GoogleCalendarPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleCalendarPlugin['hooks'];
 	webhookHooks?: InternalGoogleCalendarPlugin['webhookHooks'];
@@ -238,6 +239,24 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 
 			if (options.key) {
 				return options.key;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new AuthMissingError('googlecalendar', 'managed');
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googlecalendar',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(
+					ctx as Record<string, unknown>,
+					managedContext,
+				);
+				return result.accessToken;
 			}
 
 			if (ctx.authType === 'oauth_2') {
