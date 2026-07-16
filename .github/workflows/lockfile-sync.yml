@@ -1,15 +1,10 @@
 name: Lockfile Sync
 
-# Refreshes pnpm-lock.yaml on every push to main so plugin PRs don't keep
-# conflicting on the lockfile. Pushes as corsair-team via PR_BOT_PAT.
+# Regenerates the root pnpm-lock.yaml on every push to main and commits it back
+# if it changed, so plugin PRs stop conflicting on the lockfile.
 #
-# REQUIRES: corsair-team must be in main's branch-protection bypass allowlist
-# (Settings > Branches > "Allow specified actors to bypass"). Without it, the
-# push to protected main is rejected and every run fails.
-#
-# The PAT push re-triggers this workflow, but "[skip ci]" in the commit message
-# makes GitHub skip that run — and even if it ran, the lockfile would already
-# be in sync, so it's a no-op.
+# REQUIRES corsair-team in main's branch-protection bypass allowlist, or the
+# push to protected main is rejected.
 
 on:
   push:
@@ -20,7 +15,6 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  # The push uses PR_BOT_PAT, not GITHUB_TOKEN, so read is enough here.
   contents: read
 
 jobs:
@@ -30,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          token: ${{ secrets.PR_BOT_PAT }}
 
       - uses: pnpm/action-setup@v4
         with:
@@ -44,16 +38,27 @@ jobs:
       - name: Refresh lockfile
         run: pnpm install --lockfile-only
 
-      - name: Commit if changed
+      - name: Commit and push if changed
         env:
-          PR_BOT_PAT: ${{ secrets.PR_BOT_PAT }}
+          BRANCH: ${{ github.ref_name }}
         run: |
-          if git diff --quiet -- pnpm-lock.yaml; then
-            echo "Lockfile already up to date."
-            exit 0
-          fi
           git config user.name "corsair-team"
           git config user.email "team@corsair.dev"
-          git add pnpm-lock.yaml
-          git commit -m 'chore: sync `pnpm-lock.yaml` [skip ci]'
-          git push "https://x-access-token:${PR_BOT_PAT}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}"
+          # Retry if main advances mid-run: reset onto the new tip, regenerate,
+          # retry. The racing commit may already have synced the lockfile.
+          for attempt in 1 2 3; do
+            if git diff --quiet -- pnpm-lock.yaml; then
+              echo "Lockfile in sync — nothing to push."
+              exit 0
+            fi
+            git add pnpm-lock.yaml
+            git commit -m 'chore: sync `pnpm-lock.yaml` [skip ci]'
+            if git push origin "HEAD:${BRANCH}"; then
+              exit 0
+            fi
+            git fetch origin "${BRANCH}"
+            git reset --hard "origin/${BRANCH}"
+            pnpm install --lockfile-only
+          done
+          echo "::error::Could not push lockfile sync after 3 attempts."
+          exit 1
