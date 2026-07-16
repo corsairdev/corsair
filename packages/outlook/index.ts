@@ -17,6 +17,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import { Calendars, Contacts, Events, Folders, Messages } from './endpoints';
 import type {
@@ -57,7 +58,7 @@ import {
 } from './webhooks/types';
 
 export type OutlookPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalOutlookPlugin['hooks'];
@@ -634,6 +635,24 @@ export function outlook<const T extends OutlookPluginOptions>(
 
 			if (source === 'endpoint' && options.key) {
 				return options.key;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new AuthMissingError('outlook', 'managed');
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'outlook',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(
+					ctx as Record<string, unknown>,
+					managedContext,
+				);
+				return result.accessToken;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
