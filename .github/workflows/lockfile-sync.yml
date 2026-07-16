@@ -1,0 +1,59 @@
+name: Lockfile Sync
+
+# Refreshes pnpm-lock.yaml on every push to main so plugin PRs don't keep
+# conflicting on the lockfile. Pushes as corsair-team via PR_BOT_PAT.
+#
+# REQUIRES: corsair-team must be in main's branch-protection bypass allowlist
+# (Settings > Branches > "Allow specified actors to bypass"). Without it, the
+# push to protected main is rejected and every run fails.
+#
+# The PAT push re-triggers this workflow, but "[skip ci]" in the commit message
+# makes GitHub skip that run — and even if it ran, the lockfile would already
+# be in sync, so it's a no-op.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: lockfile-sync
+  cancel-in-progress: false
+
+permissions:
+  # The push uses PR_BOT_PAT, not GITHUB_TOKEN, so read is enough here.
+  contents: read
+
+jobs:
+  sync:
+    name: Sync pnpm lockfile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+
+      - name: Refresh lockfile
+        run: pnpm install --lockfile-only
+
+      - name: Commit if changed
+        env:
+          PR_BOT_PAT: ${{ secrets.PR_BOT_PAT }}
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "Lockfile already up to date."
+            exit 0
+          fi
+          git config user.name "corsair-team"
+          git config user.email "team@corsair.dev"
+          git add pnpm-lock.yaml
+          git commit -m 'chore: sync `pnpm-lock.yaml` [skip ci]'
+          git push "https://x-access-token:${PR_BOT_PAT}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}"
