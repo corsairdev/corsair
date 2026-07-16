@@ -13,17 +13,61 @@ Authorization: Bearer ck_dev_...
 
 ## Create a connect session
 
-```http
-POST https://auth.corsair.dev/connect/sessions
-Authorization: Bearer ck_dev_...
-Content-Type: application/json
-
-{
-  "tenantId": "user_123",
-  "deliveryUrl": "https://yourapp.com/api/corsair",
-  "plugins": [{ "plugin": "github", "oauthMode": "managed" }]
-}
+<CodeGroup>
+```bash cURL
+curl -X POST https://auth.corsair.dev/connect/sessions \
+  -H "Authorization: Bearer $CORSAIR_DEV_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tenantId": "user_123",
+    "deliveryUrl": "https://yourapp.com/api/corsair",
+    "plugins": [{ "plugin": "github", "oauthMode": "managed" }]
+  }'
 ```
+
+```ts Node
+const res = await fetch("https://auth.corsair.dev/connect/sessions", {
+    method: "POST",
+    headers: {
+        Authorization: `Bearer ${process.env.CORSAIR_DEV_API_KEY}`,
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        tenantId: "user_123",
+        deliveryUrl: "https://yourapp.com/api/corsair",
+        plugins: [{ plugin: "github", oauthMode: "managed" }],
+    }),
+});
+const { connectUrl } = await res.json();
+```
+
+```python Python
+import os, requests
+
+res = requests.post(
+    "https://auth.corsair.dev/connect/sessions",
+    headers={"Authorization": f"Bearer {os.environ['CORSAIR_DEV_API_KEY']}"},
+    json={
+        "tenantId": "user_123",
+        "deliveryUrl": "https://yourapp.com/api/corsair",
+        "plugins": [{"plugin": "github", "oauthMode": "managed"}],
+    },
+)
+connect_url = res.json()["connectUrl"]
+```
+
+```go Go
+payload, _ := json.Marshal(map[string]any{
+    "tenantId":    "user_123",
+    "deliveryUrl": "https://yourapp.com/api/corsair",
+    "plugins":     []map[string]string{{"plugin": "github", "oauthMode": "managed"}},
+})
+req, _ := http.NewRequest("POST", "https://auth.corsair.dev/connect/sessions", bytes.NewReader(payload))
+req.Header.Set("Authorization", "Bearer "+os.Getenv("CORSAIR_DEV_API_KEY"))
+req.Header.Set("Content-Type", "application/json")
+res, _ := http.DefaultClient.Do(req)
+```
+</CodeGroup>
 
 Returns `{ "connectUrl", "token", "projectId", "expiresAt" }`. Redirect the user's browser to `connectUrl`. Hub hosts the connect page and the OAuth callback.
 
@@ -40,7 +84,8 @@ When the user finishes connecting, Hub POSTs a signed JSON envelope to your `del
 
 Verify before trusting the body — recompute the HMAC over the raw bytes and compare in constant time:
 
-```python
+<CodeGroup>
+```python Python
 import hashlib, hmac, time
 
 def verify(raw_body: bytes, headers, signing_secret: str) -> bool:
@@ -52,13 +97,41 @@ def verify(raw_body: bytes, headers, signing_secret: str) -> bool:
     return hmac.compare_digest(sig, expected)   # constant-time compare
 ```
 
+```ts Node
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+function verify(rawBody: Buffer, headers: Record<string, string>, signingSecret: string): boolean {
+    const sig = headers["x-corsair-signature"].replace(/^sha256=/, "");
+    const ts = parseInt(headers["x-corsair-timestamp"] ?? "0", 10);
+    if (isNaN(ts) || Math.abs(Date.now() / 1000 - ts) > 300) return false; // reject stale or malformed
+    const expected = createHmac("sha256", signingSecret).update(rawBody).digest("hex");
+    const a = Buffer.from(sig), b = Buffer.from(expected);
+    return a.length === b.length && timingSafeEqual(a, b); // constant-time
+}
+```
+
+```go Go
+func verify(rawBody []byte, headers http.Header, signingSecret string) bool {
+    sig := strings.TrimPrefix(headers.Get("x-corsair-signature"), "sha256=")
+    ts, _ := strconv.ParseInt(headers.Get("x-corsair-timestamp"), 10, 64)
+    if math.Abs(float64(time.Now().Unix()-ts)) > 300 { // reject stale
+        return false
+    }
+    mac := hmac.New(sha256.New, []byte(signingSecret))
+    mac.Write(rawBody)
+    expected := hex.EncodeToString(mac.Sum(nil))
+    return hmac.Equal([]byte(sig), []byte(expected)) // constant-time
+}
+```
+</CodeGroup>
+
 Only after `verify` passes: parse the body, exchange or store the credential, and respond `200`.
 
 ## List connections
 
-```http
-GET https://auth.corsair.dev/projects/{projectId}/connections
-Authorization: Bearer ck_dev_...
+```bash cURL
+curl https://auth.corsair.dev/projects/{projectId}/connections \
+  -H "Authorization: Bearer $CORSAIR_DEV_API_KEY"
 ```
 
 Returns an array of `{ tenantId, plugin, status, authKind, connectedAt, expiresAt }`, deduplicated by `tenantId:plugin`.

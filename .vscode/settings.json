@@ -17,12 +17,14 @@
       "strings": false
     }
   },
-  "editor.formatOnType": true, // required
-  "editor.formatOnPaste": true, // optional
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "editor.formatOnSaveMode": "file", // required to format on save
+  "editor.formatOnSaveMode": "file",
   "files.autoSave": "off",
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  "js/ts.experimental.useTsgo": true,
+  "typescript.native-preview.goMemLimit": "4GiB"
 }

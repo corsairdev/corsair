@@ -4,6 +4,7 @@ import type { CorsairPlugin } from '../core/plugins';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
 import type { CorsairDatabase } from '../db/kysely/database';
+import type { WebhookTenantLink } from '../webhooks/tenant-links';
 import { hubApiPost } from './client/http';
 import { getHubConfig, HubNotConfiguredError } from './config';
 import type { ConnectAuthStatusLevel } from './contracts/connect-api';
@@ -17,7 +18,32 @@ export type ReportConnectionStatusInput = {
 	connected: boolean;
 	verified: boolean;
 	missingFields?: string[];
+	// Provider-side identity Hub uses to route inbound webhooks to this tenant.
+	webhookLink?: WebhookTenantLink;
 };
+
+/**
+ * Builds a connection report that carries a webhook tenant link. Used to forward
+ * a resolved provider identity (OAuth-time or subscription-time) to Hub so it can
+ * route inbound webhooks. The connection is reported ready/connected/verified
+ * because a resolvable link means the tenant is actively connected.
+ */
+export function buildWebhookLinkReport(input: {
+	plugin: string;
+	tenantId: string;
+	link: WebhookTenantLink;
+	authType?: AuthTypes;
+}): ReportConnectionStatusInput {
+	return {
+		tenantId: input.tenantId,
+		plugin: input.plugin,
+		authType: input.authType ?? 'oauth_2',
+		status: 'ready',
+		connected: true,
+		verified: true,
+		webhookLink: input.link,
+	};
+}
 
 function buildConnectionStatusReport(input: {
 	tenantId: string;
@@ -27,6 +53,7 @@ function buildConnectionStatusReport(input: {
 	connected: boolean;
 	verified: boolean;
 	missingFields?: string[];
+	webhookLink?: WebhookTenantLink;
 }): ReportConnectionStatusInput {
 	return {
 		tenantId: input.tenantId,
@@ -36,7 +63,33 @@ function buildConnectionStatusReport(input: {
 		connected: input.connected,
 		verified: input.verified,
 		missingFields: input.missingFields,
+		webhookLink: input.webhookLink,
 	};
+}
+
+/**
+ * Forwards a resolved webhook tenant link to Hub (fire-and-forget). Called after
+ * OAuth completes (email-style links) and after a watch/subscription is created
+ * (channel_id / subscription_id). No-op unless Hub is configured.
+ */
+export async function registerHubWebhookTenantLink(
+	hub: HubConfig,
+	input: {
+		plugin: string;
+		tenantId: string;
+		link: WebhookTenantLink;
+		authType?: AuthTypes;
+	},
+): Promise<void> {
+	// Awaitable (unlike the fire-and-forget status reports) so short-lived CLI
+	// callers can ensure the registration completes before the process exits.
+	// Never throws — Hub availability must not break connect/subscribe flows.
+	await hubApiPost({
+		hub,
+		path: '/connections/report',
+		body: buildWebhookLinkReport(input),
+		parseResponse: () => ({ ok: true as const }),
+	}).catch(() => {});
 }
 
 function fireAndForgetReport(
