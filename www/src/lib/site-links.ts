@@ -5,3 +5,5 @@ export const GITHUB_LICENSE_URL = `${GITHUB_URL}/blob/main/LICENSE`;
 export const APP_URL = 'https://hub.corsair.dev';
 export const TWITTER_URL = 'https://x.com/corsairdotdev';
 export const DISCORD_URL = 'https://discord.com/invite/uNgCP3mSzU';
+export const ENTERPRISE_CONTACT_URL = '';
+export const ENTERPRISE_CAL_URL = 'https://cal.com/dev-jain-ar3ec6/30min';
