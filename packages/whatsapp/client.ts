@@ -96,7 +96,7 @@ export async function makeWhatsappRequest<T>(
 				: undefined,
 		formData,
 		mediaType: isFormRequest ? undefined : 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: method === 'GET' || method === 'DELETE' ? query : undefined,
 	};
 
 	try {
