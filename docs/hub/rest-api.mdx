@@ -103,7 +103,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 function verify(rawBody: Buffer, headers: Record<string, string>, signingSecret: string): boolean {
     const sig = headers["x-corsair-signature"].replace(/^sha256=/, "");
     const ts = parseInt(headers["x-corsair-timestamp"] ?? "0", 10);
-    if (Math.abs(Date.now() / 1000 - ts) > 300) return false; // reject stale
+    if (isNaN(ts) || Math.abs(Date.now() / 1000 - ts) > 300) return false; // reject stale or malformed
     const expected = createHmac("sha256", signingSecret).update(rawBody).digest("hex");
     const a = Buffer.from(sig), b = Buffer.from(expected);
     return a.length === b.length && timingSafeEqual(a, b); // constant-time
