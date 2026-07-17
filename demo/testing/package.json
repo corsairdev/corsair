@@ -41,6 +41,7 @@
     "@corsair-dev/openweathermap": "workspace:*",
     "@corsair-dev/outlook": "workspace:*",
     "@corsair-dev/reddit": "workspace:*",
+    "@corsair-dev/retailed": "workspace:*",
     "@corsair-dev/sharepoint": "workspace:*",
     "@corsair-dev/slack": "workspace:*",
     "@corsair-dev/teams": "workspace:*",
