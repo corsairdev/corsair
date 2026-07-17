@@ -1,8 +1,8 @@
-import { fileComment } from './fileComment';
-import { fileDelete } from './fileDelete';
-import { fileUpdate } from './fileUpdate';
-import { fileVersionUpdate } from './fileVersionUpdate';
-import { libraryPublish } from './libraryPublish';
+import { fileComment } from './file-comment';
+import { fileDelete } from './file-delete';
+import { fileUpdate } from './file-update';
+import { fileVersionUpdate } from './file-version-update';
+import { libraryPublish } from './library-publish';
 import { ping } from './ping';
 
 export const FileCommentWebhooks = {

@@ -7,7 +7,8 @@ When you create a Corsair instance, every plugin exposes its API endpoints throu
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
-import { slack, linear } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     plugins: [

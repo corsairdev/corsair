@@ -5,10 +5,8 @@ import {
 	makeApi2PdfRequest,
 	makeApi2PdfTextRequest,
 } from './client';
-import {
-	Api2PdfEndpointOutputSchemas,
-	type Api2PdfJobResponse,
-} from './endpoints/types';
+import type { Api2PdfJobResponse } from './endpoints/types';
+import { Api2PdfEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_API_KEY = process.env.API2PDF_API_KEY;
 

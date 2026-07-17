@@ -107,10 +107,7 @@ export const OptimizePdfInputSchema = z.object({
 export type OptimizePdfInput = z.infer<typeof OptimizePdfInputSchema>;
 
 export const GenerateBarcodeInputSchema = z.object({
-	format: z
-		.string()
-		.min(1)
-		.describe('Barcode format (e.g. QR_CODE, CODE_128)'),
+	format: z.string().min(1).describe('Barcode format (e.g. QR_CODE, CODE_128)'),
 	value: z.string().min(1).describe('Value to encode'),
 	height: z.number().int().positive().optional(),
 	width: z.number().int().positive().optional(),
@@ -120,10 +117,7 @@ export const GenerateBarcodeInputSchema = z.object({
 export type GenerateBarcodeInput = z.infer<typeof GenerateBarcodeInputSchema>;
 
 export const LibreOfficeThumbnailInputSchema = z.object({
-	url: z
-		.string()
-		.url()
-		.describe('Public URL of PDF or Office document'),
+	url: z.string().url().describe('Public URL of PDF or Office document'),
 	inline: z.boolean().optional(),
 	fileName: z.string().optional(),
 });

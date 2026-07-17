@@ -1,8 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import {
-	assertApi2PdfSuccess,
-	makeApi2PdfRequest,
-} from '../client';
+import { assertApi2PdfSuccess, makeApi2PdfRequest } from '../client';
 import type { Api2PdfEndpoints } from '../index';
 import { cachePdfJob } from './shared';
 import type { Api2PdfJobResponse } from './types';

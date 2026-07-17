@@ -9,8 +9,11 @@ import {
 	processCorsair,
 	verifyBrowserDeliveryToken,
 } from '../tunnel';
+import { isConnectionsSyncBrowserDelivery } from '../tunnel/browser-delivery';
+import { announceAppFromRequest } from './announce';
 import { buildClientBridgePostMessageHtml } from './browser-delivery-html';
 import { getHubConfig, HubNotConfiguredError } from './config';
+import { processConnectionsSyncDelivery } from './connections-sync-delivery';
 import { BROWSER_DELIVERY_TTL_MS } from './contracts/tunnel';
 import { processAuthCredentialsDelivery } from './credentials-delivery';
 import {
@@ -106,6 +109,39 @@ export async function handleHubDeliveryGet(
 	}
 
 	try {
+		if (isConnectionsSyncBrowserDelivery(payload)) {
+			if (!payload.hubOrigin || !payload.requestId) {
+				return {
+					type: 'json',
+					status: 400,
+					body: {
+						error:
+							'Connections sync delivery requires hubOrigin and requestId for client bridge',
+					},
+				};
+			}
+
+			const encrypted = await processConnectionsSyncDelivery(
+				corsair,
+				hub.signingSecret,
+			);
+
+			return {
+				type: 'text',
+				status: 200,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: true,
+					body: {
+						status: 'ok',
+						sync: { encrypted },
+					},
+				}),
+			};
+		}
+
 		if (isAuthCredentialsBrowserDelivery(payload)) {
 			if (!payload.hubSuccessUrl) {
 				return {
@@ -180,15 +216,38 @@ export async function handleHubDeliveryGet(
 					body: { error: 'Invalid BYO OAuth delivery token' },
 				};
 			}
+			// Browser delivery token already verified above; Hub's `state` is an
+			// opaque session id it cannot sign, so trust the payload's plugin/tenant.
 			await processOAuthCallback(corsair, {
 				code: payload.code,
 				state: payload.state,
 				redirectUri: payload.redirectUri,
+				trusted: true,
+				plugin: payload.plugin,
+				tenantId: payload.tenantId,
 			});
 		}
 	} catch (error) {
 		const message =
 			error instanceof Error ? error.message : 'Hub delivery failed';
+
+		if (
+			isConnectionsSyncBrowserDelivery(payload) &&
+			payload.hubOrigin &&
+			payload.requestId
+		) {
+			return {
+				type: 'text',
+				status: 400,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: false,
+					error: message,
+				}),
+			};
+		}
 
 		if (isAuthCredentialsBrowserDelivery(payload) && payload.hubSuccessUrl) {
 			return {
@@ -352,6 +411,10 @@ export async function respondToHubDeliveryFromRequest(
 	corsair: unknown,
 	request: Request,
 ): Promise<Response> {
+	// A request reaching the corsair route proves the app is live and serving —
+	// register its (trusted, config-derived) delivery URL with Hub.
+	announceAppFromRequest(corsair);
+
 	const method = request.method.toUpperCase();
 	const corsHeaders = resolveHubBrowserDeliveryCorsHeaders(
 		request.headers.get('origin'),

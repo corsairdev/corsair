@@ -5,6 +5,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from 'corsair/core';
+import { registerHubWebhookTenantLink } from 'corsair/hub';
 
 const MICROSOFT_TOKEN_URL =
 	'https://login.microsoftonline.com/common/oauth2/v2.0/token';
@@ -184,14 +185,30 @@ export async function saveSubscriptionTenantLink(
 	},
 	subscriptionId: string,
 ): Promise<void> {
-	if (!options.internal.database) return;
+	const link = {
+		linkType: 'subscription_id' as const,
+		externalId: subscriptionId,
+	};
 
-	await setWebhookTenantLink({
-		database: options.internal.database,
-		kek: options.internal.kek,
-		pluginId: options.pluginId,
-		tenantId: options.tenantId,
-		link: { linkType: 'subscription_id', externalId: subscriptionId },
-		authType: 'oauth_2',
-	});
+	// Hub mode: forward so Hub can route inbound Graph notifications to this tenant.
+	// Awaited so the registration completes before this short-lived CLI exits.
+	if (options.internal.hub) {
+		await registerHubWebhookTenantLink(options.internal.hub, {
+			plugin: options.pluginId,
+			tenantId: options.tenantId,
+			link,
+		});
+	}
+
+	// Tunnel mode: also store locally for SDK-hosted routing.
+	if (options.internal.database) {
+		await setWebhookTenantLink({
+			database: options.internal.database,
+			kek: options.internal.kek,
+			pluginId: options.pluginId,
+			tenantId: options.tenantId,
+			link,
+			authType: 'oauth_2',
+		});
+	}
 }

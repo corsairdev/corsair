@@ -113,9 +113,9 @@ export async function makeApi2PdfTextRequest(
 	}
 }
 
-export function assertApi2PdfSuccess<T extends { Success?: boolean; Error?: unknown }>(
-	response: T,
-): T {
+export function assertApi2PdfSuccess<
+	T extends { Success?: boolean; Error?: unknown },
+>(response: T): T {
 	if (response.Success === false) {
 		const message =
 			typeof response.Error === 'string'

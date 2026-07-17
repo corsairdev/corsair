@@ -242,10 +242,10 @@ export function api2pdf<const T extends Api2PdfPluginOptions>(
 }
 
 export type {
+	AddHeaderFooterInput,
 	Api2PdfEndpointInputs,
 	Api2PdfEndpointOutputs,
 	Api2PdfJobResponse,
-	AddHeaderFooterInput,
 	CheckStatusResponse,
 	DeletePdfInput,
 	ExtractPagesInput,

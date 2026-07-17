@@ -39,7 +39,12 @@ export const addHeaderFooter: Api2PdfEndpoints['addHeaderFooter'] = async (
 	);
 
 	await cachePdfJob(ctx, 'addHeaderFooter', response);
-	await logEventFromContext(ctx, 'api2pdf.chrome.addHeaderFooter', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'api2pdf.chrome.addHeaderFooter',
+		{},
+		'completed',
+	);
 
 	return response;
 };

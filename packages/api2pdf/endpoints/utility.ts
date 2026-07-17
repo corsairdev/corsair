@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { assertApi2PdfSuccess, makeApi2PdfRequest, makeApi2PdfTextRequest } from '../client';
+import {
+	assertApi2PdfSuccess,
+	makeApi2PdfRequest,
+	makeApi2PdfTextRequest,
+} from '../client';
 import type { Api2PdfEndpoints } from '../index';
 
 export const checkStatus: Api2PdfEndpoints['checkStatus'] = async (ctx) => {
@@ -7,7 +11,12 @@ export const checkStatus: Api2PdfEndpoints['checkStatus'] = async (ctx) => {
 		apiKey: ctx.key,
 	});
 
-	await logEventFromContext(ctx, 'api2pdf.utility.checkStatus', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'api2pdf.utility.checkStatus',
+		{},
+		'completed',
+	);
 
 	return { status: status.trim() };
 };
