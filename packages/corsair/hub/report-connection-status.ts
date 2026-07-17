@@ -17,6 +17,11 @@ export type ReportConnectionStatusInput = {
 	connected: boolean;
 	verified: boolean;
 	missingFields?: string[];
+	// BYO webhook routing: the app reports the provider-side routing key so Hub
+	// can map inbound webhooks to this tenant, and the verification secret so Hub
+	// can verify them. Absent in managed mode (Hub already holds both).
+	webhookLink?: { linkType: string; externalId: string };
+	webhookSecret?: string;
 };
 
 function buildConnectionStatusReport(input: {

@@ -246,6 +246,8 @@ export type {
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairPluginSubscribe,
+	CorsairPluginSubscribeResult,
 	EndpointHooks,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
