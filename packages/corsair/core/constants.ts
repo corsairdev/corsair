@@ -14,10 +14,10 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
-	'api2pdf',
 	'ahrefs',
 	'airtable',
 	'amplitude',
+	'api2pdf',
 	'asana',
 	'bitwarden',
 	'bluesky',
@@ -93,10 +93,10 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
-	api2pdf: 'API2PDF',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
+	api2pdf: 'API2PDF',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
@@ -179,10 +179,10 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'agentql'
-	| 'api2pdf'
 	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
+	| 'api2pdf'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
