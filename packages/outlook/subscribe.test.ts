@@ -26,12 +26,6 @@ describe('outlookSubscribe (BYO)', () => {
 				set_webhook_signature: async (v: string) => {
 					stored.webhook_signature = v;
 				},
-				set_subscription_id: async (v: string) => {
-					stored.subscription_id = v;
-				},
-				set_client_state: async (v: string) => {
-					stored.client_state = v;
-				},
 			},
 		};
 		const result = await outlookSubscribe(ctx, {
@@ -43,10 +37,8 @@ describe('outlookSubscribe (BYO)', () => {
 			webhookSecret: expect.any(String),
 		});
 
-		// persisted for inbound verification/matching
+		// persisted for inbound verification (clientState == webhook_signature)
 		expect(stored.webhook_signature).toBe(result!.webhookSecret);
-		expect(stored.subscription_id).toBe('sub-123');
-		expect(stored.client_state).toBe(result!.webhookSecret);
 
 		expect(calls).toHaveLength(1);
 		expect(calls[0]!.url).toBe(
@@ -64,8 +56,6 @@ describe('outlookSubscribe (BYO)', () => {
 
 	const noopSetters = {
 		set_webhook_signature: async () => {},
-		set_subscription_id: async () => {},
-		set_client_state: async () => {},
 	};
 
 	it('returns null when there is no access token', async () => {
