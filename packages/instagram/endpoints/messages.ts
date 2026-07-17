@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints } from '../index';
 import type { FacebookPageSchema } from '../schema/database';
-import { GetFacebookPages } from './metaDataEndpoints';
+import { GetFacebookPages } from './meta-data-endpoints';
 import type { InstagramEndpointOutputs } from './types';
 
 export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {

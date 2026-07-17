@@ -5,7 +5,7 @@ import * as Image from './image';
 import * as Media from './media';
 import * as Messages from './messages';
 import * as Profile from './profile';
-import * as Publish from './publish_content';
+import * as Publish from './publish-content';
 import * as Reel from './reel';
 import * as Video from './video';
 
