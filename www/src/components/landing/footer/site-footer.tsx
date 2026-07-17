@@ -51,6 +51,14 @@ export function SiteFooter() {
 						</h3>
 						<ul className="flex flex-col gap-2 p-0 list-none">
 							<li>
+								<Link
+									href="/#pricing"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Pricing
+								</Link>
+							</li>
+							<li>
 								<a
 									href={DOCS_URL}
 									target="_blank"
@@ -166,9 +174,17 @@ export function SiteFooter() {
 				</div>
 
 				<div className="mt-12 border-t border-[#1c1c1c0d] pt-8">
-					<p className="text-center text-xs text-[#1c1c1c66] sm:text-left">
-						&copy; {currentYear} Corsair. All rights reserved.
-					</p>
+					<div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
+						<p className="text-center text-xs text-[#1c1c1c66] sm:text-left">
+							&copy; {currentYear} Corsair. All rights reserved.
+						</p>
+						<Link
+							href="/privacy-policy"
+							className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
+						>
+							Privacy Policy
+						</Link>
+					</div>
 				</div>
 			</div>
 		</footer>

@@ -4,6 +4,8 @@ sidebarTitle: Setup
 description: Wire the Corsair SDK into your app with Hub — install, add the /api/corsair route, add your keys, and start. Your app self-registers on first run.
 ---
 
+import MountHandlerTabs from '/snippets/mount-handler-tabs.mdx';
+
 Add Corsair Hub to a TypeScript app in five steps. Your app registers itself with Hub the first time it serves a request, so there is no delivery URL to type into the dashboard — the **App sync** indicator in the header turns green when it connects.
 
 <Info>
@@ -45,53 +47,9 @@ Pass your app's database as `database`. Corsair persists connections and synced 
 
 ## 3. Add the `/api/corsair` route
 
-The handler serves Hub delivery — OAuth callbacks, connect pages, and self-registration — at its base path. Mount the adapter for your server:
+The handler serves Hub delivery — OAuth callbacks, connect pages, and self-registration — plus the management API, at its base path. Mount the adapter for your server:
 
-<Tabs>
-  <Tab title="Next.js">
-    ```ts app/api/corsair/[[...path]]/route.ts
-    import { toNextJsHandler } from "corsair";
-    import { corsair } from "@/corsair";
-
-    export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
-        basePath: "/api/corsair",
-    });
-    ```
-  </Tab>
-  <Tab title="Express">
-    ```ts server.ts
-    import { toExpressHandler } from "corsair";
-    import { corsair } from "./corsair";
-
-    app.use("/api/corsair", toExpressHandler(corsair));
-    ```
-  </Tab>
-  <Tab title="Hono">
-    ```ts server.ts
-    import { toHonoHandler } from "corsair";
-    import { corsair } from "./corsair";
-
-    app.all("/api/corsair/*", toHonoHandler(corsair));
-    ```
-  </Tab>
-  <Tab title="Other">
-    Any Web-standard runtime — SvelteKit, Remix / React Router, Astro, Bun, Deno, Cloudflare Workers — uses `createHubRouteHandlers`, which returns a `(Request) => Promise<Response>`:
-
-    ```ts
-    import { createHubRouteHandlers } from "corsair/hub";
-    import { corsair } from "./corsair";
-
-    const { delivery } = createHubRouteHandlers(corsair);
-
-    // `delivery` is a (Request) => Promise<Response>. Wire it to GET/POST/OPTIONS
-    // at /api/corsair in your framework's route — e.g. SvelteKit +server.ts, a
-    // Remix action, an Astro endpoint, or a Bun.serve fetch handler.
-    export { delivery as GET, delivery as POST, delivery as OPTIONS };
-    ```
-
-    Nuxt / Nitro (h3) wrap it with `fromWebHandler(delivery)`.
-  </Tab>
-</Tabs>
+<MountHandlerTabs />
 
 You do not put the delivery URL in your `hub` config — it is resolved per environment (see [Delivery URLs](/hub/delivery-urls)).
 
