@@ -282,7 +282,10 @@ export type {
 	WebhookTree,
 } from './webhooks';
 export { googleChannelSubscribe } from './webhooks/google-channel-subscribe';
-export { msGraphSubscribe } from './webhooks/ms-graph-subscribe';
+export {
+	MS_GRAPH_API_BASE,
+	msGraphSubscribe,
+} from './webhooks/ms-graph-subscribe';
 export {
 	collectPluginWebhookMatchers,
 	matchWebhookPlugin,

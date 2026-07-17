@@ -15,10 +15,10 @@ type SubscribeCtx = {
  * (our generated channel id, echoed back in X-Goog-Channel-ID) + the channel
  * token Hub verifies via X-Goog-Channel-Token. No app-side verify, so nothing
  * is persisted locally.
- * ponytail: no stale-channel cleanup — Google has no channel list API, so old
- * channels simply lapse at their TTL (expect brief invalid-token noise after
- * reconnects). Default TTLs accepted; the shared renewal job (vault follow-up
- * #2) re-arms before expiry.
+ * No stale-channel cleanup: Google exposes no channel list API, so prior
+ * channels can't be enumerated — they lapse at their TTL (expect brief
+ * invalid-token noise after reconnects). Default TTLs are accepted;
+ * oauth/renewal.ts re-arms before expiry.
  */
 export async function googleChannelSubscribe(
 	ctx: SubscribeCtx,
@@ -36,6 +36,7 @@ export async function googleChannelSubscribe(
 
 	const response = await fetch(input.watchUrl, {
 		method: 'POST',
+		signal: AbortSignal.timeout(20_000),
 		headers: {
 			authorization: `Bearer ${accessToken}`,
 			'content-type': 'application/json',

@@ -63,7 +63,8 @@ describe('processWebhook plugin hint (hub-verified deliveries)', () => {
 	it('keeps shape-matching for direct (non-hub) webhooks', async () => {
 		const calls: string[] = [];
 		const result = await processWebhook(makeCorsair(calls), headers, graphBody);
-		// documents the wildcard-first behavior the hint exists to bypass
+		// wildcard matchers still win order-first on direct routes — the hint
+		// exists because hub deliveries must not depend on this
 		expect(result.plugin).toBe('sharepoint');
 	});
 });

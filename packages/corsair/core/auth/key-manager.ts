@@ -186,7 +186,8 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 	// Serialize config writes: each setter does a read-merge-write of the whole
 	// encrypted blob, so parallel setters (e.g. Promise.all([set_a, set_b]))
 	// read the same base and the last write silently drops the other's field.
-	// ponytail: per-instance chain only — cross-process writers can still race.
+	// Per-instance serialization only — writers in other instances/processes
+	// can still race; row-level merge or optimistic locking is the full fix.
 	let configWriteChain: Promise<void> = Promise.resolve();
 	const updateConfig = (
 		updates: Record<string, string | null>,

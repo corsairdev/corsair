@@ -1,11 +1,12 @@
-import { msGraphSubscribe } from 'corsair/core';
+import { MS_GRAPH_API_BASE, msGraphSubscribe } from 'corsair/core';
 
 /**
  * BYO subscribe for SharePoint — resolves the tenant's root site, then arms
  * the shared MS Graph subscribe on its default drive. driveItem subscriptions
  * only support changeType 'updated'.
- * ponytail: root site only — connect time gives us no site to pick. A
- * site-scoped subscribe needs a per-resource API, not connect-time auto.
+ * Root site only: at connect time there is no site to pick. Site-scoped
+ * subscriptions need a per-resource subscribe API rather than this
+ * connect-time default.
  */
 export async function sharepointSubscribe(
 	ctx: Parameters<typeof msGraphSubscribe>[0],
@@ -14,8 +15,9 @@ export async function sharepointSubscribe(
 	const accessToken = await ctx.keys.get_access_token();
 	if (!accessToken) return null;
 
-	const siteResp = await fetch('https://graph.microsoft.com/v1.0/sites/root', {
+	const siteResp = await fetch(`${MS_GRAPH_API_BASE}/sites/root`, {
 		headers: { authorization: `Bearer ${accessToken}` },
+		signal: AbortSignal.timeout(20_000),
 	});
 	if (!siteResp.ok) return null;
 	const { id } = (await siteResp.json()) as { id?: string };

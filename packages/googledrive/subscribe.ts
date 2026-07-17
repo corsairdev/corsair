@@ -1,6 +1,6 @@
 import { googleChannelSubscribe } from 'corsair/core';
 
-const DRIVE_API = 'https://www.googleapis.com/drive/v3';
+import { GOOGLE_DRIVE_API_BASE } from './client';
 
 /**
  * BYO subscribe for Google Drive — resolves the changes start page token, then
@@ -14,9 +14,13 @@ export async function googledriveSubscribe(
 	const accessToken = await ctx.keys.get_access_token();
 	if (!accessToken) return null;
 
-	const tokenResp = await fetch(`${DRIVE_API}/changes/startPageToken`, {
-		headers: { authorization: `Bearer ${accessToken}` },
-	});
+	const tokenResp = await fetch(
+		`${GOOGLE_DRIVE_API_BASE}/changes/startPageToken`,
+		{
+			headers: { authorization: `Bearer ${accessToken}` },
+			signal: AbortSignal.timeout(20_000),
+		},
+	);
 	if (!tokenResp.ok) return null;
 	const { startPageToken } = (await tokenResp.json()) as {
 		startPageToken?: string;
@@ -25,6 +29,6 @@ export async function googledriveSubscribe(
 
 	return googleChannelSubscribe(ctx, {
 		webhookUrl: input.webhookUrl,
-		watchUrl: `${DRIVE_API}/changes/watch?pageToken=${encodeURIComponent(startPageToken)}`,
+		watchUrl: `${GOOGLE_DRIVE_API_BASE}/changes/watch?pageToken=${encodeURIComponent(startPageToken)}`,
 	});
 }

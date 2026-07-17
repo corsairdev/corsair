@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import type { CorsairPluginSubscribeResult } from '../plugins';
 
-const GRAPH_API = 'https://graph.microsoft.com/v1.0';
+export const MS_GRAPH_API_BASE = 'https://graph.microsoft.com/v1.0';
+// A hung provider call would otherwise stall an entire renewal pass.
+const FETCH_TIMEOUT_MS = 20_000;
 // Graph minimum is 45 min; maxes vary by resource (mail ~4230, driveItem
-// ~42300). 60 sits inside every resource's window.
-// ponytail: no renewal — subscriptions lapse after this. The shared renewal
-// job (vault follow-up #2) covers all Graph plugins at once.
+// ~42300). 60 sits inside every resource's window. Subscriptions lapse after
+// this unless re-armed — oauth/renewal.ts re-subscribes on an interval.
 const EXPIRATION_MINUTES = 60;
 
 /** Minimal shape we need from the account key manager (ctx.keys). */
@@ -39,8 +40,9 @@ export async function msGraphSubscribe(
 	// leave stale subscriptions firing (their old clientState no longer matches
 	// the stored webhook_signature → invalid_signature noise). Best-effort.
 	try {
-		const listResp = await fetch(`${GRAPH_API}/subscriptions`, {
+		const listResp = await fetch(`${MS_GRAPH_API_BASE}/subscriptions`, {
 			headers: authHeader,
+			signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
 		});
 		if (listResp.ok) {
 			const { value } = (await listResp.json()) as {
@@ -51,9 +53,10 @@ export async function msGraphSubscribe(
 			);
 			await Promise.all(
 				stale.map((s) =>
-					fetch(`${GRAPH_API}/subscriptions/${s.id}`, {
+					fetch(`${MS_GRAPH_API_BASE}/subscriptions/${s.id}`, {
 						method: 'DELETE',
 						headers: authHeader,
+						signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
 					}).catch(() => {}),
 				),
 			);
@@ -67,9 +70,10 @@ export async function msGraphSubscribe(
 		Date.now() + EXPIRATION_MINUTES * 60_000,
 	).toISOString();
 
-	const response = await fetch(`${GRAPH_API}/subscriptions`, {
+	const response = await fetch(`${MS_GRAPH_API_BASE}/subscriptions`, {
 		method: 'POST',
 		headers: { ...authHeader, 'content-type': 'application/json' },
+		signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
 		body: JSON.stringify({
 			changeType: input.changeType,
 			notificationUrl: input.webhookUrl,

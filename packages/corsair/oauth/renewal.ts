@@ -96,9 +96,10 @@ export async function renewSubscriptions(
  * their own scheduler instead). Runs immediately, then on the interval.
  * Default 45 min sits inside MS Graph's 60-minute expiry — the tightest
  * provider window. Returns a stop function.
- * ponytail: setInterval in-process — one app instance renews; multi-instance
- * apps double-subscribe harmlessly (idempotent), move to a real scheduler if
- * that noise matters.
+ *
+ * In-process interval: with multiple app instances each renews independently;
+ * re-subscribes are idempotent so that only adds provider API chatter. Move
+ * to a shared scheduler (e.g. a db-backed job) when running many instances.
  */
 export function startSubscriptionRenewal(
 	corsair: unknown,
