@@ -21,7 +21,13 @@ const MAIL_RESOURCE = "me/mailFolders('Inbox')/messages";
 
 /** Minimal shape we need from the account key manager (ctx.keys). */
 type SubscribeCtx = {
-	keys: { get_access_token: () => Promise<string | null | undefined> };
+	keys: {
+		get_access_token: () => Promise<string | null | undefined>;
+		// Persisted so inbound Graph notifications verify + route app-side.
+		set_webhook_signature: (value: string) => Promise<void>;
+		set_subscription_id: (value: string) => Promise<void>;
+		set_client_state: (value: string) => Promise<void>;
+	};
 };
 
 /**
@@ -66,6 +72,17 @@ export async function outlookSubscribe(
 
 	const created = (await response.json()) as { id?: string };
 	if (!created.id) return null;
+
+	// Persist on the account so inbound Graph notifications can be verified:
+	// the plugin's webhook keyBuilder reads webhook_signature (the clientState)
+	// to check each notification's clientState. subscription_id/client_state are
+	// the plugin's account fields (also clears the connection report's missing
+	// fields). Without this the app 400s with "webhook signature is missing".
+	await Promise.all([
+		ctx.keys.set_webhook_signature(clientState),
+		ctx.keys.set_subscription_id(created.id),
+		ctx.keys.set_client_state(clientState),
+	]);
 
 	return {
 		webhookLink: { linkType: 'subscription_id', externalId: created.id },
