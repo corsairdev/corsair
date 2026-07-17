@@ -42,12 +42,19 @@ export async function renewAccounts(input: {
 				extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
 			});
 			// Refresh first: stored access tokens expire (~1h) between renewal
-			// passes. The plugin's keyBuilder runs its own refresh dance and
-			// persists the fresh token, which subscribe then reads. At connect
-			// time this is unnecessary (token freshly exchanged) but harmless.
+			// passes, and the bookkept expires_at can drift from the real token
+			// (lost-update race on concurrent config writes). So never trust it:
+			// present the token as already expired, forcing the keyBuilder's
+			// refresh branch, which persists a fresh token for subscribe to read.
 			const keyBuilder = plugin.keyBuilder as CorsairKeyBuilderBase | undefined;
 			if (keyBuilder) {
-				await keyBuilder({ authType: 'oauth_2', keys }, 'endpoint');
+				const primingKeys = Object.create(keys, {
+					get_expires_at: { value: async () => '0' },
+				});
+				await keyBuilder(
+					{ authType: 'oauth_2', keys: primingKeys },
+					'endpoint',
+				);
 			}
 			await doSubscribe(corsair, plugin, row.tenantId, keys);
 			renewed.push(label);
@@ -97,10 +104,20 @@ export function startSubscriptionRenewal(
 	corsair: unknown,
 	options: { intervalMinutes?: number } = {},
 ): () => void {
+	// Reentrancy guard: overlapping passes race each other's token refreshes
+	// (concurrent config writes lose updates), so never start a pass while one
+	// is still running.
+	let inFlight = false;
 	const run = () => {
-		renewSubscriptions(corsair).catch((error) =>
-			console.warn('[corsair:renewal] renewal pass failed:', error),
-		);
+		if (inFlight) return;
+		inFlight = true;
+		renewSubscriptions(corsair)
+			.catch((error) =>
+				console.warn('[corsair:renewal] renewal pass failed:', error),
+			)
+			.finally(() => {
+				inFlight = false;
+			});
 	};
 	run();
 	const timer = setInterval(run, (options.intervalMinutes ?? 45) * 60_000);

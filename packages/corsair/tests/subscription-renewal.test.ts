@@ -43,6 +43,10 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 				expect(ctx.authType).toBe('oauth_2');
 				expect(ctx.keys.get_access_token).toBeDefined();
 				expect(source).toBe('endpoint');
+				// bookkeeping must be expired BEFORE the keyBuilder runs, so its
+				// refresh branch always fires (stored expires_at can drift from
+				// the real token under concurrent-write races)
+				expect(await ctx.keys.get_expires_at()).toBe('0');
 				order.push('keyBuilder');
 				return 'fresh-token';
 			},
