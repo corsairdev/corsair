@@ -43,6 +43,35 @@ export async function outlookSubscribe(
 	const accessToken = await ctx.keys.get_access_token();
 	if (!accessToken) return null;
 
+	const authHeader = { authorization: `Bearer ${accessToken}` };
+
+	// Delete any prior subscriptions pointing at our Hub URL so reconnects don't
+	// leave stale subscriptions firing (their old clientState no longer matches
+	// the stored webhook_signature → invalid_signature noise). Best-effort.
+	try {
+		const listResp = await fetch(`${GRAPH_API}/subscriptions`, {
+			headers: authHeader,
+		});
+		if (listResp.ok) {
+			const { value } = (await listResp.json()) as {
+				value?: Array<{ id: string; notificationUrl?: string }>;
+			};
+			const stale = (value ?? []).filter(
+				(s) => s.notificationUrl === input.webhookUrl,
+			);
+			await Promise.all(
+				stale.map((s) =>
+					fetch(`${GRAPH_API}/subscriptions/${s.id}`, {
+						method: 'DELETE',
+						headers: authHeader,
+					}).catch(() => {}),
+				),
+			);
+		}
+	} catch {
+		// cleanup is best-effort — never block arming the new subscription
+	}
+
 	const clientState = randomUUID();
 	const expirationDateTime = new Date(
 		Date.now() + EXPIRATION_MINUTES * 60_000,
@@ -50,10 +79,7 @@ export async function outlookSubscribe(
 
 	const response = await fetch(`${GRAPH_API}/subscriptions`, {
 		method: 'POST',
-		headers: {
-			authorization: `Bearer ${accessToken}`,
-			'content-type': 'application/json',
-		},
+		headers: { ...authHeader, 'content-type': 'application/json' },
 		body: JSON.stringify({
 			changeType: 'created',
 			notificationUrl: input.webhookUrl,
