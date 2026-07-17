@@ -281,6 +281,8 @@ export type {
 	WebhookTenantMatch,
 	WebhookTree,
 } from './webhooks';
+export { googleChannelSubscribe } from './webhooks/google-channel-subscribe';
+export { msGraphSubscribe } from './webhooks/ms-graph-subscribe';
 export {
 	collectPluginWebhookMatchers,
 	matchWebhookPlugin,
