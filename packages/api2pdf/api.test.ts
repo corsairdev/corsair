@@ -108,5 +108,96 @@ describe('API2PDF API Type Tests', () => {
 			Api2PdfEndpointOutputSchemas.mergePdfs.parse(response);
 			expect(response.Success).toBe(true);
 		});
+
+		it('extractPages extracts a single page from a PDF', async () => {
+			if (!TEST_API_KEY) return;
+
+			const response = assertApi2PdfSuccess(
+				await makeApi2PdfRequest<Api2PdfJobResponse>(
+					'/pdfsharp/extract-pages',
+					{
+						apiKey: TEST_API_KEY,
+						method: 'POST',
+						body: buildPostPayload({ url: SAMPLE_PDF, start: 0, end: 0 }),
+					},
+				),
+			);
+
+			Api2PdfEndpointOutputSchemas.extractPages.parse(response);
+			expect(response.Success).toBe(true);
+		});
+
+		it('reorderPages reorders pages of a PDF', async () => {
+			if (!TEST_API_KEY) return;
+
+			const response = assertApi2PdfSuccess(
+				await makeApi2PdfRequest<Api2PdfJobResponse>(
+					'/pdfsharp/reorder-pages',
+					{
+						apiKey: TEST_API_KEY,
+						method: 'POST',
+						body: buildPostPayload({ url: SAMPLE_PDF, pages: [0] }),
+					},
+				),
+			);
+
+			Api2PdfEndpointOutputSchemas.reorderPages.parse(response);
+			expect(response.Success).toBe(true);
+		});
+	});
+
+	describe('utility.delete', () => {
+		it('deletePdf rejects an unknown responseId with a non-success response', async () => {
+			if (!TEST_API_KEY) return;
+
+			// Use a responseId that was never created; the API should return a
+			// non-success payload rather than throw, exercising the delete path
+			// and the assertApi2PdfSuccess helper on a failure shape.
+			const response = await makeApi2PdfRequest<{
+				Success?: boolean;
+				Error?: string;
+			}>('/file/nonexistent-response-id', {
+				apiKey: TEST_API_KEY,
+				method: 'DELETE',
+			});
+
+			Api2PdfEndpointOutputSchemas.deletePdf.parse(response);
+			expect(response.Success).toBe(false);
+		});
+	});
+
+	describe('libreoffice', () => {
+		it('thumbnail renders a thumbnail from a PDF', async () => {
+			if (!TEST_API_KEY) return;
+
+			const response = assertApi2PdfSuccess(
+				await makeApi2PdfRequest<Api2PdfJobResponse>('/libreoffice/thumbnail', {
+					apiKey: TEST_API_KEY,
+					method: 'POST',
+					body: buildPostPayload({ url: SAMPLE_PDF }),
+				}),
+			);
+
+			Api2PdfEndpointOutputSchemas.libreOfficeThumbnail.parse(response);
+			expect(response.Success).toBe(true);
+		});
+
+		it('pdfToHtml converts a PDF to HTML', async () => {
+			if (!TEST_API_KEY) return;
+
+			const response = assertApi2PdfSuccess(
+				await makeApi2PdfRequest<Api2PdfJobResponse>(
+					'/libreoffice/pdf-to-html',
+					{
+						apiKey: TEST_API_KEY,
+						method: 'POST',
+						body: buildPostPayload({ url: SAMPLE_PDF }),
+					},
+				),
+			);
+
+			Api2PdfEndpointOutputSchemas.libreOfficePdfToHtml.parse(response);
+			expect(response.Success).toBe(true);
+		});
 	});
 });
