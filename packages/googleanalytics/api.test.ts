@@ -826,4 +826,24 @@ describe('input schemas accept documented shapes', () => {
 			});
 		expect(parsed.events[0]?.name).toBe('login');
 	});
+
+	it('measurementProtocol web stream requires clientId alongside measurementId', () => {
+		expect(() =>
+			GoogleAnalyticsEndpointInputSchemas.measurementProtocolSendEvents.parse({
+				apiSecret: 'secret',
+				measurementId: 'G-XXXX',
+				events: [{ name: 'login' }],
+			}),
+		).toThrow();
+	});
+
+	it('measurementProtocol Firebase app stream requires appInstanceId alongside firebaseAppId', () => {
+		expect(() =>
+			GoogleAnalyticsEndpointInputSchemas.measurementProtocolSendEvents.parse({
+				apiSecret: 'secret',
+				firebaseAppId: '1:123:web:abc',
+				events: [{ name: 'login' }],
+			}),
+		).toThrow();
+	});
 });
