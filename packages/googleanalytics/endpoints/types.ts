@@ -470,7 +470,28 @@ const MeasurementProtocolEventsInputSchema = z
 			message:
 				'Exactly one of measurementId (web) or firebaseAppId (Firebase app) is required',
 		},
-	);
+	)
+	// Each stream identifier also needs its corresponding client identifier:
+	// web streams (measurementId) require clientId, Firebase app streams
+	// (firebaseAppId) require appInstanceId. Surface a clear error instead of
+	// letting GA4 reject the call at runtime.
+	.superRefine((data, ctx) => {
+		if (data.measurementId && !data.clientId) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'clientId is required when measurementId (web stream) is set',
+				path: ['clientId'],
+			});
+		}
+		if (data.firebaseAppId && !data.appInstanceId) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message:
+					'appInstanceId is required when firebaseAppId (Firebase app stream) is set',
+				path: ['appInstanceId'],
+			});
+		}
+	});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Input / output schema maps
