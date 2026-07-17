@@ -32,6 +32,8 @@ function buildConnectionStatusReport(input: {
 	connected: boolean;
 	verified: boolean;
 	missingFields?: string[];
+	webhookLink?: { linkType: string; externalId: string };
+	webhookSecret?: string;
 }): ReportConnectionStatusInput {
 	return {
 		tenantId: input.tenantId,
@@ -41,6 +43,8 @@ function buildConnectionStatusReport(input: {
 		connected: input.connected,
 		verified: input.verified,
 		missingFields: input.missingFields,
+		webhookLink: input.webhookLink,
+		webhookSecret: input.webhookSecret,
 	};
 }
 
@@ -155,6 +159,10 @@ export async function reportPluginConnectionStatus(
 		plugin: CorsairPlugin;
 		tenantId: string;
 		verified?: boolean;
+		// BYO webhook routing: carried through to Hub so it can route + verify
+		// inbound provider webhooks. Set by the subscribe-on-connect hook.
+		webhookLink?: { linkType: string; externalId: string };
+		webhookSecret?: string;
 	},
 ): Promise<void> {
 	const internal = getCorsairInternal(corsair);
@@ -182,6 +190,8 @@ export async function reportPluginConnectionStatus(
 			connected: authStatus.connected,
 			verified: input.verified ?? authStatus.connected,
 			missingFields: authStatus.missingRequiredFields,
+			webhookLink: input.webhookLink,
+			webhookSecret: input.webhookSecret,
 		}),
 	);
 }

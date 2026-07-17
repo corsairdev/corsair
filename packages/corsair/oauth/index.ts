@@ -20,6 +20,9 @@ import {
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
+import { getHubConfig } from '../hub/config';
+import { reportPluginConnectionStatus } from '../hub/report-connection-status';
+import { getWebhookEndpointUrl } from '../hub/webhook-endpoint-client';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
@@ -366,6 +369,40 @@ export async function processOAuthCallback(
 			`[corsair:oauth] Failed to resolve webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
 			error,
 		);
+	}
+
+	// BYO subscribe-on-connect: class-1 providers (Outlook, Gmail) only send
+	// events after a token-authenticated subscribe. The app holds the token, so
+	// the app arms the subscription here and reports the routing link +
+	// verification secret to Hub. Hub never sees the token — only an opaque
+	// routing id and a random clientState. Best-effort: a failure never breaks
+	// the connect (mirrors the tenant-link block above). Plugins without a
+	// subscribe capability (class-2 webhooks) skip this entirely.
+	if (plugin.subscribe) {
+		try {
+			const hub = getHubConfig(corsair);
+			const webhookUrl = await getWebhookEndpointUrl(hub, pluginId);
+			if (webhookUrl) {
+				const result = await plugin.subscribe(
+					{ keys: accountKm },
+					{ webhookUrl },
+				);
+				if (result) {
+					await reportPluginConnectionStatus(corsair, {
+						plugin,
+						tenantId,
+						verified: true,
+						webhookLink: result.webhookLink,
+						webhookSecret: result.webhookSecret,
+					});
+				}
+			}
+		} catch (error) {
+			console.warn(
+				`[corsair:oauth] BYO subscribe failed for '${pluginId}' tenant '${tenantId}':`,
+				error,
+			);
+		}
 	}
 
 	return { plugin: pluginId, tenantId };
