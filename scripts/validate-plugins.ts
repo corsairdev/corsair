@@ -21,17 +21,8 @@ function logError(plugin: string, message: string, fix?: string) {
 	hasErrors = true;
 }
 
-// Required/generated filenames that intentionally don't follow kebab-case.
-// Keep in sync with the structural checks below (index.ts, types.ts, etc.).
-const KEBAB_ALLOWLIST = new Set([
-	'index.ts',
-	'types.ts',
-	'package.json',
-	'tsconfig.json',
-	'tsup.config.ts',
-	'jest.config.cjs',
-	'README.md',
-]);
+// Only .ts entries the walker skips non-.ts files before checking this set.
+const KEBAB_ALLOWLIST = new Set(['index.ts', 'types.ts', 'tsup.config.ts']);
 
 // A kebab-case .ts filename: lowercase alphanumeric words joined by hyphens,
 // optionally followed by jest grouping segments before `.test.ts`
