@@ -20,12 +20,10 @@ import {
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
-import { getHubConfig } from '../hub/config';
-import { reportPluginConnectionStatus } from '../hub/report-connection-status';
-import { getWebhookEndpointUrl } from '../hub/webhook-endpoint-client';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
+import { subscribeAndReport } from './subscribe-report';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
@@ -327,6 +325,10 @@ export async function processOAuthCallback(
 		tenantId,
 		kek: internal.kek,
 		database: internal.database,
+		// Include the plugin's extension fields so subscribe/resolvers can
+		// persist them (e.g. Outlook subscription_id) — without this only the
+		// base oauth_2 setters exist and extension setters throw.
+		extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
 	});
 
 	await accountKm.set_access_token(tokens.access_token);
@@ -380,23 +382,7 @@ export async function processOAuthCallback(
 	// subscribe capability (class-2 webhooks) skip this entirely.
 	if (plugin.subscribe) {
 		try {
-			const hub = getHubConfig(corsair);
-			const webhookUrl = await getWebhookEndpointUrl(hub, pluginId);
-			if (webhookUrl) {
-				const result = await plugin.subscribe(
-					{ keys: accountKm },
-					{ webhookUrl },
-				);
-				if (result) {
-					await reportPluginConnectionStatus(corsair, {
-						plugin,
-						tenantId,
-						verified: true,
-						webhookLink: result.webhookLink,
-						webhookSecret: result.webhookSecret,
-					});
-				}
-			}
+			await subscribeAndReport(corsair, plugin, tenantId, accountKm);
 		} catch (error) {
 			console.warn(
 				`[corsair:oauth] BYO subscribe failed for '${pluginId}' tenant '${tenantId}':`,

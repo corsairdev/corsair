@@ -1,0 +1,101 @@
+import type { CorsairInternalConfig } from '../core';
+import { createAccountKeyManager } from '../core';
+import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { subscribeAndReport } from './subscribe-report';
+
+export type SubscribableAccountRow = {
+	tenantId: string;
+	integrationName: string;
+};
+
+/**
+ * Re-arm provider subscriptions for the given connected accounts. Blanket
+ * re-subscribe: no expiry bookkeeping — subscribes are idempotent (Graph
+ * cleanup deletes stale subs, Gmail watch replaces itself, Google channels
+ * lapse at TTL), so re-arming everything inside the tightest expiry window
+ * keeps all providers alive. Per-account failures are isolated and tallied,
+ * never thrown.
+ */
+export async function renewAccounts(input: {
+	corsair: unknown;
+	internal: CorsairInternalConfig;
+	rows: SubscribableAccountRow[];
+	subscribeAndReport?: typeof subscribeAndReport;
+}): Promise<{ renewed: string[]; failed: string[] }> {
+	const { corsair, internal, rows } = input;
+	const doSubscribe = input.subscribeAndReport ?? subscribeAndReport;
+	const renewed: string[] = [];
+	const failed: string[] = [];
+	if (!internal.database) return { renewed, failed };
+
+	for (const row of rows) {
+		const plugin = internal.plugins.find((p) => p.id === row.integrationName);
+		if (!plugin?.subscribe) continue;
+		const label = `${plugin.id}/${row.tenantId}`;
+		try {
+			const keys = createAccountKeyManager({
+				authType: 'oauth_2',
+				integrationName: plugin.id,
+				tenantId: row.tenantId,
+				kek: internal.kek,
+				database: internal.database,
+				extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
+			});
+			await doSubscribe(corsair, plugin, row.tenantId, keys);
+			renewed.push(label);
+		} catch (error) {
+			console.warn(
+				`[corsair:renewal] re-subscribe failed for '${label}':`,
+				error,
+			);
+			failed.push(label);
+		}
+	}
+	return { renewed, failed };
+}
+
+/** One renewal pass over every connected account of every subscribable plugin. */
+export async function renewSubscriptions(
+	corsair: unknown,
+): Promise<{ renewed: string[]; failed: string[] }> {
+	const internal = getCorsairInternal(corsair);
+	if (!internal.database) return { renewed: [], failed: [] };
+
+	const rows = await internal.database.db
+		.selectFrom('corsair_accounts as a')
+		.innerJoin('corsair_integrations as i', 'i.id', 'a.integration_id')
+		.select(['a.tenant_id as tenantId', 'i.name as integrationName'])
+		.where('a.dek', 'is not', null)
+		.execute();
+
+	return renewAccounts({
+		corsair,
+		internal,
+		rows: rows.filter((r): r is SubscribableAccountRow => !!r.tenantId),
+	});
+}
+
+/**
+ * Start periodic BYO subscription renewal. Call once at app startup (a
+ * long-running server; serverless apps should invoke renewSubscriptions from
+ * their own scheduler instead). Runs immediately, then on the interval.
+ * Default 45 min sits inside MS Graph's 60-minute expiry — the tightest
+ * provider window. Returns a stop function.
+ * ponytail: setInterval in-process — one app instance renews; multi-instance
+ * apps double-subscribe harmlessly (idempotent), move to a real scheduler if
+ * that noise matters.
+ */
+export function startSubscriptionRenewal(
+	corsair: unknown,
+	options: { intervalMinutes?: number } = {},
+): () => void {
+	const run = () => {
+		renewSubscriptions(corsair).catch((error) =>
+			console.warn('[corsair:renewal] renewal pass failed:', error),
+		);
+	};
+	run();
+	const timer = setInterval(run, (options.intervalMinutes ?? 45) * 60_000);
+	timer.unref?.();
+	return () => clearInterval(timer);
+}
