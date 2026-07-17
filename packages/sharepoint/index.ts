@@ -40,6 +40,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SharepointSchema } from './schema';
+import { sharepointSubscribe } from './subscribe';
 import { ListWebhooks } from './webhooks';
 import { matchSharepointTenantWebhook } from './webhooks/tenant-matcher';
 import type {
@@ -1363,6 +1364,7 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 			);
 		},
 		pluginTenantWebhookMatcher: matchSharepointTenantWebhook,
+		subscribe: sharepointSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
