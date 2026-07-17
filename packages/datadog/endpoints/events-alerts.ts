@@ -127,8 +127,11 @@ export const webhooksGet: DatadogEndpoints['webhooksGet'] = async (
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['webhooksGet']
 	>(
-		`/api/v1/integration/webhooks/configuration/webhooks/${encodeURIComponent(input.webhookName)}`,
+		'/api/v1/integration/webhooks/configuration/webhooks/{webhookName}',
 		ctx.key,
+		{
+			path: { webhookName: input.webhookName },
+		},
 	);
 
 	await logEventFromContext(

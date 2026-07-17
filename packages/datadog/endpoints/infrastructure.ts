@@ -69,7 +69,8 @@ export const tagsGetHost: DatadogEndpoints['tagsGetHost'] = async (
 ) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['tagsGetHost']
-	>(`/api/v1/tags/hosts/${encodeURIComponent(input.hostName)}`, ctx.key, {
+	>('/api/v1/tags/hosts/{hostName}', ctx.key, {
+		path: { hostName: input.hostName },
 		query: { source: input.source },
 	});
 
@@ -88,8 +89,9 @@ export const tagsUpdateHost: DatadogEndpoints['tagsUpdateHost'] = async (
 ) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['tagsUpdateHost']
-	>(`/api/v1/tags/hosts/${encodeURIComponent(input.hostName)}`, ctx.key, {
+	>('/api/v1/tags/hosts/{hostName}', ctx.key, {
 		method: 'PUT',
+		path: { hostName: input.hostName },
 		query: { source: input.source },
 		body: { tags: input.tags },
 	});

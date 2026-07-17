@@ -93,7 +93,7 @@ describe('Datadog endpoint routing', () => {
 			name: 'dashboards.get',
 			fn: DashboardsEndpoints.get as AnyEndpoint,
 			input: { dashboardId: 'abc-123' },
-			path: '/api/v1/dashboard/abc-123',
+			path: '/api/v1/dashboard/{dashboardId}',
 			method: 'GET',
 		},
 		{
@@ -112,14 +112,14 @@ describe('Datadog endpoint routing', () => {
 				widgets: [],
 				layoutType: 'ordered',
 			},
-			path: '/api/v1/dashboard/abc-123',
+			path: '/api/v1/dashboard/{dashboardId}',
 			method: 'PUT',
 		},
 		{
 			name: 'dashboards.delete',
 			fn: DashboardsEndpoints.delete as AnyEndpoint,
 			input: { dashboardId: 'abc-123' },
-			path: '/api/v1/dashboard/abc-123',
+			path: '/api/v1/dashboard/{dashboardId}',
 			method: 'DELETE',
 		},
 		{
@@ -142,7 +142,7 @@ describe('Datadog endpoint routing', () => {
 			name: 'monitors.get',
 			fn: MonitorsEndpoints.get as AnyEndpoint,
 			input: { monitorId: 42 },
-			path: '/api/v1/monitor/42',
+			path: '/api/v1/monitor/{monitorId}',
 			method: 'GET',
 		},
 		{
@@ -156,28 +156,28 @@ describe('Datadog endpoint routing', () => {
 			name: 'monitors.update',
 			fn: MonitorsEndpoints.update as AnyEndpoint,
 			input: { monitorId: 42, name: 'renamed' },
-			path: '/api/v1/monitor/42',
+			path: '/api/v1/monitor/{monitorId}',
 			method: 'PUT',
 		},
 		{
 			name: 'monitors.delete',
 			fn: MonitorsEndpoints.delete as AnyEndpoint,
 			input: { monitorId: 42 },
-			path: '/api/v1/monitor/42',
+			path: '/api/v1/monitor/{monitorId}',
 			method: 'DELETE',
 		},
 		{
 			name: 'monitors.mute',
 			fn: MonitorsEndpoints.mute as AnyEndpoint,
 			input: { monitorId: 42, scope: 'host:a' },
-			path: '/api/v1/monitor/42/mute',
+			path: '/api/v1/monitor/{monitorId}/mute',
 			method: 'POST',
 		},
 		{
 			name: 'monitors.unmute',
 			fn: MonitorsEndpoints.unmute as AnyEndpoint,
 			input: { monitorId: 42 },
-			path: '/api/v1/monitor/42/unmute',
+			path: '/api/v1/monitor/{monitorId}/unmute',
 			method: 'POST',
 		},
 		{
@@ -212,7 +212,7 @@ describe('Datadog endpoint routing', () => {
 			name: 'synthetics.getApiTest',
 			fn: SyntheticsEndpoints.getApiTest as AnyEndpoint,
 			input: { publicId: 'pub-1' },
-			path: '/api/v1/synthetics/tests/api/pub-1',
+			path: '/api/v1/synthetics/tests/api/{publicId}',
 			method: 'GET',
 		},
 		{
@@ -266,7 +266,7 @@ describe('Datadog endpoint routing', () => {
 			name: 'webhooks.get',
 			fn: WebhooksEndpoints.get as AnyEndpoint,
 			input: { webhookName: 'hook' },
-			path: '/api/v1/integration/webhooks/configuration/webhooks/hook',
+			path: '/api/v1/integration/webhooks/configuration/webhooks/{webhookName}',
 			method: 'GET',
 		},
 		{
@@ -301,14 +301,14 @@ describe('Datadog endpoint routing', () => {
 			name: 'tags.getHost',
 			fn: TagsEndpoints.getHost as AnyEndpoint,
 			input: { hostName: 'web-1' },
-			path: '/api/v1/tags/hosts/web-1',
+			path: '/api/v1/tags/hosts/{hostName}',
 			method: 'GET',
 		},
 		{
 			name: 'tags.updateHost',
 			fn: TagsEndpoints.updateHost as AnyEndpoint,
 			input: { hostName: 'web-1', tags: ['env:prod'] },
-			path: '/api/v1/tags/hosts/web-1',
+			path: '/api/v1/tags/hosts/{hostName}',
 			method: 'PUT',
 		},
 		{
@@ -566,17 +566,18 @@ describe('Datadog request shaping', () => {
 		);
 	});
 
-	it('URL-encodes host names in tag paths', async () => {
+	it('passes host names through the encoded path map, not the URL string', async () => {
 		mockRequest.mockResolvedValue({ host: 'my host', tags: [] });
 		const ctx = createContext();
 
 		await (TagsEndpoints.getHost as AnyEndpoint)(ctx, { hostName: 'my host' });
 
-		const [path] = mockRequest.mock.calls[0]!;
-		expect(path).toBe('/api/v1/tags/hosts/my%20host');
+		const [path, , options] = mockRequest.mock.calls[0]!;
+		expect(path).toBe('/api/v1/tags/hosts/{hostName}');
+		expect(options?.path).toEqual({ hostName: 'my host' });
 	});
 
-	it('URL-encodes id path segments so hostile ids cannot alter the URL', async () => {
+	it('keeps endpoint paths constant so hostile ids cannot alter the URL', async () => {
 		mockRequest.mockResolvedValue({});
 		const ctx = createContext();
 
@@ -584,7 +585,8 @@ describe('Datadog request shaping', () => {
 			dashboardId: '{{evil}}/../x',
 		});
 
-		const [path] = mockRequest.mock.calls[0]!;
-		expect(path).toBe('/api/v1/dashboard/%7B%7Bevil%7D%7D%2F..%2Fx');
+		const [path, , options] = mockRequest.mock.calls[0]!;
+		expect(path).toBe('/api/v1/dashboard/{dashboardId}');
+		expect(options?.path).toEqual({ dashboardId: '{{evil}}/../x' });
 	});
 });

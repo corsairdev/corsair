@@ -85,7 +85,8 @@ export const search: DatadogEndpoints['monitorsSearch'] = async (
 export const get: DatadogEndpoints['monitorsGet'] = async (ctx, input) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['monitorsGet']
-	>(`/api/v1/monitor/${input.monitorId}`, ctx.key, {
+	>('/api/v1/monitor/{monitorId}', ctx.key, {
+		path: { monitorId: input.monitorId },
 		query: { group_states: input.groupStates },
 	});
 
@@ -136,8 +137,9 @@ export const update: DatadogEndpoints['monitorsUpdate'] = async (
 ) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['monitorsUpdate']
-	>(`/api/v1/monitor/${input.monitorId}`, ctx.key, {
+	>('/api/v1/monitor/{monitorId}', ctx.key, {
 		method: 'PUT',
+		path: { monitorId: input.monitorId },
 		body: {
 			name: input.name,
 			query: input.query,
@@ -165,7 +167,10 @@ export const remove: DatadogEndpoints['monitorsDelete'] = async (
 ) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['monitorsDelete']
-	>(`/api/v1/monitor/${input.monitorId}`, ctx.key, { method: 'DELETE' });
+	>('/api/v1/monitor/{monitorId}', ctx.key, {
+		method: 'DELETE',
+		path: { monitorId: input.monitorId },
+	});
 
 	if (ctx.db?.monitors) {
 		try {
@@ -187,8 +192,9 @@ export const remove: DatadogEndpoints['monitorsDelete'] = async (
 export const mute: DatadogEndpoints['monitorsMute'] = async (ctx, input) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['monitorsMute']
-	>(`/api/v1/monitor/${input.monitorId}/mute`, ctx.key, {
+	>('/api/v1/monitor/{monitorId}/mute', ctx.key, {
 		method: 'POST',
+		path: { monitorId: input.monitorId },
 		query: { scope: input.scope, end: input.end },
 	});
 
@@ -207,8 +213,9 @@ export const unmute: DatadogEndpoints['monitorsUnmute'] = async (
 ) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['monitorsUnmute']
-	>(`/api/v1/monitor/${input.monitorId}/unmute`, ctx.key, {
+	>('/api/v1/monitor/{monitorId}/unmute', ctx.key, {
 		method: 'POST',
+		path: { monitorId: input.monitorId },
 		query: { scope: input.scope, all_scopes: input.allScopes },
 	});
 

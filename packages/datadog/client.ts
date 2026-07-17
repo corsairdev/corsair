@@ -99,6 +99,12 @@ export type DatadogRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	query?: Record<string, DatadogQueryValue>;
 	body?: Record<string, unknown>;
+	/**
+	 * Values for `{placeholder}` segments in the endpoint path. Endpoint paths
+	 * stay constant strings and every value is URI-encoded by the HTTP layer,
+	 * so user-supplied ids can never alter the URL structure.
+	 */
+	path?: Record<string, string | number>;
 };
 
 export async function makeDatadogRequest<T>(
@@ -107,13 +113,14 @@ export async function makeDatadogRequest<T>(
 	options: DatadogRequestOptions = {},
 ): Promise<T> {
 	const { apiKey, appKey, site } = parseDatadogKey(key);
-	const { method = 'GET', query, body } = options;
+	const { method = 'GET', query, body, path } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: `https://api.${site || DEFAULT_DATADOG_SITE}`,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		ENCODE_PATH: encodeURIComponent,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
@@ -125,6 +132,7 @@ export async function makeDatadogRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		path,
 		query,
 		body: method === 'GET' || method === 'DELETE' ? undefined : body,
 		mediaType: 'application/json',
