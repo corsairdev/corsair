@@ -34,6 +34,32 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 		});
 	});
 
+	it('primes the plugin keyBuilder before subscribing so expired tokens refresh', async () => {
+		const order: string[] = [];
+		const outlook = {
+			id: 'outlook',
+			subscribe: async () => ({}),
+			keyBuilder: async (ctx: any, source: string) => {
+				expect(ctx.authType).toBe('oauth_2');
+				expect(ctx.keys.get_access_token).toBeDefined();
+				expect(source).toBe('endpoint');
+				order.push('keyBuilder');
+				return 'fresh-token';
+			},
+		};
+		const result = await renewAccounts({
+			corsair: {},
+			internal: { ...internalBase, plugins: [outlook] },
+			rows: [{ tenantId: 't1', integrationName: 'outlook' }],
+			subscribeAndReport: async () => {
+				order.push('subscribe');
+			},
+		});
+
+		expect(order).toEqual(['keyBuilder', 'subscribe']);
+		expect(result.renewed).toEqual(['outlook/t1']);
+	});
+
 	it('isolates per-account failures and tallies them', async () => {
 		const outlook = { id: 'outlook', subscribe: async () => ({}) };
 		const result = await renewAccounts({

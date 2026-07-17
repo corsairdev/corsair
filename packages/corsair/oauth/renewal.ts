@@ -1,4 +1,4 @@
-import type { CorsairInternalConfig } from '../core';
+import type { CorsairInternalConfig, CorsairKeyBuilderBase } from '../core';
 import { createAccountKeyManager } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { subscribeAndReport } from './subscribe-report';
@@ -41,6 +41,14 @@ export async function renewAccounts(input: {
 				database: internal.database,
 				extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
 			});
+			// Refresh first: stored access tokens expire (~1h) between renewal
+			// passes. The plugin's keyBuilder runs its own refresh dance and
+			// persists the fresh token, which subscribe then reads. At connect
+			// time this is unnecessary (token freshly exchanged) but harmless.
+			const keyBuilder = plugin.keyBuilder as CorsairKeyBuilderBase | undefined;
+			if (keyBuilder) {
+				await keyBuilder({ authType: 'oauth_2', keys }, 'endpoint');
+			}
 			await doSubscribe(corsair, plugin, row.tenantId, keys);
 			renewed.push(label);
 		} catch (error) {
