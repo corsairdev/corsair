@@ -45,6 +45,7 @@ export const BaseProviders = [
 	'grafana',
 	'hackernews',
 	'hubspot',
+	'insightoai',
 	'instagram',
 	'intercom',
 	'jira',
@@ -122,6 +123,7 @@ export const ProviderDisplayNames = {
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
+	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
@@ -206,6 +208,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
+	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
 	| 'jira'
