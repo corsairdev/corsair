@@ -53,7 +53,7 @@ export const list: DatadogEndpoints['dashboardsList'] = async (ctx, input) => {
 export const get: DatadogEndpoints['dashboardsGet'] = async (ctx, input) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['dashboardsGet']
-	>(`/api/v1/dashboard/${input.dashboardId}`, ctx.key);
+	>(`/api/v1/dashboard/${encodeURIComponent(input.dashboardId)}`, ctx.key);
 
 	await upsertDashboard(ctx, response);
 
@@ -101,7 +101,7 @@ export const update: DatadogEndpoints['dashboardsUpdate'] = async (
 ) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['dashboardsUpdate']
-	>(`/api/v1/dashboard/${input.dashboardId}`, ctx.key, {
+	>(`/api/v1/dashboard/${encodeURIComponent(input.dashboardId)}`, ctx.key, {
 		method: 'PUT',
 		body: {
 			title: input.title,
@@ -130,7 +130,9 @@ export const remove: DatadogEndpoints['dashboardsDelete'] = async (
 ) => {
 	const response = await makeDatadogRequest<
 		DatadogEndpointOutputs['dashboardsDelete']
-	>(`/api/v1/dashboard/${input.dashboardId}`, ctx.key, { method: 'DELETE' });
+	>(`/api/v1/dashboard/${encodeURIComponent(input.dashboardId)}`, ctx.key, {
+		method: 'DELETE',
+	});
 
 	if (ctx.db?.dashboards) {
 		try {

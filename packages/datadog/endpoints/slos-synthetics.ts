@@ -108,7 +108,10 @@ export const syntheticsGetApiTest: DatadogEndpoints['syntheticsGetApiTest'] =
 	async (ctx, input) => {
 		const response = await makeDatadogRequest<
 			DatadogEndpointOutputs['syntheticsGetApiTest']
-		>(`/api/v1/synthetics/tests/api/${input.publicId}`, ctx.key);
+		>(
+			`/api/v1/synthetics/tests/api/${encodeURIComponent(input.publicId)}`,
+			ctx.key,
+		);
 
 		await logEventFromContext(
 			ctx,

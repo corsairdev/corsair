@@ -575,4 +575,16 @@ describe('Datadog request shaping', () => {
 		const [path] = mockRequest.mock.calls[0]!;
 		expect(path).toBe('/api/v1/tags/hosts/my%20host');
 	});
+
+	it('URL-encodes id path segments so hostile ids cannot alter the URL', async () => {
+		mockRequest.mockResolvedValue({});
+		const ctx = createContext();
+
+		await (DashboardsEndpoints.get as AnyEndpoint)(ctx, {
+			dashboardId: '{{evil}}/../x',
+		});
+
+		const [path] = mockRequest.mock.calls[0]!;
+		expect(path).toBe('/api/v1/dashboard/%7B%7Bevil%7D%7D%2F..%2Fx');
+	});
 });

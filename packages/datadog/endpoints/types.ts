@@ -70,7 +70,10 @@ const DashboardsListResponseSchema = z.object({
 	dashboards: z.array(DashboardSummarySchema).optional(),
 });
 
-const DashboardsGetInputSchema = z.object({ dashboardId: z.string() });
+/** Datadog dashboard ids are dash-separated alphanumeric tokens, e.g. "2xf-p3g-8ke". */
+const DashboardIdSchema = z.string().regex(/^[a-zA-Z0-9-]+$/);
+
+const DashboardsGetInputSchema = z.object({ dashboardId: DashboardIdSchema });
 
 const DashboardsCreateInputSchema = z.object({
 	title: z.string(),
@@ -83,10 +86,12 @@ const DashboardsCreateInputSchema = z.object({
 });
 
 const DashboardsUpdateInputSchema = DashboardsCreateInputSchema.extend({
-	dashboardId: z.string(),
+	dashboardId: DashboardIdSchema,
 });
 
-const DashboardsDeleteInputSchema = z.object({ dashboardId: z.string() });
+const DashboardsDeleteInputSchema = z.object({
+	dashboardId: DashboardIdSchema,
+});
 const DashboardsDeleteResponseSchema = z.object({
 	deleted_dashboard_id: z.string().optional(),
 });
@@ -296,7 +301,10 @@ const SyntheticsListTestsResponseSchema = z.object({
 	tests: z.array(SyntheticsTestSchema).optional(),
 });
 
-const SyntheticsGetApiTestInputSchema = z.object({ publicId: z.string() });
+/** Synthetics public ids are dash-separated alphanumeric tokens, e.g. "abc-def-ghi". */
+const SyntheticsGetApiTestInputSchema = z.object({
+	publicId: z.string().regex(/^[a-zA-Z0-9-]+$/),
+});
 
 const SyntheticsCreateApiTestInputSchema = z.object({
 	name: z.string(),
