@@ -4,7 +4,7 @@ description: The go-to integration layer for AI agents and apps. Connect anythin
 mode: "wide"
 ---
 
-Corsair is the fastest way to add any integration to your app or agent. Auth, token refresh, data storage, webhooks, rate limits are all handled. You write the part that's unique to your use case, not the plumbing you've already written a hundred times.
+Corsair is the fastest way to add any integration to your app or agent. It handles the authentication and data-sync plumbing every service needs, so you write only the part that's unique to your use case — not the wiring you've already built a hundred times.
 
 Every integration is a plugin. Install the ones you need, hand Corsair a database and an encryption key, and each service becomes a typed client in your code — plus one set of tools your agent can call across all of them. One pattern, whether you have a single integration or fifty. [Corsair Hub](/hub/overview) handles the hosted OAuth and approval surfaces so you never build them.
 
@@ -24,6 +24,8 @@ pnpm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @
 bun add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
 ```
 </CodeGroup>
+
+Each service ships as its own `@corsair-dev/*` package. Find the one you need — and its exact install id — in the [**Plugins**](/guides/plugins) catalog.
 
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
@@ -49,6 +51,10 @@ can accept it. Let me know when he does.
 One prompt, four integrations, and Corsair handles the rest.
 
 Corsair runs in your own app and stores credentials in your own database. **[Corsair Hub](/hub/overview) is the recommended way to run it** — connect your app, or your users' apps, without hosting the OAuth connect, approval, and webhook surfaces yourself. Hub relays those surfaces and still stores none of your credentials; tokens stay encrypted in your database. Prefer to host those surfaces yourself? That path stays [fully supported](/hub/manual-vs-hub).
+
+<Tip>
+In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair Hub end to end — install, route, keys, and a real connected integration.
+</Tip>
 
 ## Get started
 
