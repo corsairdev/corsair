@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Usage } from './endpoints';
 import type {
 	RetailedEndpointInputs,
@@ -26,11 +27,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { RetailedSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveRetailedOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchRetailedTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, RetailedWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type RetailedPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -65,28 +61,13 @@ export type RetailedEndpoints = {
 	getUsage: RetailedEndpoint<'getUsage'>;
 };
 
-type RetailedWebhook<
-	K extends keyof RetailedWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<RetailedContext, TEvent, RetailedWebhookOutputs[K]>;
-
-export type RetailedWebhooks = {
-	example: RetailedWebhook<'example', ExampleEvent>;
-};
-
-export type RetailedBoundWebhooks = BindWebhooks<RetailedWebhooks>;
-
 const retailedEndpointsNested = {
 	usage: {
 		get: Usage.get,
 	},
 } as const;
 
-const retailedWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const retailedWebhooksNested = {} as const;
 
 export const retailedEndpointSchemas = {
 	'usage.get': {
@@ -95,16 +76,6 @@ export const retailedEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof retailedEndpointsNested
->;
-
-const retailedWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof retailedWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -157,43 +128,33 @@ export function retailed<const T extends RetailedPluginOptions>(
 		webhooks: retailedWebhooksNested,
 		endpointMeta: retailedEndpointMeta,
 		endpointSchemas: retailedEndpointSchemas,
-		webhookSchemas: retailedWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-retailed-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchRetailedTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveRetailedOAuthWebhookTenantLink,
+
+		pluginWebhookMatcher: () => false,
+
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: RetailedKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res) return res;
+
+				throw new AuthMissingError('retailed', 'api_key');
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (res) return res;
+
+				throw new AuthMissingError('retailed', 'oauth_2');
 			}
 
-			return '';
+			throw new AuthMissingError('retailed', ctx.authType);
 		},
 	} satisfies InternalRetailedPlugin;
 }
@@ -204,7 +165,3 @@ export type {
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	RetailedWebhookOutputs,
-} from './webhooks/types';
