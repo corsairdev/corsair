@@ -2,7 +2,6 @@ import {
 	getPluginAuthStatus,
 	isOptionalAuthField,
 } from '../core/auth/plugin-auth-status';
-import type { PluginAuthConfig } from '../core/auth/types';
 import type { AuthTypes } from '../core/constants';
 import { formatProviderDisplayName } from '../core/constants';
 import type { CorsairInternalConfig } from '../core/index';
@@ -113,20 +112,7 @@ export async function buildConnectPluginManifestFromContext(
 			tenantId,
 		);
 		const accountFields = getAccountFields(plugin, authType);
-		// Integration-level extension fields (e.g. gmail's topic_id) are entered
-		// by the user like account credentials — omit them here and no form ever
-		// renders their inputs. Base integration fields (client_id/client_secret)
-		// stay out: the credentials UI renders those from the auth kind itself.
-		const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
-		const extraIntegrationFields = (
-			authConfig?.[authType]?.integration ?? []
-		).filter((field) => !isOptionalAuthField(field));
-		const credentialFields = [
-			...new Set([
-				...getEditableAccountFields(authType, accountFields),
-				...extraIntegrationFields,
-			]),
-		];
+		const credentialFields = getEditableAccountFields(authType, accountFields);
 
 		const entry: ConnectPluginManifestEntry = {
 			plugin: plugin.id,
