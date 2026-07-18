@@ -1,7 +1,7 @@
 import {
 	get as conferenceRecordsGet,
 	list as conferenceRecordsList,
-} from './conferenceRecords';
+} from './conference-records';
 import {
 	getParticipantSession,
 	listParticipantSessions,
@@ -9,7 +9,7 @@ import {
 	list as participantsList,
 } from './participants';
 import { get as recordingsGet, list as recordingsList } from './recordings';
-import { get as smartNotesGet, list as smartNotesList } from './smartNotes';
+import { get as smartNotesGet, list as smartNotesList } from './smart-notes';
 import { create, endActiveConference, patch, get as spacesGet } from './spaces';
 import {
 	getEntry,

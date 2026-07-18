@@ -1,10 +1,10 @@
-import * as ActivityLogsEndpoints from './activityLogs';
+import * as ActivityLogsEndpoints from './activity-logs';
 import * as CommentsEndpoints from './comments';
 import * as ComponentsEndpoints from './components';
-import * as DesignToolsEndpoints from './designTools';
-import * as DevResourcesEndpoints from './devResources';
+import * as DesignToolsEndpoints from './design-tools';
+import * as DevResourcesEndpoints from './dev-resources';
 import * as FilesEndpoints from './files';
-import * as LibraryAnalyticsEndpoints from './libraryAnalytics';
+import * as LibraryAnalyticsEndpoints from './library-analytics';
 import * as PaymentsEndpoints from './payments';
 import * as ProjectsEndpoints from './projects';
 import * as StylesEndpoints from './styles';

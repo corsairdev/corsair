@@ -21,12 +21,7 @@ The `/api/corsair` route holds the signing secret and receives Hub's server-to-s
 
 1. **Install** `corsair` and a plugin for the service the user needs — e.g. `npm i corsair @corsair-dev/github`. Ask which integration if unclear; ids are in the [catalog](https://api.corsair.dev/md/integrations). Don't assume a plugin from the repo name.
 2. **Create `corsair.ts`** — `createCorsair({ kek, database, hub: { projectApiKey, signingSecret }, plugins })`. Pass the app's own database; Corsair persists connections and synced data there. Hub stores none of it.
-3. **Add the `/api/corsair` route** using the page for the user's stack — fetch it and follow it exactly:
-   - Next.js → https://docs.corsair.dev/frameworks/nextjs.md (`toNextJsHandler`)
-   - Express → https://docs.corsair.dev/frameworks/express.md (`toExpressHandler`)
-   - Hono → https://docs.corsair.dev/frameworks/hono.md (`toHonoHandler`)
-   - Any other Web-standard runtime (SvelteKit, Remix, Astro, Nuxt, Bun, Deno, Cloudflare Workers) → https://docs.corsair.dev/frameworks/web-standard.md (`managementHandler`, a `(Request) => Promise<Response>` you wire to GET/POST)
-   - Backend not in JavaScript? Skip the SDK and use the Hub REST API → https://docs.corsair.dev/hub/rest-api.md
+3. **Add the `/api/corsair` route.** The setup guide's route step covers every stack — Next.js, Express, and Hono use their named adapters; any other Web-standard runtime (SvelteKit, Remix, Astro, Nuxt, Bun, Deno, Workers) uses `managementHandler`, a `(Request) => Promise<Response>` wired to GET/POST. Backend not in JavaScript? Skip the SDK and use the Hub REST API → https://docs.corsair.dev/hub/rest-api.md
 4. **Add keys to `.env`** — `CORSAIR_DEV_API_KEY`, `CORSAIR_DEV_SIGNING_SECRET`, and `CORSAIR_KEK`, copied from the project's **Keys** tab. Use `CORSAIR_PROD_*` for production. Never log or commit secrets.
 5. **Start the server.** On the first request the app self-registers its delivery URL — the dashboard's **App sync** indicator turns green. That confirms setup is live. No delivery URL goes in the `hub` config; it is resolved per environment.
 6. **Connect accounts.** When a tenant needs OAuth or an API key, mint a connect link in code and send the user to it (see [Connect](https://docs.corsair.dev/management/connect.md)), or use the **Sign-in link** button in the dashboard for testing. Users connect on Hub's hosted page; tokens land encrypted in the user's database.
@@ -34,7 +29,7 @@ The `/api/corsair` route holds the signing secret and receives Hub's server-to-s
 ## Reference
 
 - Setup guide (canonical): https://docs.corsair.dev/hub/setup.md
-- Framework route pages: https://docs.corsair.dev/frameworks/nextjs.md (also express, hono, web-standard)
+- Framework route (all stacks, tabbed): https://docs.corsair.dev/adapters/handlers.md
 - Hub REST API (non-JS backends): https://docs.corsair.dev/hub/rest-api.md
 - Delivery URLs (dev self-registration, production POST): https://docs.corsair.dev/hub/delivery-urls.md
 - Environments (dev vs prod keys): https://docs.corsair.dev/hub/environments.md

@@ -110,7 +110,7 @@ Errors come back as JSON in this flat shape:
 }
 ```
 
-In-process `corsair.manage.*` calls throw errors with `status`, `code`, `message`, and `extra` fields — the same shape HTTP clients surface as [`CorsairClientError`](/management/client#error-handling). Common codes you'll see from the management routes:
+In-process `corsair.manage.*` calls throw errors with `status`, `code`, `message`, and `extra` fields — the same shape HTTP clients surface as [`CorsairClientError`](/adapters/client#error-handling). Common codes you'll see from the management routes:
 
 | Status | `error`                 | When                                              |
 | ------ | ----------------------- | ------------------------------------------------- |

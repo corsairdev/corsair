@@ -10,7 +10,7 @@ import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 The quickest path to a working integration is **Hub**. It hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are still encrypted and stored in your own database — Hub stores none.
 
 <Note>
-Want to host those surfaces yourself instead? Every step below is the same; you just swap the `hub` block for `manual`. See [Manual or Hub](/hub/manual-vs-hub).
+Want to host those surfaces yourself instead? Every step below is the same; swap the `hub` block for `manual`. See [Manual or Hub](/hub/manual-vs-hub).
 </Note>
 
 <Steps>
@@ -33,6 +33,10 @@ pnpm install corsair @corsair-dev/github
 bun add corsair @corsair-dev/github
 ```
 </CodeGroup>
+
+<Tip>
+`@corsair-dev/github` is one plugin. Every service is its own `@corsair-dev/*` package — find the one you need, and its exact install id, in the [**Plugins**](/guides/plugins) catalog.
+</Tip>
 
 </Step>
 
@@ -229,7 +233,7 @@ Want an agent to call endpoints on its own? See [MCP Adapters](/mcp-adapters/mcp
   <Card title="Database options" href="/concepts/database">
     Postgres, Drizzle, Prisma, and the four tables Corsair uses.
   </Card>
-  <Card title="Provisioning & CLI" href="/going-to-production/provisioning-cli">
+  <Card title="Provisioning" href="/concepts/provisioning">
     Seed credentials and provision tenants from the `corsair` CLI or `setupCorsair`.
   </Card>
 </CardGroup>

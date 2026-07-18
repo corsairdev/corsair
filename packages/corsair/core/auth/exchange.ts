@@ -2,6 +2,28 @@ import * as https from 'node:https';
 import * as querystring from 'node:querystring';
 import type { OAuthConfig } from '../plugins';
 
+const TOKEN_NUMERIC_FIELDS = ['expires_in', 'refresh_token_expires_in'];
+
+/**
+ * Parses a token endpoint response as JSON, falling back to form-urlencoded
+ * (GitHub's default). Returns null if neither yields an access_token or error.
+ */
+export function parseTokenResponse(data: string): TokenResponse | null {
+	try {
+		return JSON.parse(data) as TokenResponse;
+	} catch {
+		// not JSON — try form-urlencoded
+	}
+	if (!data.includes('=')) return null;
+	const form = querystring.parse(data) as Record<string, string>;
+	if (!form.access_token && !form.error) return null;
+	const out: TokenResponse = { ...form };
+	for (const key of TOKEN_NUMERIC_FIELDS) {
+		if (typeof form[key] === 'string') out[key] = Number(form[key]);
+	}
+	return out;
+}
+
 export type TokenResponse = {
 	access_token?: string;
 	refresh_token?: string;
@@ -41,6 +63,9 @@ export function exchangeCodeForTokens(
 		const postData = querystring.stringify(postDataParams);
 		const headers: Record<string, string> = {
 			'Content-Type': 'application/x-www-form-urlencoded',
+			// GitHub (and some others) default to a form-urlencoded token response;
+			// ask for JSON explicitly so parsing is predictable.
+			Accept: 'application/json',
 			'Content-Length': Buffer.byteLength(postData).toString(),
 		};
 
@@ -68,9 +93,10 @@ export function exchangeCodeForTokens(
 						);
 						return;
 					}
-					try {
-						resolve(JSON.parse(data) as TokenResponse);
-					} catch {
+					const parsed = parseTokenResponse(data);
+					if (parsed) {
+						resolve(parsed);
+					} else {
 						reject(
 							new Error(`Token endpoint returned non-JSON response: ${data}`),
 						);

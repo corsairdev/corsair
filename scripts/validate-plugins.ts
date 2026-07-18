@@ -21,6 +21,40 @@ function logError(plugin: string, message: string, fix?: string) {
 	hasErrors = true;
 }
 
+// Only .ts entries the walker skips non-.ts files before checking this set.
+const KEBAB_ALLOWLIST = new Set(['index.ts', 'types.ts', 'tsup.config.ts']);
+
+// A kebab-case .ts filename: lowercase alphanumeric words joined by hyphens,
+// optionally followed by jest grouping segments before `.test.ts`
+// (e.g. feeds.api.test.ts, webhooks.integration.test.ts).
+const KEBAB_TS_RE =
+	/^[a-z0-9]+(?:-[a-z0-9]+)*(?:\.[a-z0-9-]+)*\.test\.ts$|^[a-z0-9]+(?:-[a-z0-9]+)*\.ts$/;
+
+function checkKebabFileNames(plugin: string, pluginPath: string) {
+	const visit = (dir: string) => {
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			if (entry.name === 'node_modules' || entry.name === 'dist') continue;
+			const fullPath = path.join(dir, entry.name);
+			if (entry.isDirectory()) {
+				visit(fullPath);
+				continue;
+			}
+			// Only enforce naming on source files; config/data files are allowlisted.
+			if (!entry.name.endsWith('.ts')) continue;
+			if (KEBAB_ALLOWLIST.has(entry.name)) continue;
+			if (!KEBAB_TS_RE.test(entry.name)) {
+				const rel = path.relative(pluginPath, fullPath);
+				logError(
+					plugin,
+					`File name is not kebab-case: ${rel}`,
+					`Rename to kebab-case (e.g. webhooksTelephony.ts -> webhooks-telephony.ts). Function and export names stay unchanged.`,
+				);
+			}
+		}
+	};
+	visit(pluginPath);
+}
+
 for (const plugin of plugins) {
 	const pluginPath = path.join(PACKAGES_DIR, plugin);
 
@@ -32,6 +66,9 @@ for (const plugin of plugins) {
 			'Rename e.g. active_trail -> activetrail (like googlecalendar, dodopayments)',
 		);
 	}
+
+	// 0.1 Every .ts file inside the plugin must use kebab-case (no camelCase).
+	checkKebabFileNames(plugin, pluginPath);
 
 	// 1. Check package.json
 	const packageJsonPath = path.join(pluginPath, 'package.json');

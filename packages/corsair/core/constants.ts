@@ -25,6 +25,7 @@ export const BaseProviders = [
 	'calendly',
 	'cloudflare',
 	'cursor',
+	'deepseek',
 	'discord',
 	'dodopayments',
 	'dropbox',
@@ -32,6 +33,7 @@ export const BaseProviders = [
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'gemini',
 	'github',
 	'gitlab',
 	'gmail',
@@ -43,6 +45,7 @@ export const BaseProviders = [
 	'grafana',
 	'hackernews',
 	'hubspot',
+	'insightoai',
 	'instagram',
 	'intercom',
 	'jira',
@@ -52,6 +55,7 @@ export const BaseProviders = [
 	'neon',
 	'notion',
 	'onedrive',
+	'openai',
 	'openweathermap',
 	'oura',
 	'outlook',
@@ -99,6 +103,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
 	cursor: 'Cursor',
+	deepseek: 'DeepSeek',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
@@ -106,6 +111,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
@@ -117,6 +123,7 @@ export const ProviderDisplayNames = {
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
+	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
@@ -126,6 +133,7 @@ export const ProviderDisplayNames = {
 	neon: 'Neon',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
+	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
@@ -180,6 +188,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'cloudflare'
 	| 'cursor'
+	| 'deepseek'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
@@ -187,6 +196,7 @@ export type AllProviders =
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'gemini'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
@@ -198,6 +208,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
+	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
 	| 'jira'
@@ -207,6 +218,7 @@ export type AllProviders =
 	| 'neon'
 	| 'notion'
 	| 'onedrive'
+	| 'openai'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'

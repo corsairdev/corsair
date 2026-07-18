@@ -1,0 +1,114 @@
+---
+title: React Hooks
+description: createCorsairReactClient returns typed React hooks over the management API — useTenants, useConnectionStatus, useOAuthCallback, and friends.
+---
+
+`createCorsairReactClient({ baseURL })` returns a bag of typed React hooks built on top of [`createCorsairClient`](/adapters/client). One factory call per app — use the returned hooks anywhere in your component tree.
+
+```tsx corsair-client.ts
+"use client";
+import { createCorsairReactClient } from "corsair/client/react";
+
+export const {
+  useTenants, useTenant, useCreateTenant,
+  usePlugins, usePlugin,
+  useConnectionStatus,
+  usePermission,
+  useCreateConnectLink, useOAuthCallback,
+  client, // escape hatch — the underlying vanilla client
+} = createCorsairReactClient({ baseURL: "/api/corsair" });
+```
+
+React 18+ is a peer dependency. If you aren't on React, use the [vanilla client](/adapters/client).
+
+## Read hooks
+
+Read hooks follow the same shape:
+
+```tsx tenants-list.tsx
+const { data, loading, error, refetch } = useTenants();
+```
+
+| Field      | Type                          | Notes                                   |
+| ---------- | ----------------------------- | --------------------------------------- |
+| `data`     | the typed response, or `null` | populated on success                    |
+| `loading`  | `boolean`                     | `true` while a request is in flight     |
+| `error`    | `Error \| null`               | typed error if the call failed          |
+| `refetch`  | `() => Promise<void>`         | manual re-trigger                       |
+
+Read hooks re-fetch automatically when their argument changes:
+
+```tsx tenant-detail.tsx
+function TenantDetail({ id }: { id: string }) {
+  const { data, loading } = useTenant(id);
+  // changing `id` triggers a fresh fetch automatically
+  if (loading) return <Spinner />;
+  return <pre>{JSON.stringify(data, null, 2)}</pre>;
+}
+```
+
+Available read hooks: `useTenants`, `useTenant(id)`, `usePlugins`, `usePlugin(id)`, `useConnectionStatus({ tenantId })`, `usePermission({ id })` or `usePermission({ token })`.
+
+## Mutation hooks
+
+Mutations stay idle until you call `mutate(input)`:
+
+```tsx create-tenant.tsx
+function CreateTenant() {
+  const { mutate, loading, error, data } = useCreateTenant();
+
+  return (
+    <form onSubmit={async (e) => {
+      e.preventDefault();
+      const id = new FormData(e.currentTarget).get("id") as string;
+      await mutate({ id });
+    }}>
+      <input name="id" />
+      <button disabled={loading}>Create</button>
+      {error && <p>{error.message}</p>}
+      {data && <p>Created {data.id}</p>}
+    </form>
+  );
+}
+```
+
+Available mutation hooks: `useCreateTenant`, `useCreateConnectLink`, `useOAuthCallback`.
+
+## Connection status
+
+`useConnectionStatus` is the hook your dashboard probably opens with. The response is a `Record<string, 'connected' | 'missing_credentials' | 'not_connected'>` keyed by plugin id:
+
+```tsx connections.tsx
+function Connections({ tenantId }: { tenantId: string }) {
+  const { data } = useConnectionStatus({ tenantId });
+  if (!data) return null;
+  return (
+    <ul>
+      {Object.entries(data).map(([plugin, status]) => (
+        <li key={plugin}>
+          {plugin}: {status === "connected" ? "✓" : "Connect →"}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+For wiring the actual connect-and-authorize flow, see the [Connect page](/management/connect).
+
+## Escape hatch
+
+If a hook doesn't fit (e.g. you need imperative access inside an event handler), reach for `client`:
+
+```tsx escape.tsx
+const handleClick = async () => {
+  const tenant = await client.tenants.create({ id: "acme" });
+  console.log(tenant);
+};
+```
+
+It is exactly the [vanilla client](/adapters/client), sharing the same `baseURL`.
+
+## What this is not
+
+These hooks are intentionally minimal: no cache, no deduplication, no request reuse. If you want React Query, SWR, or RTK semantics, build them on top of `client` — the hooks here exist to give you typed loading/error/data state without forcing a data-layer choice.

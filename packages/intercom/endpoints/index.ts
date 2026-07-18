@@ -4,7 +4,7 @@ import * as CollectionsFns from './collections';
 import * as CompaniesFns from './companies';
 import * as ContactsFns from './contacts';
 import * as ConversationsFns from './conversations';
-import * as HelpCentersFns from './helpCenters';
+import * as HelpCentersFns from './help-centers';
 
 export const Contacts = {
 	get: ContactsFns.get,
