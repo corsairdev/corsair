@@ -1018,9 +1018,13 @@ const SearchPullRequestMarkerSchema = z
 	})
 	.loose();
 
+// Search-specific fields use the wire shape (snake_case) because the github
+// client returns raw JSON with no key transformation. The inherited entity
+// fields (nodeId, htmlUrl, etc.) stay optional + .loose() so they tolerate
+// the camelCase/snake_case mismatch the rest of the plugin already lives with.
 const SearchIssueSchema = IssueSchema.extend({
 	score: z.number(),
-	pullRequest: SearchPullRequestMarkerSchema.optional(),
+	pull_request: SearchPullRequestMarkerSchema.optional(),
 	repository: RepositorySchema.optional(),
 }).loose();
 
