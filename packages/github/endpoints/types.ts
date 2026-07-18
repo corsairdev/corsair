@@ -445,17 +445,17 @@ const SearchIssuesInputSchema = z.object({
 		])
 		.optional(),
 	order: z.enum(['asc', 'desc']).optional(),
-	per_page: z.number().int().min(1).max(100).optional(),
+	perPage: z.number().int().min(1).max(100).optional(),
 	page: z.number().int().min(1).optional(),
-	advanced_search: z.boolean().optional(),
-	search_type: z.enum(['semantic', 'hybrid']).optional(),
+	advancedSearch: z.boolean().optional(),
+	searchType: z.enum(['semantic', 'hybrid']).optional(),
 });
 
 const SearchRepositoriesInputSchema = z.object({
 	q: z.string(),
 	sort: z.enum(['stars', 'forks', 'help-wanted-issues', 'updated']).optional(),
 	order: z.enum(['asc', 'desc']).optional(),
-	per_page: z.number().int().min(1).max(100).optional(),
+	perPage: z.number().int().min(1).max(100).optional(),
 	page: z.number().int().min(1).optional(),
 });
 
@@ -463,7 +463,7 @@ const SearchUsersInputSchema = z.object({
 	q: z.string(),
 	sort: z.enum(['followers', 'repositories', 'joined']).optional(),
 	order: z.enum(['asc', 'desc']).optional(),
-	per_page: z.number().int().min(1).max(100).optional(),
+	perPage: z.number().int().min(1).max(100).optional(),
 	page: z.number().int().min(1).optional(),
 });
 
@@ -1020,7 +1020,7 @@ const SearchPullRequestMarkerSchema = z
 
 const SearchIssueSchema = IssueSchema.extend({
 	score: z.number(),
-	pull_request: SearchPullRequestMarkerSchema.optional(),
+	pullRequest: SearchPullRequestMarkerSchema.optional(),
 	repository: RepositorySchema.optional(),
 }).loose();
 
@@ -1035,24 +1035,24 @@ const SearchUserSchema = SimpleUserSchema.extend({
 
 const SearchIssuesResponseSchema = z
 	.object({
-		total_count: z.number(),
-		incomplete_results: z.boolean(),
+		totalCount: z.number(),
+		incompleteResults: z.boolean(),
 		items: z.array(SearchIssueSchema),
 	})
 	.loose();
 
 const SearchRepositoriesResponseSchema = z
 	.object({
-		total_count: z.number(),
-		incomplete_results: z.boolean(),
+		totalCount: z.number(),
+		incompleteResults: z.boolean(),
 		items: z.array(SearchRepositorySchema),
 	})
 	.loose();
 
 const SearchUsersResponseSchema = z
 	.object({
-		total_count: z.number(),
-		incomplete_results: z.boolean(),
+		totalCount: z.number(),
+		incompleteResults: z.boolean(),
 		items: z.array(SearchUserSchema),
 	})
 	.loose();
