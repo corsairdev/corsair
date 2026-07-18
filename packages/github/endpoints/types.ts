@@ -1033,26 +1033,29 @@ const SearchUserSchema = SimpleUserSchema.extend({
 	score: z.number(),
 }).loose();
 
+// GitHub's Search API returns these fields as total_count / incomplete_results.
+// The github client returns raw JSON with no key transformation, so response
+// schemas must match the wire shape (snake_case) or .parse() throws on every call.
 const SearchIssuesResponseSchema = z
 	.object({
-		totalCount: z.number(),
-		incompleteResults: z.boolean(),
+		total_count: z.number(),
+		incomplete_results: z.boolean(),
 		items: z.array(SearchIssueSchema),
 	})
 	.loose();
 
 const SearchRepositoriesResponseSchema = z
 	.object({
-		totalCount: z.number(),
-		incompleteResults: z.boolean(),
+		total_count: z.number(),
+		incomplete_results: z.boolean(),
 		items: z.array(SearchRepositorySchema),
 	})
 	.loose();
 
 const SearchUsersResponseSchema = z
 	.object({
-		totalCount: z.number(),
-		incompleteResults: z.boolean(),
+		total_count: z.number(),
+		incomplete_results: z.boolean(),
 		items: z.array(SearchUserSchema),
 	})
 	.loose();
