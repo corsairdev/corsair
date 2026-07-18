@@ -33,6 +33,7 @@ export const BaseProviders = [
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'gemini',
 	'github',
 	'gitlab',
 	'gmail',
@@ -44,6 +45,7 @@ export const BaseProviders = [
 	'grafana',
 	'hackernews',
 	'hubspot',
+	'insightoai',
 	'instagram',
 	'intercom',
 	'jira',
@@ -109,6 +111,7 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
@@ -120,6 +123,7 @@ export const ProviderDisplayNames = {
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
+	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
@@ -192,6 +196,7 @@ export type AllProviders =
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'gemini'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
@@ -203,6 +208,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
+	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
 	| 'jira'
