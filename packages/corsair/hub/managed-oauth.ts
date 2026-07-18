@@ -6,6 +6,7 @@ import {
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
+import { registerHubWebhookTenantLink } from './report-connection-status';
 
 export type ManagedOAuthDeliveryErrorCode =
 	| 'invalid_corsair_instance'
@@ -130,6 +131,17 @@ export async function processManagedOAuthDelivery(
 					`[corsair:managed-oauth] Failed to persist webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
 					error,
 				);
+			}
+
+			// Hub mode: forward the identity so Hub can route inbound webhooks.
+			// Fire-and-forget: never block the OAuth delivery on Hub availability.
+			if (internal.hub) {
+				void registerHubWebhookTenantLink(internal.hub, {
+					plugin: pluginId,
+					tenantId,
+					link: tenantLink,
+					authType: 'managed',
+				});
 			}
 		}
 	} catch (error) {

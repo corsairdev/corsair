@@ -1,8 +1,11 @@
+import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
+
 import {
 	ClaimIntegrationButton,
 	SignInToClaimLink,
 } from '../claim-integration-button';
 import { FramedPanel } from '../framed-panel';
+import { IntegrationRewardDisplay } from '../integration-reward-display';
 
 export function IntegrationClaimCallout({
 	integrationId,
@@ -12,6 +15,7 @@ export function IntegrationClaimCallout({
 	session,
 	canClaimAnother = true,
 	wipIntegrationName,
+	claimBlockReason,
 }: {
 	integrationId: string;
 	integrationSlug: string;
@@ -20,6 +24,7 @@ export function IntegrationClaimCallout({
 	session: boolean;
 	canClaimAnother?: boolean;
 	wipIntegrationName?: string | null;
+	claimBlockReason?: ClaimBlockReason | null;
 }) {
 	return (
 		<section className="mb-8">
@@ -34,11 +39,13 @@ export function IntegrationClaimCallout({
 							{integrationName}
 						</span>{' '}
 						plugin to earn{' '}
-						<span className="font-[family-name:var(--font-landing-mono)] font-medium text-[#1c1c1c]">
-							{points} pts
-						</span>
-						. You have 1 hour to link an issue, then 3 hours to open a PR with
-						the plugin scaffold.
+						<IntegrationRewardDisplay
+							points={points}
+							variant="inline"
+							className="font-[family-name:var(--font-landing-mono)] text-[#1c1c1c]"
+						/>
+						{' when we merge it to main.'} You have 1 hour to link an issue,
+						then 3 hours to open a PR with the plugin scaffold.
 					</p>
 					<div className="mt-6">
 						{session ? (
@@ -48,6 +55,7 @@ export function IntegrationClaimCallout({
 								size="lg"
 								disabled={!canClaimAnother}
 								wipIntegrationName={wipIntegrationName}
+								claimBlockReason={claimBlockReason}
 							/>
 						) : (
 							<SignInToClaimLink />

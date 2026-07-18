@@ -1,0 +1,33 @@
+---
+title: Frameworks
+sidebarTitle: Frameworks
+description: Mount the Corsair /api/corsair route on your framework — Next.js, Express, Hono, or any Web-standard runtime.
+---
+
+import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
+import MountHandlerTabs from '/snippets/mount-handler-tabs.mdx';
+
+Corsair mounts **one** route. It serves Hub delivery — OAuth callbacks, connect pages, self-registration — and the [management API](/management/handler) in the same place. Every adapter wraps a single primitive, `managementHandler(corsair)`, which returns a `(request: Request) => Promise<Response>`. Pick the tab for your server; the rest of your app is identical.
+
+## Configure Corsair
+
+<CreateCorsairHub />
+
+## Mount the route
+
+<MountHandlerTabs />
+
+## Run and go green
+
+Start your dev server and make one request to `/api/corsair`. On that first request your app self-registers its delivery URL with Hub and the dashboard header dot turns green. See [Delivery URLs](/hub/delivery-urls).
+
+Stays grey? The route isn't reachable at `/api/corsair`. Check the mount path and — on Express and Hono — that `basePath` and the wildcard (`/api/corsair/*`) match the path you mounted.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Hub setup" href="/hub/setup">Create a project, copy keys, reach the green check.</Card>
+  <Card title="Add a plugin" href="/guides/plugins">Browse the catalog — GitHub, Slack, Linear, and hundreds more.</Card>
+  <Card title="Vanilla client" href="/adapters/client">Call the management API from any JS runtime.</Card>
+  <Card title="React hooks" href="/adapters/react">Typed `useTenants`, `useConnectionStatus`, and friends.</Card>
+</CardGroup>

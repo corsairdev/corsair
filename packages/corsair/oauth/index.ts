@@ -20,6 +20,7 @@ import {
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
+import { registerHubWebhookTenantLink } from '../hub/report-connection-status';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
@@ -201,6 +202,17 @@ export type ProcessOAuthCallbackOptions = {
 	state: string;
 	/** Must exactly match the redirectUri passed to generateOAuthUrl. */
 	redirectUri: string;
+	/**
+	 * Set ONLY by a caller that has already verified the request signature (a
+	 * Hub-signed delivery envelope). When true, `state` is not HMAC-verified and
+	 * `plugin`/`tenantId` are read from here instead — Hub cannot sign a Corsair
+	 * state because it never holds the project KEK. Never set this from a wire
+	 * field; the whole security of the bypass rests on it being caller-asserted.
+	 */
+	trusted?: boolean;
+	/** Required when `trusted` is true. Ignored otherwise (state is decoded). */
+	plugin?: string;
+	tenantId?: string;
 };
 
 export type ProcessOAuthCallbackResult = {
@@ -232,15 +244,32 @@ export async function processOAuthCallback(
 			),
 	);
 
-	const decoded = verifyAndDecodeState(state, internal.kek);
-	if (!decoded) {
-		throw new OAuthCallbackError(
-			'invalid_state',
-			'Invalid or tampered state parameter',
-		);
+	// Trusted path: caller verified the request signature and asserts plugin/
+	// tenant. Hub's `state` is an opaque session id it cannot sign, so verifying
+	// it here would always fail. Gated on the explicit `trusted` flag, not just
+	// the presence of plugin/tenant, so no future caller bypasses by accident.
+	let pluginId: string;
+	let tenantId: string;
+	if (options.trusted) {
+		if (!options.plugin || !options.tenantId) {
+			throw new OAuthCallbackError(
+				'invalid_state',
+				'trusted callback requires plugin and tenantId',
+			);
+		}
+		pluginId = options.plugin;
+		tenantId = options.tenantId;
+	} else {
+		const decoded = verifyAndDecodeState(state, internal.kek);
+		if (!decoded) {
+			throw new OAuthCallbackError(
+				'invalid_state',
+				'Invalid or tampered state parameter',
+			);
+		}
+		pluginId = decoded.plugin;
+		tenantId = decoded.tenantId;
 	}
-
-	const { plugin: pluginId, tenantId } = decoded;
 
 	if (!internal.database) {
 		throw new OAuthCallbackError(
@@ -331,6 +360,17 @@ export async function processOAuthCallback(
 					`[corsair:oauth] Failed to persist webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
 					error,
 				);
+			}
+
+			// Hub mode: forward the identity so Hub can route inbound webhooks.
+			// Fire-and-forget: never block the OAuth callback on Hub availability.
+			if (internal.hub) {
+				void registerHubWebhookTenantLink(internal.hub, {
+					plugin: pluginId,
+					tenantId,
+					link: tenantLink,
+					authType: 'oauth_2',
+				});
 			}
 		}
 	} catch (error) {
