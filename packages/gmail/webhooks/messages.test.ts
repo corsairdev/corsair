@@ -161,6 +161,45 @@ describe('Gmail messageChanged webhook event filtering', () => {
 		);
 	});
 
+	it('still deletes the local row when a deleted message fetch returns 404', async () => {
+		// Gmail returns 404 for messages that are already deleted, which is the
+		// common case in this code path. The local row must still be removed.
+		mockMakeGmailRequest.mockImplementation(
+			async (path, _credentials, options) => {
+				if (path.includes('/history')) {
+					return {
+						history: [
+							{
+								id: '1000',
+								messagesDeleted: [{ message: { id: 'gone-msg-1' } }],
+							},
+						],
+					};
+				}
+				if (
+					path.endsWith('/messages/gone-msg-1') &&
+					options?.method === 'GET'
+				) {
+					throw Object.assign(new Error('Requested entity was not found.'), {
+						status: 404,
+					});
+				}
+				return { id: 'gone-msg-1', historyId: '1000' };
+			},
+		);
+
+		const context = createHandlerContext(['messageDeleted']);
+		const response = await messageChanged.handler(
+			context,
+			createWebhookRequest('1000'),
+		);
+
+		expect(response.success).toBe(true);
+		expect(context.db.messages.deleteByEntityId).toHaveBeenCalledWith(
+			'gone-msg-1',
+		);
+	});
+
 	it('uses the fallback path when history is empty', async () => {
 		mockHistoryResponse([]);
 		mockMakeGmailRequest.mockImplementation(

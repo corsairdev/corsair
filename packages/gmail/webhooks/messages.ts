@@ -524,9 +524,14 @@ async function processDeletedMessages(
 					},
 				);
 			} catch (fetchError: any) {
-				// Using 'any' because Gmail API error shape varies and we only check statusCode
-				if (fetchError?.statusCode === 404) {
-					continue;
+				// Using 'any' because Gmail API error shape varies and we only check status.
+				// A 404 here means Gmail no longer has the message, which is exactly
+				// the case where we still need to delete the local row. Fall through
+				// to deleteByEntityId below instead of skipping (the prior continue
+				// left stale rows in the DB and let the cursor advance past the
+				// unapplied deletion).
+				if (!isNotFoundError(fetchError)) {
+					throw fetchError;
 				}
 			}
 
