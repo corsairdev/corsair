@@ -123,6 +123,12 @@ export function SiteMenu() {
 							Docs
 						</a>
 						<Link
+							href="/blog"
+							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
+						>
+							Blog
+						</Link>
+						<Link
 							href="/oss"
 							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
 						>
@@ -201,6 +207,13 @@ export function SiteMenu() {
 							Docs
 							<BookOpen size={16} weight="fill" className="text-[#1c1c1c]/50" />
 						</a>
+						<Link
+							href="/blog"
+							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+							onClick={() => setIsMobileMenuOpen(false)}
+						>
+							Blog
+						</Link>
 						<Link
 							href="/oss"
 							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
