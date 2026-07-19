@@ -24,6 +24,7 @@ import {
 	PullRequestsEndpoints,
 	ReleasesEndpoints,
 	RepositoriesEndpoints,
+	SearchEndpoints,
 	UsersEndpoints,
 	WorkflowsEndpoints,
 } from './endpoints';
@@ -342,6 +343,9 @@ export type GithubEndpoints = {
 	usersGetAuthenticated: GithubEndpoint<'usersGetAuthenticated'>;
 	usersUpdate: GithubEndpoint<'usersUpdate'>;
 	usersGetHovercard: GithubEndpoint<'usersGetHovercard'>;
+	searchIssues: GithubEndpoint<'searchIssues'>;
+	searchRepositories: GithubEndpoint<'searchRepositories'>;
+	searchUsers: GithubEndpoint<'searchUsers'>;
 };
 
 export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;
@@ -681,6 +685,11 @@ const githubEndpointsNested = {
 		update: UsersEndpoints.update,
 		getHovercard: UsersEndpoints.getHovercard,
 	},
+	search: {
+		issues: SearchEndpoints.issues,
+		repositories: SearchEndpoints.repositories,
+		users: SearchEndpoints.users,
+	},
 } as const;
 
 export const githubEndpointSchemas = {
@@ -875,6 +884,18 @@ export const githubEndpointSchemas = {
 	'users.getHovercard': {
 		input: GithubEndpointInputSchemas.usersGetHovercard,
 		output: GithubEndpointOutputSchemas.usersGetHovercard,
+	},
+	'search.issues': {
+		input: GithubEndpointInputSchemas.searchIssues,
+		output: GithubEndpointOutputSchemas.searchIssues,
+	},
+	'search.repositories': {
+		input: GithubEndpointInputSchemas.searchRepositories,
+		output: GithubEndpointOutputSchemas.searchRepositories,
+	},
+	'search.users': {
+		input: GithubEndpointInputSchemas.searchUsers,
+		output: GithubEndpointOutputSchemas.searchUsers,
 	},
 } as const;
 
@@ -1763,6 +1784,18 @@ const githubEndpointMeta = {
 	'users.getHovercard': {
 		riskLevel: 'read',
 		description: 'Get contextual hovercard information for a user',
+	},
+	'search.issues': {
+		riskLevel: 'read',
+		description: 'Search GitHub issues and pull requests',
+	},
+	'search.repositories': {
+		riskLevel: 'read',
+		description: 'Search GitHub repositories',
+	},
+	'search.users': {
+		riskLevel: 'read',
+		description: 'Search GitHub users and organizations',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof githubEndpointsNested>;
 
