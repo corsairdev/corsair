@@ -36,10 +36,33 @@ export function createWorkdayEventMatch(
 	};
 }
 
+import * as crypto from 'crypto';
+
 export function verifyWorkdayWebhookSignature(
 	request: WebhookRequest<WorkdayWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) return { valid: false, error: 'No webhook secret configured' };
+
+	const signature = request.headers['x-workday-signature'];
+	if (!signature || typeof signature !== 'string') {
+		return { valid: false, error: 'Missing x-workday-signature header' };
+	}
+
+	let bodyString: string;
+	if (typeof request.body === 'string') {
+		bodyString = request.body;
+	} else {
+		bodyString = JSON.stringify(request.body);
+	}
+
+	const expected = crypto
+		.createHmac('sha256', secret)
+		.update(bodyString)
+		.digest('base64');
+	if (signature !== expected) {
+		return { valid: false, error: 'Invalid webhook signature' };
+	}
+
 	return { valid: true };
 }

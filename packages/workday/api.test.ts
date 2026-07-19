@@ -36,4 +36,22 @@ describe('Workday Plugin', () => {
 		expect(plugin.webhooks).toBeDefined();
 		expect(plugin.pluginWebhookMatcher).toBeDefined();
 	});
+
+	it('should invoke an endpoint correctly', async () => {
+		const plugin = workday({ key: 'test', webhookSecret: 'secret' });
+
+		mockFetch.mockResolvedValueOnce({
+			ok: true,
+			json: async () => ({ success: true }),
+		});
+
+		const result = await plugin.endpoints?.business.createBusinessTitleChange(
+			{ key: 'test' } as any,
+			{ workerId: '123' } as any,
+		);
+
+		expect(mockFetch).toHaveBeenCalled();
+		expect(mockFetch.mock.calls[0][0]).toContain('workday.com');
+		expect(result).toEqual({ success: true });
+	});
 });
