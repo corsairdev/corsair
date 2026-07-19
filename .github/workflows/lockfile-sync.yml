@@ -1,0 +1,64 @@
+name: Lockfile Sync
+
+# Regenerates the root pnpm-lock.yaml on every push to main and commits it back
+# if it changed, so plugin PRs stop conflicting on the lockfile.
+#
+# REQUIRES corsair-team in main's branch-protection bypass allowlist, or the
+# push to protected main is rejected.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: lockfile-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Sync pnpm lockfile
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PR_BOT_PAT }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+
+      - name: Refresh lockfile
+        run: pnpm install --lockfile-only
+
+      - name: Commit and push if changed
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "corsair-team"
+          git config user.email "team@corsair.dev"
+          # Retry if main advances mid-run: reset onto the new tip, regenerate,
+          # retry. The racing commit may already have synced the lockfile.
+          for attempt in 1 2 3; do
+            if git diff --quiet -- pnpm-lock.yaml; then
+              echo "Lockfile in sync — nothing to push."
+              exit 0
+            fi
+            git add pnpm-lock.yaml
+            git commit -m 'chore: sync `pnpm-lock.yaml` [skip ci]'
+            if git push origin "HEAD:${BRANCH}"; then
+              exit 0
+            fi
+            git fetch origin "${BRANCH}"
+            git reset --hard "origin/${BRANCH}"
+            pnpm install --lockfile-only
+          done
+          echo "::error::Could not push lockfile sync after 3 attempts."
+          exit 1
