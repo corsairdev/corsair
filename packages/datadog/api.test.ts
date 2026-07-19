@@ -589,4 +589,34 @@ describe('Datadog request shaping', () => {
 		expect(path).toBe('/api/v1/dashboard/{dashboardId}');
 		expect(options?.path).toEqual({ dashboardId: '{{evil}}/../x' });
 	});
+
+	it('sends mute scope and end in the body, not as query params', async () => {
+		mockRequest.mockResolvedValue({});
+		const ctx = createContext();
+
+		await (MonitorsEndpoints.mute as AnyEndpoint)(ctx, {
+			monitorId: 42,
+			scope: 'host:app1',
+			end: 1735689600,
+		});
+
+		const [, , options] = mockRequest.mock.calls[0]!;
+		expect(options?.body).toEqual({ scope: 'host:app1', end: 1735689600 });
+		expect(options?.query).toBeUndefined();
+	});
+
+	it('sends unmute scope and all_scopes in the body, not as query params', async () => {
+		mockRequest.mockResolvedValue({});
+		const ctx = createContext();
+
+		await (MonitorsEndpoints.unmute as AnyEndpoint)(ctx, {
+			monitorId: 42,
+			scope: 'host:app1',
+			allScopes: true,
+		});
+
+		const [, , options] = mockRequest.mock.calls[0]!;
+		expect(options?.body).toEqual({ scope: 'host:app1', all_scopes: true });
+		expect(options?.query).toBeUndefined();
+	});
 });

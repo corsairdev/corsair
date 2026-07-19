@@ -195,7 +195,7 @@ export const mute: DatadogEndpoints['monitorsMute'] = async (ctx, input) => {
 	>('/api/v1/monitor/{monitorId}/mute', ctx.key, {
 		method: 'POST',
 		path: { monitorId: input.monitorId },
-		query: { scope: input.scope, end: input.end },
+		body: { scope: input.scope, end: input.end },
 	});
 
 	await logEventFromContext(
@@ -216,7 +216,7 @@ export const unmute: DatadogEndpoints['monitorsUnmute'] = async (
 	>('/api/v1/monitor/{monitorId}/unmute', ctx.key, {
 		method: 'POST',
 		path: { monitorId: input.monitorId },
-		query: { scope: input.scope, all_scopes: input.allScopes },
+		body: { scope: input.scope, all_scopes: input.allScopes },
 	});
 
 	await logEventFromContext(
