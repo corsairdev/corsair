@@ -4,24 +4,37 @@ import type { OAuthConfig } from '../plugins';
 
 const TOKEN_NUMERIC_FIELDS = ['expires_in', 'refresh_token_expires_in'];
 
+// Some providers return numeric fields as strings (in JSON too). Callers do
+// arithmetic on expires_in — a string would silently concatenate into a
+// far-future expires_at and the token would never refresh.
+function coerceNumericTokenFields(parsed: TokenResponse): TokenResponse {
+	const out: TokenResponse = { ...parsed };
+	for (const key of TOKEN_NUMERIC_FIELDS) {
+		const value = (parsed as Record<string, unknown>)[key];
+		if (typeof value === 'string') {
+			const num = Number(value);
+			(out as Record<string, unknown>)[key] = Number.isFinite(num)
+				? num
+				: undefined;
+		}
+	}
+	return out;
+}
+
 /**
  * Parses a token endpoint response as JSON, falling back to form-urlencoded
  * (GitHub's default). Returns null if neither yields an access_token or error.
  */
 export function parseTokenResponse(data: string): TokenResponse | null {
 	try {
-		return JSON.parse(data) as TokenResponse;
+		return coerceNumericTokenFields(JSON.parse(data) as TokenResponse);
 	} catch {
 		// not JSON — try form-urlencoded
 	}
 	if (!data.includes('=')) return null;
 	const form = querystring.parse(data) as Record<string, string>;
 	if (!form.access_token && !form.error) return null;
-	const out: TokenResponse = { ...form };
-	for (const key of TOKEN_NUMERIC_FIELDS) {
-		if (typeof form[key] === 'string') out[key] = Number(form[key]);
-	}
-	return out;
+	return coerceNumericTokenFields({ ...form } as TokenResponse);
 }
 
 export type TokenResponse = {

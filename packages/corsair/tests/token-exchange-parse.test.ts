@@ -35,4 +35,19 @@ describe('parseTokenResponse', () => {
 	it('returns null for a non-token body (e.g. an HTML error page)', () => {
 		expect(parseTokenResponse('<html>Gateway Timeout</html>')).toBeNull();
 	});
+
+	it('coerces string numeric fields in JSON responses too', () => {
+		const result = parseTokenResponse(
+			'{"access_token":"tok","expires_in":"3600"}',
+		);
+		// a string here would silently concatenate in expires_at arithmetic
+		expect(result?.expires_in).toBe(3600);
+	});
+
+	it('drops non-numeric expires_in instead of storing NaN', () => {
+		const result = parseTokenResponse(
+			'{"access_token":"tok","expires_in":"soon"}',
+		);
+		expect(result?.expires_in).toBeUndefined();
+	});
 });

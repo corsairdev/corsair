@@ -183,7 +183,21 @@ export function createIntegrationKeyManager<T extends AuthTypes>(
 		return decryptConfig(config, dek);
 	};
 
-	const updateConfig = async (
+	// Serialize config writes: each setter does a read-merge-write of the whole
+	// encrypted blob, so parallel setters (e.g. Promise.all([set_a, set_b]))
+	// read the same base and the last write silently drops the other's field.
+	// Per-instance serialization only — writers in other instances/processes
+	// can still race; row-level merge or optimistic locking is the full fix.
+	let configWriteChain: Promise<void> = Promise.resolve();
+	const updateConfig = (
+		updates: Record<string, string | null>,
+	): Promise<void> => {
+		const run = configWriteChain.then(() => doUpdateConfig(updates));
+		configWriteChain = run.catch(() => {});
+		return run;
+	};
+
+	const doUpdateConfig = async (
 		updates: Record<string, string | null>,
 	): Promise<void> => {
 		const dek = await getDecryptedDek();
@@ -454,7 +468,19 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		return decryptConfig(config, dek);
 	};
 
-	const updateConfig = async (
+	// Serialize config writes — same lost-update hazard as the integration
+	// manager above (this is what silently dropped Outlook's refreshed token
+	// when its keyBuilder persisted via Promise.all).
+	let configWriteChain: Promise<void> = Promise.resolve();
+	const updateConfig = (
+		updates: Record<string, string | null>,
+	): Promise<void> => {
+		const run = configWriteChain.then(() => doUpdateConfig(updates));
+		configWriteChain = run.catch(() => {});
+		return run;
+	};
+
+	const doUpdateConfig = async (
 		updates: Record<string, string | null>,
 	): Promise<void> => {
 		const dek = await getDecryptedDek();
@@ -522,6 +548,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				const config = await getDecryptedIntegrationConfig();
 
 				return {
+					// Pass extension integration fields through (e.g. gmail's
+					// topic_id/pubsub_audience) — subscribe capabilities read them.
+					...config,
 					client_id: config.client_id || null,
 					client_secret: config.client_secret || null,
 					redirect_url: config.redirect_url ?? null,

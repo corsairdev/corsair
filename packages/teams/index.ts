@@ -27,6 +27,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TeamsSchema } from './schema';
+import { teamsSubscribe } from './subscribe';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
 import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
 import type {
@@ -454,6 +455,7 @@ export function teams<const T extends TeamsPluginOptions>(
 			return hasTeamsHeader && isJsonPost;
 		},
 		pluginTenantWebhookMatcher: matchTeamsTenantWebhook,
+		subscribe: teamsSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

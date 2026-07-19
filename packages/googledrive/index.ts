@@ -29,6 +29,7 @@ import {
 	GoogleDriveEndpointOutputSchemas,
 } from './endpoints/types';
 import { GoogleDriveSchema } from './schema';
+import { googledriveSubscribe } from './subscribe';
 import type {
 	GoogleDriveWebhookEvent,
 	GoogleDriveWebhookOutputs,
@@ -476,6 +477,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 			}
 		},
 		pluginTenantWebhookMatcher: matchGoogleDriveTenantWebhook,
+		subscribe: googledriveSubscribe,
 	} satisfies InternalGoogleDrivePlugin;
 }
 

@@ -24,6 +24,7 @@ import { registerHubWebhookTenantLink } from '../hub/report-connection-status';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
+import { subscribeAndReport } from './subscribe-report';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
 export { decodeOAuthState, encodeOAuthState } from '../core/auth/state';
@@ -325,6 +326,10 @@ export async function processOAuthCallback(
 		tenantId,
 		kek: internal.kek,
 		database: internal.database,
+		// Include the plugin's extension fields so subscribe/resolvers can
+		// persist them (e.g. Outlook subscription_id) — without this only the
+		// base oauth_2 setters exist and extension setters throw.
+		extraAccountFields: [...(plugin.authConfig?.oauth_2?.account ?? [])],
 	});
 
 	await accountKm.set_access_token(tokens.access_token);
@@ -378,6 +383,24 @@ export async function processOAuthCallback(
 			`[corsair:oauth] Failed to resolve webhook tenant link for '${pluginId}' tenant '${tenantId}':`,
 			error,
 		);
+	}
+
+	// BYO subscribe-on-connect: class-1 providers (Outlook, Gmail) only send
+	// events after a token-authenticated subscribe. The app holds the token, so
+	// the app arms the subscription here and reports the routing link +
+	// verification secret to Hub. Hub never sees the token — only an opaque
+	// routing id and a random clientState. Best-effort: a failure never breaks
+	// the connect (mirrors the tenant-link block above). Plugins without a
+	// subscribe capability (class-2 webhooks) skip this entirely.
+	if (plugin.subscribe) {
+		try {
+			await subscribeAndReport(corsair, plugin, tenantId, accountKm);
+		} catch (error) {
+			console.warn(
+				`[corsair:oauth] BYO subscribe failed for '${pluginId}' tenant '${tenantId}':`,
+				error,
+			);
+		}
 	}
 
 	return { plugin: pluginId, tenantId };
