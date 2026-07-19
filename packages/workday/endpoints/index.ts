@@ -54,8 +54,16 @@ export const Job = {
 	updateJobChangeBusinessTitle,
 };
 
-import { createPayrollInputs, getPayrollInputInstance } from './payroll';
-export const Payroll = { createPayrollInputs, getPayrollInputInstance };
+import {
+	createPayrollInputs,
+	getPayrollInputInstance,
+	updateAnExistingPayroll,
+} from './payroll';
+export const Payroll = {
+	createPayrollInputs,
+	getPayrollInputInstance,
+	updateAnExistingPayroll,
+};
 
 import {
 	createTimeOffRequest,
@@ -226,9 +234,6 @@ export const Interviews = { listInterviews };
 
 import { listJobs } from './jobs';
 export const Jobs = { listJobs };
-
-import { updateAnExistingPayroll } from './an';
-export const An = { updateAnExistingPayroll };
 
 import { updateMessageTemplateById } from './message';
 export const Message = { updateMessageTemplateById };

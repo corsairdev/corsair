@@ -212,6 +212,7 @@ const workdayEndpointsNested = {
 	payroll: {
 		createPayrollInputs: Payroll.createPayrollInputs,
 		getPayrollInputInstance: Payroll.getPayrollInputInstance,
+		updateAnExistingPayroll: Payroll.updateAnExistingPayroll,
 	},
 	time: {
 		createTimeOffRequest: Time.createTimeOffRequest,
@@ -337,9 +338,6 @@ const workdayEndpointsNested = {
 	},
 	jobs: {
 		listJobs: Jobs.listJobs,
-	},
-	an: {
-		updateAnExistingPayroll: Payroll.updateAnExistingPayroll,
 	},
 	message: {
 		updateMessageTemplateById: Message.updateMessageTemplateById,
