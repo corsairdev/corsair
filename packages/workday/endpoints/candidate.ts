@@ -7,9 +7,10 @@ export const getCandidateAvailabilityTemplate: WorkdayEndpoints['getCandidateAva
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getCandidateAvailabilityTemplate']
-		>('v1/candidate/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/candidate/getCandidateAvailabilityTemplate', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

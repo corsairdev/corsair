@@ -12,13 +12,10 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	ProviderDisplayNames,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import {
 	Absence,
-	An,
 	Assignment,
 	Balances,
 	Business,
@@ -65,7 +62,6 @@ import { errorHandlers } from './error-handlers';
 import { WorkdaySchema } from './schema';
 import { resolveWorkdayOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchWorkdayTenantWebhook } from './webhooks/tenant-matcher';
-import type { WorkdayWebhookOutputs } from './webhooks/types';
 
 export type WorkdayPluginOptions = {
 	/** Workday integration for Corsair */
@@ -343,7 +339,7 @@ const workdayEndpointsNested = {
 		listJobs: Jobs.listJobs,
 	},
 	an: {
-		updateAnExistingPayroll: An.updateAnExistingPayroll,
+		updateAnExistingPayroll: Payroll.updateAnExistingPayroll,
 	},
 	message: {
 		updateMessageTemplateById: Message.updateMessageTemplateById,
@@ -686,7 +682,7 @@ export const workdayEndpointSchemas = {
 		input: WorkdayEndpointInputSchemas.listJobs,
 		output: WorkdayEndpointOutputSchemas.listJobs,
 	},
-	'an.updateAnExistingPayroll': {
+	'payroll.updateAnExistingPayroll': {
 		input: WorkdayEndpointInputSchemas.updateAnExistingPayroll,
 		output: WorkdayEndpointOutputSchemas.updateAnExistingPayroll,
 	},
@@ -704,11 +700,11 @@ const workdayEndpointMeta = {
 		description: 'Create Business Title Change',
 	},
 	'business.getBusinessTitleChange': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Business Title Change',
 	},
 	'business.getBusinessTitleChangeForWorker': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Business Title Change For Worker',
 	},
 	'job.createJobChange': {
@@ -716,75 +712,75 @@ const workdayEndpointMeta = {
 		description: 'Create Job Change',
 	},
 	'job.getJobById': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job By ID',
 	},
 	'job.getJobChangeFrequencies': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Change Frequencies',
 	},
 	'job.getJobChangeLocationInfo': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Change Location Info',
 	},
 	'job.getJobChangePosition': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Change Position',
 	},
 	'job.getJobChangeReasonInstance': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Change Reason Instance',
 	},
 	'job.getJobChangeReasonValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Change Reason Values',
 	},
 	'job.getJobChangeReasons': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Change Reasons',
 	},
 	'job.getJobChangesGroupTemplates': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Changes Group Templates',
 	},
 	'job.getJobChangesJobValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Changes Job Values',
 	},
 	'job.getJobChangesWorkerValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Changes Worker Values',
 	},
 	'job.getJobClassifications': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Classifications',
 	},
 	'job.getJobPosting': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Posting',
 	},
 	'job.getJobPostingQuestionnaire': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Posting Questionnaire',
 	},
 	'job.getJobProfilesValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Profiles Values',
 	},
 	'job.getJobRequisitionValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Requisition Values',
 	},
 	'job.getJobWorkspace': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Workspace',
 	},
 	'job.getJobWorkspaces': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Job Workspaces',
 	},
 	'job.listJobPostings': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'List Job Postings',
 	},
 	'job.updateJobChangeBusinessTitle': {
@@ -796,7 +792,7 @@ const workdayEndpointMeta = {
 		description: 'Create Payroll Inputs',
 	},
 	'payroll.getPayrollInputInstance': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Payroll Input Instance',
 	},
 	'time.createTimeOffRequest': {
@@ -804,203 +800,203 @@ const workdayEndpointMeta = {
 		description: 'Create Time Off Request',
 	},
 	'time.getTimeOffEntriesForWorker': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Time Off Entries for Worker',
 	},
 	'time.getTimeOffPlansForWorker': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Time Off Plans For Worker',
 	},
 	'time.getTimeOffStatusValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Time Off Status Values',
 	},
 	'time.getTimeTypes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Time Types',
 	},
 	'absence.getAbsenceBalance': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Absence Balance',
 	},
 	'assignment.getAssignmentChangeGroupCostCenters': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Assignment Change Group Cost Centers',
 	},
 	'assignment.getAssignmentChangeGroupJobs': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Assignment Change Group Jobs',
 	},
 	'assignment.getAssignmentTypes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Assignment Types',
 	},
 	'candidate.getCandidateAvailabilityTemplate': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Candidate Availability Template',
 	},
 	'collection.getCollectionOfJobs': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Collection of Jobs',
 	},
 	'collection.getCollectionOfPayroll': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Collection of Payroll',
 	},
 	'company.getCompanyInsiderTypes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Company Insider Types',
 	},
 	'contingent.getContingentWorkerTypes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Contingent Worker Types',
 	},
 	'country.getCountryInfo': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Country Info',
 	},
 	'currencies.getCurrencies': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Currencies',
 	},
 	'current.getCurrentUser': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Current User',
 	},
 	'grants.getGrants': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Grants',
 	},
 	'headcount.getHeadcountOptions': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Headcount Options',
 	},
 	'history.getHistoryInstanceForWorker': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get History Instance for Worker',
 	},
 	'history.getHistoryItemsForWorker': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get History Items for Worker',
 	},
 	'holiday.getHolidayEvents': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Holiday Events',
 	},
 	'interview.getInterview': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Interview',
 	},
 	'interview.getInterviewFeedback2': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Interview Feedback',
 	},
 	'leave.getLeaveStatusValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Leave Status Values',
 	},
 	'my.getMyJobPostings': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get My Job Postings',
 	},
 	'organization.getOrganizationAssignmentBusinessUnits': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Organization Assignment Business Units',
 	},
 	'organization.getOrganizationAssignmentCustoms': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Organization Assignment Customs',
 	},
 	'organization.getOrganizationAssignmentFunds': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Organization Assignment Funds',
 	},
 	'organization.getOrganizationAssignmentRegions': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Organization Assignment Regions',
 	},
 	'organization.getOrganizationAssignmentWorkers': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Organization Assignment Workers',
 	},
 	'pay.getPayGroupByJobId': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Pay Group by Job ID',
 	},
 	'pay.getPaySlipInstancesForWorker': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Pay Slip Instance for Worker',
 	},
 	'pay.getPaySlipsForWorker': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Pay Slips for Worker',
 	},
 	'proposed.getProposedPositionValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Proposed Position Values',
 	},
 	'prospect.getProspect': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Prospect',
 	},
 	'prospect.getProspectEducations': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Prospect Educations',
 	},
 	'prospect.getProspectExperiences': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Prospect Experiences',
 	},
 	'prospect.getProspectResumeAttachments': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Prospect Resume Attachments',
 	},
 	'prospect.getProspectSkills': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Prospect Skills',
 	},
 	'supervisory.getSupervisoryOrgValues': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Supervisory Organization Values',
 	},
 	'work.getWorkStudyAwards': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Work Study Awards',
 	},
 	'worker.getWorkerBusinessTitleChanges': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Business Title Changes',
 	},
 	'worker.getWorkerEligibleAbsenceTypes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Eligible Absence Types',
 	},
 	'worker.getWorkerInfo': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Info',
 	},
 	'worker.getWorkerLeavesOfAbsence': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Leaves of Absence',
 	},
 	'worker.getWorkerServiceDates': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Service Dates',
 	},
 	'worker.getWorkerStaffingInformation': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Staffing Information',
 	},
 	'worker.getWorkerTimeOffDetails': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Time Off Details',
 	},
 	'worker.getWorkerTypes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Types',
 	},
 	'worker.getWorkerValidTimeOffDates': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Worker Valid Time Off Dates',
 	},
 	'worker.retrieveWorkerLeaveOfAbsenceSubresource': {
@@ -1008,30 +1004,30 @@ const workdayEndpointMeta = {
 		description: 'Retrieve Worker Leave of Absence',
 	},
 	'workers.getWorkersCollectionStaffing': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Workers Collection Staffing',
 	},
 	'workspace.getWorkspaceInstances': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get Workspace Instances',
 	},
 	'balances.listBalances': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'List Balances',
 	},
 	'countries.listCountries': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'List Countries',
 	},
 	'interviews.listInterviews': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'List Interviews',
 	},
 	'jobs.listJobs': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'List Jobs',
 	},
-	'an.updateAnExistingPayroll': {
+	'payroll.updateAnExistingPayroll': {
 		riskLevel: 'write',
 		description: 'Update An Existing Payroll',
 	},

@@ -7,9 +7,10 @@ export const getAssignmentChangeGroupCostCenters: WorkdayEndpoints['getAssignmen
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getAssignmentChangeGroupCostCenters']
-		>('v1/assignment/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/assignment/getAssignmentChangeGroupCostCenters', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,
@@ -24,9 +25,10 @@ export const getAssignmentChangeGroupJobs: WorkdayEndpoints['getAssignmentChange
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getAssignmentChangeGroupJobs']
-		>('v1/assignment/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/assignment/getAssignmentChangeGroupJobs', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,
@@ -41,9 +43,10 @@ export const getAssignmentTypes: WorkdayEndpoints['getAssignmentTypes'] =
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getAssignmentTypes']
-		>('v1/assignment/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/assignment/getAssignmentTypes', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

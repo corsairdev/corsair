@@ -11,6 +11,7 @@ export const getAbsenceBalance: WorkdayEndpoints['getAbsenceBalance'] = async (
 		WorkdayEndpointOutputs['getAbsenceBalance']
 	>('v1/absence/getAbsenceBalance', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

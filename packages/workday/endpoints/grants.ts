@@ -8,6 +8,7 @@ export const getGrants: WorkdayEndpoints['getGrants'] = async (ctx, input) => {
 		WorkdayEndpointOutputs['getGrants']
 	>('v1/grants/getGrants', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

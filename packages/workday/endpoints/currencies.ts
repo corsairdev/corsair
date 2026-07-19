@@ -11,6 +11,7 @@ export const getCurrencies: WorkdayEndpoints['getCurrencies'] = async (
 		WorkdayEndpointOutputs['getCurrencies']
 	>('v1/currencies/getCurrencies', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

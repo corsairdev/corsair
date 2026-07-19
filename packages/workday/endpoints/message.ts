@@ -7,8 +7,9 @@ export const updateMessageTemplateById: WorkdayEndpoints['updateMessageTemplateB
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['updateMessageTemplateById']
-		>('v1/message/api', ctx.key, {
-			method: 'POST',
+		>('v1/message/updateMessageTemplateById/{id}', ctx.key, {
+			method: 'PUT',
+			// Justification: The makeWorkdayRequest client expects a generic unknown record.
 			body: input as { [key: string]: unknown },
 		});
 		await logEventFromContext(

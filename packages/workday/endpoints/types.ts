@@ -10,6 +10,7 @@ export type CreateBusinessTitleChangeInput = z.infer<
 
 const CreateBusinessTitleChangeResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type CreateBusinessTitleChangeResponse = z.infer<
 	typeof CreateBusinessTitleChangeResponseSchema
@@ -21,7 +22,10 @@ const CreateJobChangeInputSchema = z
 	.optional();
 export type CreateJobChangeInput = z.infer<typeof CreateJobChangeInputSchema>;
 
-const CreateJobChangeResponseSchema = z.object({}).catchall(z.unknown());
+const CreateJobChangeResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type CreateJobChangeResponse = z.infer<
 	typeof CreateJobChangeResponseSchema
 >;
@@ -34,7 +38,10 @@ export type CreatePayrollInputsInput = z.infer<
 	typeof CreatePayrollInputsInputSchema
 >;
 
-const CreatePayrollInputsResponseSchema = z.object({}).catchall(z.unknown());
+const CreatePayrollInputsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type CreatePayrollInputsResponse = z.infer<
 	typeof CreatePayrollInputsResponseSchema
 >;
@@ -47,7 +54,10 @@ export type CreateTimeOffRequestInput = z.infer<
 	typeof CreateTimeOffRequestInputSchema
 >;
 
-const CreateTimeOffRequestResponseSchema = z.object({}).catchall(z.unknown());
+const CreateTimeOffRequestResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type CreateTimeOffRequestResponse = z.infer<
 	typeof CreateTimeOffRequestResponseSchema
 >;
@@ -59,7 +69,10 @@ export type GetAbsenceBalanceInput = z.infer<
 	typeof GetAbsenceBalanceInputSchema
 >;
 
-const GetAbsenceBalanceResponseSchema = z.object({}).catchall(z.unknown());
+const GetAbsenceBalanceResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetAbsenceBalanceResponse = z.infer<
 	typeof GetAbsenceBalanceResponseSchema
 >;
@@ -73,6 +86,7 @@ export type GetAssignmentChangeGroupCostCentersInput = z.infer<
 
 const GetAssignmentChangeGroupCostCentersResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetAssignmentChangeGroupCostCentersResponse = z.infer<
 	typeof GetAssignmentChangeGroupCostCentersResponseSchema
@@ -87,6 +101,7 @@ export type GetAssignmentChangeGroupJobsInput = z.infer<
 
 const GetAssignmentChangeGroupJobsResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetAssignmentChangeGroupJobsResponse = z.infer<
 	typeof GetAssignmentChangeGroupJobsResponseSchema
@@ -99,7 +114,10 @@ export type GetAssignmentTypesInput = z.infer<
 	typeof GetAssignmentTypesInputSchema
 >;
 
-const GetAssignmentTypesResponseSchema = z.object({}).catchall(z.unknown());
+const GetAssignmentTypesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetAssignmentTypesResponse = z.infer<
 	typeof GetAssignmentTypesResponseSchema
 >;
@@ -111,7 +129,10 @@ export type GetBusinessTitleChangeInput = z.infer<
 	typeof GetBusinessTitleChangeInputSchema
 >;
 
-const GetBusinessTitleChangeResponseSchema = z.object({}).catchall(z.unknown());
+const GetBusinessTitleChangeResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetBusinessTitleChangeResponse = z.infer<
 	typeof GetBusinessTitleChangeResponseSchema
 >;
@@ -125,6 +146,7 @@ export type GetBusinessTitleChangeForWorkerInput = z.infer<
 
 const GetBusinessTitleChangeForWorkerResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetBusinessTitleChangeForWorkerResponse = z.infer<
 	typeof GetBusinessTitleChangeForWorkerResponseSchema
@@ -139,6 +161,7 @@ export type GetCandidateAvailabilityTemplateInput = z.infer<
 
 const GetCandidateAvailabilityTemplateResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetCandidateAvailabilityTemplateResponse = z.infer<
 	typeof GetCandidateAvailabilityTemplateResponseSchema
@@ -151,7 +174,10 @@ export type GetCollectionOfJobsInput = z.infer<
 	typeof GetCollectionOfJobsInputSchema
 >;
 
-const GetCollectionOfJobsResponseSchema = z.object({}).catchall(z.unknown());
+const GetCollectionOfJobsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetCollectionOfJobsResponse = z.infer<
 	typeof GetCollectionOfJobsResponseSchema
 >;
@@ -163,7 +189,10 @@ export type GetCollectionOfPayrollInput = z.infer<
 	typeof GetCollectionOfPayrollInputSchema
 >;
 
-const GetCollectionOfPayrollResponseSchema = z.object({}).catchall(z.unknown());
+const GetCollectionOfPayrollResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetCollectionOfPayrollResponse = z.infer<
 	typeof GetCollectionOfPayrollResponseSchema
 >;
@@ -175,7 +204,10 @@ export type GetCompanyInsiderTypesInput = z.infer<
 	typeof GetCompanyInsiderTypesInputSchema
 >;
 
-const GetCompanyInsiderTypesResponseSchema = z.object({}).catchall(z.unknown());
+const GetCompanyInsiderTypesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetCompanyInsiderTypesResponse = z.infer<
 	typeof GetCompanyInsiderTypesResponseSchema
 >;
@@ -189,6 +221,7 @@ export type GetContingentWorkerTypesInput = z.infer<
 
 const GetContingentWorkerTypesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetContingentWorkerTypesResponse = z.infer<
 	typeof GetContingentWorkerTypesResponseSchema
@@ -199,7 +232,10 @@ const GetCountryInfoInputSchema = z
 	.passthrough();
 export type GetCountryInfoInput = z.infer<typeof GetCountryInfoInputSchema>;
 
-const GetCountryInfoResponseSchema = z.object({}).catchall(z.unknown());
+const GetCountryInfoResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetCountryInfoResponse = z.infer<
 	typeof GetCountryInfoResponseSchema
 >;
@@ -209,7 +245,10 @@ const GetCurrenciesInputSchema = z
 	.passthrough();
 export type GetCurrenciesInput = z.infer<typeof GetCurrenciesInputSchema>;
 
-const GetCurrenciesResponseSchema = z.object({}).catchall(z.unknown());
+const GetCurrenciesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetCurrenciesResponse = z.infer<typeof GetCurrenciesResponseSchema>;
 
 const GetCurrentUserInputSchema = z
@@ -217,7 +256,10 @@ const GetCurrentUserInputSchema = z
 	.passthrough();
 export type GetCurrentUserInput = z.infer<typeof GetCurrentUserInputSchema>;
 
-const GetCurrentUserResponseSchema = z.object({}).catchall(z.unknown());
+const GetCurrentUserResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetCurrentUserResponse = z.infer<
 	typeof GetCurrentUserResponseSchema
 >;
@@ -227,7 +269,10 @@ const GetGrantsInputSchema = z
 	.passthrough();
 export type GetGrantsInput = z.infer<typeof GetGrantsInputSchema>;
 
-const GetGrantsResponseSchema = z.object({}).catchall(z.unknown());
+const GetGrantsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetGrantsResponse = z.infer<typeof GetGrantsResponseSchema>;
 
 const GetHeadcountOptionsInputSchema = z
@@ -237,7 +282,10 @@ export type GetHeadcountOptionsInput = z.infer<
 	typeof GetHeadcountOptionsInputSchema
 >;
 
-const GetHeadcountOptionsResponseSchema = z.object({}).catchall(z.unknown());
+const GetHeadcountOptionsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetHeadcountOptionsResponse = z.infer<
 	typeof GetHeadcountOptionsResponseSchema
 >;
@@ -251,6 +299,7 @@ export type GetHistoryInstanceForWorkerInput = z.infer<
 
 const GetHistoryInstanceForWorkerResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetHistoryInstanceForWorkerResponse = z.infer<
 	typeof GetHistoryInstanceForWorkerResponseSchema
@@ -265,6 +314,7 @@ export type GetHistoryItemsForWorkerInput = z.infer<
 
 const GetHistoryItemsForWorkerResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetHistoryItemsForWorkerResponse = z.infer<
 	typeof GetHistoryItemsForWorkerResponseSchema
@@ -275,7 +325,10 @@ const GetHolidayEventsInputSchema = z
 	.passthrough();
 export type GetHolidayEventsInput = z.infer<typeof GetHolidayEventsInputSchema>;
 
-const GetHolidayEventsResponseSchema = z.object({}).catchall(z.unknown());
+const GetHolidayEventsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetHolidayEventsResponse = z.infer<
 	typeof GetHolidayEventsResponseSchema
 >;
@@ -285,7 +338,10 @@ const GetInterviewInputSchema = z
 	.passthrough();
 export type GetInterviewInput = z.infer<typeof GetInterviewInputSchema>;
 
-const GetInterviewResponseSchema = z.object({}).catchall(z.unknown());
+const GetInterviewResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetInterviewResponse = z.infer<typeof GetInterviewResponseSchema>;
 
 const GetInterviewFeedback2InputSchema = z
@@ -295,7 +351,10 @@ export type GetInterviewFeedback2Input = z.infer<
 	typeof GetInterviewFeedback2InputSchema
 >;
 
-const GetInterviewFeedback2ResponseSchema = z.object({}).catchall(z.unknown());
+const GetInterviewFeedback2ResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetInterviewFeedback2Response = z.infer<
 	typeof GetInterviewFeedback2ResponseSchema
 >;
@@ -303,7 +362,10 @@ export type GetInterviewFeedback2Response = z.infer<
 const GetJobByIdInputSchema = z.object({ id: z.string() });
 export type GetJobByIdInput = z.infer<typeof GetJobByIdInputSchema>;
 
-const GetJobByIdResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobByIdResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobByIdResponse = z.infer<typeof GetJobByIdResponseSchema>;
 
 const GetJobChangeFrequenciesInputSchema = z
@@ -315,6 +377,7 @@ export type GetJobChangeFrequenciesInput = z.infer<
 
 const GetJobChangeFrequenciesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobChangeFrequenciesResponse = z.infer<
 	typeof GetJobChangeFrequenciesResponseSchema
@@ -329,6 +392,7 @@ export type GetJobChangeLocationInfoInput = z.infer<
 
 const GetJobChangeLocationInfoResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobChangeLocationInfoResponse = z.infer<
 	typeof GetJobChangeLocationInfoResponseSchema
@@ -341,7 +405,10 @@ export type GetJobChangePositionInput = z.infer<
 	typeof GetJobChangePositionInputSchema
 >;
 
-const GetJobChangePositionResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobChangePositionResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobChangePositionResponse = z.infer<
 	typeof GetJobChangePositionResponseSchema
 >;
@@ -355,6 +422,7 @@ export type GetJobChangeReasonInstanceInput = z.infer<
 
 const GetJobChangeReasonInstanceResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobChangeReasonInstanceResponse = z.infer<
 	typeof GetJobChangeReasonInstanceResponseSchema
@@ -369,6 +437,7 @@ export type GetJobChangeReasonValuesInput = z.infer<
 
 const GetJobChangeReasonValuesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobChangeReasonValuesResponse = z.infer<
 	typeof GetJobChangeReasonValuesResponseSchema
@@ -381,7 +450,10 @@ export type GetJobChangeReasonsInput = z.infer<
 	typeof GetJobChangeReasonsInputSchema
 >;
 
-const GetJobChangeReasonsResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobChangeReasonsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobChangeReasonsResponse = z.infer<
 	typeof GetJobChangeReasonsResponseSchema
 >;
@@ -395,6 +467,7 @@ export type GetJobChangesGroupTemplatesInput = z.infer<
 
 const GetJobChangesGroupTemplatesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobChangesGroupTemplatesResponse = z.infer<
 	typeof GetJobChangesGroupTemplatesResponseSchema
@@ -407,7 +480,10 @@ export type GetJobChangesJobValuesInput = z.infer<
 	typeof GetJobChangesJobValuesInputSchema
 >;
 
-const GetJobChangesJobValuesResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobChangesJobValuesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobChangesJobValuesResponse = z.infer<
 	typeof GetJobChangesJobValuesResponseSchema
 >;
@@ -421,6 +497,7 @@ export type GetJobChangesWorkerValuesInput = z.infer<
 
 const GetJobChangesWorkerValuesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobChangesWorkerValuesResponse = z.infer<
 	typeof GetJobChangesWorkerValuesResponseSchema
@@ -433,7 +510,10 @@ export type GetJobClassificationsInput = z.infer<
 	typeof GetJobClassificationsInputSchema
 >;
 
-const GetJobClassificationsResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobClassificationsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobClassificationsResponse = z.infer<
 	typeof GetJobClassificationsResponseSchema
 >;
@@ -443,7 +523,10 @@ const GetJobPostingInputSchema = z
 	.passthrough();
 export type GetJobPostingInput = z.infer<typeof GetJobPostingInputSchema>;
 
-const GetJobPostingResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobPostingResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobPostingResponse = z.infer<typeof GetJobPostingResponseSchema>;
 
 const GetJobPostingQuestionnaireInputSchema = z
@@ -455,6 +538,7 @@ export type GetJobPostingQuestionnaireInput = z.infer<
 
 const GetJobPostingQuestionnaireResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobPostingQuestionnaireResponse = z.infer<
 	typeof GetJobPostingQuestionnaireResponseSchema
@@ -467,7 +551,10 @@ export type GetJobProfilesValuesInput = z.infer<
 	typeof GetJobProfilesValuesInputSchema
 >;
 
-const GetJobProfilesValuesResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobProfilesValuesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobProfilesValuesResponse = z.infer<
 	typeof GetJobProfilesValuesResponseSchema
 >;
@@ -481,6 +568,7 @@ export type GetJobRequisitionValuesInput = z.infer<
 
 const GetJobRequisitionValuesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetJobRequisitionValuesResponse = z.infer<
 	typeof GetJobRequisitionValuesResponseSchema
@@ -491,7 +579,10 @@ const GetJobWorkspaceInputSchema = z
 	.passthrough();
 export type GetJobWorkspaceInput = z.infer<typeof GetJobWorkspaceInputSchema>;
 
-const GetJobWorkspaceResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobWorkspaceResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobWorkspaceResponse = z.infer<
 	typeof GetJobWorkspaceResponseSchema
 >;
@@ -501,7 +592,10 @@ const GetJobWorkspacesInputSchema = z
 	.passthrough();
 export type GetJobWorkspacesInput = z.infer<typeof GetJobWorkspacesInputSchema>;
 
-const GetJobWorkspacesResponseSchema = z.object({}).catchall(z.unknown());
+const GetJobWorkspacesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetJobWorkspacesResponse = z.infer<
 	typeof GetJobWorkspacesResponseSchema
 >;
@@ -513,7 +607,10 @@ export type GetLeaveStatusValuesInput = z.infer<
 	typeof GetLeaveStatusValuesInputSchema
 >;
 
-const GetLeaveStatusValuesResponseSchema = z.object({}).catchall(z.unknown());
+const GetLeaveStatusValuesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetLeaveStatusValuesResponse = z.infer<
 	typeof GetLeaveStatusValuesResponseSchema
 >;
@@ -523,7 +620,10 @@ const GetMyJobPostingsInputSchema = z
 	.passthrough();
 export type GetMyJobPostingsInput = z.infer<typeof GetMyJobPostingsInputSchema>;
 
-const GetMyJobPostingsResponseSchema = z.object({}).catchall(z.unknown());
+const GetMyJobPostingsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetMyJobPostingsResponse = z.infer<
 	typeof GetMyJobPostingsResponseSchema
 >;
@@ -537,6 +637,7 @@ export type GetOrganizationAssignmentBusinessUnitsInput = z.infer<
 
 const GetOrganizationAssignmentBusinessUnitsResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetOrganizationAssignmentBusinessUnitsResponse = z.infer<
 	typeof GetOrganizationAssignmentBusinessUnitsResponseSchema
@@ -551,6 +652,7 @@ export type GetOrganizationAssignmentCustomsInput = z.infer<
 
 const GetOrganizationAssignmentCustomsResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetOrganizationAssignmentCustomsResponse = z.infer<
 	typeof GetOrganizationAssignmentCustomsResponseSchema
@@ -565,6 +667,7 @@ export type GetOrganizationAssignmentFundsInput = z.infer<
 
 const GetOrganizationAssignmentFundsResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetOrganizationAssignmentFundsResponse = z.infer<
 	typeof GetOrganizationAssignmentFundsResponseSchema
@@ -579,6 +682,7 @@ export type GetOrganizationAssignmentRegionsInput = z.infer<
 
 const GetOrganizationAssignmentRegionsResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetOrganizationAssignmentRegionsResponse = z.infer<
 	typeof GetOrganizationAssignmentRegionsResponseSchema
@@ -593,6 +697,7 @@ export type GetOrganizationAssignmentWorkersInput = z.infer<
 
 const GetOrganizationAssignmentWorkersResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetOrganizationAssignmentWorkersResponse = z.infer<
 	typeof GetOrganizationAssignmentWorkersResponseSchema
@@ -605,7 +710,10 @@ export type GetPayGroupByJobIdInput = z.infer<
 	typeof GetPayGroupByJobIdInputSchema
 >;
 
-const GetPayGroupByJobIdResponseSchema = z.object({}).catchall(z.unknown());
+const GetPayGroupByJobIdResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetPayGroupByJobIdResponse = z.infer<
 	typeof GetPayGroupByJobIdResponseSchema
 >;
@@ -619,6 +727,7 @@ export type GetPaySlipInstancesForWorkerInput = z.infer<
 
 const GetPaySlipInstancesForWorkerResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetPaySlipInstancesForWorkerResponse = z.infer<
 	typeof GetPaySlipInstancesForWorkerResponseSchema
@@ -631,7 +740,10 @@ export type GetPaySlipsForWorkerInput = z.infer<
 	typeof GetPaySlipsForWorkerInputSchema
 >;
 
-const GetPaySlipsForWorkerResponseSchema = z.object({}).catchall(z.unknown());
+const GetPaySlipsForWorkerResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetPaySlipsForWorkerResponse = z.infer<
 	typeof GetPaySlipsForWorkerResponseSchema
 >;
@@ -645,6 +757,7 @@ export type GetPayrollInputInstanceInput = z.infer<
 
 const GetPayrollInputInstanceResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetPayrollInputInstanceResponse = z.infer<
 	typeof GetPayrollInputInstanceResponseSchema
@@ -659,6 +772,7 @@ export type GetProposedPositionValuesInput = z.infer<
 
 const GetProposedPositionValuesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetProposedPositionValuesResponse = z.infer<
 	typeof GetProposedPositionValuesResponseSchema
@@ -669,7 +783,10 @@ const GetProspectInputSchema = z
 	.passthrough();
 export type GetProspectInput = z.infer<typeof GetProspectInputSchema>;
 
-const GetProspectResponseSchema = z.object({}).catchall(z.unknown());
+const GetProspectResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetProspectResponse = z.infer<typeof GetProspectResponseSchema>;
 
 const GetProspectEducationsInputSchema = z
@@ -679,7 +796,10 @@ export type GetProspectEducationsInput = z.infer<
 	typeof GetProspectEducationsInputSchema
 >;
 
-const GetProspectEducationsResponseSchema = z.object({}).catchall(z.unknown());
+const GetProspectEducationsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetProspectEducationsResponse = z.infer<
 	typeof GetProspectEducationsResponseSchema
 >;
@@ -691,7 +811,10 @@ export type GetProspectExperiencesInput = z.infer<
 	typeof GetProspectExperiencesInputSchema
 >;
 
-const GetProspectExperiencesResponseSchema = z.object({}).catchall(z.unknown());
+const GetProspectExperiencesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetProspectExperiencesResponse = z.infer<
 	typeof GetProspectExperiencesResponseSchema
 >;
@@ -705,6 +828,7 @@ export type GetProspectResumeAttachmentsInput = z.infer<
 
 const GetProspectResumeAttachmentsResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetProspectResumeAttachmentsResponse = z.infer<
 	typeof GetProspectResumeAttachmentsResponseSchema
@@ -717,7 +841,10 @@ export type GetProspectSkillsInput = z.infer<
 	typeof GetProspectSkillsInputSchema
 >;
 
-const GetProspectSkillsResponseSchema = z.object({}).catchall(z.unknown());
+const GetProspectSkillsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetProspectSkillsResponse = z.infer<
 	typeof GetProspectSkillsResponseSchema
 >;
@@ -731,6 +858,7 @@ export type GetSupervisoryOrgValuesInput = z.infer<
 
 const GetSupervisoryOrgValuesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetSupervisoryOrgValuesResponse = z.infer<
 	typeof GetSupervisoryOrgValuesResponseSchema
@@ -745,6 +873,7 @@ export type GetTimeOffEntriesForWorkerInput = z.infer<
 
 const GetTimeOffEntriesForWorkerResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetTimeOffEntriesForWorkerResponse = z.infer<
 	typeof GetTimeOffEntriesForWorkerResponseSchema
@@ -759,6 +888,7 @@ export type GetTimeOffPlansForWorkerInput = z.infer<
 
 const GetTimeOffPlansForWorkerResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetTimeOffPlansForWorkerResponse = z.infer<
 	typeof GetTimeOffPlansForWorkerResponseSchema
@@ -771,7 +901,10 @@ export type GetTimeOffStatusValuesInput = z.infer<
 	typeof GetTimeOffStatusValuesInputSchema
 >;
 
-const GetTimeOffStatusValuesResponseSchema = z.object({}).catchall(z.unknown());
+const GetTimeOffStatusValuesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetTimeOffStatusValuesResponse = z.infer<
 	typeof GetTimeOffStatusValuesResponseSchema
 >;
@@ -781,7 +914,10 @@ const GetTimeTypesInputSchema = z
 	.passthrough();
 export type GetTimeTypesInput = z.infer<typeof GetTimeTypesInputSchema>;
 
-const GetTimeTypesResponseSchema = z.object({}).catchall(z.unknown());
+const GetTimeTypesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetTimeTypesResponse = z.infer<typeof GetTimeTypesResponseSchema>;
 
 const GetWorkStudyAwardsInputSchema = z
@@ -791,7 +927,10 @@ export type GetWorkStudyAwardsInput = z.infer<
 	typeof GetWorkStudyAwardsInputSchema
 >;
 
-const GetWorkStudyAwardsResponseSchema = z.object({}).catchall(z.unknown());
+const GetWorkStudyAwardsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetWorkStudyAwardsResponse = z.infer<
 	typeof GetWorkStudyAwardsResponseSchema
 >;
@@ -805,6 +944,7 @@ export type GetWorkerBusinessTitleChangesInput = z.infer<
 
 const GetWorkerBusinessTitleChangesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetWorkerBusinessTitleChangesResponse = z.infer<
 	typeof GetWorkerBusinessTitleChangesResponseSchema
@@ -819,6 +959,7 @@ export type GetWorkerEligibleAbsenceTypesInput = z.infer<
 
 const GetWorkerEligibleAbsenceTypesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetWorkerEligibleAbsenceTypesResponse = z.infer<
 	typeof GetWorkerEligibleAbsenceTypesResponseSchema
@@ -829,7 +970,10 @@ const GetWorkerInfoInputSchema = z
 	.passthrough();
 export type GetWorkerInfoInput = z.infer<typeof GetWorkerInfoInputSchema>;
 
-const GetWorkerInfoResponseSchema = z.object({}).catchall(z.unknown());
+const GetWorkerInfoResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetWorkerInfoResponse = z.infer<typeof GetWorkerInfoResponseSchema>;
 
 const GetWorkerLeavesOfAbsenceInputSchema = z
@@ -841,6 +985,7 @@ export type GetWorkerLeavesOfAbsenceInput = z.infer<
 
 const GetWorkerLeavesOfAbsenceResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetWorkerLeavesOfAbsenceResponse = z.infer<
 	typeof GetWorkerLeavesOfAbsenceResponseSchema
@@ -853,7 +998,10 @@ export type GetWorkerServiceDatesInput = z.infer<
 	typeof GetWorkerServiceDatesInputSchema
 >;
 
-const GetWorkerServiceDatesResponseSchema = z.object({}).catchall(z.unknown());
+const GetWorkerServiceDatesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetWorkerServiceDatesResponse = z.infer<
 	typeof GetWorkerServiceDatesResponseSchema
 >;
@@ -867,6 +1015,7 @@ export type GetWorkerStaffingInformationInput = z.infer<
 
 const GetWorkerStaffingInformationResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetWorkerStaffingInformationResponse = z.infer<
 	typeof GetWorkerStaffingInformationResponseSchema
@@ -881,6 +1030,7 @@ export type GetWorkerTimeOffDetailsInput = z.infer<
 
 const GetWorkerTimeOffDetailsResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetWorkerTimeOffDetailsResponse = z.infer<
 	typeof GetWorkerTimeOffDetailsResponseSchema
@@ -891,7 +1041,10 @@ const GetWorkerTypesInputSchema = z
 	.passthrough();
 export type GetWorkerTypesInput = z.infer<typeof GetWorkerTypesInputSchema>;
 
-const GetWorkerTypesResponseSchema = z.object({}).catchall(z.unknown());
+const GetWorkerTypesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetWorkerTypesResponse = z.infer<
 	typeof GetWorkerTypesResponseSchema
 >;
@@ -905,6 +1058,7 @@ export type GetWorkerValidTimeOffDatesInput = z.infer<
 
 const GetWorkerValidTimeOffDatesResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetWorkerValidTimeOffDatesResponse = z.infer<
 	typeof GetWorkerValidTimeOffDatesResponseSchema
@@ -919,6 +1073,7 @@ export type GetWorkersCollectionStaffingInput = z.infer<
 
 const GetWorkersCollectionStaffingResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type GetWorkersCollectionStaffingResponse = z.infer<
 	typeof GetWorkersCollectionStaffingResponseSchema
@@ -931,7 +1086,10 @@ export type GetWorkspaceInstancesInput = z.infer<
 	typeof GetWorkspaceInstancesInputSchema
 >;
 
-const GetWorkspaceInstancesResponseSchema = z.object({}).catchall(z.unknown());
+const GetWorkspaceInstancesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type GetWorkspaceInstancesResponse = z.infer<
 	typeof GetWorkspaceInstancesResponseSchema
 >;
@@ -941,7 +1099,10 @@ const ListBalancesInputSchema = z
 	.passthrough();
 export type ListBalancesInput = z.infer<typeof ListBalancesInputSchema>;
 
-const ListBalancesResponseSchema = z.object({}).catchall(z.unknown());
+const ListBalancesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type ListBalancesResponse = z.infer<typeof ListBalancesResponseSchema>;
 
 const ListCountriesInputSchema = z
@@ -949,7 +1110,10 @@ const ListCountriesInputSchema = z
 	.passthrough();
 export type ListCountriesInput = z.infer<typeof ListCountriesInputSchema>;
 
-const ListCountriesResponseSchema = z.object({}).catchall(z.unknown());
+const ListCountriesResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type ListCountriesResponse = z.infer<typeof ListCountriesResponseSchema>;
 
 const ListInterviewsInputSchema = z
@@ -957,7 +1121,10 @@ const ListInterviewsInputSchema = z
 	.passthrough();
 export type ListInterviewsInput = z.infer<typeof ListInterviewsInputSchema>;
 
-const ListInterviewsResponseSchema = z.object({}).catchall(z.unknown());
+const ListInterviewsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type ListInterviewsResponse = z.infer<
 	typeof ListInterviewsResponseSchema
 >;
@@ -967,7 +1134,10 @@ const ListJobPostingsInputSchema = z
 	.passthrough();
 export type ListJobPostingsInput = z.infer<typeof ListJobPostingsInputSchema>;
 
-const ListJobPostingsResponseSchema = z.object({}).catchall(z.unknown());
+const ListJobPostingsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type ListJobPostingsResponse = z.infer<
 	typeof ListJobPostingsResponseSchema
 >;
@@ -977,7 +1147,10 @@ const ListJobsInputSchema = z
 	.passthrough();
 export type ListJobsInput = z.infer<typeof ListJobsInputSchema>;
 
-const ListJobsResponseSchema = z.object({}).catchall(z.unknown());
+const ListJobsResponseSchema = z
+	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
+	.catchall(z.unknown());
 export type ListJobsResponse = z.infer<typeof ListJobsResponseSchema>;
 
 const RetrieveWorkerLeaveOfAbsenceSubresourceInputSchema = z
@@ -989,6 +1162,7 @@ export type RetrieveWorkerLeaveOfAbsenceSubresourceInput = z.infer<
 
 const RetrieveWorkerLeaveOfAbsenceSubresourceResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type RetrieveWorkerLeaveOfAbsenceSubresourceResponse = z.infer<
 	typeof RetrieveWorkerLeaveOfAbsenceSubresourceResponseSchema
@@ -1004,6 +1178,7 @@ export type UpdateAnExistingPayrollInput = z.infer<
 
 const UpdateAnExistingPayrollResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type UpdateAnExistingPayrollResponse = z.infer<
 	typeof UpdateAnExistingPayrollResponseSchema
@@ -1019,6 +1194,7 @@ export type UpdateJobChangeBusinessTitleInput = z.infer<
 
 const UpdateJobChangeBusinessTitleResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type UpdateJobChangeBusinessTitleResponse = z.infer<
 	typeof UpdateJobChangeBusinessTitleResponseSchema
@@ -1034,6 +1210,7 @@ export type UpdateMessageTemplateByIdInput = z.infer<
 
 const UpdateMessageTemplateByIdResponseSchema = z
 	.object({})
+	// Justification: Catching all unknown properties for forward-compatibility.
 	.catchall(z.unknown());
 export type UpdateMessageTemplateByIdResponse = z.infer<
 	typeof UpdateMessageTemplateByIdResponseSchema

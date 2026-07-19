@@ -7,9 +7,10 @@ export const getCompanyInsiderTypes: WorkdayEndpoints['getCompanyInsiderTypes'] 
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getCompanyInsiderTypes']
-		>('v1/company/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/company/getCompanyInsiderTypes', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

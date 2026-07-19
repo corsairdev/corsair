@@ -1,5 +1,5 @@
 import type { TokenResponse, WebhookTenantMatch } from 'corsair/core';
-import { asRecord, toExternalId } from 'corsair/core';
+import { toExternalId } from 'corsair/core';
 
 export async function resolveWorkdayOAuthWebhookTenantLink(
 	tokens: TokenResponse,
@@ -8,9 +8,5 @@ export async function resolveWorkdayOAuthWebhookTenantLink(
 	if (externalId) {
 		return { linkType: 'tenant_external_id', externalId };
 	}
-
-	const accessToken = tokens.access_token;
-	if (!accessToken) return null;
-
 	return null;
 }

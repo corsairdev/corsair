@@ -7,9 +7,10 @@ export const getHeadcountOptions: WorkdayEndpoints['getHeadcountOptions'] =
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getHeadcountOptions']
-		>('v1/headcount/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/headcount/getHeadcountOptions', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

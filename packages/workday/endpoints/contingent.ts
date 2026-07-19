@@ -7,9 +7,10 @@ export const getContingentWorkerTypes: WorkdayEndpoints['getContingentWorkerType
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getContingentWorkerTypes']
-		>('v1/contingent/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/contingent/getContingentWorkerTypes', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

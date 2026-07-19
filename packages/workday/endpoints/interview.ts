@@ -11,6 +11,7 @@ export const getInterview: WorkdayEndpoints['getInterview'] = async (
 		WorkdayEndpointOutputs['getInterview']
 	>('v1/interview/getInterview', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
@@ -26,9 +27,10 @@ export const getInterviewFeedback2: WorkdayEndpoints['getInterviewFeedback2'] =
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getInterviewFeedback2']
-		>('v1/interview/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/interview/getInterviewFeedback2', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

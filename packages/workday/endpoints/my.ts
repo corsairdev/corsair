@@ -11,6 +11,7 @@ export const getMyJobPostings: WorkdayEndpoints['getMyJobPostings'] = async (
 		WorkdayEndpointOutputs['getMyJobPostings']
 	>('v1/my/getMyJobPostings', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

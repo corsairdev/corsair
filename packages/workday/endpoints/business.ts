@@ -7,8 +7,9 @@ export const createBusinessTitleChange: WorkdayEndpoints['createBusinessTitleCha
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['createBusinessTitleChange']
-		>('v1/business/api', ctx.key, {
+		>('v1/business/createBusinessTitleChange', ctx.key, {
 			method: 'POST',
+			// Justification: The makeWorkdayRequest client expects a generic unknown record.
 			body: input as { [key: string]: unknown },
 		});
 		await logEventFromContext(
@@ -24,9 +25,10 @@ export const getBusinessTitleChange: WorkdayEndpoints['getBusinessTitleChange'] 
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getBusinessTitleChange']
-		>('v1/business/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/business/getBusinessTitleChange', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,
@@ -41,9 +43,10 @@ export const getBusinessTitleChangeForWorker: WorkdayEndpoints['getBusinessTitle
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getBusinessTitleChangeForWorker']
-		>('v1/business/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/business/getBusinessTitleChangeForWorker', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

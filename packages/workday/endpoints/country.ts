@@ -11,6 +11,7 @@ export const getCountryInfo: WorkdayEndpoints['getCountryInfo'] = async (
 		WorkdayEndpointOutputs['getCountryInfo']
 	>('v1/country/getCountryInfo', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

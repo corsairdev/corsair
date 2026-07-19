@@ -11,6 +11,7 @@ export const listBalances: WorkdayEndpoints['listBalances'] = async (
 		WorkdayEndpointOutputs['listBalances']
 	>('v1/balances/listBalances', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

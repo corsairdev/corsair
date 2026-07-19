@@ -11,6 +11,7 @@ export const getHolidayEvents: WorkdayEndpoints['getHolidayEvents'] = async (
 		WorkdayEndpointOutputs['getHolidayEvents']
 	>('v1/holiday/getHolidayEvents', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

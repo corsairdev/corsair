@@ -7,8 +7,9 @@ export const createTimeOffRequest: WorkdayEndpoints['createTimeOffRequest'] =
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['createTimeOffRequest']
-		>('v1/time/api', ctx.key, {
+		>('v1/time/createTimeOffRequest', ctx.key, {
 			method: 'POST',
+			// Justification: The makeWorkdayRequest client expects a generic unknown record.
 			body: input as { [key: string]: unknown },
 		});
 		await logEventFromContext(
@@ -24,9 +25,10 @@ export const getTimeOffEntriesForWorker: WorkdayEndpoints['getTimeOffEntriesForW
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getTimeOffEntriesForWorker']
-		>('v1/time/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/time/getTimeOffEntriesForWorker', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,
@@ -41,9 +43,10 @@ export const getTimeOffPlansForWorker: WorkdayEndpoints['getTimeOffPlansForWorke
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getTimeOffPlansForWorker']
-		>('v1/time/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/time/getTimeOffPlansForWorker', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,
@@ -58,9 +61,10 @@ export const getTimeOffStatusValues: WorkdayEndpoints['getTimeOffStatusValues'] 
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getTimeOffStatusValues']
-		>('v1/time/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/time/getTimeOffStatusValues', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,
@@ -79,6 +83,7 @@ export const getTimeTypes: WorkdayEndpoints['getTimeTypes'] = async (
 		WorkdayEndpointOutputs['getTimeTypes']
 	>('v1/time/getTimeTypes', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

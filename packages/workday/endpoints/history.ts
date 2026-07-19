@@ -7,9 +7,10 @@ export const getHistoryInstanceForWorker: WorkdayEndpoints['getHistoryInstanceFo
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getHistoryInstanceForWorker']
-		>('v1/history/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/history/getHistoryInstanceForWorker', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,
@@ -24,9 +25,10 @@ export const getHistoryItemsForWorker: WorkdayEndpoints['getHistoryItemsForWorke
 	async (ctx, input) => {
 		const response = await makeWorkdayRequest<
 			WorkdayEndpointOutputs['getHistoryItemsForWorker']
-		>('v1/history/api', ctx.key, {
-			method: 'POST',
-			body: input as { [key: string]: unknown },
+		>('v1/history/getHistoryItemsForWorker', ctx.key, {
+			method: 'GET',
+			// Justification: The makeWorkdayRequest client expects a generic string/number/boolean query record.
+			query: input as { [key: string]: string | number | boolean | undefined },
 		});
 		await logEventFromContext(
 			ctx,

@@ -11,6 +11,7 @@ export const getCurrentUser: WorkdayEndpoints['getCurrentUser'] = async (
 		WorkdayEndpointOutputs['getCurrentUser']
 	>('v1/current/getCurrentUser', ctx.key, {
 		method: 'GET',
+		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(

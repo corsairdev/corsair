@@ -24,7 +24,12 @@ export type WorkdayWebhookOutputs = {
 };
 
 function parseBody(body: unknown): unknown {
-	return typeof body === 'string' ? JSON.parse(body) : body;
+	if (typeof body !== 'string') return body;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return null;
+	}
 }
 
 export function createWorkdayEventMatch(
@@ -50,10 +55,10 @@ export function verifyWorkdayWebhookSignature(
 	}
 
 	let bodyString: string;
-	if (typeof request.body === 'string') {
-		bodyString = request.body;
+	if (typeof request.rawBody === 'string') {
+		bodyString = request.rawBody;
 	} else {
-		bodyString = JSON.stringify(request.body);
+		bodyString = JSON.stringify(request.payload);
 	}
 
 	const expected = crypto
