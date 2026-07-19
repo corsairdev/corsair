@@ -9,9 +9,9 @@ export const getAbsenceBalance: WorkdayEndpoints['getAbsenceBalance'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getAbsenceBalance']
-	>('v1/absence/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/absence/getAbsenceBalance', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

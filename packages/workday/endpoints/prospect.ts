@@ -9,9 +9,9 @@ export const getProspect: WorkdayEndpoints['getProspect'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getProspect']
-	>('v1/prospect/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/prospect/getProspect', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,
@@ -79,9 +79,9 @@ export const getProspectSkills: WorkdayEndpoints['getProspectSkills'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getProspectSkills']
-	>('v1/prospect/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/prospect/getProspectSkills', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

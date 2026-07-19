@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-const CreateBusinessTitleChangeInputSchema = z.object({}).optional();
+const CreateBusinessTitleChangeInputSchema = z
+	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.passthrough()
+	.optional();
 export type CreateBusinessTitleChangeInput = z.infer<
 	typeof CreateBusinessTitleChangeInputSchema
 >;
@@ -12,7 +15,10 @@ export type CreateBusinessTitleChangeResponse = z.infer<
 	typeof CreateBusinessTitleChangeResponseSchema
 >;
 
-const CreateJobChangeInputSchema = z.object({}).optional();
+const CreateJobChangeInputSchema = z
+	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.passthrough()
+	.optional();
 export type CreateJobChangeInput = z.infer<typeof CreateJobChangeInputSchema>;
 
 const CreateJobChangeResponseSchema = z.object({}).catchall(z.unknown());
@@ -20,7 +26,10 @@ export type CreateJobChangeResponse = z.infer<
 	typeof CreateJobChangeResponseSchema
 >;
 
-const CreatePayrollInputsInputSchema = z.object({}).optional();
+const CreatePayrollInputsInputSchema = z
+	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.passthrough()
+	.optional();
 export type CreatePayrollInputsInput = z.infer<
 	typeof CreatePayrollInputsInputSchema
 >;
@@ -30,7 +39,10 @@ export type CreatePayrollInputsResponse = z.infer<
 	typeof CreatePayrollInputsResponseSchema
 >;
 
-const CreateTimeOffRequestInputSchema = z.object({}).optional();
+const CreateTimeOffRequestInputSchema = z
+	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.passthrough()
+	.optional();
 export type CreateTimeOffRequestInput = z.infer<
 	typeof CreateTimeOffRequestInputSchema
 >;
@@ -40,7 +52,9 @@ export type CreateTimeOffRequestResponse = z.infer<
 	typeof CreateTimeOffRequestResponseSchema
 >;
 
-const GetAbsenceBalanceInputSchema = z.object({}).optional();
+const GetAbsenceBalanceInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetAbsenceBalanceInput = z.infer<
 	typeof GetAbsenceBalanceInputSchema
 >;
@@ -50,7 +64,9 @@ export type GetAbsenceBalanceResponse = z.infer<
 	typeof GetAbsenceBalanceResponseSchema
 >;
 
-const GetAssignmentChangeGroupCostCentersInputSchema = z.object({}).optional();
+const GetAssignmentChangeGroupCostCentersInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetAssignmentChangeGroupCostCentersInput = z.infer<
 	typeof GetAssignmentChangeGroupCostCentersInputSchema
 >;
@@ -62,7 +78,9 @@ export type GetAssignmentChangeGroupCostCentersResponse = z.infer<
 	typeof GetAssignmentChangeGroupCostCentersResponseSchema
 >;
 
-const GetAssignmentChangeGroupJobsInputSchema = z.object({}).optional();
+const GetAssignmentChangeGroupJobsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetAssignmentChangeGroupJobsInput = z.infer<
 	typeof GetAssignmentChangeGroupJobsInputSchema
 >;
@@ -74,7 +92,9 @@ export type GetAssignmentChangeGroupJobsResponse = z.infer<
 	typeof GetAssignmentChangeGroupJobsResponseSchema
 >;
 
-const GetAssignmentTypesInputSchema = z.object({}).optional();
+const GetAssignmentTypesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetAssignmentTypesInput = z.infer<
 	typeof GetAssignmentTypesInputSchema
 >;
@@ -84,7 +104,9 @@ export type GetAssignmentTypesResponse = z.infer<
 	typeof GetAssignmentTypesResponseSchema
 >;
 
-const GetBusinessTitleChangeInputSchema = z.object({}).optional();
+const GetBusinessTitleChangeInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetBusinessTitleChangeInput = z.infer<
 	typeof GetBusinessTitleChangeInputSchema
 >;
@@ -94,7 +116,9 @@ export type GetBusinessTitleChangeResponse = z.infer<
 	typeof GetBusinessTitleChangeResponseSchema
 >;
 
-const GetBusinessTitleChangeForWorkerInputSchema = z.object({}).optional();
+const GetBusinessTitleChangeForWorkerInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetBusinessTitleChangeForWorkerInput = z.infer<
 	typeof GetBusinessTitleChangeForWorkerInputSchema
 >;
@@ -106,7 +130,9 @@ export type GetBusinessTitleChangeForWorkerResponse = z.infer<
 	typeof GetBusinessTitleChangeForWorkerResponseSchema
 >;
 
-const GetCandidateAvailabilityTemplateInputSchema = z.object({}).optional();
+const GetCandidateAvailabilityTemplateInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetCandidateAvailabilityTemplateInput = z.infer<
 	typeof GetCandidateAvailabilityTemplateInputSchema
 >;
@@ -118,7 +144,9 @@ export type GetCandidateAvailabilityTemplateResponse = z.infer<
 	typeof GetCandidateAvailabilityTemplateResponseSchema
 >;
 
-const GetCollectionOfJobsInputSchema = z.object({}).optional();
+const GetCollectionOfJobsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetCollectionOfJobsInput = z.infer<
 	typeof GetCollectionOfJobsInputSchema
 >;
@@ -128,7 +156,9 @@ export type GetCollectionOfJobsResponse = z.infer<
 	typeof GetCollectionOfJobsResponseSchema
 >;
 
-const GetCollectionOfPayrollInputSchema = z.object({}).optional();
+const GetCollectionOfPayrollInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetCollectionOfPayrollInput = z.infer<
 	typeof GetCollectionOfPayrollInputSchema
 >;
@@ -138,7 +168,9 @@ export type GetCollectionOfPayrollResponse = z.infer<
 	typeof GetCollectionOfPayrollResponseSchema
 >;
 
-const GetCompanyInsiderTypesInputSchema = z.object({}).optional();
+const GetCompanyInsiderTypesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetCompanyInsiderTypesInput = z.infer<
 	typeof GetCompanyInsiderTypesInputSchema
 >;
@@ -148,7 +180,9 @@ export type GetCompanyInsiderTypesResponse = z.infer<
 	typeof GetCompanyInsiderTypesResponseSchema
 >;
 
-const GetContingentWorkerTypesInputSchema = z.object({}).optional();
+const GetContingentWorkerTypesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetContingentWorkerTypesInput = z.infer<
 	typeof GetContingentWorkerTypesInputSchema
 >;
@@ -160,7 +194,9 @@ export type GetContingentWorkerTypesResponse = z.infer<
 	typeof GetContingentWorkerTypesResponseSchema
 >;
 
-const GetCountryInfoInputSchema = z.object({}).optional();
+const GetCountryInfoInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetCountryInfoInput = z.infer<typeof GetCountryInfoInputSchema>;
 
 const GetCountryInfoResponseSchema = z.object({}).catchall(z.unknown());
@@ -168,13 +204,17 @@ export type GetCountryInfoResponse = z.infer<
 	typeof GetCountryInfoResponseSchema
 >;
 
-const GetCurrenciesInputSchema = z.object({}).optional();
+const GetCurrenciesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetCurrenciesInput = z.infer<typeof GetCurrenciesInputSchema>;
 
 const GetCurrenciesResponseSchema = z.object({}).catchall(z.unknown());
 export type GetCurrenciesResponse = z.infer<typeof GetCurrenciesResponseSchema>;
 
-const GetCurrentUserInputSchema = z.object({}).optional();
+const GetCurrentUserInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetCurrentUserInput = z.infer<typeof GetCurrentUserInputSchema>;
 
 const GetCurrentUserResponseSchema = z.object({}).catchall(z.unknown());
@@ -182,13 +222,17 @@ export type GetCurrentUserResponse = z.infer<
 	typeof GetCurrentUserResponseSchema
 >;
 
-const GetGrantsInputSchema = z.object({}).optional();
+const GetGrantsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetGrantsInput = z.infer<typeof GetGrantsInputSchema>;
 
 const GetGrantsResponseSchema = z.object({}).catchall(z.unknown());
 export type GetGrantsResponse = z.infer<typeof GetGrantsResponseSchema>;
 
-const GetHeadcountOptionsInputSchema = z.object({}).optional();
+const GetHeadcountOptionsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetHeadcountOptionsInput = z.infer<
 	typeof GetHeadcountOptionsInputSchema
 >;
@@ -198,7 +242,9 @@ export type GetHeadcountOptionsResponse = z.infer<
 	typeof GetHeadcountOptionsResponseSchema
 >;
 
-const GetHistoryInstanceForWorkerInputSchema = z.object({}).optional();
+const GetHistoryInstanceForWorkerInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetHistoryInstanceForWorkerInput = z.infer<
 	typeof GetHistoryInstanceForWorkerInputSchema
 >;
@@ -210,7 +256,9 @@ export type GetHistoryInstanceForWorkerResponse = z.infer<
 	typeof GetHistoryInstanceForWorkerResponseSchema
 >;
 
-const GetHistoryItemsForWorkerInputSchema = z.object({}).optional();
+const GetHistoryItemsForWorkerInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetHistoryItemsForWorkerInput = z.infer<
 	typeof GetHistoryItemsForWorkerInputSchema
 >;
@@ -222,7 +270,9 @@ export type GetHistoryItemsForWorkerResponse = z.infer<
 	typeof GetHistoryItemsForWorkerResponseSchema
 >;
 
-const GetHolidayEventsInputSchema = z.object({}).optional();
+const GetHolidayEventsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetHolidayEventsInput = z.infer<typeof GetHolidayEventsInputSchema>;
 
 const GetHolidayEventsResponseSchema = z.object({}).catchall(z.unknown());
@@ -230,13 +280,17 @@ export type GetHolidayEventsResponse = z.infer<
 	typeof GetHolidayEventsResponseSchema
 >;
 
-const GetInterviewInputSchema = z.object({}).optional();
+const GetInterviewInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetInterviewInput = z.infer<typeof GetInterviewInputSchema>;
 
 const GetInterviewResponseSchema = z.object({}).catchall(z.unknown());
 export type GetInterviewResponse = z.infer<typeof GetInterviewResponseSchema>;
 
-const GetInterviewFeedback2InputSchema = z.object({}).optional();
+const GetInterviewFeedback2InputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetInterviewFeedback2Input = z.infer<
 	typeof GetInterviewFeedback2InputSchema
 >;
@@ -246,13 +300,15 @@ export type GetInterviewFeedback2Response = z.infer<
 	typeof GetInterviewFeedback2ResponseSchema
 >;
 
-const GetJobByIdInputSchema = z.object({}).optional();
+const GetJobByIdInputSchema = z.object({ id: z.string() });
 export type GetJobByIdInput = z.infer<typeof GetJobByIdInputSchema>;
 
 const GetJobByIdResponseSchema = z.object({}).catchall(z.unknown());
 export type GetJobByIdResponse = z.infer<typeof GetJobByIdResponseSchema>;
 
-const GetJobChangeFrequenciesInputSchema = z.object({}).optional();
+const GetJobChangeFrequenciesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangeFrequenciesInput = z.infer<
 	typeof GetJobChangeFrequenciesInputSchema
 >;
@@ -264,7 +320,9 @@ export type GetJobChangeFrequenciesResponse = z.infer<
 	typeof GetJobChangeFrequenciesResponseSchema
 >;
 
-const GetJobChangeLocationInfoInputSchema = z.object({}).optional();
+const GetJobChangeLocationInfoInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangeLocationInfoInput = z.infer<
 	typeof GetJobChangeLocationInfoInputSchema
 >;
@@ -276,7 +334,9 @@ export type GetJobChangeLocationInfoResponse = z.infer<
 	typeof GetJobChangeLocationInfoResponseSchema
 >;
 
-const GetJobChangePositionInputSchema = z.object({}).optional();
+const GetJobChangePositionInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangePositionInput = z.infer<
 	typeof GetJobChangePositionInputSchema
 >;
@@ -286,7 +346,9 @@ export type GetJobChangePositionResponse = z.infer<
 	typeof GetJobChangePositionResponseSchema
 >;
 
-const GetJobChangeReasonInstanceInputSchema = z.object({}).optional();
+const GetJobChangeReasonInstanceInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangeReasonInstanceInput = z.infer<
 	typeof GetJobChangeReasonInstanceInputSchema
 >;
@@ -298,7 +360,9 @@ export type GetJobChangeReasonInstanceResponse = z.infer<
 	typeof GetJobChangeReasonInstanceResponseSchema
 >;
 
-const GetJobChangeReasonValuesInputSchema = z.object({}).optional();
+const GetJobChangeReasonValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangeReasonValuesInput = z.infer<
 	typeof GetJobChangeReasonValuesInputSchema
 >;
@@ -310,7 +374,9 @@ export type GetJobChangeReasonValuesResponse = z.infer<
 	typeof GetJobChangeReasonValuesResponseSchema
 >;
 
-const GetJobChangeReasonsInputSchema = z.object({}).optional();
+const GetJobChangeReasonsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangeReasonsInput = z.infer<
 	typeof GetJobChangeReasonsInputSchema
 >;
@@ -320,7 +386,9 @@ export type GetJobChangeReasonsResponse = z.infer<
 	typeof GetJobChangeReasonsResponseSchema
 >;
 
-const GetJobChangesGroupTemplatesInputSchema = z.object({}).optional();
+const GetJobChangesGroupTemplatesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangesGroupTemplatesInput = z.infer<
 	typeof GetJobChangesGroupTemplatesInputSchema
 >;
@@ -332,7 +400,9 @@ export type GetJobChangesGroupTemplatesResponse = z.infer<
 	typeof GetJobChangesGroupTemplatesResponseSchema
 >;
 
-const GetJobChangesJobValuesInputSchema = z.object({}).optional();
+const GetJobChangesJobValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangesJobValuesInput = z.infer<
 	typeof GetJobChangesJobValuesInputSchema
 >;
@@ -342,7 +412,9 @@ export type GetJobChangesJobValuesResponse = z.infer<
 	typeof GetJobChangesJobValuesResponseSchema
 >;
 
-const GetJobChangesWorkerValuesInputSchema = z.object({}).optional();
+const GetJobChangesWorkerValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobChangesWorkerValuesInput = z.infer<
 	typeof GetJobChangesWorkerValuesInputSchema
 >;
@@ -354,7 +426,9 @@ export type GetJobChangesWorkerValuesResponse = z.infer<
 	typeof GetJobChangesWorkerValuesResponseSchema
 >;
 
-const GetJobClassificationsInputSchema = z.object({}).optional();
+const GetJobClassificationsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobClassificationsInput = z.infer<
 	typeof GetJobClassificationsInputSchema
 >;
@@ -364,13 +438,17 @@ export type GetJobClassificationsResponse = z.infer<
 	typeof GetJobClassificationsResponseSchema
 >;
 
-const GetJobPostingInputSchema = z.object({}).optional();
+const GetJobPostingInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobPostingInput = z.infer<typeof GetJobPostingInputSchema>;
 
 const GetJobPostingResponseSchema = z.object({}).catchall(z.unknown());
 export type GetJobPostingResponse = z.infer<typeof GetJobPostingResponseSchema>;
 
-const GetJobPostingQuestionnaireInputSchema = z.object({}).optional();
+const GetJobPostingQuestionnaireInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobPostingQuestionnaireInput = z.infer<
 	typeof GetJobPostingQuestionnaireInputSchema
 >;
@@ -382,7 +460,9 @@ export type GetJobPostingQuestionnaireResponse = z.infer<
 	typeof GetJobPostingQuestionnaireResponseSchema
 >;
 
-const GetJobProfilesValuesInputSchema = z.object({}).optional();
+const GetJobProfilesValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobProfilesValuesInput = z.infer<
 	typeof GetJobProfilesValuesInputSchema
 >;
@@ -392,7 +472,9 @@ export type GetJobProfilesValuesResponse = z.infer<
 	typeof GetJobProfilesValuesResponseSchema
 >;
 
-const GetJobRequisitionValuesInputSchema = z.object({}).optional();
+const GetJobRequisitionValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobRequisitionValuesInput = z.infer<
 	typeof GetJobRequisitionValuesInputSchema
 >;
@@ -404,7 +486,9 @@ export type GetJobRequisitionValuesResponse = z.infer<
 	typeof GetJobRequisitionValuesResponseSchema
 >;
 
-const GetJobWorkspaceInputSchema = z.object({}).optional();
+const GetJobWorkspaceInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobWorkspaceInput = z.infer<typeof GetJobWorkspaceInputSchema>;
 
 const GetJobWorkspaceResponseSchema = z.object({}).catchall(z.unknown());
@@ -412,7 +496,9 @@ export type GetJobWorkspaceResponse = z.infer<
 	typeof GetJobWorkspaceResponseSchema
 >;
 
-const GetJobWorkspacesInputSchema = z.object({}).optional();
+const GetJobWorkspacesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetJobWorkspacesInput = z.infer<typeof GetJobWorkspacesInputSchema>;
 
 const GetJobWorkspacesResponseSchema = z.object({}).catchall(z.unknown());
@@ -420,7 +506,9 @@ export type GetJobWorkspacesResponse = z.infer<
 	typeof GetJobWorkspacesResponseSchema
 >;
 
-const GetLeaveStatusValuesInputSchema = z.object({}).optional();
+const GetLeaveStatusValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetLeaveStatusValuesInput = z.infer<
 	typeof GetLeaveStatusValuesInputSchema
 >;
@@ -430,7 +518,9 @@ export type GetLeaveStatusValuesResponse = z.infer<
 	typeof GetLeaveStatusValuesResponseSchema
 >;
 
-const GetMyJobPostingsInputSchema = z.object({}).optional();
+const GetMyJobPostingsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetMyJobPostingsInput = z.infer<typeof GetMyJobPostingsInputSchema>;
 
 const GetMyJobPostingsResponseSchema = z.object({}).catchall(z.unknown());
@@ -452,7 +542,9 @@ export type GetOrganizationAssignmentBusinessUnitsResponse = z.infer<
 	typeof GetOrganizationAssignmentBusinessUnitsResponseSchema
 >;
 
-const GetOrganizationAssignmentCustomsInputSchema = z.object({}).optional();
+const GetOrganizationAssignmentCustomsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetOrganizationAssignmentCustomsInput = z.infer<
 	typeof GetOrganizationAssignmentCustomsInputSchema
 >;
@@ -464,7 +556,9 @@ export type GetOrganizationAssignmentCustomsResponse = z.infer<
 	typeof GetOrganizationAssignmentCustomsResponseSchema
 >;
 
-const GetOrganizationAssignmentFundsInputSchema = z.object({}).optional();
+const GetOrganizationAssignmentFundsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetOrganizationAssignmentFundsInput = z.infer<
 	typeof GetOrganizationAssignmentFundsInputSchema
 >;
@@ -476,7 +570,9 @@ export type GetOrganizationAssignmentFundsResponse = z.infer<
 	typeof GetOrganizationAssignmentFundsResponseSchema
 >;
 
-const GetOrganizationAssignmentRegionsInputSchema = z.object({}).optional();
+const GetOrganizationAssignmentRegionsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetOrganizationAssignmentRegionsInput = z.infer<
 	typeof GetOrganizationAssignmentRegionsInputSchema
 >;
@@ -488,7 +584,9 @@ export type GetOrganizationAssignmentRegionsResponse = z.infer<
 	typeof GetOrganizationAssignmentRegionsResponseSchema
 >;
 
-const GetOrganizationAssignmentWorkersInputSchema = z.object({}).optional();
+const GetOrganizationAssignmentWorkersInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetOrganizationAssignmentWorkersInput = z.infer<
 	typeof GetOrganizationAssignmentWorkersInputSchema
 >;
@@ -500,7 +598,9 @@ export type GetOrganizationAssignmentWorkersResponse = z.infer<
 	typeof GetOrganizationAssignmentWorkersResponseSchema
 >;
 
-const GetPayGroupByJobIdInputSchema = z.object({}).optional();
+const GetPayGroupByJobIdInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetPayGroupByJobIdInput = z.infer<
 	typeof GetPayGroupByJobIdInputSchema
 >;
@@ -510,7 +610,9 @@ export type GetPayGroupByJobIdResponse = z.infer<
 	typeof GetPayGroupByJobIdResponseSchema
 >;
 
-const GetPaySlipInstancesForWorkerInputSchema = z.object({}).optional();
+const GetPaySlipInstancesForWorkerInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetPaySlipInstancesForWorkerInput = z.infer<
 	typeof GetPaySlipInstancesForWorkerInputSchema
 >;
@@ -522,7 +624,9 @@ export type GetPaySlipInstancesForWorkerResponse = z.infer<
 	typeof GetPaySlipInstancesForWorkerResponseSchema
 >;
 
-const GetPaySlipsForWorkerInputSchema = z.object({}).optional();
+const GetPaySlipsForWorkerInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetPaySlipsForWorkerInput = z.infer<
 	typeof GetPaySlipsForWorkerInputSchema
 >;
@@ -532,7 +636,9 @@ export type GetPaySlipsForWorkerResponse = z.infer<
 	typeof GetPaySlipsForWorkerResponseSchema
 >;
 
-const GetPayrollInputInstanceInputSchema = z.object({}).optional();
+const GetPayrollInputInstanceInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetPayrollInputInstanceInput = z.infer<
 	typeof GetPayrollInputInstanceInputSchema
 >;
@@ -544,7 +650,9 @@ export type GetPayrollInputInstanceResponse = z.infer<
 	typeof GetPayrollInputInstanceResponseSchema
 >;
 
-const GetProposedPositionValuesInputSchema = z.object({}).optional();
+const GetProposedPositionValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetProposedPositionValuesInput = z.infer<
 	typeof GetProposedPositionValuesInputSchema
 >;
@@ -556,13 +664,17 @@ export type GetProposedPositionValuesResponse = z.infer<
 	typeof GetProposedPositionValuesResponseSchema
 >;
 
-const GetProspectInputSchema = z.object({}).optional();
+const GetProspectInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetProspectInput = z.infer<typeof GetProspectInputSchema>;
 
 const GetProspectResponseSchema = z.object({}).catchall(z.unknown());
 export type GetProspectResponse = z.infer<typeof GetProspectResponseSchema>;
 
-const GetProspectEducationsInputSchema = z.object({}).optional();
+const GetProspectEducationsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetProspectEducationsInput = z.infer<
 	typeof GetProspectEducationsInputSchema
 >;
@@ -572,7 +684,9 @@ export type GetProspectEducationsResponse = z.infer<
 	typeof GetProspectEducationsResponseSchema
 >;
 
-const GetProspectExperiencesInputSchema = z.object({}).optional();
+const GetProspectExperiencesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetProspectExperiencesInput = z.infer<
 	typeof GetProspectExperiencesInputSchema
 >;
@@ -582,7 +696,9 @@ export type GetProspectExperiencesResponse = z.infer<
 	typeof GetProspectExperiencesResponseSchema
 >;
 
-const GetProspectResumeAttachmentsInputSchema = z.object({}).optional();
+const GetProspectResumeAttachmentsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetProspectResumeAttachmentsInput = z.infer<
 	typeof GetProspectResumeAttachmentsInputSchema
 >;
@@ -594,7 +710,9 @@ export type GetProspectResumeAttachmentsResponse = z.infer<
 	typeof GetProspectResumeAttachmentsResponseSchema
 >;
 
-const GetProspectSkillsInputSchema = z.object({}).optional();
+const GetProspectSkillsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetProspectSkillsInput = z.infer<
 	typeof GetProspectSkillsInputSchema
 >;
@@ -604,7 +722,9 @@ export type GetProspectSkillsResponse = z.infer<
 	typeof GetProspectSkillsResponseSchema
 >;
 
-const GetSupervisoryOrgValuesInputSchema = z.object({}).optional();
+const GetSupervisoryOrgValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetSupervisoryOrgValuesInput = z.infer<
 	typeof GetSupervisoryOrgValuesInputSchema
 >;
@@ -616,7 +736,9 @@ export type GetSupervisoryOrgValuesResponse = z.infer<
 	typeof GetSupervisoryOrgValuesResponseSchema
 >;
 
-const GetTimeOffEntriesForWorkerInputSchema = z.object({}).optional();
+const GetTimeOffEntriesForWorkerInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetTimeOffEntriesForWorkerInput = z.infer<
 	typeof GetTimeOffEntriesForWorkerInputSchema
 >;
@@ -628,7 +750,9 @@ export type GetTimeOffEntriesForWorkerResponse = z.infer<
 	typeof GetTimeOffEntriesForWorkerResponseSchema
 >;
 
-const GetTimeOffPlansForWorkerInputSchema = z.object({}).optional();
+const GetTimeOffPlansForWorkerInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetTimeOffPlansForWorkerInput = z.infer<
 	typeof GetTimeOffPlansForWorkerInputSchema
 >;
@@ -640,7 +764,9 @@ export type GetTimeOffPlansForWorkerResponse = z.infer<
 	typeof GetTimeOffPlansForWorkerResponseSchema
 >;
 
-const GetTimeOffStatusValuesInputSchema = z.object({}).optional();
+const GetTimeOffStatusValuesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetTimeOffStatusValuesInput = z.infer<
 	typeof GetTimeOffStatusValuesInputSchema
 >;
@@ -650,13 +776,17 @@ export type GetTimeOffStatusValuesResponse = z.infer<
 	typeof GetTimeOffStatusValuesResponseSchema
 >;
 
-const GetTimeTypesInputSchema = z.object({}).optional();
+const GetTimeTypesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetTimeTypesInput = z.infer<typeof GetTimeTypesInputSchema>;
 
 const GetTimeTypesResponseSchema = z.object({}).catchall(z.unknown());
 export type GetTimeTypesResponse = z.infer<typeof GetTimeTypesResponseSchema>;
 
-const GetWorkStudyAwardsInputSchema = z.object({}).optional();
+const GetWorkStudyAwardsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkStudyAwardsInput = z.infer<
 	typeof GetWorkStudyAwardsInputSchema
 >;
@@ -666,7 +796,9 @@ export type GetWorkStudyAwardsResponse = z.infer<
 	typeof GetWorkStudyAwardsResponseSchema
 >;
 
-const GetWorkerBusinessTitleChangesInputSchema = z.object({}).optional();
+const GetWorkerBusinessTitleChangesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerBusinessTitleChangesInput = z.infer<
 	typeof GetWorkerBusinessTitleChangesInputSchema
 >;
@@ -678,7 +810,9 @@ export type GetWorkerBusinessTitleChangesResponse = z.infer<
 	typeof GetWorkerBusinessTitleChangesResponseSchema
 >;
 
-const GetWorkerEligibleAbsenceTypesInputSchema = z.object({}).optional();
+const GetWorkerEligibleAbsenceTypesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerEligibleAbsenceTypesInput = z.infer<
 	typeof GetWorkerEligibleAbsenceTypesInputSchema
 >;
@@ -690,13 +824,17 @@ export type GetWorkerEligibleAbsenceTypesResponse = z.infer<
 	typeof GetWorkerEligibleAbsenceTypesResponseSchema
 >;
 
-const GetWorkerInfoInputSchema = z.object({}).optional();
+const GetWorkerInfoInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerInfoInput = z.infer<typeof GetWorkerInfoInputSchema>;
 
 const GetWorkerInfoResponseSchema = z.object({}).catchall(z.unknown());
 export type GetWorkerInfoResponse = z.infer<typeof GetWorkerInfoResponseSchema>;
 
-const GetWorkerLeavesOfAbsenceInputSchema = z.object({}).optional();
+const GetWorkerLeavesOfAbsenceInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerLeavesOfAbsenceInput = z.infer<
 	typeof GetWorkerLeavesOfAbsenceInputSchema
 >;
@@ -708,7 +846,9 @@ export type GetWorkerLeavesOfAbsenceResponse = z.infer<
 	typeof GetWorkerLeavesOfAbsenceResponseSchema
 >;
 
-const GetWorkerServiceDatesInputSchema = z.object({}).optional();
+const GetWorkerServiceDatesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerServiceDatesInput = z.infer<
 	typeof GetWorkerServiceDatesInputSchema
 >;
@@ -718,7 +858,9 @@ export type GetWorkerServiceDatesResponse = z.infer<
 	typeof GetWorkerServiceDatesResponseSchema
 >;
 
-const GetWorkerStaffingInformationInputSchema = z.object({}).optional();
+const GetWorkerStaffingInformationInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerStaffingInformationInput = z.infer<
 	typeof GetWorkerStaffingInformationInputSchema
 >;
@@ -730,7 +872,9 @@ export type GetWorkerStaffingInformationResponse = z.infer<
 	typeof GetWorkerStaffingInformationResponseSchema
 >;
 
-const GetWorkerTimeOffDetailsInputSchema = z.object({}).optional();
+const GetWorkerTimeOffDetailsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerTimeOffDetailsInput = z.infer<
 	typeof GetWorkerTimeOffDetailsInputSchema
 >;
@@ -742,7 +886,9 @@ export type GetWorkerTimeOffDetailsResponse = z.infer<
 	typeof GetWorkerTimeOffDetailsResponseSchema
 >;
 
-const GetWorkerTypesInputSchema = z.object({}).optional();
+const GetWorkerTypesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerTypesInput = z.infer<typeof GetWorkerTypesInputSchema>;
 
 const GetWorkerTypesResponseSchema = z.object({}).catchall(z.unknown());
@@ -750,7 +896,9 @@ export type GetWorkerTypesResponse = z.infer<
 	typeof GetWorkerTypesResponseSchema
 >;
 
-const GetWorkerValidTimeOffDatesInputSchema = z.object({}).optional();
+const GetWorkerValidTimeOffDatesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkerValidTimeOffDatesInput = z.infer<
 	typeof GetWorkerValidTimeOffDatesInputSchema
 >;
@@ -762,7 +910,9 @@ export type GetWorkerValidTimeOffDatesResponse = z.infer<
 	typeof GetWorkerValidTimeOffDatesResponseSchema
 >;
 
-const GetWorkersCollectionStaffingInputSchema = z.object({}).optional();
+const GetWorkersCollectionStaffingInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkersCollectionStaffingInput = z.infer<
 	typeof GetWorkersCollectionStaffingInputSchema
 >;
@@ -774,7 +924,9 @@ export type GetWorkersCollectionStaffingResponse = z.infer<
 	typeof GetWorkersCollectionStaffingResponseSchema
 >;
 
-const GetWorkspaceInstancesInputSchema = z.object({}).optional();
+const GetWorkspaceInstancesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type GetWorkspaceInstancesInput = z.infer<
 	typeof GetWorkspaceInstancesInputSchema
 >;
@@ -784,19 +936,25 @@ export type GetWorkspaceInstancesResponse = z.infer<
 	typeof GetWorkspaceInstancesResponseSchema
 >;
 
-const ListBalancesInputSchema = z.object({}).optional();
+const ListBalancesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type ListBalancesInput = z.infer<typeof ListBalancesInputSchema>;
 
 const ListBalancesResponseSchema = z.object({}).catchall(z.unknown());
 export type ListBalancesResponse = z.infer<typeof ListBalancesResponseSchema>;
 
-const ListCountriesInputSchema = z.object({}).optional();
+const ListCountriesInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type ListCountriesInput = z.infer<typeof ListCountriesInputSchema>;
 
 const ListCountriesResponseSchema = z.object({}).catchall(z.unknown());
 export type ListCountriesResponse = z.infer<typeof ListCountriesResponseSchema>;
 
-const ListInterviewsInputSchema = z.object({}).optional();
+const ListInterviewsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type ListInterviewsInput = z.infer<typeof ListInterviewsInputSchema>;
 
 const ListInterviewsResponseSchema = z.object({}).catchall(z.unknown());
@@ -804,7 +962,9 @@ export type ListInterviewsResponse = z.infer<
 	typeof ListInterviewsResponseSchema
 >;
 
-const ListJobPostingsInputSchema = z.object({}).optional();
+const ListJobPostingsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type ListJobPostingsInput = z.infer<typeof ListJobPostingsInputSchema>;
 
 const ListJobPostingsResponseSchema = z.object({}).catchall(z.unknown());
@@ -812,7 +972,9 @@ export type ListJobPostingsResponse = z.infer<
 	typeof ListJobPostingsResponseSchema
 >;
 
-const ListJobsInputSchema = z.object({}).optional();
+const ListJobsInputSchema = z
+	.object({ cursor: z.string().optional(), limit: z.number().optional() })
+	.passthrough();
 export type ListJobsInput = z.infer<typeof ListJobsInputSchema>;
 
 const ListJobsResponseSchema = z.object({}).catchall(z.unknown());
@@ -832,7 +994,10 @@ export type RetrieveWorkerLeaveOfAbsenceSubresourceResponse = z.infer<
 	typeof RetrieveWorkerLeaveOfAbsenceSubresourceResponseSchema
 >;
 
-const UpdateAnExistingPayrollInputSchema = z.object({}).optional();
+const UpdateAnExistingPayrollInputSchema = z
+	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.passthrough()
+	.optional();
 export type UpdateAnExistingPayrollInput = z.infer<
 	typeof UpdateAnExistingPayrollInputSchema
 >;
@@ -844,7 +1009,10 @@ export type UpdateAnExistingPayrollResponse = z.infer<
 	typeof UpdateAnExistingPayrollResponseSchema
 >;
 
-const UpdateJobChangeBusinessTitleInputSchema = z.object({}).optional();
+const UpdateJobChangeBusinessTitleInputSchema = z
+	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.passthrough()
+	.optional();
 export type UpdateJobChangeBusinessTitleInput = z.infer<
 	typeof UpdateJobChangeBusinessTitleInputSchema
 >;
@@ -856,7 +1024,10 @@ export type UpdateJobChangeBusinessTitleResponse = z.infer<
 	typeof UpdateJobChangeBusinessTitleResponseSchema
 >;
 
-const UpdateMessageTemplateByIdInputSchema = z.object({}).optional();
+const UpdateMessageTemplateByIdInputSchema = z
+	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.passthrough()
+	.optional();
 export type UpdateMessageTemplateByIdInput = z.infer<
 	typeof UpdateMessageTemplateByIdInputSchema
 >;

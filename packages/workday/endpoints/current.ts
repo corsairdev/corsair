@@ -9,9 +9,9 @@ export const getCurrentUser: WorkdayEndpoints['getCurrentUser'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getCurrentUser']
-	>('v1/current/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/current/getCurrentUser', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

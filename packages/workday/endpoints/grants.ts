@@ -6,9 +6,9 @@ import type { WorkdayEndpointOutputs } from './types';
 export const getGrants: WorkdayEndpoints['getGrants'] = async (ctx, input) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getGrants']
-	>('v1/grants/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/grants/getGrants', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

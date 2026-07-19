@@ -9,9 +9,9 @@ export const getCurrencies: WorkdayEndpoints['getCurrencies'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getCurrencies']
-	>('v1/currencies/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/currencies/getCurrencies', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

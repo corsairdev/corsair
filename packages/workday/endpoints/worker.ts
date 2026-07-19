@@ -43,9 +43,9 @@ export const getWorkerInfo: WorkdayEndpoints['getWorkerInfo'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getWorkerInfo']
-	>('v1/worker/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/worker/getWorkerInfo', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,
@@ -130,9 +130,9 @@ export const getWorkerTypes: WorkdayEndpoints['getWorkerTypes'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getWorkerTypes']
-	>('v1/worker/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/worker/getWorkerTypes', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

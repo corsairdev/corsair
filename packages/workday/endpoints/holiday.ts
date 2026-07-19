@@ -9,9 +9,9 @@ export const getHolidayEvents: WorkdayEndpoints['getHolidayEvents'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getHolidayEvents']
-	>('v1/holiday/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/holiday/getHolidayEvents', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

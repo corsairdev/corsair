@@ -77,9 +77,9 @@ export const getTimeTypes: WorkdayEndpoints['getTimeTypes'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getTimeTypes']
-	>('v1/time/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/time/getTimeTypes', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

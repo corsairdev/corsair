@@ -9,7 +9,7 @@ export const createJobChange: WorkdayEndpoints['createJobChange'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['createJobChange']
-	>('v1/job/api', ctx.key, {
+	>('v1/job/createJobChange', ctx.key, {
 		method: 'POST',
 		body: input as { [key: string]: unknown },
 	});
@@ -28,9 +28,9 @@ export const getJobById: WorkdayEndpoints['getJobById'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getJobById']
-	>('v1/job/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/job/getJobById/{id}', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,
@@ -217,9 +217,9 @@ export const getJobPosting: WorkdayEndpoints['getJobPosting'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getJobPosting']
-	>('v1/job/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/job/getJobPosting', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,
@@ -287,9 +287,9 @@ export const getJobWorkspace: WorkdayEndpoints['getJobWorkspace'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getJobWorkspace']
-	>('v1/job/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/job/getJobWorkspace', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,
@@ -306,9 +306,9 @@ export const getJobWorkspaces: WorkdayEndpoints['getJobWorkspaces'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getJobWorkspaces']
-	>('v1/job/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/job/getJobWorkspaces', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,
@@ -325,9 +325,9 @@ export const listJobPostings: WorkdayEndpoints['listJobPostings'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['listJobPostings']
-	>('v1/job/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/job/listJobPostings', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,

@@ -9,9 +9,9 @@ export const getMyJobPostings: WorkdayEndpoints['getMyJobPostings'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getMyJobPostings']
-	>('v1/my/api', ctx.key, {
-		method: 'POST',
-		body: input as { [key: string]: unknown },
+	>('v1/my/getMyJobPostings', ctx.key, {
+		method: 'GET',
+		query: input as { [key: string]: string | number | boolean | undefined },
 	});
 	await logEventFromContext(
 		ctx,
