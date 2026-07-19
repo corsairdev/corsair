@@ -75,6 +75,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'workday',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -145,6 +146,7 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	workday: 'Workday',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -222,6 +224,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'workday'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
