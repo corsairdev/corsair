@@ -28,9 +28,7 @@ export const errorHandlers = {
 		match: (error) => {
 			if (getStatus(error) === 401) return true;
 			const message = error.message.toLowerCase();
-			return (
-				message.includes('unauthorized') || message.includes('403 forbidden')
-			);
+			return message.includes('unauthorized');
 		},
 		handler: async (error, context) => {
 			console.warn(
