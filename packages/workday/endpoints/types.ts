@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const CreateBusinessTitleChangeInputSchema = z
-	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.object({ id: z.string(), workerId: z.string().optional() })
 	.passthrough()
 	.optional();
 export type CreateBusinessTitleChangeInput = z.infer<
@@ -17,7 +17,7 @@ export type CreateBusinessTitleChangeResponse = z.infer<
 >;
 
 const CreateJobChangeInputSchema = z
-	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.object({ id: z.string(), workerId: z.string().optional() })
 	.passthrough()
 	.optional();
 export type CreateJobChangeInput = z.infer<typeof CreateJobChangeInputSchema>;
@@ -31,7 +31,7 @@ export type CreateJobChangeResponse = z.infer<
 >;
 
 const CreatePayrollInputsInputSchema = z
-	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.object({ id: z.string(), workerId: z.string().optional() })
 	.passthrough()
 	.optional();
 export type CreatePayrollInputsInput = z.infer<
@@ -47,7 +47,7 @@ export type CreatePayrollInputsResponse = z.infer<
 >;
 
 const CreateTimeOffRequestInputSchema = z
-	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.object({ id: z.string(), workerId: z.string().optional() })
 	.passthrough()
 	.optional();
 export type CreateTimeOffRequestInput = z.infer<
@@ -1169,7 +1169,7 @@ export type RetrieveWorkerLeaveOfAbsenceSubresourceResponse = z.infer<
 >;
 
 const UpdateAnExistingPayrollInputSchema = z
-	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.object({ id: z.string(), workerId: z.string().optional() })
 	.passthrough()
 	.optional();
 export type UpdateAnExistingPayrollInput = z.infer<
@@ -1185,7 +1185,7 @@ export type UpdateAnExistingPayrollResponse = z.infer<
 >;
 
 const UpdateJobChangeBusinessTitleInputSchema = z
-	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.object({ id: z.string(), workerId: z.string().optional() })
 	.passthrough()
 	.optional();
 export type UpdateJobChangeBusinessTitleInput = z.infer<
@@ -1201,7 +1201,7 @@ export type UpdateJobChangeBusinessTitleResponse = z.infer<
 >;
 
 const UpdateMessageTemplateByIdInputSchema = z
-	.object({ id: z.string().optional(), workerId: z.string().optional() })
+	.object({ id: z.string(), workerId: z.string().optional() })
 	.passthrough()
 	.optional();
 export type UpdateMessageTemplateByIdInput = z.infer<

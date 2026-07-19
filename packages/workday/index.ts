@@ -62,6 +62,7 @@ import { errorHandlers } from './error-handlers';
 import { WorkdaySchema } from './schema';
 import { resolveWorkdayOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchWorkdayTenantWebhook } from './webhooks/tenant-matcher';
+import { workerUpdated } from './webhooks/worker';
 
 export type WorkdayPluginOptions = {
 	/** Workday integration for Corsair */
@@ -344,7 +345,9 @@ const workdayEndpointsNested = {
 	},
 } as const;
 
-const workdayWebhooksNested = {} as const;
+const workdayWebhooksNested = {
+	'worker.updated': workerUpdated,
+} as const;
 
 export const workdayEndpointSchemas = {
 	'business.createBusinessTitleChange': {

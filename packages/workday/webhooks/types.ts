@@ -36,8 +36,10 @@ export function createWorkdayEventMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const parsed = parseBody(request.body) as Record<string, unknown>;
-		return typeof parsed.type === 'string' && parsed.type === eventType;
+		const parsed = parseBody(request.body);
+		if (!parsed || typeof parsed !== 'object') return false;
+		const record = parsed as Record<string, unknown>;
+		return typeof record.type === 'string' && record.type === eventType;
 	};
 }
 

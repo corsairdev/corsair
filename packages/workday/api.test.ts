@@ -46,7 +46,9 @@ describe('Workday Plugin', () => {
 		});
 
 		const result = await plugin.endpoints?.business.createBusinessTitleChange(
+			// Justification: Mock context for testing
 			{ key: 'test' } as any,
+			// Justification: Mock input for testing
 			{ workerId: '123' } as any,
 		);
 
