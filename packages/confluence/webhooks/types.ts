@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import crypto from 'crypto';
 import { z } from 'zod';
 
 export const ConfluenceWebhookPayloadSchema = z.object({
@@ -61,6 +62,32 @@ export function verifyConfluenceWebhookSignature(
 	request: WebhookRequest<ConfluenceWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	const headers = request.headers;
+	const signatureHeader = Array.isArray(headers['x-hub-signature'])
+		? headers['x-hub-signature'][0]
+		: (headers['x-hub-signature'] as string | undefined);
+
+	if (!signatureHeader) {
+		if (!secret) {
+			return { valid: true };
+		}
+		return { valid: false, error: 'Missing x-hub-signature header' };
+	}
+
+	const rawBody = request.rawBody ?? JSON.stringify(request.payload);
+	const expectedHash = crypto
+		.createHmac('sha256', secret)
+		.update(rawBody)
+		.digest('hex');
+	const expectedSignature = `sha256=${expectedHash}`;
+
+	const sigBuffer = Buffer.from(signatureHeader);
+	const expectedBuffer = Buffer.from(expectedSignature);
+
+	if (sigBuffer.length !== expectedBuffer.length) {
+		return { valid: false, error: 'Signature length mismatch' };
+	}
+
+	const isValid = crypto.timingSafeEqual(sigBuffer, expectedBuffer);
+	return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
 }

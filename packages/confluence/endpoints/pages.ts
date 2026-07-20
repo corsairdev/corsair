@@ -12,8 +12,9 @@ export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
 
 	const result = await makeConfluenceRequest<
 		ConfluenceEndpointOutputs['pagesGet']
-	>('../../api/v2/pages', ctx.key, cloudUrl, {
+	>('pages', ctx.key, cloudUrl, {
 		method: 'GET',
+		base: '/wiki/api/v2',
 		authType: ctx.options.authType,
 		query: {
 			...(validated.space_id && { 'space-id': validated.space_id }),

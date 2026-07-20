@@ -3,8 +3,8 @@ import { Pages, Spaces } from './endpoints';
 import { ConfluenceEndpointOutputSchemas } from './endpoints/types';
 import type { ConfluenceContext } from './index';
 
-const API_KEY = process.env.CONFLUENCE_API_KEY!;
-const CLOUD_URL = process.env.CONFLUENCE_CLOUD_URL!;
+const API_KEY = process.env.CONFLUENCE_API_KEY;
+const CLOUD_URL = process.env.CONFLUENCE_CLOUD_URL;
 
 const mockCtx = {
 	key: API_KEY,
@@ -14,6 +14,14 @@ const mockCtx = {
 } as unknown as ConfluenceContext;
 
 describe('Confluence API Type Tests', () => {
+	beforeAll(() => {
+		if (!API_KEY || !CLOUD_URL) {
+			throw new Error(
+				'CONFLUENCE_API_KEY and CONFLUENCE_CLOUD_URL env vars are required to run integration tests',
+			);
+		}
+	});
+
 	it('spaces.list returns correct type', async () => {
 		const result = await Spaces.list(mockCtx, { limit: 10 });
 		ConfluenceEndpointOutputSchemas.spacesList.parse(result);
@@ -21,6 +29,11 @@ describe('Confluence API Type Tests', () => {
 
 	it('pages.get returns correct type', async () => {
 		const result = await Pages.get(mockCtx, { limit: 10 });
+		ConfluenceEndpointOutputSchemas.pagesGet.parse(result);
+	});
+
+	it('pages.get filters by status', async () => {
+		const result = await Pages.get(mockCtx, { limit: 10, status: 'current' });
 		ConfluenceEndpointOutputSchemas.pagesGet.parse(result);
 	});
 

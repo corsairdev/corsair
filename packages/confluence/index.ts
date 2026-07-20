@@ -136,7 +136,7 @@ const confluenceEndpointMeta = {
 	},
 	'pages.search': {
 		riskLevel: 'read',
-		description: 'List Confluence pages',
+		description: 'Search Confluence pages  via CQL',
 	},
 	'spaces.list': {
 		riskLevel: 'read',
@@ -194,8 +194,7 @@ export function confluence<const T extends ConfluencePluginOptions>(
 		webhookSchemas: confluenceWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-confluence-signature' in headers;
+			return 'x-atlassian-webhook-identifier' in headers;
 		},
 		pluginTenantWebhookMatcher: matchConfluenceTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveConfluenceOAuthWebhookTenantLink,
