@@ -1,9 +1,14 @@
 import { z } from 'zod';
 
-// TODO: Define your database entities here
-// export const RetailedExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type RetailedExample = z.infer<typeof RetailedExample>;
+export const RetailedProductSchema = z
+	.object({
+		id: z.string(),
+		productId: z.string(),
+		name: z.string(),
+		url: z.string().optional(),
+		domain: z.string().optional(),
+		price: z.number().nullable().optional(),
+	})
+	.passthrough();
+
+export type RetailedProduct = z.infer<typeof RetailedProductSchema>;

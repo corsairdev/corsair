@@ -1,22 +1,19 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Usage } from './endpoints';
+import { Products, Usage } from './endpoints';
 import type {
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
@@ -59,11 +56,15 @@ type RetailedEndpoint<K extends keyof RetailedEndpointOutputs> =
 
 export type RetailedEndpoints = {
 	getUsage: RetailedEndpoint<'getUsage'>;
+	searchProducts: RetailedEndpoint<'searchProducts'>;
 };
 
 const retailedEndpointsNested = {
 	usage: {
 		get: Usage.get,
+	},
+	products: {
+		search: Products.search,
 	},
 } as const;
 
@@ -73,6 +74,10 @@ export const retailedEndpointSchemas = {
 	'usage.get': {
 		input: RetailedEndpointInputSchemas.getUsage,
 		output: RetailedEndpointOutputSchemas.getUsage,
+	},
+	'products.search': {
+		input: RetailedEndpointInputSchemas.searchProducts,
+		output: RetailedEndpointOutputSchemas.searchProducts,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof retailedEndpointsNested
@@ -84,6 +89,10 @@ const retailedEndpointMeta = {
 	'usage.get': {
 		riskLevel: 'read',
 		description: 'Get API usage information',
+	},
+	'products.search': {
+		riskLevel: 'read',
+		description: 'Search products',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof retailedEndpointsNested>;
 
@@ -164,4 +173,6 @@ export type {
 	GetUsageResponse,
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
+	SearchProductsInput,
+	SearchProductsResponse,
 } from './endpoints/types';
