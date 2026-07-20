@@ -27,6 +27,7 @@ import {
 } from './endpoints/types';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
+import { gmailSubscribe } from './subscribe';
 import type {
 	GmailWebhookOutputs,
 	GmailWebhookPayload,
@@ -49,11 +50,13 @@ import {
 
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
- * - integration: topic_id (Google Cloud Pub/Sub topic for push notifications)
+ * - integration: topic_id (Google Cloud Pub/Sub topic for push notifications),
+ *   pubsub_audience (push subscription's OIDC identity — SA email or audience —
+ *   reported to Hub as the webhook verification secret for verifyPubsub)
  */
 export const gmailAuthConfig = {
 	oauth_2: {
-		integration: ['topic_id'] as const,
+		integration: ['topic_id', 'pubsub_audience'] as const,
 		account: ['email_address'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -536,6 +539,7 @@ export function gmail<const T extends GmailPluginOptions>(
 		},
 		pluginTenantWebhookMatcher: matchGmailTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveGmailOAuthWebhookTenantLink,
+		subscribe: gmailSubscribe,
 	} satisfies InternalGmailPlugin;
 }
 

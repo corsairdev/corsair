@@ -17,6 +17,10 @@ export type ConnectionsSyncPlugin = {
 	authType: string | null;
 	configured: boolean;
 	missingFields: string[];
+	// Customer-entered integration config beyond client credentials (e.g.
+	// gmail's topic_id) — the hub grid renders inputs for these. Tenant-facing
+	// connect surfaces must not use them.
+	integrationCredentialFields?: string[];
 };
 
 export type ConnectionsSyncManifest = {
@@ -132,6 +136,14 @@ export function decryptSyncManifest(
 							(field): field is string => typeof field === 'string',
 						)
 					: [],
+				...(Array.isArray(entry.integrationCredentialFields)
+					? {
+							integrationCredentialFields:
+								entry.integrationCredentialFields.filter(
+									(field): field is string => typeof field === 'string',
+								),
+						}
+					: {}),
 			})),
 		syncedAt:
 			typeof record.syncedAt === 'string'
