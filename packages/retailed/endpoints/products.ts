@@ -1,5 +1,6 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+
 import type { RetailedContext } from '..';
 import { makeRetailedRequest } from '../client';
 import type { RetailedEndpointInputs, RetailedEndpointOutputs } from './types';
