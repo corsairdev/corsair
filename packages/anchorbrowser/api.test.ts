@@ -104,10 +104,76 @@ describe('AnchorBrowser endpoints', () => {
 
 	it('maps representative operations to API routes', async () => {
 		const plugin = anchorbrowser({ key: 'test-api-key' });
-		// Test-only: narrow to representative session endpoints for route-mapping assertions.
+		// Test-only: narrow to one representative endpoint per group for route-mapping assertions.
 		const endpoints = plugin.endpoints as NonNullable<
 			typeof plugin.endpoints
 		> & {
+			agent: {
+				listAgentResources: (
+					ctx: AnchorBrowserContext,
+					input: { session_id: string },
+				) => Promise<unknown>;
+			};
+			batchSessions: {
+				getBatchSessionStatus: (
+					ctx: AnchorBrowserContext,
+					input: { batch_id: string },
+				) => Promise<unknown>;
+			};
+			downloads: {
+				listSessionDownloads: (
+					ctx: AnchorBrowserContext,
+					input: { session_id: string },
+				) => Promise<unknown>;
+			};
+			events: {
+				signalEvent: (
+					ctx: AnchorBrowserContext,
+					input: { event_name: string; data: Record<string, unknown> },
+				) => Promise<unknown>;
+			};
+			extensions: {
+				listExtensions: (
+					ctx: AnchorBrowserContext,
+					input: Record<string, never>,
+				) => Promise<unknown>;
+			};
+			integrations: {
+				listIntegrations: (
+					ctx: AnchorBrowserContext,
+					input: Record<string, never>,
+				) => Promise<unknown>;
+			};
+			osLevel: {
+				clickMouse: (
+					ctx: AnchorBrowserContext,
+					input: { session_id: string; x: number; y: number },
+				) => Promise<unknown>;
+			};
+			pages: {
+				getSessionPages: (
+					ctx: AnchorBrowserContext,
+					input: { session_id: string },
+				) => Promise<unknown>;
+			};
+			profiles: {
+				listProfiles: (
+					ctx: AnchorBrowserContext,
+					input: Record<string, never>,
+				) => Promise<unknown>;
+			};
+			recordings: {
+				listSessionRecordings: (
+					ctx: AnchorBrowserContext,
+					input: { session_id: string },
+				) => Promise<unknown>;
+			};
+			screenshots: {
+				takeScreenshot: (
+					ctx: AnchorBrowserContext,
+					input: { session_id: string },
+				) => Promise<unknown>;
+			};
 			sessions: {
 				listSessions: (
 					ctx: AnchorBrowserContext,
@@ -118,25 +184,126 @@ describe('AnchorBrowser endpoints', () => {
 					input: { browser?: Record<string, unknown> },
 				) => Promise<unknown>;
 			};
+			tasks: {
+				listTasks: (
+					ctx: AnchorBrowserContext,
+					input: Record<string, never>,
+				) => Promise<unknown>;
+			};
+			tools: {
+				getWebpageContent: (
+					ctx: AnchorBrowserContext,
+					input: { url: string },
+				) => Promise<unknown>;
+			};
+			uploads: {
+				uploadFilesToSession: (
+					ctx: AnchorBrowserContext,
+					input: { session_id: string; file: Record<string, unknown> },
+				) => Promise<unknown>;
+			};
 		};
 
+		const sessionId = 'sess-demo-123';
+
+		await endpoints.agent.listAgentResources(mockCtx, {
+			session_id: sessionId,
+		});
+		await endpoints.batchSessions.getBatchSessionStatus(mockCtx, {
+			batch_id: 'batch-demo-456',
+		});
+		await endpoints.downloads.listSessionDownloads(mockCtx, {
+			session_id: sessionId,
+		});
+		await endpoints.events.signalEvent(mockCtx, {
+			event_name: 'page-loaded',
+			data: { ready: true },
+		});
+		await endpoints.extensions.listExtensions(mockCtx, {});
+		await endpoints.integrations.listIntegrations(mockCtx, {});
+		await endpoints.osLevel.clickMouse(mockCtx, {
+			session_id: sessionId,
+			x: 120,
+			y: 80,
+		});
+		await endpoints.pages.getSessionPages(mockCtx, { session_id: sessionId });
+		await endpoints.profiles.listProfiles(mockCtx, {});
+		await endpoints.recordings.listSessionRecordings(mockCtx, {
+			session_id: sessionId,
+		});
+		await endpoints.screenshots.takeScreenshot(mockCtx, {
+			session_id: sessionId,
+		});
 		await endpoints.sessions.listSessions(mockCtx, {});
 		await endpoints.sessions.startBrowserSession(mockCtx, {
 			browser: { profile: { name: 'demo-profile' } },
+		});
+		await endpoints.tasks.listTasks(mockCtx, {});
+		await endpoints.tools.getWebpageContent(mockCtx, {
+			url: 'https://example.com',
+		});
+		await endpoints.uploads.uploadFilesToSession(mockCtx, {
+			session_id: sessionId,
+			file: { name: 'upload.txt' },
 		});
 
 		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({
 					method: 'GET',
-					url: '/sessions',
+					url: `/sessions/${sessionId}/agent/files`,
 				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/batch-sessions/batch-demo-456',
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: `/sessions/${sessionId}/downloads`,
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/events/page-loaded',
+					body: { data: { ready: true } },
+				}),
+				expect.objectContaining({ method: 'GET', url: '/extensions' }),
+				expect.objectContaining({ method: 'GET', url: '/integrations' }),
+				expect.objectContaining({
+					method: 'POST',
+					url: `/sessions/${sessionId}/mouse/click`,
+					body: { x: 120, y: 80 },
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: `/sessions/${sessionId}/pages`,
+				}),
+				expect.objectContaining({ method: 'GET', url: '/profiles' }),
+				expect.objectContaining({
+					method: 'GET',
+					url: `/sessions/${sessionId}/recordings`,
+				}),
+				expect.objectContaining({
+					method: 'GET',
+					url: `/sessions/${sessionId}/screenshot`,
+				}),
+				expect.objectContaining({ method: 'GET', url: '/sessions' }),
 				expect.objectContaining({
 					method: 'POST',
 					url: '/sessions',
 					body: {
 						browser: { profile: { name: 'demo-profile' } },
 					},
+				}),
+				expect.objectContaining({ method: 'GET', url: '/task' }),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/tools/fetch/webpage',
+					body: { url: 'https://example.com' },
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: `/sessions/${sessionId}/uploads`,
+					body: { file: { name: 'upload.txt' } },
 				}),
 			]),
 		);
