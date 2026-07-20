@@ -7,7 +7,8 @@ Corsair supports hundreds of integrations through its SDK. Add as many as you ne
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
-import { slack, linear } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     plugins: [

@@ -9,6 +9,34 @@ The Vercel plugin syncs data locally. Use `corsair.vercel.db.<entity>.search({ d
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
 </Info>
 
+## Aliases
+
+Path: `vercel.db.aliases.search`
+
+```ts
+const rows = await corsair.vercel.db.aliases.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uid` | `string` | equals, contains, startsWith, endsWith, in |
+| `alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `deploymentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `redirect` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
 ## Deployments
 
 Path: `vercel.db.deployments.search`
@@ -24,7 +52,8 @@ const rows = await corsair.vercel.db.deployments.search({
 ### Searchable filters
 
 | Field | Type | Operators |
-| --- | --- | --- |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `uid` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
@@ -35,58 +64,7 @@ const rows = await corsair.vercel.db.deployments.search({
 | `projectId` | `string` | equals, contains, startsWith, endsWith, in |
 | `teamId` | `string` | equals, contains, startsWith, endsWith, in |
 
----
-
-## Projects
-
-Path: `vercel.db.projects.search`
-
-```ts
-const rows = await corsair.vercel.db.projects.search({
-    data: { /* filters below */ },
-    limit: 100,
-    offset: 0,
-});
-```
-
-### Searchable filters
-
-| Field | Type | Operators |
-| --- | --- | --- |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `accountId` | `string` | equals, contains, startsWith, endsWith, in |
-| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
-| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
-| `framework` | `string` | equals, contains, startsWith, endsWith, in |
-| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
-
----
-
-## Envs
-
-Path: `vercel.db.envs.search`
-
-```ts
-const rows = await corsair.vercel.db.envs.search({
-    data: { /* filters below */ },
-    limit: 100,
-    offset: 0,
-});
-```
-
-### Searchable filters
-
-| Field | Type | Operators |
-| --- | --- | --- |
-| `id` | `string` | equals, contains, startsWith, endsWith, in |
-| `key` | `string` | equals, contains, startsWith, endsWith, in |
-| `value` | `string` | equals, contains, startsWith, endsWith, in |
-| `type` | `string` | equals, contains, startsWith, endsWith, in |
-| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
-| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
-| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
-| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
 
@@ -105,7 +83,8 @@ const rows = await corsair.vercel.db.domains.search({
 ### Searchable filters
 
 | Field | Type | Operators |
-| --- | --- | --- |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `number` | equals, gt, gte, lt, lte, in |
@@ -116,14 +95,16 @@ const rows = await corsair.vercel.db.domains.search({
 | `projectId` | `string` | equals, contains, startsWith, endsWith, in |
 | `teamId` | `string` | equals, contains, startsWith, endsWith, in |
 
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
 ---
 
-## Aliases
+## Envs
 
-Path: `vercel.db.aliases.search`
+Path: `vercel.db.envs.search`
 
 ```ts
-const rows = await corsair.vercel.db.aliases.search({
+const rows = await corsair.vercel.db.envs.search({
     data: { /* filters below */ },
     limit: 100,
     offset: 0,
@@ -133,15 +114,47 @@ const rows = await corsair.vercel.db.aliases.search({
 ### Searchable filters
 
 | Field | Type | Operators |
-| --- | --- | --- |
-| `uid` | `string` | equals, contains, startsWith, endsWith, in |
-| `alias` | `string` | equals, contains, startsWith, endsWith, in |
-| `created` | `number` | equals, gt, gte, lt, lte, in |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `number` | equals, gt, gte, lt, lte, in |
-| `deploymentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
 | `projectId` | `string` | equals, contains, startsWith, endsWith, in |
-| `redirect` | `string` | equals, contains, startsWith, endsWith, in |
 | `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `vercel.db.projects.search`
+
+```ts
+const rows = await corsair.vercel.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `accountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
+| `framework` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
 
@@ -160,10 +173,16 @@ const rows = await corsair.vercel.db.teams.search({
 ### Searchable filters
 
 | Field | Type | Operators |
-| --- | --- | --- |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `slug` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `number` | equals, gt, gte, lt, lte, in |
 | `updatedAt` | `number` | equals, gt, gte, lt, lte, in |
 | `avatar` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

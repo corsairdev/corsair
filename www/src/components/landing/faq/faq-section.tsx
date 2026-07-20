@@ -4,14 +4,14 @@ const FAQ_ITEMS = [
 	{
 		id: 'different-from-others',
 		question: 'How is this different from existing integration products?',
-		answer:
-			"Most are closed source. If they're missing an integration, you wait for them to add it. Corsair is open source. Add any integration yourself.",
+		answer: `Most are closed source. If they're missing an integration, you wait for them to add it. Corsair is open source. Add any integration yourself.
+
+			Also, if you're using Corsair Hub, none of your credentials stay with us. We are a relay between you and your integration. If our database is hacked tomorrow, it has none of your data.`,
 	},
 	{
 		id: 'vibe-code',
 		question: 'Why not just vibe code integrations myself?',
-		answer:
-			'You can get 80% there fast. The other 20% (token refresh, webhook signature verification, API deprecations, rate limit handling, multi-tenant credential isolation) compounds into a maintenance burden that distracts from your actual product.',
+		answer: `You can get 80% there fast. The other 20% (token refresh, webhook signature verification, API deprecations, rate limit handling, multi-tenant credential isolation) compounds into a maintenance burden that distracts from your actual product. Corsair is an easy drop-in that takes away all of those headaches.`,
 	},
 	{
 		id: 'api-keys',
@@ -41,7 +41,7 @@ const FAQ_ITEMS = [
 		id: 'hosted-security',
 		question: 'Is the hosted version secure?',
 		answer:
-			"Credentials use envelope encryption. A key you control wraps per-tenant encryption keys, which wrap the actual secrets. Nothing stored in plaintext. Both keys are stored in separate places and you can't decrypt credentials without both.",
+			"The hosted version holds none of your credentials or data. All of that lives in your own database. That means if our database was suddenly opened up tomorrow, your data (and your customers' data) and credentials would not be compromised.",
 	},
 ] as const;
 
