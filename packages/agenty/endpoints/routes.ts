@@ -911,7 +911,7 @@ export const agentyRoutes = [
 		hostType: 'main',
 		description:
 			'Tool to partially update a workflow by ID. Use when you need to update specific fields of a workflow without replacing the entire workflow object. This action performs a PATCH operation, allowing you to update only the fields you specify (e.g., just the name) without affecting other workflow properties. Currently supports updating the workflow name.',
-		pathParams: ['id'],
+		pathParams: ['workflow_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -1068,7 +1068,7 @@ export const agentyRoutes = [
 		hostType: 'main',
 		description:
 			"Tool to update an existing workflow's configuration by workflow ID. Use this to modify workflow properties including name, agent selection, trigger conditions, and actions to execute. Workflows automate responses to agent events such as job completion, errors, or change detection. Common use cases include sending notifications, triggering webhooks, or updating external systems.",
-		pathParams: ['id'],
+		pathParams: ['workflow_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},

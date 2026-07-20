@@ -1032,7 +1032,8 @@ export type ListsUploadCsvResponse = z.infer<
 
 // patchWorkflow
 const PatchWorkflowInputSchema = z.object({
-	id: z.string(),
+	workflow_id: z.string(),
+	id: z.union([z.string(), z.number()]).optional(),
 	name: z.string().optional(),
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
@@ -1221,7 +1222,8 @@ export type UpdateUserByIdResponse = z.infer<
 
 // updateWorkflow
 const UpdateWorkflowInputSchema = z.object({
-	id: z.string(),
+	workflow_id: z.string(),
+	id: z.union([z.string(), z.number()]).optional(),
 	name: z.string(),
 	agents: AgentyLooseRecordSchema,
 	actions: AgentyBatchItemsSchema,

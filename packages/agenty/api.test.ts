@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
 import { makeAgentyRequest } from './client';
+import { agentyRoutes } from './endpoints/routes';
 import type { AgentyContext } from './index';
 import { agenty, agentyEndpointSchemas } from './index';
 
@@ -178,6 +179,56 @@ describe('Agenty endpoints', () => {
 		);
 	});
 
+	it('resolves workflow_id for update and patch operations', async () => {
+		const plugin = agenty({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			workflows: {
+				updateWorkflow: (
+					ctx: AgentyContext,
+					input: {
+						workflow_id: string;
+						name: string;
+						agents: Record<string, unknown>;
+						actions: unknown[];
+						trigger: Record<string, unknown>;
+					},
+				) => Promise<unknown>;
+				patchWorkflow: (
+					ctx: AgentyContext,
+					input: { workflow_id: string; name?: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.workflows.updateWorkflow(mockCtx, {
+			workflow_id: 'wf-update',
+			name: 'Updated workflow',
+			agents: {},
+			actions: [],
+			trigger: {},
+		});
+		await endpoints.workflows.patchWorkflow(mockCtx, {
+			workflow_id: 'wf-patch',
+			name: 'Patched name',
+		});
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					method: 'PUT',
+					url: '/workflows/wf-update',
+				}),
+				expect.objectContaining({
+					method: 'PATCH',
+					url: '/workflows/wf-patch',
+					body: { name: 'Patched name' },
+				}),
+			]),
+		);
+	});
+
 	it('resolves list_id and key_id into path segments', async () => {
 		const plugin = agenty({ key: 'test-api-key' });
 		// Test-only: narrow to list/apiKey endpoints for path-param resolution assertions.
@@ -213,5 +264,59 @@ describe('Agenty endpoints', () => {
 				}),
 			]),
 		);
+	});
+});
+
+describe('Agenty route wiring', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({ ok: true });
+	});
+
+	it('routes every operation to its declared HTTP method, path, and host', async () => {
+		const plugin = agenty({ key: 'test-api-key' });
+		// Test-only: widen plugin.endpoints for dynamic group+name lookup across all 79 ops.
+		const endpoints = plugin.endpoints as unknown as Record<
+			string,
+			Record<
+				string,
+				(ctx: AgentyContext, input: Record<string, unknown>) => Promise<unknown>
+			>
+		>;
+
+		const allRoutes = agentyRoutes as readonly {
+			group: string;
+			name: string;
+			method: string;
+			path: string;
+			hostType: 'main' | 'browser';
+			pathParams?: readonly string[];
+		}[];
+
+		for (const route of allRoutes) {
+			const handler = endpoints[route.group]?.[route.name];
+			if (!handler) {
+				throw new Error(`[test] missing endpoint ${route.group}.${route.name}`);
+			}
+
+			const input: Record<string, unknown> = {};
+			for (const param of route.pathParams ?? []) {
+				input[param] = `test-${param.replace(/_/g, '-')}`;
+			}
+
+			mockRequest.mockClear();
+			await handler(mockCtx, input);
+
+			const config = mockRequest.mock.calls[0]?.[0];
+			const call = mockRequest.mock.calls[0]?.[1];
+			const expectedBase =
+				route.hostType === 'browser'
+					? 'https://browser.agenty.com/api'
+					: 'https://api.agenty.com/v2';
+
+			expect(config).toMatchObject({ BASE: expectedBase });
+			expect(call).toMatchObject({ method: route.method });
+			expect(call.url).not.toContain('{');
+		}
 	});
 });
