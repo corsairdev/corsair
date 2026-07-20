@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
 import { makeAnchorBrowserRequest } from './client';
+import { anchorBrowserRoutes } from './endpoints/routes';
 import type { AnchorBrowserContext } from './index';
 import { anchorBrowserEndpointSchemas, anchorbrowser } from './index';
 
@@ -307,5 +308,61 @@ describe('AnchorBrowser endpoints', () => {
 				}),
 			]),
 		);
+	});
+});
+
+describe('AnchorBrowser route wiring', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue({ ok: true });
+	});
+
+	it('routes every operation to its declared HTTP method and path', async () => {
+		const plugin = anchorbrowser({ key: 'test-api-key' });
+		// Test-only: widen plugin.endpoints for dynamic group+name lookup across all 64 ops.
+		const endpoints = plugin.endpoints as unknown as Record<
+			string,
+			Record<
+				string,
+				(
+					ctx: AnchorBrowserContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>
+			>
+		>;
+
+		// Widen routes array so the loop can read optional fields uniformly.
+		const allRoutes = anchorBrowserRoutes as readonly {
+			group: string;
+			name: string;
+			method: string;
+			path: string;
+			pathParams?: readonly string[];
+		}[];
+
+		for (const route of allRoutes) {
+			const handler = endpoints[route.group]?.[route.name];
+			if (!handler) {
+				throw new Error(`[test] missing endpoint ${route.group}.${route.name}`);
+			}
+
+			// Synthesise one value per declared path param so the factory can resolve them all.
+			const input: Record<string, unknown> = {};
+			let expectedUrl = route.path;
+			for (const param of route.pathParams ?? []) {
+				const value = `test-${param.replace(/_/g, '-')}`;
+				input[param] = value;
+				// routes.ts uses camelCase placeholders; alias system maps snake_case input to them
+				expectedUrl = expectedUrl.replace(/\{[^}]+\}/, value);
+			}
+
+			mockRequest.mockClear();
+			await handler(mockCtx, input);
+
+			const call = mockRequest.mock.calls[0]?.[1];
+			expect(call).toMatchObject({ method: route.method });
+			// No unresolved {placeholder} means path params and route template agree.
+			expect(call.url).not.toContain('{');
+		}
 	});
 });
