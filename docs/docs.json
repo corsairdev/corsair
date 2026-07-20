@@ -34,12 +34,43 @@
             ]
           },
           {
-            "group": "Frameworks",
+            "group": "Adapters",
             "pages": [
-              "frameworks/nextjs",
-              "frameworks/express",
-              "frameworks/hono",
-              "frameworks/web-standard"
+              "adapters/handlers",
+              "adapters/client",
+              "adapters/react",
+              {
+                "group": "AI agents",
+                "expanded": false,
+                "pages": [
+                  "mcp-adapters/mcp-adapters",
+                  "mcp-adapters/anthropic-sdk",
+                  "mcp-adapters/claude-sdk",
+                  "mcp-adapters/openai-agents",
+                  "mcp-adapters/vercel-ai",
+                  "mcp-adapters/mastra",
+                  "mcp-adapters/openai"
+                ]
+              },
+              {
+                "group": "Coding agents",
+                "expanded": false,
+                "pages": [
+                  "mcp-adapters/coding-agents",
+                  "mcp-adapters/claude-code",
+                  "mcp-adapters/cursor"
+                ]
+              },
+              {
+                "group": "Workflow engines",
+                "expanded": false,
+                "pages": [
+                  "guides/inngest",
+                  "guides/temporal",
+                  "guides/trigger-dev",
+                  "guides/hatchet"
+                ]
+              }
             ]
           },
           {
@@ -84,7 +115,12 @@
               {
                 "group": "Authentication",
                 "expanded": false,
-                "pages": ["concepts/auth", "concepts/api-key", "concepts/oauth"]
+                "pages": [
+                  "concepts/auth",
+                  "concepts/api-key",
+                  "concepts/oauth",
+                  "concepts/oauth-process"
+                ]
               },
               {
                 "group": "Building",
@@ -92,33 +128,9 @@
                 "pages": [
                   "concepts/permissions",
                   "concepts/multi-tenancy",
+                  "concepts/provisioning",
                   "concepts/webhooks",
                   "concepts/hooks"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "AI Agents",
-            "pages": [
-              {
-                "group": "MCP",
-                "pages": [
-                  "mcp-adapters/mcp-adapters",
-                  "mcp-adapters/anthropic-sdk",
-                  "mcp-adapters/claude-sdk",
-                  "mcp-adapters/openai-agents",
-                  "mcp-adapters/vercel-ai",
-                  "mcp-adapters/mastra",
-                  "mcp-adapters/openai"
-                ]
-              },
-              {
-                "group": "Coding Agents",
-                "pages": [
-                  "mcp-adapters/coding-agents",
-                  "mcp-adapters/claude-code",
-                  "mcp-adapters/cursor"
                 ]
               }
             ]
@@ -128,34 +140,7 @@
             "pages": [
               "management/overview",
               "management/handler",
-              "management/connect",
-              {
-                "group": "Clients",
-                "expanded": false,
-                "pages": ["management/client", "management/react"]
-              }
-            ]
-          },
-          {
-            "group": "Going to Production",
-            "pages": [
-              "production/oauth-process",
-              "production/tenant-provisioning",
-              "going-to-production/provisioning-cli"
-            ]
-          },
-          {
-            "group": "Guides",
-            "pages": [
-              {
-                "group": "Workflow Engines",
-                "pages": [
-                  "guides/inngest",
-                  "guides/temporal",
-                  "guides/trigger-dev",
-                  "guides/hatchet"
-                ]
-              }
+              "management/connect"
             ]
           }
         ]
@@ -872,7 +857,7 @@
     },
     {
       "source": "/getting-started/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/home",
@@ -884,11 +869,11 @@
     },
     {
       "source": "/app/agent-setup",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/coding-agents",
@@ -956,7 +941,7 @@
     },
     {
       "source": "/hosted-sdk/quickstart",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/hosted-sdk/instances-and-plugins",
@@ -1012,7 +997,7 @@
     },
     {
       "source": "/app/sdk/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/sdk/instances-and-plugins",
@@ -1028,11 +1013,47 @@
     },
     {
       "source": "/getting-started/setup",
-      "destination": "/going-to-production/provisioning-cli"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/getting-started/comparison",
       "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/frameworks/nextjs",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/express",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/hono",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/web-standard",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/management/client",
+      "destination": "/adapters/client"
+    },
+    {
+      "source": "/management/react",
+      "destination": "/adapters/react"
+    },
+    {
+      "source": "/production/tenant-provisioning",
+      "destination": "/concepts/provisioning"
+    },
+    {
+      "source": "/going-to-production/provisioning-cli",
+      "destination": "/concepts/provisioning"
+    },
+    {
+      "source": "/production/oauth-process",
+      "destination": "/concepts/oauth-process"
     }
   ]
 }

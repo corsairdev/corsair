@@ -75,6 +75,13 @@ export type OAuthCallbackTunnelPayload = {
 	code: string;
 	state: string;
 	redirectUri: string;
+	/**
+	 * Set by Hub, which authenticates the delivery envelope with the signing
+	 * secret and cannot sign a Corsair `state`. When present, the callback is
+	 * processed against these instead of decoding `state`.
+	 */
+	plugin?: string;
+	tenantId?: string;
 };
 
 export type OAuthTokensTunnelPayload = {
@@ -224,6 +231,9 @@ async function handleWebhookTunnel(
 		payload.headers,
 		payload.body,
 		query,
+		// Hub routed this by the plugin's own endpoint — dispatch exactly there,
+		// never by body shape (MS Graph siblings are indistinguishable).
+		payload.plugin ? { plugin: payload.plugin } : undefined,
 	);
 
 	if (!result.plugin) {
@@ -270,7 +280,17 @@ async function handleOAuthCallbackTunnel(
 	corsair: unknown,
 	payload: OAuthCallbackTunnelPayload,
 ): Promise<TunnelAck> {
-	await processOAuthCallback(corsair, payload);
+	// Envelope signature already verified by processCorsair before dispatch. Take
+	// the trusted path only when Hub supplied plugin/tenant; otherwise fall back
+	// to HMAC state verification (a Hub deployed before the companion change).
+	await processOAuthCallback(corsair, {
+		code: payload.code,
+		state: payload.state,
+		redirectUri: payload.redirectUri,
+		...(payload.plugin && payload.tenantId
+			? { trusted: true, plugin: payload.plugin, tenantId: payload.tenantId }
+			: {}),
+	});
 	return { status: 'ok' };
 }
 

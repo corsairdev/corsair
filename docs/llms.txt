@@ -8,12 +8,11 @@
 - [Quick start](https://docs.corsair.dev/getting-started/quick-start.md): Get a local Corsair instance running with Hub.
 - [Set up with your agent](https://docs.corsair.dev/getting-started/set-up-with-your-agent.md): One prompt that wires Corsair Hub into your app end to end.
 
-## Frameworks
+## Adapters
 
-- [Next.js](https://docs.corsair.dev/frameworks/nextjs.md): Mount the /api/corsair route with toNextJsHandler.
-- [Express](https://docs.corsair.dev/frameworks/express.md): Mount the route with toExpressHandler.
-- [Hono](https://docs.corsair.dev/frameworks/hono.md): Mount the route with toHonoHandler.
-- [Web-standard (Fetch)](https://docs.corsair.dev/frameworks/web-standard.md): SvelteKit, Remix, Astro, Nuxt, Workers, Bun, and Deno via managementHandler.
+- [Handlers](https://docs.corsair.dev/adapters/handlers.md): Mount the /api/corsair route — Next.js, Express, Hono, or any Web-standard runtime (SvelteKit, Remix, Astro, Nuxt, Workers, Bun, Deno).
+- [Vanilla client](https://docs.corsair.dev/adapters/client.md): createCorsairClient — typed fetch wrapper for the management API, any JS runtime.
+- [React hooks](https://docs.corsair.dev/adapters/react.md): createCorsairReactClient — typed useTenants, useConnectionStatus, and friends.
 
 ## Core concepts
 
@@ -32,12 +31,11 @@
 
 - [API key](https://docs.corsair.dev/concepts/api-key.md): API-key based auth for providers.
 - [OAuth](https://docs.corsair.dev/concepts/oauth.md): OAuth-based auth for providers.
+- [OAuth process](https://docs.corsair.dev/concepts/oauth-process.md): Manual-mode production OAuth flow and connect links.
 
-## Going to production
+## Provisioning
 
-- [OAuth process](https://docs.corsair.dev/production/oauth-process.md): Manual-mode production OAuth flow and connect links.
-- [Tenant provisioning](https://docs.corsair.dev/production/tenant-provisioning.md): Provision tenants in production with `setupCorsair`.
-- [Provisioning & CLI](https://docs.corsair.dev/going-to-production/provisioning-cli.md): Integrations, accounts, tenants, and the corsair CLI.
+- [Provisioning](https://docs.corsair.dev/concepts/provisioning.md): Initialize integrations, accounts, and tenants with `setupCorsair` or the corsair CLI.
 
 ## Hub
 
@@ -70,9 +68,7 @@ Expose Corsair tools to agents over MCP, or wire them into agent SDKs and coding
 ## Management API
 
 - [Overview](https://docs.corsair.dev/management/overview.md): Manage instances, tenants, and connections programmatically.
-- [Handler](https://docs.corsair.dev/management/handler.md): Mount the management handler in your backend.
-- [Client](https://docs.corsair.dev/management/client.md): Call the management API from the client.
-- [React](https://docs.corsair.dev/management/react.md): React hooks for management.
+- [Handler](https://docs.corsair.dev/management/handler.md): The 9 management routes, options, and error shapes. Mounting lives under [Adapters](https://docs.corsair.dev/adapters/handlers.md).
 - [Connect](https://docs.corsair.dev/management/connect.md): Connect link flow.
 
 ## Workflow engines
