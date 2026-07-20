@@ -25,7 +25,7 @@ export type AgentyRequestOptions = {
 	method?: AgentyMethod;
 	// body is unknown because request payloads vary per Agenty endpoint and are built dynamically.
 	body?: unknown;
-	// query values are heterogeneous (pagination, filters, apikey); not fully typed across 79 ops.
+	// query values are heterogeneous (pagination, filters); not fully typed across 79 ops.
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
 	baseUrl?: string;
@@ -38,10 +38,6 @@ export async function makeAgentyRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query, headers, baseUrl } = options;
 	const resolvedBase = baseUrl ?? AGENTY_API_BASE;
-	const mergedQuery = { ...(query ?? {}) };
-	if (!mergedQuery.apikey && !mergedQuery.apiKey) {
-		mergedQuery.apikey = apiKey;
-	}
 	const config: OpenAPIConfig = {
 		BASE: resolvedBase,
 		VERSION: '1.0.0',
@@ -61,7 +57,7 @@ export async function makeAgentyRequest<T>(
 		method,
 		url: endpoint,
 		body: hasBody ? body : undefined,
-		query: mergedQuery,
+		query,
 	};
 
 	try {

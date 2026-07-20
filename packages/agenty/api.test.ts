@@ -90,6 +90,8 @@ describe('Agenty request client', () => {
 				url: '/agents',
 			}),
 		);
+		expect(mockRequest.mock.calls[0]?.[1].query?.apikey).toBeUndefined();
+		expect(mockRequest.mock.calls[0]?.[1].query?.apiKey).toBeUndefined();
 	});
 });
 
