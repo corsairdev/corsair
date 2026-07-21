@@ -76,7 +76,9 @@ export const algoliaRoutes = [
 			'Tool to retrieve all records from an index. Use when you need to export or iterate through an entire index dataset.',
 		pathParams: ['index_name'],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		// POST body carries query/filters but the call is read-only (no
+		// index mutation); classify as 'read' so read-only API keys can browse.
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'clearObjects',
@@ -1563,7 +1565,9 @@ export const algoliaRoutes = [
 			"Tool to perform a search on a specified Algolia index. Use after confirming the index name. Example: SearchIndex(index_name='contacts', query='apple', search_params={'hitsPerPage':10})",
 		pathParams: ['index_name'],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		// Algolia's search endpoint uses POST because the query goes in the
+		// body (long queries, structured params), but the call is read-only.
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchMultipleIndices',
