@@ -178,12 +178,20 @@ export function SiteFooter() {
 						<p className="text-center text-xs text-[#1c1c1c66] sm:text-left">
 							&copy; {currentYear} Corsair. All rights reserved.
 						</p>
-						<Link
-							href="/privacy-policy"
-							className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
-						>
-							Privacy Policy
-						</Link>
+						<div className="flex items-center gap-4">
+							<Link
+								href="/privacy-policy"
+								className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
+							>
+								Privacy Policy
+							</Link>
+							<Link
+								href="/terms-of-service"
+								className="text-xs text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
+							>
+								Terms of Service
+							</Link>
+						</div>
 					</div>
 				</div>
 			</div>
