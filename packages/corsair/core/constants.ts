@@ -14,6 +14,7 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
+	'algolia',
 	'ahrefs',
 	'airtable',
 	'amplitude',
@@ -94,6 +95,7 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
+	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
@@ -181,6 +183,7 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'agentql'
+	| 'algolia'
 	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
