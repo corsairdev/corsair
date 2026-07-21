@@ -105,32 +105,17 @@ describe('verifyConfluenceWebhookSignature', () => {
 		};
 		const r = verifyConfluenceWebhookSignature(req, secret);
 		expect(r.valid).toBe(false);
-		expect(r.error).toMatch(/Signature length mismatch/);
+		expect(r.error).toMatch(/Invalid signature/);
 	});
 
-	it('falls through when secret is empty and no header', () => {
+	it('returns invalid when secret is not configured', () => {
 		const req = { ...baseRequest(), headers: {} };
 		const r = verifyConfluenceWebhookSignature(req, '');
-		expect(r.valid).toBe(true);
+		expect(r.valid).toBe(false);
+		expect(r.error).toMatch(/Missing webhook secret/);
 	});
 
-	it('uses rawBody over payload for signature', () => {
-		const differentBody = '{"other":"data"}';
-		const differentHash = crypto
-			.createHmac('sha256', secret)
-			.update(differentBody)
-			.digest('hex');
-		const req = {
-			...baseRequest(),
-			rawBody: differentBody,
-			payload: { type: 'x', created_at: 'y', data: {} },
-			headers: { 'x-hub-signature': `sha256=${differentHash}` },
-		};
-		const r = verifyConfluenceWebhookSignature(req, secret);
-		expect(r.valid).toBe(true);
-	});
-
-	it('falls back to JSON.stringify(payload) when rawBody is missing', () => {
+	it('returns invalid when rawBody is missing', () => {
 		const payload = { type: 'test', created_at: 'now', data: { id: '1' } };
 		const payloadStr = JSON.stringify(payload);
 		const payloadHash = crypto
@@ -143,6 +128,7 @@ describe('verifyConfluenceWebhookSignature', () => {
 			payload,
 		};
 		const r = verifyConfluenceWebhookSignature(req, secret);
-		expect(r.valid).toBe(true);
+		expect(r.valid).toBe(false);
+		expect(r.error).toMatch(/raw body/);
 	});
 });

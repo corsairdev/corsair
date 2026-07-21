@@ -3,7 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
-import crypto from 'crypto';
+import { verifyHmacSignatureWithPrefix } from 'corsair/http';
 import { z } from 'zod';
 
 export const ConfluenceWebhookPayloadSchema = z.object({
@@ -62,32 +62,36 @@ export function verifyConfluenceWebhookSignature(
 	request: WebhookRequest<ConfluenceWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
+	// Atlassian Cloud admin webhooks (Confluence + Jira) sign payloads with
+	// HMAC-SHA256 using the WebSub convention, sending the signature in the
+	// `x-hub-signature` header formatted as `sha256=<hex>`.
+	// Ref: https://developer.atlassian.com/cloud/jira/platform/webhooks/#secure-admin-webhooks
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
 	const headers = request.headers;
 	const signatureHeader = Array.isArray(headers['x-hub-signature'])
 		? headers['x-hub-signature'][0]
 		: (headers['x-hub-signature'] as string | undefined);
 
 	if (!signatureHeader) {
-		if (!secret) {
-			return { valid: true };
-		}
 		return { valid: false, error: 'Missing x-hub-signature header' };
 	}
 
-	const rawBody = request.rawBody ?? JSON.stringify(request.payload);
-	const expectedHash = crypto
-		.createHmac('sha256', secret)
-		.update(rawBody)
-		.digest('hex');
-	const expectedSignature = `sha256=${expectedHash}`;
-
-	const sigBuffer = Buffer.from(signatureHeader);
-	const expectedBuffer = Buffer.from(expectedSignature);
-
-	if (sigBuffer.length !== expectedBuffer.length) {
-		return { valid: false, error: 'Signature length mismatch' };
-	}
-
-	const isValid = crypto.timingSafeEqual(sigBuffer, expectedBuffer);
+	const isValid = verifyHmacSignatureWithPrefix(
+		rawBody,
+		secret,
+		signatureHeader,
+		'sha256=',
+	);
 	return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
 }
