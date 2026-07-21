@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Pages, Spaces } from './endpoints';
 import type {
 	ConfluenceEndpointInputs,
@@ -209,7 +210,10 @@ export function confluence<const T extends ConfluencePluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('confluence', 'webhook_signature');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {
@@ -218,15 +222,21 @@ export function confluence<const T extends ConfluencePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('confluence', 'api_key');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('confluence', 'access_token');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('confluence', 'api_key');
 		},
 	} satisfies InternalConfluencePlugin;
 }
