@@ -91,10 +91,8 @@ export async function processManagedOAuthDelivery(
 		database: internal.database,
 	});
 
+	// Custody: refresh token stays at Hub; the app caches only the access token.
 	await accountKm.set_access_token(accessToken);
-	if (refreshToken) {
-		await accountKm.set_refresh_token(refreshToken);
-	}
 	if (expiresIn) {
 		await accountKm.set_expires_at(
 			String(Math.floor(Date.now() / 1000) + expiresIn),

@@ -74,6 +74,17 @@ test('managed without a hub config throws AuthMissingError', async () => {
 	).rejects.toBeInstanceOf(AuthMissingError);
 });
 
+test('managed without a key store throws AuthMissingError and never calls getManagedAccessToken', async () => {
+	await expect(
+		resolveBindingKey(
+			{ authType: 'managed', keys: undefined, hub, tenantId: 't1' },
+			{ id: 'gmail', keyBuilder: jest.fn() },
+			'endpoint',
+		),
+	).rejects.toBeInstanceOf(AuthMissingError);
+	expect(getManagedAccessToken).not.toHaveBeenCalled();
+});
+
 test('isManagedEnabled is true by default and false only on explicit opt-out', () => {
 	expect(isManagedEnabled({})).toBe(true);
 	expect(isManagedEnabled({ managed: true })).toBe(true);

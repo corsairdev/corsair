@@ -40,7 +40,7 @@ export async function resolveBindingKey(
 	kind: 'endpoint' | 'webhook',
 ): Promise<string | undefined> {
 	if (ctx.authType === 'managed' && isManagedEnabled(plugin)) {
-		if (!ctx.hub) {
+		if (!ctx.hub || !ctx.keys) {
 			throw new AuthMissingError(plugin.id, 'managed');
 		}
 		const managedCtx = {

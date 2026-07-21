@@ -8,13 +8,11 @@ jest.mock('../../hub/managed-auth', () => ({
 import { bindWebhooksRecursively } from '../webhooks/bind';
 
 beforeEach(() => {
-	getManagedAccessToken
-		.mockReset()
-		.mockResolvedValue({
-			accessToken: 'managed-token',
-			expiresAt: 0,
-			refreshed: false,
-		});
+	getManagedAccessToken.mockReset().mockResolvedValue({
+		accessToken: 'managed-token',
+		expiresAt: 0,
+		refreshed: false,
+	});
 	attachManagedRefreshAuth.mockReset().mockResolvedValue(undefined);
 });
 
