@@ -47,9 +47,16 @@ export async function makeConfluenceRequest<T>(
 			return `Bearer ${apiKey}`;
 		}
 		// Atlassian Cloud Basic auth requires "email:apiToken" format.
-		// If the stored key is a bare token without a colon, we can't form a
-		// valid Basic credential. This matches the jira plugin's contract.
+		// The stored api_key must contain the full credential. If a bare
+		// token is passed (no colon), reject it before sending a broken
+		// Authorization header that would silently 401.
 		// Ref: https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
+		if (!apiKey.includes(':')) {
+			throw new Error(
+				'Confluence Basic auth requires "email:apiToken" format. ' +
+					'The stored api_key appears to be a bare token.',
+			);
+		}
 		return `Basic ${Buffer.from(apiKey).toString('base64')}`;
 	})();
 

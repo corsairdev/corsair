@@ -33,7 +33,7 @@ const searchResponse = {
 
 function createContext(overrides: Record<string, unknown> = {}) {
 	return {
-		key: 'test-token',
+		key: 'user@example.com:test-token',
 		options: {
 			cloudUrl: 'https://test.atlassian.net',
 			authType: 'api_key' as const,
@@ -96,7 +96,7 @@ describe('Confluence endpoint routing', () => {
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const [path, key, cloudUrl, options] = mockRequest.mock.calls[0]!;
 		expect(path).toBe(c.path);
-		expect(key).toBe('test-token');
+		expect(key).toBe('user@example.com:test-token');
 		expect(cloudUrl).toBe('https://test.atlassian.net');
 		expect(options?.method ?? 'GET').toBe(c.method);
 		if (c.base) {

@@ -152,7 +152,7 @@ export const confluenceAuthConfig = {
 		account: ['cloud_url'] as const,
 	},
 	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['tenant_external_id', 'cloud_url'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -195,7 +195,31 @@ export function confluence<const T extends ConfluencePluginOptions>(
 		webhookSchemas: confluenceWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-atlassian-webhook-identifier' in headers;
+			if (!('x-atlassian-webhook-identifier' in headers)) return false;
+			// Confluence webhook events use page_/space_/blogpost_ prefixes
+			// while Jira uses jira:/comment_/sprint_ prefixes. This prevents
+			// a Jira webhook from matching the Confluence plugin.
+			let parsedBody: unknown = request.body;
+			if (typeof request.body === 'string') {
+				try {
+					parsedBody = JSON.parse(request.body);
+				} catch {
+					parsedBody = null;
+				}
+			}
+			if (parsedBody && typeof parsedBody === 'object') {
+				const eventType = (parsedBody as Record<string, unknown>).webhookEvent;
+				if (typeof eventType === 'string') {
+					return (
+						eventType.startsWith('page_') ||
+						eventType.startsWith('space_') ||
+						eventType.startsWith('blogpost_') ||
+						eventType.startsWith('attachment_') ||
+						eventType.startsWith('content_')
+					);
+				}
+			}
+			return true;
 		},
 		pluginTenantWebhookMatcher: matchConfluenceTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveConfluenceOAuthWebhookTenantLink,
