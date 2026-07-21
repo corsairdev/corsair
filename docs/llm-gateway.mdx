@@ -1,0 +1,138 @@
+---
+title: LLM Gateway
+description: Use llm.corsair.dev as an OpenAI-compatible API with per-developer keys and budgets.
+---
+
+`llm.corsair.dev` is Corsair's internal LLM gateway — an **OpenAI-compatible API** you can use with the Vercel AI SDK, OpenAI SDK, Cursor, or any client that accepts a custom `baseURL`.
+
+Visiting [llm.corsair.dev](https://llm.corsair.dev) in a browser redirects here.
+
+## Quick start
+
+Add these env vars to your app:
+
+```bash
+LITELLM_API_KEY=sk-your-virtual-key
+LITELLM_BASE_URL=https://llm.corsair.dev/v1
+LITELLM_MODEL=gpt-5.4-mini   # optional default
+```
+
+Point your client at the gateway and call models by name.
+
+## Available models
+
+| Model | Typical use |
+| ----- | ----------- |
+| `gpt-5.5` | Newest flagship |
+| `gpt-5.3-codex` | Coding / agentic (Codex) |
+| `gpt-5.4` | General flagship |
+| `gpt-5.4-mini` | Fast / balanced (good default) |
+| `gpt-5.4-nano` | Cheapest / highest throughput |
+
+List models with your key:
+
+```bash
+curl https://llm.corsair.dev/v1/models \
+  -H "Authorization: Bearer $LITELLM_API_KEY"
+```
+
+## Check your budget
+
+Each key has a dollar budget. Check how much you've used and how much is left:
+
+```bash
+curl https://llm.corsair.dev/v1/key/info \
+  -H "Authorization: Bearer $LITELLM_API_KEY"
+```
+
+Example response:
+
+```json
+{
+  "key": "sk-...",
+  "info": {
+    "spend": 1.42,
+    "max_budget": 25,
+    "budget_duration": "30d",
+    "models": ["corsair-models"]
+  }
+}
+```
+
+- **`spend`** — dollars used so far in the current budget window
+- **`max_budget`** — your total allowance
+- **`budget_duration`** — when spend resets (e.g. `30d` = monthly)
+
+Remaining budget: `max_budget - spend` (e.g. `$23.58` left in the example above).
+
+When `spend` reaches `max_budget`, requests return an error until the budget resets or your limit is increased.
+
+## Vercel AI SDK
+
+```ts
+import { createOpenAI } from '@ai-sdk/openai';
+import { generateText } from 'ai';
+
+const corsair = createOpenAI({
+  apiKey: process.env.LITELLM_API_KEY,
+  baseURL: process.env.LITELLM_BASE_URL ?? 'https://llm.corsair.dev/v1',
+});
+
+const { text } = await generateText({
+  model: corsair('gpt-5.4-mini'),
+  prompt: 'Hello!',
+});
+```
+
+Streaming works the same way with `streamText`.
+
+## OpenAI SDK
+
+```ts
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.LITELLM_API_KEY,
+  baseURL: 'https://llm.corsair.dev/v1',
+});
+
+const response = await client.chat.completions.create({
+  model: 'gpt-5.4-mini',
+  messages: [{ role: 'user', content: 'Hello!' }],
+});
+```
+
+<Warning>
+Do not use `openai('gpt-4o')` with the default OpenAI provider — that calls OpenAI directly. Always use `createOpenAI({ baseURL, apiKey })` so requests go through the gateway.
+</Warning>
+
+## curl
+
+```bash
+curl https://llm.corsair.dev/v1/chat/completions \
+  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.4-mini",
+    "messages": [{ "role": "user", "content": "hi" }]
+  }'
+```
+
+## Env var aliases
+
+Some projects use different names. These are equivalent:
+
+| Preferred | Also accepted |
+| --------- | ------------- |
+| `LITELLM_API_KEY` | `OPENAI_API_KEY` (when `baseURL` points at the gateway) |
+| `LITELLM_BASE_URL` | — |
+| `LITELLM_MODEL` | — |
+
+## Endpoints
+
+| Path | Purpose |
+| ---- | ------- |
+| `https://llm.corsair.dev/v1/*` | OpenAI-compatible inference |
+| `https://llm.corsair.dev/v1/models` | List available models |
+| `https://llm.corsair.dev/v1/key/info` | Check spend and remaining budget |
+| `https://llm.corsair.dev/health` | Health check |

@@ -1,6 +1,10 @@
 import type { CorsairInternalConfig } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
+import {
+	isConnectionsSyncRetryableError,
+	processConnectionsSyncDelivery,
+} from '../hub/connections-sync-delivery';
 import type { TunnelEnvelope } from '../hub/contracts/tunnel';
 import {
 	INBOUND_TUNNEL_TYPES,
@@ -10,6 +14,7 @@ import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
+import type { ServerDeliveryAckBody } from '../hub/signing/envelope';
 import { verifySignedTunnelDelivery } from '../hub/signing/envelope';
 import { processOAuthCallback } from '../oauth';
 import { processWebhook } from '../webhooks';
@@ -33,6 +38,7 @@ export {
 	type BrowserDeliveryPayload,
 	isAuthCredentialsBrowserDelivery,
 	isByoOAuthBrowserDelivery,
+	isConnectionsSyncBrowserDelivery,
 	isManagedBrowserDelivery,
 	isPermissionBrowserDelivery,
 	verifyBrowserDeliveryToken,
@@ -69,6 +75,13 @@ export type OAuthCallbackTunnelPayload = {
 	code: string;
 	state: string;
 	redirectUri: string;
+	/**
+	 * Set by Hub, which authenticates the delivery envelope with the signing
+	 * secret and cannot sign a Corsair `state`. When present, the callback is
+	 * processed against these instead of decoding `state`.
+	 */
+	plugin?: string;
+	tenantId?: string;
 };
 
 export type OAuthTokensTunnelPayload = {
@@ -99,6 +112,37 @@ export type ConnectCreateLinkTunnelPayload = {
 	tenantId: string;
 	plugins: string[];
 };
+
+async function handleConnectionsSyncTunnel(
+	corsair: unknown,
+	signingSecret: string,
+): Promise<TunnelAck> {
+	try {
+		const encrypted = await processConnectionsSyncDelivery(
+			corsair,
+			signingSecret,
+		);
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: {
+					status: 'ok',
+					sync: { encrypted },
+				} satisfies ServerDeliveryAckBody,
+			},
+		};
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: isConnectionsSyncRetryableError(error),
+			error:
+				error instanceof Error
+					? error.message
+					: 'Connections sync delivery failed',
+		};
+	}
+}
 
 async function handleConnectCreateLinkTunnel(
 	corsair: unknown,
@@ -187,6 +231,9 @@ async function handleWebhookTunnel(
 		payload.headers,
 		payload.body,
 		query,
+		// Hub routed this by the plugin's own endpoint — dispatch exactly there,
+		// never by body shape (MS Graph siblings are indistinguishable).
+		payload.plugin ? { plugin: payload.plugin } : undefined,
 	);
 
 	if (!result.plugin) {
@@ -233,7 +280,17 @@ async function handleOAuthCallbackTunnel(
 	corsair: unknown,
 	payload: OAuthCallbackTunnelPayload,
 ): Promise<TunnelAck> {
-	await processOAuthCallback(corsair, payload);
+	// Envelope signature already verified by processCorsair before dispatch. Take
+	// the trusted path only when Hub supplied plugin/tenant; otherwise fall back
+	// to HMAC state verification (a Hub deployed before the companion change).
+	await processOAuthCallback(corsair, {
+		code: payload.code,
+		state: payload.state,
+		redirectUri: payload.redirectUri,
+		...(payload.plugin && payload.tenantId
+			? { trusted: true, plugin: payload.plugin, tenantId: payload.tenantId }
+			: {}),
+	});
 	return { status: 'ok' };
 }
 
@@ -450,7 +507,7 @@ export async function processCorsair(
 			status: 'failed',
 			retryable: false,
 			error:
-				'connect.status pull introspection is disabled; apps push status via POST /connections/report',
+				'connect.status is deprecated; use connections.sync signed delivery instead',
 		};
 	}
 
@@ -498,6 +555,17 @@ export async function processCorsair(
 				corsair,
 				envelope.payload as ConnectCreateLinkTunnelPayload,
 			);
+		case 'connections.sync': {
+			const signingSecret = options.signingSecret?.trim();
+			if (!signingSecret) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error: 'Tunnel signing secret is required for connections.sync',
+				};
+			}
+			return handleConnectionsSyncTunnel(corsair, signingSecret);
+		}
 		default:
 			return unsupportedTunnelType(String(envelope.type));
 	}

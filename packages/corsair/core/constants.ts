@@ -26,6 +26,8 @@ export const BaseProviders = [
 	'calendly',
 	'cloudflare',
 	'cursor',
+	'datadog',
+	'deepseek',
 	'discord',
 	'dodopayments',
 	'dropbox',
@@ -33,26 +35,34 @@ export const BaseProviders = [
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'gemini',
 	'github',
 	'gitlab',
 	'gmail',
 	'googlecalendar',
+	'googledocs',
 	'googledrive',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
 	'hubspot',
+	'insightoai',
+	'instagram',
 	'intercom',
 	'jira',
 	'linear',
+	'linkedin',
 	'monday',
+	'neon',
 	'notion',
 	'onedrive',
+	'openai',
 	'openweathermap',
 	'oura',
 	'outlook',
 	'pagerduty',
+	'perplexityai',
 	'posthog',
 	'razorpay',
 	'reddit',
@@ -80,7 +90,6 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
-	'instagram',
 ] as const;
 
 export const ProviderDisplayNames = {
@@ -97,6 +106,8 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
 	cursor: 'Cursor',
+	datadog: 'Datadog',
+	deepseek: 'DeepSeek',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
@@ -104,22 +115,29 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
 	googlecalendar: 'Google Calendar',
+	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
-	googlesheets: 'Google Sheets',
 	googlemeet: 'Google Meet',
+	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
+	insightoai: 'Insighto.ai',
+	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
+	linkedin: 'LinkedIn',
 	monday: 'Monday',
+	neon: 'Neon',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
+	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
@@ -151,7 +169,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram',
+	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -175,6 +193,8 @@ export type AllProviders =
 	| 'calendly'
 	| 'cloudflare'
 	| 'cursor'
+	| 'datadog'
+	| 'deepseek'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
@@ -182,26 +202,34 @@ export type AllProviders =
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'gemini'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
 	| 'googlecalendar'
+	| 'googledocs'
 	| 'googledrive'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
+	| 'insightoai'
+	| 'instagram'
 	| 'intercom'
 	| 'jira'
 	| 'linear'
+	| 'linkedin'
 	| 'monday'
+	| 'neon'
 	| 'notion'
 	| 'onedrive'
+	| 'openai'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'perplexityai'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
@@ -229,7 +257,6 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
-	| 'instagram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';

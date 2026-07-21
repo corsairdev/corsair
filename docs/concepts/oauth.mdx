@@ -117,7 +117,7 @@ export async function startOAuthConnect(plugin: string) {
 }
 ```
 
-Or from the client via the [management client](/management/client):
+Or from the client via the [management client](/adapters/client):
 
 ```tsx connect-button.tsx
 "use client";
@@ -196,7 +196,7 @@ export async function GET(request: NextRequest) {
 Corsair extracts the `tenantId` from the HMAC-signed state, exchanges the code for tokens, and stores them encrypted for that tenant.
 
 <Info>
-See [Production: OAuth Process](/production/oauth-process) for a full implementation with security best practices — authenticated link creation, HTML escaping, and production checklists.
+See [Production: OAuth Process](/concepts/oauth-process) for a full implementation with security best practices — authenticated link creation, HTML escaping, and production checklists.
 </Info>
 
 ### 5. Make API calls per tenant
