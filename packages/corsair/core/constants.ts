@@ -54,6 +54,7 @@ export const BaseProviders = [
 	'jira',
 	'linear',
 	'linkedin',
+	'mailchimp',
 	'monday',
 	'neon',
 	'notion',
@@ -135,6 +136,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	mailchimp: 'Mailchimp',
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
@@ -223,6 +225,7 @@ export type AllProviders =
 	| 'jira'
 	| 'linear'
 	| 'linkedin'
+	| 'mailchimp'
 	| 'monday'
 	| 'neon'
 	| 'notion'
