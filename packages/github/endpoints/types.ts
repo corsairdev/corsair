@@ -252,6 +252,13 @@ const RepositoriesListStarredInputSchema = z.object({
 	page: z.number().optional(),
 });
 
+const RepositoriesListStargazersInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	perPage: z.number().optional(),
+	page: z.number().optional(),
+});
+
 const ReleasesListInputSchema = z.object({
 	owner: z.string(),
 	repo: z.string(),
@@ -495,6 +502,7 @@ export const GithubEndpointInputSchemas = {
 	repositoriesUnstar: RepositoriesUnstarInputSchema,
 	repositoriesCheckStarred: RepositoriesCheckStarredInputSchema,
 	repositoriesListStarred: RepositoriesListStarredInputSchema,
+	repositoriesListStargazers: RepositoriesListStargazersInputSchema,
 	releasesList: ReleasesListInputSchema,
 	releasesGet: ReleasesGetInputSchema,
 	releasesCreate: ReleasesCreateInputSchema,
@@ -1064,6 +1072,18 @@ const SearchUsersResponseSchema = z
 	})
 	.loose();
 
+const StargazerEntrySchema = z.object({
+	starredAt: z.coerce.date(),
+	user: SimpleUserSchema,
+});
+
+const RepositoriesListStargazersResponseSchema = z.array(StargazerEntrySchema);
+
+export type StargazerEntry = z.infer<typeof StargazerEntrySchema>;
+export type RepositoriesListStargazersResponse = z.infer<
+	typeof RepositoriesListStargazersResponseSchema
+>;
+
 export const GithubEndpointOutputSchemas = {
 	issuesList: z.array(IssueSchema),
 	issuesGet: IssueSchema,
@@ -1092,6 +1112,7 @@ export const GithubEndpointOutputSchemas = {
 	repositoriesUnstar: z.boolean(),
 	repositoriesCheckStarred: z.object({ starred: z.boolean() }),
 	repositoriesListStarred: z.array(RepositorySchema),
+	repositoriesListStargazers: RepositoriesListStargazersResponseSchema,
 	releasesList: z.array(ReleaseSchema),
 	releasesGet: ReleaseSchema,
 	releasesCreate: ReleaseSchema,

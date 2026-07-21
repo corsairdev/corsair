@@ -35,6 +35,7 @@ export const RepositoriesEndpoints = {
 	unstar: Repositories.unstar,
 	checkStarred: Repositories.checkStarred,
 	listStarred: Repositories.listStarred,
+	listStargazers: Repositories.listStargazers,
 };
 
 export const ReleasesEndpoints = {
