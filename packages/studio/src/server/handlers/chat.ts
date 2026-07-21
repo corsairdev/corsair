@@ -137,7 +137,7 @@ function toAiMessages(stored: StoredMessage[]): CoreMessage[] {
 }
 
 function buildAiTools(corsairClient: Record<string, unknown>): ToolSet {
-	const defs = buildCorsairToolDefs({ corsair: corsairClient, setup: false });
+	const defs = buildCorsairToolDefs({ corsair: corsairClient });
 	const tools: ToolSet = {};
 	for (const def of defs) {
 		tools[def.name] = tool({
