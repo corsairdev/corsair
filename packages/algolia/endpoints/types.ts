@@ -10,7 +10,9 @@ const AddAbTestInputSchema = z.object({
 	name: z.string(),
 	endAt: z.string(),
 	region: z.string().optional(),
-	variants: z.array(z.unknown()),
+	variants: z.array(
+		z.object({ indexName: z.string(), trafficPercentage: z.number() }).loose(),
+	),
 	body: AlgoliaOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
@@ -114,7 +116,7 @@ export type ClearSynonymsResponse = z.infer<typeof ClearSynonymsResponseSchema>;
 const ClickedObjectIdsInputSchema = z.object({
 	eventName: z.string(),
 	indexName: z.string(),
-	objectIDs: z.array(z.unknown()),
+	objectIDs: z.array(z.string()),
 	userToken: z.string(),
 	authenticatedUserToken: z.string().optional(),
 	body: AlgoliaOptionalBodySchema,
@@ -134,8 +136,8 @@ const ClickedObjectIdsAfterSearchInputSchema = z.object({
 	index: z.string(),
 	queryID: z.string(),
 	eventName: z.string(),
-	objectIDs: z.array(z.unknown()),
-	positions: z.array(z.unknown()),
+	objectIDs: z.array(z.string()),
+	positions: z.array(z.number()),
 	timestamp: z.number().int().optional(),
 	userToken: z.string(),
 	body: AlgoliaOptionalBodySchema,
@@ -173,7 +175,7 @@ export type ComputeRealtimeUserResponse = z.infer<
 const ConvertedObjectIdsInputSchema = z.object({
 	index: z.string(),
 	eventName: z.string(),
-	objectIDs: z.array(z.unknown()),
+	objectIDs: z.array(z.string()),
 	timestamp: z.number().int().optional(),
 	userToken: z.string(),
 	authenticatedUserToken: z.string().optional(),
@@ -208,9 +210,9 @@ export type CopyIndexResponse = z.infer<typeof CopyIndexResponseSchema>;
 
 // createApiKey
 const CreateApiKeyInputSchema = z.object({
-	acl: z.array(z.unknown()),
-	indexes: z.array(z.unknown()).optional(),
-	referers: z.array(z.unknown()).optional(),
+	acl: z.array(z.string()),
+	indexes: z.array(z.string()).optional(),
+	referers: z.array(z.string()).optional(),
 	validity: z.number().int().optional(),
 	description: z.string().optional(),
 	maxHitsPerQuery: z.number().int().optional(),
@@ -297,7 +299,7 @@ export type CreateIngestionTaskResponse = z.infer<
 // createOrUpdateRecommendRules
 const CreateOrUpdateRecommendRulesInputSchema = z.object({
 	model: z.string().optional(),
-	rules: z.array(z.unknown()),
+	rules: z.array(z.object({ objectID: z.string() }).loose()),
 	index_name: z.string(),
 	body: AlgoliaOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
@@ -1685,7 +1687,7 @@ export type PushTaskResponse = z.infer<typeof PushTaskResponseSchema>;
 
 // replaceAllRules
 const ReplaceAllRulesInputSchema = z.object({
-	rules: z.array(z.unknown()),
+	rules: z.array(z.object({ objectID: z.string() }).loose()),
 	indexName: z.string(),
 	requestOptions: z.record(z.string(), z.unknown()).optional(),
 	forwardToReplicas: z.boolean().optional(),
@@ -2106,10 +2108,10 @@ export type TryTransformationBeforeUpdateResponse = z.infer<
 
 // updateApiKey
 const UpdateApiKeyInputSchema = z.object({
-	acl: z.array(z.unknown()),
+	acl: z.array(z.string()),
 	key: z.string(),
-	indexes: z.array(z.unknown()).optional(),
-	referers: z.array(z.unknown()).optional(),
+	indexes: z.array(z.string()).optional(),
+	referers: z.array(z.string()).optional(),
 	validity: z.number().int().optional(),
 	description: z.string().optional(),
 	maxHitsPerQuery: z.number().int().optional(),
