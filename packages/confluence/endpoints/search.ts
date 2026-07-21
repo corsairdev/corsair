@@ -11,10 +11,15 @@ export const search: ConfluenceEndpoints['pagesSearch'] = async (
 
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
+	const cloudId =
+		ctx.options.authType === 'oauth_2'
+			? ((await ctx.keys.get_cloud_id()) ?? undefined)
+			: undefined;
 
 	const result = await makeConfluenceRequest('search', ctx.key, cloudUrl, {
 		method: 'GET',
 		authType: ctx.options.authType,
+		cloudId,
 		query: {
 			cql: validated.cql,
 			...(validated.cqlcontext && { cqlcontext: validated.cqlcontext }),

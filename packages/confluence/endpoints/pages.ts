@@ -8,11 +8,16 @@ export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
 
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
+	const cloudId =
+		ctx.options.authType === 'oauth_2'
+			? ((await ctx.keys.get_cloud_id()) ?? undefined)
+			: undefined;
 
 	const result = await makeConfluenceRequest('pages', ctx.key, cloudUrl, {
 		method: 'GET',
 		base: '/wiki/api/v2',
 		authType: ctx.options.authType,
+		cloudId,
 		query: {
 			...(validated.space_id && { 'space-id': validated.space_id }),
 			...(validated.title && { title: validated.title }),

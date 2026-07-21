@@ -40,6 +40,7 @@ function createContext(overrides: Record<string, unknown> = {}) {
 		},
 		keys: {
 			get_cloud_url: jest.fn().mockResolvedValue(null),
+			get_cloud_id: jest.fn().mockResolvedValue(null),
 		},
 		...overrides,
 	};
@@ -120,7 +121,7 @@ describe('Confluence endpoint routing', () => {
 
 		const [, , , options] = mockRequest.mock.calls[0]!;
 		expect(options?.query).toMatchObject({
-			key: 'ENG',
+			spaceKey: 'ENG',
 			type: 'global',
 			status: 'current',
 			limit: 50,
@@ -206,6 +207,27 @@ describe('Confluence endpoint routing', () => {
 
 		const [, , , options] = mockRequest.mock.calls[0]!;
 		expect(options?.authType).toBe('oauth_2');
+	});
+
+	it('passes the resolved cloud ID to OAuth requests', async () => {
+		mockRequest.mockResolvedValue(spacesResponse);
+		const ctx = createContext({
+			options: {
+				authType: 'oauth_2',
+			},
+			keys: {
+				get_cloud_url: jest
+					.fn()
+					.mockResolvedValue('https://test.atlassian.net'),
+				get_cloud_id: jest.fn().mockResolvedValue('cloud-123'),
+			},
+		});
+
+		await (Spaces.list as AnyEndpoint)(ctx, {});
+
+		const [, , cloudUrl, options] = mockRequest.mock.calls[0]!;
+		expect(cloudUrl).toBe('https://test.atlassian.net');
+		expect(options?.cloudId).toBe('cloud-123');
 	});
 
 	it('logs a completed event after a successful call', async () => {

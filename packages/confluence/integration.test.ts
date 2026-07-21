@@ -5,6 +5,7 @@ import type { ConfluenceContext } from './index';
 
 const API_KEY = process.env.CONFLUENCE_API_KEY;
 const CLOUD_URL = process.env.CONFLUENCE_CLOUD_URL;
+const describeIntegration = API_KEY && CLOUD_URL ? describe : describe.skip;
 
 const mockCtx = {
 	key: API_KEY,
@@ -13,15 +14,7 @@ const mockCtx = {
 	logEvent: jest.fn(),
 } as unknown as ConfluenceContext;
 
-describe('Confluence API Type Tests', () => {
-	beforeAll(() => {
-		if (!API_KEY || !CLOUD_URL) {
-			throw new Error(
-				'CONFLUENCE_API_KEY and CONFLUENCE_CLOUD_URL env vars are required to run integration tests',
-			);
-		}
-	});
-
+describeIntegration('Confluence API Type Tests', () => {
 	it('spaces.list returns correct type', async () => {
 		const result = await Spaces.list(mockCtx, { limit: 10 });
 		ConfluenceEndpointOutputSchemas.spacesList.parse(result);

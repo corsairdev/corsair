@@ -1,21 +1,22 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import {
+	getValidConfluenceAccessToken,
+	resolveConfluenceCloudResource,
+} from './client';
 import { Pages, Spaces } from './endpoints';
 import type {
 	ConfluenceEndpointInputs,
@@ -27,20 +28,15 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ConfluenceSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveConfluenceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchConfluenceTenantWebhook } from './webhooks/tenant-matcher';
-import type { ConfluenceWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type ConfluencePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	/** Atlassian account email used with a Confluence Cloud API token. */
+	email?: string;
 	/** Confluence Cloud URL, e.g. 'https://your-domain.atlassian.net'. */
 	cloudUrl?: string;
-	webhookSecret?: string;
 	hooks?: InternalConfluencePlugin['hooks'];
-	webhookHooks?: InternalConfluencePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof confluenceEndpointsNested>;
 };
@@ -74,17 +70,6 @@ export type ConfluenceEndpoints = {
 	spacesList: ConfluenceEndpoint<'spacesList'>;
 };
 
-type ConfluenceWebhook<
-	K extends keyof ConfluenceWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ConfluenceContext, TEvent, ConfluenceWebhookOutputs[K]>;
-
-export type ConfluenceWebhooks = {
-	example: ConfluenceWebhook<'example', ExampleEvent>;
-};
-
-export type ConfluenceBoundWebhooks = BindWebhooks<ConfluenceWebhooks>;
-
 const confluenceEndpointsNested = {
 	pages: {
 		get: Pages.get,
@@ -92,12 +77,6 @@ const confluenceEndpointsNested = {
 	},
 	spaces: {
 		list: Spaces.list,
-	},
-} as const;
-
-const confluenceWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -116,16 +95,6 @@ export const confluenceEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof confluenceEndpointsNested
->;
-
-const confluenceWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof confluenceWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -149,10 +118,10 @@ const confluenceEndpointMeta = {
 
 export const confluenceAuthConfig = {
 	api_key: {
-		account: ['cloud_url'] as const,
+		account: ['email', 'cloud_url'] as const,
 	},
 	oauth_2: {
-		account: ['tenant_external_id', 'cloud_url'] as const,
+		account: ['cloud_id', 'cloud_url'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -161,7 +130,7 @@ export type BaseConfluencePlugin<T extends ConfluencePluginOptions> =
 		'confluence',
 		typeof ConfluenceSchema,
 		typeof confluenceEndpointsNested,
-		typeof confluenceWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType,
 		typeof confluenceAuthConfig
@@ -184,80 +153,115 @@ export function confluence<const T extends ConfluencePluginOptions>(
 	return {
 		id: 'confluence',
 		authConfig: confluenceAuthConfig,
+		oauthConfig: {
+			providerName: 'Confluence',
+			authUrl: 'https://auth.atlassian.com/authorize',
+			tokenUrl: 'https://auth.atlassian.com/oauth/token',
+			scopes: [
+				'read:page:confluence',
+				'read:confluence-space.summary',
+				'search:confluence',
+				'offline_access',
+			],
+			authParams: { audience: 'api.atlassian.com', prompt: 'consent' },
+		},
 		schema: ConfluenceSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: confluenceEndpointsNested,
-		webhooks: confluenceWebhooksNested,
+		webhooks: {},
 		endpointMeta: confluenceEndpointMeta,
 		endpointSchemas: confluenceEndpointSchemas,
-		webhookSchemas: confluenceWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			if (!('x-atlassian-webhook-identifier' in headers)) return false;
-			// Confluence webhook events use page_/space_/blogpost_ prefixes
-			// while Jira uses jira:/comment_/sprint_ prefixes. This prevents
-			// a Jira webhook from matching the Confluence plugin.
-			let parsedBody: unknown = request.body;
-			if (typeof request.body === 'string') {
-				try {
-					parsedBody = JSON.parse(request.body);
-				} catch {
-					parsedBody = null;
-				}
-			}
-			if (parsedBody && typeof parsedBody === 'object') {
-				const eventType = (parsedBody as Record<string, unknown>).webhookEvent;
-				if (typeof eventType === 'string') {
-					return (
-						eventType.startsWith('page_') ||
-						eventType.startsWith('space_') ||
-						eventType.startsWith('blogpost_') ||
-						eventType.startsWith('attachment_') ||
-						eventType.startsWith('content_')
-					);
-				}
-			}
-			return true;
-		},
-		pluginTenantWebhookMatcher: matchConfluenceTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveConfluenceOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ConfluenceKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				if (!res) {
-					throw new AuthMissingError('confluence', 'webhook_signature');
-				}
-				return res;
-			}
-
 			if (source === 'endpoint' && options.key) {
-				return options.key;
+				if (ctx.authType !== 'api_key' || options.key.includes(':')) {
+					return options.key;
+				}
+				if (!options.email) {
+					throw new AuthMissingError('confluence', 'email');
+				}
+				return `${options.email}:${options.key}`;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
+				const apiToken = await ctx.keys.get_api_key();
+				if (!apiToken) {
 					throw new AuthMissingError('confluence', 'api_key');
 				}
-				return res;
+				if (apiToken.includes(':')) return apiToken;
+
+				const email = await ctx.keys.get_email();
+				if (!email) {
+					throw new AuthMissingError('confluence', 'email');
+				}
+				return `${email}:${apiToken}`;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
-					throw new AuthMissingError('confluence', 'access_token');
+				const [
+					accessToken,
+					expiresAt,
+					refreshToken,
+					storedCloudId,
+					storedCloudUrl,
+					credentials,
+				] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+					ctx.keys.get_cloud_id(),
+					ctx.keys.get_cloud_url(),
+					ctx.keys.get_integration_credentials(),
+				]);
+
+				if (!refreshToken) {
+					throw new AuthMissingError('confluence', 'refresh_token');
 				}
-				return res;
+				if (!credentials.client_id || !credentials.client_secret) {
+					throw new AuthMissingError('confluence', 'client_credentials');
+				}
+
+				const result = await getValidConfluenceAccessToken({
+					accessToken,
+					expiresAt,
+					refreshToken,
+					clientId: credentials.client_id,
+					clientSecret: credentials.client_secret,
+				});
+
+				if (result.refreshed) {
+					await Promise.all([
+						ctx.keys.set_access_token(result.accessToken),
+						ctx.keys.set_expires_at(String(result.expiresAt)),
+						ctx.keys.set_refresh_token(result.refreshToken),
+					]);
+				}
+
+				const configuredCloudUrl = options.cloudUrl ?? storedCloudUrl;
+				const normalizedConfiguredUrl = configuredCloudUrl?.replace(/\/+$/, '');
+				const normalizedStoredUrl = storedCloudUrl?.replace(/\/+$/, '');
+				if (
+					!storedCloudId ||
+					!storedCloudUrl ||
+					(normalizedConfiguredUrl &&
+						normalizedConfiguredUrl !== normalizedStoredUrl)
+				) {
+					const resource = await resolveConfluenceCloudResource(
+						result.accessToken,
+						configuredCloudUrl,
+					);
+					await Promise.all([
+						ctx.keys.set_cloud_id(resource.id),
+						ctx.keys.set_cloud_url(resource.url),
+					]);
+				}
+
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('confluence', 'api_key');
@@ -275,7 +279,3 @@ export type {
 	SpacesListInput,
 	SpacesListResponse,
 } from './endpoints/types';
-export type {
-	ConfluenceWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
