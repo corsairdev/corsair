@@ -13,7 +13,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Products, StockX, Usage } from './endpoints';
+import { packRetailedKey } from './client';
+import { Goat, Products, StockX, Usage } from './endpoints';
 import type {
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
@@ -59,6 +60,8 @@ export type RetailedEndpoints = {
 	searchProducts: RetailedEndpoint<'searchProducts'>;
 	stockxTrends: RetailedEndpoint<'stockxTrends'>;
 	stockxSearch: RetailedEndpoint<'stockxSearch'>;
+	stockxProduct: RetailedEndpoint<'stockxProduct'>;
+	goatPrices: RetailedEndpoint<'goatPrices'>;
 };
 
 const retailedEndpointsNested = {
@@ -71,6 +74,10 @@ const retailedEndpointsNested = {
 	stockx: {
 		trends: StockX.trends,
 		search: StockX.search,
+		product: StockX.product,
+	},
+	goat: {
+		prices: Goat.prices,
 	},
 } as const;
 
@@ -92,6 +99,14 @@ export const retailedEndpointSchemas = {
 	'stockx.search': {
 		input: RetailedEndpointInputSchemas.stockxSearch,
 		output: RetailedEndpointOutputSchemas.stockxSearch,
+	},
+	'stockx.product': {
+		input: RetailedEndpointInputSchemas.stockxProduct,
+		output: RetailedEndpointOutputSchemas.stockxProduct,
+	},
+	'goat.prices': {
+		input: RetailedEndpointInputSchemas.goatPrices,
+		output: RetailedEndpointOutputSchemas.goatPrices,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof retailedEndpointsNested
@@ -115,6 +130,14 @@ const retailedEndpointMeta = {
 	'stockx.search': {
 		riskLevel: 'read',
 		description: 'Search StockX products',
+	},
+	'stockx.product': {
+		riskLevel: 'read',
+		description: 'Get StockX product details',
+	},
+	'goat.prices': {
+		riskLevel: 'read',
+		description: 'Get GOAT product prices',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof retailedEndpointsNested>;
 
@@ -168,19 +191,34 @@ export function retailed<const T extends RetailedPluginOptions>(
 		},
 		keyBuilder: async (ctx: RetailedKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
-				return options.key;
+				return packRetailedKey({
+					authType: 'api_key',
+					credential: options.key,
+				});
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+
+				if (res) {
+					return packRetailedKey({
+						authType: 'api_key',
+						credential: res,
+					});
+				}
 
 				throw new AuthMissingError('retailed', 'api_key');
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				if (res) return res;
+
+				if (res) {
+					return packRetailedKey({
+						authType: 'oauth_2',
+						credential: res,
+					});
+				}
 
 				throw new AuthMissingError('retailed', 'oauth_2');
 			}
@@ -193,10 +231,14 @@ export function retailed<const T extends RetailedPluginOptions>(
 export type {
 	GetUsageInput,
 	GetUsageResponse,
+	GoatPricesInput,
+	GoatPricesResponse,
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
 	SearchProductsInput,
 	SearchProductsResponse,
+	StockXProductInput,
+	StockXProductResponse,
 	StockXSearchInput,
 	StockXSearchResponse,
 	StockXTrendsInput,

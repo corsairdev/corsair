@@ -24,12 +24,42 @@ export class RetailedAPIError extends Error {
 	}
 }
 
-// Official Retailed API
+export type RetailedCredentials = {
+	authType: 'api_key' | 'oauth_2';
+	credential: string;
+};
+
+export function packRetailedKey(credentials: RetailedCredentials): string {
+	return JSON.stringify(credentials);
+}
+
+export function parseRetailedKey(key: string): RetailedCredentials {
+	try {
+		const parsed = JSON.parse(key);
+
+		if (
+			typeof parsed === 'object' &&
+			parsed !== null &&
+			'authType' in parsed &&
+			'credential' in parsed
+		) {
+			return parsed as RetailedCredentials;
+		}
+	} catch {
+		// Backward compatibility: treat a plain string as an API key.
+	}
+
+	return {
+		authType: 'api_key',
+		credential: key,
+	};
+}
+
 const RETAILED_API_BASE = 'https://app.retailed.io/api/v1';
 
 export async function makeRetailedRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	key: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
@@ -38,16 +68,25 @@ export async function makeRetailedRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
+	const headers: Record<string, string> = {
+		'Content-Type': 'application/json',
+	};
+
+	const { authType, credential } = parseRetailedKey(key);
+
+	if (authType === 'api_key') {
+		headers['x-api-key'] = credential;
+	} else {
+		headers.Authorization = `Bearer ${credential}`;
+	}
+
 	const config: OpenAPIConfig = {
 		BASE: RETAILED_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: '',
-		HEADERS: {
-			'Content-Type': 'application/json',
-			'x-api-key': apiKey,
-		},
+		HEADERS: headers,
 	};
 
 	const requestOptions: ApiRequestOptions = {

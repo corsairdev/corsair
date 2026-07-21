@@ -6,6 +6,8 @@ import { makeRetailedRequest } from '../client';
 import type {
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
+	StockXProductInput,
+	StockXProductResponse,
 	StockXSearchInput,
 	StockXSearchResponse,
 } from './types';
@@ -61,4 +63,37 @@ export const stockxSearch: CorsairEndpoint<
 	await logEventFromContext(ctx, 'retailed.stockx.search', {}, 'completed');
 
 	return RetailedEndpointOutputSchemas.stockxSearch.parse(response);
+};
+
+export const stockxProduct: CorsairEndpoint<
+	RetailedContext,
+	StockXProductInput,
+	StockXProductResponse
+> = async (ctx, input) => {
+	const query: Record<string, string> = {
+		query: input.query,
+	};
+
+	if (input.country) {
+		query.country = input.country;
+	}
+
+	if (input.language) {
+		query.language = input.language;
+	}
+
+	if (input.currency) {
+		query.currency = input.currency;
+	}
+
+	const response = await makeRetailedRequest<
+		RetailedEndpointOutputs['stockxProduct']
+	>('stockx/product', ctx.key, {
+		method: 'GET',
+		query,
+	});
+
+	await logEventFromContext(ctx, 'retailed.stockx.product', {}, 'completed');
+
+	return RetailedEndpointOutputSchemas.stockxProduct.parse(response);
 };
