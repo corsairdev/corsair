@@ -104,7 +104,7 @@ export const prDeadlineFunction = inngest.createFunction(
 
 export const expiredClaimsCronFunction = inngest.createFunction(
 	{ id: 'integration-expired-claims-cron' },
-	{ cron: '*/5 * * * *' },
+	{ cron: '*/30 * * * *' },
 	async ({ step }) => {
 		return step.run('release-expired-claims', async () => {
 			const { getExpiredDeadlineClaims } = await import(
