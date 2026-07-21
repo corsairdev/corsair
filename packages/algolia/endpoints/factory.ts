@@ -1,5 +1,5 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeAlgoliaRequest } from '../client';
 import type { AlgoliaContext } from '../index';
 import { syncAlgoliaOperationCache } from './cache-sync';
@@ -142,8 +142,16 @@ export async function resolveBaseUrl(
 	const explicitBaseUrl = (input as { baseUrl?: string }).baseUrl;
 	if (explicitBaseUrl) return explicitBaseUrl;
 
+	// applicationId is normally validated by ensureApplicationId in the
+	// keyBuilder before this function can run. Resolve it again here and
+	// throw defensively so a future caller that bypasses keyBuilder (or a
+	// bug that skips it) gets a clear AuthMissingError instead of an opaque
+	// DNS failure on `https://-dsn.algolia.net`.
 	const applicationId =
-		ctx.options.applicationId ?? (await ctx.keys.get_applicationId()) ?? '';
+		ctx.options.applicationId ?? (await ctx.keys.get_applicationId());
+	if (!applicationId) {
+		throw new AuthMissingError('algolia', 'api_key');
+	}
 	// region is optional on analytics/ingestion inputs; fall back to plugin default.
 	const region =
 		(input as { region?: string }).region ?? ctx.options.region ?? 'us';
