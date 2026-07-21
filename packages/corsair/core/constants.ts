@@ -26,6 +26,7 @@ export const BaseProviders = [
 	'cloudflare',
 	'confluence',
 	'cursor',
+	'datadog',
 	'deepseek',
 	'discord',
 	'dodopayments',
@@ -105,6 +106,7 @@ export const ProviderDisplayNames = {
 	cloudflare: 'Cloudflare',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
+	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
@@ -191,6 +193,7 @@ export type AllProviders =
 	| 'cloudflare'
 	| 'confluence'
 	| 'cursor'
+	| 'datadog'
 	| 'deepseek'
 	| 'discord'
 	| 'dodopayments'

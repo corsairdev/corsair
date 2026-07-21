@@ -231,6 +231,9 @@ async function handleWebhookTunnel(
 		payload.headers,
 		payload.body,
 		query,
+		// Hub routed this by the plugin's own endpoint — dispatch exactly there,
+		// never by body shape (MS Graph siblings are indistinguishable).
+		payload.plugin ? { plugin: payload.plugin } : undefined,
 	);
 
 	if (!result.plugin) {
