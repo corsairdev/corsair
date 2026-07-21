@@ -1,8 +1,5 @@
 import type { HubConfig } from '../../hub';
-import {
-	attachManagedRefreshAuth,
-	getManagedAccessToken,
-} from '../../hub/managed-auth';
+import { getManagedAccessToken } from '../../hub/managed-auth';
 import { AuthMissingError } from './errors/auth-missing';
 
 type KeyBuilderLike = (
@@ -52,10 +49,9 @@ export async function resolveBindingKey(
 		const { accessToken } = await getManagedAccessToken(
 			managedCtx as Parameters<typeof getManagedAccessToken>[0],
 		);
-		await attachManagedRefreshAuth(
-			ctx as Record<string, unknown>,
-			managedCtx as Parameters<typeof attachManagedRefreshAuth>[1],
-		);
+		// Managed refresh is handled proactively by getManagedAccessToken via Hub;
+		// no 401-retry consumer reads ctx._refreshAuth on the managed path, so we
+		// don't mutate shared state with it.
 		return accessToken;
 	}
 	return plugin.keyBuilder ? plugin.keyBuilder(ctx, kind) : undefined;

@@ -28,46 +28,33 @@ export async function getManagedAccessToken(
 	const { keys, hub, plugin, tenantId } = ctx;
 	const forceRefresh = options?.forceRefresh ?? false;
 
-	const [accessToken, expiresAt, refreshToken] = await Promise.all([
+	// Managed never stores a refresh token app-side (custody: Hub owns it), so we
+	// only read the cached access token + expiry. A missing access token means the
+	// tenant was never connected → AuthMissingError.
+	const [accessToken, expiresAt] = await Promise.all([
 		keys.get_access_token(),
 		keys.get_expires_at(),
-		keys.get_refresh_token(),
 	]);
 
-	if (!accessToken && !refreshToken) {
+	if (!accessToken) {
 		throw new AuthMissingError(plugin, 'managed');
 	}
 
 	const now = Math.floor(Date.now() / 1000);
-	if (
-		!forceRefresh &&
-		accessToken &&
-		expiresAt &&
-		Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
-	) {
+
+	// Serve the cached access token while it is still valid. Non-expiring tokens
+	// (no expires_at) are treated as usable; expired/near-expiry ones fall through
+	// to a Hub refresh, which holds the refresh token.
+	const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
+	const tokenStillUsable =
+		expiresAtSeconds === null ||
+		expiresAtSeconds > now + TOKEN_REFRESH_BUFFER_SECONDS;
+	if (!forceRefresh && tokenStillUsable) {
 		return {
 			accessToken,
-			expiresAt: Number(expiresAt),
+			expiresAt: expiresAtSeconds ?? now + 3600,
 			refreshed: false,
 		};
-	}
-
-	// Non-expiring tokens may have no refresh token — keep using the access token
-	// while it is still valid. If it is expired (or due for refresh), fall through
-	// to the hub, which may still hold a refresh token even when local storage does not.
-	if (!refreshToken && accessToken && !forceRefresh) {
-		const expiresAtSeconds = expiresAt ? Number(expiresAt) : null;
-		const tokenStillUsable =
-			expiresAtSeconds === null ||
-			expiresAtSeconds > now + TOKEN_REFRESH_BUFFER_SECONDS;
-
-		if (tokenStillUsable) {
-			return {
-				accessToken,
-				expiresAt: expiresAtSeconds ?? now + 3600,
-				refreshed: false,
-			};
-		}
 	}
 
 	const tokens = await refreshManagedTokensFromHub(hub, plugin, tenantId);

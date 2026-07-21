@@ -31,9 +31,10 @@ export const BASE_AUTH_FIELDS = {
 	},
 	managed: {
 		integration: [] as const,
+		// Custody is structural: no 'refresh_token' field means no set/get_refresh_token
+		// on managed key managers — the refresh token can only ever live at Hub.
 		account: [
 			'access_token',
-			'refresh_token',
 			'expires_at',
 			'scope',
 			'webhook_signature',

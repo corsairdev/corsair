@@ -258,8 +258,9 @@ export type AllProviders =
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
 
-// Managed mode is available wherever oauth_2 is (managed just means Hub holds
-// the oauth_2 token). Any plugin offering oauth_2 also accepts 'managed'.
-export type PickAuth<T extends AuthTypes> = T extends 'oauth_2'
+// Managed mode is available only for *pure* oauth_2 plugins (managed just means
+// Hub holds the oauth_2 token). Non-distributive ([T] extends ['oauth_2']) so a
+// mixed set like 'api_key' | 'oauth_2' does NOT gain 'managed'.
+export type PickAuth<T extends AuthTypes> = [T] extends ['oauth_2']
 	? T | 'managed'
 	: T;

@@ -67,8 +67,11 @@ function isRequiredAccountField(field: string): boolean {
 function getConnectionCredentialFields(authType: AuthTypes): readonly string[] {
 	switch (authType) {
 		case 'oauth_2':
-		case 'managed':
 			return ['access_token', 'refresh_token'];
+		// Managed stores only the access token app-side — the refresh token stays
+		// at Hub, so having the access token is what "connected" means here.
+		case 'managed':
+			return ['access_token'];
 		case 'api_key':
 			return ['api_key'];
 		case 'bot_token':

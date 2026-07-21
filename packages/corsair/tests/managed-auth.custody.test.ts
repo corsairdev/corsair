@@ -5,20 +5,18 @@ jest.mock('../hub/client/http', () => ({
 
 import { getManagedAccessToken } from '../hub/managed-auth';
 
+// Managed key managers have NO refresh_token accessor (custody is structural).
+// getManagedAccessToken must work without ever reading/writing a refresh token.
 function makeKeys(initial: Record<string, string | null>) {
 	const store = { ...initial };
 	return {
 		get_access_token: async () => store.access_token ?? null,
 		get_expires_at: async () => store.expires_at ?? null,
-		get_refresh_token: async () => store.refresh_token ?? null,
 		set_access_token: jest.fn(async (v: string) => {
 			store.access_token = v;
 		}),
 		set_expires_at: jest.fn(async (v: string) => {
 			store.expires_at = v;
-		}),
-		set_refresh_token: jest.fn(async (v: string) => {
-			store.refresh_token = v;
 		}),
 		set_scope: jest.fn(async () => {}),
 	};
@@ -35,7 +33,6 @@ test('a Hub refresh caches the access token but NEVER persists the refresh token
 	const keys = makeKeys({
 		access_token: 'old',
 		expires_at: '1',
-		refresh_token: null,
 	});
 
 	const result = await getManagedAccessToken({
@@ -48,5 +45,6 @@ test('a Hub refresh caches the access token but NEVER persists the refresh token
 	expect(result.accessToken).toBe('fresh-access');
 	expect(keys.set_access_token).toHaveBeenCalledWith('fresh-access');
 	expect(keys.set_expires_at).toHaveBeenCalled();
-	expect(keys.set_refresh_token).not.toHaveBeenCalled(); // custody: refresh token stays at Hub
+	// custody: no set_refresh_token exists on managed key managers at all
+	expect('set_refresh_token' in keys).toBe(false);
 });

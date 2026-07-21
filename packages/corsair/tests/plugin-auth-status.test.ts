@@ -94,8 +94,9 @@ describe('getPluginAuthStatus', () => {
 		} as any);
 
 		await setupCorsair(corsair);
+		// Managed stores only the access token app-side (refresh token stays at Hub;
+		// managed key managers have no set_refresh_token — custody is structural).
 		await (corsair as any).github.keys.set_access_token('gho_test');
-		await (corsair as any).github.keys.set_refresh_token('ghr_test');
 
 		const status = await getPluginAuthStatus(
 			getCorsairInternal(corsair),
