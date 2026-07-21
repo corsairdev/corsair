@@ -27,6 +27,14 @@ const StockXTrendsInputSchema = z.object({
 	country: z.string().optional(),
 });
 
+/*               StockX Search                          */
+
+const StockXSearchInputSchema = z.object({
+	query: z.string(),
+});
+
+const StockXSearchResponseSchema = z.array(RetailedProductSchema);
+
 const StockXTrendsResponseSchema = z.array(RetailedProductSchema);
 
 const SearchProductsResponseSchema = z.object({
@@ -53,27 +61,34 @@ export type SearchProductsResponse = z.infer<
 export type StockXTrendsInput = z.infer<typeof StockXTrendsInputSchema>;
 
 export type StockXTrendsResponse = z.infer<typeof StockXTrendsResponseSchema>;
+export type StockXSearchInput = z.infer<typeof StockXSearchInputSchema>;
+
+export type StockXSearchResponse = z.infer<typeof StockXSearchResponseSchema>;
 
 export type RetailedEndpointInputs = {
 	getUsage: GetUsageInput;
 	searchProducts: SearchProductsInput;
 	stockxTrends: StockXTrendsInput;
+	stockxSearch: StockXSearchInput;
 };
 
 export type RetailedEndpointOutputs = {
 	getUsage: GetUsageResponse;
 	searchProducts: SearchProductsResponse;
 	stockxTrends: StockXTrendsResponse;
+	stockxSearch: StockXSearchResponse;
 };
 
 export const RetailedEndpointInputSchemas = {
 	getUsage: GetUsageInputSchema,
 	searchProducts: SearchProductsInputSchema,
 	stockxTrends: StockXTrendsInputSchema,
+	stockxSearch: StockXSearchInputSchema,
 } as const;
 
 export const RetailedEndpointOutputSchemas = {
 	getUsage: GetUsageResponseSchema,
 	searchProducts: SearchProductsResponseSchema,
 	stockxTrends: StockXTrendsResponseSchema,
+	stockxSearch: StockXSearchResponseSchema,
 } as const;

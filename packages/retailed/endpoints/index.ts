@@ -1,6 +1,6 @@
 import { get as usageGet } from './example';
 import { search as searchProducts } from './products';
-import { stockxTrends } from './stockx';
+import { stockxSearch, stockxTrends } from './stockx';
 
 export const Usage = {
 	get: usageGet,
@@ -12,6 +12,7 @@ export const Products = {
 
 export const StockX = {
 	trends: stockxTrends,
+	search: stockxSearch,
 };
 
 export * from './types';

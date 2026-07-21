@@ -58,6 +58,7 @@ export type RetailedEndpoints = {
 	getUsage: RetailedEndpoint<'getUsage'>;
 	searchProducts: RetailedEndpoint<'searchProducts'>;
 	stockxTrends: RetailedEndpoint<'stockxTrends'>;
+	stockxSearch: RetailedEndpoint<'stockxSearch'>;
 };
 
 const retailedEndpointsNested = {
@@ -69,6 +70,7 @@ const retailedEndpointsNested = {
 	},
 	stockx: {
 		trends: StockX.trends,
+		search: StockX.search,
 	},
 } as const;
 
@@ -86,6 +88,10 @@ export const retailedEndpointSchemas = {
 	'stockx.trends': {
 		input: RetailedEndpointInputSchemas.stockxTrends,
 		output: RetailedEndpointOutputSchemas.stockxTrends,
+	},
+	'stockx.search': {
+		input: RetailedEndpointInputSchemas.stockxSearch,
+		output: RetailedEndpointOutputSchemas.stockxSearch,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof retailedEndpointsNested
@@ -105,6 +111,10 @@ const retailedEndpointMeta = {
 	'stockx.trends': {
 		riskLevel: 'read',
 		description: 'Get StockX trends',
+	},
+	'stockx.search': {
+		riskLevel: 'read',
+		description: 'Search StockX products',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof retailedEndpointsNested>;
 
@@ -187,6 +197,8 @@ export type {
 	RetailedEndpointOutputs,
 	SearchProductsInput,
 	SearchProductsResponse,
+	StockXSearchInput,
+	StockXSearchResponse,
 	StockXTrendsInput,
 	StockXTrendsResponse,
 } from './endpoints/types';
