@@ -5,6 +5,9 @@ import type { AlgoliaMethod } from './endpoints/routes';
 export class AlgoliaAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// Algolia returns a heterogeneous error shape across endpoints (RFC 7807
+	// for some, plain { message } for others, plus per-endpoint metadata), so
+	// we carry the raw body as `unknown` and let callers narrow per-route.
 	public readonly body?: unknown;
 
 	constructor(message: string, options?: { cause?: Error }) {
@@ -20,6 +23,9 @@ export class AlgoliaAPIError extends Error {
 
 export type AlgoliaRequestOptions = {
 	method?: AlgoliaMethod;
+	// Each Algolia operation carries its own Zod-validated input shape; this
+	// layer just forwards whatever body/query the route produced without
+	// re-modeling them, hence `unknown` for the per-call surface.
 	body?: unknown;
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
