@@ -1,8 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeConfluenceRequest } from '../client';
 import type { ConfluenceEndpoints } from '../index';
-import type { ConfluenceEndpointOutputs } from './types';
-import { PagesSearchInputSchema } from './types';
+import { PagesSearchInputSchema, PagesSearchResponseSchema } from './types';
 
 export const search: ConfluenceEndpoints['pagesSearch'] = async (
 	ctx,
@@ -13,9 +12,7 @@ export const search: ConfluenceEndpoints['pagesSearch'] = async (
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 
-	const result = await makeConfluenceRequest<
-		ConfluenceEndpointOutputs['pagesSearch']
-	>('search', ctx.key, cloudUrl, {
+	const result = await makeConfluenceRequest('search', ctx.key, cloudUrl, {
 		method: 'GET',
 		authType: ctx.options.authType,
 		query: {
@@ -36,5 +33,5 @@ export const search: ConfluenceEndpoints['pagesSearch'] = async (
 		'completed',
 	);
 
-	return result;
+	return PagesSearchResponseSchema.parse(result);
 };

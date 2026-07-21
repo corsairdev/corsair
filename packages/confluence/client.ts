@@ -15,6 +15,11 @@ const CONFLUENCE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+/**
+ * Makes a request to the Confluence REST API.
+ * For Basic auth (api_key), the apiKey should be in "email:apiToken" format
+ * (Confluence Cloud). For OAuth, the apiKey is the raw bearer token.
+ */
 export async function makeConfluenceRequest<T>(
 	endpoint: string,
 	apiKey: string,

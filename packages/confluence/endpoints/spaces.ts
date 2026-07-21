@@ -1,8 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeConfluenceRequest } from '../client';
 import type { ConfluenceEndpoints } from '../index';
-import type { ConfluenceEndpointOutputs } from './types';
-import { SpacesListInputSchema } from './types';
+import { SpacesListInputSchema, SpacesListResponseSchema } from './types';
 
 export const list: ConfluenceEndpoints['spacesList'] = async (ctx, input) => {
 	const validated = SpacesListInputSchema.parse(input);
@@ -10,9 +9,7 @@ export const list: ConfluenceEndpoints['spacesList'] = async (ctx, input) => {
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 
-	const result = await makeConfluenceRequest<
-		ConfluenceEndpointOutputs['spacesList']
-	>('space', ctx.key, cloudUrl, {
+	const result = await makeConfluenceRequest('space', ctx.key, cloudUrl, {
 		method: 'GET',
 		authType: ctx.options.authType,
 		query: {
@@ -33,5 +30,5 @@ export const list: ConfluenceEndpoints['spacesList'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return result;
+	return SpacesListResponseSchema.parse(result);
 };

@@ -15,6 +15,22 @@ const mockLog = jest.mocked(logEventFromContext);
 
 type AnyEndpoint = (ctx: unknown, input: unknown) => Promise<unknown>;
 
+// Schema-valid mock responses so output .parse() succeeds.
+const spacesResponse = {
+	results: [{ key: 'ENG', name: 'Engineering' }],
+};
+const pagesResponse = {
+	results: [{ id: 'p1', title: 'Hello' }],
+};
+const searchResponse = {
+	results: [
+		{ content: { id: 'c1', type: 'page', title: 'Hello' }, title: 'Hello' },
+	],
+	start: 0,
+	limit: 25,
+	size: 1,
+};
+
 function createContext(overrides: Record<string, unknown> = {}) {
 	return {
 		key: 'test-token',
@@ -50,7 +66,7 @@ describe('Confluence endpoint routing', () => {
 			input: { limit: 10 },
 			path: 'space',
 			method: 'GET',
-			response: { results: [] },
+			response: spacesResponse,
 		},
 		{
 			name: 'pages.get',
@@ -59,7 +75,7 @@ describe('Confluence endpoint routing', () => {
 			path: 'pages',
 			method: 'GET',
 			base: '/wiki/api/v2',
-			response: { results: [] },
+			response: pagesResponse,
 		},
 		{
 			name: 'pages.search',
@@ -67,7 +83,7 @@ describe('Confluence endpoint routing', () => {
 			input: { cql: 'type = "page"' },
 			path: 'search',
 			method: 'GET',
-			response: { results: [] },
+			response: searchResponse,
 		},
 	];
 
@@ -91,7 +107,7 @@ describe('Confluence endpoint routing', () => {
 	});
 
 	it('spaces.list forwards filters as query params', async () => {
-		mockRequest.mockResolvedValue({ results: [] });
+		mockRequest.mockResolvedValue(spacesResponse);
 		const ctx = createContext();
 
 		await (Spaces.list as AnyEndpoint)(ctx, {
@@ -113,7 +129,7 @@ describe('Confluence endpoint routing', () => {
 	});
 
 	it('pages.get uses the v2 base path', async () => {
-		mockRequest.mockResolvedValue({ results: [] });
+		mockRequest.mockResolvedValue(pagesResponse);
 		const ctx = createContext();
 
 		await (Pages.get as AnyEndpoint)(ctx, { limit: 10 });
@@ -123,7 +139,7 @@ describe('Confluence endpoint routing', () => {
 	});
 
 	it('pages.get forwards space-id (snake-to-kebab) and cursor', async () => {
-		mockRequest.mockResolvedValue({ results: [] });
+		mockRequest.mockResolvedValue(pagesResponse);
 		const ctx = createContext();
 
 		await (Pages.get as AnyEndpoint)(ctx, {
@@ -141,7 +157,7 @@ describe('Confluence endpoint routing', () => {
 	});
 
 	it('pages.search forwards cql and pagination', async () => {
-		mockRequest.mockResolvedValue({ results: [] });
+		mockRequest.mockResolvedValue(searchResponse);
 		const ctx = createContext();
 
 		await (Pages.search as AnyEndpoint)(ctx, {
@@ -161,7 +177,7 @@ describe('Confluence endpoint routing', () => {
 	});
 
 	it('falls back to ctx.keys.get_cloud_url() when options.cloudUrl is unset', async () => {
-		mockRequest.mockResolvedValue({ results: [] });
+		mockRequest.mockResolvedValue(spacesResponse);
 		const ctx = createContext({
 			options: { authType: 'api_key' },
 			keys: {
@@ -178,7 +194,7 @@ describe('Confluence endpoint routing', () => {
 	});
 
 	it('propagates authType through to the request', async () => {
-		mockRequest.mockResolvedValue({ results: [] });
+		mockRequest.mockResolvedValue(spacesResponse);
 		const ctx = createContext({
 			options: {
 				cloudUrl: 'https://test.atlassian.net',
@@ -193,26 +209,28 @@ describe('Confluence endpoint routing', () => {
 	});
 
 	it('logs a completed event after a successful call', async () => {
-		mockRequest.mockResolvedValue({ results: [{ id: 'p1' }] });
+		mockRequest.mockResolvedValue(pagesResponse);
 		const ctx = createContext();
 
-		await (Spaces.list as AnyEndpoint)(ctx, { limit: 5 });
+		await (Pages.get as AnyEndpoint)(ctx, { limit: 5 });
 
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
-			'confluence.spaces.list',
+			'confluence.pages.get',
 			expect.any(Object),
 			'completed',
 		);
 	});
 
-	it('returns the raw response from makeConfluenceRequest', async () => {
-		const response = { results: [{ id: 'p1', title: 'Hello' }] };
-		mockRequest.mockResolvedValue(response);
+	it('parses the response through the output schema', async () => {
+		mockRequest.mockResolvedValue(pagesResponse);
 		const ctx = createContext();
 
-		const result = await (Pages.get as AnyEndpoint)(ctx, { limit: 1 });
+		const result = (await (Pages.get as AnyEndpoint)(ctx, { limit: 1 })) as {
+			results: Array<{ id: string }>;
+		};
 
-		expect(result).toBe(response);
+		expect(result.results).toBeDefined();
+		expect(result.results[0]?.id).toBe('p1');
 	});
 });

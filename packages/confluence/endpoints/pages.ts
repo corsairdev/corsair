@@ -1,8 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeConfluenceRequest } from '../client';
 import type { ConfluenceEndpoints } from '../index';
-import type { ConfluenceEndpointOutputs } from './types';
-import { PagesGetInputSchema } from './types';
+import { PagesGetInputSchema, PagesGetResponseSchema } from './types';
 
 export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
 	const validated = PagesGetInputSchema.parse(input);
@@ -10,9 +9,7 @@ export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 
-	const result = await makeConfluenceRequest<
-		ConfluenceEndpointOutputs['pagesGet']
-	>('pages', ctx.key, cloudUrl, {
+	const result = await makeConfluenceRequest('pages', ctx.key, cloudUrl, {
 		method: 'GET',
 		base: '/wiki/api/v2',
 		authType: ctx.options.authType,
@@ -32,5 +29,5 @@ export const get: ConfluenceEndpoints['pagesGet'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return result;
+	return PagesGetResponseSchema.parse(result);
 };
