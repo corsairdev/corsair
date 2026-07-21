@@ -39,10 +39,14 @@ export type AlgoliaEndpoint = CorsairEndpoint<
 >;
 
 function camelToSnake(value: string): string {
-	return value
-		.replace(/([A-Z])/g, '_$1')
-		.replace(/^_/, '')
-		.toLowerCase();
+	return (
+		value
+			// Insert underscore at lowercase/digit → uppercase boundary (indexName → index_Name).
+			.replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+			// Insert underscore at consecutive-caps → Cap+lowercase boundary (HTTPSConn → HTTPS_Conn).
+			.replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+			.toLowerCase()
+	);
 }
 
 function encodePathPart(value: unknown): string {
