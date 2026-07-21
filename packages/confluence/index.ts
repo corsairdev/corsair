@@ -15,6 +15,7 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import {
 	getValidConfluenceAccessToken,
+	normalizeConfluenceCloudUrl,
 	resolveConfluenceCloudResource,
 } from './client';
 import { Pages, Spaces } from './endpoints';
@@ -159,7 +160,7 @@ export function confluence<const T extends ConfluencePluginOptions>(
 			tokenUrl: 'https://auth.atlassian.com/oauth/token',
 			scopes: [
 				'read:page:confluence',
-				'read:confluence-space.summary',
+				'read:space:confluence',
 				'search:confluence',
 				'offline_access',
 			],
@@ -243,8 +244,12 @@ export function confluence<const T extends ConfluencePluginOptions>(
 				}
 
 				const configuredCloudUrl = options.cloudUrl ?? storedCloudUrl;
-				const normalizedConfiguredUrl = configuredCloudUrl?.replace(/\/+$/, '');
-				const normalizedStoredUrl = storedCloudUrl?.replace(/\/+$/, '');
+				const normalizedConfiguredUrl = configuredCloudUrl
+					? normalizeConfluenceCloudUrl(configuredCloudUrl)
+					: undefined;
+				const normalizedStoredUrl = storedCloudUrl
+					? normalizeConfluenceCloudUrl(storedCloudUrl)
+					: undefined;
 				if (
 					!storedCloudId ||
 					!storedCloudUrl ||

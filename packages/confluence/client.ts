@@ -108,8 +108,11 @@ export async function getValidConfluenceAccessToken({
 	};
 }
 
-function normalizeCloudUrl(cloudUrl: string): string {
-	return cloudUrl.trim().replace(/\/+$/, '');
+export function normalizeConfluenceCloudUrl(cloudUrl: string): string {
+	const trimmed = cloudUrl.trim();
+	let end = trimmed.length;
+	while (end > 0 && trimmed.charCodeAt(end - 1) === 47) end -= 1;
+	return trimmed.slice(0, end);
 }
 
 function isConfluenceResource(
@@ -158,9 +161,9 @@ export async function resolveConfluenceCloudResource(
 	}
 
 	if (cloudUrl) {
-		const requestedUrl = normalizeCloudUrl(cloudUrl);
+		const requestedUrl = normalizeConfluenceCloudUrl(cloudUrl);
 		const selected = resources.find(
-			(resource) => normalizeCloudUrl(resource.url) === requestedUrl,
+			(resource) => normalizeConfluenceCloudUrl(resource.url) === requestedUrl,
 		);
 		if (!selected) {
 			throw new Error(
@@ -231,7 +234,7 @@ export async function makeConfluenceRequest<T>(
 				? `https://api.atlassian.com/ex/confluence/${encodeURIComponent(cloudId)}${apiPath}`
 				: null
 			: cloudUrl
-				? `${normalizeCloudUrl(cloudUrl)}${apiPath}`
+				? `${normalizeConfluenceCloudUrl(cloudUrl)}${apiPath}`
 				: null;
 
 	if (!apiBase) {

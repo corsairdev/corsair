@@ -4,7 +4,7 @@ const ConfluenceLinksSchema = z.record(z.string(), z.string()).optional();
 const ConfluenceExpandableSchema = z.record(z.string(), z.string()).optional();
 
 export const ConfluenceSpaceSchema = z.object({
-	id: z.number().optional(),
+	id: z.string().optional(),
 	ari: z.string().optional(),
 	key: z.string(),
 	alias: z.string().optional(),
@@ -72,12 +72,7 @@ export const SpacesListInputSchema = z.object({
 		.optional()
 		.describe('Filter by space status'),
 	label: z.string().optional().describe('Filter by space label'),
-	start: z
-		.number()
-		.int()
-		.min(0)
-		.optional()
-		.describe('Pagination offset for the first result'),
+	cursor: z.string().optional().describe('Pagination cursor'),
 	limit: z
 		.number()
 		.int()
@@ -85,12 +80,6 @@ export const SpacesListInputSchema = z.object({
 		.max(250)
 		.optional()
 		.describe('Maximum number of spaces to return'),
-	expand: z
-		.string()
-		.optional()
-		.describe(
-			'Comma-separated Confluence expansions, such as description.plain',
-		),
 });
 export type SpacesListInput = z.infer<typeof SpacesListInputSchema>;
 

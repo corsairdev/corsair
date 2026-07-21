@@ -65,8 +65,9 @@ describe('Confluence endpoint routing', () => {
 			name: 'spaces.list',
 			fn: Spaces.list as AnyEndpoint,
 			input: { limit: 10 },
-			path: 'space',
+			path: 'spaces',
 			method: 'GET',
+			base: '/wiki/api/v2',
 			response: spacesResponse,
 		},
 		{
@@ -115,18 +116,21 @@ describe('Confluence endpoint routing', () => {
 			key: 'ENG',
 			type: 'global',
 			status: 'current',
+			label: 'documentation',
+			cursor: 'next-page',
 			limit: 50,
-			expand: 'description',
 		});
 
 		const [, , , options] = mockRequest.mock.calls[0]!;
 		expect(options?.query).toMatchObject({
-			spaceKey: 'ENG',
+			keys: 'ENG',
 			type: 'global',
 			status: 'current',
+			labels: 'documentation',
+			cursor: 'next-page',
 			limit: 50,
-			expand: 'description',
 		});
+		expect(options?.base).toBe('/wiki/api/v2');
 	});
 
 	it('pages.get uses the v2 base path', async () => {

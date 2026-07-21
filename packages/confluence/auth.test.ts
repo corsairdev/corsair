@@ -1,15 +1,22 @@
 import {
 	getValidConfluenceAccessToken,
+	normalizeConfluenceCloudUrl,
 	resolveConfluenceCloudResource,
 } from './client';
 import { confluence } from './index';
 
 jest.mock('./client', () => ({
 	getValidConfluenceAccessToken: jest.fn(),
+	normalizeConfluenceCloudUrl: jest.fn((value: string) => {
+		let end = value.length;
+		while (end > 0 && value.charCodeAt(end - 1) === 47) end -= 1;
+		return value.slice(0, end);
+	}),
 	resolveConfluenceCloudResource: jest.fn(),
 }));
 
 const mockGetValidAccessToken = jest.mocked(getValidConfluenceAccessToken);
+const mockNormalizeCloudUrl = jest.mocked(normalizeConfluenceCloudUrl);
 const mockResolveCloudResource = jest.mocked(resolveConfluenceCloudResource);
 
 function endpointKeyBuilder(plugin: ReturnType<typeof confluence>) {
@@ -35,6 +42,7 @@ describe('Confluence authentication', () => {
 				scopes: expect.arrayContaining([
 					'offline_access',
 					'read:page:confluence',
+					'read:space:confluence',
 					'search:confluence',
 				]),
 				authParams: {
@@ -132,6 +140,47 @@ describe('Confluence authentication', () => {
 		expect(keys.set_refresh_token).toHaveBeenCalledWith('new-refresh-token');
 		expect(keys.set_cloud_id).toHaveBeenCalledWith('site-b');
 		expect(keys.set_cloud_url).toHaveBeenCalledWith('https://b.atlassian.net');
+	});
+
+	it('uses safe URL normalization when comparing a stored OAuth site', async () => {
+		const plugin = confluence({
+			authType: 'oauth_2',
+			cloudUrl: 'https://b.atlassian.net/',
+		});
+		const keyBuilder = endpointKeyBuilder(plugin);
+		mockGetValidAccessToken.mockResolvedValue({
+			accessToken: 'access-token',
+			refreshToken: 'refresh-token',
+			expiresAt: 12_345,
+			refreshed: false,
+		});
+
+		await keyBuilder(
+			{
+				authType: 'oauth_2',
+				options: plugin.options,
+				keys: {
+					get_access_token: jest.fn().mockResolvedValue('access-token'),
+					get_expires_at: jest.fn().mockResolvedValue('9999999999'),
+					get_refresh_token: jest.fn().mockResolvedValue('refresh-token'),
+					get_cloud_url: jest.fn().mockResolvedValue('https://b.atlassian.net'),
+					get_cloud_id: jest.fn().mockResolvedValue('site-b'),
+					get_integration_credentials: jest.fn().mockResolvedValue({
+						client_id: 'client-id',
+						client_secret: 'client-secret',
+					}),
+				},
+			},
+			'endpoint',
+		);
+
+		expect(mockNormalizeCloudUrl).toHaveBeenCalledWith(
+			'https://b.atlassian.net/',
+		);
+		expect(mockNormalizeCloudUrl).toHaveBeenCalledWith(
+			'https://b.atlassian.net',
+		);
+		expect(mockResolveCloudResource).not.toHaveBeenCalled();
 	});
 
 	it('does not expose placeholder webhooks', () => {

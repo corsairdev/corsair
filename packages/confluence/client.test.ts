@@ -34,6 +34,7 @@ const clientUnderTest = client as typeof client & {
 		accessToken: string,
 		cloudUrl?: string | null,
 	) => Promise<AccessibleResource>;
+	normalizeConfluenceCloudUrl: (cloudUrl: string) => string;
 };
 
 describe('Confluence API client', () => {
@@ -44,6 +45,14 @@ describe('Confluence API client', () => {
 
 	afterEach(() => {
 		jest.restoreAllMocks();
+	});
+
+	it('normalizes arbitrarily many trailing slashes in linear time', () => {
+		const cloudUrl = `https://example.atlassian.net${'/'.repeat(10_000)}`;
+
+		expect(clientUnderTest.normalizeConfluenceCloudUrl(cloudUrl)).toBe(
+			'https://example.atlassian.net',
+		);
 	});
 
 	it('routes OAuth requests through the Atlassian cloud ID gateway', async () => {
