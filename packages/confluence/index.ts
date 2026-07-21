@@ -136,7 +136,7 @@ const confluenceEndpointMeta = {
 	},
 	'pages.search': {
 		riskLevel: 'read',
-		description: 'Search Confluence pages  via CQL',
+		description: 'Search Confluence pages via CQL',
 	},
 	'spaces.list': {
 		riskLevel: 'read',
