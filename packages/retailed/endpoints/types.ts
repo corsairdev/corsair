@@ -19,6 +19,16 @@ const SearchProductsInputSchema = z.object({
 	sort: z.string().optional(),
 });
 
+/*               StockX Trends                          */
+
+const StockXTrendsInputSchema = z.object({
+	query: z.string().optional(),
+	sort_by: z.enum(['featured', 'most_active', 'release_date']).optional(),
+	country: z.string().optional(),
+});
+
+const StockXTrendsResponseSchema = z.array(RetailedProductSchema);
+
 const SearchProductsResponseSchema = z.object({
 	docs: z.array(RetailedProductSchema),
 	totalDocs: z.number(),
@@ -40,22 +50,30 @@ export type SearchProductsResponse = z.infer<
 	typeof SearchProductsResponseSchema
 >;
 
+export type StockXTrendsInput = z.infer<typeof StockXTrendsInputSchema>;
+
+export type StockXTrendsResponse = z.infer<typeof StockXTrendsResponseSchema>;
+
 export type RetailedEndpointInputs = {
 	getUsage: GetUsageInput;
 	searchProducts: SearchProductsInput;
+	stockxTrends: StockXTrendsInput;
 };
 
 export type RetailedEndpointOutputs = {
 	getUsage: GetUsageResponse;
 	searchProducts: SearchProductsResponse;
+	stockxTrends: StockXTrendsResponse;
 };
 
 export const RetailedEndpointInputSchemas = {
 	getUsage: GetUsageInputSchema,
 	searchProducts: SearchProductsInputSchema,
+	stockxTrends: StockXTrendsInputSchema,
 } as const;
 
 export const RetailedEndpointOutputSchemas = {
 	getUsage: GetUsageResponseSchema,
 	searchProducts: SearchProductsResponseSchema,
+	stockxTrends: StockXTrendsResponseSchema,
 } as const;

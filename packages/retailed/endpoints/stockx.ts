@@ -1,0 +1,38 @@
+import type { CorsairEndpoint } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
+
+import type { RetailedContext } from '..';
+import { makeRetailedRequest } from '../client';
+import type { RetailedEndpointInputs, RetailedEndpointOutputs } from './types';
+import { RetailedEndpointOutputSchemas } from './types';
+
+export const stockxTrends: CorsairEndpoint<
+	RetailedContext,
+	RetailedEndpointInputs['stockxTrends'],
+	RetailedEndpointOutputs['stockxTrends']
+> = async (ctx, input) => {
+	const query: Record<string, string> = {};
+
+	if (input.query) {
+		query.query = input.query;
+	}
+
+	if (input.sort_by) {
+		query.sort_by = input.sort_by;
+	}
+
+	if (input.country) {
+		query.country = input.country;
+	}
+
+	const response = await makeRetailedRequest<
+		RetailedEndpointOutputs['stockxTrends']
+	>('scraper/stockx/trends', ctx.key, {
+		method: 'GET',
+		query,
+	});
+
+	await logEventFromContext(ctx, 'retailed.stockx.trends', {}, 'completed');
+
+	return RetailedEndpointOutputSchemas.stockxTrends.parse(response);
+};

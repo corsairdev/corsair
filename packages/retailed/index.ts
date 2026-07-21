@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Products, Usage } from './endpoints';
+import { Products, StockX, Usage } from './endpoints';
 import type {
 	RetailedEndpointInputs,
 	RetailedEndpointOutputs,
@@ -57,6 +57,7 @@ type RetailedEndpoint<K extends keyof RetailedEndpointOutputs> =
 export type RetailedEndpoints = {
 	getUsage: RetailedEndpoint<'getUsage'>;
 	searchProducts: RetailedEndpoint<'searchProducts'>;
+	stockxTrends: RetailedEndpoint<'stockxTrends'>;
 };
 
 const retailedEndpointsNested = {
@@ -65,6 +66,9 @@ const retailedEndpointsNested = {
 	},
 	products: {
 		search: Products.search,
+	},
+	stockx: {
+		trends: StockX.trends,
 	},
 } as const;
 
@@ -78,6 +82,10 @@ export const retailedEndpointSchemas = {
 	'products.search': {
 		input: RetailedEndpointInputSchemas.searchProducts,
 		output: RetailedEndpointOutputSchemas.searchProducts,
+	},
+	'stockx.trends': {
+		input: RetailedEndpointInputSchemas.stockxTrends,
+		output: RetailedEndpointOutputSchemas.stockxTrends,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof retailedEndpointsNested
@@ -93,6 +101,10 @@ const retailedEndpointMeta = {
 	'products.search': {
 		riskLevel: 'read',
 		description: 'Search products',
+	},
+	'stockx.trends': {
+		riskLevel: 'read',
+		description: 'Get StockX trends',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof retailedEndpointsNested>;
 
@@ -175,4 +187,6 @@ export type {
 	RetailedEndpointOutputs,
 	SearchProductsInput,
 	SearchProductsResponse,
+	StockXTrendsInput,
+	StockXTrendsResponse,
 } from './endpoints/types';
