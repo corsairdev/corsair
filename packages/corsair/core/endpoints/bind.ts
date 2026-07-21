@@ -3,6 +3,7 @@ import type { HubConfig } from '../../hub';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
+import { resolveBindingKey } from '../auth/resolve-binding-key';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
@@ -241,7 +242,11 @@ export function bindEndpointsRecursively({
 
 				let key: string | undefined;
 				try {
-					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
+					key = await resolveBindingKey(
+						ctx as Parameters<typeof resolveBindingKey>[0],
+						{ id: pluginId, managed: plugin?.managed, keyBuilder },
+						'endpoint',
+					);
 				} catch (err) {
 					if (err instanceof AuthMissingError) {
 						if (plugin && hubConfig) {

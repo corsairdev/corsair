@@ -1,3 +1,5 @@
+import type { ManagedCapablePlugin } from '../auth/resolve-binding-key';
+import { resolveBindingKey } from '../auth/resolve-binding-key';
 import type { CorsairKeyBuilderBase, WebhookHooks } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -37,12 +39,14 @@ export function bindWebhooksRecursively({
 	ctx,
 	webhooksTree,
 	keyBuilder,
+	plugin,
 }: {
 	webhooks: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
 	ctx: Record<string, unknown>;
 	webhooksTree: Record<string, unknown>;
 	keyBuilder?: CorsairKeyBuilderBase;
+	plugin: ManagedCapablePlugin;
 }): void {
 	for (const [key, value] of Object.entries(webhooks)) {
 		// we have to retype this now because it's nested webhooks
@@ -56,7 +60,14 @@ export function bindWebhooksRecursively({
 				const call = (callCtx: Record<string, unknown>, callRequest: unknown) =>
 					value.handler(callCtx, callRequest);
 
-				const key = keyBuilder ? await keyBuilder(ctx, 'webhook') : undefined;
+				const key = await resolveBindingKey(
+					ctx as Parameters<typeof resolveBindingKey>[0],
+					{
+						...plugin,
+						keyBuilder: keyBuilder as ManagedCapablePlugin['keyBuilder'],
+					},
+					'webhook',
+				);
 
 				if (!webhookHooks?.before && !webhookHooks?.after) {
 					return call({ ...ctx, key }, request);
@@ -101,6 +112,7 @@ export function bindWebhooksRecursively({
 				ctx,
 				webhooksTree: nestedWebhooksTree,
 				keyBuilder,
+				plugin,
 			});
 
 			webhooksTree[key] = nestedWebhooksTree;

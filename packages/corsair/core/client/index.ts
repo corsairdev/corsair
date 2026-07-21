@@ -543,6 +543,7 @@ export function buildCorsairClient<
 				ctx: ctxForPlugin,
 				webhooksTree: boundWebhooks,
 				keyBuilder: plugin.keyBuilder as CorsairKeyBuilderBase | undefined,
+				plugin,
 			});
 			apiUnsafe[plugin.id]!.webhooks = boundWebhooks;
 
