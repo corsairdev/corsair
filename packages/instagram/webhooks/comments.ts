@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
 import {
 	createInstagramWebhookMatcher,
@@ -9,6 +9,12 @@ import {
 export const comments: InstagramWebhooks['comments'] = {
 	match: createInstagramWebhookMatcher('comments'),
 	handler: async (ctx, request) => {
+		// Managed webhooks are verified by Hub before the handler runs, so the
+		// managed key-manager variant omits get_integration_credentials. Narrow to
+		// the oauth_2 variant that exposes it.
+		if (!('get_integration_credentials' in ctx.keys)) {
+			throw new AuthMissingError('instagram', 'oauth_2');
+		}
 		const credentials = await ctx.keys.get_integration_credentials();
 		const appSecret = credentials.client_secret;
 

@@ -297,6 +297,9 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			// See https://www.dropbox.com/developers/reference/webhooks
 			if (source === 'webhook') {
 				if (options.webhookSecret) return options.webhookSecret;
+				if (ctx.authType !== 'oauth_2') {
+					throw new AuthMissingError('dropbox', 'oauth_2');
+				}
 				const creds = await ctx.keys.get_integration_credentials();
 				if (!creds.client_secret) {
 					throw new Error(
