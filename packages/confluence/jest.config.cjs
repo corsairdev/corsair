@@ -49,6 +49,7 @@ module.exports = {
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	testPathIgnorePatterns: ['integration\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

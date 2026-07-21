@@ -42,10 +42,16 @@ export async function makeConfluenceRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query, base, authType } = options;
 
-	const authorization =
-		authType === 'oauth_2'
-			? `Bearer ${apiKey}`
-			: `Basic ${Buffer.from(apiKey).toString('base64')}`;
+	const authorization = (() => {
+		if (authType === 'oauth_2') {
+			return `Bearer ${apiKey}`;
+		}
+		// Atlassian Cloud Basic auth requires "email:apiToken" format.
+		// If the stored key is a bare token without a colon, we can't form a
+		// valid Basic credential. This matches the jira plugin's contract.
+		// Ref: https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
+		return `Basic ${Buffer.from(apiKey).toString('base64')}`;
+	})();
 
 	const config: OpenAPIConfig = {
 		BASE: `${cloudUrl}${base ?? '/wiki/rest/api'}`,
