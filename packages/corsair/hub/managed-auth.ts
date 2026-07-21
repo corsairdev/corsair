@@ -80,9 +80,8 @@ export async function getManagedAccessToken(
 
 	await keys.set_access_token(tokens.access_token);
 	await keys.set_expires_at(String(nextExpiresAt));
-	if (tokens.refresh_token) {
-		await keys.set_refresh_token(tokens.refresh_token);
-	}
+	// Custody: the app caches only the short-lived access token. The refresh
+	// token stays at Hub — managed means "we own it" (revocation via Hub).
 	if (tokens.scope) {
 		await keys.set_scope(tokens.scope);
 	}
