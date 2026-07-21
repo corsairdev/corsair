@@ -32,6 +32,11 @@ const BODY_CONTROL_KEYS = new Set([
 	'baseUrl',
 ]);
 
+// Output is `unknown` because Algolia's responses vary wildly across 133
+// operations (search hits, task acknowledgements, paginated lists, etc.)
+// and each call site narrows with the matching Zod output schema from
+// `algoliaEndpointSchemas`. Modeling a single union here would force
+// callers to re-narrow anyway.
 export type AlgoliaEndpoint = CorsairEndpoint<
 	AlgoliaContext,
 	AlgoliaEndpointInput,
