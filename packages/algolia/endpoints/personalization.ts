@@ -22,7 +22,10 @@ export const getUsers: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const setPersonalizationStrategyRoute = getRoute('setPersonalizationStrategy');
-export const setPersonalizationStrategy: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const setPersonalizationStrategy: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, setPersonalizationStrategyRoute);
 };
 
@@ -31,5 +34,5 @@ export const PersonalizationEndpoints = {
 	deleteUserProfile,
 	getConfig2,
 	getUsers,
-	setPersonalizationStrategy
+	setPersonalizationStrategy,
 } as const;

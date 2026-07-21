@@ -7,5 +7,5 @@ export const getLogs: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 export const LogsEndpoints = {
-	getLogs
+	getLogs,
 } as const;

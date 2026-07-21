@@ -67,5 +67,5 @@ export const TasksEndpoints = {
 	replaceTask,
 	runTaskV1,
 	searchTasksV1,
-	updateTask
+	updateTask,
 } as const;

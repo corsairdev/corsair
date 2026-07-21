@@ -6,8 +6,13 @@ export const clearRules: AlgoliaEndpoint = async (ctx, input = {}) => {
 	return executeAlgoliaOperation(ctx, input, clearRulesRoute);
 };
 
-const createOrUpdateRecommendRulesRoute = getRoute('createOrUpdateRecommendRules');
-export const createOrUpdateRecommendRules: AlgoliaEndpoint = async (ctx, input = {}) => {
+const createOrUpdateRecommendRulesRoute = getRoute(
+	'createOrUpdateRecommendRules',
+);
+export const createOrUpdateRecommendRules: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, createOrUpdateRecommendRulesRoute);
 };
 
@@ -47,7 +52,10 @@ export const saveRule: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const searchRecommendRulesRoute = getRoute('searchRecommendRules');
-export const searchRecommendRules: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const searchRecommendRules: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, searchRecommendRulesRoute);
 };
 
@@ -61,5 +69,5 @@ export const RulesEndpoints = {
 	getRule,
 	replaceAllRules,
 	saveRule,
-	searchRecommendRules
+	searchRecommendRules,
 } as const;

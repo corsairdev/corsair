@@ -11,9 +11,11 @@ export const AlgoliaIndex = z.object({
 	pendingTask: z.boolean().optional(),
 });
 
-export const AlgoliaRecord = z.object({
-	objectID: z.union([z.string(), z.number()]).optional(),
-}).catchall(z.unknown());
+export const AlgoliaRecord = z
+	.object({
+		objectID: z.union([z.string(), z.number()]).optional(),
+	})
+	.catchall(z.unknown());
 
 export const AlgoliaTask = z.object({
 	taskID: z.union([z.string(), z.number()]).optional(),

@@ -6,8 +6,13 @@ export const clickedObjectIds: AlgoliaEndpoint = async (ctx, input = {}) => {
 	return executeAlgoliaOperation(ctx, input, clickedObjectIdsRoute);
 };
 
-const clickedObjectIdsAfterSearchRoute = getRoute('clickedObjectIdsAfterSearch');
-export const clickedObjectIdsAfterSearch: AlgoliaEndpoint = async (ctx, input = {}) => {
+const clickedObjectIdsAfterSearchRoute = getRoute(
+	'clickedObjectIdsAfterSearch',
+);
+export const clickedObjectIdsAfterSearch: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, clickedObjectIdsAfterSearchRoute);
 };
 
@@ -31,5 +36,5 @@ export const InsightsEndpoints = {
 	clickedObjectIdsAfterSearch,
 	convertedObjectIds,
 	deleteUserToken,
-	initInsights
+	initInsights,
 } as const;

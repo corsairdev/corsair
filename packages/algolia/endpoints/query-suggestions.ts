@@ -31,5 +31,5 @@ export const QuerySuggestionsEndpoints = {
 	deleteConfig,
 	getConfig,
 	listQsConfigs,
-	updateConfig
+	updateConfig,
 } as const;

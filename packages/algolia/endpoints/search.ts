@@ -27,7 +27,10 @@ export const searchIndex: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const searchMultipleIndicesRoute = getRoute('searchMultipleIndices');
-export const searchMultipleIndices: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const searchMultipleIndices: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, searchMultipleIndicesRoute);
 };
 
@@ -37,5 +40,5 @@ export const SearchEndpoints = {
 	getObjects,
 	searchFacetValues,
 	searchIndex,
-	searchMultipleIndices
+	searchMultipleIndices,
 } as const;

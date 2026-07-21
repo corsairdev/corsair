@@ -37,5 +37,5 @@ export const SynonymsEndpoints = {
 	getSynonym,
 	saveSynonym,
 	saveSynonyms,
-	searchSynonyms
+	searchSynonyms,
 } as const;

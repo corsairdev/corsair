@@ -31,9 +31,13 @@ const AddOrReplaceRecordInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type AddOrReplaceRecordInput = z.infer<typeof AddOrReplaceRecordInputSchema>;
+export type AddOrReplaceRecordInput = z.infer<
+	typeof AddOrReplaceRecordInputSchema
+>;
 const AddOrReplaceRecordResponseSchema = AlgoliaResponseSchema;
-export type AddOrReplaceRecordResponse = z.infer<typeof AddOrReplaceRecordResponseSchema>;
+export type AddOrReplaceRecordResponse = z.infer<
+	typeof AddOrReplaceRecordResponseSchema
+>;
 
 // addRecord
 const AddRecordInputSchema = z.object({
@@ -121,7 +125,9 @@ const ClickedObjectIdsInputSchema = z.object({
 });
 export type ClickedObjectIdsInput = z.infer<typeof ClickedObjectIdsInputSchema>;
 const ClickedObjectIdsResponseSchema = AlgoliaResponseSchema;
-export type ClickedObjectIdsResponse = z.infer<typeof ClickedObjectIdsResponseSchema>;
+export type ClickedObjectIdsResponse = z.infer<
+	typeof ClickedObjectIdsResponseSchema
+>;
 
 // clickedObjectIdsAfterSearch
 const ClickedObjectIdsAfterSearchInputSchema = z.object({
@@ -138,9 +144,13 @@ const ClickedObjectIdsAfterSearchInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type ClickedObjectIdsAfterSearchInput = z.infer<typeof ClickedObjectIdsAfterSearchInputSchema>;
+export type ClickedObjectIdsAfterSearchInput = z.infer<
+	typeof ClickedObjectIdsAfterSearchInputSchema
+>;
 const ClickedObjectIdsAfterSearchResponseSchema = AlgoliaResponseSchema;
-export type ClickedObjectIdsAfterSearchResponse = z.infer<typeof ClickedObjectIdsAfterSearchResponseSchema>;
+export type ClickedObjectIdsAfterSearchResponse = z.infer<
+	typeof ClickedObjectIdsAfterSearchResponseSchema
+>;
 
 // computeRealtimeUser
 const ComputeRealtimeUserInputSchema = z.object({
@@ -151,9 +161,13 @@ const ComputeRealtimeUserInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type ComputeRealtimeUserInput = z.infer<typeof ComputeRealtimeUserInputSchema>;
+export type ComputeRealtimeUserInput = z.infer<
+	typeof ComputeRealtimeUserInputSchema
+>;
 const ComputeRealtimeUserResponseSchema = AlgoliaResponseSchema;
-export type ComputeRealtimeUserResponse = z.infer<typeof ComputeRealtimeUserResponseSchema>;
+export type ComputeRealtimeUserResponse = z.infer<
+	typeof ComputeRealtimeUserResponseSchema
+>;
 
 // convertedObjectIds
 const ConvertedObjectIdsInputSchema = z.object({
@@ -169,9 +183,13 @@ const ConvertedObjectIdsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type ConvertedObjectIdsInput = z.infer<typeof ConvertedObjectIdsInputSchema>;
+export type ConvertedObjectIdsInput = z.infer<
+	typeof ConvertedObjectIdsInputSchema
+>;
 const ConvertedObjectIdsResponseSchema = AlgoliaResponseSchema;
-export type ConvertedObjectIdsResponse = z.infer<typeof ConvertedObjectIdsResponseSchema>;
+export type ConvertedObjectIdsResponse = z.infer<
+	typeof ConvertedObjectIdsResponseSchema
+>;
 
 // copyIndex
 const CopyIndexInputSchema = z.object({
@@ -220,9 +238,13 @@ const CreateAuthenticationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type CreateAuthenticationInput = z.infer<typeof CreateAuthenticationInputSchema>;
+export type CreateAuthenticationInput = z.infer<
+	typeof CreateAuthenticationInputSchema
+>;
 const CreateAuthenticationResponseSchema = AlgoliaResponseSchema;
-export type CreateAuthenticationResponse = z.infer<typeof CreateAuthenticationResponseSchema>;
+export type CreateAuthenticationResponse = z.infer<
+	typeof CreateAuthenticationResponseSchema
+>;
 
 // createDestination
 const CreateDestinationInputSchema = z.object({
@@ -237,9 +259,13 @@ const CreateDestinationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type CreateDestinationInput = z.infer<typeof CreateDestinationInputSchema>;
+export type CreateDestinationInput = z.infer<
+	typeof CreateDestinationInputSchema
+>;
 const CreateDestinationResponseSchema = AlgoliaResponseSchema;
-export type CreateDestinationResponse = z.infer<typeof CreateDestinationResponseSchema>;
+export type CreateDestinationResponse = z.infer<
+	typeof CreateDestinationResponseSchema
+>;
 
 // createIngestionTask
 const CreateIngestionTaskInputSchema = z.object({
@@ -260,9 +286,13 @@ const CreateIngestionTaskInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type CreateIngestionTaskInput = z.infer<typeof CreateIngestionTaskInputSchema>;
+export type CreateIngestionTaskInput = z.infer<
+	typeof CreateIngestionTaskInputSchema
+>;
 const CreateIngestionTaskResponseSchema = AlgoliaResponseSchema;
-export type CreateIngestionTaskResponse = z.infer<typeof CreateIngestionTaskResponseSchema>;
+export type CreateIngestionTaskResponse = z.infer<
+	typeof CreateIngestionTaskResponseSchema
+>;
 
 // createOrUpdateRecommendRules
 const CreateOrUpdateRecommendRulesInputSchema = z.object({
@@ -275,9 +305,13 @@ const CreateOrUpdateRecommendRulesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type CreateOrUpdateRecommendRulesInput = z.infer<typeof CreateOrUpdateRecommendRulesInputSchema>;
+export type CreateOrUpdateRecommendRulesInput = z.infer<
+	typeof CreateOrUpdateRecommendRulesInputSchema
+>;
 const CreateOrUpdateRecommendRulesResponseSchema = AlgoliaResponseSchema;
-export type CreateOrUpdateRecommendRulesResponse = z.infer<typeof CreateOrUpdateRecommendRulesResponseSchema>;
+export type CreateOrUpdateRecommendRulesResponse = z.infer<
+	typeof CreateOrUpdateRecommendRulesResponseSchema
+>;
 
 // createQsConfig
 const CreateQsConfigInputSchema = z.object({
@@ -295,7 +329,9 @@ const CreateQsConfigInputSchema = z.object({
 });
 export type CreateQsConfigInput = z.infer<typeof CreateQsConfigInputSchema>;
 const CreateQsConfigResponseSchema = AlgoliaResponseSchema;
-export type CreateQsConfigResponse = z.infer<typeof CreateQsConfigResponseSchema>;
+export type CreateQsConfigResponse = z.infer<
+	typeof CreateQsConfigResponseSchema
+>;
 
 // createSource
 const CreateSourceInputSchema = z.object({
@@ -326,9 +362,13 @@ const CreateTransformationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type CreateTransformationInput = z.infer<typeof CreateTransformationInputSchema>;
+export type CreateTransformationInput = z.infer<
+	typeof CreateTransformationInputSchema
+>;
 const CreateTransformationResponseSchema = AlgoliaResponseSchema;
-export type CreateTransformationResponse = z.infer<typeof CreateTransformationResponseSchema>;
+export type CreateTransformationResponse = z.infer<
+	typeof CreateTransformationResponseSchema
+>;
 
 // deleteAbTest
 const DeleteAbTestInputSchema = z.object({
@@ -365,9 +405,13 @@ const DeleteAuthenticationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type DeleteAuthenticationInput = z.infer<typeof DeleteAuthenticationInputSchema>;
+export type DeleteAuthenticationInput = z.infer<
+	typeof DeleteAuthenticationInputSchema
+>;
 const DeleteAuthenticationResponseSchema = AlgoliaResponseSchema;
-export type DeleteAuthenticationResponse = z.infer<typeof DeleteAuthenticationResponseSchema>;
+export type DeleteAuthenticationResponse = z.infer<
+	typeof DeleteAuthenticationResponseSchema
+>;
 
 // deleteConfig
 const DeleteConfigInputSchema = z.object({
@@ -391,9 +435,13 @@ const DeleteDestinationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type DeleteDestinationInput = z.infer<typeof DeleteDestinationInputSchema>;
+export type DeleteDestinationInput = z.infer<
+	typeof DeleteDestinationInputSchema
+>;
 const DeleteDestinationResponseSchema = AlgoliaResponseSchema;
-export type DeleteDestinationResponse = z.infer<typeof DeleteDestinationResponseSchema>;
+export type DeleteDestinationResponse = z.infer<
+	typeof DeleteDestinationResponseSchema
+>;
 
 // deleteIndex
 const DeleteIndexInputSchema = z.object({
@@ -434,9 +482,13 @@ const DeleteRecommendRuleInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type DeleteRecommendRuleInput = z.infer<typeof DeleteRecommendRuleInputSchema>;
+export type DeleteRecommendRuleInput = z.infer<
+	typeof DeleteRecommendRuleInputSchema
+>;
 const DeleteRecommendRuleResponseSchema = AlgoliaResponseSchema;
-export type DeleteRecommendRuleResponse = z.infer<typeof DeleteRecommendRuleResponseSchema>;
+export type DeleteRecommendRuleResponse = z.infer<
+	typeof DeleteRecommendRuleResponseSchema
+>;
 
 // deleteRecordsByFilter
 const DeleteRecordsByFilterInputSchema = z.object({
@@ -456,9 +508,13 @@ const DeleteRecordsByFilterInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type DeleteRecordsByFilterInput = z.infer<typeof DeleteRecordsByFilterInputSchema>;
+export type DeleteRecordsByFilterInput = z.infer<
+	typeof DeleteRecordsByFilterInputSchema
+>;
 const DeleteRecordsByFilterResponseSchema = AlgoliaResponseSchema;
-export type DeleteRecordsByFilterResponse = z.infer<typeof DeleteRecordsByFilterResponseSchema>;
+export type DeleteRecordsByFilterResponse = z.infer<
+	typeof DeleteRecordsByFilterResponseSchema
+>;
 
 // deleteRule
 const DeleteRuleInputSchema = z.object({
@@ -512,9 +568,13 @@ const DeleteTransformationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type DeleteTransformationInput = z.infer<typeof DeleteTransformationInputSchema>;
+export type DeleteTransformationInput = z.infer<
+	typeof DeleteTransformationInputSchema
+>;
 const DeleteTransformationResponseSchema = AlgoliaResponseSchema;
-export type DeleteTransformationResponse = z.infer<typeof DeleteTransformationResponseSchema>;
+export type DeleteTransformationResponse = z.infer<
+	typeof DeleteTransformationResponseSchema
+>;
 
 // deleteUserProfile
 const DeleteUserProfileInputSchema = z.object({
@@ -525,9 +585,13 @@ const DeleteUserProfileInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type DeleteUserProfileInput = z.infer<typeof DeleteUserProfileInputSchema>;
+export type DeleteUserProfileInput = z.infer<
+	typeof DeleteUserProfileInputSchema
+>;
 const DeleteUserProfileResponseSchema = AlgoliaResponseSchema;
-export type DeleteUserProfileResponse = z.infer<typeof DeleteUserProfileResponseSchema>;
+export type DeleteUserProfileResponse = z.infer<
+	typeof DeleteUserProfileResponseSchema
+>;
 
 // deleteUserToken
 const DeleteUserTokenInputSchema = z.object({
@@ -540,7 +604,9 @@ const DeleteUserTokenInputSchema = z.object({
 });
 export type DeleteUserTokenInput = z.infer<typeof DeleteUserTokenInputSchema>;
 const DeleteUserTokenResponseSchema = AlgoliaResponseSchema;
-export type DeleteUserTokenResponse = z.infer<typeof DeleteUserTokenResponseSchema>;
+export type DeleteUserTokenResponse = z.infer<
+	typeof DeleteUserTokenResponseSchema
+>;
 
 // disableTaskV1
 const DisableTaskV1InputSchema = z.object({
@@ -577,9 +643,13 @@ const ExecuteBatchOnMultipleIndicesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type ExecuteBatchOnMultipleIndicesInput = z.infer<typeof ExecuteBatchOnMultipleIndicesInputSchema>;
+export type ExecuteBatchOnMultipleIndicesInput = z.infer<
+	typeof ExecuteBatchOnMultipleIndicesInputSchema
+>;
 const ExecuteBatchOnMultipleIndicesResponseSchema = AlgoliaResponseSchema;
-export type ExecuteBatchOnMultipleIndicesResponse = z.infer<typeof ExecuteBatchOnMultipleIndicesResponseSchema>;
+export type ExecuteBatchOnMultipleIndicesResponse = z.infer<
+	typeof ExecuteBatchOnMultipleIndicesResponseSchema
+>;
 
 // exportRules
 const ExportRulesInputSchema = z.object({
@@ -638,7 +708,9 @@ const GetAddToCartRateInputSchema = z.object({
 });
 export type GetAddToCartRateInput = z.infer<typeof GetAddToCartRateInputSchema>;
 const GetAddToCartRateResponseSchema = AlgoliaResponseSchema;
-export type GetAddToCartRateResponse = z.infer<typeof GetAddToCartRateResponseSchema>;
+export type GetAddToCartRateResponse = z.infer<
+	typeof GetAddToCartRateResponseSchema
+>;
 
 // getApiKey
 const GetApiKeyInputSchema = z.object({
@@ -675,9 +747,13 @@ const GetAuthenticationInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetAuthenticationInput = z.infer<typeof GetAuthenticationInputSchema>;
+export type GetAuthenticationInput = z.infer<
+	typeof GetAuthenticationInputSchema
+>;
 const GetAuthenticationResponseSchema = AlgoliaResponseSchema;
-export type GetAuthenticationResponse = z.infer<typeof GetAuthenticationResponseSchema>;
+export type GetAuthenticationResponse = z.infer<
+	typeof GetAuthenticationResponseSchema
+>;
 
 // getAverageClickPosition
 const GetAverageClickPositionInputSchema = z.object({
@@ -691,9 +767,13 @@ const GetAverageClickPositionInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetAverageClickPositionInput = z.infer<typeof GetAverageClickPositionInputSchema>;
+export type GetAverageClickPositionInput = z.infer<
+	typeof GetAverageClickPositionInputSchema
+>;
 const GetAverageClickPositionResponseSchema = AlgoliaResponseSchema;
-export type GetAverageClickPositionResponse = z.infer<typeof GetAverageClickPositionResponseSchema>;
+export type GetAverageClickPositionResponse = z.infer<
+	typeof GetAverageClickPositionResponseSchema
+>;
 
 // getClickPositions
 const GetClickPositionsInputSchema = z.object({
@@ -707,9 +787,13 @@ const GetClickPositionsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetClickPositionsInput = z.infer<typeof GetClickPositionsInputSchema>;
+export type GetClickPositionsInput = z.infer<
+	typeof GetClickPositionsInputSchema
+>;
 const GetClickPositionsResponseSchema = AlgoliaResponseSchema;
-export type GetClickPositionsResponse = z.infer<typeof GetClickPositionsResponseSchema>;
+export type GetClickPositionsResponse = z.infer<
+	typeof GetClickPositionsResponseSchema
+>;
 
 // getClickThroughRate
 const GetClickThroughRateInputSchema = z.object({
@@ -723,9 +807,13 @@ const GetClickThroughRateInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetClickThroughRateInput = z.infer<typeof GetClickThroughRateInputSchema>;
+export type GetClickThroughRateInput = z.infer<
+	typeof GetClickThroughRateInputSchema
+>;
 const GetClickThroughRateResponseSchema = AlgoliaResponseSchema;
-export type GetClickThroughRateResponse = z.infer<typeof GetClickThroughRateResponseSchema>;
+export type GetClickThroughRateResponse = z.infer<
+	typeof GetClickThroughRateResponseSchema
+>;
 
 // getConfig
 const GetConfigInputSchema = z.object({
@@ -764,9 +852,13 @@ const GetConversionRateInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetConversionRateInput = z.infer<typeof GetConversionRateInputSchema>;
+export type GetConversionRateInput = z.infer<
+	typeof GetConversionRateInputSchema
+>;
 const GetConversionRateResponseSchema = AlgoliaResponseSchema;
-export type GetConversionRateResponse = z.infer<typeof GetConversionRateResponseSchema>;
+export type GetConversionRateResponse = z.infer<
+	typeof GetConversionRateResponseSchema
+>;
 
 // getDestination
 const GetDestinationInputSchema = z.object({
@@ -779,7 +871,9 @@ const GetDestinationInputSchema = z.object({
 });
 export type GetDestinationInput = z.infer<typeof GetDestinationInputSchema>;
 const GetDestinationResponseSchema = AlgoliaResponseSchema;
-export type GetDestinationResponse = z.infer<typeof GetDestinationResponseSchema>;
+export type GetDestinationResponse = z.infer<
+	typeof GetDestinationResponseSchema
+>;
 
 // getDictionaryLanguages
 const GetDictionaryLanguagesInputSchema = z.object({
@@ -789,9 +883,13 @@ const GetDictionaryLanguagesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetDictionaryLanguagesInput = z.infer<typeof GetDictionaryLanguagesInputSchema>;
+export type GetDictionaryLanguagesInput = z.infer<
+	typeof GetDictionaryLanguagesInputSchema
+>;
 const GetDictionaryLanguagesResponseSchema = AlgoliaResponseSchema;
-export type GetDictionaryLanguagesResponse = z.infer<typeof GetDictionaryLanguagesResponseSchema>;
+export type GetDictionaryLanguagesResponse = z.infer<
+	typeof GetDictionaryLanguagesResponseSchema
+>;
 
 // getDictionarySettings
 const GetDictionarySettingsInputSchema = z.object({
@@ -801,9 +899,13 @@ const GetDictionarySettingsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetDictionarySettingsInput = z.infer<typeof GetDictionarySettingsInputSchema>;
+export type GetDictionarySettingsInput = z.infer<
+	typeof GetDictionarySettingsInputSchema
+>;
 const GetDictionarySettingsResponseSchema = AlgoliaResponseSchema;
-export type GetDictionarySettingsResponse = z.infer<typeof GetDictionarySettingsResponseSchema>;
+export type GetDictionarySettingsResponse = z.infer<
+	typeof GetDictionarySettingsResponseSchema
+>;
 
 // getLogs
 const GetLogsInputSchema = z.object({
@@ -835,7 +937,9 @@ const GetNoClickRateInputSchema = z.object({
 });
 export type GetNoClickRateInput = z.infer<typeof GetNoClickRateInputSchema>;
 const GetNoClickRateResponseSchema = AlgoliaResponseSchema;
-export type GetNoClickRateResponse = z.infer<typeof GetNoClickRateResponseSchema>;
+export type GetNoClickRateResponse = z.infer<
+	typeof GetNoClickRateResponseSchema
+>;
 
 // getNoResultsRate
 const GetNoResultsRateInputSchema = z.object({
@@ -851,7 +955,9 @@ const GetNoResultsRateInputSchema = z.object({
 });
 export type GetNoResultsRateInput = z.infer<typeof GetNoResultsRateInputSchema>;
 const GetNoResultsRateResponseSchema = AlgoliaResponseSchema;
-export type GetNoResultsRateResponse = z.infer<typeof GetNoResultsRateResponseSchema>;
+export type GetNoResultsRateResponse = z.infer<
+	typeof GetNoResultsRateResponseSchema
+>;
 
 // getNoResultsSearches
 const GetNoResultsSearchesInputSchema = z.object({
@@ -867,9 +973,13 @@ const GetNoResultsSearchesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetNoResultsSearchesInput = z.infer<typeof GetNoResultsSearchesInputSchema>;
+export type GetNoResultsSearchesInput = z.infer<
+	typeof GetNoResultsSearchesInputSchema
+>;
 const GetNoResultsSearchesResponseSchema = AlgoliaResponseSchema;
-export type GetNoResultsSearchesResponse = z.infer<typeof GetNoResultsSearchesResponseSchema>;
+export type GetNoResultsSearchesResponse = z.infer<
+	typeof GetNoResultsSearchesResponseSchema
+>;
 
 // getObjectPosition
 const GetObjectPositionInputSchema = z.object({
@@ -882,9 +992,13 @@ const GetObjectPositionInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetObjectPositionInput = z.infer<typeof GetObjectPositionInputSchema>;
+export type GetObjectPositionInput = z.infer<
+	typeof GetObjectPositionInputSchema
+>;
 const GetObjectPositionResponseSchema = AlgoliaResponseSchema;
-export type GetObjectPositionResponse = z.infer<typeof GetObjectPositionResponseSchema>;
+export type GetObjectPositionResponse = z.infer<
+	typeof GetObjectPositionResponseSchema
+>;
 
 // getObjects
 const GetObjectsInputSchema = z.object({
@@ -913,7 +1027,9 @@ const GetPurchaseRateInputSchema = z.object({
 });
 export type GetPurchaseRateInput = z.infer<typeof GetPurchaseRateInputSchema>;
 const GetPurchaseRateResponseSchema = AlgoliaResponseSchema;
-export type GetPurchaseRateResponse = z.infer<typeof GetPurchaseRateResponseSchema>;
+export type GetPurchaseRateResponse = z.infer<
+	typeof GetPurchaseRateResponseSchema
+>;
 
 // getRecommendRule
 const GetRecommendRuleInputSchema = z.object({
@@ -928,7 +1044,9 @@ const GetRecommendRuleInputSchema = z.object({
 });
 export type GetRecommendRuleInput = z.infer<typeof GetRecommendRuleInputSchema>;
 const GetRecommendRuleResponseSchema = AlgoliaResponseSchema;
-export type GetRecommendRuleResponse = z.infer<typeof GetRecommendRuleResponseSchema>;
+export type GetRecommendRuleResponse = z.infer<
+	typeof GetRecommendRuleResponseSchema
+>;
 
 // getRecommendTaskStatus
 const GetRecommendTaskStatusInputSchema = z.object({
@@ -941,9 +1059,13 @@ const GetRecommendTaskStatusInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetRecommendTaskStatusInput = z.infer<typeof GetRecommendTaskStatusInputSchema>;
+export type GetRecommendTaskStatusInput = z.infer<
+	typeof GetRecommendTaskStatusInputSchema
+>;
 const GetRecommendTaskStatusResponseSchema = AlgoliaResponseSchema;
-export type GetRecommendTaskStatusResponse = z.infer<typeof GetRecommendTaskStatusResponseSchema>;
+export type GetRecommendTaskStatusResponse = z.infer<
+	typeof GetRecommendTaskStatusResponseSchema
+>;
 
 // getRecord
 const GetRecordInputSchema = z.object({
@@ -1004,7 +1126,9 @@ const GetSearchesCountInputSchema = z.object({
 });
 export type GetSearchesCountInput = z.infer<typeof GetSearchesCountInputSchema>;
 const GetSearchesCountResponseSchema = AlgoliaResponseSchema;
-export type GetSearchesCountResponse = z.infer<typeof GetSearchesCountResponseSchema>;
+export type GetSearchesCountResponse = z.infer<
+	typeof GetSearchesCountResponseSchema
+>;
 
 // getSearchesNoClicks
 const GetSearchesNoClicksInputSchema = z.object({
@@ -1020,9 +1144,13 @@ const GetSearchesNoClicksInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetSearchesNoClicksInput = z.infer<typeof GetSearchesNoClicksInputSchema>;
+export type GetSearchesNoClicksInput = z.infer<
+	typeof GetSearchesNoClicksInputSchema
+>;
 const GetSearchesNoClicksResponseSchema = AlgoliaResponseSchema;
-export type GetSearchesNoClicksResponse = z.infer<typeof GetSearchesNoClicksResponseSchema>;
+export type GetSearchesNoClicksResponse = z.infer<
+	typeof GetSearchesNoClicksResponseSchema
+>;
 
 // getSettings
 const GetSettingsInputSchema = z.object({
@@ -1107,7 +1235,9 @@ const GetTopCountriesInputSchema = z.object({
 });
 export type GetTopCountriesInput = z.infer<typeof GetTopCountriesInputSchema>;
 const GetTopCountriesResponseSchema = AlgoliaResponseSchema;
-export type GetTopCountriesResponse = z.infer<typeof GetTopCountriesResponseSchema>;
+export type GetTopCountriesResponse = z.infer<
+	typeof GetTopCountriesResponseSchema
+>;
 
 // getTopFilterAttributes
 const GetTopFilterAttributesInputSchema = z.object({
@@ -1124,9 +1254,13 @@ const GetTopFilterAttributesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetTopFilterAttributesInput = z.infer<typeof GetTopFilterAttributesInputSchema>;
+export type GetTopFilterAttributesInput = z.infer<
+	typeof GetTopFilterAttributesInputSchema
+>;
 const GetTopFilterAttributesResponseSchema = AlgoliaResponseSchema;
-export type GetTopFilterAttributesResponse = z.infer<typeof GetTopFilterAttributesResponseSchema>;
+export type GetTopFilterAttributesResponse = z.infer<
+	typeof GetTopFilterAttributesResponseSchema
+>;
 
 // getTopFilterForAttribute
 const GetTopFilterForAttributeInputSchema = z.object({
@@ -1144,9 +1278,13 @@ const GetTopFilterForAttributeInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetTopFilterForAttributeInput = z.infer<typeof GetTopFilterForAttributeInputSchema>;
+export type GetTopFilterForAttributeInput = z.infer<
+	typeof GetTopFilterForAttributeInputSchema
+>;
 const GetTopFilterForAttributeResponseSchema = AlgoliaResponseSchema;
-export type GetTopFilterForAttributeResponse = z.infer<typeof GetTopFilterForAttributeResponseSchema>;
+export type GetTopFilterForAttributeResponse = z.infer<
+	typeof GetTopFilterForAttributeResponseSchema
+>;
 
 // getTopFiltersNoResults
 const GetTopFiltersNoResultsInputSchema = z.object({
@@ -1163,9 +1301,13 @@ const GetTopFiltersNoResultsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetTopFiltersNoResultsInput = z.infer<typeof GetTopFiltersNoResultsInputSchema>;
+export type GetTopFiltersNoResultsInput = z.infer<
+	typeof GetTopFiltersNoResultsInputSchema
+>;
 const GetTopFiltersNoResultsResponseSchema = AlgoliaResponseSchema;
-export type GetTopFiltersNoResultsResponse = z.infer<typeof GetTopFiltersNoResultsResponseSchema>;
+export type GetTopFiltersNoResultsResponse = z.infer<
+	typeof GetTopFiltersNoResultsResponseSchema
+>;
 
 // getTopHits
 const GetTopHitsInputSchema = z.object({
@@ -1208,7 +1350,9 @@ const GetTopSearchesInputSchema = z.object({
 });
 export type GetTopSearchesInput = z.infer<typeof GetTopSearchesInputSchema>;
 const GetTopSearchesResponseSchema = AlgoliaResponseSchema;
-export type GetTopSearchesResponse = z.infer<typeof GetTopSearchesResponseSchema>;
+export type GetTopSearchesResponse = z.infer<
+	typeof GetTopSearchesResponseSchema
+>;
 
 // getTransformation
 const GetTransformationInputSchema = z.object({
@@ -1219,9 +1363,13 @@ const GetTransformationInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 	baseUrl: z.string().optional(),
 });
-export type GetTransformationInput = z.infer<typeof GetTransformationInputSchema>;
+export type GetTransformationInput = z.infer<
+	typeof GetTransformationInputSchema
+>;
 const GetTransformationResponseSchema = AlgoliaResponseSchema;
-export type GetTransformationResponse = z.infer<typeof GetTransformationResponseSchema>;
+export type GetTransformationResponse = z.infer<
+	typeof GetTransformationResponseSchema
+>;
 
 // getUsage
 const GetUsageInputSchema = z.object({
@@ -1254,7 +1402,9 @@ const GetUsageForIndexInputSchema = z.object({
 });
 export type GetUsageForIndexInput = z.infer<typeof GetUsageForIndexInputSchema>;
 const GetUsageForIndexResponseSchema = AlgoliaResponseSchema;
-export type GetUsageForIndexResponse = z.infer<typeof GetUsageForIndexResponseSchema>;
+export type GetUsageForIndexResponse = z.infer<
+	typeof GetUsageForIndexResponseSchema
+>;
 
 // getUsers
 const GetUsersInputSchema = z.object({
@@ -1359,9 +1509,13 @@ const ListAuthenticationsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type ListAuthenticationsInput = z.infer<typeof ListAuthenticationsInputSchema>;
+export type ListAuthenticationsInput = z.infer<
+	typeof ListAuthenticationsInputSchema
+>;
 const ListAuthenticationsResponseSchema = AlgoliaResponseSchema;
-export type ListAuthenticationsResponse = z.infer<typeof ListAuthenticationsResponseSchema>;
+export type ListAuthenticationsResponse = z.infer<
+	typeof ListAuthenticationsResponseSchema
+>;
 
 // listDestinations
 const ListDestinationsInputSchema = z.object({
@@ -1380,7 +1534,9 @@ const ListDestinationsInputSchema = z.object({
 });
 export type ListDestinationsInput = z.infer<typeof ListDestinationsInputSchema>;
 const ListDestinationsResponseSchema = AlgoliaResponseSchema;
-export type ListDestinationsResponse = z.infer<typeof ListDestinationsResponseSchema>;
+export type ListDestinationsResponse = z.infer<
+	typeof ListDestinationsResponseSchema
+>;
 
 // listIndices
 const ListIndicesInputSchema = z.object({
@@ -1413,9 +1569,13 @@ const ListIngestionTasksInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type ListIngestionTasksInput = z.infer<typeof ListIngestionTasksInputSchema>;
+export type ListIngestionTasksInput = z.infer<
+	typeof ListIngestionTasksInputSchema
+>;
 const ListIngestionTasksResponseSchema = AlgoliaResponseSchema;
-export type ListIngestionTasksResponse = z.infer<typeof ListIngestionTasksResponseSchema>;
+export type ListIngestionTasksResponse = z.infer<
+	typeof ListIngestionTasksResponseSchema
+>;
 
 // listQsConfigs
 const ListQsConfigsInputSchema = z.object({
@@ -1481,9 +1641,13 @@ const ListTransformationsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type ListTransformationsInput = z.infer<typeof ListTransformationsInputSchema>;
+export type ListTransformationsInput = z.infer<
+	typeof ListTransformationsInputSchema
+>;
 const ListTransformationsResponseSchema = AlgoliaResponseSchema;
-export type ListTransformationsResponse = z.infer<typeof ListTransformationsResponseSchema>;
+export type ListTransformationsResponse = z.infer<
+	typeof ListTransformationsResponseSchema
+>;
 
 // partialUpdateObjects
 const PartialUpdateObjectsInputSchema = z.object({
@@ -1495,9 +1659,13 @@ const PartialUpdateObjectsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type PartialUpdateObjectsInput = z.infer<typeof PartialUpdateObjectsInputSchema>;
+export type PartialUpdateObjectsInput = z.infer<
+	typeof PartialUpdateObjectsInputSchema
+>;
 const PartialUpdateObjectsResponseSchema = AlgoliaResponseSchema;
-export type PartialUpdateObjectsResponse = z.infer<typeof PartialUpdateObjectsResponseSchema>;
+export type PartialUpdateObjectsResponse = z.infer<
+	typeof PartialUpdateObjectsResponseSchema
+>;
 
 // pushTask
 const PushTaskInputSchema = z.object({
@@ -1529,7 +1697,9 @@ const ReplaceAllRulesInputSchema = z.object({
 });
 export type ReplaceAllRulesInput = z.infer<typeof ReplaceAllRulesInputSchema>;
 const ReplaceAllRulesResponseSchema = AlgoliaResponseSchema;
-export type ReplaceAllRulesResponse = z.infer<typeof ReplaceAllRulesResponseSchema>;
+export type ReplaceAllRulesResponse = z.infer<
+	typeof ReplaceAllRulesResponseSchema
+>;
 
 // replaceTask
 const ReplaceTaskInputSchema = z.object({
@@ -1642,9 +1812,13 @@ const SearchAuthenticationsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SearchAuthenticationsInput = z.infer<typeof SearchAuthenticationsInputSchema>;
+export type SearchAuthenticationsInput = z.infer<
+	typeof SearchAuthenticationsInputSchema
+>;
 const SearchAuthenticationsResponseSchema = AlgoliaResponseSchema;
-export type SearchAuthenticationsResponse = z.infer<typeof SearchAuthenticationsResponseSchema>;
+export type SearchAuthenticationsResponse = z.infer<
+	typeof SearchAuthenticationsResponseSchema
+>;
 
 // searchDestinations
 const SearchDestinationsInputSchema = z.object({
@@ -1655,9 +1829,13 @@ const SearchDestinationsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SearchDestinationsInput = z.infer<typeof SearchDestinationsInputSchema>;
+export type SearchDestinationsInput = z.infer<
+	typeof SearchDestinationsInputSchema
+>;
 const SearchDestinationsResponseSchema = AlgoliaResponseSchema;
-export type SearchDestinationsResponse = z.infer<typeof SearchDestinationsResponseSchema>;
+export type SearchDestinationsResponse = z.infer<
+	typeof SearchDestinationsResponseSchema
+>;
 
 // searchDictionaryEntries
 const SearchDictionaryEntriesInputSchema = z.object({
@@ -1671,9 +1849,13 @@ const SearchDictionaryEntriesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SearchDictionaryEntriesInput = z.infer<typeof SearchDictionaryEntriesInputSchema>;
+export type SearchDictionaryEntriesInput = z.infer<
+	typeof SearchDictionaryEntriesInputSchema
+>;
 const SearchDictionaryEntriesResponseSchema = AlgoliaResponseSchema;
-export type SearchDictionaryEntriesResponse = z.infer<typeof SearchDictionaryEntriesResponseSchema>;
+export type SearchDictionaryEntriesResponse = z.infer<
+	typeof SearchDictionaryEntriesResponseSchema
+>;
 
 // searchFacetValues
 const SearchFacetValuesInputSchema = z.object({
@@ -1688,9 +1870,13 @@ const SearchFacetValuesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SearchFacetValuesInput = z.infer<typeof SearchFacetValuesInputSchema>;
+export type SearchFacetValuesInput = z.infer<
+	typeof SearchFacetValuesInputSchema
+>;
 const SearchFacetValuesResponseSchema = AlgoliaResponseSchema;
-export type SearchFacetValuesResponse = z.infer<typeof SearchFacetValuesResponseSchema>;
+export type SearchFacetValuesResponse = z.infer<
+	typeof SearchFacetValuesResponseSchema
+>;
 
 // searchIndex
 const SearchIndexInputSchema = z.object({
@@ -1717,9 +1903,13 @@ const SearchMultipleIndicesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SearchMultipleIndicesInput = z.infer<typeof SearchMultipleIndicesInputSchema>;
+export type SearchMultipleIndicesInput = z.infer<
+	typeof SearchMultipleIndicesInputSchema
+>;
 const SearchMultipleIndicesResponseSchema = AlgoliaResponseSchema;
-export type SearchMultipleIndicesResponse = z.infer<typeof SearchMultipleIndicesResponseSchema>;
+export type SearchMultipleIndicesResponse = z.infer<
+	typeof SearchMultipleIndicesResponseSchema
+>;
 
 // searchRecommendRules
 const SearchRecommendRulesInputSchema = z.object({
@@ -1738,9 +1928,13 @@ const SearchRecommendRulesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SearchRecommendRulesInput = z.infer<typeof SearchRecommendRulesInputSchema>;
+export type SearchRecommendRulesInput = z.infer<
+	typeof SearchRecommendRulesInputSchema
+>;
 const SearchRecommendRulesResponseSchema = AlgoliaResponseSchema;
-export type SearchRecommendRulesResponse = z.infer<typeof SearchRecommendRulesResponseSchema>;
+export type SearchRecommendRulesResponse = z.infer<
+	typeof SearchRecommendRulesResponseSchema
+>;
 
 // searchSources
 const SearchSourcesInputSchema = z.object({
@@ -1769,7 +1963,9 @@ const SearchSynonymsInputSchema = z.object({
 });
 export type SearchSynonymsInput = z.infer<typeof SearchSynonymsInputSchema>;
 const SearchSynonymsResponseSchema = AlgoliaResponseSchema;
-export type SearchSynonymsResponse = z.infer<typeof SearchSynonymsResponseSchema>;
+export type SearchSynonymsResponse = z.infer<
+	typeof SearchSynonymsResponseSchema
+>;
 
 // searchTasksV1
 const SearchTasksV1InputSchema = z.object({
@@ -1793,9 +1989,13 @@ const SearchTransformationsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SearchTransformationsInput = z.infer<typeof SearchTransformationsInputSchema>;
+export type SearchTransformationsInput = z.infer<
+	typeof SearchTransformationsInputSchema
+>;
 const SearchTransformationsResponseSchema = AlgoliaResponseSchema;
-export type SearchTransformationsResponse = z.infer<typeof SearchTransformationsResponseSchema>;
+export type SearchTransformationsResponse = z.infer<
+	typeof SearchTransformationsResponseSchema
+>;
 
 // setDictionarySettings
 const SetDictionarySettingsInputSchema = z.object({
@@ -1806,9 +2006,13 @@ const SetDictionarySettingsInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type SetDictionarySettingsInput = z.infer<typeof SetDictionarySettingsInputSchema>;
+export type SetDictionarySettingsInput = z.infer<
+	typeof SetDictionarySettingsInputSchema
+>;
 const SetDictionarySettingsResponseSchema = AlgoliaResponseSchema;
-export type SetDictionarySettingsResponse = z.infer<typeof SetDictionarySettingsResponseSchema>;
+export type SetDictionarySettingsResponse = z.infer<
+	typeof SetDictionarySettingsResponseSchema
+>;
 
 // setPersonalizationStrategy
 const SetPersonalizationStrategyInputSchema = z.object({
@@ -1821,9 +2025,13 @@ const SetPersonalizationStrategyInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 	baseUrl: z.string().optional(),
 });
-export type SetPersonalizationStrategyInput = z.infer<typeof SetPersonalizationStrategyInputSchema>;
+export type SetPersonalizationStrategyInput = z.infer<
+	typeof SetPersonalizationStrategyInputSchema
+>;
 const SetPersonalizationStrategyResponseSchema = AlgoliaResponseSchema;
-export type SetPersonalizationStrategyResponse = z.infer<typeof SetPersonalizationStrategyResponseSchema>;
+export type SetPersonalizationStrategyResponse = z.infer<
+	typeof SetPersonalizationStrategyResponseSchema
+>;
 
 // setSettings
 const SetSettingsInputSchema = z.object({
@@ -1866,9 +2074,13 @@ const TryTransformationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type TryTransformationInput = z.infer<typeof TryTransformationInputSchema>;
+export type TryTransformationInput = z.infer<
+	typeof TryTransformationInputSchema
+>;
 const TryTransformationResponseSchema = AlgoliaResponseSchema;
-export type TryTransformationResponse = z.infer<typeof TryTransformationResponseSchema>;
+export type TryTransformationResponse = z.infer<
+	typeof TryTransformationResponseSchema
+>;
 
 // tryTransformationBeforeUpdate
 const TryTransformationBeforeUpdateInputSchema = z.object({
@@ -1884,9 +2096,13 @@ const TryTransformationBeforeUpdateInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type TryTransformationBeforeUpdateInput = z.infer<typeof TryTransformationBeforeUpdateInputSchema>;
+export type TryTransformationBeforeUpdateInput = z.infer<
+	typeof TryTransformationBeforeUpdateInputSchema
+>;
 const TryTransformationBeforeUpdateResponseSchema = AlgoliaResponseSchema;
-export type TryTransformationBeforeUpdateResponse = z.infer<typeof TryTransformationBeforeUpdateResponseSchema>;
+export type TryTransformationBeforeUpdateResponse = z.infer<
+	typeof TryTransformationBeforeUpdateResponseSchema
+>;
 
 // updateApiKey
 const UpdateApiKeyInputSchema = z.object({
@@ -1920,9 +2136,13 @@ const UpdateAuthenticationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type UpdateAuthenticationInput = z.infer<typeof UpdateAuthenticationInputSchema>;
+export type UpdateAuthenticationInput = z.infer<
+	typeof UpdateAuthenticationInputSchema
+>;
 const UpdateAuthenticationResponseSchema = AlgoliaResponseSchema;
-export type UpdateAuthenticationResponse = z.infer<typeof UpdateAuthenticationResponseSchema>;
+export type UpdateAuthenticationResponse = z.infer<
+	typeof UpdateAuthenticationResponseSchema
+>;
 
 // updateConfig
 const UpdateConfigInputSchema = z.object({
@@ -1956,9 +2176,13 @@ const UpdateDestinationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type UpdateDestinationInput = z.infer<typeof UpdateDestinationInputSchema>;
+export type UpdateDestinationInput = z.infer<
+	typeof UpdateDestinationInputSchema
+>;
 const UpdateDestinationResponseSchema = AlgoliaResponseSchema;
-export type UpdateDestinationResponse = z.infer<typeof UpdateDestinationResponseSchema>;
+export type UpdateDestinationResponse = z.infer<
+	typeof UpdateDestinationResponseSchema
+>;
 
 // updateDictionaryEntries
 const UpdateDictionaryEntriesInputSchema = z.object({
@@ -1971,9 +2195,13 @@ const UpdateDictionaryEntriesInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type UpdateDictionaryEntriesInput = z.infer<typeof UpdateDictionaryEntriesInputSchema>;
+export type UpdateDictionaryEntriesInput = z.infer<
+	typeof UpdateDictionaryEntriesInputSchema
+>;
 const UpdateDictionaryEntriesResponseSchema = AlgoliaResponseSchema;
-export type UpdateDictionaryEntriesResponse = z.infer<typeof UpdateDictionaryEntriesResponseSchema>;
+export type UpdateDictionaryEntriesResponse = z.infer<
+	typeof UpdateDictionaryEntriesResponseSchema
+>;
 
 // updateRecordPartially
 const UpdateRecordPartiallyInputSchema = z.object({
@@ -1987,9 +2215,13 @@ const UpdateRecordPartiallyInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type UpdateRecordPartiallyInput = z.infer<typeof UpdateRecordPartiallyInputSchema>;
+export type UpdateRecordPartiallyInput = z.infer<
+	typeof UpdateRecordPartiallyInputSchema
+>;
 const UpdateRecordPartiallyResponseSchema = AlgoliaResponseSchema;
-export type UpdateRecordPartiallyResponse = z.infer<typeof UpdateRecordPartiallyResponseSchema>;
+export type UpdateRecordPartiallyResponse = z.infer<
+	typeof UpdateRecordPartiallyResponseSchema
+>;
 
 // updateSource
 const UpdateSourceInputSchema = z.object({
@@ -2043,9 +2275,13 @@ const UpdateTransformationInputSchema = z.object({
 	region: z.string().optional(),
 	baseUrl: z.string().optional(),
 });
-export type UpdateTransformationInput = z.infer<typeof UpdateTransformationInputSchema>;
+export type UpdateTransformationInput = z.infer<
+	typeof UpdateTransformationInputSchema
+>;
 const UpdateTransformationResponseSchema = AlgoliaResponseSchema;
-export type UpdateTransformationResponse = z.infer<typeof UpdateTransformationResponseSchema>;
+export type UpdateTransformationResponse = z.infer<
+	typeof UpdateTransformationResponseSchema
+>;
 
 // validateSource
 const ValidateSourceInputSchema = z.object({
@@ -2061,7 +2297,9 @@ const ValidateSourceInputSchema = z.object({
 });
 export type ValidateSourceInput = z.infer<typeof ValidateSourceInputSchema>;
 const ValidateSourceResponseSchema = AlgoliaResponseSchema;
-export type ValidateSourceResponse = z.infer<typeof ValidateSourceResponseSchema>;
+export type ValidateSourceResponse = z.infer<
+	typeof ValidateSourceResponseSchema
+>;
 
 // validateSourceBeforeUpdate
 const ValidateSourceBeforeUpdateInputSchema = z.object({
@@ -2075,9 +2313,13 @@ const ValidateSourceBeforeUpdateInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 	baseUrl: z.string().optional(),
 });
-export type ValidateSourceBeforeUpdateInput = z.infer<typeof ValidateSourceBeforeUpdateInputSchema>;
+export type ValidateSourceBeforeUpdateInput = z.infer<
+	typeof ValidateSourceBeforeUpdateInputSchema
+>;
 const ValidateSourceBeforeUpdateResponseSchema = AlgoliaResponseSchema;
-export type ValidateSourceBeforeUpdateResponse = z.infer<typeof ValidateSourceBeforeUpdateResponseSchema>;
+export type ValidateSourceBeforeUpdateResponse = z.infer<
+	typeof ValidateSourceBeforeUpdateResponseSchema
+>;
 
 export const AlgoliaEndpointInputSchemas = {
 	addAbTest: AddAbTestInputSchema,
@@ -2216,7 +2458,9 @@ export const AlgoliaEndpointInputSchemas = {
 } as const;
 
 export type AlgoliaEndpointInputs = {
-	[K in keyof typeof AlgoliaEndpointInputSchemas]: z.infer<(typeof AlgoliaEndpointInputSchemas)[K]>;
+	[K in keyof typeof AlgoliaEndpointInputSchemas]: z.infer<
+		(typeof AlgoliaEndpointInputSchemas)[K]
+	>;
 };
 
 export const AlgoliaEndpointOutputSchemas = {
@@ -2356,9 +2600,12 @@ export const AlgoliaEndpointOutputSchemas = {
 } as const;
 
 export type AlgoliaEndpointOutputs = {
-	[K in keyof typeof AlgoliaEndpointOutputSchemas]: z.infer<(typeof AlgoliaEndpointOutputSchemas)[K]>;
+	[K in keyof typeof AlgoliaEndpointOutputSchemas]: z.infer<
+		(typeof AlgoliaEndpointOutputSchemas)[K]
+	>;
 };
 
-export type AlgoliaEndpointInput = AlgoliaEndpointInputs[keyof AlgoliaEndpointInputs] & {
-	[key: string]: unknown;
-};
+export type AlgoliaEndpointInput =
+	AlgoliaEndpointInputs[keyof AlgoliaEndpointInputs] & {
+		[key: string]: unknown;
+	};

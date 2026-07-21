@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { AbTestsEndpoints } from './ab-tests';
 import { AnalyticsEndpoints } from './analytics';
 import { ApiKeysEndpoints } from './api-keys';
@@ -9,6 +10,7 @@ import { InsightsEndpoints } from './insights';
 import { LogsEndpoints } from './logs';
 import { PersonalizationEndpoints } from './personalization';
 import { QuerySuggestionsEndpoints } from './query-suggestions';
+import { algoliaRoutes } from './routes';
 import { RulesEndpoints } from './rules';
 import { RunsEndpoints } from './runs';
 import { SearchEndpoints } from './search';
@@ -16,10 +18,11 @@ import { SourcesEndpoints } from './sources';
 import { SynonymsEndpoints } from './synonyms';
 import { TasksEndpoints } from './tasks';
 import { TransformationsEndpoints } from './transformations';
+import {
+	AlgoliaEndpointInputSchemas,
+	AlgoliaEndpointOutputSchemas,
+} from './types';
 import { UsageEndpoints } from './usage';
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
-import { algoliaRoutes } from './routes';
-import { AlgoliaEndpointInputSchemas, AlgoliaEndpointOutputSchemas } from './types';
 
 export const algoliaEndpointsNested = {
 	abTests: AbTestsEndpoints,
@@ -40,7 +43,7 @@ export const algoliaEndpointsNested = {
 	synonyms: SynonymsEndpoints,
 	tasks: TasksEndpoints,
 	transformations: TransformationsEndpoints,
-	usage: UsageEndpoints
+	usage: UsageEndpoints,
 } as const;
 
 export const algoliaEndpointMeta = Object.fromEntries(

@@ -37,5 +37,5 @@ export const DestinationsEndpoints = {
 	getDestination,
 	listDestinations,
 	searchDestinations,
-	updateDestination
+	updateDestination,
 } as const;

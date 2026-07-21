@@ -13,5 +13,5 @@ export const getUsageForIndex: AlgoliaEndpoint = async (ctx, input = {}) => {
 
 export const UsageEndpoints = {
 	getUsage,
-	getUsageForIndex
+	getUsageForIndex,
 } as const;

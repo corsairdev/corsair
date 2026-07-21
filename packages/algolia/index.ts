@@ -12,9 +12,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	algoliaEndpointMeta as generatedAlgoliaEndpointMeta,
 	algoliaEndpointSchemas,
 	algoliaEndpointsNested,
+	algoliaEndpointMeta as generatedAlgoliaEndpointMeta,
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { AlgoliaSchema } from './schema';
@@ -55,7 +55,9 @@ export type AlgoliaKeyBuilderContext = KeyBuilderContext<
 	typeof algoliaAuthConfig
 >;
 
-export type AlgoliaBoundEndpoints = BindEndpoints<typeof algoliaEndpointsNested>;
+export type AlgoliaBoundEndpoints = BindEndpoints<
+	typeof algoliaEndpointsNested
+>;
 
 export type AlgoliaEndpoints = typeof algoliaEndpointsNested;
 

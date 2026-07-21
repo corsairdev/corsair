@@ -120,7 +120,9 @@ describe('Algolia endpoints', () => {
 			applicationId: 'test-app-id',
 			key: 'test-api-key',
 		});
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			search: {
 				searchIndex: (
 					ctx: AlgoliaContext,

@@ -7,7 +7,10 @@ export const getAddToCartRate: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const getAverageClickPositionRoute = getRoute('getAverageClickPosition');
-export const getAverageClickPosition: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const getAverageClickPosition: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, getAverageClickPositionRoute);
 };
 
@@ -37,7 +40,10 @@ export const getNoResultsRate: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const getNoResultsSearchesRoute = getRoute('getNoResultsSearches');
-export const getNoResultsSearches: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const getNoResultsSearches: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, getNoResultsSearchesRoute);
 };
 
@@ -67,17 +73,26 @@ export const getTopCountries: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const getTopFilterAttributesRoute = getRoute('getTopFilterAttributes');
-export const getTopFilterAttributes: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const getTopFilterAttributes: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, getTopFilterAttributesRoute);
 };
 
 const getTopFilterForAttributeRoute = getRoute('getTopFilterForAttribute');
-export const getTopFilterForAttribute: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const getTopFilterForAttribute: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, getTopFilterForAttributeRoute);
 };
 
 const getTopFiltersNoResultsRoute = getRoute('getTopFiltersNoResults');
-export const getTopFiltersNoResults: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const getTopFiltersNoResults: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, getTopFiltersNoResultsRoute);
 };
 
@@ -115,5 +130,5 @@ export const AnalyticsEndpoints = {
 	getTopFiltersNoResults,
 	getTopHits,
 	getTopSearches,
-	getUsersCount
+	getUsersCount,
 } as const;

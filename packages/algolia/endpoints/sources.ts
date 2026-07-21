@@ -37,7 +37,10 @@ export const validateSource: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const validateSourceBeforeUpdateRoute = getRoute('validateSourceBeforeUpdate');
-export const validateSourceBeforeUpdate: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const validateSourceBeforeUpdate: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, validateSourceBeforeUpdateRoute);
 };
 
@@ -49,5 +52,5 @@ export const SourcesEndpoints = {
 	searchSources,
 	updateSource,
 	validateSource,
-	validateSourceBeforeUpdate
+	validateSourceBeforeUpdate,
 } as const;

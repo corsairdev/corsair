@@ -2,12 +2,18 @@ import type { AlgoliaEndpoint } from './factory';
 import { executeAlgoliaOperation, getRoute } from './factory';
 
 const createAuthenticationRoute = getRoute('createAuthentication');
-export const createAuthentication: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const createAuthentication: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, createAuthenticationRoute);
 };
 
 const deleteAuthenticationRoute = getRoute('deleteAuthentication');
-export const deleteAuthentication: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const deleteAuthentication: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, deleteAuthenticationRoute);
 };
 
@@ -22,12 +28,18 @@ export const listAuthentications: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const searchAuthenticationsRoute = getRoute('searchAuthentications');
-export const searchAuthentications: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const searchAuthentications: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, searchAuthenticationsRoute);
 };
 
 const updateAuthenticationRoute = getRoute('updateAuthentication');
-export const updateAuthentication: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const updateAuthentication: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, updateAuthenticationRoute);
 };
 
@@ -37,5 +49,5 @@ export const AuthenticationsEndpoints = {
 	getAuthentication,
 	listAuthentications,
 	searchAuthentications,
-	updateAuthentication
+	updateAuthentication,
 } as const;

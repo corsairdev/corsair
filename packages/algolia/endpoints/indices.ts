@@ -37,17 +37,32 @@ export const deleteObjects: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const deleteRecordsByFilterRoute = getRoute('deleteRecordsByFilter');
-export const deleteRecordsByFilter: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const deleteRecordsByFilter: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, deleteRecordsByFilterRoute);
 };
 
-const executeBatchOnMultipleIndicesRoute = getRoute('executeBatchOnMultipleIndices');
-export const executeBatchOnMultipleIndices: AlgoliaEndpoint = async (ctx, input = {}) => {
-	return executeAlgoliaOperation(ctx, input, executeBatchOnMultipleIndicesRoute);
+const executeBatchOnMultipleIndicesRoute = getRoute(
+	'executeBatchOnMultipleIndices',
+);
+export const executeBatchOnMultipleIndices: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAlgoliaOperation(
+		ctx,
+		input,
+		executeBatchOnMultipleIndicesRoute,
+	);
 };
 
 const getRecommendTaskStatusRoute = getRoute('getRecommendTaskStatus');
-export const getRecommendTaskStatus: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const getRecommendTaskStatus: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, getRecommendTaskStatusRoute);
 };
 
@@ -77,7 +92,10 @@ export const listIndices: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const partialUpdateObjectsRoute = getRoute('partialUpdateObjects');
-export const partialUpdateObjects: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const partialUpdateObjects: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, partialUpdateObjectsRoute);
 };
 
@@ -87,7 +105,10 @@ export const setSettings: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const updateRecordPartiallyRoute = getRoute('updateRecordPartially');
-export const updateRecordPartially: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const updateRecordPartially: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, updateRecordPartiallyRoute);
 };
 
@@ -109,5 +130,5 @@ export const IndicesEndpoints = {
 	listIndices,
 	partialUpdateObjects,
 	setSettings,
-	updateRecordPartially
+	updateRecordPartially,
 } as const;

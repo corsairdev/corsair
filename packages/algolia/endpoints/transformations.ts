@@ -2,12 +2,18 @@ import type { AlgoliaEndpoint } from './factory';
 import { executeAlgoliaOperation, getRoute } from './factory';
 
 const createTransformationRoute = getRoute('createTransformation');
-export const createTransformation: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const createTransformation: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, createTransformationRoute);
 };
 
 const deleteTransformationRoute = getRoute('deleteTransformation');
-export const deleteTransformation: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const deleteTransformation: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, deleteTransformationRoute);
 };
 
@@ -22,7 +28,10 @@ export const listTransformations: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 const searchTransformationsRoute = getRoute('searchTransformations');
-export const searchTransformations: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const searchTransformations: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, searchTransformationsRoute);
 };
 
@@ -31,13 +40,25 @@ export const tryTransformation: AlgoliaEndpoint = async (ctx, input = {}) => {
 	return executeAlgoliaOperation(ctx, input, tryTransformationRoute);
 };
 
-const tryTransformationBeforeUpdateRoute = getRoute('tryTransformationBeforeUpdate');
-export const tryTransformationBeforeUpdate: AlgoliaEndpoint = async (ctx, input = {}) => {
-	return executeAlgoliaOperation(ctx, input, tryTransformationBeforeUpdateRoute);
+const tryTransformationBeforeUpdateRoute = getRoute(
+	'tryTransformationBeforeUpdate',
+);
+export const tryTransformationBeforeUpdate: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAlgoliaOperation(
+		ctx,
+		input,
+		tryTransformationBeforeUpdateRoute,
+	);
 };
 
 const updateTransformationRoute = getRoute('updateTransformation');
-export const updateTransformation: AlgoliaEndpoint = async (ctx, input = {}) => {
+export const updateTransformation: AlgoliaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAlgoliaOperation(ctx, input, updateTransformationRoute);
 };
 
@@ -49,5 +70,5 @@ export const TransformationsEndpoints = {
 	searchTransformations,
 	tryTransformation,
 	tryTransformationBeforeUpdate,
-	updateTransformation
+	updateTransformation,
 } as const;

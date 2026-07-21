@@ -37,5 +37,5 @@ export const ApiKeysEndpoints = {
 	getApiKey,
 	listApiKeys,
 	restoreApiKey,
-	updateApiKey
+	updateApiKey,
 } as const;

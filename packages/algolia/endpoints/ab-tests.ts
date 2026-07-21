@@ -31,5 +31,5 @@ export const AbTestsEndpoints = {
 	deleteAbTest,
 	getAbTest,
 	listAbTests,
-	stopAbTest
+	stopAbTest,
 } as const;

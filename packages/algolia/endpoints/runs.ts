@@ -7,5 +7,5 @@ export const listRuns: AlgoliaEndpoint = async (ctx, input = {}) => {
 };
 
 export const RunsEndpoints = {
-	listRuns
+	listRuns,
 } as const;
