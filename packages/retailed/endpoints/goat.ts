@@ -30,7 +30,9 @@ export const goatPrices: CorsairEndpoint<
 		query,
 	});
 
+	const parsed = RetailedEndpointOutputSchemas.goatPrices.parse(response);
+
 	await logEventFromContext(ctx, 'retailed.goat.prices', {}, 'completed');
 
-	return RetailedEndpointOutputSchemas.goatPrices.parse(response);
+	return parsed;
 };

@@ -1,7 +1,7 @@
-import { get as usageGet } from './example';
 import { goatPrices } from './goat';
 import { search as searchProducts } from './products';
 import { stockxProduct, stockxSearch, stockxTrends } from './stockx';
+import { get as usageGet } from './usage';
 
 export const Usage = {
 	get: usageGet,

@@ -36,7 +36,9 @@ export const search: CorsairEndpoint<
 		query,
 	});
 
+	const parsed = RetailedEndpointOutputSchemas.searchProducts.parse(response);
+
 	await logEventFromContext(ctx, 'retailed.products.search', {}, 'completed');
 
-	return RetailedEndpointOutputSchemas.searchProducts.parse(response);
+	return parsed;
 };

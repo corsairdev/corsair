@@ -39,9 +39,11 @@ export const stockxTrends: CorsairEndpoint<
 		query,
 	});
 
+	const parsed = RetailedEndpointOutputSchemas.stockxTrends.parse(response);
+
 	await logEventFromContext(ctx, 'retailed.stockx.trends', {}, 'completed');
 
-	return RetailedEndpointOutputSchemas.stockxTrends.parse(response);
+	return parsed;
 };
 
 export const stockxSearch: CorsairEndpoint<
@@ -60,9 +62,11 @@ export const stockxSearch: CorsairEndpoint<
 		query,
 	});
 
+	const parsed = RetailedEndpointOutputSchemas.stockxSearch.parse(response);
+
 	await logEventFromContext(ctx, 'retailed.stockx.search', {}, 'completed');
 
-	return RetailedEndpointOutputSchemas.stockxSearch.parse(response);
+	return parsed;
 };
 
 export const stockxProduct: CorsairEndpoint<
@@ -93,7 +97,9 @@ export const stockxProduct: CorsairEndpoint<
 		query,
 	});
 
+	const parsed = RetailedEndpointOutputSchemas.stockxProduct.parse(response);
+
 	await logEventFromContext(ctx, 'retailed.stockx.product', {}, 'completed');
 
-	return RetailedEndpointOutputSchemas.stockxProduct.parse(response);
+	return parsed;
 };
