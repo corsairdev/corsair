@@ -30,7 +30,7 @@ sqlite.exec(`
 		entity_id TEXT NOT NULL,
 		entity_type TEXT NOT NULL,
 		version TEXT NOT NULL,
-		data TEXT NOT NULL
+		data TEXT NOT NULL,
 		UNIQUE (account_id, entity_type, entity_id)
 	);
 
