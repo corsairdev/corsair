@@ -34,12 +34,16 @@ export {
 	verifyConnectToken,
 } from './connect-token';
 export {
+	type ConnectLinkDeliveryAck,
+	deliverConnectCreateLink,
 	deliverSignedEnvelope,
 	describeDeliveryNetworkError,
+	extractConnectLinkFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
 	isServerDeliveryAckSuccessful,
+	parseConnectLinkFromDeliveryBody,
 	parseServerDeliveryAckBody,
 	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,

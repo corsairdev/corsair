@@ -24,6 +24,13 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	buildClientBridgeBrowserDeliveryUrl,
+	type ClientBridgeDeliverySpec,
+	type ClientBridgeTransportResult,
+	type PrepareClientBridgeDeliveryTransportInput,
+	prepareClientBridgeDeliveryTransport,
+} from './client-bridge-delivery';
+export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
 	HubNotConfiguredError,
@@ -111,6 +118,7 @@ export {
 	BROWSER_DELIVERY_TTL_MS,
 	type BrowserDeliveryPayload,
 	buildBrowserDeliveryRedirectUrl,
+	type ConnectLinkDeliveryAck,
 	type ConnectSessionTokenPayload,
 	type ConnectTokenPayload,
 	createConnectSessionJti,
@@ -120,10 +128,12 @@ export {
 	decodeConnectSessionTokenFromPath,
 	decodeConnectTokenFromPath,
 	decodePermissionTokenFromPath,
+	deliverConnectCreateLink,
 	deliverSignedEnvelope,
 	describeDeliveryNetworkError,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractConnectLinkFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
@@ -131,6 +141,7 @@ export {
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
+	parseConnectLinkFromDeliveryBody,
 	parseServerDeliveryAckBody,
 	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,

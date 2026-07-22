@@ -54,6 +54,11 @@ export type ServerDeliveryAckBody = {
 	connectUrl?: string;
 	/** ISO expiry for connect.create_link deliveries. */
 	expiresAt?: string;
+	/** Nested connect link shape returned by some delivery handlers. */
+	connectLink?: {
+		connectUrl?: string;
+		expiresAt?: string;
+	};
 	/** Encrypted tenant/plugin manifest returned by connections.sync deliveries. */
 	sync?: {
 		encrypted: string;
@@ -236,6 +241,84 @@ export function extractSyncFromDeliveryAck(
 		return null;
 	}
 	return { encrypted: encrypted.trim() };
+}
+
+export type ConnectLinkDeliveryAck = {
+	connectUrl: string;
+	expiresAt?: string;
+};
+
+/**
+ * Reads the connect link returned by connect.create_link server deliveries.
+ */
+export function extractConnectLinkFromDeliveryAck(
+	body: ServerDeliveryAckBody,
+): ConnectLinkDeliveryAck | null {
+	if (body.connectUrl?.trim()) {
+		return { connectUrl: body.connectUrl.trim(), expiresAt: body.expiresAt };
+	}
+
+	const nestedUrl = body.connectLink?.connectUrl?.trim();
+	if (!nestedUrl) {
+		return null;
+	}
+
+	return {
+		connectUrl: nestedUrl,
+		expiresAt: body.connectLink?.expiresAt,
+	};
+}
+
+/**
+ * Parses connect link payload from a raw delivery HTTP body.
+ */
+export function parseConnectLinkFromDeliveryBody(
+	body: string,
+): ConnectLinkDeliveryAck | null {
+	return extractConnectLinkFromDeliveryAck(parseServerDeliveryAckBody(body));
+}
+
+/**
+ * POSTs a connect.create_link envelope to the app's delivery URL.
+ */
+export async function deliverConnectCreateLink(input: {
+	deliveryUrl: string;
+	projectId: string;
+	signingSecret: string;
+	tenantId: string;
+	plugins: string[];
+}): Promise<ConnectLinkDeliveryAck> {
+	const delivery = await deliverSignedEnvelope({
+		deliveryUrl: input.deliveryUrl,
+		projectId: input.projectId,
+		signingSecret: input.signingSecret,
+		type: 'connect.create_link',
+		payload: {
+			tenantId: input.tenantId,
+			plugins: input.plugins,
+		},
+	});
+
+	const ack = parseServerDeliveryAckBody(delivery.body);
+	const ok = isServerDeliveryAckSuccessful({
+		httpOk: delivery.ok,
+		status: delivery.status,
+		body: ack,
+	});
+	const connectLink = extractConnectLinkFromDeliveryAck(ack);
+
+	if (!ok || !connectLink) {
+		throw new Error(
+			formatServerDeliveryError({
+				deliveryUrl: input.deliveryUrl,
+				status: delivery.status,
+				body: delivery.body,
+				ack,
+			}),
+		);
+	}
+
+	return connectLink;
 }
 
 /**
