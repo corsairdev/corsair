@@ -181,6 +181,9 @@ export type OAuth2IntegrationCredentials = {
 	client_id: string | null;
 	client_secret: string | null;
 	redirect_url: string | null;
+	// Extension integration fields declared by the plugin's authConfig
+	// (e.g. gmail's topic_id/pubsub_audience) pass through as-is.
+	[key: string]: string | null | undefined;
 };
 
 /**
