@@ -42,6 +42,7 @@ import type {
 	WebhookTree,
 } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
+import { bindingAuthCtx } from './binding-auth-ctx';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types
@@ -464,9 +465,7 @@ export function buildCorsairClient<
 			$getAccountId: getAccountId,
 			...(plugin.options ? { options: plugin.options } : {}),
 			// Include keys manager and authType in context so keyBuilder can access and narrow types
-			...(accountKeyManager
-				? { keys: accountKeyManager, authType: pluginOptions?.authType }
-				: {}),
+			...bindingAuthCtx(pluginOptions?.authType, accountKeyManager),
 			// Include tenantId in context for keyBuilder and webhook hooks
 			tenantId: effectiveTenantId,
 			...(hubConfig ? { hub: hubConfig } : {}),

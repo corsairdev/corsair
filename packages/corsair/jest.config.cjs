@@ -7,6 +7,7 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 		'**/core/auth/**/*.test.ts',
+		'**/core/client/**/*.test.ts',
 	],
 	collectCoverageFrom: [
 		'**/*.ts',
