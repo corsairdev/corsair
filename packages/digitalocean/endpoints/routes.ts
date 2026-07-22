@@ -22,7 +22,8 @@ export const digitalOceanRoutes = [
 		name: 'createCustomImage',
 		method: 'POST',
 		path: '/images',
-		description: 'Creates a custom image in DigitalOcean by importing a Linux VM disk image from a publicly accessible URL. Use this action to upload custom OS images (Ubuntu, Debian, CentOS, Fedora, etc.) that can later be used to create Droplets. The image will be processed asynchronously and its status can be monitored via the returned image ID.',
+		description:
+			'Creates a custom image in DigitalOcean by importing a Linux VM disk image from a publicly accessible URL. Use this action to upload custom OS images (Ubuntu, Debian, CentOS, Fedora, etc.) that can later be used to create Droplets. The image will be processed asynchronously and its status can be monitored via the returned image ID.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -33,7 +34,8 @@ export const digitalOceanRoutes = [
 		name: 'createDatabaseCluster',
 		method: 'POST',
 		path: '/databases',
-		description: "Creates a new managed database cluster on DigitalOcean. Provisions a database with specified engine (PostgreSQL, MySQL, Valkey, MongoDB, Kafka, or OpenSearch), version, region, size, and node count. Returns connection credentials and cluster details. The cluster will be in 'creating' status initially and take several minutes to become fully operational.",
+		description:
+			"Creates a new managed database cluster on DigitalOcean. Provisions a database with specified engine (PostgreSQL, MySQL, Valkey, MongoDB, Kafka, or OpenSearch), version, region, size, and node count. Returns connection credentials and cluster details. The cluster will be in 'creating' status initially and take several minutes to become fully operational.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -44,7 +46,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewBlockStorageVolume',
 		method: 'POST',
 		path: '/volumes',
-		description: 'Tool to create a new block storage volume. Use when you need to provision persistent block storage after confirming the target region supports volumes. Example: "Create a 100 GiB ext4 backup volume named \'db-backup\' in nyc1."',
+		description:
+			'Tool to create a new block storage volume. Use when you need to provision persistent block storage after confirming the target region supports volumes. Example: "Create a 100 GiB ext4 backup volume named \'db-backup\' in nyc1."',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -55,7 +58,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewDomain',
 		method: 'POST',
 		path: '/domains',
-		description: "Creates a new domain in DigitalOcean's DNS management system. This adds the domain to your DigitalOcean account and allows you to manage its DNS records. Use this action when you need to: - Add a domain to DigitalOcean DNS for DNS hosting and management - Set up a new domain with an optional initial A record pointing to an IP address - Transfer DNS management of an existing domain to DigitalOcean Note: The domain name must be unique within your DigitalOcean account and use a recognized top-level domain (TLD). After creation, you can add additional DNS records using the create domain record action.",
+		description:
+			"Creates a new domain in DigitalOcean's DNS management system. This adds the domain to your DigitalOcean account and allows you to manage its DNS records. Use this action when you need to: - Add a domain to DigitalOcean DNS for DNS hosting and management - Set up a new domain with an optional initial A record pointing to an IP address - Transfer DNS management of an existing domain to DigitalOcean Note: The domain name must be unique within your DigitalOcean account and use a recognized top-level domain (TLD). After creation, you can add additional DNS records using the create domain record action.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -66,7 +70,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewDomainRecord',
 		method: 'POST',
 		path: '/domains/{domain_name}/records',
-		description: 'Tool to create a new DNS record for a domain. Use after confirming domain exists and record specifics.',
+		description:
+			'Tool to create a new DNS record for a domain. Use after confirming domain exists and record specifics.',
 		pathParams: ['domain_name'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -77,7 +82,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewDroplet',
 		method: 'POST',
 		path: '/droplets',
-		description: "Tool to create a new Droplet. Use when you need to provision a VM with name, region, size, and image. The `image`, `region`, and `size` must be mutually compatible — the chosen `region` must be listed in the image's available regions.",
+		description:
+			"Tool to create a new Droplet. Use when you need to provision a VM with name, region, size, and image. The `image`, `region`, and `size` must be mutually compatible — the chosen `region` must be listed in the image's available regions.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -88,7 +94,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewFirewall',
 		method: 'POST',
 		path: '/firewalls',
-		description: 'Creates a new cloud firewall with custom inbound and outbound rules. Use this action to set up network security rules that control traffic to and from your Droplets. You can specify rules using IP addresses (CIDR notation), Droplet IDs, tags, Load Balancer UUIDs, or Kubernetes cluster IDs. The firewall can be applied to specific Droplets, all Droplets with certain tags, or scoped to a VPC. Requires at least one inbound rule and one outbound rule. Supports tcp, udp, and icmp protocols.',
+		description:
+			'Creates a new cloud firewall with custom inbound and outbound rules. Use this action to set up network security rules that control traffic to and from your Droplets. You can specify rules using IP addresses (CIDR notation), Droplet IDs, tags, Load Balancer UUIDs, or Kubernetes cluster IDs. The firewall can be applied to specific Droplets, all Droplets with certain tags, or scoped to a VPC. Requires at least one inbound rule and one outbound rule. Supports tcp, udp, and icmp protocols.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -99,7 +106,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewKubernetesCluster',
 		method: 'POST',
 		path: '/kubernetes/clusters',
-		description: "Creates a new DigitalOcean Kubernetes (DOKS) cluster with managed control plane. Required: cluster name, region slug, Kubernetes version slug, and at least one node pool configuration. Optional: tags, auto-upgrade settings, maintenance policy, node labels/taints, and auto-scaling. The cluster will be created in 'provisioning' state and may take several minutes to become 'running'. Query /v2/kubernetes/options endpoint to get available regions, versions, and node sizes.",
+		description:
+			"Creates a new DigitalOcean Kubernetes (DOKS) cluster with managed control plane. Required: cluster name, region slug, Kubernetes version slug, and at least one node pool configuration. Optional: tags, auto-upgrade settings, maintenance policy, node labels/taints, and auto-scaling. The cluster will be created in 'provisioning' state and may take several minutes to become 'running'. Query /v2/kubernetes/options endpoint to get available regions, versions, and node sizes.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -110,7 +118,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewLoadBalancer',
 		method: 'POST',
 		path: '/load_balancers',
-		description: 'Tool to create a new load balancer. Use after specifying region, forwarding rules, and targets.',
+		description:
+			'Tool to create a new load balancer. Use after specifying region, forwarding rules, and targets.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -121,7 +130,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewSshKey',
 		method: 'POST',
 		path: '/account/keys',
-		description: 'Registers a new SSH public key with your DigitalOcean account. The registered key can then be automatically added to new Droplets during creation, enabling secure SSH access. The key must be provided in OpenSSH format (ssh-rsa, ssh-ed25519, etc.) and must not already exist on the account.',
+		description:
+			'Registers a new SSH public key with your DigitalOcean account. The registered key can then be automatically added to new Droplets during creation, enabling secure SSH access. The key must be provided in OpenSSH format (ssh-rsa, ssh-ed25519, etc.) and must not already exist on the account.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -132,7 +142,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewTag',
 		method: 'POST',
 		path: '/tags',
-		description: 'Creates a new tag in DigitalOcean for organizing and grouping resources. Tags can be applied to droplets, images, volumes, volume snapshots, and databases. If a tag with the same name already exists, the API returns the existing tag (idempotent operation). Tag names must be 1-255 characters containing only letters, numbers, hyphens, or underscores.',
+		description:
+			'Creates a new tag in DigitalOcean for organizing and grouping resources. Tags can be applied to droplets, images, volumes, volume snapshots, and databases. If a tag with the same name already exists, the API returns the existing tag (idempotent operation). Tag names must be 1-255 characters containing only letters, numbers, hyphens, or underscores.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -143,7 +154,8 @@ export const digitalOceanRoutes = [
 		name: 'createNewVpc',
 		method: 'POST',
 		path: '/vpcs',
-		description: "Creates a new Virtual Private Cloud (VPC) in a specified DigitalOcean region. VPCs are private networks for isolating your resources. Traffic within a VPC is free and doesn't count toward bandwidth limits. VPCs support Droplets, managed databases, load balancers, and Kubernetes clusters. The first VPC created in a region automatically becomes the default VPC for that region.",
+		description:
+			"Creates a new Virtual Private Cloud (VPC) in a specified DigitalOcean region. VPCs are private networks for isolating your resources. Traffic within a VPC is free and doesn't count toward bandwidth limits. VPCs support Droplets, managed databases, load balancers, and Kubernetes clusters. The first VPC created in a region automatically becomes the default VPC for that region.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -154,7 +166,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteBlockStorageVolume',
 		method: 'DELETE',
 		path: '/volumes/{volume_id}',
-		description: 'Permanently deletes a block storage volume by its unique ID. Use this tool when you need to remove an existing volume. The volume must not be attached to any Droplet before deletion. This operation cannot be undone. Returns HTTP 204 No Content on success. Note: To delete by volume name instead of ID, you would need a different endpoint that accepts both name and region parameters.',
+		description:
+			'Permanently deletes a block storage volume by its unique ID. Use this tool when you need to remove an existing volume. The volume must not be attached to any Droplet before deletion. This operation cannot be undone. Returns HTTP 204 No Content on success. Note: To delete by volume name instead of ID, you would need a different endpoint that accepts both name and region parameters.',
 		pathParams: ['volume_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -166,7 +179,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteDatabaseCluster',
 		method: 'DELETE',
 		path: '/databases/{database_cluster_uuid}',
-		description: 'Tool to delete a database cluster by UUID. Use when you have confirmed the cluster is no longer needed. Returns HTTP 204 No Content on success.',
+		description:
+			'Tool to delete a database cluster by UUID. Use when you have confirmed the cluster is no longer needed. Returns HTTP 204 No Content on success.',
 		pathParams: ['database_cluster_uuid'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -178,7 +192,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteDomain',
 		method: 'DELETE',
 		path: '/domains/{name}',
-		description: "Deletes a domain from DigitalOcean DNS. This action is permanent and cannot be undone. Note: If the domain is associated with a Let's Encrypt certificate, delete the certificate first and reconfigure any resources using it (e.g., load balancer SSL termination, Spaces CDN endpoints). Returns 204 No Content on successful deletion.",
+		description:
+			"Deletes a domain from DigitalOcean DNS. This action is permanent and cannot be undone. Note: If the domain is associated with a Let's Encrypt certificate, delete the certificate first and reconfigure any resources using it (e.g., load balancer SSL termination, Spaces CDN endpoints). Returns 204 No Content on successful deletion.",
 		pathParams: ['name'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -190,7 +205,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteDomainRecord',
 		method: 'DELETE',
 		path: '/domains/{domain_name}/records/{record_id}',
-		description: 'Tool to delete a DNS record by its record ID for a domain. Use when you need to remove an existing DNS record and have the domain name and record ID. Returns HTTP 204 No Content on success.',
+		description:
+			'Tool to delete a DNS record by its record ID for a domain. Use when you need to remove an existing DNS record and have the domain name and record ID. Returns HTTP 204 No Content on success.',
 		pathParams: ['domain_name', 'record_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -202,7 +218,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteExistingDroplet',
 		method: 'DELETE',
 		path: '/droplets/{droplet_id}',
-		description: 'Tool to delete a Droplet by ID. Deletion is irreversible — all data is permanently lost. Confirm droplet_id with the user and verify a backup or snapshot exists before proceeding.',
+		description:
+			'Tool to delete a Droplet by ID. Deletion is irreversible — all data is permanently lost. Confirm droplet_id with the user and verify a backup or snapshot exists before proceeding.',
 		pathParams: ['droplet_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -214,7 +231,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteFirewall',
 		method: 'DELETE',
 		path: '/firewalls/{firewall_id}',
-		description: 'Tool to delete a firewall by ID. Use when you have confirmed the firewall is no longer needed.',
+		description:
+			'Tool to delete a firewall by ID. Use when you have confirmed the firewall is no longer needed.',
 		pathParams: ['firewall_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -226,7 +244,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteImage',
 		method: 'DELETE',
 		path: '/images/{image_id}',
-		description: 'Deletes a user-created custom image or snapshot from your DigitalOcean account by its numeric ID. This action permanently removes the image and cannot be undone. Only custom images and snapshots you own can be deleted - attempting to delete distribution images or marketplace applications will fail with a 403 Forbidden error. Use this when cleaning up unused images that are no longer needed and have no dependent resources.',
+		description:
+			'Deletes a user-created custom image or snapshot from your DigitalOcean account by its numeric ID. This action permanently removes the image and cannot be undone. Only custom images and snapshots you own can be deleted - attempting to delete distribution images or marketplace applications will fail with a 403 Forbidden error. Use this when cleaning up unused images that are no longer needed and have no dependent resources.',
 		pathParams: ['image_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -238,7 +257,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteLoadBalancer',
 		method: 'DELETE',
 		path: '/load_balancers/{load_balancer_id}',
-		description: 'Tool to delete a load balancer instance by ID. Use when you need to permanently remove an existing load balancer after confirming its ID. Returns 204 No Content on success.',
+		description:
+			'Tool to delete a load balancer instance by ID. Use when you need to permanently remove an existing load balancer after confirming its ID. Returns 204 No Content on success.',
 		pathParams: ['load_balancer_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -250,7 +270,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteSshKey',
 		method: 'DELETE',
 		path: '/account/keys/{key_id_or_fingerprint}',
-		description: 'Tool to delete a public SSH key. Use when you need to remove an SSH key from your account by its ID or fingerprint after confirming its ownership. Returns 204 No Content on success.',
+		description:
+			'Tool to delete a public SSH key. Use when you need to remove an SSH key from your account by its ID or fingerprint after confirming its ownership. Returns 204 No Content on success.',
 		pathParams: ['key_id_or_fingerprint'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -262,7 +283,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteTag',
 		method: 'DELETE',
 		path: '/tags/{name}',
-		description: 'Deletes a tag from your DigitalOcean account. When a tag is deleted, it is automatically removed from all resources that were tagged with it. This operation is idempotent - deleting a non-existent tag will also return success (204 No Content).',
+		description:
+			'Deletes a tag from your DigitalOcean account. When a tag is deleted, it is automatically removed from all resources that were tagged with it. This operation is idempotent - deleting a non-existent tag will also return success (204 No Content).',
 		pathParams: ['name'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -274,7 +296,8 @@ export const digitalOceanRoutes = [
 		name: 'deleteVpc',
 		method: 'DELETE',
 		path: '/vpcs/{vpc_id}',
-		description: 'Delete a VPC (Virtual Private Cloud) by its unique identifier. Use this tool when you need to permanently remove a VPC from your DigitalOcean account. Deletion is irreversible — always confirm the vpc_id with the user before proceeding. **Important Restrictions:** - Cannot delete a VPC that is the default VPC for its region - Cannot delete a VPC that has member resources (droplets, databases, load balancers, etc.) — all resources must be detached or migrated first - VPC must be empty before deletion Returns an empty response (HTTP 204) on successful deletion.',
+		description:
+			'Delete a VPC (Virtual Private Cloud) by its unique identifier. Use this tool when you need to permanently remove a VPC from your DigitalOcean account. Deletion is irreversible — always confirm the vpc_id with the user before proceeding. **Important Restrictions:** - Cannot delete a VPC that is the default VPC for its region - Cannot delete a VPC that has member resources (droplets, databases, load balancers, etc.) — all resources must be detached or migrated first - VPC must be empty before deletion Returns an empty response (HTTP 204) on successful deletion.',
 		pathParams: ['vpc_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -286,7 +309,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllDatabases',
 		method: 'GET',
 		path: '/databases',
-		description: 'Tool to list all managed database clusters on your account. Supports pagination and filtering by tag. A single request returns only one page; iterate using `page` and `per_page` to retrieve all clusters.',
+		description:
+			'Tool to list all managed database clusters on your account. Supports pagination and filtering by tag. A single request returns only one page; iterate using `page` and `per_page` to retrieve all clusters.',
 		pathParams: [],
 		queryParams: ['page', 'per_page', 'tag_name'],
 		riskLevel: 'read' as const,
@@ -297,7 +321,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllDomains',
 		method: 'GET',
 		path: '/domains',
-		description: 'Lists all DNS domains configured in your DigitalOcean account. Returns domain names, TTL values, and complete zone files. Supports pagination for large domain lists. Use this action to discover available domains, check domain configurations, or as a prerequisite for domain-specific operations like managing DNS records. No parameters are required - calling without parameters returns the first 20 domains (default page size).',
+		description:
+			'Lists all DNS domains configured in your DigitalOcean account. Returns domain names, TTL values, and complete zone files. Supports pagination for large domain lists. Use this action to discover available domains, check domain configurations, or as a prerequisite for domain-specific operations like managing DNS records. No parameters are required - calling without parameters returns the first 20 domains (default page size).',
 		pathParams: [],
 		queryParams: ['page', 'per_page'],
 		riskLevel: 'read' as const,
@@ -308,7 +333,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllDroplets',
 		method: 'GET',
 		path: '/droplets',
-		description: 'Lists all Droplets (virtual machines) in your DigitalOcean account with pagination support. Returns detailed information including: ID, name, specs (memory, vCPUs, disk), status, networking (IP addresses), region, image, size, tags, and VPC. Supports filtering by tag and pagination for large result sets. Use this to get an overview of your infrastructure, find specific droplets, or monitor droplet status. Default page size is 20; accounts with more droplets require explicit pagination (increment `page`, up to `per_page=200`) to avoid silently incomplete results.',
+		description:
+			'Lists all Droplets (virtual machines) in your DigitalOcean account with pagination support. Returns detailed information including: ID, name, specs (memory, vCPUs, disk), status, networking (IP addresses), region, image, size, tags, and VPC. Supports filtering by tag and pagination for large result sets. Use this to get an overview of your infrastructure, find specific droplets, or monitor droplet status. Default page size is 20; accounts with more droplets require explicit pagination (increment `page`, up to `per_page=200`) to avoid silently incomplete results.',
 		pathParams: [],
 		queryParams: ['page', 'per_page', 'tag_name'],
 		riskLevel: 'read' as const,
@@ -319,7 +345,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllFirewalls',
 		method: 'GET',
 		path: '/firewalls',
-		description: 'List all cloud firewalls configured in your DigitalOcean account. Returns comprehensive firewall details including inbound/outbound rules, associated droplets, tags, and status. Supports pagination for accounts with many firewalls. Use this to audit network security, discover existing firewall configurations, or retrieve firewall IDs for subsequent operations.',
+		description:
+			'List all cloud firewalls configured in your DigitalOcean account. Returns comprehensive firewall details including inbound/outbound rules, associated droplets, tags, and status. Supports pagination for accounts with many firewalls. Use this to audit network security, discover existing firewall configurations, or retrieve firewall IDs for subsequent operations.',
 		pathParams: [],
 		queryParams: ['page', 'per_page'],
 		riskLevel: 'read' as const,
@@ -330,7 +357,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllImages',
 		method: 'GET',
 		path: '/images',
-		description: 'Tool to list all images available on your account. Use after obtaining a valid API token to retrieve images optionally filtered by type, private visibility, or tag_name.',
+		description:
+			'Tool to list all images available on your account. Use after obtaining a valid API token to retrieve images optionally filtered by type, private visibility, or tag_name.',
 		pathParams: [],
 		queryParams: ['page', 'type', 'private', 'per_page', 'tag_name'],
 		riskLevel: 'read' as const,
@@ -341,7 +369,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllKubernetesClusters',
 		method: 'GET',
 		path: '/kubernetes/clusters',
-		description: 'Tool to list all Kubernetes clusters on your account. Use when you need to enumerate every cluster and handle pagination.',
+		description:
+			'Tool to list all Kubernetes clusters on your account. Use when you need to enumerate every cluster and handle pagination.',
 		pathParams: [],
 		queryParams: ['page', 'per_page'],
 		riskLevel: 'read' as const,
@@ -352,7 +381,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllLoadBalancers',
 		method: 'GET',
 		path: '/load_balancers',
-		description: 'List all load balancers in your DigitalOcean account with pagination support. Returns load balancer details including IDs, names, IP addresses, forwarding rules, health checks, sticky sessions, assigned Droplets, and region information. Use this to get an overview of all load balancers or to find specific load balancers by iterating through results.',
+		description:
+			'List all load balancers in your DigitalOcean account with pagination support. Returns load balancer details including IDs, names, IP addresses, forwarding rules, health checks, sticky sessions, assigned Droplets, and region information. Use this to get an overview of all load balancers or to find specific load balancers by iterating through results.',
 		pathParams: [],
 		queryParams: ['page', 'per_page'],
 		riskLevel: 'read' as const,
@@ -363,7 +393,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllSnapshots',
 		method: 'GET',
 		path: '/snapshots',
-		description: 'Tool to list all snapshots available on your DigitalOcean account. Use when you need to fetch and optionally filter snapshots by resource type (droplet or volume) and handle pagination for inventory or backup workflows.',
+		description:
+			'Tool to list all snapshots available on your DigitalOcean account. Use when you need to fetch and optionally filter snapshots by resource type (droplet or volume) and handle pagination for inventory or backup workflows.',
 		pathParams: [],
 		queryParams: ['page', 'per_page', 'resource_type'],
 		riskLevel: 'read' as const,
@@ -374,7 +405,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllSshKeys',
 		method: 'GET',
 		path: '/account/keys',
-		description: 'Lists all SSH keys associated with your DigitalOcean account. Returns SSH key details including ID, name, public key content, and fingerprint. Supports pagination for accounts with many SSH keys. Use this when you need to view available SSH keys or retrieve an SSH key ID for use with other operations like creating droplets.',
+		description:
+			'Lists all SSH keys associated with your DigitalOcean account. Returns SSH key details including ID, name, public key content, and fingerprint. Supports pagination for accounts with many SSH keys. Use this when you need to view available SSH keys or retrieve an SSH key ID for use with other operations like creating droplets.',
 		pathParams: [],
 		queryParams: ['page', 'per_page'],
 		riskLevel: 'read' as const,
@@ -385,7 +417,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllTags',
 		method: 'GET',
 		path: '/tags',
-		description: 'Tool to list all tags in your account. Use when you need to retrieve available tags and pagination info. A single request returns only one page of results; iterate using `page` and `per_page` to retrieve all tags.',
+		description:
+			'Tool to list all tags in your account. Use when you need to retrieve available tags and pagination info. A single request returns only one page of results; iterate using `page` and `per_page` to retrieve all tags.',
 		pathParams: [],
 		queryParams: ['page', 'per_page'],
 		riskLevel: 'read' as const,
@@ -396,7 +429,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllVolumes',
 		method: 'GET',
 		path: '/volumes',
-		description: 'Tool to list all block storage volumes available on your account. Use when you need to retrieve volumes and optionally filter by name and region.',
+		description:
+			'Tool to list all block storage volumes available on your account. Use when you need to retrieve volumes and optionally filter by name and region.',
 		pathParams: [],
 		queryParams: ['name', 'page', 'region', 'per_page'],
 		riskLevel: 'read' as const,
@@ -407,7 +441,8 @@ export const digitalOceanRoutes = [
 		name: 'listAllVpcs',
 		method: 'GET',
 		path: '/vpcs',
-		description: 'Tool to list all VPCs on your account. Use when you need an inventory of your VPC resources. A single request returns only one page; iterate through all pages using `page` and `per_page` (max 200) to retrieve the complete set.',
+		description:
+			'Tool to list all VPCs on your account. Use when you need an inventory of your VPC resources. A single request returns only one page; iterate through all pages using `page` and `per_page` (max 200) to retrieve the complete set.',
 		pathParams: [],
 		queryParams: ['page', 'per_page'],
 		riskLevel: 'read' as const,
@@ -418,7 +453,8 @@ export const digitalOceanRoutes = [
 		name: 'listDatabaseOptions',
 		method: 'GET',
 		path: '/databases/options',
-		description: 'Lists all available configuration options for DigitalOcean managed database clusters, including supported engines (PostgreSQL, MySQL, MongoDB, Valkey, Kafka, OpenSearch), versions, regions, and cluster sizes/layouts. Use this to discover valid parameter values when creating a new database cluster. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Lists all available configuration options for DigitalOcean managed database clusters, including supported engines (PostgreSQL, MySQL, MongoDB, Valkey, Kafka, OpenSearch), versions, regions, and cluster sizes/layouts. Use this to discover valid parameter values when creating a new database cluster. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -429,7 +465,8 @@ export const digitalOceanRoutes = [
 		name: 'listDomainRecords',
 		method: 'GET',
 		path: '/domains/{domain_name}/records',
-		description: "Tool to list all DNS records for a domain. Use when you need to inspect or filter a domain's DNS configuration.",
+		description:
+			"Tool to list all DNS records for a domain. Use when you need to inspect or filter a domain's DNS configuration.",
 		pathParams: ['domain_name'],
 		queryParams: ['page', 'type', 'per_page', 'record_name'],
 		riskLevel: 'read' as const,
@@ -440,7 +477,8 @@ export const digitalOceanRoutes = [
 		name: 'retrieveDomain',
 		method: 'GET',
 		path: '/domains/{name}',
-		description: 'Retrieves complete details about a specific domain including its TTL and DNS zone file configuration. Use this when you need to check domain settings, verify DNS configuration, or get the full zone file contents for a domain in your DigitalOcean account.',
+		description:
+			'Retrieves complete details about a specific domain including its TTL and DNS zone file configuration. Use this when you need to check domain settings, verify DNS configuration, or get the full zone file contents for a domain in your DigitalOcean account.',
 		pathParams: ['name'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -451,7 +489,8 @@ export const digitalOceanRoutes = [
 		name: 'retrieveDomainRecord',
 		method: 'GET',
 		path: '/domains/{domain_name}/records/{record_id}',
-		description: 'Tool to retrieve a specific DNS record for a domain by its record ID. Use when you have the domain name and record ID to fetch record details.',
+		description:
+			'Tool to retrieve a specific DNS record for a domain by its record ID. Use when you have the domain name and record ID to fetch record details.',
 		pathParams: ['domain_name', 'record_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -462,7 +501,8 @@ export const digitalOceanRoutes = [
 		name: 'retrieveExistingDroplet',
 		method: 'GET',
 		path: '/droplets/{droplet_id}',
-		description: "Retrieve detailed information about a specific DigitalOcean Droplet by its unique numeric ID. Returns comprehensive droplet details including: current status, specifications (memory, CPU, disk), networking configuration (IPv4/IPv6 addresses), image information, region, VPC, backup settings, attached volumes, and tags. Use this when you need to check a droplet's current state, configuration, or IP addresses.",
+		description:
+			"Retrieve detailed information about a specific DigitalOcean Droplet by its unique numeric ID. Returns comprehensive droplet details including: current status, specifications (memory, CPU, disk), networking configuration (IPv4/IPv6 addresses), image information, region, VPC, backup settings, attached volumes, and tags. Use this when you need to check a droplet's current state, configuration, or IP addresses.",
 		pathParams: ['droplet_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -473,7 +513,8 @@ export const digitalOceanRoutes = [
 		name: 'retrieveExistingImage',
 		method: 'GET',
 		path: '/images/{image_id}',
-		description: 'Tool to retrieve information about an image by ID or slug. Use when you need detailed metadata for a known image.',
+		description:
+			'Tool to retrieve information about an image by ID or slug. Use when you need detailed metadata for a known image.',
 		pathParams: ['image_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -484,7 +525,8 @@ export const digitalOceanRoutes = [
 		name: 'retrieveTag',
 		method: 'GET',
 		path: '/tags/{name}',
-		description: 'Tool to retrieve an individual tag by name. Use when you need to inspect the resources grouped under a specific tag.',
+		description:
+			'Tool to retrieve an individual tag by name. Use when you need to inspect the resources grouped under a specific tag.',
 		pathParams: ['name'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -495,7 +537,8 @@ export const digitalOceanRoutes = [
 		name: 'retrieveVpc',
 		method: 'GET',
 		path: '/vpcs/{vpc_uuid}',
-		description: 'Tool to retrieve details about a specific VPC by its ID. Use when you need to inspect VPC properties for configuration or auditing.',
+		description:
+			'Tool to retrieve details about a specific VPC by its ID. Use when you need to inspect VPC properties for configuration or auditing.',
 		pathParams: ['vpc_uuid'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -506,7 +549,8 @@ export const digitalOceanRoutes = [
 		name: 'tagResource',
 		method: 'POST',
 		path: '/tags/{tag_name}/resources',
-		description: 'Tool to tag resources by name. Use when you need to assign an existing tag to one or more resources. Returns 204 No Content on success.',
+		description:
+			'Tool to tag resources by name. Use when you need to assign an existing tag to one or more resources. Returns 204 No Content on success.',
 		pathParams: ['tag_name'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -517,7 +561,8 @@ export const digitalOceanRoutes = [
 		name: 'untagResource',
 		method: 'DELETE',
 		path: '/tags/{tag_name}/resources',
-		description: 'Tool to untag resources by tag name. Use when you need to remove an existing tag from multiple resources in a single operation.',
+		description:
+			'Tool to untag resources by tag name. Use when you need to remove an existing tag from multiple resources in a single operation.',
 		pathParams: ['tag_name'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -528,7 +573,8 @@ export const digitalOceanRoutes = [
 		name: 'updateDomainRecord',
 		method: 'PUT',
 		path: '/domains/{domain_name}/records/{record_id}',
-		description: 'Tool to update an existing DNS record for a domain. Use when you need to modify any valid attribute of a record after confirming its record ID.',
+		description:
+			'Tool to update an existing DNS record for a domain. Use when you need to modify any valid attribute of a record after confirming its record ID.',
 		pathParams: ['domain_name', 'record_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -539,7 +585,8 @@ export const digitalOceanRoutes = [
 		name: 'updateVpc',
 		method: 'PUT',
 		path: '/vpcs/{vpc_id}',
-		description: 'Tool to update information about a VPC. Use when you need to modify the name, description, or default status of an existing VPC.',
+		description:
+			'Tool to update information about a VPC. Use when you need to modify the name, description, or default status of an existing VPC.',
 		pathParams: ['vpc_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,

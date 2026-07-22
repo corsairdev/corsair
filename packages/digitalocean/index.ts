@@ -12,9 +12,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	digitalOceanEndpointMeta as generatedDigitalOceanEndpointMeta,
 	digitalOceanEndpointSchemas,
 	digitalOceanEndpointsNested,
+	digitalOceanEndpointMeta as generatedDigitalOceanEndpointMeta,
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { DigitalOceanSchema } from './schema';
@@ -38,9 +38,12 @@ export type DigitalOceanContext = CorsairPluginContext<
 	DigitalOceanPluginOptions
 >;
 
-export type DigitalOceanKeyBuilderContext = KeyBuilderContext<DigitalOceanPluginOptions>;
+export type DigitalOceanKeyBuilderContext =
+	KeyBuilderContext<DigitalOceanPluginOptions>;
 
-export type DigitalOceanBoundEndpoints = BindEndpoints<typeof digitalOceanEndpointsNested>;
+export type DigitalOceanBoundEndpoints = BindEndpoints<
+	typeof digitalOceanEndpointsNested
+>;
 
 export type DigitalOceanEndpoints = typeof digitalOceanEndpointsNested;
 
@@ -50,22 +53,25 @@ export const digitalOceanAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export type BaseDigitalOceanPlugin<T extends DigitalOceanPluginOptions> = CorsairPlugin<
-	'digitalocean',
-	typeof DigitalOceanSchema,
-	typeof digitalOceanEndpointsNested,
-	{},
-	T,
-	typeof defaultAuthType
->;
+export type BaseDigitalOceanPlugin<T extends DigitalOceanPluginOptions> =
+	CorsairPlugin<
+		'digitalocean',
+		typeof DigitalOceanSchema,
+		typeof digitalOceanEndpointsNested,
+		{},
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalDigitalOceanPlugin = BaseDigitalOceanPlugin<DigitalOceanPluginOptions>;
+export type InternalDigitalOceanPlugin =
+	BaseDigitalOceanPlugin<DigitalOceanPluginOptions>;
 
 export type ExternalDigitalOceanPlugin<T extends DigitalOceanPluginOptions> =
 	BaseDigitalOceanPlugin<T>;
 
 export function digitalocean<const T extends DigitalOceanPluginOptions>(
-	incomingOptions: DigitalOceanPluginOptions & T = {} as DigitalOceanPluginOptions & T,
+	incomingOptions: DigitalOceanPluginOptions &
+		T = {} as DigitalOceanPluginOptions & T,
 ): ExternalDigitalOceanPlugin<T> {
 	const options = {
 		...incomingOptions,

@@ -2,7 +2,10 @@ import type { DigitalOceanEndpoint } from './factory';
 import { executeDigitalOceanOperation, getRoute } from './factory';
 
 const createNewSshKeyRoute = getRoute('createNewSshKey');
-export const createNewSshKey: DigitalOceanEndpoint = async (ctx, input = {}) => {
+export const createNewSshKey: DigitalOceanEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeDigitalOceanOperation(ctx, input, createNewSshKeyRoute);
 };
 
@@ -19,5 +22,5 @@ export const listAllSshKeys: DigitalOceanEndpoint = async (ctx, input = {}) => {
 export const SshKeysEndpoints = {
 	createNewSshKey,
 	deleteSshKey,
-	listAllSshKeys
+	listAllSshKeys,
 } as const;

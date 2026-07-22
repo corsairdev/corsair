@@ -19,9 +19,13 @@ const CreateCustomImageInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateCustomImageInput = z.infer<typeof CreateCustomImageInputSchema>;
+export type CreateCustomImageInput = z.infer<
+	typeof CreateCustomImageInputSchema
+>;
 const CreateCustomImageResponseSchema = DigitalOceanResponseSchema;
-export type CreateCustomImageResponse = z.infer<typeof CreateCustomImageResponseSchema>;
+export type CreateCustomImageResponse = z.infer<
+	typeof CreateCustomImageResponseSchema
+>;
 
 // createDatabaseCluster
 const CreateDatabaseClusterInputSchema = z.object({
@@ -44,9 +48,13 @@ const CreateDatabaseClusterInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateDatabaseClusterInput = z.infer<typeof CreateDatabaseClusterInputSchema>;
+export type CreateDatabaseClusterInput = z.infer<
+	typeof CreateDatabaseClusterInputSchema
+>;
 const CreateDatabaseClusterResponseSchema = DigitalOceanResponseSchema;
-export type CreateDatabaseClusterResponse = z.infer<typeof CreateDatabaseClusterResponseSchema>;
+export type CreateDatabaseClusterResponse = z.infer<
+	typeof CreateDatabaseClusterResponseSchema
+>;
 
 // createNewBlockStorageVolume
 const CreateNewBlockStorageVolumeInputSchema = z.object({
@@ -62,9 +70,13 @@ const CreateNewBlockStorageVolumeInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateNewBlockStorageVolumeInput = z.infer<typeof CreateNewBlockStorageVolumeInputSchema>;
+export type CreateNewBlockStorageVolumeInput = z.infer<
+	typeof CreateNewBlockStorageVolumeInputSchema
+>;
 const CreateNewBlockStorageVolumeResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewBlockStorageVolumeResponse = z.infer<typeof CreateNewBlockStorageVolumeResponseSchema>;
+export type CreateNewBlockStorageVolumeResponse = z.infer<
+	typeof CreateNewBlockStorageVolumeResponseSchema
+>;
 
 // createNewDomain
 const CreateNewDomainInputSchema = z.object({
@@ -76,7 +88,9 @@ const CreateNewDomainInputSchema = z.object({
 });
 export type CreateNewDomainInput = z.infer<typeof CreateNewDomainInputSchema>;
 const CreateNewDomainResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewDomainResponse = z.infer<typeof CreateNewDomainResponseSchema>;
+export type CreateNewDomainResponse = z.infer<
+	typeof CreateNewDomainResponseSchema
+>;
 
 // createNewDomainRecord
 const CreateNewDomainRecordInputSchema = z.object({
@@ -94,9 +108,13 @@ const CreateNewDomainRecordInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateNewDomainRecordInput = z.infer<typeof CreateNewDomainRecordInputSchema>;
+export type CreateNewDomainRecordInput = z.infer<
+	typeof CreateNewDomainRecordInputSchema
+>;
 const CreateNewDomainRecordResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewDomainRecordResponse = z.infer<typeof CreateNewDomainRecordResponseSchema>;
+export type CreateNewDomainRecordResponse = z.infer<
+	typeof CreateNewDomainRecordResponseSchema
+>;
 
 // createNewDroplet
 const CreateNewDropletInputSchema = z.object({
@@ -120,7 +138,9 @@ const CreateNewDropletInputSchema = z.object({
 });
 export type CreateNewDropletInput = z.infer<typeof CreateNewDropletInputSchema>;
 const CreateNewDropletResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewDropletResponse = z.infer<typeof CreateNewDropletResponseSchema>;
+export type CreateNewDropletResponse = z.infer<
+	typeof CreateNewDropletResponseSchema
+>;
 
 // createNewFirewall
 const CreateNewFirewallInputSchema = z.object({
@@ -134,9 +154,13 @@ const CreateNewFirewallInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateNewFirewallInput = z.infer<typeof CreateNewFirewallInputSchema>;
+export type CreateNewFirewallInput = z.infer<
+	typeof CreateNewFirewallInputSchema
+>;
 const CreateNewFirewallResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewFirewallResponse = z.infer<typeof CreateNewFirewallResponseSchema>;
+export type CreateNewFirewallResponse = z.infer<
+	typeof CreateNewFirewallResponseSchema
+>;
 
 // createNewKubernetesCluster
 const CreateNewKubernetesClusterInputSchema = z.object({
@@ -151,9 +175,13 @@ const CreateNewKubernetesClusterInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateNewKubernetesClusterInput = z.infer<typeof CreateNewKubernetesClusterInputSchema>;
+export type CreateNewKubernetesClusterInput = z.infer<
+	typeof CreateNewKubernetesClusterInputSchema
+>;
 const CreateNewKubernetesClusterResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewKubernetesClusterResponse = z.infer<typeof CreateNewKubernetesClusterResponseSchema>;
+export type CreateNewKubernetesClusterResponse = z.infer<
+	typeof CreateNewKubernetesClusterResponseSchema
+>;
 
 // createNewLoadBalancer
 const CreateNewLoadBalancerInputSchema = z.object({
@@ -174,9 +202,13 @@ const CreateNewLoadBalancerInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateNewLoadBalancerInput = z.infer<typeof CreateNewLoadBalancerInputSchema>;
+export type CreateNewLoadBalancerInput = z.infer<
+	typeof CreateNewLoadBalancerInputSchema
+>;
 const CreateNewLoadBalancerResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewLoadBalancerResponse = z.infer<typeof CreateNewLoadBalancerResponseSchema>;
+export type CreateNewLoadBalancerResponse = z.infer<
+	typeof CreateNewLoadBalancerResponseSchema
+>;
 
 // createNewSshKey
 const CreateNewSshKeyInputSchema = z.object({
@@ -188,7 +220,9 @@ const CreateNewSshKeyInputSchema = z.object({
 });
 export type CreateNewSshKeyInput = z.infer<typeof CreateNewSshKeyInputSchema>;
 const CreateNewSshKeyResponseSchema = DigitalOceanResponseSchema;
-export type CreateNewSshKeyResponse = z.infer<typeof CreateNewSshKeyResponseSchema>;
+export type CreateNewSshKeyResponse = z.infer<
+	typeof CreateNewSshKeyResponseSchema
+>;
 
 // createNewTag
 const CreateNewTagInputSchema = z.object({
@@ -223,9 +257,13 @@ const DeleteBlockStorageVolumeInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteBlockStorageVolumeInput = z.infer<typeof DeleteBlockStorageVolumeInputSchema>;
+export type DeleteBlockStorageVolumeInput = z.infer<
+	typeof DeleteBlockStorageVolumeInputSchema
+>;
 const DeleteBlockStorageVolumeResponseSchema = DigitalOceanResponseSchema;
-export type DeleteBlockStorageVolumeResponse = z.infer<typeof DeleteBlockStorageVolumeResponseSchema>;
+export type DeleteBlockStorageVolumeResponse = z.infer<
+	typeof DeleteBlockStorageVolumeResponseSchema
+>;
 
 // deleteDatabaseCluster
 const DeleteDatabaseClusterInputSchema = z.object({
@@ -234,9 +272,13 @@ const DeleteDatabaseClusterInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteDatabaseClusterInput = z.infer<typeof DeleteDatabaseClusterInputSchema>;
+export type DeleteDatabaseClusterInput = z.infer<
+	typeof DeleteDatabaseClusterInputSchema
+>;
 const DeleteDatabaseClusterResponseSchema = DigitalOceanResponseSchema;
-export type DeleteDatabaseClusterResponse = z.infer<typeof DeleteDatabaseClusterResponseSchema>;
+export type DeleteDatabaseClusterResponse = z.infer<
+	typeof DeleteDatabaseClusterResponseSchema
+>;
 
 // deleteDomain
 const DeleteDomainInputSchema = z.object({
@@ -257,9 +299,13 @@ const DeleteDomainRecordInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteDomainRecordInput = z.infer<typeof DeleteDomainRecordInputSchema>;
+export type DeleteDomainRecordInput = z.infer<
+	typeof DeleteDomainRecordInputSchema
+>;
 const DeleteDomainRecordResponseSchema = DigitalOceanResponseSchema;
-export type DeleteDomainRecordResponse = z.infer<typeof DeleteDomainRecordResponseSchema>;
+export type DeleteDomainRecordResponse = z.infer<
+	typeof DeleteDomainRecordResponseSchema
+>;
 
 // deleteExistingDroplet
 const DeleteExistingDropletInputSchema = z.object({
@@ -268,9 +314,13 @@ const DeleteExistingDropletInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteExistingDropletInput = z.infer<typeof DeleteExistingDropletInputSchema>;
+export type DeleteExistingDropletInput = z.infer<
+	typeof DeleteExistingDropletInputSchema
+>;
 const DeleteExistingDropletResponseSchema = DigitalOceanResponseSchema;
-export type DeleteExistingDropletResponse = z.infer<typeof DeleteExistingDropletResponseSchema>;
+export type DeleteExistingDropletResponse = z.infer<
+	typeof DeleteExistingDropletResponseSchema
+>;
 
 // deleteFirewall
 const DeleteFirewallInputSchema = z.object({
@@ -281,7 +331,9 @@ const DeleteFirewallInputSchema = z.object({
 });
 export type DeleteFirewallInput = z.infer<typeof DeleteFirewallInputSchema>;
 const DeleteFirewallResponseSchema = DigitalOceanResponseSchema;
-export type DeleteFirewallResponse = z.infer<typeof DeleteFirewallResponseSchema>;
+export type DeleteFirewallResponse = z.infer<
+	typeof DeleteFirewallResponseSchema
+>;
 
 // deleteImage
 const DeleteImageInputSchema = z.object({
@@ -301,9 +353,13 @@ const DeleteLoadBalancerInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteLoadBalancerInput = z.infer<typeof DeleteLoadBalancerInputSchema>;
+export type DeleteLoadBalancerInput = z.infer<
+	typeof DeleteLoadBalancerInputSchema
+>;
 const DeleteLoadBalancerResponseSchema = DigitalOceanResponseSchema;
-export type DeleteLoadBalancerResponse = z.infer<typeof DeleteLoadBalancerResponseSchema>;
+export type DeleteLoadBalancerResponse = z.infer<
+	typeof DeleteLoadBalancerResponseSchema
+>;
 
 // deleteSshKey
 const DeleteSshKeyInputSchema = z.object({
@@ -349,7 +405,9 @@ const ListAllDatabasesInputSchema = z.object({
 });
 export type ListAllDatabasesInput = z.infer<typeof ListAllDatabasesInputSchema>;
 const ListAllDatabasesResponseSchema = DigitalOceanResponseSchema;
-export type ListAllDatabasesResponse = z.infer<typeof ListAllDatabasesResponseSchema>;
+export type ListAllDatabasesResponse = z.infer<
+	typeof ListAllDatabasesResponseSchema
+>;
 
 // listAllDomains
 const ListAllDomainsInputSchema = z.object({
@@ -361,7 +419,9 @@ const ListAllDomainsInputSchema = z.object({
 });
 export type ListAllDomainsInput = z.infer<typeof ListAllDomainsInputSchema>;
 const ListAllDomainsResponseSchema = DigitalOceanResponseSchema;
-export type ListAllDomainsResponse = z.infer<typeof ListAllDomainsResponseSchema>;
+export type ListAllDomainsResponse = z.infer<
+	typeof ListAllDomainsResponseSchema
+>;
 
 // listAllDroplets
 const ListAllDropletsInputSchema = z.object({
@@ -374,7 +434,9 @@ const ListAllDropletsInputSchema = z.object({
 });
 export type ListAllDropletsInput = z.infer<typeof ListAllDropletsInputSchema>;
 const ListAllDropletsResponseSchema = DigitalOceanResponseSchema;
-export type ListAllDropletsResponse = z.infer<typeof ListAllDropletsResponseSchema>;
+export type ListAllDropletsResponse = z.infer<
+	typeof ListAllDropletsResponseSchema
+>;
 
 // listAllFirewalls
 const ListAllFirewallsInputSchema = z.object({
@@ -386,7 +448,9 @@ const ListAllFirewallsInputSchema = z.object({
 });
 export type ListAllFirewallsInput = z.infer<typeof ListAllFirewallsInputSchema>;
 const ListAllFirewallsResponseSchema = DigitalOceanResponseSchema;
-export type ListAllFirewallsResponse = z.infer<typeof ListAllFirewallsResponseSchema>;
+export type ListAllFirewallsResponse = z.infer<
+	typeof ListAllFirewallsResponseSchema
+>;
 
 // listAllImages
 const ListAllImagesInputSchema = z.object({
@@ -411,9 +475,13 @@ const ListAllKubernetesClustersInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListAllKubernetesClustersInput = z.infer<typeof ListAllKubernetesClustersInputSchema>;
+export type ListAllKubernetesClustersInput = z.infer<
+	typeof ListAllKubernetesClustersInputSchema
+>;
 const ListAllKubernetesClustersResponseSchema = DigitalOceanResponseSchema;
-export type ListAllKubernetesClustersResponse = z.infer<typeof ListAllKubernetesClustersResponseSchema>;
+export type ListAllKubernetesClustersResponse = z.infer<
+	typeof ListAllKubernetesClustersResponseSchema
+>;
 
 // listAllLoadBalancers
 const ListAllLoadBalancersInputSchema = z.object({
@@ -423,9 +491,13 @@ const ListAllLoadBalancersInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListAllLoadBalancersInput = z.infer<typeof ListAllLoadBalancersInputSchema>;
+export type ListAllLoadBalancersInput = z.infer<
+	typeof ListAllLoadBalancersInputSchema
+>;
 const ListAllLoadBalancersResponseSchema = DigitalOceanResponseSchema;
-export type ListAllLoadBalancersResponse = z.infer<typeof ListAllLoadBalancersResponseSchema>;
+export type ListAllLoadBalancersResponse = z.infer<
+	typeof ListAllLoadBalancersResponseSchema
+>;
 
 // listAllSnapshots
 const ListAllSnapshotsInputSchema = z.object({
@@ -438,7 +510,9 @@ const ListAllSnapshotsInputSchema = z.object({
 });
 export type ListAllSnapshotsInput = z.infer<typeof ListAllSnapshotsInputSchema>;
 const ListAllSnapshotsResponseSchema = DigitalOceanResponseSchema;
-export type ListAllSnapshotsResponse = z.infer<typeof ListAllSnapshotsResponseSchema>;
+export type ListAllSnapshotsResponse = z.infer<
+	typeof ListAllSnapshotsResponseSchema
+>;
 
 // listAllSshKeys
 const ListAllSshKeysInputSchema = z.object({
@@ -450,7 +524,9 @@ const ListAllSshKeysInputSchema = z.object({
 });
 export type ListAllSshKeysInput = z.infer<typeof ListAllSshKeysInputSchema>;
 const ListAllSshKeysResponseSchema = DigitalOceanResponseSchema;
-export type ListAllSshKeysResponse = z.infer<typeof ListAllSshKeysResponseSchema>;
+export type ListAllSshKeysResponse = z.infer<
+	typeof ListAllSshKeysResponseSchema
+>;
 
 // listAllTags
 const ListAllTagsInputSchema = z.object({
@@ -476,7 +552,9 @@ const ListAllVolumesInputSchema = z.object({
 });
 export type ListAllVolumesInput = z.infer<typeof ListAllVolumesInputSchema>;
 const ListAllVolumesResponseSchema = DigitalOceanResponseSchema;
-export type ListAllVolumesResponse = z.infer<typeof ListAllVolumesResponseSchema>;
+export type ListAllVolumesResponse = z.infer<
+	typeof ListAllVolumesResponseSchema
+>;
 
 // listAllVpcs
 const ListAllVpcsInputSchema = z.object({
@@ -496,9 +574,13 @@ const ListDatabaseOptionsInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListDatabaseOptionsInput = z.infer<typeof ListDatabaseOptionsInputSchema>;
+export type ListDatabaseOptionsInput = z.infer<
+	typeof ListDatabaseOptionsInputSchema
+>;
 const ListDatabaseOptionsResponseSchema = DigitalOceanResponseSchema;
-export type ListDatabaseOptionsResponse = z.infer<typeof ListDatabaseOptionsResponseSchema>;
+export type ListDatabaseOptionsResponse = z.infer<
+	typeof ListDatabaseOptionsResponseSchema
+>;
 
 // listDomainRecords
 const ListDomainRecordsInputSchema = z.object({
@@ -511,9 +593,13 @@ const ListDomainRecordsInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListDomainRecordsInput = z.infer<typeof ListDomainRecordsInputSchema>;
+export type ListDomainRecordsInput = z.infer<
+	typeof ListDomainRecordsInputSchema
+>;
 const ListDomainRecordsResponseSchema = DigitalOceanResponseSchema;
-export type ListDomainRecordsResponse = z.infer<typeof ListDomainRecordsResponseSchema>;
+export type ListDomainRecordsResponse = z.infer<
+	typeof ListDomainRecordsResponseSchema
+>;
 
 // retrieveDomain
 const RetrieveDomainInputSchema = z.object({
@@ -524,7 +610,9 @@ const RetrieveDomainInputSchema = z.object({
 });
 export type RetrieveDomainInput = z.infer<typeof RetrieveDomainInputSchema>;
 const RetrieveDomainResponseSchema = DigitalOceanResponseSchema;
-export type RetrieveDomainResponse = z.infer<typeof RetrieveDomainResponseSchema>;
+export type RetrieveDomainResponse = z.infer<
+	typeof RetrieveDomainResponseSchema
+>;
 
 // retrieveDomainRecord
 const RetrieveDomainRecordInputSchema = z.object({
@@ -534,9 +622,13 @@ const RetrieveDomainRecordInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type RetrieveDomainRecordInput = z.infer<typeof RetrieveDomainRecordInputSchema>;
+export type RetrieveDomainRecordInput = z.infer<
+	typeof RetrieveDomainRecordInputSchema
+>;
 const RetrieveDomainRecordResponseSchema = DigitalOceanResponseSchema;
-export type RetrieveDomainRecordResponse = z.infer<typeof RetrieveDomainRecordResponseSchema>;
+export type RetrieveDomainRecordResponse = z.infer<
+	typeof RetrieveDomainRecordResponseSchema
+>;
 
 // retrieveExistingDroplet
 const RetrieveExistingDropletInputSchema = z.object({
@@ -545,9 +637,13 @@ const RetrieveExistingDropletInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type RetrieveExistingDropletInput = z.infer<typeof RetrieveExistingDropletInputSchema>;
+export type RetrieveExistingDropletInput = z.infer<
+	typeof RetrieveExistingDropletInputSchema
+>;
 const RetrieveExistingDropletResponseSchema = DigitalOceanResponseSchema;
-export type RetrieveExistingDropletResponse = z.infer<typeof RetrieveExistingDropletResponseSchema>;
+export type RetrieveExistingDropletResponse = z.infer<
+	typeof RetrieveExistingDropletResponseSchema
+>;
 
 // retrieveExistingImage
 const RetrieveExistingImageInputSchema = z.object({
@@ -556,9 +652,13 @@ const RetrieveExistingImageInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type RetrieveExistingImageInput = z.infer<typeof RetrieveExistingImageInputSchema>;
+export type RetrieveExistingImageInput = z.infer<
+	typeof RetrieveExistingImageInputSchema
+>;
 const RetrieveExistingImageResponseSchema = DigitalOceanResponseSchema;
-export type RetrieveExistingImageResponse = z.infer<typeof RetrieveExistingImageResponseSchema>;
+export type RetrieveExistingImageResponse = z.infer<
+	typeof RetrieveExistingImageResponseSchema
+>;
 
 // retrieveTag
 const RetrieveTagInputSchema = z.object({
@@ -623,9 +723,13 @@ const UpdateDomainRecordInputSchema = z.object({
 	query: z.record(z.string(), z.unknown()).optional(),
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateDomainRecordInput = z.infer<typeof UpdateDomainRecordInputSchema>;
+export type UpdateDomainRecordInput = z.infer<
+	typeof UpdateDomainRecordInputSchema
+>;
 const UpdateDomainRecordResponseSchema = DigitalOceanResponseSchema;
-export type UpdateDomainRecordResponse = z.infer<typeof UpdateDomainRecordResponseSchema>;
+export type UpdateDomainRecordResponse = z.infer<
+	typeof UpdateDomainRecordResponseSchema
+>;
 
 // updateVpc
 const UpdateVpcInputSchema = z.object({
@@ -692,7 +796,9 @@ export const DigitalOceanEndpointInputSchemas = {
 } as const;
 
 export type DigitalOceanEndpointInputs = {
-	[K in keyof typeof DigitalOceanEndpointInputSchemas]: z.infer<(typeof DigitalOceanEndpointInputSchemas)[K]>;
+	[K in keyof typeof DigitalOceanEndpointInputSchemas]: z.infer<
+		(typeof DigitalOceanEndpointInputSchemas)[K]
+	>;
 };
 
 export const DigitalOceanEndpointOutputSchemas = {
@@ -746,9 +852,12 @@ export const DigitalOceanEndpointOutputSchemas = {
 } as const;
 
 export type DigitalOceanEndpointOutputs = {
-	[K in keyof typeof DigitalOceanEndpointOutputSchemas]: z.infer<(typeof DigitalOceanEndpointOutputSchemas)[K]>;
+	[K in keyof typeof DigitalOceanEndpointOutputSchemas]: z.infer<
+		(typeof DigitalOceanEndpointOutputSchemas)[K]
+	>;
 };
 
-export type DigitalOceanEndpointInput = DigitalOceanEndpointInputs[keyof DigitalOceanEndpointInputs] & {
-	[key: string]: unknown;
-};
+export type DigitalOceanEndpointInput =
+	DigitalOceanEndpointInputs[keyof DigitalOceanEndpointInputs] & {
+		[key: string]: unknown;
+	};

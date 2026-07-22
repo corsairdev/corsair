@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { DatabasesEndpoints } from './databases';
 import { DomainRecordsEndpoints } from './domain-records';
 import { DomainsEndpoints } from './domains';
@@ -6,14 +7,16 @@ import { FirewallsEndpoints } from './firewalls';
 import { ImagesEndpoints } from './images';
 import { KubernetesEndpoints } from './kubernetes';
 import { LoadBalancersEndpoints } from './load-balancers';
+import { digitalOceanRoutes } from './routes';
 import { SnapshotsEndpoints } from './snapshots';
 import { SshKeysEndpoints } from './ssh-keys';
 import { TagsEndpoints } from './tags';
+import {
+	DigitalOceanEndpointInputSchemas,
+	DigitalOceanEndpointOutputSchemas,
+} from './types';
 import { VolumesEndpoints } from './volumes';
 import { VpcsEndpoints } from './vpcs';
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
-import { digitalOceanRoutes } from './routes';
-import { DigitalOceanEndpointInputSchemas, DigitalOceanEndpointOutputSchemas } from './types';
 
 export const digitalOceanEndpointsNested = {
 	databases: DatabasesEndpoints,
@@ -28,7 +31,7 @@ export const digitalOceanEndpointsNested = {
 	sshKeys: SshKeysEndpoints,
 	tags: TagsEndpoints,
 	volumes: VolumesEndpoints,
-	vpcs: VpcsEndpoints
+	vpcs: VpcsEndpoints,
 } as const;
 
 // Route metadata is built dynamically from digitalOceanRoutes; cast satisfies RequiredPluginEndpointMeta shape.

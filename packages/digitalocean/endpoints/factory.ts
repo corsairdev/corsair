@@ -2,9 +2,10 @@ import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { makeDigitalOceanRequest } from '../client';
 import type { DigitalOceanContext } from '../index';
-import { digitalOceanRoutes, type DigitalOceanRoute } from './routes';
-import type { DigitalOceanEndpointInput } from './types';
 import { syncDigitalOceanOperationCache } from './cache-sync';
+import type { DigitalOceanRoute } from './routes';
+import { digitalOceanRoutes } from './routes';
+import type { DigitalOceanEndpointInput } from './types';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 	domain_name: ['domain_name', 'name'],
@@ -24,7 +25,10 @@ export type DigitalOceanEndpoint = CorsairEndpoint<
 >;
 
 function camelToSnake(value: string): string {
-	return value.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
+	return value
+		.replace(/([A-Z])/g, '_$1')
+		.replace(/^_/, '')
+		.toLowerCase();
 }
 
 function encodePathPart(value: unknown): string {
@@ -34,7 +38,10 @@ function encodePathPart(value: unknown): string {
 	return encodeURIComponent(String(value));
 }
 
-function resolvePathParam(input: DigitalOceanEndpointInput, pathKey: string): unknown {
+function resolvePathParam(
+	input: DigitalOceanEndpointInput,
+	pathKey: string,
+): unknown {
 	const snake = camelToSnake(pathKey);
 	const candidates = [pathKey, snake, ...(PATH_PARAM_ALIASES[pathKey] ?? [])];
 	for (const candidate of candidates) {
@@ -63,18 +70,23 @@ export function resolvePath(
 	});
 }
 
-function buildQuery(route: DigitalOceanRoute, input: DigitalOceanEndpointInput) {
+function buildQuery(
+	route: DigitalOceanRoute,
+	input: DigitalOceanEndpointInput,
+) {
 	const query: Record<string, unknown> = { ...(input.query ?? {}) };
 	for (const key of route.queryParams ?? []) {
 		const snake = camelToSnake(key);
-		const value =
-			input[snake] ?? input[key] ?? resolvePathParam(input, key);
+		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
 		if (value !== undefined) query[key] = value;
 	}
 	return Object.keys(query).length > 0 ? query : undefined;
 }
 
-function requestBody(route: DigitalOceanRoute, input: DigitalOceanEndpointInput) {
+function requestBody(
+	route: DigitalOceanRoute,
+	input: DigitalOceanEndpointInput,
+) {
 	if ('body' in input && input.body !== undefined) return input.body;
 	const pathParams = new Set(route.pathParams ?? []);
 	const queryParams = new Set(
@@ -120,13 +132,17 @@ export async function requestDigitalOceanOperation(
 	input: DigitalOceanEndpointInput,
 	route: DigitalOceanRoute,
 ) {
-	return makeDigitalOceanRequest(resolvePath(route.path, input, route), ctx.key, {
-		method: route.method,
-		body: requestBody(route, input),
-		query: buildQuery(route, input),
-		// headers is optional unknown on DigitalOceanEndpointInput; callers pass string header maps.
-		headers: input.headers as Record<string, string> | undefined,
-	});
+	return makeDigitalOceanRequest(
+		resolvePath(route.path, input, route),
+		ctx.key,
+		{
+			method: route.method,
+			body: requestBody(route, input),
+			query: buildQuery(route, input),
+			// headers is optional unknown on DigitalOceanEndpointInput; callers pass string header maps.
+			headers: input.headers as Record<string, string> | undefined,
+		},
+	);
 }
 
 export async function executeDigitalOceanOperation(

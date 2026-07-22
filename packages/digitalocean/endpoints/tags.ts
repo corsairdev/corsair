@@ -37,5 +37,5 @@ export const TagsEndpoints = {
 	listAllTags,
 	retrieveTag,
 	tagResource,
-	untagResource
+	untagResource,
 } as const;

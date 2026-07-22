@@ -2,7 +2,10 @@ import type { DigitalOceanEndpoint } from './factory';
 import { executeDigitalOceanOperation, getRoute } from './factory';
 
 const createCustomImageRoute = getRoute('createCustomImage');
-export const createCustomImage: DigitalOceanEndpoint = async (ctx, input = {}) => {
+export const createCustomImage: DigitalOceanEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeDigitalOceanOperation(ctx, input, createCustomImageRoute);
 };
 
@@ -17,7 +20,10 @@ export const listAllImages: DigitalOceanEndpoint = async (ctx, input = {}) => {
 };
 
 const retrieveExistingImageRoute = getRoute('retrieveExistingImage');
-export const retrieveExistingImage: DigitalOceanEndpoint = async (ctx, input = {}) => {
+export const retrieveExistingImage: DigitalOceanEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeDigitalOceanOperation(ctx, input, retrieveExistingImageRoute);
 };
 
@@ -25,5 +31,5 @@ export const ImagesEndpoints = {
 	createCustomImage,
 	deleteImage,
 	listAllImages,
-	retrieveExistingImage
+	retrieveExistingImage,
 } as const;

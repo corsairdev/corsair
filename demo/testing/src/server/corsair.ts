@@ -13,7 +13,6 @@ import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
-import { digitalocean } from '@corsair-dev/digitalocean';
 import { createCorsair } from 'corsair';
 
 import { sqlite } from '../db';
@@ -56,9 +55,6 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
-		digitalocean({
-			key: process.env.DIGITAL_OCEAN_API_KEY,
-		}),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),

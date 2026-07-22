@@ -1,7 +1,7 @@
 import { request } from 'corsair/http';
 import { makeDigitalOceanRequest } from './client';
 import type { DigitalOceanContext } from './index';
-import { digitalocean, digitalOceanEndpointSchemas } from './index';
+import { digitalOceanEndpointSchemas, digitalocean } from './index';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -101,9 +101,14 @@ describe('DigitalOcean endpoints', () => {
 
 	it('maps representative operations to API routes', async () => {
 		const plugin = digitalocean({ key: 'test-api-key' });
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			droplets: {
-				listAllDroplets: (ctx: DigitalOceanContext, input: {}) => Promise<unknown>;
+				listAllDroplets: (
+					ctx: DigitalOceanContext,
+					input: {},
+				) => Promise<unknown>;
 				createNewDroplet: (
 					ctx: DigitalOceanContext,
 					input: { name: string; region: string; size: string; image: string },

@@ -31,5 +31,5 @@ export const VpcsEndpoints = {
 	deleteVpc,
 	listAllVpcs,
 	retrieveVpc,
-	updateVpc
+	updateVpc,
 } as const;

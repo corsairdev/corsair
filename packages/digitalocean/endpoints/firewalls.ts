@@ -2,7 +2,10 @@ import type { DigitalOceanEndpoint } from './factory';
 import { executeDigitalOceanOperation, getRoute } from './factory';
 
 const createNewFirewallRoute = getRoute('createNewFirewall');
-export const createNewFirewall: DigitalOceanEndpoint = async (ctx, input = {}) => {
+export const createNewFirewall: DigitalOceanEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeDigitalOceanOperation(ctx, input, createNewFirewallRoute);
 };
 
@@ -12,12 +15,15 @@ export const deleteFirewall: DigitalOceanEndpoint = async (ctx, input = {}) => {
 };
 
 const listAllFirewallsRoute = getRoute('listAllFirewalls');
-export const listAllFirewalls: DigitalOceanEndpoint = async (ctx, input = {}) => {
+export const listAllFirewalls: DigitalOceanEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeDigitalOceanOperation(ctx, input, listAllFirewallsRoute);
 };
 
 export const FirewallsEndpoints = {
 	createNewFirewall,
 	deleteFirewall,
-	listAllFirewalls
+	listAllFirewalls,
 } as const;
