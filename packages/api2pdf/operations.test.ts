@@ -25,6 +25,8 @@ const mockRequest = jest.mocked(makeApi2PdfRequest);
 const mockTextRequest = jest.mocked(makeApi2PdfTextRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
+// Endpoint closures are heterogeneous; unknown avoids inventing a fake shared
+// Ctx/Input union just for the table-driven cases below.
 type AnyEndpoint = (ctx: unknown, input?: unknown) => Promise<unknown>;
 
 const SAMPLE_PDF =
@@ -59,10 +61,12 @@ describe('API2PDF endpoint routing', () => {
 	const cases: Array<{
 		name: string;
 		fn: AnyEndpoint;
+		// Table rows mix endpoint inputs; Record avoids a mega discriminated union.
 		input?: Record<string, unknown>;
 		path: string;
 		method: string;
 		text?: boolean;
+		// Mocked HTTP payloads differ per endpoint (text status vs job JSON).
 		response?: unknown;
 	}> = [
 		{
@@ -180,4 +184,19 @@ describe('API2PDF endpoint routing', () => {
 			expect(mockLog).toHaveBeenCalled();
 		},
 	);
+
+	it('utility.deletePdf throws when Success is false', async () => {
+		mockRequest.mockResolvedValueOnce({
+			Success: false,
+			Error: 'file not found',
+		});
+
+		const ctx = createContext();
+		await expect(
+			(UtilityEndpoints.deletePdf as AnyEndpoint)(ctx, {
+				responseId: 'missing-id',
+			}),
+		).rejects.toThrow('file not found');
+		expect(mockLog).not.toHaveBeenCalled();
+	});
 });

@@ -12,6 +12,8 @@ export const addHeaderFooter: Api2PdfEndpoints['addHeaderFooter'] = async (
 	ctx,
 	input,
 ) => {
+	// Chrome options bag is open-ended (API accepts arbitrary Headless Chrome flags);
+	// Record<string, unknown> is required because the upstream schema is not fixed.
 	const chromeOptions: Record<string, unknown> = {
 		displayHeaderFooter: input.displayHeaderFooter ?? true,
 	};

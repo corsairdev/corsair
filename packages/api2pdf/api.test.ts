@@ -5,8 +5,18 @@ import {
 	makeApi2PdfRequest,
 	makeApi2PdfTextRequest,
 } from './client';
+import { UtilityEndpoints } from './endpoints';
 import type { Api2PdfJobResponse } from './endpoints/types';
 import { Api2PdfEndpointOutputSchemas } from './endpoints/types';
+import type { Api2PdfContext } from './index';
+
+/** Minimal plugin context for live endpoint-handler tests. */
+function testCtx(key: string): Api2PdfContext {
+	return {
+		key,
+		// logEventFromContext only needs enough of ctx to no-op safely in tests
+	} as Api2PdfContext;
+}
 
 const TEST_API_KEY = process.env.API2PDF_API_KEY;
 
@@ -147,22 +157,16 @@ describe('API2PDF API Type Tests', () => {
 	});
 
 	describe('utility.delete', () => {
-		it('deletePdf rejects an unknown responseId with a non-success response', async () => {
+		it('deletePdf throws when Success is false for an unknown responseId', async () => {
 			if (!TEST_API_KEY) return;
 
-			// Use a responseId that was never created; the API should return a
-			// non-success payload rather than throw, exercising the delete path
-			// and the assertApi2PdfSuccess helper on a failure shape.
-			const response = await makeApi2PdfRequest<{
-				Success?: boolean;
-				Error?: string;
-			}>('/file/nonexistent-response-id', {
-				apiKey: TEST_API_KEY,
-				method: 'DELETE',
-			});
-
-			Api2PdfEndpointOutputSchemas.deletePdf.parse(response);
-			expect(response.Success).toBe(false);
+			// Drive the real endpoint so assertApi2PdfSuccess throws on Success:false
+			// instead of calling makeApi2PdfRequest directly (which bypasses it).
+			await expect(
+				UtilityEndpoints.deletePdf(testCtx(TEST_API_KEY), {
+					responseId: 'nonexistent-response-id',
+				}),
+			).rejects.toThrow();
 		});
 	});
 

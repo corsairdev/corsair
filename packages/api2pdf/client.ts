@@ -30,6 +30,7 @@ const API2PDF_API_BASE = 'https://v2.api2pdf.com';
 export type Api2PdfRequestOptions = {
 	apiKey?: string;
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// Endpoint payloads differ per operation; Record keeps the client generic.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 };
@@ -48,7 +49,8 @@ function buildConfig(apiKey?: string, isWrite = false): OpenAPIConfig {
 	};
 }
 
-// Catch values are untyped at runtime; narrow to ApiError/Error before rethrowing.
+// Catch values are untyped at runtime; unknown forces narrowing to ApiError/Error
+// before rethrowing as Api2PdfAPIError.
 async function handleRequestError(error: unknown): Promise<never> {
 	if (error instanceof ApiError) {
 		throw new Api2PdfAPIError(error.message, error.status, {
@@ -114,6 +116,8 @@ export async function makeApi2PdfTextRequest(
 }
 
 export function assertApi2PdfSuccess<
+	// Error field shape varies by endpoint (string | object | null); unknown forces
+	// callers to narrow before reading it.
 	T extends { Success?: boolean; Error?: unknown },
 >(response: T): T {
 	if (response.Success === false) {
@@ -126,12 +130,14 @@ export function assertApi2PdfSuccess<
 	return response;
 }
 
-// Endpoint payloads differ per operation; Record keeps the client generic.
+// Endpoint payloads differ per operation; Record keeps the client generic across
+// chrome/pdfsharp/libreoffice field sets without a union of every wire shape.
 export function buildPostPayload(
 	fields: Record<string, unknown>,
 	options?: {
 		inline?: boolean;
 		fileName?: string;
+		// Headless Chrome options bag is open-ended upstream.
 		chromeOptions?: Record<string, unknown>;
 	},
 ): Record<string, unknown> {

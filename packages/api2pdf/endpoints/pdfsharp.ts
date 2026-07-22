@@ -35,6 +35,8 @@ export const extractPages: Api2PdfEndpoints['extractPages'] = async (
 	ctx,
 	input,
 ) => {
+	// Optional start/end are omitted when unset; Record keeps a flexible POST body
+	// without inventing a second schema for the wire payload.
 	const body: Record<string, unknown> = { url: input.url };
 	if (input.start != null) body.start = input.start;
 	if (input.end != null) body.end = input.end;
