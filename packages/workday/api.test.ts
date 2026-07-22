@@ -2,6 +2,7 @@ import { workday } from './index.js';
 
 describe('Workday Plugin', () => {
 	const mockFetch = jest.fn();
+	// Justification: jest requires injecting fetch into global scope for tests.
 	(globalThis as any).fetch = mockFetch;
 
 	beforeEach(() => {

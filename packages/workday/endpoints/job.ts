@@ -29,7 +29,7 @@ export const getJobById: WorkdayEndpoints['getJobById'] = async (
 ) => {
 	const response = await makeWorkdayRequest<
 		WorkdayEndpointOutputs['getJobById']
-	>('v1/job/getJobById/{id}', ctx.key, {
+	>(`v1/job/getJobById/${input?.id || ''}`, ctx.key, {
 		method: 'GET',
 		// Justification: The makeWorkdayRequest client expects a generic unknown record.
 		query: input as { [key: string]: string | number | boolean | undefined },
