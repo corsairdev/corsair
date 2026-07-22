@@ -322,6 +322,7 @@ export type GithubEndpoints = {
 	repositoriesUnstar: GithubEndpoint<'repositoriesUnstar'>;
 	repositoriesCheckStarred: GithubEndpoint<'repositoriesCheckStarred'>;
 	repositoriesListStarred: GithubEndpoint<'repositoriesListStarred'>;
+	repositoriesListStargazers: GithubEndpoint<'repositoriesListStargazers'>;
 	releasesList: GithubEndpoint<'releasesList'>;
 	releasesGet: GithubEndpoint<'releasesGet'>;
 	releasesCreate: GithubEndpoint<'releasesCreate'>;
@@ -640,6 +641,7 @@ const githubEndpointsNested = {
 		unstar: RepositoriesEndpoints.unstar,
 		checkStarred: RepositoriesEndpoints.checkStarred,
 		listStarred: RepositoriesEndpoints.listStarred,
+		listStargazers: RepositoriesEndpoints.listStargazers,
 	},
 	releases: {
 		list: ReleasesEndpoints.list,
@@ -800,6 +802,10 @@ export const githubEndpointSchemas = {
 	'repositories.listStarred': {
 		input: GithubEndpointInputSchemas.repositoriesListStarred,
 		output: GithubEndpointOutputSchemas.repositoriesListStarred,
+	},
+	'repositories.listStargazers': {
+		input: GithubEndpointInputSchemas.repositoriesListStargazers,
+		output: GithubEndpointOutputSchemas.repositoriesListStargazers,
 	},
 	'releases.list': {
 		input: GithubEndpointInputSchemas.releasesList,
@@ -1703,6 +1709,10 @@ const githubEndpointMeta = {
 	'repositories.listStarred': {
 		riskLevel: 'read',
 		description: 'List repositories starred by the authenticated user',
+	},
+	'repositories.listStargazers': {
+		riskLevel: 'read',
+		description: 'List users who have starred a repository',
 	},
 	'releases.list': {
 		riskLevel: 'read',

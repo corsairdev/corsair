@@ -14,6 +14,7 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
+	'algolia',
 	'ahrefs',
 	'airtable',
 	'amplitude',
@@ -24,7 +25,9 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'cloudflare',
+	'confluence',
 	'cursor',
+	'datadog',
 	'deepseek',
 	'discord',
 	'dodopayments',
@@ -51,6 +54,7 @@ export const BaseProviders = [
 	'jira',
 	'linear',
 	'linkedin',
+	'mailchimp',
 	'monday',
 	'neon',
 	'notion',
@@ -93,6 +97,7 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
+	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
@@ -103,7 +108,9 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
+	confluence: 'Confluence',
 	cursor: 'Cursor',
+	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
@@ -130,6 +137,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	mailchimp: 'Mailchimp',
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
@@ -179,6 +187,7 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'agentql'
+	| 'algolia'
 	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
@@ -189,7 +198,9 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'cloudflare'
+	| 'confluence'
 	| 'cursor'
+	| 'datadog'
 	| 'deepseek'
 	| 'discord'
 	| 'dodopayments'
@@ -216,6 +227,7 @@ export type AllProviders =
 	| 'jira'
 	| 'linear'
 	| 'linkedin'
+	| 'mailchimp'
 	| 'monday'
 	| 'neon'
 	| 'notion'
