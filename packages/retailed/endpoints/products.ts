@@ -13,12 +13,15 @@ export const search: CorsairEndpoint<
 > = async (ctx, input) => {
 	const query: Record<string, string | number> = {};
 
+	// Separate OR branches so name and sku match independently (name OR sku),
+	// not AND'd under the same branch.
+	let orIndex = 0;
 	if (input.name) {
-		query['where[or][0][and][0][name][equals]'] = input.name;
+		query[`where[or][${orIndex}][name][equals]`] = input.name;
+		orIndex += 1;
 	}
-
 	if (input.sku) {
-		query['where[or][0][and][0][sku][equals]'] = input.sku;
+		query[`where[or][${orIndex}][sku][equals]`] = input.sku;
 	}
 
 	if (input.page) {

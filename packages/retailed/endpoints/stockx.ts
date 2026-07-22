@@ -92,7 +92,7 @@ export const stockxProduct: CorsairEndpoint<
 
 	const response = await makeRetailedRequest<
 		RetailedEndpointOutputs['stockxProduct']
-	>('stockx/product', ctx.key, {
+	>('scraper/stockx/product', ctx.key, {
 		method: 'GET',
 		query,
 	});
