@@ -10,7 +10,7 @@ export {
 	type ConnectAuthFieldStatus,
 	type ConnectAuthKind,
 	type ConnectAuthStatusLevel,
-	type ConnectLinkDeliveryAck,
+	type ConnectCreateLinkDeliveryResult,
 	type ConnectPluginManifestEntry,
 	type ConnectSessionTokenPayload,
 	type ConnectStatusPluginEntry,

@@ -39,6 +39,10 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export type {
+	ConnectCreateLinkDeliveryPayload,
+	ConnectCreateLinkDeliveryResult,
+} from './connect-link-delivery';
 export {
 	type ConnectAuthFieldStatus,
 	type ConnectAuthStatusLevel,
@@ -118,7 +122,6 @@ export {
 	BROWSER_DELIVERY_TTL_MS,
 	type BrowserDeliveryPayload,
 	buildBrowserDeliveryRedirectUrl,
-	type ConnectLinkDeliveryAck,
 	type ConnectSessionTokenPayload,
 	type ConnectTokenPayload,
 	createConnectSessionJti,

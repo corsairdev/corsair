@@ -48,10 +48,6 @@ export type TunnelAck = {
 	status: 'ok' | 'failed';
 	retryable?: boolean;
 	error?: string;
-	connectLink?: {
-		connectUrl: string;
-		expiresAt?: string;
-	};
 	webhookResponse?: {
 		status?: number;
 		body?: unknown;
@@ -152,7 +148,14 @@ async function handleConnectCreateLinkTunnel(
 		const result = await processConnectLinkDelivery(corsair, payload);
 		return {
 			status: 'ok',
-			connectLink: result,
+			webhookResponse: {
+				status: 200,
+				body: {
+					status: 'ok',
+					connectUrl: result.connectUrl,
+					expiresAt: result.expiresAt,
+				} satisfies ServerDeliveryAckBody,
+			},
 		};
 	} catch (error) {
 		return {

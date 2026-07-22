@@ -34,7 +34,6 @@ export {
 	verifyConnectToken,
 } from './connect-token';
 export {
-	type ConnectLinkDeliveryAck,
 	deliverConnectCreateLink,
 	deliverSignedEnvelope,
 	describeDeliveryNetworkError,

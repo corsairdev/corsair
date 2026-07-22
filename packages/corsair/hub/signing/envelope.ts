@@ -7,6 +7,7 @@
  */
 
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
+import type { ConnectCreateLinkDeliveryResult } from '../connect-link-delivery';
 import type { TunnelEnvelope, TunnelType } from '../contracts/tunnel';
 import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../contracts/tunnel';
 
@@ -54,11 +55,6 @@ export type ServerDeliveryAckBody = {
 	connectUrl?: string;
 	/** ISO expiry for connect.create_link deliveries. */
 	expiresAt?: string;
-	/** Nested connect link shape returned by some delivery handlers. */
-	connectLink?: {
-		connectUrl?: string;
-		expiresAt?: string;
-	};
 	/** Encrypted tenant/plugin manifest returned by connections.sync deliveries. */
 	sync?: {
 		encrypted: string;
@@ -243,30 +239,15 @@ export function extractSyncFromDeliveryAck(
 	return { encrypted: encrypted.trim() };
 }
 
-export type ConnectLinkDeliveryAck = {
-	connectUrl: string;
-	expiresAt?: string;
-};
-
-/**
- * Reads the connect link returned by connect.create_link server deliveries.
- */
 export function extractConnectLinkFromDeliveryAck(
 	body: ServerDeliveryAckBody,
-): ConnectLinkDeliveryAck | null {
-	if (body.connectUrl?.trim()) {
-		return { connectUrl: body.connectUrl.trim(), expiresAt: body.expiresAt };
-	}
-
-	const nestedUrl = body.connectLink?.connectUrl?.trim();
-	if (!nestedUrl) {
+): ConnectCreateLinkDeliveryResult | null {
+	const connectUrl = body.connectUrl?.trim();
+	if (!connectUrl) {
 		return null;
 	}
 
-	return {
-		connectUrl: nestedUrl,
-		expiresAt: body.connectLink?.expiresAt,
-	};
+	return { connectUrl, expiresAt: body.expiresAt };
 }
 
 /**
@@ -274,7 +255,7 @@ export function extractConnectLinkFromDeliveryAck(
  */
 export function parseConnectLinkFromDeliveryBody(
 	body: string,
-): ConnectLinkDeliveryAck | null {
+): ConnectCreateLinkDeliveryResult | null {
 	return extractConnectLinkFromDeliveryAck(parseServerDeliveryAckBody(body));
 }
 
@@ -287,7 +268,7 @@ export async function deliverConnectCreateLink(input: {
 	signingSecret: string;
 	tenantId: string;
 	plugins: string[];
-}): Promise<ConnectLinkDeliveryAck> {
+}): Promise<ConnectCreateLinkDeliveryResult> {
 	const delivery = await deliverSignedEnvelope({
 		deliveryUrl: input.deliveryUrl,
 		projectId: input.projectId,
@@ -305,9 +286,9 @@ export async function deliverConnectCreateLink(input: {
 		status: delivery.status,
 		body: ack,
 	});
-	const connectLink = extractConnectLinkFromDeliveryAck(ack);
+	const result = extractConnectLinkFromDeliveryAck(ack);
 
-	if (!ok || !connectLink) {
+	if (!ok || !result) {
 		throw new Error(
 			formatServerDeliveryError({
 				deliveryUrl: input.deliveryUrl,
@@ -318,7 +299,7 @@ export async function deliverConnectCreateLink(input: {
 		);
 	}
 
-	return connectLink;
+	return result;
 }
 
 /**

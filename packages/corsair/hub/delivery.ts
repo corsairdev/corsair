@@ -170,7 +170,7 @@ export async function handleHubDeliveryGet(
 				};
 			}
 
-			const connectLink = await processConnectLinkDelivery(corsair, {
+			const result = await processConnectLinkDelivery(corsair, {
 				tenantId: payload.tenantId,
 				plugins,
 			});
@@ -185,8 +185,8 @@ export async function handleHubDeliveryGet(
 					ok: true,
 					body: {
 						status: 'ok',
-						connectUrl: connectLink.connectUrl,
-						expiresAt: connectLink.expiresAt,
+						connectUrl: result.connectUrl,
+						expiresAt: result.expiresAt,
 					},
 				}),
 			};
@@ -372,18 +372,6 @@ export async function handleHubDeliveryPost(
 	}
 
 	const webhookResponse = ack.webhookResponse;
-	if (ack.connectLink) {
-		return {
-			type: 'json',
-			status: 200,
-			body: {
-				status: 'ok',
-				connectUrl: ack.connectLink.connectUrl,
-				expiresAt: ack.connectLink.expiresAt,
-			},
-		};
-	}
-
 	if (!webhookResponse) {
 		return {
 			type: 'json',
