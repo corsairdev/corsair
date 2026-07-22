@@ -1,6 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { listOperations, setupCorsair } from 'corsair';
+import { listOperations } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
