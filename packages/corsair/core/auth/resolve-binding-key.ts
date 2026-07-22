@@ -9,7 +9,6 @@ type KeyBuilderLike = (
 
 export type ManagedCapablePlugin = {
 	id: string;
-	managed?: boolean;
 	keyBuilder?: KeyBuilderLike;
 };
 
@@ -19,11 +18,6 @@ type BindingCtx = {
 	hub?: HubConfig;
 	tenantId?: string;
 } & Record<string, unknown>;
-
-/** A plugin is managed-capable unless it explicitly opts out. */
-export function isManagedEnabled(plugin: { managed?: boolean }): boolean {
-	return plugin.managed !== false;
-}
 
 /**
  * Resolves the access key for a bound endpoint/webhook call. In managed mode
@@ -36,7 +30,7 @@ export async function resolveBindingKey(
 	plugin: ManagedCapablePlugin,
 	kind: 'endpoint' | 'webhook',
 ): Promise<string | undefined> {
-	if (ctx.authType === 'managed' && isManagedEnabled(plugin)) {
+	if (ctx.authType === 'managed') {
 		if (!ctx.hub || !ctx.keys) {
 			throw new AuthMissingError(plugin.id, 'managed');
 		}

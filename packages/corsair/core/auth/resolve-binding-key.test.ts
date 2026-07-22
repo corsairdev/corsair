@@ -7,7 +7,7 @@ jest.mock('../../hub/managed-auth', () => ({
 	attachManagedRefreshAuth: (...a: unknown[]) => attachManagedRefreshAuth(...a),
 }));
 
-import { isManagedEnabled, resolveBindingKey } from './resolve-binding-key';
+import { resolveBindingKey } from './resolve-binding-key';
 
 const hub = { apiUrl: 'https://hub.test' } as never;
 const keys = { marker: 'account-keys' } as never;
@@ -53,17 +53,6 @@ test('non-managed authType falls through to the plugin keyBuilder', async () => 
 	expect(getManagedAccessToken).not.toHaveBeenCalled();
 });
 
-test('managed:false opts the plugin out — falls through even when authType is managed', async () => {
-	const keyBuilder = jest.fn().mockResolvedValue('oauth-token');
-	const key = await resolveBindingKey(
-		{ authType: 'managed', keys, hub, tenantId: 't1' },
-		{ id: 'slack', managed: false, keyBuilder },
-		'endpoint',
-	);
-	expect(key).toBe('oauth-token');
-	expect(getManagedAccessToken).not.toHaveBeenCalled();
-});
-
 test('managed without a hub config throws AuthMissingError', async () => {
 	await expect(
 		resolveBindingKey(
@@ -83,10 +72,4 @@ test('managed without a key store throws AuthMissingError and never calls getMan
 		),
 	).rejects.toBeInstanceOf(AuthMissingError);
 	expect(getManagedAccessToken).not.toHaveBeenCalled();
-});
-
-test('isManagedEnabled is true by default and false only on explicit opt-out', () => {
-	expect(isManagedEnabled({})).toBe(true);
-	expect(isManagedEnabled({ managed: true })).toBe(true);
-	expect(isManagedEnabled({ managed: false })).toBe(false);
 });

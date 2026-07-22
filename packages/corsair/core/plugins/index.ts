@@ -515,12 +515,6 @@ export type CorsairPlugin<
 	 * Absent for plugins that need no token-based subscribe (class-2 webhooks).
 	 */
 	subscribe?: CorsairPluginSubscribe;
-	/**
-	 * Managed-mode capability. Every oauth_2 plugin is managed-capable by
-	 * default; set `false` to opt a plugin out of Hub-resolved managed auth.
-	 * Policy only — the auth mechanism lives once in core (resolveBindingKey).
-	 */
-	managed?: boolean;
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
 	/**

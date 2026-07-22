@@ -244,7 +244,7 @@ export function bindEndpointsRecursively({
 				try {
 					key = await resolveBindingKey(
 						ctx as Parameters<typeof resolveBindingKey>[0],
-						{ id: pluginId, managed: plugin?.managed, keyBuilder },
+						{ id: pluginId, keyBuilder },
 						'endpoint',
 					);
 				} catch (err) {

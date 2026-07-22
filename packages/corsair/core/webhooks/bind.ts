@@ -46,7 +46,7 @@ export function bindWebhooksRecursively({
 	ctx: Record<string, unknown>;
 	webhooksTree: Record<string, unknown>;
 	keyBuilder?: CorsairKeyBuilderBase;
-	plugin: Pick<ManagedCapablePlugin, 'id' | 'managed'>;
+	plugin: Pick<ManagedCapablePlugin, 'id'>;
 }): void {
 	for (const [key, value] of Object.entries(webhooks)) {
 		// we have to retype this now because it's nested webhooks
