@@ -6,13 +6,12 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import type { IntegrationPhase, IntegrationUrls } from '@/db/schema';
-
+import { adminMarkIntegrationMerged } from '@/server/actions/admin-mark-merged';
 import { ContributorLink } from '../contributor-link';
 import { FramedPanel } from '../framed-panel';
-import { IntegrationStatusBadge } from '../integration-status-badge';
 import { formatPoints } from '../integration-reward';
+import { IntegrationStatusBadge } from '../integration-status-badge';
 import { buildOssIntegrationHref } from '../oss-url';
-import { adminMarkIntegrationMerged } from '@/server/actions/admin-mark-merged';
 
 type ReviewQueueItem = {
 	id: string;

@@ -16,6 +16,7 @@ export type TunnelType =
 	| 'auth.credentials'
 	| 'integration.credentials'
 	| 'connect.create_link'
+	| 'connections.sync'
 	| 'run';
 
 /** Inbound tunnel types the app accepts (write-only — no credential reads). */
@@ -28,6 +29,7 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 	'auth.credentials',
 	'integration.credentials',
 	'connect.create_link',
+	'connections.sync',
 ]);
 
 /**
@@ -52,7 +54,9 @@ export type BrowserDeliveryMode =
 	| 'oauth.tokens'
 	| 'permission.approve'
 	| 'permission.deny'
-	| 'auth.credentials';
+	| 'auth.credentials'
+	| 'connections.sync'
+	| 'connect.create_link';
 
 /**
  * Decoded payload inside a browser delivery token (`?d=` query param).
@@ -102,6 +106,8 @@ export type BrowserDeliveryPayload = {
 	requestId?: string;
 	/** API key / bot token fields (`deliveryMode: auth.credentials`). */
 	credentials?: Record<string, string>;
+	/** Plugin ids for connect link creation (`deliveryMode: connect.create_link`). */
+	connectLinkPlugins?: string[];
 };
 
 /** Max age of a browser delivery token (60 seconds). */

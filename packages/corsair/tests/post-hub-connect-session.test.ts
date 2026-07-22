@@ -56,10 +56,20 @@ describe('postHubConnectSession', () => {
 	});
 
 	it('includes auto-detected deliveryUrl for development keys', async () => {
-		const previousPort = process.env.PORT;
+		const previousEnv = {
+			PORT: process.env.PORT,
+			CORSAIR_DELIVERY_URL: process.env.CORSAIR_DELIVERY_URL,
+			APP_URL: process.env.APP_URL,
+			NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+			VERCEL_URL: process.env.VERCEL_URL,
+		};
 		process.env.PORT = '3001';
-		process.env.CORSAIR_DELIVERY_URL = undefined;
-		process.env.APP_URL = undefined;
+		// Assigning undefined to process.env stores the string "undefined";
+		// Reflect.deleteProperty removes the vars (biome noDelete-compliant).
+		Reflect.deleteProperty(process.env, 'CORSAIR_DELIVERY_URL');
+		Reflect.deleteProperty(process.env, 'APP_URL');
+		Reflect.deleteProperty(process.env, 'NEXT_PUBLIC_APP_URL');
+		Reflect.deleteProperty(process.env, 'VERCEL_URL');
 
 		const { fetchMock, getRequestBody } = mockHubConnectFetch();
 		global.fetch = fetchMock;
@@ -76,10 +86,12 @@ describe('postHubConnectSession', () => {
 				deliveryUrl: 'http://localhost:3001/api/corsair',
 			});
 		} finally {
-			if (previousPort === undefined) {
-				process.env.PORT = undefined;
-			} else {
-				process.env.PORT = previousPort;
+			for (const [key, value] of Object.entries(previousEnv)) {
+				if (value === undefined) {
+					Reflect.deleteProperty(process.env, key);
+				} else {
+					process.env[key] = value;
+				}
 			}
 		}
 	});

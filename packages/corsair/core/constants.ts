@@ -14,6 +14,7 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
+	'algolia',
 	'ahrefs',
 	'airtable',
 	'amplitude',
@@ -24,7 +25,10 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'cloudflare',
+	'confluence',
 	'cursor',
+	'datadog',
+	'deepseek',
 	'digital_ocean',
 	'discord',
 	'dodopayments',
@@ -33,26 +37,35 @@ export const BaseProviders = [
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'gemini',
 	'github',
 	'gitlab',
 	'gmail',
 	'googlecalendar',
+	'googledocs',
 	'googledrive',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
 	'hubspot',
+	'insightoai',
+	'instagram',
 	'intercom',
 	'jira',
 	'linear',
+	'linkedin',
+	'mailchimp',
 	'monday',
+	'neon',
 	'notion',
 	'onedrive',
+	'openai',
 	'openweathermap',
 	'oura',
 	'outlook',
 	'pagerduty',
+	'perplexityai',
 	'posthog',
 	'razorpay',
 	'reddit',
@@ -80,11 +93,11 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
-	'instagram',
 ] as const;
 
 export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
+	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	amplitude: 'Amplitude',
@@ -95,7 +108,10 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
+	confluence: 'Confluence',
 	cursor: 'Cursor',
+	datadog: 'Datadog',
+	deepseek: 'DeepSeek',
 	digital_ocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
@@ -104,22 +120,30 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
 	googlecalendar: 'Google Calendar',
+	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
-	googlesheets: 'Google Sheets',
 	googlemeet: 'Google Meet',
+	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hubspot: 'HubSpot',
+	insightoai: 'Insighto.ai',
+	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
+	linkedin: 'LinkedIn',
+	mailchimp: 'Mailchimp',
 	monday: 'Monday',
+	neon: 'Neon',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
+	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
@@ -151,7 +175,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram',
+	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -163,6 +187,7 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'agentql'
+	| 'algolia'
 	| 'ahrefs'
 	| 'airtable'
 	| 'amplitude'
@@ -173,7 +198,10 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'cloudflare'
+	| 'confluence'
 	| 'cursor'
+	| 'datadog'
+	| 'deepseek'
 	| 'digital_ocean'
 	| 'discord'
 	| 'dodopayments'
@@ -182,26 +210,35 @@ export type AllProviders =
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'gemini'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
 	| 'googlecalendar'
+	| 'googledocs'
 	| 'googledrive'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
 	| 'hubspot'
+	| 'insightoai'
+	| 'instagram'
 	| 'intercom'
 	| 'jira'
 	| 'linear'
+	| 'linkedin'
+	| 'mailchimp'
 	| 'monday'
+	| 'neon'
 	| 'notion'
 	| 'onedrive'
+	| 'openai'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'perplexityai'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
@@ -229,7 +266,6 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
-	| 'instagram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';

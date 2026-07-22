@@ -27,7 +27,7 @@ export function LandingHero({ starCount }: { starCount?: number | null }) {
 				<div className="flex w-full flex-col items-center gap-4 sm:max-w-[360px] sm:gap-5 md:max-w-[720px]">
 					{/* High-Fidelity Typography Headline */}
 					<h1 className="animate-hero-fade-up delay-[100ms] w-full text-[clamp(2.25rem,6vw,4.5rem)] font-light leading-[1.05] tracking-tight text-[#1c1c1c]">
-						<span className="font-[family-name:var(--landing-font-serif)] italic text-transparent bg-clip-text bg-gradient-to-br from-[#1c1c1c] to-[#555]">
+						<span className="font-[family-name:var(--landing-font-serif)] italic text-transparent bg-clip-text bg-gradient-to-br from-[#1c1c1c] to-[#555] pr-1.5">
 							Add any integration
 						</span>{' '}
 						<br className="hidden sm:block" />
@@ -52,15 +52,15 @@ export function LandingHero({ starCount }: { starCount?: number | null }) {
 						className="star-button-shine group inline-flex items-center justify-center rounded-lg border border-amber-200/60 bg-gradient-to-b from-amber-50/80 to-white/60 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c] no-underline shadow-[0_2px_8px_rgba(251,191,36,0.12)] backdrop-blur-sm transition-all duration-300 ease-out hover:border-amber-300/80 hover:shadow-[0_4px_20px_rgba(251,191,36,0.22)] hover:-translate-y-0.5 active:translate-y-0"
 					>
 						<span className="inline-flex items-center gap-2 px-4 py-3">
-							<Star
-								weight="fill"
-								className="star-icon-glow size-4"
-							/>
+							<Star weight="fill" className="star-icon-glow size-4" />
 							Star on GitHub
 						</span>
 						{starCount != null ? (
 							<>
-								<span className="self-stretch w-px bg-amber-200/60" aria-hidden />
+								<span
+									className="self-stretch w-px bg-amber-200/60"
+									aria-hidden
+								/>
 								<span className="px-3.5 py-3 font-[family-name:var(--landing-font-mono)] text-[13px] font-semibold text-amber-600 tabular-nums">
 									{formatStarCount(starCount)}
 								</span>

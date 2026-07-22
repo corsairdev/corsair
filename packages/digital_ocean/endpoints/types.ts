@@ -251,7 +251,7 @@ export type DeleteDomainResponse = z.infer<typeof DeleteDomainResponseSchema>;
 
 // deleteDomainRecord
 const DeleteDomainRecordInputSchema = z.object({
-	name: z.string(),
+	domain_name: z.string(),
 	record_id: z.number().int(),
 	body: DigitalOceanOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
@@ -528,7 +528,7 @@ export type RetrieveDomainResponse = z.infer<typeof RetrieveDomainResponseSchema
 
 // retrieveDomainRecord
 const RetrieveDomainRecordInputSchema = z.object({
-	name: z.string(),
+	domain_name: z.string(),
 	record_id: z.number().int(),
 	body: DigitalOceanOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),

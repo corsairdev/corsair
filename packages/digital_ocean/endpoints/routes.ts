@@ -521,7 +521,6 @@ export const digitalOceanRoutes = [
 		pathParams: ['tag_name'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
-		irreversible: true,
 	},
 	{
 		key: 'updateDomainRecord',
