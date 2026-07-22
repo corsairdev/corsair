@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { normalizeBridgeTargetOrigin } from './browser-delivery-html';
 import type { HubEnvironmentSlug } from './contracts/environment';
 import { resolveDeliveryTransport } from './contracts/environment';
 import type { BrowserDeliveryPayload } from './contracts/tunnel';
@@ -34,12 +35,13 @@ export type ClientBridgeTransportResult =
 function buildClientBridgePayload(
 	spec: ClientBridgeDeliverySpec,
 ): Omit<BrowserDeliveryPayload, 'exp' | 'iat' | 'jti'> {
+	const bridgeTargetOrigin = normalizeBridgeTargetOrigin(spec.hubOrigin);
 	const base = {
 		connectJti: spec.requestId,
 		projectId: spec.projectId,
 		hubSuccessUrl: spec.hubOrigin,
 		deliveryMode: spec.deliveryMode,
-		hubOrigin: spec.hubOrigin,
+		hubOrigin: bridgeTargetOrigin,
 		requestId: spec.requestId,
 	};
 

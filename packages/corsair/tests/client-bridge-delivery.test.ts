@@ -63,4 +63,25 @@ describe('client-bridge-delivery', () => {
 
 		expect(result.transport).toBe('server');
 	});
+
+	it('normalizes hubOrigin to an origin for postMessage', () => {
+		const url = buildClientBridgeBrowserDeliveryUrl({
+			deliveryMode: 'connect.create_link',
+			deliveryUrl: 'http://localhost:3000/api/corsair',
+			projectId: 'proj_test',
+			signingSecret: 'signing-secret',
+			hubOrigin: 'https://hub.corsair.dev/dashboard/project/abc',
+			requestId: 'connect-request-2',
+			tenantId: 'default',
+			plugins: ['slack'],
+		});
+
+		const token = new URL(url).searchParams.get('d');
+		expect(token).toBeTruthy();
+		const payloadBase64 = token!.split('.')[0]!;
+		const payload = JSON.parse(
+			Buffer.from(payloadBase64, 'base64url').toString('utf-8'),
+		) as { hubOrigin?: string };
+		expect(payload.hubOrigin).toBe('https://hub.corsair.dev');
+	});
 });
