@@ -9,10 +9,14 @@ import {
 	processCorsair,
 	verifyBrowserDeliveryToken,
 } from '../tunnel';
-import { isConnectionsSyncBrowserDelivery } from '../tunnel/browser-delivery';
+import {
+	isConnectCreateLinkBrowserDelivery,
+	isConnectionsSyncBrowserDelivery,
+} from '../tunnel/browser-delivery';
 import { announceAppFromRequest } from './announce';
 import { buildClientBridgePostMessageHtml } from './browser-delivery-html';
 import { getHubConfig, HubNotConfiguredError } from './config';
+import { processConnectLinkDelivery } from './connect-link-delivery';
 import { processConnectionsSyncDelivery } from './connections-sync-delivery';
 import { BROWSER_DELIVERY_TTL_MS } from './contracts/tunnel';
 import { processAuthCredentialsDelivery } from './credentials-delivery';
@@ -142,6 +146,52 @@ export async function handleHubDeliveryGet(
 			};
 		}
 
+		if (isConnectCreateLinkBrowserDelivery(payload)) {
+			if (!payload.hubOrigin || !payload.requestId) {
+				return {
+					type: 'json',
+					status: 400,
+					body: {
+						error:
+							'Connect link delivery requires hubOrigin and requestId for client bridge',
+					},
+				};
+			}
+
+			const plugins = payload.connectLinkPlugins?.filter(Boolean) ?? [];
+			if (plugins.length === 0) {
+				return {
+					type: 'json',
+					status: 400,
+					body: {
+						error:
+							'Connect link delivery requires at least one plugin in connectLinkPlugins',
+					},
+				};
+			}
+
+			const result = await processConnectLinkDelivery(corsair, {
+				tenantId: payload.tenantId,
+				plugins,
+			});
+
+			return {
+				type: 'text',
+				status: 200,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: true,
+					body: {
+						status: 'ok',
+						connectUrl: result.connectUrl,
+						expiresAt: result.expiresAt,
+					},
+				}),
+			};
+		}
+
 		if (isAuthCredentialsBrowserDelivery(payload)) {
 			if (!payload.hubSuccessUrl) {
 				return {
@@ -249,6 +299,24 @@ export async function handleHubDeliveryGet(
 			};
 		}
 
+		if (
+			isConnectCreateLinkBrowserDelivery(payload) &&
+			payload.hubOrigin &&
+			payload.requestId
+		) {
+			return {
+				type: 'text',
+				status: 400,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+				body: buildClientBridgePostMessageHtml({
+					hubOrigin: payload.hubOrigin,
+					requestId: payload.requestId,
+					ok: false,
+					error: message,
+				}),
+			};
+		}
+
 		if (isAuthCredentialsBrowserDelivery(payload) && payload.hubSuccessUrl) {
 			return {
 				type: 'redirect',
@@ -304,18 +372,6 @@ export async function handleHubDeliveryPost(
 	}
 
 	const webhookResponse = ack.webhookResponse;
-	if (ack.connectLink) {
-		return {
-			type: 'json',
-			status: 200,
-			body: {
-				status: 'ok',
-				connectUrl: ack.connectLink.connectUrl,
-				expiresAt: ack.connectLink.expiresAt,
-			},
-		};
-	}
-
 	if (!webhookResponse) {
 		return {
 			type: 'json',
