@@ -48,10 +48,6 @@ export type TunnelAck = {
 	status: 'ok' | 'failed';
 	retryable?: boolean;
 	error?: string;
-	connectLink?: {
-		connectUrl: string;
-		expiresAt?: string;
-	};
 	webhookResponse?: {
 		status?: number;
 		body?: unknown;
@@ -152,7 +148,14 @@ async function handleConnectCreateLinkTunnel(
 		const result = await processConnectLinkDelivery(corsair, payload);
 		return {
 			status: 'ok',
-			connectLink: result,
+			webhookResponse: {
+				status: 200,
+				body: {
+					status: 'ok',
+					connectUrl: result.connectUrl,
+					expiresAt: result.expiresAt,
+				} satisfies ServerDeliveryAckBody,
+			},
 		};
 	} catch (error) {
 		return {
@@ -231,6 +234,9 @@ async function handleWebhookTunnel(
 		payload.headers,
 		payload.body,
 		query,
+		// Hub routed this by the plugin's own endpoint — dispatch exactly there,
+		// never by body shape (MS Graph siblings are indistinguishable).
+		payload.plugin ? { plugin: payload.plugin } : undefined,
 	);
 
 	if (!result.plugin) {
