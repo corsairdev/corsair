@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
+import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
 import type { HashnodeEndpointOutputs } from './types';
 import { TAG_QUERY } from './types';
@@ -11,6 +12,11 @@ export const getTag: HashnodeEndpoints['getTag'] = async (ctx, input) => {
 		{ slug: input.slug },
 	);
 
-	await logEventFromContext(ctx, 'hashnode.getTag', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hashnode.getTag',
+		redactEventPayload(input as Record<string, unknown>),
+		'completed',
+	);
 	return response;
 };

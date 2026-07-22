@@ -5,8 +5,12 @@ export class HashnodeAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string | number,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
+		public readonly body?: unknown,
+		options?: ErrorOptions,
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'HashnodeAPIError';
 	}
 }
@@ -73,6 +77,11 @@ export async function makeHashnodeRequest<T>(
 					: String(error.body ?? '');
 			throw new HashnodeAPIError(
 				`${error.message} (status=${error.status}, body=${bodyDetail})`,
+				undefined,
+				error.status,
+				error.retryAfter,
+				error.body,
+				{ cause: error },
 			);
 		}
 		throw new HashnodeAPIError(

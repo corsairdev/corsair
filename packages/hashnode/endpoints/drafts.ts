@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
+import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
 import type { HashnodeEndpointOutputs } from './types';
 import {
@@ -18,7 +19,7 @@ export const get: HashnodeEndpoints['getDraft'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'hashnode.getDraft',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -32,7 +33,7 @@ export const create: HashnodeEndpoints['createDraft'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'hashnode.createDraft',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -46,7 +47,7 @@ export const update: HashnodeEndpoints['updateDraft'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'hashnode.updateDraft',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -63,7 +64,7 @@ export const publish: HashnodeEndpoints['publishDraft'] = async (
 	await logEventFromContext(
 		ctx,
 		'hashnode.publishDraft',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -80,7 +81,7 @@ export const deleteDraft: HashnodeEndpoints['deleteDraft'] = async (
 	await logEventFromContext(
 		ctx,
 		'hashnode.deleteDraft',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;

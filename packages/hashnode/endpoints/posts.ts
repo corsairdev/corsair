@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
+import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
 import type { HashnodeEndpointOutputs } from './types';
 import {
@@ -16,7 +17,12 @@ export const get: HashnodeEndpoints['getPost'] = async (ctx, input) => {
 		HashnodeEndpointOutputs['getPost']
 	>(POST_QUERY, ctx.key, { id: input.id });
 
-	await logEventFromContext(ctx, 'hashnode.getPost', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hashnode.getPost',
+		redactEventPayload(input as Record<string, unknown>),
+		'completed',
+	);
 	return response;
 };
 
@@ -31,7 +37,7 @@ export const getBySlug: HashnodeEndpoints['getPostBySlug'] = async (
 	await logEventFromContext(
 		ctx,
 		'hashnode.getPostBySlug',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -56,7 +62,7 @@ export const list: HashnodeEndpoints['listPosts'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'hashnode.listPosts',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -70,7 +76,7 @@ export const publish: HashnodeEndpoints['publishPost'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'hashnode.publishPost',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -84,7 +90,7 @@ export const update: HashnodeEndpoints['updatePost'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'hashnode.updatePost',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -106,7 +112,7 @@ export const search: HashnodeEndpoints['searchPostsOfPublication'] = async (
 	await logEventFromContext(
 		ctx,
 		'hashnode.searchPostsOfPublication',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;

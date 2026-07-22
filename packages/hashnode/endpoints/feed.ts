@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
+import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
 import type { HashnodeEndpointOutputs } from './types';
 import { FEED_QUERY } from './types';
@@ -21,6 +22,11 @@ export const feed: HashnodeEndpoints['feed'] = async (ctx, input) => {
 		variables,
 	);
 
-	await logEventFromContext(ctx, 'hashnode.feed', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'hashnode.feed',
+		redactEventPayload(input as Record<string, unknown>),
+		'completed',
+	);
 	return response;
 };

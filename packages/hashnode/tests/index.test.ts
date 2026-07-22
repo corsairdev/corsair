@@ -1,8 +1,10 @@
+import { HashnodeAPIError } from '../client';
 import {
 	HashnodeEndpointInputSchemas,
 	HashnodeEndpointOutputSchemas,
 } from '../endpoints/types';
 import { errorHandlers } from '../error-handlers';
+import { redactEventPayload } from '../event-payload';
 import { hashnode, hashnodeAuthConfig } from '../index';
 
 describe('Hashnode Plugin', () => {
@@ -229,6 +231,100 @@ describe('Hashnode Plugin', () => {
 				{} as any,
 			);
 			expect(result.maxRetries).toBe(3);
+		});
+	});
+
+	describe('HashnodeAPIError enriched fields', () => {
+		it('carries status, retryAfter, body, and cause from ApiError', () => {
+			const cause = new Error('underlying error');
+			const err = new HashnodeAPIError(
+				'rate limited',
+				undefined,
+				429,
+				5000,
+				{ detail: 'slow down' },
+				{ cause },
+			);
+			expect(err.status).toBe(429);
+			expect(err.retryAfter).toBe(5000);
+			expect(err.body).toEqual({ detail: 'slow down' });
+			expect(err.cause).toBe(cause);
+			expect(err.name).toBe('HashnodeAPIError');
+		});
+
+		it('RATE_LIMIT_ERROR handler extracts retryAfter from HashnodeAPIError', async () => {
+			const err = new HashnodeAPIError('too fast', undefined, 429, 3000);
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				err,
+				{} as any,
+			);
+			expect(result.maxRetries).toBe(5);
+			expect(result.headersRetryAfterMs).toBe(3000);
+		});
+
+		it('RATE_LIMIT_ERROR match recognizes HashnodeAPIError with status 429', () => {
+			const err = new HashnodeAPIError('rate limit', undefined, 429);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(err, {} as any)).toBe(true);
+		});
+
+		it('AUTH_ERROR match recognizes HashnodeAPIError with status 401', () => {
+			const err = new HashnodeAPIError('unauthenticated', undefined, 401);
+			expect(errorHandlers.AUTH_ERROR.match(err, {} as any)).toBe(true);
+		});
+
+		it('NOT_FOUND_ERROR match recognizes HashnodeAPIError with status 404', () => {
+			const err = new HashnodeAPIError('missing', undefined, 404);
+			expect(errorHandlers.NOT_FOUND_ERROR.match(err, {} as any)).toBe(true);
+		});
+
+		it('PERMISSION_ERROR match recognizes HashnodeAPIError with status 403', () => {
+			const err = new HashnodeAPIError('forbidden', undefined, 403);
+			expect(errorHandlers.PERMISSION_ERROR.match(err, {} as any)).toBe(true);
+		});
+	});
+
+	describe('redactEventPayload', () => {
+		it('replaces contentMarkdown with contentMarkdownLength', () => {
+			const result = redactEventPayload({
+				title: 'My Post',
+				publicationId: 'pub1',
+				contentMarkdown: '# Hello\nThis is a long post',
+			});
+			expect(result).not.toHaveProperty('contentMarkdown');
+			expect(result.contentMarkdownLength).toBe(27);
+			expect(result.title).toBe('My Post');
+			expect(result.publicationId).toBe('pub1');
+		});
+
+		it('replaces multiple sensitive fields', () => {
+			const result = redactEventPayload({
+				title: 'Test',
+				contentMarkdown: 'short',
+				htmlContent: '<p>short</p>',
+			});
+			expect(result.contentMarkdownLength).toBe(5);
+			expect(result.htmlContentLength).toBe(12);
+			expect(result.title).toBe('Test');
+		});
+
+		it('preserves safe small fields unchanged', () => {
+			const result = redactEventPayload({
+				id: 'abc123',
+				host: 'blog.hashnode.dev',
+				slug: 'hello-world',
+				first: 10,
+			});
+			expect(result).toEqual({
+				id: 'abc123',
+				host: 'blog.hashnode.dev',
+				slug: 'hello-world',
+				first: 10,
+			});
+		});
+
+		it('handles null/undefined input gracefully', () => {
+			const result = redactEventPayload({} as Record<string, unknown>);
+			expect(result).toEqual({});
 		});
 	});
 

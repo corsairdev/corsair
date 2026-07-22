@@ -2,10 +2,22 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { HashnodeAPIError } from './client';
 
+function extractHttpStatus(error: unknown): number | undefined {
+	if (error instanceof ApiError) return error.status;
+	if (error instanceof HashnodeAPIError) return error.status;
+	return undefined;
+}
+
+function extractRetryAfter(error: unknown): number | undefined {
+	if (error instanceof ApiError) return error.retryAfter;
+	if (error instanceof HashnodeAPIError) return error.retryAfter;
+	return undefined;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 429) {
+			if (extractHttpStatus(error) === 429) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -18,20 +30,15 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error, context) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter) {
-				retryAfterMs = error.retryAfter;
-			}
-
 			return {
 				maxRetries: 5,
-				headersRetryAfterMs: retryAfterMs,
+				headersRetryAfterMs: extractRetryAfter(error),
 			};
 		},
 	},
 	AUTH_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 401) {
+			if (extractHttpStatus(error) === 401) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -54,7 +61,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 404) {
+			if (extractHttpStatus(error) === 404) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -72,7 +79,7 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 403) {
+			if (extractHttpStatus(error) === 403) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
@@ -91,7 +98,7 @@ export const errorHandlers = {
 	},
 	VALIDATION_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 400) {
+			if (extractHttpStatus(error) === 400) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();

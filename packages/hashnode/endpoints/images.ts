@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
+import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
 import type { HashnodeEndpointOutputs } from './types';
 import { CREATE_IMAGE_UPLOAD_URL_MUTATION } from './types';
@@ -13,7 +14,7 @@ export const createImageUploadURL: HashnodeEndpoints['createImageUploadURL'] =
 		await logEventFromContext(
 			ctx,
 			'hashnode.createImageUploadURL',
-			{ ...input },
+			redactEventPayload(input as Record<string, unknown>),
 			'completed',
 		);
 		return response;

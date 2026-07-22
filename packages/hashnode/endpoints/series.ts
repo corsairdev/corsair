@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
+import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
 import type { HashnodeEndpointOutputs } from './types';
 import { SERIES_LIST_QUERY, SERIES_QUERY } from './types';
@@ -12,7 +13,7 @@ export const getSeries: HashnodeEndpoints['getSeries'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'hashnode.getSeries',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
@@ -29,7 +30,7 @@ export const listSeries: HashnodeEndpoints['listSeries'] = async (
 	await logEventFromContext(
 		ctx,
 		'hashnode.listSeries',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;

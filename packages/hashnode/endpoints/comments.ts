@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
+import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
 import type { HashnodeEndpointOutputs } from './types';
 import { POST_COMMENTS_QUERY } from './types';
@@ -19,7 +20,7 @@ export const listPostComments: HashnodeEndpoints['listPostComments'] = async (
 	await logEventFromContext(
 		ctx,
 		'hashnode.listPostComments',
-		{ ...input },
+		redactEventPayload(input as Record<string, unknown>),
 		'completed',
 	);
 	return response;
