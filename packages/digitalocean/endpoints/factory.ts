@@ -29,7 +29,7 @@ function camelToSnake(value: string): string {
 
 function encodePathPart(value: unknown): string {
 	if (value === undefined || value === null || value === '') {
-		throw new Error('[digital_ocean] missing required path parameter');
+		throw new Error('[digitalocean] missing required path parameter');
 	}
 	return encodeURIComponent(String(value));
 }
@@ -96,7 +96,7 @@ function requestBody(route: DigitalOceanRoute, input: DigitalOceanEndpointInput)
 export function getRoute(name: string): DigitalOceanRoute {
 	const route = digitalOceanRoutes.find((candidate) => candidate.name === name);
 	if (!route) {
-		throw new Error(`[digital_ocean] missing route: ${name}`);
+		throw new Error(`[digitalocean] missing route: ${name}`);
 	}
 	return route;
 }
@@ -109,7 +109,7 @@ export async function logDigitalOceanOperation(
 ) {
 	await logEventFromContext(
 		ctx,
-		`digital_ocean.${route.group}.${route.name}`,
+		`digitalocean.${route.group}.${route.name}`,
 		{ method: route.method, path: route.path },
 		status,
 	);

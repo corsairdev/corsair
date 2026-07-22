@@ -51,7 +51,7 @@ export const digitalOceanAuthConfig = {
 } as const satisfies PluginAuthConfig;
 
 export type BaseDigitalOceanPlugin<T extends DigitalOceanPluginOptions> = CorsairPlugin<
-	'digital_ocean',
+	'digitalocean',
 	typeof DigitalOceanSchema,
 	typeof digitalOceanEndpointsNested,
 	{},
@@ -64,7 +64,7 @@ export type InternalDigitalOceanPlugin = BaseDigitalOceanPlugin<DigitalOceanPlug
 export type ExternalDigitalOceanPlugin<T extends DigitalOceanPluginOptions> =
 	BaseDigitalOceanPlugin<T>;
 
-export function digital_ocean<const T extends DigitalOceanPluginOptions>(
+export function digitalocean<const T extends DigitalOceanPluginOptions>(
 	incomingOptions: DigitalOceanPluginOptions & T = {} as DigitalOceanPluginOptions & T,
 ): ExternalDigitalOceanPlugin<T> {
 	const options = {
@@ -72,7 +72,7 @@ export function digital_ocean<const T extends DigitalOceanPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
-		id: 'digital_ocean',
+		id: 'digitalocean',
 		schema: DigitalOceanSchema,
 		options,
 		authConfig: digitalOceanAuthConfig,
@@ -97,7 +97,7 @@ export function digital_ocean<const T extends DigitalOceanPluginOptions>(
 					console.error(
 						'[DIGITALOCEAN] API key missing — connect DigitalOcean or pass key in plugin options.',
 					);
-					throw new AuthMissingError('digital_ocean', 'api_key');
+					throw new AuthMissingError('digitalocean', 'api_key');
 				}
 				return res;
 			}
@@ -105,7 +105,7 @@ export function digital_ocean<const T extends DigitalOceanPluginOptions>(
 			console.error(
 				'[DIGITALOCEAN] Authentication required for DigitalOcean API requests.',
 			);
-			throw new AuthMissingError('digital_ocean', 'api_key');
+			throw new AuthMissingError('digitalocean', 'api_key');
 		},
 	} satisfies InternalDigitalOceanPlugin;
 }

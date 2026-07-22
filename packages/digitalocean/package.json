@@ -1,5 +1,5 @@
 {
-  "name": "@corsair-dev/digital_ocean",
+  "name": "@corsair-dev/digitalocean",
   "version": "0.1.0",
   "description": "DigitalOcean plugin for Corsair",
   "type": "module",
@@ -33,7 +33,7 @@
   },
   "keywords": [
     "corsair",
-    "digital_ocean",
+    "digitalocean",
     "digitalocean",
     "plugin"
   ],

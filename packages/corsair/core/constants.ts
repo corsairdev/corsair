@@ -29,7 +29,7 @@ export const BaseProviders = [
 	'cursor',
 	'datadog',
 	'deepseek',
-	'digital_ocean',
+	'digitalocean',
 	'discord',
 	'dodopayments',
 	'dropbox',
@@ -112,7 +112,7 @@ export const ProviderDisplayNames = {
 	cursor: 'Cursor',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
-	digital_ocean: 'DigitalOcean',
+	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
@@ -202,7 +202,7 @@ export type AllProviders =
 	| 'cursor'
 	| 'datadog'
 	| 'deepseek'
-	| 'digital_ocean'
+	| 'digitalocean'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'

@@ -115,6 +115,6 @@ export async function syncDigitalOceanOperationCache(
 			await client.upsertByEntityId(entityId, item);
 		}
 	} catch (error) {
-		console.warn(`[digital_ocean] Failed to sync ${rule.entity} cache:`, error);
+		console.warn(`[digitalocean] Failed to sync ${rule.entity} cache:`, error);
 	}
 }

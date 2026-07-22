@@ -1,7 +1,7 @@
 import { request } from 'corsair/http';
 import { makeDigitalOceanRequest } from './client';
 import type { DigitalOceanContext } from './index';
-import { digital_ocean, digitalOceanEndpointSchemas } from './index';
+import { digitalocean, digitalOceanEndpointSchemas } from './index';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -45,7 +45,7 @@ const mockCtx = {
 
 describe('DigitalOcean plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {
-		const plugin = digital_ocean();
+		const plugin = digitalocean();
 		const endpoints = plugin.endpoints as Record<string, unknown>;
 		const paths = endpointPaths(endpoints).sort();
 
@@ -59,7 +59,7 @@ describe('DigitalOcean plugin shape', () => {
 	});
 
 	it('supports api key auth configuration', () => {
-		const plugin = digital_ocean();
+		const plugin = digitalocean();
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({ api_key: {} });
 	});
@@ -100,7 +100,7 @@ describe('DigitalOcean endpoints', () => {
 	});
 
 	it('maps representative operations to API routes', async () => {
-		const plugin = digital_ocean({ key: 'test-api-key' });
+		const plugin = digitalocean({ key: 'test-api-key' });
 		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
 			droplets: {
 				listAllDroplets: (ctx: DigitalOceanContext, input: {}) => Promise<unknown>;

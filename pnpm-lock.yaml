@@ -171,9 +171,9 @@ importers:
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
-      '@corsair-dev/digital_ocean':
+      '@corsair-dev/digitalocean':
         specifier: workspace:*
-        version: link:../../packages/digital_ocean
+        version: link:../../packages/digitalocean
       '@corsair-dev/firecrawl':
         specifier: workspace:*
         version: link:../../packages/firecrawl
@@ -854,7 +854,7 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/digital_ocean:
+  packages/digitalocean:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
