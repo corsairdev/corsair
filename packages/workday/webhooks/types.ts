@@ -43,7 +43,7 @@ export function createWorkdayEventMatch(
 	};
 }
 
-import * as crypto from 'crypto';
+import { verifyHmacSignature } from 'corsair/http';
 
 export function verifyWorkdayWebhookSignature(
 	request: WebhookRequest<WorkdayWebhookPayload>,
@@ -63,11 +63,8 @@ export function verifyWorkdayWebhookSignature(
 		bodyString = JSON.stringify(request.payload);
 	}
 
-	const expected = crypto
-		.createHmac('sha256', secret)
-		.update(bodyString)
-		.digest('base64');
-	if (signature !== expected) {
+	const isValid = verifyHmacSignature(bodyString, secret, signature);
+	if (!isValid) {
 		return { valid: false, error: 'Invalid webhook signature' };
 	}
 
