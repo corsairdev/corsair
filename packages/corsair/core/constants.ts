@@ -25,6 +25,7 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'cloudflare',
+	'confluence',
 	'cursor',
 	'datadog',
 	'deepseek',
@@ -53,6 +54,7 @@ export const BaseProviders = [
 	'jira',
 	'linear',
 	'linkedin',
+	'mailchimp',
 	'monday',
 	'neon',
 	'notion',
@@ -106,6 +108,7 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
+	confluence: 'Confluence',
 	cursor: 'Cursor',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
@@ -134,6 +137,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	mailchimp: 'Mailchimp',
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
@@ -194,6 +198,7 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'cloudflare'
+	| 'confluence'
 	| 'cursor'
 	| 'datadog'
 	| 'deepseek'
@@ -222,6 +227,7 @@ export type AllProviders =
 	| 'jira'
 	| 'linear'
 	| 'linkedin'
+	| 'mailchimp'
 	| 'monday'
 	| 'neon'
 	| 'notion'
