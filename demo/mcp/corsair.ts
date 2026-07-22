@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { github } from '@corsair-dev/github';
+import { gmail } from '@corsair-dev/gmail';
 import { linear } from '@corsair-dev/linear';
-// import { gmail } from '@corsair-dev/gmail'
 // import { googlecalendar } from '@corsair-dev/googlecalendar'
 import { slack } from '@corsair-dev/slack';
 import { createCorsair } from 'corsair';

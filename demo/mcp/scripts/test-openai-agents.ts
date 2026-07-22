@@ -4,13 +4,18 @@ import { corsair } from '../corsair';
 import { createLlmRunner, getChatModel } from '../llm';
 
 const provider = new OpenAIAgentsProvider();
-const tools = provider.build({ corsair, tool });
+const tools = provider.build({
+	corsair: corsair.withTenant('dev'),
+	tool,
+	runOptions: {
+		readonly: true,
+	},
+});
 
 const agent = new Agent({
 	name: 'corsair-agent',
 	model: getChatModel(),
-	instructions:
-		'You are a helpful assistant with access to Corsair tools. Use list_operations to discover available APIs, get_schema to understand required arguments, and run_script to execute them. When referencing resources (like channels), always use their ID, not their name. If a tool call fails, use get_schema to check the expected arguments and retry.',
+	instructions: 'You are a helpful assistant with access to the Corsair MCP.',
 	tools,
 });
 
