@@ -9,6 +9,12 @@ export type HubConfigInput = {
 	signingSecret: string;
 	apiUrl?: string;
 	oauthCallbackUrl?: string;
+	/**
+	 * Opt-in to executing Hub-delivered workflow code (`type: 'run'`). Off by
+	 * default because it dynamically evaluates code in-process. Sandbox before
+	 * enabling in production — see workflows/execute.ts.
+	 */
+	allowWorkflowExecution?: boolean;
 };
 
 export type HubConfig = {
@@ -16,6 +22,7 @@ export type HubConfig = {
 	projectApiKey: string;
 	signingSecret: string;
 	oauthCallbackUrl?: string;
+	allowWorkflowExecution?: boolean;
 };
 
 export type HubConnectSessionInput = {
