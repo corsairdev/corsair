@@ -53,11 +53,13 @@ import {
  * - integration: topic_id (Google Cloud Pub/Sub topic for push notifications),
  *   pubsub_audience (push subscription's OIDC identity — SA email or audience —
  *   reported to Hub as the webhook verification secret for verifyPubsub)
+ * - account: email_address (mailbox identity), last_history_id (cursor of the
+ *   last processed history record, used as startHistoryId for webhook syncs)
  */
 export const gmailAuthConfig = {
 	oauth_2: {
 		integration: ['topic_id', 'pubsub_audience'] as const,
-		account: ['email_address'] as const,
+		account: ['email_address', 'last_history_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
