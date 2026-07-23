@@ -238,6 +238,12 @@ export type {
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
 } from './permissions';
+export {
+	assertReadonlyAllowed,
+	isReadonlyScopeActive,
+	ReadonlyForbiddenError,
+	runReadonly,
+} from './permissions';
 // Plugin types
 export type {
 	BeforeHookResult,
@@ -246,6 +252,8 @@ export type {
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairPluginSubscribe,
+	CorsairPluginSubscribeResult,
 	EndpointHooks,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
@@ -279,6 +287,11 @@ export type {
 	WebhookTenantMatch,
 	WebhookTree,
 } from './webhooks';
+export { googleChannelSubscribe } from './webhooks/google-channel-subscribe';
+export {
+	MS_GRAPH_API_BASE,
+	msGraphSubscribe,
+} from './webhooks/ms-graph-subscribe';
 export {
 	collectPluginWebhookMatchers,
 	matchWebhookPlugin,

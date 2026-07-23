@@ -40,6 +40,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SharepointSchema } from './schema';
+import { sharepointSubscribe } from './subscribe';
 import { ListWebhooks } from './webhooks';
 import { matchSharepointTenantWebhook } from './webhooks/tenant-matcher';
 import type {
@@ -1351,18 +1352,20 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 		endpointSchemas: sharepointEndpointSchemas,
 		webhookSchemas: sharepointWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// SharePoint webhook notifications are identified by their JSON body structure
-			// containing a "value" array of notification objects
-			const contentType = Array.isArray(headers['content-type'])
-				? headers['content-type'][0]
-				: headers['content-type'];
-			return (
-				typeof contentType === 'string' &&
-				contentType.includes('application/json')
-			);
+			// Graph notification envelopes are shape-identical across MS plugins,
+			// so require a SharePoint resource — matching any JSON here would
+			// steal sibling plugins' events on direct (non-hub) routes.
+			const body = request.body as {
+				value?: Array<{ resource?: unknown }>;
+			} | null;
+			if (!Array.isArray(body?.value) || body.value.length === 0) {
+				return false;
+			}
+			const resource = body.value[0]?.resource;
+			return typeof resource === 'string' && resource.startsWith('sites/');
 		},
 		pluginTenantWebhookMatcher: matchSharepointTenantWebhook,
+		subscribe: sharepointSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

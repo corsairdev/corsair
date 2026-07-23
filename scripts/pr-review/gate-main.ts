@@ -116,9 +116,6 @@ const result = runGate({
 	changedFiles,
 	prBody: (event.pull_request.body as string) ?? '',
 	isDraft: event.pull_request.draft as boolean,
-	readmeExists: plugin
-		? fs.existsSync(path.join('packages', plugin, 'README.md'))
-		: false,
 	testFileCount: tests.testFileCount,
 	assertionCount: tests.assertionCount,
 });

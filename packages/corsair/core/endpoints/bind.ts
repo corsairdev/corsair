@@ -7,6 +7,7 @@ import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
+	assertReadonlyAllowed,
 	enforcePermission,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
@@ -105,10 +106,21 @@ export function bindEndpointsRecursively({
 			const operationPath = [...currentPath, key].join('.');
 
 			const boundFn = async (args: unknown = {}) => {
+				const endpointMetaEntry = endpointMeta?.[operationPath];
+
+				// ── Readonly scope guard ──────────────────────────────────────────────────────────
+				// Enforced ahead of (and independent of) the developer's permission config: when the
+				// call runs inside a runReadonly() scope, any non-read endpoint throws immediately.
+				// Default to 'write' when no risk level is declared — conservative fallback.
+				assertReadonlyAllowed(
+					operationPath,
+					endpointMetaEntry?.riskLevel ?? 'write',
+				);
+
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				if (permissionsConfig) {
-					const meta = endpointMeta?.[operationPath];
+					const meta = endpointMetaEntry;
 					const {
 						result: permResult,
 						reason: permReason,

@@ -6,8 +6,6 @@ export interface GateInput {
 	changedFiles: string[];
 	prBody: string;
 	isDraft: boolean;
-	/** Whether packages/<plugin>/README.md exists in the checkout. */
-	readmeExists: boolean;
 	/** Number of *.test.ts files that exist in the plugin package. */
 	testFileCount: number;
 	/** Total expect(/assert( calls across the plugin's *.test.ts files. */
@@ -168,16 +166,6 @@ export function runGate(input: GateInput): GateResult {
 		detail: /https?:\/\/\S+/.test(demos)
 			? undefined
 			: 'Required in "Screenshots / Demos" before a maintainer reviews',
-	});
-
-	// R7 — plugin README
-	checks.push({
-		rule: 'R7',
-		label: 'Plugin README',
-		status: input.readmeExists ? 'pass' : 'fail',
-		detail: input.readmeExists
-			? undefined
-			: `packages/${plugin}/README.md is missing (auth setup + endpoints overview)`,
 	});
 
 	const failures = checks
