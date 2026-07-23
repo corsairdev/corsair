@@ -61,6 +61,7 @@ export const BaseProviders = [
 	'neon',
 	'notion',
 	'onedrive',
+	'onepassword',
 	'openai',
 	'openweathermap',
 	'oura',
@@ -146,6 +147,7 @@ export const ProviderDisplayNames = {
 	neon: 'Neon',
 	notion: 'Notion',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
 	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
@@ -238,6 +240,7 @@ export type AllProviders =
 	| 'neon'
 	| 'notion'
 	| 'onedrive'
+	| 'onepassword'
 	| 'openai'
 	| 'openweathermap'
 	| 'oura'
