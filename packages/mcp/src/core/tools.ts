@@ -1,6 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { listOperations, setupCorsair } from 'corsair';
+import { listOperations, runReadonly, setupCorsair } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
@@ -15,7 +15,7 @@ export type CorsairToolDef = {
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
-	const { corsair } = options;
+	const { corsair, runOptions } = options;
 
 	const defs: CorsairToolDef[] = [
 		{
@@ -75,14 +75,18 @@ export function buildCorsairToolDefs(
 					),
 			},
 			handler: async ({ code }) => {
+				const readonly = runOptions?.readonly || false;
 				try {
 					const fn = new Function(
 						'corsair',
 						`return (async () => { ${code} })()`,
 					);
-					const result = await (fn as (c: unknown) => Promise<unknown>)(
-						corsair,
-					);
+					const invoke = () =>
+						(fn as (c: unknown) => Promise<unknown>)(corsair);
+					// When readonly is required, run the whole script inside a readonly
+					// scope that takes precedence over the developer's permission config.
+					// Any write/destructive endpoint throws and aborts the script.
+					const result = readonly ? await runReadonly(invoke) : await invoke();
 					return {
 						content: [
 							{

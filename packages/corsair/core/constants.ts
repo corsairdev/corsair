@@ -48,6 +48,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'heygen',
 	'hubspot',
 	'insightoai',
 	'instagram',
@@ -88,6 +89,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'vercel',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -131,6 +133,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -170,6 +173,7 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	vercel: 'Vercel',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -221,6 +225,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'heygen'
 	| 'hubspot'
 	| 'insightoai'
 	| 'instagram'
@@ -261,6 +266,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'vercel'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
