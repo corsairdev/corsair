@@ -29,6 +29,7 @@ export const BaseProviders = [
 	'cursor',
 	'datadog',
 	'deepseek',
+	'digitalocean',
 	'discord',
 	'dodopayments',
 	'dropbox',
@@ -47,6 +48,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'heygen',
 	'hubspot',
 	'insightoai',
 	'instagram',
@@ -88,6 +90,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'vercel',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -112,6 +115,7 @@ export const ProviderDisplayNames = {
 	cursor: 'Cursor',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
+	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
@@ -130,6 +134,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -170,6 +175,7 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	vercel: 'Vercel',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -202,6 +208,7 @@ export type AllProviders =
 	| 'cursor'
 	| 'datadog'
 	| 'deepseek'
+	| 'digitalocean'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
@@ -220,6 +227,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'heygen'
 	| 'hubspot'
 	| 'insightoai'
 	| 'instagram'
@@ -261,6 +269,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'vercel'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
