@@ -47,6 +47,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'hashnode',
 	'hubspot',
 	'insightoai',
 	'instagram',
@@ -129,6 +130,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	hashnode: 'Hashnode',
 	hubspot: 'HubSpot',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -218,6 +220,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'hashnode'
 	| 'hubspot'
 	| 'insightoai'
 	| 'instagram'
