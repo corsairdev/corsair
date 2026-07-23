@@ -24,6 +24,13 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	buildClientBridgeBrowserDeliveryUrl,
+	type ClientBridgeDeliverySpec,
+	type ClientBridgeTransportResult,
+	type PrepareClientBridgeDeliveryTransportInput,
+	prepareClientBridgeDeliveryTransport,
+} from './client-bridge-delivery';
+export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
 	HubNotConfiguredError,
@@ -32,6 +39,10 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export type {
+	ConnectCreateLinkDeliveryPayload,
+	ConnectCreateLinkDeliveryResult,
+} from './connect-link-delivery';
 export {
 	type ConnectAuthFieldStatus,
 	type ConnectAuthStatusLevel,
@@ -96,6 +107,8 @@ export {
 } from './permission';
 export type { ReportConnectionStatusInput } from './report-connection-status';
 export {
+	buildWebhookLinkReport,
+	registerHubWebhookTenantLink,
 	reportConnectionStatus,
 	reportConnectionStatusForHub,
 	reportPluginConnectionAuthMissing,
@@ -118,10 +131,12 @@ export {
 	decodeConnectSessionTokenFromPath,
 	decodeConnectTokenFromPath,
 	decodePermissionTokenFromPath,
+	deliverConnectCreateLink,
 	deliverSignedEnvelope,
 	describeDeliveryNetworkError,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractConnectLinkFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
@@ -129,6 +144,7 @@ export {
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
+	parseConnectLinkFromDeliveryBody,
 	parseServerDeliveryAckBody,
 	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,
