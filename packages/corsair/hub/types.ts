@@ -9,6 +9,8 @@ export type HubConfigInput = {
 	signingSecret: string;
 	apiUrl?: string;
 	oauthCallbackUrl?: string;
+	/** URL the connect/approve pages send the user back to when they're done. */
+	redirectURL?: string;
 };
 
 export type HubConfig = {
@@ -16,6 +18,7 @@ export type HubConfig = {
 	projectApiKey: string;
 	signingSecret: string;
 	oauthCallbackUrl?: string;
+	redirectURL?: string;
 };
 
 export type HubConnectSessionInput = {

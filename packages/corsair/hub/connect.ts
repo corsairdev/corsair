@@ -42,6 +42,10 @@ export async function postHubConnectSession(
 		plugins: input.plugins,
 	};
 
+	if (hub.redirectURL) {
+		body.redirectUri = hub.redirectURL;
+	}
+
 	if (environmentSlug === 'development') {
 		body.deliveryUrl = resolveHubDeliveryUrl({
 			deliveryUrl: input.deliveryUrl,
