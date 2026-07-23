@@ -42,6 +42,7 @@ describe('OnePassword endpoint routing', () => {
 		path: string;
 		method: string;
 		body?: Record<string, unknown>;
+		query?: Record<string, unknown>;
 	}> = [
 		{
 			name: 'vaults.list',
@@ -60,9 +61,10 @@ describe('OnePassword endpoint routing', () => {
 		{
 			name: 'items.list',
 			fn: Items.list as AnyEndpoint,
-			input: { vaultId: 'vault-1' },
+			input: { vaultId: 'vault-1', limit: 25, offset: 50 },
 			path: 'v1/vaults/vault-1/items',
 			method: 'GET',
+			query: { limit: 25, offset: 50 },
 		},
 		{
 			name: 'items.get',
@@ -116,7 +118,7 @@ describe('OnePassword endpoint routing', () => {
 
 	it.each(cases)(
 		'$name drives the endpoint closure against $path',
-		async ({ fn, input, path, method, body }) => {
+		async ({ fn, input, path, method, body, query }) => {
 			const ctx = createContext();
 			await fn(ctx, input);
 
@@ -127,6 +129,7 @@ describe('OnePassword endpoint routing', () => {
 				expect.objectContaining({
 					method,
 					...(body ? { body: expect.objectContaining(body) } : {}),
+					...(query ? { query } : {}),
 				}),
 			);
 			expect(mockLog).toHaveBeenCalled();

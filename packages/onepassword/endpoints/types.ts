@@ -57,6 +57,8 @@ export type VaultItem = z.infer<typeof VaultItemSchema>;
 
 export const ItemsListInputSchema = z.object({
 	vaultId: z.string(),
+	limit: z.number().int().positive().optional(),
+	offset: z.number().int().nonnegative().optional(),
 });
 export type ItemsListInput = z.infer<typeof ItemsListInputSchema>;
 

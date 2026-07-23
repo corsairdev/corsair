@@ -8,6 +8,10 @@ export const list: OnePasswordEndpoints['itemsList'] = async (ctx, input) => {
 		OnePasswordEndpointOutputs['itemsList']
 	>(ctx.options.connectUrl, `v1/vaults/${input.vaultId}/items`, ctx.key, {
 		method: 'GET',
+		query: {
+			limit: input.limit,
+			offset: input.offset,
+		},
 	});
 
 	await logEventFromContext(ctx, 'onepassword.items.list', input, 'completed');
