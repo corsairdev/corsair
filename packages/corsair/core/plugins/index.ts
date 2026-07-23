@@ -23,6 +23,7 @@ import type {
 	WebhookPathsOf,
 	WebhookRequest,
 	WebhookResponse,
+	WebhookTenantMatch,
 	WebhookTree,
 } from '../webhooks';
 
@@ -428,6 +429,30 @@ export type CorsairKeyBuilderBase = (
 ) => string | Promise<string>;
 
 /**
+ * Result of a BYO subscribe: the routing key Hub uses to map inbound provider
+ * webhooks back to this tenant, plus the verification secret Hub stores so it
+ * can verify those webhooks (e.g. Outlook `clientState`).
+ */
+export type CorsairPluginSubscribeResult = {
+	webhookLink: WebhookTenantMatch;
+	webhookSecret?: string;
+};
+
+/**
+ * BYO-mode subscribe capability. In managed mode Hub subscribes; in BYO the app
+ * holds the token, so the plugin arms the provider subscription (Outlook
+ * `POST /subscriptions`, Gmail `users.watch`) using the account token and
+ * returns the routing link + verification secret to report to Hub. Return null
+ * to skip (e.g. missing integration credentials). `ctx` is the same account
+ * context keyBuilder receives; typed `any` here to match CorsairKeyBuilderBase's
+ * array-variance handling.
+ */
+export type CorsairPluginSubscribe = (
+	ctx: any,
+	input: { webhookUrl: string },
+) => Promise<CorsairPluginSubscribeResult | null>;
+
+/**
  * Defines a Corsair plugin with endpoints, webhooks, schema, and configuration.
  * @template Id - The plugin identifier (must be one of AllProviders)
  * @template Schema - The plugin schema for database services
@@ -484,6 +509,12 @@ export type CorsairPlugin<
 	 * webhooks can be routed to the correct tenant. Return null when unavailable.
 	 */
 	oauthWebhookTenantLinkResolver?: CorsairOAuthWebhookTenantLinkResolver;
+	/**
+	 * BYO-mode subscribe: arm the provider subscription on connect using the
+	 * account token and return the routing link + verification secret for Hub.
+	 * Absent for plugins that need no token-based subscribe (class-2 webhooks).
+	 */
+	subscribe?: CorsairPluginSubscribe;
 	/** Plugin-specific error handlers */
 	errorHandlers?: CorsairErrorHandler;
 	/**

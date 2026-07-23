@@ -1,0 +1,95 @@
+---
+title: Setup
+sidebarTitle: Setup
+description: Wire the Corsair SDK into your app with Hub — install, add the /api/corsair route, add your keys, and start. Your app self-registers on first run.
+---
+
+import MountHandlerTabs from '/snippets/mount-handler-tabs.mdx';
+
+Add Corsair Hub to a TypeScript app in five steps. Your app registers itself with Hub the first time it serves a request, so there is no delivery URL to type into the dashboard — the **App sync** indicator in the header turns green when it connects.
+
+<Info>
+Prefer to hand this to a coding agent? Point it at this page: *"Set up Corsair Hub in this app. Follow https://docs.corsair.dev/hub/setup.md end to end."* It works through the same five steps below.
+</Info>
+
+## Prerequisites
+
+A Hub project. Open your project's **Keys** tab in the [dashboard](/hub/dashboard) to copy its API key and signing secret. Secrets are shown once — never log or commit them.
+
+## 1. Install Corsair and a plugin
+
+```bash
+npm i corsair @corsair-dev/github
+```
+
+`@corsair-dev/github` is an example — swap it for the integration your app needs. Browse the [integrations catalog](https://api.corsair.dev/md/integrations) for plugin ids.
+
+## 2. Create `corsair.ts` and link your database
+
+```ts corsair.ts
+import "dotenv/config";
+
+import { createCorsair } from "corsair";
+import { github } from "@corsair-dev/github";
+
+export const corsair = createCorsair({
+    kek: process.env.CORSAIR_KEK!,
+    database: db,
+    hub: {
+        projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+        signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+    },
+    plugins: [github()],
+});
+```
+
+Pass your app's database as `database`. Corsair persists connections and synced data there — Hub stores none of it (see [Hub overview](/hub/overview#hub-stores-none-of-your-credentials)).
+
+## 3. Add the `/api/corsair` route
+
+The handler serves Hub delivery — OAuth callbacks, connect pages, and self-registration — plus the management API, at its base path. Mount the adapter for your server:
+
+<MountHandlerTabs />
+
+You do not put the delivery URL in your `hub` config — it is resolved per environment (see [Delivery URLs](/hub/delivery-urls)).
+
+## 4. Add your keys to `.env`
+
+Copy the values from your project's **Keys** tab. Never commit them.
+
+```bash .env
+CORSAIR_DEV_API_KEY=ck_dev_...
+CORSAIR_DEV_SIGNING_SECRET=...
+CORSAIR_KEK=...
+```
+
+The env var names are your choice — the dashboard uses `CORSAIR_DEV_*` for development and `CORSAIR_PROD_*` for production so both can coexist. Match whatever you reference in `corsair.ts`.
+
+## 5. Start your app
+
+```bash
+npm run dev
+```
+
+The first request to `/api/corsair` registers this app's delivery URL with Hub automatically. The **App sync** indicator in the dashboard header turns green — you are connected.
+
+<Info>
+The delivery URL is derived from your app's own config (`CORSAIR_DELIVERY_URL` → `PORT`), never from an inbound request, and only development keys self-register. See [Delivery URLs](/hub/delivery-urls) for detection order and production setup.
+</Info>
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Delivery URLs" href="/hub/delivery-urls">
+    How development and production delivery differ.
+  </Card>
+  <Card title="Environments" href="/hub/environments">
+    Development vs production keys.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    Mint a connect link so users can sign in.
+  </Card>
+  <Card title="Dashboard" href="/hub/dashboard">
+    Manage keys, connections, and delivery URLs.
+  </Card>
+</CardGroup>

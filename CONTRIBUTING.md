@@ -27,119 +27,33 @@ If you want to contribute a new plugin, please start with the issue first. The i
 
 ## Fork and Local Setup
 
-To contribute to Corsair, you will need to set up the monorepo locally.
+Prerequisites: Node.js 22 or newer (the plugin generator uses
+`--experimental-strip-types`) and pnpm 10.
 
-### Prerequisites
-
-Ensure you have the following installed on your machine:
-- **Node.js**: `v22.x` (specified in `.nvmrc`)
-- **pnpm**: `v10.x` (specified in `package.json` packageManager)
-- **Docker**: Optional, but recommended if you want to run database-backed integrations or testing databases locally.
-
-### Step 1: Fork and Clone
+For each new integration, start from a fresh fork and a new local clone. If you already forked corsair for a previous integration, delete that fork on GitHub before forking again. Reusing an old fork or local checkout causes merge conflicts when you open a PR.
 
 1. Delete any existing corsair fork on GitHub (if this is not your first integration).
 2. Fork the repository on GitHub from [corsairdev/corsair](https://github.com/corsairdev/corsair).
-3. Clone your new fork into a new local directory (do not reuse a previous clone):
+3. Clone your new fork into a new local directory (do not reuse a previous clone).
+4. Install dependencies from the repo root.
 
 ```bash
-git clone https://github.com/<your-username>/corsair.git corsair-dev
-cd corsair-dev
-```
-
-### Step 2: Install and Build
-
-Install dependencies and perform an initial build of all workspace packages:
-
-```bash
+git clone https://github.com/<your-username>/corsair.git corsair-<integration-slug>
+cd corsair-<integration-slug>
 pnpm install
-pnpm build
 ```
 
 Useful commands from the repo root:
 
-| Command | Description |
-|---|---|
-| `pnpm typecheck` | Run TypeScript typechecks across all packages |
-| `pnpm lint` | Run Biome lint checks |
-| `pnpm lint:fix` | Automatically fix auto-fixable Biome lint errors |
-| `pnpm format` | Format files according to Biome settings |
-| `pnpm run validate:plugins` | Run script to validate all plugins meet configuration standards |
-| `pnpm build` | Build all packages in the workspace |
-| `pnpm test` | Run tests across all workspace packages |
-
----
-
-## Local Sandbox & Testing Workflow
-
-The main E2E testing sandbox for integrations lives in `demo/testing/`. This is a Next.js-based application configured with a local database and a runner to test plugins locally.
-
-### 1. Setup the Local Database
-
-The demo sandbox is configured to run Postgres via Docker.
-1. Spin up the Postgres container:
-   ```bash
-   cd demo/testing
-   pnpm run db:up
-   ```
-2. Generate and apply migrations to provision the necessary database schemas:
-   ```bash
-   pnpm run db:generate
-   pnpm run db:push
-   ```
-
-*(Alternatively, you can test with SQLite. The sandbox initializes `./corsair.db` when running manual/hub tests).*
-
-### 2. Configure Local Environment Variables
-
-Create a `.env` file inside `demo/testing/` to configure the sandbox.
-```env
-# Encryption Key (KEK) - Corsair uses this to encrypt all credentials
-CORSAIR_KEK=your_32_byte_hex_key_here
-
-# (Optional) Hub Environment Keys - if testing via Hub Integration
-CORSAIR_API_KEY=ck_dev_...
-CORSAIR_SIGNING_SECRET=...
-```
-
-*Tip: You can generate a random 32-byte hex key for your `CORSAIR_KEK` using the following Node command:*
 ```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+pnpm typecheck
+pnpm lint
+pnpm lint:fix
+pnpm format
+pnpm run validate:plugins
+pnpm build
+pnpm test
 ```
-
-### 3. Registering & Running Tests
-
-1. Register your plugin in `demo/testing/src/server/corsair.ts`.
-2. Add or modify calls in `demo/testing/src/scripts/test-script.ts` to execute your plugin's endpoints.
-3. Run the test script:
-   ```bash
-   pnpm test:manual
-   ```
-   Or if testing through the Hub relay:
-   ```bash
-   pnpm test:hub
-   ```
-
----
-
-## Running the Local Studio
-
-Corsair includes a visual developer dashboard called **Studio** for inspecting and editing local configurations, tenants, and credential states.
-
-To start the Studio:
-1. Make sure you have built the workspace packages:
-   ```bash
-   pnpm build
-   ```
-2. Start the dev server in watch mode:
-   ```bash
-   pnpm dev
-   ```
-   Or explicitly target the studio package:
-   ```bash
-   pnpm --filter @corsair-dev/studio dev:web
-   pnpm --filter @corsair-dev/studio dev:server
-   ```
 
 If your change needs credentials or local environment setup, follow the package-specific docs or examples in the repo before running tests.
 

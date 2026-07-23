@@ -11,7 +11,7 @@ export class GmailAPIError extends Error {
 	}
 }
 
-const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1';
+export const GMAIL_API_BASE = 'https://gmail.googleapis.com/gmail/v1';
 
 async function refreshAccessToken(
 	clientId: string,

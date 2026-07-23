@@ -1,14 +1,18 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Corsair",
-  "theme": "luma",
+  "theme": "aspen",
   "favicon": "/favicon.ico",
+  "logo": {
+    "light": "/images/logo-light.svg",
+    "dark": "/images/logo-dark.svg"
+  },
   "colors": {
     "primary": "#2d7387",
     "light": "#95cbcf"
   },
   "appearance": {
-    "default": "dark"
+    "default": "light"
   },
   "navbar": {
     "primary": {
@@ -26,43 +30,18 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/setup"
-            ]
-          },
-          {
-            "group": "Concepts",
-            "pages": [
-              {
-                "group": "Core Concepts",
-                "pages": [
-                  "concepts/integrations",
-                  "concepts/auth",
-                  "concepts/permissions",
-                  "concepts/multi-tenancy",
-                  "concepts/database",
-                  "concepts/webhooks",
-                  "concepts/hooks",
-                  "concepts/api",
-                  "concepts/error-handling",
-                  "concepts/typescript"
-                ]
-              },
-              {
-                "group": "Authentication",
-                "pages": [
-                  "concepts/api-key",
-                  "concepts/oauth",
-                  "production/oauth-process",
-                  "production/tenant-provisioning"
-                ]
-              }
+              "getting-started/set-up-with-your-agent"
             ]
           },
           {
             "group": "Adapters",
             "pages": [
+              "adapters/handlers",
+              "adapters/client",
+              "adapters/react",
               {
-                "group": "MCP",
+                "group": "AI agents",
+                "expanded": false,
                 "pages": [
                   "mcp-adapters/mcp-adapters",
                   "mcp-adapters/anthropic-sdk",
@@ -74,7 +53,8 @@
                 ]
               },
               {
-                "group": "Coding Agents",
+                "group": "Coding agents",
+                "expanded": false,
                 "pages": [
                   "mcp-adapters/coding-agents",
                   "mcp-adapters/claude-code",
@@ -82,7 +62,8 @@
                 ]
               },
               {
-                "group": "Workflow Engines",
+                "group": "Workflow engines",
+                "expanded": false,
                 "pages": [
                   "guides/inngest",
                   "guides/temporal",
@@ -93,30 +74,73 @@
             ]
           },
           {
-            "group": "Reference",
+            "group": "Hub",
             "pages": [
+              "hub/overview",
+              "hub/setup",
               {
-                "group": "Client",
+                "group": "Configure",
                 "expanded": false,
                 "pages": [
-                  "management/overview",
-                  "management/handler",
-                  "management/client",
-                  "management/react",
-                  "management/connect"
+                  "hub/environments",
+                  "hub/delivery-urls",
+                  "hub/dashboard"
+                ]
+              },
+              {
+                "group": "Reference",
+                "expanded": false,
+                "pages": [
+                  "hub/manual-vs-hub",
+                  "hub/permissions",
+                  "hub/rest-api"
                 ]
               }
             ]
           },
           {
-            "group": "Hub",
+            "group": "Concepts",
             "pages": [
-              "hub/overview",
-              "hub/environments",
-              "hub/dashboard",
-              "hub/manual-vs-hub",
-              "hub/delivery-urls",
-              "hub/permissions"
+              {
+                "group": "Core",
+                "expanded": false,
+                "pages": [
+                  "concepts/integrations",
+                  "concepts/database",
+                  "concepts/api",
+                  "concepts/typescript",
+                  "concepts/error-handling"
+                ]
+              },
+              {
+                "group": "Authentication",
+                "expanded": false,
+                "pages": [
+                  "concepts/auth",
+                  "concepts/api-key",
+                  "concepts/oauth",
+                  "concepts/oauth-process"
+                ]
+              },
+              {
+                "group": "Building",
+                "expanded": false,
+                "pages": [
+                  "concepts/permissions",
+                  "concepts/multi-tenancy",
+                  "concepts/provisioning",
+                  "concepts/webhooks",
+                  "concepts/hooks"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Management API",
+            "pages": [
+              "management/overview",
+              "management/handler",
+              "management/connect"
             ]
           }
         ]
@@ -131,6 +155,14 @@
           {
             "group": "Plugins",
             "pages": [
+              {
+                "group": "AgentQL",
+                "pages": [
+                  "plugins/agentql/overview",
+                  "plugins/agentql/api",
+                  "plugins/agentql/database"
+                ]
+              },
               {
                 "group": "Ahrefs",
                 "pages": [
@@ -342,6 +374,15 @@
                 ]
               },
               {
+                "group": "Google Docs",
+                "pages": [
+                  "plugins/googledocs/overview",
+                  "plugins/googledocs/api",
+                  "plugins/googledocs/database",
+                  "plugins/googledocs/webhooks"
+                ]
+              },
+              {
                 "group": "Google drive",
                 "pages": [
                   "plugins/googledrive/overview",
@@ -397,6 +438,15 @@
                 ]
               },
               {
+                "group": "Instagram",
+                "pages": [
+                  "plugins/instagram/overview",
+                  "plugins/instagram/api",
+                  "plugins/instagram/database",
+                  "plugins/instagram/webhooks"
+                ]
+              },
+              {
                 "group": "Intercom",
                 "pages": [
                   "plugins/intercom/overview",
@@ -427,6 +477,14 @@
                 ]
               },
               {
+                "group": "LinkedIn",
+                "pages": [
+                  "plugins/linkedin/overview",
+                  "plugins/linkedin/api",
+                  "plugins/linkedin/database"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -443,6 +501,14 @@
                   "plugins/monday/api",
                   "plugins/monday/database",
                   "plugins/monday/webhooks"
+                ]
+              },
+              {
+                "group": "Neon",
+                "pages": [
+                  "plugins/neon/overview",
+                  "plugins/neon/api",
+                  "plugins/neon/database"
                 ]
               },
               {
@@ -791,7 +857,7 @@
     },
     {
       "source": "/getting-started/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/home",
@@ -803,11 +869,11 @@
     },
     {
       "source": "/app/agent-setup",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/coding-agents",
@@ -875,7 +941,7 @@
     },
     {
       "source": "/hosted-sdk/quickstart",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/hosted-sdk/instances-and-plugins",
@@ -931,7 +997,7 @@
     },
     {
       "source": "/app/sdk/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/sdk/instances-and-plugins",
@@ -944,6 +1010,50 @@
     {
       "source": "/app/sdk/types-and-errors",
       "destination": "/concepts/typescript"
+    },
+    {
+      "source": "/getting-started/setup",
+      "destination": "/concepts/provisioning"
+    },
+    {
+      "source": "/getting-started/comparison",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/frameworks/nextjs",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/express",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/hono",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/web-standard",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/management/client",
+      "destination": "/adapters/client"
+    },
+    {
+      "source": "/management/react",
+      "destination": "/adapters/react"
+    },
+    {
+      "source": "/production/tenant-provisioning",
+      "destination": "/concepts/provisioning"
+    },
+    {
+      "source": "/going-to-production/provisioning-cli",
+      "destination": "/concepts/provisioning"
+    },
+    {
+      "source": "/production/oauth-process",
+      "destination": "/concepts/oauth-process"
     }
   ]
 }

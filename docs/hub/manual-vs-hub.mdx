@@ -4,10 +4,13 @@ sidebarTitle: Manual or Hub
 description: The same Corsair instance, two ways to handle the surfaces that need a public URL. Here is exactly what each mode asks you to build.
 ---
 
+import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
+import CreateCorsairManual from '/snippets/create-corsair-manual.mdx';
+
 Corsair only differs between modes in one place: the surfaces that need a public URL (OAuth callbacks, approval pages). Everything else (calling APIs, `withTenant`, hooks, the database layer, encryption) is identical.
 
-- **Manual** is the default. You host the connect, callback, and approval surfaces yourself. Fully featured, no external dependency.
-- **Hub** is an optional upgrade. Corsair hosts those surfaces for you. It stores none of your credentials. See [Hub overview](/hub/overview).
+- **Hub** is the recommended path. Corsair hosts the connect, callback, and approval surfaces for you, and stores none of your credentials. See [Hub overview](/hub/overview).
+- **Manual** is the self-hosted alternative. You host those surfaces yourself — fully featured, no external dependency.
 
 The picker is config on `createCorsair`: pass `manual` or `hub`.
 
@@ -30,38 +33,15 @@ The last row is the key one: **credential storage never changes.** Tokens live i
 
 <Tab title="Manual (self-hosted)">
 
-```ts corsair.ts
-export const corsair = createCorsair({
-    plugins: [github(), slack()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
-    manual: {
-        baseUrl: `${appUrl}/connect`,
-        redirectUri: `${appUrl}/api/oauth/callback`,
-        approvalBaseUrl: `${appUrl}/approve`,
-        onApprovalRequired: ({ approvalUrl }) =>
-            `Approval required. Visit ${approvalUrl} then retry.`,
-    },
-});
-```
+<CreateCorsairManual />
 
-You also build the connect page, the OAuth callback route, and the approval review page. See [OAuth Process](/production/oauth-process) for the full implementation.
+You also build the connect page, the OAuth callback route, and the approval review page. See [OAuth Process](/concepts/oauth-process) for the full implementation.
 
 </Tab>
 
 <Tab title="Hub (hosted)">
 
-```ts corsair.ts
-export const corsair = createCorsair({
-    plugins: [github(), slack()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
-    hub: {
-        projectApiKey: process.env.CORSAIR_API_KEY!,
-        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-    },
-});
-```
+<CreateCorsairHub />
 
 No connect page, callback route, or approval page to build. Mount the handler once — Hub [delivers results](/hub/delivery-urls) to it (auto-detected locally, registered in the dashboard for production).
 
@@ -117,7 +97,7 @@ You can also mix: connect through Hub while keeping approvals manual, or the rev
   <Card title="Environments" href="/hub/environments">
     Development vs production keys and delivery.
   </Card>
-  <Card title="OAuth Process" href="/production/oauth-process">
+  <Card title="OAuth Process" href="/concepts/oauth-process">
     The full manual-mode implementation with security best practices.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
