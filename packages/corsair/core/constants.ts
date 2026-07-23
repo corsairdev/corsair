@@ -14,9 +14,9 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
-	'algolia',
 	'ahrefs',
 	'airtable',
+	'algolia',
 	'amplitude',
 	'asana',
 	'bitwarden',
@@ -43,6 +43,7 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledocs',
 	'googledrive',
+	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
@@ -96,9 +97,9 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
-	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
+	algolia: 'Algolia',
 	amplitude: 'Amplitude',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -125,6 +126,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
+	googlemaps: 'GoogleMaps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
@@ -146,6 +148,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
@@ -173,7 +176,6 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -185,9 +187,9 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'agentql'
-	| 'algolia'
 	| 'ahrefs'
 	| 'airtable'
+	| 'algolia'
 	| 'amplitude'
 	| 'asana'
 	| 'bitwarden'
@@ -214,6 +216,7 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledocs'
 	| 'googledrive'
+	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
