@@ -58,7 +58,38 @@ export type TunnelAck = {
 		body?: unknown;
 		headers?: Record<string, string>;
 	};
+	/**
+	 * @deprecated Shipped in v0.1.102. The connect URL now also lives in
+	 * `webhookResponse.body`; this alias is kept populated so direct
+	 * `processCorsair` consumers that read `ack.connectLink` don't break.
+	 */
+	connectLink?: {
+		connectUrl: string;
+		expiresAt?: string;
+	};
 };
+
+/**
+ * Builds the ack for a `connect.create_link` tunnel. Carries the connect URL in
+ * both `webhookResponse.body` (current) and the deprecated `connectLink` alias.
+ */
+export function connectLinkAck(result: {
+	connectUrl: string;
+	expiresAt?: string;
+}): TunnelAck {
+	return {
+		status: 'ok',
+		connectLink: { connectUrl: result.connectUrl, expiresAt: result.expiresAt },
+		webhookResponse: {
+			status: 200,
+			body: {
+				status: 'ok',
+				connectUrl: result.connectUrl,
+				expiresAt: result.expiresAt,
+			} satisfies ServerDeliveryAckBody,
+		},
+	};
+}
 
 export type WebhookTunnelPayload = {
 	headers: Record<string, string>;
@@ -151,17 +182,7 @@ async function handleConnectCreateLinkTunnel(
 ): Promise<TunnelAck> {
 	try {
 		const result = await processConnectLinkDelivery(corsair, payload);
-		return {
-			status: 'ok',
-			webhookResponse: {
-				status: 200,
-				body: {
-					status: 'ok',
-					connectUrl: result.connectUrl,
-					expiresAt: result.expiresAt,
-				} satisfies ServerDeliveryAckBody,
-			},
-		};
+		return connectLinkAck(result);
 	} catch (error) {
 		return {
 			status: 'failed',
