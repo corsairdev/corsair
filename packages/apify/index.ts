@@ -98,10 +98,16 @@ export function apify<const T extends ApifyPluginOptions>(
 		endpointSchemas: apifyEndpointSchemas,
 		webhookSchemas: apifyWebhookSchemas,
 		pluginWebhookMatcher: () => false,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			// DEFAULT matches everything (`() => true`), so it must always be
+			// evaluated last — otherwise caller-supplied handlers become dead code.
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: ApifyKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 

@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import type { ApifyOperationDefinition } from './endpoints';
 import {
@@ -24,7 +25,18 @@ jest.mock('corsair/http', () => {
 	};
 });
 
+jest.mock('corsair/core', () => {
+	const original = jest.requireActual('corsair/core');
+	return {
+		...original,
+		logEventFromContext: jest.fn().mockResolvedValue(null),
+	};
+});
+
 const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockLog = logEventFromContext as jest.MockedFunction<
+	typeof logEventFromContext
+>;
 
 type OperationEntry = { path: string; def: ApifyOperationDefinition };
 
@@ -196,7 +208,11 @@ function makeCtx(key = 'test-token'): ApifyContext {
 }
 
 describe('apify endpoint invocation', () => {
-	beforeEach(() => mockRequest.mockReset());
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockLog.mockReset();
+		mockLog.mockResolvedValue(null);
+	});
 
 	it('routes an endpoint call to makeApifyRequest with the right method, path, and bearer token', async () => {
 		mockRequest.mockResolvedValue({ id: 'actor-1' });
@@ -220,6 +236,19 @@ describe('apify endpoint invocation', () => {
 		expect(requestOptions?.path).toEqual({ actorId: 'abc123' });
 		// GET requests carry no body.
 		expect(requestOptions?.body).toBeUndefined();
+		expect(result).toEqual({ id: 'actor-1' });
+	});
+
+	it('still returns the Apify response when logging throws', async () => {
+		mockRequest.mockResolvedValue({ id: 'actor-1' });
+		mockLog.mockRejectedValue(new Error('logger down'));
+
+		const result = await (
+			ApifyEndpoints as unknown as {
+				act: { get: (ctx: ApifyContext, input: unknown) => Promise<unknown> };
+			}
+		).act.get(makeCtx(), { actorId: 'abc123' });
+
 		expect(result).toEqual({ id: 'actor-1' });
 	});
 

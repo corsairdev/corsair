@@ -51,15 +51,22 @@ function buildEndpointTree<T extends ApifyOperationTree>(
 				input: ApifyOperationInput,
 			) => {
 				const response = await makeApifyRequest(value, ctx.key, input ?? {});
-				await logEventFromContext(
-					ctx,
-					`apify.${operationPath}`,
-					{
-						method: value.method,
-						path: value.path,
-					},
-					'completed',
-				);
+				// Never let logging failures convert a successful Apify response into
+				// an error for the caller (logEventFromContext also swallows, but keep
+				// this defensive so the success path always returns).
+				try {
+					await logEventFromContext(
+						ctx,
+						`apify.${operationPath}`,
+						{
+							method: value.method,
+							path: value.path,
+						},
+						'completed',
+					);
+				} catch {
+					// ignore
+				}
 				return response;
 			};
 		} else {
