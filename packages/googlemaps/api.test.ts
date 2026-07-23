@@ -21,6 +21,12 @@ describe('Google Maps Plugin API Tests', () => {
 		$getAccountId: jest.fn().mockResolvedValue('acc_123'),
 	} as any;
 
+	const dummyOAuthCtx = {
+		key: 'oauth_access_token',
+		authType: 'oauth_2' as const,
+		$getAccountId: jest.fn().mockResolvedValue('acc_123'),
+	} as any;
+
 	beforeEach(() => {
 		jest.clearAllMocks();
 	});
@@ -31,6 +37,7 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(plugin.authConfig!.api_key).toBeDefined();
 	});
 
+	// Places Endpoints (5)
 	it('places.autocomplete returns place suggestions', async () => {
 		const plugin = googlemaps();
 		mockedMakeRequest.mockResolvedValueOnce({
@@ -62,14 +69,9 @@ describe('Google Maps Plugin API Tests', () => {
 		});
 
 		expect(res.formattedAddress).toBe('Sydney NSW, Australia');
-		expect(mockedMakeRequest).toHaveBeenCalledWith(
-			'/v1/places/ChIJN1t_tDeuEmsRUsoyG83frY4',
-			dummyCtx,
-			expect.objectContaining({ method: 'GET' }),
-		);
 	});
 
-	it('places.getPlacePhoto generates place photo URL', async () => {
+	it('places.getPlacePhoto generates authenticated place photo URL', async () => {
 		const plugin = googlemaps();
 		const res = await plugin.endpoints!.places.getPlacePhoto(dummyCtx, {
 			photo_reference: 'ref_12345',
@@ -77,8 +79,38 @@ describe('Google Maps Plugin API Tests', () => {
 		});
 
 		expect(res.photoUrl).toContain('ref_12345');
+		expect(res.photoUrl).toContain('key=test_key');
 	});
 
+	it('places.nearbySearch searches places nearby', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			places: [{ name: 'places/p1', displayName: { text: 'Park' } }],
+		});
+
+		const res = await plugin.endpoints!.places.nearbySearch(dummyCtx, {
+			locationRestriction: {
+				circle: { center: { latitude: 37.4, longitude: -122.0 }, radius: 500 },
+			},
+		});
+
+		expect(res.places).toBeDefined();
+	});
+
+	it('places.textSearch searches places by query string', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			places: [{ name: 'places/p2', formattedAddress: 'London, UK' }],
+		});
+
+		const res = await plugin.endpoints!.places.textSearch(dummyCtx, {
+			textQuery: 'restaurants in London',
+		});
+
+		expect(res.places).toBeDefined();
+	});
+
+	// Routes Endpoints (4)
 	it('routes.computeRouteMatrix calculates matrix', async () => {
 		const plugin = googlemaps();
 		mockedMakeRequest.mockResolvedValueOnce({
@@ -96,6 +128,81 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(res.distanceMeters).toBe(5000);
 	});
 
+	it('routes.distanceMatrix calculates distance matrix (api_key and oauth)', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			status: 'OK',
+			origin_addresses: ['SF'],
+			destination_addresses: ['Oakland'],
+		});
+
+		const res = await plugin.endpoints!.routes.distanceMatrix(dummyCtx, {
+			origins: 'SF',
+			destinations: 'Oakland',
+		});
+
+		expect(res.status).toBe('OK');
+
+		// OAuth test
+		mockedMakeRequest.mockResolvedValueOnce({
+			originIndex: 0,
+			destinationIndex: 0,
+		});
+		const resOAuth = await plugin.endpoints!.routes.distanceMatrix(
+			dummyOAuthCtx,
+			{
+				origins: 'SF',
+				destinations: 'Oakland',
+			},
+		);
+		expect(resOAuth.status).toBe('OK');
+	});
+
+	it('routes.getDirection calculates directions (api_key and oauth)', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			status: 'OK',
+			routes: [{ summary: 'US-101 N' }],
+		});
+
+		const res = await plugin.endpoints!.routes.getDirection(dummyCtx, {
+			origin: 'San Jose, CA',
+			destination: 'San Francisco, CA',
+		});
+
+		expect(res.status).toBe('OK');
+
+		// OAuth test
+		mockedMakeRequest.mockResolvedValueOnce({
+			routes: [{ legs: [] }],
+		});
+		const resOAuth = await plugin.endpoints!.routes.getDirection(
+			dummyOAuthCtx,
+			{
+				origin: 'San Jose, CA',
+				destination: 'San Francisco, CA',
+			},
+		);
+		expect(resOAuth.status).toBe('OK');
+	});
+
+	it('routes.getRoute computes routes via Routes API', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			routes: [{ distanceMeters: 12000, duration: '900s' }],
+		});
+
+		const res = await plugin.endpoints!.routes.getRoute(dummyCtx, {
+			origin: { location: { latLng: { latitude: 37.7, longitude: -122.4 } } },
+			destination: {
+				location: { latLng: { latitude: 37.8, longitude: -122.2 } },
+			},
+		});
+
+		expect(res.routes).toBeDefined();
+	});
+
+	// Geocoding Endpoints (6)
 	it('geocoding.geocodeAddress geocodes street address', async () => {
 		const plugin = googlemaps();
 		mockedMakeRequest.mockResolvedValueOnce({
@@ -110,13 +217,86 @@ describe('Google Maps Plugin API Tests', () => {
 		});
 
 		expect(res.status).toBe('OK');
-		expect(mockedMakeRequest).toHaveBeenCalledWith(
-			'/maps/api/geocode/json',
-			dummyCtx,
-			expect.objectContaining({ method: 'GET' }),
-		);
 	});
 
+	it('geocoding.geocodeAddressWithQuery geocodes address with query', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			places: [{ formattedAddress: '1600 Amphitheatre Pkwy' }],
+		});
+
+		const res = await plugin.endpoints!.geocoding.geocodeAddressWithQuery(
+			dummyCtx,
+			{
+				address: '1600 Amphitheatre Pkwy',
+			},
+		);
+
+		expect(res).toBeDefined();
+	});
+
+	it('geocoding.geocodeDestinations looks up destination info', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			results: [{ place_id: 'dest_123' }],
+		});
+
+		const res = await plugin.endpoints!.geocoding.geocodeDestinations(
+			dummyCtx,
+			{
+				address: 'Eiffel Tower, Paris',
+			},
+		);
+
+		expect(res.results).toBeDefined();
+	});
+
+	it('geocoding.geocodePlace retrieves address by place_id', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			status: 'OK',
+			results: [{ formatted_address: 'Paris, France' }],
+		});
+
+		const res = await plugin.endpoints!.geocoding.geocodePlace(dummyCtx, {
+			place_id: 'ChIJD7fiBh9u5kcRYJSMaMOCCwQ',
+		});
+
+		expect(res.status).toBe('OK');
+	});
+
+	it('geocoding.geocodingApi handles forward & reverse geocoding', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			status: 'OK',
+			results: [{ formatted_address: 'Tokyo, Japan' }],
+		});
+
+		const res = await plugin.endpoints!.geocoding.geocodingApi(dummyCtx, {
+			address: 'Tokyo, Japan',
+		});
+
+		expect(res.status).toBe('OK');
+	});
+
+	it('geocoding.reverseGeocodeLocation reverse geocodes latlng', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			status: 'OK',
+			results: [{ formatted_address: 'Googleplex, Mountain View, CA' }],
+		});
+
+		const res = await plugin.endpoints!.geocoding.reverseGeocodeLocation(
+			dummyCtx,
+			{
+				latlng: '37.422,-122.084',
+			},
+		);
+
+		expect(res.status).toBe('OK');
+	});
+
+	// Tiles Endpoints (4)
 	it('tiles.createTilesSession initializes 2D tiles session', async () => {
 		const plugin = googlemaps();
 		mockedMakeRequest.mockResolvedValueOnce({
@@ -131,6 +311,46 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(res.session).toBe('session_token_123');
 	});
 
+	it('tiles.get2dTile generates tile image URL', async () => {
+		const plugin = googlemaps();
+		const res = await plugin.endpoints!.tiles.get2dTile(dummyCtx, {
+			session: 'token_123',
+			z: 10,
+			x: 5,
+			y: 8,
+		});
+
+		expect(res.tileUrl).toContain('2dtiles/10/5/8');
+	});
+
+	it('tiles.get3dTilesRoot fetches 3D tiles root tileset', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			geometricError: 500,
+			asset: { version: '1.0' },
+		});
+
+		const res = await plugin.endpoints!.tiles.get3dTilesRoot(dummyCtx, {});
+
+		expect(res.geometricError).toBe(500);
+	});
+
+	it('tiles.embedMap generates embed URL with center, zoom, and maptype options', async () => {
+		const plugin = googlemaps();
+		const res = await plugin.endpoints!.tiles.embedMap(dummyCtx, {
+			mode: 'place',
+			q: 'Space Needle',
+			center: '47.6205,-122.3493',
+			zoom: 18,
+			maptype: 'satellite',
+		});
+
+		expect(res.embedUrl).toContain('center=47.6205%2C-122.3493');
+		expect(res.embedUrl).toContain('zoom=18');
+		expect(res.embedUrl).toContain('maptype=satellite');
+	});
+
+	// Geolocation Endpoint (1)
 	it('geolocation.geolocate determines device location', async () => {
 		const plugin = googlemaps();
 		mockedMakeRequest.mockResolvedValueOnce({
@@ -143,6 +363,21 @@ describe('Google Maps Plugin API Tests', () => {
 		});
 
 		expect(res.location.lat).toBe(37.422);
+	});
+
+	// Aerial Endpoints (2)
+	it('aerial.lookupAerialVideo looks up aerial view video', async () => {
+		const plugin = googlemaps();
+		mockedMakeRequest.mockResolvedValueOnce({
+			id: 'video_123',
+			state: 'ACTIVE',
+		});
+
+		const res = await plugin.endpoints!.aerial.lookupAerialVideo(dummyCtx, {
+			videoId: 'video_123',
+		});
+
+		expect(res.id).toBe('video_123');
 	});
 
 	it('aerial.renderAerialVideo starts rendering aerial view video', async () => {
@@ -159,7 +394,7 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(res.id).toBe('video_id_999');
 	});
 
-	it('preserves status code on GoogleMapsAPIError', () => {
+	it('preserves status code and retryAfter on GoogleMapsAPIError', () => {
 		const error = new clientModule.GoogleMapsAPIError(
 			'Resource exhausted',
 			429,

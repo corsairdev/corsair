@@ -109,6 +109,16 @@ export const embedMap: GoogleMapsEndpoints['embedMap'] = async (ctx, input) => {
 		queryStr = `&q=${encodeURIComponent(validatedInput.q)}`;
 	}
 
+	if (validatedInput.center) {
+		queryStr += `&center=${encodeURIComponent(validatedInput.center)}`;
+	}
+	if (validatedInput.zoom !== undefined) {
+		queryStr += `&zoom=${validatedInput.zoom}`;
+	}
+	if (validatedInput.maptype) {
+		queryStr += `&maptype=${encodeURIComponent(validatedInput.maptype)}`;
+	}
+
 	const embedUrl = `https://www.google.com/maps/embed/v1/${validatedInput.mode}?mode=${validatedInput.mode}${queryStr}${keyParam}`;
 	const iframeHtml = `<iframe width="600" height="450" style="border:0" loading="lazy" allowfullscreen src="${embedUrl}"></iframe>`;
 

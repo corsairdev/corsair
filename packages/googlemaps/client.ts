@@ -77,8 +77,11 @@ export async function makeGoogleMapsRequest<T>(
 		const err = error as {
 			status?: number;
 			statusCode?: number;
+			retryAfter?: number;
+			headers?: Record<string, unknown>;
 			response?: {
 				status?: number;
+				headers?: Record<string, unknown>;
 				data?: { error?: { message?: string; code?: string } };
 			};
 			body?: { error?: { message?: string; code?: string } };
@@ -93,6 +96,12 @@ export async function makeGoogleMapsRequest<T>(
 			'Unknown Google Maps API Error';
 		const code = err?.body?.error?.code ?? err?.response?.data?.error?.code;
 
-		throw new GoogleMapsAPIError(message, status, code);
+		const retryHeader =
+			err?.headers?.['retry-after'] ?? err?.response?.headers?.['retry-after'];
+		const retryAfter =
+			err?.retryAfter ??
+			(retryHeader ? parseInt(String(retryHeader), 10) : undefined);
+
+		throw new GoogleMapsAPIError(message, status, code, retryAfter);
 	}
 }
