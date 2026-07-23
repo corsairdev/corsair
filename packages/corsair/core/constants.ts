@@ -72,6 +72,7 @@ export const BaseProviders = [
 	'razorpay',
 	'reddit',
 	'resend',
+	'retailed',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -158,6 +159,7 @@ export const ProviderDisplayNames = {
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
+	retailed: 'Retailed',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -253,6 +255,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
+	| 'retailed'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
