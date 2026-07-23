@@ -8,4 +8,7 @@ export type PermissionAdapter = {
 
 export type BaseMcpOptions = {
 	corsair: { [key: string]: unknown };
+	runOptions?: {
+		readonly: boolean;
+	};
 };
