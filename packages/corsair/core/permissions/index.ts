@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomBytes } from 'node:crypto';
 import { v4 as uuidv4 } from 'uuid';
 import type { CorsairPermission } from '../../db';
@@ -8,6 +9,71 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Readonly Enforcement Scope
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Ambient flag propagated via AsyncLocalStorage that forces every endpoint call
+ * made inside the scope to be read-only, regardless of the developer's configured
+ * permission mode or overrides.
+ *
+ * This is intentionally a *runtime* scope rather than a permission mode: it applies
+ * to every plugin call — including plugins that have no `permissions` config and
+ * therefore skip the normal permission guard — and it takes strict precedence over
+ * whatever the developer configured. It is used by the MCP `run_script` tool to run
+ * agent-authored scripts under a hard read-only guarantee.
+ */
+const readonlyScope = new AsyncLocalStorage<true>();
+
+/**
+ * Thrown when a write or destructive operation is attempted inside a
+ * {@link runReadonly} scope. Aborts the whole script so the agent must retry with
+ * read-only operations only — no permission record is created.
+ */
+export class ReadonlyForbiddenError extends Error {
+	readonly endpointPath: string;
+	readonly riskLevel: EndpointRiskLevel;
+
+	constructor(endpointPath: string, riskLevel: EndpointRiskLevel) {
+		super(
+			`Action '${endpointPath}' is a '${riskLevel}' operation and is forbidden in readonly mode. ` +
+				'Only read operations are permitted — rewrite the script to avoid write/destructive actions.',
+		);
+		this.name = 'ReadonlyForbiddenError';
+		this.endpointPath = endpointPath;
+		this.riskLevel = riskLevel;
+	}
+}
+
+/**
+ * Runs `fn` in a scope where every Corsair endpoint call is forced to read-only.
+ * Any write/destructive endpoint invoked within (including in nested async calls)
+ * throws {@link ReadonlyForbiddenError}.
+ */
+export function runReadonly<T>(fn: () => T): T {
+	return readonlyScope.run(true, fn);
+}
+
+/** Whether the current async context is inside a {@link runReadonly} scope. */
+export function isReadonlyScopeActive(): boolean {
+	return readonlyScope.getStore() === true;
+}
+
+/**
+ * Guard invoked by the endpoint binding layer before any endpoint runs. When a
+ * read-only scope is active and the endpoint is not a `read` operation, throws
+ * {@link ReadonlyForbiddenError}. No-op otherwise.
+ */
+export function assertReadonlyAllowed(
+	endpointPath: string,
+	riskLevel: EndpointRiskLevel,
+): void {
+	if (isReadonlyScopeActive() && riskLevel !== 'read') {
+		throw new ReadonlyForbiddenError(endpointPath, riskLevel);
+	}
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Permission Matrix
