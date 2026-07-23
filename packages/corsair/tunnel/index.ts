@@ -432,13 +432,33 @@ async function handleIntegrationCredentialsTunnel(
 	}
 }
 
+/**
+ * Scopes the root Corsair instance to the run's tenant. Multi-tenant apps expose
+ * plugin namespaces only via `withTenant(...)`; the root wrapper does not, so a
+ * workflow calling `corsair.github.api.*` needs the tenant-scoped client. For
+ * single-tenant apps there is no `withTenant`, so the instance is used as-is.
+ */
+function scopeCorsairToTenant(corsair: unknown, tenantId: string): unknown {
+	const candidate = corsair as {
+		withTenant?: (tenantId: string) => unknown;
+	} | null;
+	if (tenantId && typeof candidate?.withTenant === 'function') {
+		return candidate.withTenant(tenantId);
+	}
+	return corsair;
+}
+
 async function handleRunTunnel(
 	corsair: unknown,
 	payload: RunTunnelPayload,
 ): Promise<TunnelAck> {
 	try {
+		// Scope to the tenant BEFORE handing the client to workflow `main`, so the
+		// generated code's `corsair.<plugin>.api.*` calls resolve the right tenant's
+		// credentials. Dropping this silently breaks every multi-tenant run.
+		const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
 		const result: RunResultPayload = await executeWorkflowRun({
-			corsair,
+			corsair: tenantScopedCorsair,
 			code: payload.code,
 			payload: payload.trigger?.payload ?? null,
 			memoizedSteps: payload.memoizedSteps,
