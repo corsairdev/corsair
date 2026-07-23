@@ -35,6 +35,8 @@ import type {
 	PermissionPolicy,
 } from '../plugins';
 import { ensureTenantProvisioned } from '../tenant-provision';
+import type { CorsairThreadsNamespace } from '../threads';
+import { buildThreadsNamespace } from '../threads';
 import type {
 	BindWebhooks,
 	CorsairWebhookTenantMatcher,
@@ -207,7 +209,14 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
-	InferPluginNamespaces<Plugins>;
+	InferPluginNamespaces<Plugins> & {
+		/**
+		 * Chat interface over the Hub-hosted workflow agent, scoped to this
+		 * client's tenant. Create/list threads and send messages that author or
+		 * edit workflows. Requires `hub` to be configured on `createCorsair`.
+		 */
+		threads: CorsairThreadsNamespace;
+	};
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
@@ -558,6 +567,13 @@ export function buildCorsairClient<
 			}
 		}
 	}
+
+	// Tenant-scoped chat interface to the Hub workflow agent. Attached to every
+	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
+	(apiUnsafe as Record<string, unknown>).threads = buildThreadsNamespace(
+		hubConfig,
+		tenantId ?? 'default',
+	);
 
 	return apiUnsafe as CorsairClient<Plugins>;
 }

@@ -5,7 +5,11 @@ import {
 	isConnectionsSyncRetryableError,
 	processConnectionsSyncDelivery,
 } from '../hub/connections-sync-delivery';
-import type { TunnelEnvelope } from '../hub/contracts/tunnel';
+import type {
+	RunResultPayload,
+	RunTunnelPayload,
+	TunnelEnvelope,
+} from '../hub/contracts/tunnel';
 import {
 	INBOUND_TUNNEL_TYPES,
 	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
@@ -24,6 +28,7 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
+import { executeWorkflowRun } from '../workflows/execute';
 
 export {
 	resolveAccountFromWebhookLink,
@@ -427,11 +432,49 @@ async function handleIntegrationCredentialsTunnel(
 	}
 }
 
+async function handleRunTunnel(
+	corsair: unknown,
+	payload: RunTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		const result: RunResultPayload = await executeWorkflowRun({
+			corsair,
+			code: payload.code,
+			payload: payload.trigger?.payload ?? null,
+			memoizedSteps: payload.memoizedSteps,
+		});
+		// The envelope was processed successfully regardless of whether the workflow
+		// itself succeeded — Hub reads the run status/steps from `run` in the ack
+		// body. Nested under `run` so the ack's own `status: 'ok'` (envelope
+		// success) doesn't collide with the run's `status: 'completed'|'failed'`.
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: { status: 'ok', run: result } satisfies ServerDeliveryAckBody,
+			},
+		};
+	} catch (error) {
+		// Only reached for infrastructure-level failures (e.g. code failed to load).
+		return {
+			status: 'failed',
+			retryable: true,
+			error: error instanceof Error ? error.message : 'Workflow run failed',
+		};
+	}
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
 	/** Local development only. Skips signature verification when signingSecret is omitted. */
 	allowUnsignedTunnel?: boolean;
+	/**
+	 * Opt-in to executing Hub-delivered workflow code (`type: 'run'`). Off by
+	 * default because it dynamically evaluates code in-process. See the warning in
+	 * workflows/execute.ts — sandbox before enabling in production.
+	 */
+	allowWorkflowExecution?: boolean;
 };
 
 export async function processCorsair(
@@ -569,6 +612,16 @@ export async function processCorsair(
 			}
 			return handleConnectionsSyncTunnel(corsair, signingSecret);
 		}
+		case 'run':
+			if (!options.allowWorkflowExecution) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error:
+						'Workflow execution is not enabled (set allowWorkflowExecution: true)',
+				};
+			}
+			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
 		default:
 			return unsupportedTunnelType(String(envelope.type));
 	}

@@ -69,6 +69,10 @@ export type {
 export type { DeliveryTransport } from './contracts/environment';
 export type {
 	BrowserDeliveryMode,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
 	TunnelEnvelope,
 	TunnelType,
 } from './contracts/tunnel';
