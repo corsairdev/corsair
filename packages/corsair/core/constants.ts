@@ -90,6 +90,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'whatsapp',
 	'vercel',
 	'xquik',
 	'youtube',
@@ -175,6 +176,7 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	whatsapp: 'WhatsApp',
 	vercel: 'Vercel',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
@@ -269,6 +271,7 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'whatsapp'
 	| 'vercel'
 	| 'xquik'
 	| 'youtube'
