@@ -93,8 +93,18 @@ export const getPlacePhoto: GoogleMapsEndpoints['getPlacePhoto'] = async (
 ) => {
 	const validatedInput = GetPlacePhotoInputSchema.parse(input);
 	const { photo_reference, maxwidth, maxheight } = validatedInput;
-	const keyParam = ctx.key ? `&key=${encodeURIComponent(ctx.key)}` : '';
-	const photoUrl = `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${encodeURIComponent(photo_reference)}&maxwidth=${maxwidth ?? 400}${maxheight ? `&maxheight=${maxheight}` : ''}${keyParam}`;
+	const isApiKey =
+		(ctx as any).authType === 'api_key' ||
+		(ctx as any).options?.authType === 'api_key';
+	let photoUrl: string;
+
+	if (photo_reference.startsWith('places/')) {
+		photoUrl = `https://places.googleapis.com/v1/${photo_reference}/media?maxHeightPx=${maxheight ?? 400}&maxWidthPx=${maxwidth ?? 400}`;
+	} else {
+		const keyParam =
+			isApiKey && ctx.key ? `&key=${encodeURIComponent(ctx.key)}` : '';
+		photoUrl = `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${encodeURIComponent(photo_reference)}&maxwidth=${maxwidth ?? 400}${maxheight ? `&maxheight=${maxheight}` : ''}${keyParam}`;
+	}
 
 	const response = GetPlacePhotoResponseSchema.parse({
 		photoUrl,

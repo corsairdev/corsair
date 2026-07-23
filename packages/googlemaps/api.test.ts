@@ -80,6 +80,17 @@ describe('Google Maps Plugin API Tests', () => {
 
 		expect(res.photoUrl).toContain('ref_12345');
 		expect(res.photoUrl).toContain('key=test_key');
+
+		// OAuth mode: should not expose bearer token in URL query string
+		const resOAuth = await plugin.endpoints!.places.getPlacePhoto(
+			dummyOAuthCtx,
+			{
+				photo_reference: 'ref_12345',
+				maxwidth: 400,
+			},
+		);
+
+		expect(resOAuth.photoUrl).not.toContain('key=');
 	});
 
 	it('places.nearbySearch searches places nearby', async () => {
@@ -143,11 +154,16 @@ describe('Google Maps Plugin API Tests', () => {
 
 		expect(res.status).toBe('OK');
 
-		// OAuth test
-		mockedMakeRequest.mockResolvedValueOnce({
-			originIndex: 0,
-			destinationIndex: 0,
-		});
+		// OAuth test: mock computeRouteMatrix returning array of elements
+		mockedMakeRequest.mockResolvedValueOnce([
+			{
+				originIndex: 0,
+				destinationIndex: 0,
+				condition: 'ROUTE_EXISTS',
+				distanceMeters: 5000,
+				duration: '600s',
+			},
+		]);
 		const resOAuth = await plugin.endpoints!.routes.distanceMatrix(
 			dummyOAuthCtx,
 			{
@@ -156,6 +172,10 @@ describe('Google Maps Plugin API Tests', () => {
 			},
 		);
 		expect(resOAuth.status).toBe('OK');
+		expect(resOAuth.rows).toBeDefined();
+		expect(Array.isArray(resOAuth.rows)).toBe(true);
+		expect((resOAuth.rows![0] as any).elements).toBeDefined();
+		expect(Array.isArray((resOAuth.rows![0] as any).elements)).toBe(true);
 	});
 
 	it('routes.getDirection calculates directions (api_key and oauth)', async () => {

@@ -70,7 +70,7 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 			travelMode: validatedInput.mode?.toUpperCase(),
 		};
 
-		const res = await makeGoogleMapsRequest<Record<string, unknown>>(
+		const res = await makeGoogleMapsRequest<unknown>(
 			'/distanceMatrix/v1:computeRouteMatrix',
 			ctx,
 			{
@@ -80,11 +80,37 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 			},
 		);
 
+		const elementsArray = Array.isArray(res)
+			? res
+			: ((res as any)?.elements ?? [res]);
+
+		const formattedElements = elementsArray.map((elem: any) => ({
+			status:
+				elem?.condition === 'ROUTE_EXISTS' || !elem?.condition
+					? 'OK'
+					: 'ZERO_RESULTS',
+			distance:
+				elem?.distanceMeters !== undefined
+					? { text: `${elem.distanceMeters} m`, value: elem.distanceMeters }
+					: undefined,
+			duration: elem?.duration
+				? {
+						text: elem.duration,
+						value: parseInt(String(elem.duration).replace('s', ''), 10),
+					}
+				: undefined,
+			...elem,
+		}));
+
 		rawResponse = {
 			status: 'OK',
 			origin_addresses: originsList,
 			destination_addresses: destinationsList,
-			rows: [res],
+			rows: [
+				{
+					elements: formattedElements,
+				},
+			],
 		};
 	} else {
 		const originsStr = Array.isArray(validatedInput.origins)
