@@ -14,9 +14,9 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
-	'algolia',
 	'ahrefs',
 	'airtable',
+	'algolia',
 	'amplitude',
 	'asana',
 	'bitwarden',
@@ -69,6 +69,7 @@ export const BaseProviders = [
 	'razorpay',
 	'reddit',
 	'resend',
+	'salesforce',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -96,9 +97,9 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
-	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
+	algolia: 'Algolia',
 	amplitude: 'Amplitude',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -146,10 +147,12 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
+	salesforce: 'Salesforce',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -173,7 +176,6 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -185,9 +187,9 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'agentql'
-	| 'algolia'
 	| 'ahrefs'
 	| 'airtable'
+	| 'algolia'
 	| 'amplitude'
 	| 'asana'
 	| 'bitwarden'
@@ -240,6 +242,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
+	| 'salesforce'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
