@@ -1,4 +1,3 @@
-import { Kysely } from 'kysely';
 import type { CorsairInternalConfig } from '../index';
 import type { CorsairPlugin } from '../plugins';
 
@@ -26,7 +25,12 @@ export function isCorsairInternalConfig(
 	if (typeof value.multiTenancy !== 'boolean') return false;
 	if (value.database === undefined) return true;
 	if (!isObjectRecord(value.database)) return false;
-	return value.database.db instanceof Kysely;
+	const db = value.database.db;
+	return (
+		typeof db === 'object' &&
+		db !== null &&
+		typeof (db as { selectFrom?: unknown }).selectFrom === 'function'
+	);
 }
 
 export function tryGetCorsairInternal(

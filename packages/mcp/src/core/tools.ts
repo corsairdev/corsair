@@ -1,9 +1,19 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { listOperations, runReadonly, setupCorsair } from 'corsair';
+import { listOperations, runReadonly } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
+import { formatRunScriptError, formatRunScriptResult } from './tool-result.js';
+
+export {
+	callToolResultToText,
+	formatRunScriptError,
+	formatRunScriptResult,
+	isActionToolError,
+	isAgentFacingActionMessage,
+	toolErrorResult,
+} from './tool-result.js';
 
 export type CorsairToolDef = {
 	name: string;
@@ -87,30 +97,9 @@ export function buildCorsairToolDefs(
 					// scope that takes precedence over the developer's permission config.
 					// Any write/destructive endpoint throws and aborts the script.
 					const result = readonly ? await runReadonly(invoke) : await invoke();
-					return {
-						content: [
-							{
-								type: 'text',
-								text: JSON.stringify(result ?? null, null, 2),
-							},
-						],
-					};
+					return formatRunScriptResult(result);
 				} catch (err) {
-					const message = err instanceof Error ? err.message : String(err);
-					const extra =
-						err instanceof Error && err.cause
-							? `\nCause: ${String(err.cause)}`
-							: '';
-					const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-					return {
-						isError: true,
-						content: [
-							{
-								type: 'text',
-								text: `Error running snippet: ${message}${extra}\n${full}`,
-							},
-						],
-					};
+					return formatRunScriptError(err);
 				}
 			},
 		},

@@ -467,3 +467,4 @@ export {
 	resolveAsyncApprovalMessage,
 	usesManualApprovalConfig,
 } from './approval-message';
+export { PermissionRequiredError } from './errors/permission-required';

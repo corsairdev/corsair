@@ -6,7 +6,9 @@ import { Kysely, SqliteDialect } from 'kysely';
 import type { CorsairPlugin } from '../core';
 import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
+import { createCorsairDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
+import { ensureConnectAccountRowsFromContext } from '../hub/setup-introspect';
 
 function createTestDb() {
 	const sqlite = new Database(':memory:');
@@ -68,6 +70,35 @@ describe('ensureTenantProvisioned', () => {
 		await Promise.all([
 			corsair.withTenant('shared-tenant').slack.keys.get_api_key(),
 			corsair.withTenant('shared-tenant').slack.keys.get_api_key(),
+		]);
+
+		const accounts = await testDb.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('tenant_id', '=', 'shared-tenant')
+			.execute();
+
+		expect(accounts).toHaveLength(1);
+	});
+
+	it('deduplicates concurrent connect provisioning from fresh manifest contexts', async () => {
+		const plugins = [slack({ authType: 'api_key' })];
+		const database = createCorsairDatabase(testDb.db);
+		const makeContext = () => ({
+			plugins,
+			database,
+			kek: 'test-kek-32-chars-long-padding-x',
+			hub: {
+				apiUrl: 'https://hub.example',
+				projectApiKey: 'ck_dev_test',
+				signingSecret: 'signing-secret',
+			},
+			multiTenancy: true,
+		});
+
+		await Promise.all([
+			ensureConnectAccountRowsFromContext(makeContext(), 'shared-tenant'),
+			ensureConnectAccountRowsFromContext(makeContext(), 'shared-tenant'),
 		]);
 
 		const accounts = await testDb.db

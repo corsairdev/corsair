@@ -143,5 +143,7 @@ export function decodeTokenFromPath(encoded: string): string {
  * Encodes a token for safe use in a URL path segment.
  */
 export function encodeTokenForPath(token: string): string {
-	return encodeURIComponent(token);
+	// encodeURIComponent leaves "." unencoded; Next.js dynamic [token] routes can
+	// treat the signature suffix as a file extension and drop it from params.
+	return encodeURIComponent(token).replace(/\./g, '%2E');
 }

@@ -1,7 +1,7 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
-import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
+import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
@@ -12,6 +12,7 @@ import {
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
 } from '../permissions';
+import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPermissionsOptions,
@@ -66,6 +67,7 @@ export function bindEndpointsRecursively({
 	plugin,
 	kek,
 	allPlugins,
+	multiTenancy,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -94,6 +96,7 @@ export function bindEndpointsRecursively({
 	plugin?: CorsairPlugin;
 	kek?: string;
 	allPlugins?: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -176,7 +179,7 @@ export function bindEndpointsRecursively({
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}
-						throw new Error(msg);
+						throw new PermissionRequiredError(msg);
 					}
 					onPermissionComplete = onComplete;
 				}
@@ -267,7 +270,7 @@ export function bindEndpointsRecursively({
 								verified: false,
 							});
 						}
-						return resolveAuthMissingEndpointResult({
+						await throwAuthMissingEndpointError({
 							error: err,
 							manual: manualConfig,
 							hub: hubConfig,
@@ -276,6 +279,7 @@ export function bindEndpointsRecursively({
 							database,
 							kek,
 							plugins: allPlugins,
+							multiTenancy,
 						});
 					}
 					throw err;
@@ -353,6 +357,7 @@ export function bindEndpointsRecursively({
 				plugin,
 				kek,
 				allPlugins,
+				multiTenancy,
 			});
 
 			tree[key] = nestedTree;

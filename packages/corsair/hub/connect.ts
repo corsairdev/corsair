@@ -9,6 +9,7 @@ import { resolveHubDeliveryUrl } from './resolve-delivery-url';
 import type { ConnectManifestContext } from './setup-introspect';
 import {
 	buildConnectPluginManifestFromContext,
+	ensureConnectAccountRows,
 	ensureConnectAccountRowsFromContext,
 } from './setup-introspect';
 import type {
@@ -71,6 +72,7 @@ export type CreateHubConnectSessionForPluginInput = {
 	kek: string;
 	plugins: readonly CorsairPlugin[];
 	deliveryUrl?: string;
+	multiTenancy?: boolean;
 };
 
 /**
@@ -92,6 +94,7 @@ export async function createHubConnectSessionForPlugin(
 		database: input.database,
 		kek: input.kek,
 		hub,
+		multiTenancy: input.multiTenancy,
 	};
 
 	await ensureConnectAccountRowsFromContext(manifestContext, input.tenantId);
@@ -136,9 +139,11 @@ export async function createHubConnectSession(
 		database: internal.database,
 		kek: internal.kek,
 		hub,
+		multiTenancy: internal.multiTenancy,
+		internalConfig: internal,
 	};
 
-	await ensureConnectAccountRowsFromContext(manifestContext, input.tenantId);
+	await ensureConnectAccountRows(corsair, input.tenantId);
 
 	const pluginIds = input.plugin ? [input.plugin] : undefined;
 	const oauthModeOverrides =
