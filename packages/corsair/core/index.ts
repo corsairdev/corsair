@@ -238,6 +238,13 @@ export type {
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
 } from './permissions';
+export {
+	assertReadonlyAllowed,
+	isReadonlyScopeActive,
+	PermissionRequiredError,
+	ReadonlyForbiddenError,
+	runReadonly,
+} from './permissions';
 // Plugin types
 export type {
 	BeforeHookResult,
