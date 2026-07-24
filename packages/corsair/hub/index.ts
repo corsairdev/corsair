@@ -137,6 +137,7 @@ export {
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
 	extractConnectLinkFromDeliveryAck,
+	extractProbeFromDeliveryAck,
 	extractRunFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
