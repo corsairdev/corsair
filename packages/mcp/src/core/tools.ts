@@ -4,17 +4,16 @@ import { listOperations, runReadonly } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
+import { formatRunScriptError, formatRunScriptResult } from './tool-result.js';
 
-function formatRunScriptResult(result: unknown): CallToolResult {
-	return {
-		content: [
-			{
-				type: 'text',
-				text: JSON.stringify(result ?? null, null, 2),
-			},
-		],
-	};
-}
+export {
+	callToolResultToText,
+	formatRunScriptError,
+	formatRunScriptResult,
+	isActionToolError,
+	isAgentFacingActionMessage,
+	toolErrorResult,
+} from './tool-result.js';
 
 export type CorsairToolDef = {
 	name: string;
@@ -100,21 +99,7 @@ export function buildCorsairToolDefs(
 					const result = readonly ? await runReadonly(invoke) : await invoke();
 					return formatRunScriptResult(result);
 				} catch (err) {
-					const message = err instanceof Error ? err.message : String(err);
-					const extra =
-						err instanceof Error && err.cause
-							? `\nCause: ${String(err.cause)}`
-							: '';
-					const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-					return {
-						isError: true,
-						content: [
-							{
-								type: 'text',
-								text: `Error running snippet: ${message}${extra}\n${full}`,
-							},
-						],
-					};
+					return formatRunScriptError(err);
 				}
 			},
 		},
