@@ -92,7 +92,7 @@ const BLOCKED_KEYS = new Set<PropertyKey>([
 	'__proto__',
 ]);
 
-function harden(value: unknown, thisArg: unknown): unknown {
+export function harden(value: unknown, thisArg: unknown): unknown {
 	if (value === null) return null;
 	const type = typeof value;
 	if (type === 'function') {
