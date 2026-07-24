@@ -99,8 +99,6 @@ export function apify<const T extends ApifyPluginOptions>(
 		webhookSchemas: apifyWebhookSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: (() => {
-			// DEFAULT matches everything (`() => true`), so it must always be
-			// evaluated last — otherwise caller-supplied handlers become dead code.
 			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
 			return {
 				...specificDefaults,

@@ -130,7 +130,6 @@ export const ApifyUser = z
 		id: z.string(),
 		username: z.string().optional(),
 		email: z.string().email().optional(),
-		// Apify user profile fields are custom account metadata without a stable provider-wide schema.
 		profile: z.record(z.string(), z.unknown()).optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})

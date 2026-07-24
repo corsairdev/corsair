@@ -40,7 +40,6 @@ function buildEndpointTree<T extends ApifyOperationTree>(
 	tree: T,
 	segments: string[] = [],
 ): ApifyEndpointTree<T> {
-	// The recursive builder accumulates heterogeneous endpoint functions before the final typed tree cast.
 	const endpoints: Record<string, unknown> = {};
 
 	for (const [key, value] of Object.entries(tree)) {
@@ -51,9 +50,6 @@ function buildEndpointTree<T extends ApifyOperationTree>(
 				input: ApifyOperationInput,
 			) => {
 				const response = await makeApifyRequest(value, ctx.key, input ?? {});
-				// Never let logging failures convert a successful Apify response into
-				// an error for the caller (logEventFromContext also swallows, but keep
-				// this defensive so the success path always returns).
 				try {
 					await logEventFromContext(
 						ctx,
@@ -64,9 +60,7 @@ function buildEndpointTree<T extends ApifyOperationTree>(
 						},
 						'completed',
 					);
-				} catch {
-					// ignore
-				}
+				} catch {}
 				return response;
 			};
 		} else {
@@ -79,11 +73,8 @@ function buildEndpointTree<T extends ApifyOperationTree>(
 
 function createOperationInputSchema(operation: ApifyOperationDefinition) {
 	const shape: Record<string, z.ZodTypeAny> = {
-		// Apify operation bodies vary per endpoint and can include arbitrary JSON payloads.
 		body: z.unknown().optional(),
-		// Query values are endpoint-specific primitives preserved by the generic operation router.
 		query: z.record(z.string(), z.unknown()).optional(),
-		// Custom headers are passed through to Apify without a stable provider-wide shape.
 		headers: z.record(z.string(), z.unknown()).optional(),
 		contentType: z.string().optional(),
 		mediaType: z.string().optional(),
@@ -94,7 +85,6 @@ function createOperationInputSchema(operation: ApifyOperationDefinition) {
 	}
 
 	for (const param of operation.queryParams ?? []) {
-		// Generated query metadata names the parameter but does not constrain its provider-specific value type.
 		shape[param] = z.unknown().optional();
 	}
 
@@ -105,7 +95,6 @@ export function buildApifyEndpointSchemas<T extends ApifyOperationTree>(
 	tree: T,
 	segments: string[] = [],
 ): RequiredPluginEndpointSchemas<ApifyEndpointTree<T>> {
-	// Schema entries are accumulated by dotted operation path before the typed schema-map cast.
 	const schemas: Record<string, unknown> = {};
 
 	for (const [key, value] of Object.entries(tree)) {

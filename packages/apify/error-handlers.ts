@@ -27,7 +27,7 @@ export const errorHandlers = {
 				? error.status === 429
 				: messageOf(error).includes('rate-limit'),
 		handler: async (error: Error) => ({
-			maxRetries: 5,
+			maxRetries: 0,
 			headersRetryAfterMs:
 				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff_jitter',

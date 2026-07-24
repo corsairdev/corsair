@@ -14,9 +14,6 @@ import {
 import type { ApifyContext } from './index';
 import { apify } from './index';
 
-// Mock the shared HTTP transport so endpoint invocations exercise the full
-// request-building path (makeApifyRequest → buildBody/buildQuery/pickDefined)
-// without hitting the network.
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
 	return {
@@ -40,8 +37,6 @@ const mockLog = logEventFromContext as jest.MockedFunction<
 
 type OperationEntry = { path: string; def: ApifyOperationDefinition };
 
-// Walks the nested operation tree and yields every leaf operation with its
-// dotted path (e.g. "act.buildsGet"). Used to assert over the full registry.
 function isDefinition(node: unknown): node is ApifyOperationDefinition {
 	return (
 		typeof node === 'object' &&
@@ -67,10 +62,13 @@ function flattenOperations(node: unknown, prefix = ''): OperationEntry[] {
 const ALL_OPERATIONS = flattenOperations(apifyOperations);
 
 describe('apify operation registry', () => {
-	it('registers a non-empty set of operations', () => {
-		expect(ALL_OPERATIONS.length).toBeGreaterThan(0);
-		// Sanity bound: the registry covers many Apify resources, so it is large.
-		expect(ALL_OPERATIONS.length).toBeGreaterThan(100);
+	it('registers exactly the 113 OSS listing operations', () => {
+		expect(ALL_OPERATIONS.length).toBe(113);
+		const slugs = ALL_OPERATIONS.map(({ def }) => def.slug);
+		expect(new Set(slugs).size).toBe(113);
+		for (const slug of slugs) {
+			expect(slug.startsWith('APIFY_')).toBe(true);
+		}
 	});
 
 	it('gives every operation a valid HTTP method and absolute path', () => {
@@ -104,18 +102,11 @@ describe('apify operation registry', () => {
 	it('marks DELETE operations with the right risk level', () => {
 		for (const { def } of ALL_OPERATIONS) {
 			if (def.method !== 'DELETE') continue;
-			// Two DELETE families are intentionally non-destructive:
-			//  - /lock paths release a temporary request-queue lock (re-acquirable),
-			//    so they are a write, not destructive, and never irreversible.
-			//  - /v2/browser-info is a read-style endpoint the provider exposes
-			//    across all HTTP verbs; the DELETE variant must not be destructive.
 			const releasesLock = def.path.endsWith('/lock');
-			const isBrowserInfo = def.path === '/v2/browser-info';
-			if (releasesLock || isBrowserInfo) {
+			if (releasesLock) {
 				expect(def.riskLevel).not.toBe('destructive');
 				expect(def.irreversible).not.toBe(true);
 			} else {
-				// Every other DELETE removes a real Apify resource.
 				expect(def.riskLevel).toBe('destructive');
 			}
 		}
@@ -125,11 +116,11 @@ describe('apify operation registry', () => {
 describe('apify endpoint tree', () => {
 	it('exposes a callable function for every registered operation', () => {
 		expect(typeof ApifyEndpoints).toBe('object');
-		// Every leaf in the operation tree has a matching endpoint function.
-		const actNode = (ApifyEndpoints as Record<string, unknown>).act;
-		expect(typeof actNode).toBe('object');
+		const actors = (ApifyEndpoints as Record<string, unknown>).actors;
+		expect(typeof actors).toBe('object');
 		expect(
-			typeof (actNode as Record<string, (...a: unknown[]) => unknown>).get,
+			typeof (actors as Record<string, (...a: unknown[]) => unknown>)
+				.getActorDetails,
 		).toBe('function');
 	});
 });
@@ -153,14 +144,14 @@ describe('apify endpoint schemas', () => {
 	});
 
 	it('treats each path param as a required string|number input', () => {
-		const sample = schemaMap['act.get'];
+		const sample = schemaMap['actors.getActorDetails'];
 		expect(sample).toBeDefined();
 		const parsed = sample?.input.safeParse({ actorId: 'abc123' });
 		expect(parsed?.success).toBe(true);
 	});
 
 	it('rejects inputs missing a required path param', () => {
-		const sample = schemaMap['act.get'];
+		const sample = schemaMap['actors.getActorDetails'];
 		expect(sample).toBeDefined();
 		const parsed = sample?.input.safeParse({});
 		expect(parsed?.success).toBe(false);
@@ -196,13 +187,11 @@ describe('apify endpoint meta', () => {
 	});
 
 	it('tags actor delete as irreversible', () => {
-		expect(metaMap['act.delete']?.riskLevel).toBe('destructive');
-		expect(metaMap['act.delete']?.irreversible).toBe(true);
+		expect(metaMap['actors.deleteActor']?.riskLevel).toBe('destructive');
+		expect(metaMap['actors.deleteActor']?.irreversible).toBe(true);
 	});
 });
 
-// A minimal context carrying just the fields the endpoint closures read.
-// makeApifyRequest consumes ctx.key; logEventFromContext reads ctx for logging.
 function makeCtx(key = 'test-token'): ApifyContext {
 	return { key } as unknown as ApifyContext;
 }
@@ -219,9 +208,14 @@ describe('apify endpoint invocation', () => {
 
 		const result = await (
 			ApifyEndpoints as unknown as {
-				act: { get: (ctx: ApifyContext, input: unknown) => Promise<unknown> };
+				actors: {
+					getActorDetails: (
+						ctx: ApifyContext,
+						input: unknown,
+					) => Promise<unknown>;
+				};
 			}
-		).act.get(makeCtx(), { actorId: 'abc123' });
+		).actors.getActorDetails(makeCtx(), { actorId: 'abc123' });
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const [config, requestOptions] = mockRequest.mock.calls[0] ?? [];
@@ -234,7 +228,6 @@ describe('apify endpoint invocation', () => {
 			url: '/v2/actors/{actorId}',
 		});
 		expect(requestOptions?.path).toEqual({ actorId: 'abc123' });
-		// GET requests carry no body.
 		expect(requestOptions?.body).toBeUndefined();
 		expect(result).toEqual({ id: 'actor-1' });
 	});
@@ -245,9 +238,14 @@ describe('apify endpoint invocation', () => {
 
 		const result = await (
 			ApifyEndpoints as unknown as {
-				act: { get: (ctx: ApifyContext, input: unknown) => Promise<unknown> };
+				actors: {
+					getActorDetails: (
+						ctx: ApifyContext,
+						input: unknown,
+					) => Promise<unknown>;
+				};
 			}
-		).act.get(makeCtx(), { actorId: 'abc123' });
+		).actors.getActorDetails(makeCtx(), { actorId: 'abc123' });
 
 		expect(result).toEqual({ id: 'actor-1' });
 	});
@@ -257,19 +255,25 @@ describe('apify endpoint invocation', () => {
 
 		await (
 			ApifyEndpoints as unknown as {
-				actorRun: {
-					chargePost: (ctx: ApifyContext, input: unknown) => Promise<unknown>;
+				datasets: {
+					storeDataInDataset: (
+						ctx: ApifyContext,
+						input: unknown,
+					) => Promise<unknown>;
 				};
 			}
-		).actorRun.chargePost(makeCtx(), { runId: 'r1', events: [{ e: 1 }] });
+		).datasets.storeDataInDataset(makeCtx(), {
+			datasetId: 'd1',
+			items: [{ e: 1 }],
+		});
 
 		const requestOptions = mockRequest.mock.calls[0]?.[1];
 		expect(requestOptions).toMatchObject({
 			method: 'POST',
-			url: '/v2/actor-runs/{runId}/charge',
-			body: { events: [{ e: 1 }] },
+			url: '/v2/datasets/{datasetId}/items',
+			body: { items: [{ e: 1 }] },
 		});
-		expect(requestOptions?.path).toEqual({ runId: 'r1' });
+		expect(requestOptions?.path).toEqual({ datasetId: 'd1' });
 	});
 
 	it('passes query params through without polluting the body', async () => {
@@ -277,15 +281,21 @@ describe('apify endpoint invocation', () => {
 
 		await (
 			ApifyEndpoints as unknown as {
-				act: {
-					buildsGet: (ctx: ApifyContext, input: unknown) => Promise<unknown>;
+				actors: {
+					getListOfBuilds: (
+						ctx: ApifyContext,
+						input: unknown,
+					) => Promise<unknown>;
 				};
 			}
-		).act.buildsGet(makeCtx(), { actorId: 'a1', limit: 5, offset: 10 });
+		).actors.getListOfBuilds(makeCtx(), {
+			actorId: 'a1',
+			limit: 5,
+			offset: 10,
+		});
 
 		const requestOptions = mockRequest.mock.calls[0]?.[1];
 		expect(requestOptions?.query).toMatchObject({ limit: 5, offset: 10 });
-		// Query/path params are excluded from the body.
 		expect(requestOptions?.body).toBeUndefined();
 	});
 
@@ -294,11 +304,14 @@ describe('apify endpoint invocation', () => {
 
 		const result = await (
 			ApifyEndpoints as unknown as {
-				actorRun: {
-					delete: (ctx: ApifyContext, input: unknown) => Promise<unknown>;
+				actorRuns: {
+					deleteActorRun: (
+						ctx: ApifyContext,
+						input: unknown,
+					) => Promise<unknown>;
 				};
 			}
-		).actorRun.delete(makeCtx(), { runId: 'r1' });
+		).actorRuns.deleteActorRun(makeCtx(), { runId: 'r1' });
 
 		expect(result).toEqual({ success: true });
 	});
@@ -309,15 +322,17 @@ describe('apify endpoint invocation', () => {
 		await expect(
 			(
 				ApifyEndpoints as unknown as {
-					act: { get: (ctx: ApifyContext, input: unknown) => Promise<unknown> };
+					actors: {
+						getActorDetails: (
+							ctx: ApifyContext,
+							input: unknown,
+						) => Promise<unknown>;
+					};
 				}
-			).act.get(makeCtx(), { actorId: 'abc123' }),
+			).actors.getActorDetails(makeCtx(), { actorId: 'abc123' }),
 		).rejects.toThrow('network down');
 	});
 
-	// Drive one endpoint from EVERY top-level namespace so request-building
-	// (path/query/body wiring) is exercised across the full registered surface,
-	// not just act.* and actorRun.*.
 	it('routes the first operation of every namespace to its declared path and method', async () => {
 		mockRequest.mockResolvedValue({ ok: true });
 		const endpoints = ApifyEndpoints as unknown as Record<
@@ -332,13 +347,10 @@ describe('apify endpoint invocation', () => {
 			const endpointFn = nsEndpoints?.[opName];
 			expect(endpointFn).toBeDefined();
 			mockRequest.mockClear();
-			// Build a deterministic input: a string value for each declared path param.
 			const input: Record<string, string> = {};
 			for (const param of def.pathParams) {
 				input[param] = `sample-${param}`;
 			}
-			// Invoke the endpoint closure — this exercises makeApifyRequest's
-			// full request-building path (pickDefined/buildQuery/buildBody).
 			await endpointFn?.(makeCtx(), input);
 
 			const requestOptions = mockRequest.mock.calls[0]?.[1];
@@ -348,9 +360,6 @@ describe('apify endpoint invocation', () => {
 	});
 });
 
-// For every top-level namespace, pick its first leaf operation. Returns the
-// namespace, the operation name, and the operation definition so the caller can
-// build an input and assert the routed request.
 function sampleOperationPerNamespace(): Array<{
 	namespace: string;
 	opName: string;
@@ -382,7 +391,6 @@ function firstLeaf(
 		) {
 			return { opName: key, def: value as unknown as ApifyOperationDefinition };
 		}
-		// Descend into subtrees.
 		const nested = firstLeaf(value);
 		if (nested) return nested;
 	}
@@ -438,5 +446,14 @@ describe('apify plugin factory', () => {
 		expect(plugin.errorHandlers?.RATE_LIMIT_ERROR).toBeDefined();
 		expect(plugin.errorHandlers?.AUTH_ERROR).toBeDefined();
 		expect(plugin.errorHandlers?.DEFAULT).toBeDefined();
+	});
+
+	it('exposes only API Key auth to match the OSS listing', () => {
+		const plugin = apify({});
+		expect(plugin.authConfig).toEqual({ api_key: {} });
+		expect(
+			(plugin.options as { authType?: string } | undefined)?.authType,
+		).toBe('api_key');
+		expect(plugin.webhooks).toEqual({});
 	});
 });

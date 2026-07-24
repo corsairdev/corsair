@@ -26,7 +26,6 @@ const RESERVED_INPUT_KEYS = new Set([
 	'mediaType',
 ]);
 
-// Apify accepts and returns endpoint-specific JSON that the generic client passes through unchanged.
 type ApifyJsonValue = unknown;
 type ApifyJsonRecord = Record<string, ApifyJsonValue>;
 
