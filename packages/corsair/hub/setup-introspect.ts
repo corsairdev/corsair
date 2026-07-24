@@ -36,6 +36,8 @@ export type ConnectManifestContext = {
 	kek: string;
 	hub: HubConfig;
 	multiTenancy?: boolean;
+	/** Stable Corsair instance config for provisioning deduplication. */
+	internalConfig?: CorsairInternalConfig;
 };
 
 export type BuildConnectPluginManifestOptions = {
@@ -202,7 +204,10 @@ export async function ensureConnectAccountRowsFromContext(
 		);
 	}
 
-	await ensureTenantProvisioned(toProvisionConfig(context), tenantId);
+	await ensureTenantProvisioned(
+		context.internalConfig ?? toProvisionConfig(context),
+		tenantId,
+	);
 }
 
 export async function ensureConnectAccountRows(

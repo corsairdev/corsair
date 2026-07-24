@@ -140,6 +140,7 @@ export async function createHubConnectSession(
 		kek: internal.kek,
 		hub,
 		multiTenancy: internal.multiTenancy,
+		internalConfig: internal,
 	};
 
 	await ensureConnectAccountRows(corsair, input.tenantId);

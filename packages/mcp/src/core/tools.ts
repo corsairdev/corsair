@@ -5,47 +5,7 @@ import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
 
-function isAgentActionMessage(value: unknown): value is string {
-	return (
-		typeof value === 'string' &&
-		(value.includes('[auth-missing:') ||
-			value.startsWith('Approval required. Visit'))
-	);
-}
-
-function wrapCorsairForScript(corsair: unknown): unknown {
-	if (typeof corsair !== 'object' || corsair === null) {
-		return corsair;
-	}
-
-	return new Proxy(corsair, {
-		get(target, prop, receiver) {
-			const value = Reflect.get(target, prop, receiver);
-			if (typeof value === 'object' && value !== null) {
-				return wrapCorsairForScript(value);
-			}
-			if (typeof value === 'function') {
-				return async (...args: unknown[]) => {
-					const result = await value.apply(target, args);
-					if (isAgentActionMessage(result)) {
-						throw new Error(result);
-					}
-					return result;
-				};
-			}
-			return value;
-		},
-	});
-}
-
 function formatRunScriptResult(result: unknown): CallToolResult {
-	if (isAgentActionMessage(result)) {
-		return {
-			isError: true,
-			content: [{ type: 'text', text: result }],
-		};
-	}
-
 	return {
 		content: [
 			{
@@ -133,9 +93,7 @@ export function buildCorsairToolDefs(
 						`return (async () => { ${code} })()`,
 					);
 					const invoke = () =>
-						(fn as (c: unknown) => Promise<unknown>)(
-							wrapCorsairForScript(corsair),
-						);
+						(fn as (c: unknown) => Promise<unknown>)(corsair);
 					// When readonly is required, run the whole script inside a readonly
 					// scope that takes precedence over the developer's permission config.
 					// Any write/destructive endpoint throws and aborts the script.
@@ -143,12 +101,6 @@ export function buildCorsairToolDefs(
 					return formatRunScriptResult(result);
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);
-					if (isAgentActionMessage(message)) {
-						return {
-							isError: true,
-							content: [{ type: 'text', text: message }],
-						};
-					}
 					const extra =
 						err instanceof Error && err.cause
 							? `\nCause: ${String(err.cause)}`

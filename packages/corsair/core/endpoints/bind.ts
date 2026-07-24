@@ -1,7 +1,7 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
-import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
+import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
@@ -269,7 +269,7 @@ export function bindEndpointsRecursively({
 								verified: false,
 							});
 						}
-						return resolveAuthMissingEndpointResult({
+						await throwAuthMissingEndpointError({
 							error: err,
 							manual: manualConfig,
 							hub: hubConfig,

@@ -4,7 +4,7 @@ import { createHubConnectSessionForPlugin } from '../../hub/connect';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import { hasManualConnectConfig } from '../config/manual-connect';
 import type { CorsairPlugin } from '../plugins';
-import type { AuthMissingError } from './errors/auth-missing';
+import { AuthMissingError } from './errors/auth-missing';
 import { encodeOAuthState, signState } from './state';
 
 /**
@@ -74,7 +74,7 @@ export async function resolveAuthMissingConnectUrl(
  * message (or delegates to `manual.onAuthMissing` when set). Falls back to a
  * plain `[auth-missing:…]` tag when no link can be generated.
  *
- * Called from endpoint binding via {@link resolveAuthMissingEndpointResult} —
+ * Called from endpoint binding via {@link throwAuthMissingEndpointError} —
  * same role as {@link resolveAsyncApprovalMessage} for permission-gated operations.
  */
 export async function resolveAuthMissingConnectMessage(input: {
@@ -170,13 +170,9 @@ export function buildManualConnectMessage(
 }
 
 /**
- * Resolves the string returned from a bound endpoint when auth credentials are missing.
- *
- * Prefers manual OAuth connect URLs, then hosted Hub connect URLs, then the raw
- * {@link AuthMissingError} message. Never throws — endpoint binding returns this
- * value directly instead of propagating an error.
+ * Resolves the agent-facing message when auth credentials are missing.
  */
-export async function resolveAuthMissingEndpointResult(input: {
+export async function resolveAuthMissingEndpointMessage(input: {
 	error: AuthMissingError;
 	manual?: EndpointManualConfig;
 	hub?: HubConfig;
@@ -230,4 +226,26 @@ export async function resolveAuthMissingEndpointResult(input: {
 	}
 
 	return input.error.message;
+}
+
+/**
+ * Resolves a connect message and throws {@link AuthMissingError} for endpoint callers.
+ */
+export async function throwAuthMissingEndpointError(input: {
+	error: AuthMissingError;
+	manual?: EndpointManualConfig;
+	hub?: HubConfig;
+	plugin?: CorsairPlugin;
+	tenantId?: string;
+	database?: CorsairDatabase;
+	kek?: string;
+	plugins?: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
+}): Promise<never> {
+	const message = await resolveAuthMissingEndpointMessage(input);
+	throw new AuthMissingError(
+		input.error.pluginId,
+		input.error.authType,
+		message,
+	);
 }
