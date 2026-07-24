@@ -12,6 +12,7 @@ import {
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
 } from '../permissions';
+import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPermissionsOptions,
@@ -178,7 +179,7 @@ export function bindEndpointsRecursively({
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}
-						throw new Error(msg);
+						throw new PermissionRequiredError(msg);
 					}
 					onPermissionComplete = onComplete;
 				}
