@@ -43,6 +43,7 @@ export async function resolveAuthMissingConnectUrl(
 		database?: CorsairDatabase;
 		kek?: string;
 		plugins: readonly CorsairPlugin[];
+		multiTenancy?: boolean;
 	},
 ): Promise<string | null> {
 	const hub = routing.hub;
@@ -57,6 +58,7 @@ export async function resolveAuthMissingConnectUrl(
 			database: input.database,
 			kek: input.kek,
 			plugins: input.plugins,
+			multiTenancy: input.multiTenancy,
 		});
 		return session.connectUrl;
 	} catch {
@@ -85,6 +87,7 @@ export async function resolveAuthMissingConnectMessage(input: {
 	database?: CorsairDatabase;
 	kek?: string;
 	plugins: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
 }): Promise<string> {
 	const hub = input.hub;
 	if (hub && input.database && input.kek) {
@@ -95,6 +98,7 @@ export async function resolveAuthMissingConnectMessage(input: {
 				database: input.database,
 				kek: input.kek,
 				plugins: input.plugins,
+				multiTenancy: input.multiTenancy,
 			});
 
 			if (input.manual?.onAuthMissing) {
@@ -122,6 +126,7 @@ export async function resolveAuthMissingConnectMessage(input: {
 			database: input.database,
 			kek: input.kek,
 			plugins: input.plugins,
+			multiTenancy: input.multiTenancy,
 		},
 	);
 
@@ -180,6 +185,7 @@ export async function resolveAuthMissingEndpointResult(input: {
 	database?: CorsairDatabase;
 	kek?: string;
 	plugins?: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
 }): Promise<string> {
 	const tenantId = input.tenantId ?? 'default';
 	const pluginId = input.error.pluginId;
@@ -219,6 +225,7 @@ export async function resolveAuthMissingEndpointResult(input: {
 			database: input.database,
 			kek: input.kek,
 			plugins: input.plugins,
+			multiTenancy: input.multiTenancy,
 		});
 	}
 

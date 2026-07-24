@@ -66,6 +66,7 @@ export function bindEndpointsRecursively({
 	plugin,
 	kek,
 	allPlugins,
+	multiTenancy,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -94,6 +95,7 @@ export function bindEndpointsRecursively({
 	plugin?: CorsairPlugin;
 	kek?: string;
 	allPlugins?: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -276,6 +278,7 @@ export function bindEndpointsRecursively({
 							database,
 							kek,
 							plugins: allPlugins,
+							multiTenancy,
 						});
 					}
 					throw err;
@@ -353,6 +356,7 @@ export function bindEndpointsRecursively({
 				plugin,
 				kek,
 				allPlugins,
+				multiTenancy,
 			});
 
 			tree[key] = nestedTree;

@@ -6,6 +6,7 @@ import type { AuthTypes } from '../core/constants';
 import { formatProviderDisplayName } from '../core/constants';
 import type { CorsairInternalConfig } from '../core/index';
 import type { CorsairPlugin } from '../core/plugins';
+import { ensureTenantProvisioned } from '../core/tenant-provision';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getAccountFields, getPluginAuthType } from '../core/utils/plugin-auth';
 import type { CorsairDatabase } from '../db/kysely/database';
@@ -34,6 +35,7 @@ export type ConnectManifestContext = {
 	database: CorsairDatabase | undefined;
 	kek: string;
 	hub: HubConfig;
+	multiTenancy?: boolean;
 };
 
 export type BuildConnectPluginManifestOptions = {
@@ -75,7 +77,18 @@ function toAuthStatusConfig(
 		plugins: context.plugins,
 		database: context.database,
 		kek: context.kek,
-		multiTenancy: false,
+		multiTenancy: context.multiTenancy ?? false,
+	};
+}
+
+function toProvisionConfig(
+	context: ConnectManifestContext,
+): CorsairInternalConfig {
+	return {
+		plugins: context.plugins,
+		database: context.database,
+		kek: context.kek,
+		multiTenancy: context.multiTenancy ?? false,
 	};
 }
 
@@ -189,7 +202,7 @@ export async function ensureConnectAccountRowsFromContext(
 		);
 	}
 
-	await ensureCorsairProvisionedForTenant(toCorsairHandle(context), tenantId);
+	await ensureTenantProvisioned(toProvisionConfig(context), tenantId);
 }
 
 export async function ensureConnectAccountRows(
