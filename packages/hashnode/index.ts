@@ -382,10 +382,14 @@ export function hashnode<const T extends HashnodePluginOptions>(
 		pluginWebhookMatcher: () => false,
 		pluginTenantWebhookMatcher: () => null,
 		oauthWebhookTenantLinkResolver: () => null,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: HashnodeKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;

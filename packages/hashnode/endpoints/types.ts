@@ -424,13 +424,18 @@ export const POST_COMMENTS_QUERY = `
 `;
 
 export const PAGES_QUERY = `
-  query Pages($host: String!) {
+  query Pages($host: String!, $first: Int!, $after: String) {
     publication(host: $host) {
-      staticPages(first: 50) {
+      staticPages(first: $first, after: $after) {
         edges {
           node {
             ...PageFields
           }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }
@@ -459,13 +464,18 @@ export const SERIES_QUERY = `
 `;
 
 export const SERIES_LIST_QUERY = `
-  query SeriesList($host: String!) {
+  query SeriesList($host: String!, $first: Int!, $after: String) {
     publication(host: $host) {
-      seriesList(first: 50) {
+      seriesList(first: $first, after: $after) {
         edges {
           node {
             ...SeriesFields
           }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }
@@ -761,13 +771,19 @@ const PostCommentsInputSchema = z.object({
 
 const SeriesListInputSchema = z.object({
 	host: z.string(),
+	first: z.number().min(1).max(100).default(10),
+	after: z.string().optional(),
 });
 
 const SeriesInputSchema = z.object({
 	slug: z.string(),
 });
 
-const PagesInputSchema = HostInputSchema;
+const PagesInputSchema = z.object({
+	host: z.string(),
+	first: z.number().min(1).max(100).default(10),
+	after: z.string().optional(),
+});
 
 const PageInputSchema = z.object({
 	host: z.string(),
@@ -1224,8 +1240,10 @@ const PagesResponseSchema = z.object({
 			edges: z.array(
 				z.object({
 					node: StaticPageSchema,
+					cursor: z.string(),
 				}),
 			),
+			pageInfo: PageInfoSchema,
 		}),
 	}),
 });
@@ -1246,8 +1264,10 @@ const SeriesListResponseSchema = z.object({
 			edges: z.array(
 				z.object({
 					node: SeriesSchema,
+					cursor: z.string(),
 				}),
 			),
+			pageInfo: PageInfoSchema,
 		}),
 	}),
 });

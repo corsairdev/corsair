@@ -2,13 +2,14 @@ import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
 import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
-import type { HashnodeEndpointOutputs } from './types';
-import { ME_QUERY, USER_QUERY } from './types';
+import { HashnodeEndpointOutputSchemas, ME_QUERY, USER_QUERY } from './types';
 
 export const me: HashnodeEndpoints['me'] = async (ctx) => {
-	const response = await makeHashnodeRequest<HashnodeEndpointOutputs['me']>(
+	const response = await makeHashnodeRequest(
 		ME_QUERY,
 		ctx.key,
+		undefined,
+		HashnodeEndpointOutputSchemas.me,
 	);
 
 	await logEventFromContext(ctx, 'hashnode.me', {}, 'completed');
@@ -16,9 +17,12 @@ export const me: HashnodeEndpoints['me'] = async (ctx) => {
 };
 
 export const getUser: HashnodeEndpoints['getUser'] = async (ctx, input) => {
-	const response = await makeHashnodeRequest<
-		HashnodeEndpointOutputs['getUser']
-	>(USER_QUERY, ctx.key, { username: input.username });
+	const response = await makeHashnodeRequest(
+		USER_QUERY,
+		ctx.key,
+		{ username: input.username },
+		HashnodeEndpointOutputSchemas.getUser,
+	);
 
 	await logEventFromContext(
 		ctx,

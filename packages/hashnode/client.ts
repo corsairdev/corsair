@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { z } from 'zod';
 
 export class HashnodeAPIError extends Error {
 	constructor(
@@ -20,7 +21,8 @@ const HASHNODE_API_BASE = 'https://gql-beta.hashnode.com';
 export async function makeHashnodeRequest<T>(
 	query: string,
 	token: string,
-	variables?: Record<string, unknown>,
+	variables: Record<string, unknown> | undefined,
+	schema: z.ZodType<T>,
 ): Promise<T> {
 	const config: OpenAPIConfig = {
 		BASE: HASHNODE_API_BASE,
@@ -44,8 +46,9 @@ export async function makeHashnodeRequest<T>(
 	};
 
 	try {
+		// GraphQL envelopes mix typed data with provider-specific error extensions.
 		const response = await request<{
-			data?: T;
+			data?: unknown;
 			errors?: Array<{ message: string; extensions?: Record<string, unknown> }>;
 		}>(config, requestOptions);
 
@@ -61,11 +64,11 @@ export async function makeHashnodeRequest<T>(
 			);
 		}
 
-		if (!response.data) {
+		if (response.data === undefined || response.data === null) {
 			throw new HashnodeAPIError('No data returned from Hashnode API');
 		}
 
-		return response.data as T;
+		return schema.parse(response.data);
 	} catch (error) {
 		if (error instanceof HashnodeAPIError) {
 			throw error;

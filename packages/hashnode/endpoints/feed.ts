@@ -2,8 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
 import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
-import type { HashnodeEndpointOutputs } from './types';
-import { FEED_QUERY } from './types';
+import { FEED_QUERY, HashnodeEndpointOutputSchemas } from './types';
 
 export const feed: HashnodeEndpoints['feed'] = async (ctx, input) => {
 	const variables: Record<string, unknown> = {
@@ -16,10 +15,11 @@ export const feed: HashnodeEndpoints['feed'] = async (ctx, input) => {
 		variables.filter = input.filter;
 	}
 
-	const response = await makeHashnodeRequest<HashnodeEndpointOutputs['feed']>(
+	const response = await makeHashnodeRequest(
 		FEED_QUERY,
 		ctx.key,
 		variables,
+		HashnodeEndpointOutputSchemas.feed,
 	);
 
 	await logEventFromContext(

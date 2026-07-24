@@ -209,12 +209,12 @@ describe('Hashnode Plugin', () => {
 			expect(defaultHandler.match(new Error('anything'), {} as any)).toBe(true);
 		});
 
-		it('RATE_LIMIT_ERROR handler returns maxRetries 5', async () => {
+		it('RATE_LIMIT_ERROR handler returns maxRetries 3', async () => {
 			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
 				new Error('test'),
 				{} as any,
 			);
-			expect(result.maxRetries).toBe(5);
+			expect(result.maxRetries).toBe(3);
 		});
 
 		it('AUTH_ERROR handler returns maxRetries 0', async () => {
@@ -258,7 +258,7 @@ describe('Hashnode Plugin', () => {
 				err,
 				{} as any,
 			);
-			expect(result.maxRetries).toBe(5);
+			expect(result.maxRetries).toBe(3);
 			expect(result.headersRetryAfterMs).toBe(3000);
 		});
 
@@ -590,13 +590,20 @@ describe('Hashnode Plugin', () => {
 			const data = {
 				publication: {
 					staticPages: {
-						edges: [{ node: { id: 'page1', title: 'About', slug: 'about' } }],
+						edges: [
+							{
+								node: { id: 'page1', title: 'About', slug: 'about' },
+								cursor: 'c1',
+							},
+						],
+						pageInfo: { hasNextPage: false, endCursor: null },
 					},
 				},
 			};
 			const schema = HashnodeEndpointOutputSchemas.listPages;
 			const parsed = schema.parse(data);
 			expect(parsed.publication.staticPages.edges).toHaveLength(1);
+			expect(parsed.publication.staticPages.pageInfo.hasNextPage).toBe(false);
 		});
 
 		it('CreateImageUploadURLResponseSchema parses correctly', () => {

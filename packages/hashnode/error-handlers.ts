@@ -16,7 +16,7 @@ function extractRetryAfter(error: unknown): number | undefined {
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error, context) => {
+		match: (error, _context) => {
 			if (extractHttpStatus(error) === 429) {
 				return true;
 			}
@@ -29,15 +29,16 @@ export const errorHandlers = {
 				error.message.includes('429')
 			);
 		},
-		handler: async (error, context) => {
+		handler: async (error, _context) => {
 			return {
-				maxRetries: 5,
+				maxRetries: 3,
 				headersRetryAfterMs: extractRetryAfter(error),
+				retryStrategy: 'exponential_backoff_jitter' as const,
 			};
 		},
 	},
 	AUTH_ERROR: {
-		match: (error, context) => {
+		match: (error, _context) => {
 			if (extractHttpStatus(error) === 401) {
 				return true;
 			}
@@ -53,14 +54,10 @@ export const errorHandlers = {
 				errorMessage.includes('invalid pat')
 			);
 		},
-		handler: async (error, context) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error, _context) => ({ maxRetries: 0 }),
 	},
 	NOT_FOUND_ERROR: {
-		match: (error, context) => {
+		match: (error, _context) => {
 			if (extractHttpStatus(error) === 404) {
 				return true;
 			}
@@ -71,14 +68,10 @@ export const errorHandlers = {
 				errorMessage.includes('could not find')
 			);
 		},
-		handler: async (error, context) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error, _context) => ({ maxRetries: 0 }),
 	},
 	PERMISSION_ERROR: {
-		match: (error, context) => {
+		match: (error, _context) => {
 			if (extractHttpStatus(error) === 403) {
 				return true;
 			}
@@ -90,14 +83,10 @@ export const errorHandlers = {
 				errorMessage.includes('insufficient permissions')
 			);
 		},
-		handler: async (error, context) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error, _context) => ({ maxRetries: 0 }),
 	},
 	VALIDATION_ERROR: {
-		match: (error, context) => {
+		match: (error, _context) => {
 			if (extractHttpStatus(error) === 400) {
 				return true;
 			}
@@ -111,35 +100,30 @@ export const errorHandlers = {
 				errorMessage.includes('graphql validation')
 			);
 		},
-		handler: async (error, context) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error, _context) => ({ maxRetries: 0 }),
 	},
 	GRAPHQL_ERROR: {
-		match: (error, context) => {
-			if (error instanceof HashnodeAPIError) {
-				return true;
+		match: (error, _context) => {
+			if (!(error instanceof HashnodeAPIError)) {
+				return false;
+			}
+			if (error.status !== undefined) {
+				return false;
 			}
 			const errorMessage = error.message.toLowerCase();
 			return (
 				errorMessage.includes('graphql') ||
-				errorMessage.includes('query') ||
-				errorMessage.includes('mutation') ||
-				errorMessage.includes('field') ||
-				errorMessage.includes('argument') ||
-				errorMessage.includes('variable')
+				errorMessage.includes('cannot query') ||
+				errorMessage.includes('unknown field') ||
+				errorMessage.includes('syntax error') ||
+				errorMessage.includes('variable') ||
+				errorMessage.includes('argument')
 			);
 		},
-		handler: async (error, context) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		handler: async (_error, _context) => ({ maxRetries: 0 }),
 	},
 	NETWORK_ERROR: {
-		match: (error, context) => {
+		match: (error, _context) => {
 			const errorMessage = error.message.toLowerCase();
 			return (
 				errorMessage.includes('network') ||
@@ -151,20 +135,10 @@ export const errorHandlers = {
 				errorMessage.includes('network error')
 			);
 		},
-		handler: async (error, context) => {
-			return {
-				maxRetries: 3,
-			};
-		},
+		handler: async (_error, _context) => ({ maxRetries: 3 }),
 	},
 	DEFAULT: {
-		match: (error, context) => {
-			return true;
-		},
-		handler: async (error, context) => {
-			return {
-				maxRetries: 0,
-			};
-		},
+		match: (_error, _context) => true,
+		handler: async (_error, _context) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import { makeHashnodeRequest } from '../client';
 import { redactEventPayload } from '../event-payload';
 import type { HashnodeEndpoints } from '../index';
-import type { HashnodeEndpointOutputs } from './types';
 import {
+	HashnodeEndpointOutputSchemas,
 	POST_BY_SLUG_QUERY,
 	POST_QUERY,
 	POSTS_QUERY,
@@ -13,9 +13,12 @@ import {
 } from './types';
 
 export const get: HashnodeEndpoints['getPost'] = async (ctx, input) => {
-	const response = await makeHashnodeRequest<
-		HashnodeEndpointOutputs['getPost']
-	>(POST_QUERY, ctx.key, { id: input.id });
+	const response = await makeHashnodeRequest(
+		POST_QUERY,
+		ctx.key,
+		{ id: input.id },
+		HashnodeEndpointOutputSchemas.getPost,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -30,9 +33,12 @@ export const getBySlug: HashnodeEndpoints['getPostBySlug'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeHashnodeRequest<
-		HashnodeEndpointOutputs['getPostBySlug']
-	>(POST_BY_SLUG_QUERY, ctx.key, { host: input.host, slug: input.slug });
+	const response = await makeHashnodeRequest(
+		POST_BY_SLUG_QUERY,
+		ctx.key,
+		{ host: input.host, slug: input.slug },
+		HashnodeEndpointOutputSchemas.getPostBySlug,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -55,9 +61,12 @@ export const list: HashnodeEndpoints['listPosts'] = async (ctx, input) => {
 		variables.filter = input.filter;
 	}
 
-	const response = await makeHashnodeRequest<
-		HashnodeEndpointOutputs['listPosts']
-	>(POSTS_QUERY, ctx.key, variables);
+	const response = await makeHashnodeRequest(
+		POSTS_QUERY,
+		ctx.key,
+		variables,
+		HashnodeEndpointOutputSchemas.listPosts,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -69,9 +78,12 @@ export const list: HashnodeEndpoints['listPosts'] = async (ctx, input) => {
 };
 
 export const publish: HashnodeEndpoints['publishPost'] = async (ctx, input) => {
-	const response = await makeHashnodeRequest<
-		HashnodeEndpointOutputs['publishPost']
-	>(PUBLISH_POST_MUTATION, ctx.key, { input });
+	const response = await makeHashnodeRequest(
+		PUBLISH_POST_MUTATION,
+		ctx.key,
+		{ input },
+		HashnodeEndpointOutputSchemas.publishPost,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -83,9 +95,12 @@ export const publish: HashnodeEndpoints['publishPost'] = async (ctx, input) => {
 };
 
 export const update: HashnodeEndpoints['updatePost'] = async (ctx, input) => {
-	const response = await makeHashnodeRequest<
-		HashnodeEndpointOutputs['updatePost']
-	>(UPDATE_POST_MUTATION, ctx.key, { input });
+	const response = await makeHashnodeRequest(
+		UPDATE_POST_MUTATION,
+		ctx.key,
+		{ input },
+		HashnodeEndpointOutputSchemas.updatePost,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -100,14 +115,17 @@ export const search: HashnodeEndpoints['searchPostsOfPublication'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeHashnodeRequest<
-		HashnodeEndpointOutputs['searchPostsOfPublication']
-	>(SEARCH_POSTS_OF_PUBLICATION_QUERY, ctx.key, {
-		first: input.first ?? 10,
-		after: input.after,
-		sortBy: input.sortBy,
-		filter: input.filter,
-	});
+	const response = await makeHashnodeRequest(
+		SEARCH_POSTS_OF_PUBLICATION_QUERY,
+		ctx.key,
+		{
+			first: input.first ?? 10,
+			after: input.after,
+			sortBy: input.sortBy,
+			filter: input.filter,
+		},
+		HashnodeEndpointOutputSchemas.searchPostsOfPublication,
+	);
 
 	await logEventFromContext(
 		ctx,
