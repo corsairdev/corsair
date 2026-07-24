@@ -17,7 +17,8 @@ export type TunnelType =
 	| 'integration.credentials'
 	| 'connect.create_link'
 	| 'connections.sync'
-	| 'run';
+	| 'run'
+	| 'probe';
 
 /** Inbound tunnel types the app accepts (write-only — no credential reads). */
 export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
@@ -33,6 +34,9 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 	// Workflow execution. Only handled when the app opts in via
 	// processCorsair({ allowWorkflowExecution: true }); off by default.
 	'run',
+	// Read-only probe (authoring dry-run / id grounding). Same opt-in gate as
+	// `run`; the app runs it under runReadonly so it can never write.
+	'probe',
 ]);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -96,6 +100,29 @@ export type RunResultPayload = {
 	/** ISO timestamp when a `sleeping` run should be re-invoked. */
 	sleepUntil?: string;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Read-only probe contract (`type: 'probe'`)
+//
+// Hub's authoring agent asks the app to run a short read-only script against the
+// tenant's client — to ground on real ids/fields or dry-run generated code before
+// saving it. The app runs it under `runReadonly`, so any write/destructive call
+// throws and the probe can never change anything.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Hub → app: one read-only script to run against the tenant's client. */
+export type ProbeTunnelPayload = {
+	tenantId: string;
+	/** Async JS body with `corsair` in scope; `return` the value to hand back. */
+	code: string;
+	/** Max run time in ms; the app applies a default when omitted. */
+	timeoutMs?: number;
+};
+
+/** App → Hub: the script's value, or an error (including a blocked write). */
+export type ProbeResultPayload =
+	| { status: 'ok'; value: unknown }
+	| { status: 'error'; error: string };
 
 /**
  * JSON body of a server-side delivery POST from the hub.

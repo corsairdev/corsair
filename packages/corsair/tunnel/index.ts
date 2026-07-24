@@ -6,6 +6,7 @@ import {
 	processConnectionsSyncDelivery,
 } from '../hub/connections-sync-delivery';
 import type {
+	ProbeTunnelPayload,
 	RunResultPayload,
 	RunTunnelPayload,
 	TunnelEnvelope,
@@ -26,6 +27,7 @@ import {
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
 import { executeWorkflowRun } from '../workflows/execute';
+import { runReadonlyProbe } from '../workflows/probe';
 
 export {
 	resolveAccountFromWebhookLink,
@@ -502,6 +504,31 @@ async function handleRunTunnel(
 	}
 }
 
+async function handleProbeTunnel(
+	corsair: unknown,
+	payload: ProbeTunnelPayload,
+): Promise<TunnelAck> {
+	// Same tenant scoping as a run: the read-only script resolves the right
+	// tenant's credentials. `runReadonlyProbe` runs it under runReadonly, so a
+	// write/destructive call throws and comes back as `{ status: 'error' }`.
+	const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
+	const probe = await runReadonlyProbe({
+		corsair: tenantScopedCorsair,
+		code: payload.code,
+		timeoutMs: payload.timeoutMs,
+	});
+	// Envelope succeeded regardless of the script outcome — Hub reads `probe` from
+	// the ack. Nested so the ack's own `status: 'ok'` doesn't collide with the
+	// probe's `status: 'ok' | 'error'`.
+	return {
+		status: 'ok',
+		webhookResponse: {
+			status: 200,
+			body: { status: 'ok', probe } satisfies ServerDeliveryAckBody,
+		},
+	};
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
@@ -660,6 +687,19 @@ export async function processCorsair(
 				};
 			}
 			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
+		case 'probe':
+			// ponytail: gated by the same flag as `run` — a probe still executes
+			// Hub-authored code (read-only). Split into its own flag if a tenant
+			// ever needs authoring probes without enabling full execution.
+			if (!options.allowWorkflowExecution) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error:
+						'Workflow execution is not enabled (set allowWorkflowExecution: true)',
+				};
+			}
+			return handleProbeTunnel(corsair, envelope.payload as ProbeTunnelPayload);
 		default:
 			return {
 				status: 'failed',
