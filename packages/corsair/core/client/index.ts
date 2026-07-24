@@ -391,9 +391,15 @@ export function buildCorsairClient<
 		internalConfig,
 	} = options;
 
+	// Canonical tenant scope for this client. Single-tenant clients pass no
+	// tenantId → 'default', which is Hub's own single-tenant convention. Used
+	// identically for provisioning, plugin operations, and the threads API so a
+	// client's scope is the same everywhere.
+	const effectiveTenantId = tenantId ?? 'default';
+
 	const ensureProvisioned =
 		internalConfig && database
-			? () => ensureTenantProvisioned(internalConfig, tenantId ?? 'default')
+			? () => ensureTenantProvisioned(internalConfig, effectiveTenantId)
 			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
@@ -406,7 +412,6 @@ export function buildCorsairClient<
 
 	for (const plugin of plugins) {
 		const schema = plugin.schema;
-		const effectiveTenantId = tenantId ?? 'default';
 
 		// Create a shared account ID resolver for this plugin
 		const getAccountId = createAccountIdResolver(
@@ -573,7 +578,7 @@ export function buildCorsairClient<
 	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
 	(apiUnsafe as Record<string, unknown>).threads = buildThreadsNamespace(
 		hubConfig,
-		tenantId ?? 'default',
+		effectiveTenantId,
 	);
 
 	return apiUnsafe as CorsairClient<Plugins>;
