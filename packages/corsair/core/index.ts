@@ -241,6 +241,7 @@ export type {
 export {
 	assertReadonlyAllowed,
 	isReadonlyScopeActive,
+	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	runReadonly,
 } from './permissions';
