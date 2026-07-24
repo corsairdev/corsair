@@ -1,0 +1,180 @@
+import { executeWorkflowRun } from '../workflows/execute';
+
+// A mock tenant client. `db.query` echoes its arg so tests can prove the
+// membrane lets normal calls through and hardens the result.
+function mockCorsair() {
+	return {
+		token: 'secret-should-not-leak',
+		db: {
+			query: async (x: unknown) => ({ rows: [x] }),
+		},
+	};
+}
+
+function run(code: string, extra: Record<string, unknown> = {}) {
+	return executeWorkflowRun({
+		corsair: mockCorsair(),
+		code,
+		payload: null,
+		timeoutMs: 200,
+		...extra,
+	});
+}
+
+describe('executeWorkflowRun — happy path', () => {
+	it('runs a step and reports it completed', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step('greet', async () => 'hello');
+			};
+		`);
+		expect(result.status).toBe('completed');
+		expect(result.steps).toEqual([
+			{ name: 'greet', seq: 0, status: 'completed', output: 'hello' },
+		]);
+	});
+
+	it('passes calls through the membrane and hardens the result', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step('query', async () => {
+					const r = await corsair.db.query('ping');
+					return r.rows[0];
+				});
+			};
+		`);
+		expect(result.status).toBe('completed');
+		expect(result.steps[0].output).toBe('ping');
+	});
+});
+
+describe('executeWorkflowRun — sandbox isolation', () => {
+	it('blocks the constructor.constructor escape on host objects', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step('escape', async () => {
+					try {
+						const Fn = corsair.db.query.constructor.constructor;
+						return 'leaked:' + typeof Fn('return process')();
+					} catch (e) {
+						return 'blocked:' + (e && e.name);
+					}
+				});
+			};
+		`);
+		expect(result.status).toBe('completed');
+		expect(result.steps[0].output).toMatch(/^blocked:/);
+	});
+
+	it('has no host globals in scope', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step('globals', async () => JSON.stringify({
+					process: typeof process,
+					Buffer: typeof Buffer,
+					fetch: typeof fetch,
+				}));
+			};
+		`);
+		expect(JSON.parse(result.steps[0].output as string)).toEqual({
+			process: 'undefined',
+			Buffer: 'undefined',
+			fetch: 'undefined',
+		});
+	});
+
+	it('rejects require()', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				const fs = require('fs');
+			};
+		`);
+		expect(result.status).toBe('failed');
+		expect(result.error?.message).toMatch(/may not import modules/);
+	});
+});
+
+describe('executeWorkflowRun — replay / memoization', () => {
+	it('replays memoized steps without re-running them, keeping seq stable', async () => {
+		// `a` throws if executed — proving the memoized value is returned instead.
+		const result = await run(
+			`
+			module.exports.main = async (corsair, payload, step) => {
+				const a = await step('a', async () => { throw new Error('should-not-run'); });
+				await step('b', async () => 'B:' + a);
+			};
+		`,
+			{ memoizedSteps: { a: { output: 'memoA' } } },
+		);
+		expect(result.status).toBe('completed');
+		// Only the freshly-run step is reported; `b` still gets seq 1 because the
+		// replayed `a` advances the counter.
+		expect(result.steps).toEqual([
+			{ name: 'b', seq: 1, status: 'completed', output: 'B:memoA' },
+		]);
+	});
+
+	it('reports the failed step name', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step('boom', async () => { throw new Error('kaboom'); });
+			};
+		`);
+		expect(result.status).toBe('failed');
+		expect(result.error).toEqual({ message: 'kaboom', failedStep: 'boom' });
+	});
+});
+
+describe('executeWorkflowRun — sleep', () => {
+	it('unwinds on step.sleep and resumes past it on the next attempt', async () => {
+		const code = `
+			module.exports.main = async (corsair, payload, step) => {
+				await step('one', async () => 1);
+				await step.sleep('nap', 60000);
+				await step('two', async () => 2);
+			};
+		`;
+
+		const first = await run(code);
+		expect(first.status).toBe('sleeping');
+		expect(Number.isNaN(Date.parse(first.sleepUntil as string))).toBe(false);
+		expect(first.steps.map((s) => s.name)).toEqual(['one', 'nap']);
+
+		const second = await run(code, {
+			memoizedSteps: { one: { output: 1 }, nap: { output: null } },
+		});
+		expect(second.status).toBe('completed');
+		expect(second.steps).toEqual([
+			{ name: 'two', seq: 2, status: 'completed', output: 2 },
+		]);
+	});
+
+	it('does not crash on a non-finite sleep duration (B3)', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.sleep('nap', NaN);
+			};
+		`);
+		expect(result.status).toBe('sleeping');
+		expect(Number.isNaN(Date.parse(result.sleepUntil as string))).toBe(false);
+	});
+});
+
+describe('executeWorkflowRun — resource limits (B1)', () => {
+	it('aborts a synchronous runaway via the vm timeout', async () => {
+		const result = await run(
+			`module.exports.main = async () => { while (true) {} };`,
+			{ timeoutMs: 100 },
+		);
+		expect(result.status).toBe('failed');
+	});
+
+	it('aborts a hung workflow via the wall-clock cap', async () => {
+		const result = await run(
+			`module.exports.main = async () => { await new Promise(() => {}); };`,
+			{ timeoutMs: 100 },
+		);
+		expect(result.status).toBe('failed');
+		expect(result.error?.message).toMatch(/time limit/);
+	});
+});

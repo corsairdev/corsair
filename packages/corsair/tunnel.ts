@@ -29,6 +29,5 @@ export {
 export {
 	type ExecuteWorkflowRunInput,
 	executeWorkflowRun,
-	type WorkflowMain,
 	type WorkflowStep,
 } from './workflows/execute';

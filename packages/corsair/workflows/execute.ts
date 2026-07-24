@@ -40,13 +40,11 @@ export interface WorkflowStep {
 	sleep(name: string, ms: number): Promise<void>;
 }
 
-export type WorkflowMain = (
-	corsair: unknown,
-	payload: unknown,
-	step: WorkflowStep,
-) => Promise<void>;
-
 const FAILED_STEP_MARKER = '__corsairFailedStep';
+
+// ponytail: one 30s cap covers both guards below; the deploy targets short,
+// gated workflows. Promote to a per-run config knob if long workflows land.
+const WORKFLOW_TIMEOUT_MS = 30_000;
 
 /**
  * Thrown by `step.sleep` to unwind `main` at the sleep boundary. Not an Error, so
@@ -172,10 +170,12 @@ function runWorkflowInSandbox(input: {
 	corsair: unknown;
 	payload: unknown;
 	step: WorkflowStep;
+	timeoutMs: number;
 }): Promise<void> {
 	// Null-proto global object → `globalThis`'s prototype chain can't reach host
 	// intrinsics. V8 still installs the realm's own built-ins (Object, JSON, …).
-	const context = vm.createContext(Object.create(null) as object, {
+	const sandbox = Object.create(null) as Record<string, unknown>;
+	const context = vm.createContext(sandbox, {
 		name: 'corsair-workflow',
 		codeGeneration: { strings: false, wasm: false },
 	});
@@ -233,36 +233,54 @@ function runWorkflowInSandbox(input: {
 		}
 	});
 
-	const hardenedCorsair = harden(input.corsair, undefined);
+	// Expose the capabilities as realm globals so `main` can be *invoked inside*
+	// the timed runInContext below. vm's `timeout` only bounds code it runs
+	// directly, so this is what lets it abort a synchronous runaway
+	// (`while (true) {}`) in the workflow body. `corsair` is the membrane;
+	// `payload`/`step`/`console` are realm-native, so no bare host reference is
+	// exposed by making them globals.
+	sandbox.__corsair = harden(input.corsair, undefined);
+	sandbox.__payload = realmPayload;
+	sandbox.__step = realmStep;
+	sandbox.__console = realmConsole;
 
-	// The workflow body runs inside this realm-defined IIFE. `require` throws
+	// The workflow body runs inside this realm-defined IIFE, invoked in-realm so
+	// its synchronous portion is bounded by `timeout`. `require` throws
 	// (self-contained modules only); `module`/`exports` are realm objects.
-	const runner = vm.runInContext(
-		`(function (corsair, payload, step, console) {
+	const mainPromise = vm.runInContext(
+		`(function () {
 			'use strict';
 			const module = { exports: {} };
 			const require = function (id) {
 				throw new Error('Workflow code may not import modules (attempted to require "' + id + '")');
 			};
-			(function (exports, module, require) {
+			(function (exports, module, require, console) {
 ${input.code}
-			})(module.exports, module, require);
+			})(module.exports, module, require, __console);
 			const main = module.exports.main;
 			if (typeof main !== 'function') {
 				throw new Error('Workflow code must export a \`main\` function');
 			}
-			return main(corsair, payload, step);
-		})`,
+			return main(__corsair, __payload, __step);
+		})()`,
 		context,
-		{ filename: 'corsair:workflow' },
-	) as (
-		corsair: unknown,
-		payload: unknown,
-		step: WorkflowStep,
-		console: unknown,
-	) => Promise<void>;
+		{ filename: 'corsair:workflow', timeout: input.timeoutMs },
+	) as Promise<void>;
 
-	return runner(hardenedCorsair, realmPayload, realmStep, realmConsole);
+	// Wall-clock cap for the async remainder: once `main` yields at its first
+	// await, the vm `timeout` above no longer applies, so bound total run time
+	// here. clearTimeout so a finished run's timer never keeps the process alive.
+	let timer: ReturnType<typeof setTimeout>;
+	const wallClock = new Promise<never>((_resolve, reject) => {
+		timer = setTimeout(
+			() =>
+				reject(new Error(`Workflow exceeded ${input.timeoutMs}ms time limit`)),
+			input.timeoutMs,
+		);
+	});
+	return Promise.race([mainPromise, wallClock]).finally(() =>
+		clearTimeout(timer),
+	);
 }
 
 export type ExecuteWorkflowRunInput = {
@@ -274,6 +292,8 @@ export type ExecuteWorkflowRunInput = {
 	payload: unknown;
 	/** Outputs of steps that already completed on prior attempts, keyed by name. */
 	memoizedSteps?: Record<string, { output: unknown }>;
+	/** Max run time (sync + wall-clock) in ms. Defaults to {@link WORKFLOW_TIMEOUT_MS}. */
+	timeoutMs?: number;
 };
 
 /**
@@ -319,7 +339,10 @@ export async function executeWorkflowRun(
 		// First encounter: record the sleep as a completed step (so the next attempt
 		// replays past it) and unwind to hand control back to Hub.
 		steps.push({ name, seq: current, status: 'completed', output: null });
-		throw new SleepInterrupt(Date.now() + Math.max(0, ms), name);
+		// Guard non-finite ms: `Date.now() + NaN` → `new Date(NaN).toISOString()`
+		// throws, turning a sleep into an infra failure.
+		const delay = Number.isFinite(ms) ? Math.max(0, ms) : 0;
+		throw new SleepInterrupt(Date.now() + delay, name);
 	};
 
 	try {
@@ -328,6 +351,7 @@ export async function executeWorkflowRun(
 			corsair: input.corsair,
 			payload: input.payload,
 			step,
+			timeoutMs: input.timeoutMs ?? WORKFLOW_TIMEOUT_MS,
 		});
 		return { status: 'completed', steps };
 	} catch (err) {

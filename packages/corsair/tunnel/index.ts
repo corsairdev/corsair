@@ -10,10 +10,7 @@ import type {
 	RunTunnelPayload,
 	TunnelEnvelope,
 } from '../hub/contracts/tunnel';
-import {
-	INBOUND_TUNNEL_TYPES,
-	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
-} from '../hub/contracts/tunnel';
+import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
@@ -664,21 +661,10 @@ export async function processCorsair(
 			}
 			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
 		default:
-			return unsupportedTunnelType(String(envelope.type));
+			return {
+				status: 'failed',
+				retryable: false,
+				error: `Unsupported tunnel type: ${String(envelope.type)}`,
+			};
 	}
-}
-
-function unsupportedTunnelType(type: string): TunnelAck {
-	if (!INBOUND_TUNNEL_TYPES.has(type as TunnelEnvelope['type'])) {
-		return {
-			status: 'failed',
-			retryable: false,
-			error: `Unsupported tunnel type: ${type}`,
-		};
-	}
-	return {
-		status: 'failed',
-		retryable: false,
-		error: `Unsupported tunnel type: ${type}`,
-	};
 }
