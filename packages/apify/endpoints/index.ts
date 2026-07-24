@@ -40,6 +40,7 @@ function buildEndpointTree<T extends ApifyOperationTree>(
 	tree: T,
 	segments: string[] = [],
 ): ApifyEndpointTree<T> {
+	// Accumulator holds mixed endpoint fns / nested trees before the final cast.
 	const endpoints: Record<string, unknown> = {};
 
 	for (const [key, value] of Object.entries(tree)) {
@@ -73,8 +74,11 @@ function buildEndpointTree<T extends ApifyOperationTree>(
 
 function createOperationInputSchema(operation: ApifyOperationDefinition) {
 	const shape: Record<string, z.ZodTypeAny> = {
+		// Apify request bodies differ per endpoint and are passed through as-is.
 		body: z.unknown().optional(),
+		// Query values are endpoint-specific and not shared across operations.
 		query: z.record(z.string(), z.unknown()).optional(),
+		// Custom headers are forwarded without a fixed provider-wide shape.
 		headers: z.record(z.string(), z.unknown()).optional(),
 		contentType: z.string().optional(),
 		mediaType: z.string().optional(),
@@ -85,6 +89,7 @@ function createOperationInputSchema(operation: ApifyOperationDefinition) {
 	}
 
 	for (const param of operation.queryParams ?? []) {
+		// Query metadata names the param but does not constrain its value type.
 		shape[param] = z.unknown().optional();
 	}
 
@@ -95,6 +100,7 @@ export function buildApifyEndpointSchemas<T extends ApifyOperationTree>(
 	tree: T,
 	segments: string[] = [],
 ): RequiredPluginEndpointSchemas<ApifyEndpointTree<T>> {
+	// Schema map is keyed by dotted path before the typed cast.
 	const schemas: Record<string, unknown> = {};
 
 	for (const [key, value] of Object.entries(tree)) {

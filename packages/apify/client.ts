@@ -26,6 +26,7 @@ const RESERVED_INPUT_KEYS = new Set([
 	'mediaType',
 ]);
 
+// Apify JSON payloads are endpoint-specific and passed through unchanged.
 type ApifyJsonValue = unknown;
 type ApifyJsonRecord = Record<string, ApifyJsonValue>;
 

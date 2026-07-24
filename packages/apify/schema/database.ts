@@ -130,6 +130,7 @@ export const ApifyUser = z
 		id: z.string(),
 		username: z.string().optional(),
 		email: z.string().email().optional(),
+		// Profile is free-form account metadata without a stable schema.
 		profile: z.record(z.string(), z.unknown()).optional(),
 		createdAt: z.coerce.date().nullable().optional(),
 	})
