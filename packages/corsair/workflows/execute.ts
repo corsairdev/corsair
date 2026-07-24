@@ -267,6 +267,11 @@ ${input.code}
 		{ filename: 'corsair:workflow', timeout: input.timeoutMs },
 	) as Promise<void>;
 
+	// If the wall-clock cap wins the race below, `main` keeps running detached
+	// (we can't cancel in-process). Attach a no-op catch so its late settlement
+	// can't surface as an unhandledRejection and crash the host.
+	void mainPromise.catch(() => {});
+
 	// Wall-clock cap for the async remainder: once `main` yields at its first
 	// await, the vm `timeout` above no longer applies, so bound total run time
 	// here. clearTimeout so a finished run's timer never keeps the process alive.
@@ -306,8 +311,14 @@ export async function executeWorkflowRun(
 	const memo = input.memoizedSteps ?? {};
 	const steps: RunStepResult[] = [];
 	let seq = 0;
+	// Set once step.sleep unwinds. If workflow-level try/catch swallows the throw,
+	// this lets the pause re-assert itself instead of silently continuing.
+	let pendingSleep: SleepInterrupt | null = null;
 
 	const step = (async <T>(name: string, fn: () => Promise<T>): Promise<T> => {
+		// A prior sleep unwound but was swallowed — re-throw rather than run more
+		// work this attempt.
+		if (pendingSleep) throw pendingSleep;
 		const current = seq++;
 
 		// Replay: a completed step from a prior attempt is not re-executed and not
@@ -333,6 +344,7 @@ export async function executeWorkflowRun(
 	}) as WorkflowStep;
 
 	step.sleep = async (name: string, ms: number): Promise<void> => {
+		if (pendingSleep) throw pendingSleep;
 		const current = seq++;
 		// Already slept on a prior attempt — the pause is satisfied, continue.
 		if (Object.hasOwn(memo, name)) return;
@@ -342,7 +354,8 @@ export async function executeWorkflowRun(
 		// Guard non-finite ms: `Date.now() + NaN` → `new Date(NaN).toISOString()`
 		// throws, turning a sleep into an infra failure.
 		const delay = Number.isFinite(ms) ? Math.max(0, ms) : 0;
-		throw new SleepInterrupt(Date.now() + delay, name);
+		pendingSleep = new SleepInterrupt(Date.now() + delay, name);
+		throw pendingSleep;
 	};
 
 	try {
@@ -353,6 +366,17 @@ export async function executeWorkflowRun(
 			step,
 			timeoutMs: input.timeoutMs ?? WORKFLOW_TIMEOUT_MS,
 		});
+		// `main` returned without propagating the interrupt — a try/catch swallowed
+		// it. Honor the pause anyway rather than reporting a false completion.
+		// (cast: TS narrows the closure-mutated `pendingSleep` back to `null` here.)
+		const swallowed = pendingSleep as SleepInterrupt | null;
+		if (swallowed) {
+			return {
+				status: 'sleeping',
+				steps,
+				sleepUntil: new Date(swallowed.wakeAt).toISOString(),
+			};
+		}
 		return { status: 'completed', steps };
 	} catch (err) {
 		if (isSleepInterrupt(err)) {

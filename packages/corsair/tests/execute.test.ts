@@ -158,6 +158,28 @@ describe('executeWorkflowRun — sleep', () => {
 		expect(result.status).toBe('sleeping');
 		expect(Number.isNaN(Date.parse(result.sleepUntil as string))).toBe(false);
 	});
+
+	it('still pauses when a broad try/catch swallows the sleep and more steps follow', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				try { await step.sleep('nap', 60000); } catch (e) { /* swallow */ }
+				await step('after', async () => 'ran');
+			};
+		`);
+		// The pause re-asserts on the next step call, so 'after' never runs.
+		expect(result.status).toBe('sleeping');
+		expect(result.steps.map((s) => s.name)).toEqual(['nap']);
+	});
+
+	it('still pauses when the sleep is swallowed and main returns normally', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				try { await step.sleep('nap', 60000); } catch (e) { /* swallow */ }
+			};
+		`);
+		expect(result.status).toBe('sleeping');
+		expect(result.steps.map((s) => s.name)).toEqual(['nap']);
+	});
 });
 
 describe('executeWorkflowRun — resource limits (B1)', () => {
