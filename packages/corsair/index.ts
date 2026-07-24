@@ -7,6 +7,7 @@ export type { ResolveConnectLinkResult } from './core';
 export {
 	AuthMissingError,
 	createCorsair,
+	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	resolveConnectLink,
 	runReadonly,

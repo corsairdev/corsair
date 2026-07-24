@@ -14,9 +14,9 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'agentql',
-	'algolia',
 	'ahrefs',
 	'airtable',
+	'algolia',
 	'amplitude',
 	'apify',
 	'asana',
@@ -30,6 +30,7 @@ export const BaseProviders = [
 	'cursor',
 	'datadog',
 	'deepseek',
+	'digitalocean',
 	'discord',
 	'dodopayments',
 	'dropbox',
@@ -41,6 +42,7 @@ export const BaseProviders = [
 	'github',
 	'gitlab',
 	'gmail',
+	'googlebigquery',
 	'googlecalendar',
 	'googledocs',
 	'googledrive',
@@ -48,6 +50,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'heygen',
 	'hubspot',
 	'insightoai',
 	'instagram',
@@ -59,7 +62,9 @@ export const BaseProviders = [
 	'monday',
 	'neon',
 	'notion',
+	'ollama',
 	'onedrive',
+	'onepassword',
 	'openai',
 	'openweathermap',
 	'oura',
@@ -70,6 +75,7 @@ export const BaseProviders = [
 	'razorpay',
 	'reddit',
 	'resend',
+	'retailed',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -88,6 +94,8 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'whatsapp',
+	'vercel',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -97,9 +105,9 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
-	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
+	algolia: 'Algolia',
 	amplitude: 'Amplitude',
 	apify: 'Apify',
 	asana: 'Asana',
@@ -113,6 +121,7 @@ export const ProviderDisplayNames = {
 	cursor: 'Cursor',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
+	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
@@ -124,6 +133,7 @@ export const ProviderDisplayNames = {
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
@@ -131,6 +141,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -142,16 +153,20 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
+	ollama: 'Ollama',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
 	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
+	retailed: 'Retailed',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -170,12 +185,13 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	whatsapp: 'WhatsApp',
+	vercel: 'Vercel',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -187,9 +203,9 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'agentql'
-	| 'algolia'
 	| 'ahrefs'
 	| 'airtable'
+	| 'algolia'
 	| 'amplitude'
 	| 'apify'
 	| 'asana'
@@ -203,6 +219,7 @@ export type AllProviders =
 	| 'cursor'
 	| 'datadog'
 	| 'deepseek'
+	| 'digitalocean'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
@@ -214,6 +231,7 @@ export type AllProviders =
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googlebigquery'
 	| 'googlecalendar'
 	| 'googledocs'
 	| 'googledrive'
@@ -221,6 +239,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'heygen'
 	| 'hubspot'
 	| 'insightoai'
 	| 'instagram'
@@ -232,7 +251,9 @@ export type AllProviders =
 	| 'monday'
 	| 'neon'
 	| 'notion'
+	| 'ollama'
 	| 'onedrive'
+	| 'onepassword'
 	| 'openai'
 	| 'openweathermap'
 	| 'oura'
@@ -243,6 +264,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
+	| 'retailed'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
@@ -261,6 +283,8 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'whatsapp'
+	| 'vercel'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
