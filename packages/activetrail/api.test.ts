@@ -43,6 +43,33 @@ const mockCtx = {
 	db: {},
 } as unknown as ActiveTrailContext;
 
+function expectedUrl(
+	path: string,
+	pathParams: readonly string[],
+	input: Record<string, unknown>,
+): string {
+	let index = 0;
+	return (path.split('?')[0] ?? path).replace(/\{[^}]+\}/g, () => {
+		const key = pathParams[index];
+		index += 1;
+		const value = key !== undefined ? input[key] : undefined;
+		if (value === undefined || value === null || value === '') {
+			throw new Error(`missing test path param: ${key ?? '<unknown>'}`);
+		}
+		return encodeURIComponent(String(value));
+	});
+}
+
+function pathInputForRoute(
+	pathParams: readonly string[],
+): Record<string, unknown> {
+	const input: Record<string, unknown> = {};
+	for (const key of pathParams) {
+		input[key] = 42;
+	}
+	return input;
+}
+
 describe('ActiveTrail plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {
 		const plugin = activetrail();
@@ -474,5 +501,44 @@ describe('ActiveTrail endpoints', () => {
 				url: '/api/account/sendingprofiles',
 			}),
 		]);
+	});
+
+	it('exercises every route with the expected method and resolved path', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as Record<
+			string,
+			Record<
+				string,
+				(
+					ctx: ActiveTrailContext,
+					input?: Record<string, unknown>,
+				) => Promise<unknown>
+			>
+		>;
+		const groups = new Set(activeTrailRoutes.map((route) => route.group));
+
+		for (const route of activeTrailRoutes) {
+			mockRequest.mockClear();
+			mockRequest.mockResolvedValue({ ok: true });
+
+			const fn = endpoints[route.group]?.[route.name];
+			expect(fn).toEqual(expect.any(Function));
+
+			const input = pathInputForRoute(route.pathParams ?? []);
+			await fn!(mockCtx, input);
+
+			expect(mockRequest).toHaveBeenCalledTimes(1);
+			const options = mockRequest.mock.calls[0][1] as {
+				method: string;
+				url: string;
+			};
+			expect(options.method).toBe(route.method);
+			expect(options.url).toBe(
+				expectedUrl(route.path, route.pathParams ?? [], input),
+			);
+		}
+
+		expect(groups.size).toBe(20);
+		expect(activeTrailRoutes).toHaveLength(159);
 	});
 });
