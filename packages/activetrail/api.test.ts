@@ -407,4 +407,72 @@ describe('ActiveTrail endpoints', () => {
 			}),
 		);
 	});
+
+	it('classifies read routes with correct method and risk', async () => {
+		const byName = Object.fromEntries(
+			activeTrailRoutes.map((route) => [route.name, route]),
+		);
+		expect(byName.getSmsSendingProfiles).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				path: '/api/account/sms-sendingprofiles',
+				riskLevel: 'read',
+			}),
+		);
+		expect(byName.getUpdateActions).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				path: '/api/automations/GetUpdateActions',
+				riskLevel: 'read',
+			}),
+		);
+		expect(byName.getSendingProfiles).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				path: '/api/account/sendingprofiles',
+				riskLevel: 'read',
+			}),
+		);
+
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			external: {
+				getSmsSendingProfiles: (
+					ctx: ActiveTrailContext,
+					input: {},
+				) => Promise<unknown>;
+				getSendingProfiles: (
+					ctx: ActiveTrailContext,
+					input: {},
+				) => Promise<unknown>;
+			};
+			automations: {
+				getUpdateActions: (
+					ctx: ActiveTrailContext,
+					input: {},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.external.getSmsSendingProfiles(mockCtx, {});
+		await endpoints.automations.getUpdateActions(mockCtx, {});
+		await endpoints.external.getSendingProfiles(mockCtx, {});
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual([
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/account/sms-sendingprofiles',
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/automations/GetUpdateActions',
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/account/sendingprofiles',
+			}),
+		]);
+	});
 });

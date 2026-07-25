@@ -1291,13 +1291,13 @@ export const activeTrailRoutes = [
 		key: 'getSendingProfiles',
 		group: 'external',
 		name: 'getSendingProfiles',
-		method: 'POST',
-		path: '/api/external/import',
+		method: 'GET',
+		path: '/api/account/sendingprofiles',
 		description:
 			'Tool to retrieve account email sending profiles. Use when you need to get sending profile configurations including sender names, email addresses, and reply-to settings. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'getSignupForms',
@@ -1483,7 +1483,7 @@ export const activeTrailRoutes = [
 			'Tool to retrieve SMS sending profiles configured for the account. Use when you need to get SMS sender profile configurations including sender names and phone numbers. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'getTemplate',
@@ -1573,13 +1573,13 @@ export const activeTrailRoutes = [
 		key: 'getUpdateActions',
 		group: 'automations',
 		name: 'getUpdateActions',
-		method: 'PUT',
-		path: '/api/automations/{id}/details',
+		method: 'GET',
+		path: '/api/automations/GetUpdateActions',
 		description:
 			'Retrieves all available update action types that can be applied to contacts within automation workflows. Each action type includes its ID, name, description, type category, and required parameters. Use this to discover what contact update operations are available when building or modifying automation workflows (e.g., updating contact fields, changing status, adding tags, etc.). #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
-		pathParams: ['id'],
+		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'getUserSocialAccountsGet',
