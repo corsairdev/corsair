@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
 import { makeActiveTrailRequest } from './client';
+import { activeTrailRoutes } from './endpoints/routes';
 import type { ActiveTrailContext } from './index';
 import { activeTrailEndpointSchemas, activetrail } from './index';
 
@@ -61,6 +62,17 @@ describe('ActiveTrail plugin shape', () => {
 		const plugin = activetrail();
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({ api_key: {} });
+	});
+
+	it('has unique method+path pairs for every route', () => {
+		const seen = new Map<string, string>();
+		for (const route of activeTrailRoutes) {
+			const key = `${route.method} ${route.path}`;
+			const prev = seen.get(key);
+			expect(prev).toBeUndefined();
+			seen.set(key, route.name);
+		}
+		expect(seen.size).toBe(activeTrailRoutes.length);
 	});
 });
 
@@ -225,5 +237,59 @@ describe('ActiveTrail endpoints', () => {
 				url: '/api/templates/42/campaign',
 			}),
 		);
+	});
+
+	it('maps corrected report and webhook routes', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			smsCampaignReport: {
+				getSmsCampaignDelivered: (
+					ctx: ActiveTrailContext,
+					input: { id: number },
+				) => Promise<unknown>;
+			};
+			webhooks: {
+				postWebhooksParameters: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+			external: {
+				getSmsSendingProfiles: (
+					ctx: ActiveTrailContext,
+					input: {},
+				) => Promise<unknown>;
+			};
+			mailingList: {
+				getMailingList: (
+					ctx: ActiveTrailContext,
+					input: { id: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.smsCampaignReport.getSmsCampaignDelivered(mockCtx, {
+			id: 9,
+		});
+		await endpoints.webhooks.postWebhooksParameters(mockCtx, {
+			webhook_id: 3,
+			key: 'x',
+			value: 'y',
+			event_value_type: 'static',
+			event_parameter_type: 'header',
+		});
+		await endpoints.external.getSmsSendingProfiles(mockCtx, {});
+		await endpoints.mailingList.getMailingList(mockCtx, { id: 'ml-1' });
+
+		const urls = mockRequest.mock.calls.map((call) => call[1].url);
+		expect(urls).toEqual([
+			'/api/smscampaignreport/9/Delivered',
+			'/api/webhooks/3/parameters',
+			'/api/account/sms-sendingprofiles',
+			'/api/mailinglist/ml-1',
+		]);
+		expect(mockRequest.mock.calls[2][1].method).toBe('GET');
 	});
 });
