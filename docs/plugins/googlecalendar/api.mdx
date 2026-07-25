@@ -139,7 +139,7 @@ await corsair.googlecalendar.api.events.create({});
   colorId?: string,
   transparency?: opaque | transparent,
   visibility?: default | public | private | confidential,
-  eventType?: default | outOfOffice | focusTime | workingLocation,
+  eventType?: default | outOfOffice | focusTime | workingLocation | birthday | fromGmail,
   status?: confirmed | tentative | cancelled,
   reminders?: {
     useDefault?: boolean,
@@ -201,7 +201,11 @@ await corsair.googlecalendar.api.events.create({});
 | `guestsCanSeeOtherGuests` | `boolean` | No | — |
 | `privateCopy` | `boolean` | No | — |
 | `locked` | `boolean` | No | — |
-| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation` | No | — |
+| `conferenceData` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `source` | `object` | No | — |
+| `gadget` | `object` | No | — |
+| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation \| birthday \| fromGmail` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -288,6 +292,83 @@ await corsair.googlecalendar.api.events.create({});
     method?: email | popup,
     minutes?: number
   }[]
+}
+```
+</Accordion>
+
+<Accordion title="conferenceData full type">
+
+```ts
+{
+  createRequest?: {
+    requestId?: string,
+    conferenceSolutionKey?: {
+      type?: string
+    },
+    status?: {
+      statusCode?: string
+    }
+  },
+  entryPoints?: {
+    entryPointType?: string,
+    uri?: string,
+    label?: string,
+    pin?: string,
+    accessCode?: string,
+    meetingCode?: string,
+    passcode?: string,
+    password?: string
+  }[],
+  conferenceSolution?: {
+    key?: {
+      type?: string
+    },
+    name?: string,
+    iconUri?: string
+  },
+  conferenceId?: string,
+  signature?: string,
+  notes?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileUrl?: string,
+  title?: string,
+  mimeType?: string,
+  iconLink?: string,
+  fileId?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  url?: string,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="gadget full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  link?: string,
+  iconLink?: string,
+  width?: number,
+  height?: number,
+  display?: string,
+  preferences?: {
+  }
 }
 ```
 </Accordion>
@@ -383,7 +464,11 @@ await corsair.googlecalendar.api.events.get({});
 | `guestsCanSeeOtherGuests` | `boolean` | No | — |
 | `privateCopy` | `boolean` | No | — |
 | `locked` | `boolean` | No | — |
-| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation` | No | — |
+| `conferenceData` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `source` | `object` | No | — |
+| `gadget` | `object` | No | — |
+| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation \| birthday \| fromGmail` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -470,6 +555,83 @@ await corsair.googlecalendar.api.events.get({});
     method?: email | popup,
     minutes?: number
   }[]
+}
+```
+</Accordion>
+
+<Accordion title="conferenceData full type">
+
+```ts
+{
+  createRequest?: {
+    requestId?: string,
+    conferenceSolutionKey?: {
+      type?: string
+    },
+    status?: {
+      statusCode?: string
+    }
+  },
+  entryPoints?: {
+    entryPointType?: string,
+    uri?: string,
+    label?: string,
+    pin?: string,
+    accessCode?: string,
+    meetingCode?: string,
+    passcode?: string,
+    password?: string
+  }[],
+  conferenceSolution?: {
+    key?: {
+      type?: string
+    },
+    name?: string,
+    iconUri?: string
+  },
+  conferenceId?: string,
+  signature?: string,
+  notes?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileUrl?: string,
+  title?: string,
+  mimeType?: string,
+  iconLink?: string,
+  fileId?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  url?: string,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="gadget full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  link?: string,
+  iconLink?: string,
+  width?: number,
+  height?: number,
+  display?: string,
+  preferences?: {
+  }
 }
 ```
 </Accordion>
@@ -612,7 +774,60 @@ await corsair.googlecalendar.api.events.getMany({});
   guestsCanSeeOtherGuests?: boolean,
   privateCopy?: boolean,
   locked?: boolean,
-  eventType?: default | outOfOffice | focusTime | workingLocation
+  conferenceData?: {
+    createRequest?: {
+      requestId?: string,
+      conferenceSolutionKey?: {
+        type?: string
+      },
+      status?: {
+        statusCode?: string
+      }
+    },
+    entryPoints?: {
+      entryPointType?: string,
+      uri?: string,
+      label?: string,
+      pin?: string,
+      accessCode?: string,
+      meetingCode?: string,
+      passcode?: string,
+      password?: string
+    }[],
+    conferenceSolution?: {
+      key?: {
+        type?: string
+      },
+      name?: string,
+      iconUri?: string
+    },
+    conferenceId?: string,
+    signature?: string,
+    notes?: string
+  },
+  attachments?: {
+    fileUrl?: string,
+    title?: string,
+    mimeType?: string,
+    iconLink?: string,
+    fileId?: string
+  }[],
+  source?: {
+    url?: string,
+    title?: string
+  },
+  gadget?: {
+    type?: string,
+    title?: string,
+    link?: string,
+    iconLink?: string,
+    width?: number,
+    height?: number,
+    display?: string,
+    preferences?: {
+    }
+  },
+  eventType?: default | outOfOffice | focusTime | workingLocation | birthday | fromGmail
 }[]
 ```
 </Accordion>
@@ -681,7 +896,7 @@ await corsair.googlecalendar.api.events.update({});
   colorId?: string,
   transparency?: opaque | transparent,
   visibility?: default | public | private | confidential,
-  eventType?: default | outOfOffice | focusTime | workingLocation,
+  eventType?: default | outOfOffice | focusTime | workingLocation | birthday | fromGmail,
   status?: confirmed | tentative | cancelled,
   reminders?: {
     useDefault?: boolean,
@@ -743,7 +958,11 @@ await corsair.googlecalendar.api.events.update({});
 | `guestsCanSeeOtherGuests` | `boolean` | No | — |
 | `privateCopy` | `boolean` | No | — |
 | `locked` | `boolean` | No | — |
-| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation` | No | — |
+| `conferenceData` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `source` | `object` | No | — |
+| `gadget` | `object` | No | — |
+| `eventType` | `default \| outOfOffice \| focusTime \| workingLocation \| birthday \| fromGmail` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -830,6 +1049,83 @@ await corsair.googlecalendar.api.events.update({});
     method?: email | popup,
     minutes?: number
   }[]
+}
+```
+</Accordion>
+
+<Accordion title="conferenceData full type">
+
+```ts
+{
+  createRequest?: {
+    requestId?: string,
+    conferenceSolutionKey?: {
+      type?: string
+    },
+    status?: {
+      statusCode?: string
+    }
+  },
+  entryPoints?: {
+    entryPointType?: string,
+    uri?: string,
+    label?: string,
+    pin?: string,
+    accessCode?: string,
+    meetingCode?: string,
+    passcode?: string,
+    password?: string
+  }[],
+  conferenceSolution?: {
+    key?: {
+      type?: string
+    },
+    name?: string,
+    iconUri?: string
+  },
+  conferenceId?: string,
+  signature?: string,
+  notes?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  fileUrl?: string,
+  title?: string,
+  mimeType?: string,
+  iconLink?: string,
+  fileId?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="source full type">
+
+```ts
+{
+  url?: string,
+  title?: string
+}
+```
+</Accordion>
+
+<Accordion title="gadget full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  link?: string,
+  iconLink?: string,
+  width?: number,
+  height?: number,
+  display?: string,
+  preferences?: {
+  }
 }
 ```
 </Accordion>

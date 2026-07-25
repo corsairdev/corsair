@@ -1,0 +1,1163 @@
+---
+title: API
+description: "API reference for LinkedIn: every `linkedin.api.*` operation with input and output types."
+---
+
+Every `linkedin.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Ads
+
+### getAudienceCounts
+
+`ads.getAudienceCounts`
+
+Retrieve audience size counts for targeting criteria.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.ads.getAudienceCounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `object` | Yes | Targeting criteria to estimate audience size for, as a LinkedIn targeting object (e.g. { and: [ { or: [...] }] }). |
+
+<AccordionGroup>
+<Accordion title="target full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | No | Audience size entries for the given targeting criteria. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTargetingFacets
+
+`ads.getTargetingFacets`
+
+Retrieve available LinkedIn ad targeting facets.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.ads.getTargetingFacets({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `facets` | `object[]` | No | Available targeting facets. |
+| `elements` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="facets full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="elements full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchTargetingEntities
+
+`ads.searchTargetingEntities`
+
+Search LinkedIn ad targeting entities via typeahead.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.ads.searchTargetingEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Typeahead search query for targeting entities. |
+| `type` | `string` | No | Optional facet type to scope the search (e.g. locations, titles, industries). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | No | Matching targeting entities. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Create a comment on a LinkedIn share, UGC post, or comment.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkedin.api.comments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commented_on_urn` | `string` | Yes | URN of the object being commented on: a share, UGC post, or parent comment. |
+| `actor` | `string` | Yes | URN of the member or organization posting the comment, e.g. urn:li:person:... or urn:li:organization:.... |
+| `message` | `string` | Yes | The text of the comment (max 3000 characters). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | The URN of the created comment. |
+| `message` | `string` | No | The comment text. |
+| `object` | `string` | No | The URN the comment was posted on. |
+| `lastModified` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastModified full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### get
+
+`images.get`
+
+Retrieve details of a single LinkedIn image by URN.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.images.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image_urn` | `string` | Yes | The image URN (e.g. urn:li:image:C4D22...) whose details to retrieve. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The image URN. |
+| `owner` | `string` | No | — |
+| `status` | `string` | No | UPLOADING, AVAILABLE, WAITING_UPLOAD, etc. |
+| `downloadUrl` | `string` | No | — |
+| `original` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="original full type">
+
+```ts
+{
+  size?: string,
+  width?: number,
+  height?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### initializeUpload
+
+`images.initializeUpload`
+
+Initialize a LinkedIn image upload and return an upload URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkedin.api.images.initializeUpload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Owner URN that will own the uploaded image, e.g. urn:li:person:... or urn:li:organization:.... |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  image: string,
+  uploadUrl?: string,
+  uploadUrlExpiresAt?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`images.list`
+
+Retrieve LinkedIn image metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.images.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | No | Owner URN. Returns images owned by this member/org. |
+| `urns` | `string[]` | No | Specific image URNs to fetch in a single batch request. |
+| `start` | `number` | No | Pagination start index. |
+| `count` | `number` | No | Number of images per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  id: string,
+  owner?: string,
+  status?: string,
+  downloadUrl?: string | null,
+  original?: {
+    size?: string,
+    width?: number,
+    height?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### registerUpload
+
+`images.registerUpload`
+
+Register a native image upload for feed shares.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkedin.api.images.registerUpload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | Owner URN for the media asset, e.g. urn:li:person:... or urn:li:organization:.... |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  asset: string,
+  mediaArtifact?: string,
+  uploadMechanism?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### getCompanyInfo
+
+`organizations.getCompanyInfo`
+
+Retrieve organizations where the user has roles.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.organizations.getCompanyInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role_assignee` | `string` | No | Person URN whose organization roles to list. Defaults to the authenticated member. |
+| `role` | `ADMINISTRATOR \| DIRECT_SPONSORED_CONTENT_POSTER \| RECRUITING_POSTER \| LEAD_GEN_FORMS_MANAGER \| CONTENT_ADMIN \| ANALYTICS_ROLE[]` | No | Filter to specific organization roles. |
+| `state` | `APPROVED \| PENDING \| REVOKED` | No | Filter to ACLs in a given state. Defaults to APPROVED. |
+| `start` | `number` | No | Zero-based pagination offset into the role list. |
+| `count` | `number` | No | Maximum number of roles to return per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  organization?: string,
+  organizationRoleAssignee?: string,
+  role?: string,
+  state?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNetworkSize
+
+`organizations.getNetworkSize`
+
+Retrieve the follower count for a LinkedIn organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.organizations.getNetworkSize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_urn` | `string` | Yes | The organization URN (e.g. urn:li:organization:2414183) whose follower count to retrieve. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalFollowerCount` | `number` | No | Total followers of the organization. |
+| `organizationFollowerCount` | `number` | No | — |
+| `elements` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPageStats
+
+`organizations.getPageStats`
+
+Retrieve page statistics for a LinkedIn organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.organizations.getPageStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_urn` | `string` | Yes | The organization URN whose page statistics to retrieve. |
+| `time_integrated` | `object` | No | Optional time range for time-bound (aggregate) statistics. |
+| `start` | `number` | No | Pagination start index. |
+| `count` | `number` | No | Number of results per page. |
+
+<AccordionGroup>
+<Accordion title="time_integrated full type">
+
+```ts
+{
+  start?: number,
+  end?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | Yes | Page statistics entries. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getShareStats
+
+`organizations.getShareStats`
+
+Retrieve share statistics for an organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.organizations.getShareStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_urn` | `string` | Yes | The organization URN whose share statistics to retrieve. |
+| `time_integrated` | `object` | No | Optional time range to filter statistics. |
+| `start` | `number` | No | Pagination start index. |
+| `count` | `number` | No | Number of results per page. |
+
+<AccordionGroup>
+<Accordion title="time_integrated full type">
+
+```ts
+{
+  start?: number,
+  end?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | Yes | Share statistics entries. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### create
+
+`posts.create`
+
+Create a new LinkedIn post for a member or organization.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkedin.api.posts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `author` | `string` | Yes | Author URN. Use urn:li:person:... to post as a person (w_member_social) or urn:li:organization:... to post as an organization (w_organization_social). |
+| `commentary` | `string` | Yes | The text commentary (body) of the post. |
+| `visibility` | `PUBLIC \| CONNECTIONS \| LOGGED_IN_MEMBERS` | No | Who can see the post. Defaults to PUBLIC. |
+| `lifecycleState` | `PUBLISHED \| DRAFT` | No | PUBLISHED to post immediately, DRAFT to save as a draft. |
+| `isReshareDisabledByAuthor` | `boolean` | No | When true, other members cannot reshare this post. |
+| `article_url` | `string` | No | Optional URL to attach as article content with the post. |
+| `article_title` | `string` | No | Title for the attached article. Requires article_url. |
+| `article_description` | `string` | No | Description for the attached article. Requires article_url. |
+| `image_urn` | `string` | No | Optional image URN to attach as media. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The URN of the newly created post. |
+
+
+
+---
+
+### createArticleShare
+
+`posts.createArticleShare`
+
+Create an article or URL share on LinkedIn.
+
+**Risk:** `write`
+
+```ts
+await corsair.linkedin.api.posts.createArticleShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authorUrn` | `string` | Yes | Author URN, e.g. urn:li:person:... or urn:li:organization:.... |
+| `text` | `string` | No | Optional commentary to include alongside the shared URL. |
+| `article_url` | `string` | Yes | The URL to share as an article. |
+| `article_title` | `string` | No | Optional title for the article. |
+| `article_description` | `string` | No | Optional description for the article. |
+| `article_thumbnail` | `string` | No | Optional thumbnail URL for the article. |
+| `visibility` | `PUBLIC \| CONNECTIONS` | No | Visibility of the share. Defaults to PUBLIC. |
+| `lifecycleState` | `PUBLISHED \| DRAFT` | No | PUBLISHED to post immediately, DRAFT to save as a draft. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The URN of the newly created UGC post. |
+| `activity` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a LinkedIn post via the Posts API.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.linkedin.api.posts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_id` | `string` | Yes | The post URN or ID to delete via the Posts API (idempotent, returns 204). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the delete operation completed. |
+
+
+
+---
+
+### deleteShare
+
+`posts.deleteShare`
+
+Delete a LinkedIn post (share) by its share_id.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.linkedin.api.posts.deleteShare({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `share_id` | `string` | Yes | The share ID of the LinkedIn share to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the delete operation completed. |
+
+
+
+---
+
+### deleteUgc
+
+`posts.deleteUgc`
+
+Delete a UGC post via the legacy v2/ugcPosts endpoint.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.linkedin.api.posts.deleteUgc({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ugc_post_urn` | `string` | Yes | The UGC post URN (e.g. urn:li:ugcPost:12345) to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the delete operation completed. |
+
+
+
+---
+
+### getContent
+
+`posts.getContent`
+
+Retrieve detailed content of a specific LinkedIn post.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.posts.getContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post_urn` | `string` | Yes | The post URN (e.g. urn:li:post:1234567890) whose content to retrieve. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `author` | `string` | No | — |
+| `commentary` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `lifecycleState` | `string` | No | — |
+| `createdAt` | `object` | No | — |
+| `isReshareDisabledByAuthor` | `boolean` | No | — |
+| `media` | `object` | No | — |
+| `content` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="createdAt full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profile
+
+### getMyInfo
+
+`profile.getMyInfo`
+
+Fetch the authenticated LinkedIn member's profile.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.profile.getMyInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projection` | `string` | No | Optional projection of profile fields to return (e.g. "(sub,name,email)"). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sub` | `string` | No | — |
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `given_name` | `string` | No | — |
+| `family_name` | `string` | No | — |
+| `picture` | `string` | No | — |
+| `email` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `vanityName` | `string` | No | — |
+| `headline` | `string` | No | — |
+
+
+
+---
+
+### getPerson
+
+`profile.getPerson`
+
+Retrieve a LinkedIn member profile by person ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.profile.getPerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id` | `string` | Yes | The LinkedIn member ID of the person whose profile to retrieve. |
+| `projection` | `string` | No | Optional projection of fields. Defaults to the lite profile; add headline and vanityName for the basic profile (requires r_basicprofile). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The member ID. |
+| `localizedFirstName` | `string` | No | — |
+| `localizedLastName` | `string` | No | — |
+| `localizedHeadline` | `string` | No | — |
+| `vanityName` | `string` | No | — |
+| `firstName` | `object` | No | — |
+| `lastName` | `object` | No | — |
+| `headline` | `object` | No | — |
+| `profilePicture` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="firstName full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="lastName full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headline full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="profilePicture full type">
+
+```ts
+{
+  displayImage~?: string,
+  displayImage~:playableStreams?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reactions
+
+### list
+
+`reactions.list`
+
+List reactions on a LinkedIn entity.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.reactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_urn` | `string` | Yes | URN of the entity (share, post, or comment) whose reactions to list. |
+| `start` | `number` | No | Pagination start index. Defaults to 0. |
+| `count` | `number` | No | Number of reactions to return per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | Yes | The reactions on the entity. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  actor?: string,
+  type?: string,
+  created?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### list
+
+`videos.list`
+
+Retrieve LinkedIn video metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.linkedin.api.videos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_urn` | `string` | No | A single video URN to retrieve. |
+| `owner` | `string` | No | Owner URN. Returns videos owned by this account. |
+| `urns` | `string[]` | No | Specific video URNs to fetch in a batch. |
+| `start` | `number` | No | Pagination start index. |
+| `count` | `number` | No | Number of videos per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `elements` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  id: string,
+  owner?: string,
+  status?: string,
+  downloadUrl?: string | null,
+  durationMilliseconds?: number,
+  original?: {
+    width?: number,
+    height?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  start?: number,
+  count?: number,
+  total?: number,
+  links?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

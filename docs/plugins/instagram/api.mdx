@@ -1,0 +1,1119 @@
+---
+title: API
+description: "API reference for Instagram: every `instagram.api.*` operation with input and output types."
+---
+
+Every `instagram.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Carousel
+
+### post
+
+`carousel.post`
+
+create a carousel container for publishing on instagram.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.carousel.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the carousel post. |
+| `children` | `string[]` | Yes | An array of media container IDs that will be included in the carousel. A carousel must contain at least two media items. |
+| `media_type` | `string` | Yes | The type of media container to create. For carousel posts, this is typically set to CAROUSEL. |
+| `caption` | `string` | No | Optional caption text that will be displayed with the carousel post. |
+| `share_to_feed` | `boolean` | No | Whether the carousel post should be shared to the Instagram profile feed. |
+| `collaborators` | `string[]` | No | Optional list of Instagram User IDs to invite as collaborators on the carousel post. |
+| `location_id` | `string` | No | Optional Facebook Location ID to associate a location with the carousel post. |
+| `product_tags` | `object[]` | No | Optional list of Instagram Shopping products to tag in the carousel. |
+
+<AccordionGroup>
+<Accordion title="product_tags full type">
+
+```ts
+{
+  product_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
+
+
+
+---
+
+## Comments
+
+### get
+
+`comments.get`
+
+get details about a specific comment on an instagram media object.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.comments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | The Instagram Comment ID of the comment whose details should be retrieved. |
+| `q` | `string` | No | Optional search query or filter used when retrieving comment details. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The unique Instagram Comment ID. |
+| `text` | `string` | No | The text content of the comment. |
+| `hidden` | `boolean` | No | Indicates whether the comment is hidden from public view. |
+| `like_count` | `number` | No | The total number of likes received by the comment. |
+| `legacy_instagram_comment_id` | `string` | No | The legacy Instagram comment identifier, if available. |
+| `timestamp` | `string` | No | The ISO 8601 timestamp indicating when the comment was created. |
+| `parent_id` | `string` | No | The ID of the parent comment if this comment is a reply. |
+| `from` | `object` | No | Information about the user who created the comment. |
+| `media` | `object` | No | Information about the media on which the comment was posted. |
+| `user` | `string` | No | The ID of the Instagram user associated with the comment. |
+| `username` | `string` | No | The Instagram username of the comment author. |
+| `replies` | `object[]` | No | The list of replies associated with this comment. |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  id: string,
+  username: string
+}
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  id: string,
+  media_product_type?: string
+}
+```
+</Accordion>
+
+<Accordion title="replies full type">
+
+```ts
+{
+  id: string,
+  text?: string,
+  timestamp?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+list comments on an instagram media object.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `string` | Yes | The Instagram Media ID of the post, Reel, video, or carousel whose comments should be retrieved. |
+| `q` | `string` | No | Optional search query used to filter comments by text, username, or other supported criteria. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | The list of comments associated with the requested Instagram media. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string,
+  timestamp?: string,
+  username?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`comments.remove`
+
+delete a comment on an instagram media object.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.comments.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | The Instagram Comment ID of the comment that should be permanently deleted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates whether the comment update operation completed successfully. |
+
+
+
+---
+
+### reply
+
+`comments.reply`
+
+reply to a comment on an instagram media object.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.comments.reply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | The Instagram Comment ID of the comment that should receive a reply. |
+| `message` | `string` | Yes | The text content of the reply to post in response to the specified comment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The unique ID of the newly created reply comment. |
+
+
+
+---
+
+### send
+
+`comments.send`
+
+send a comment on an instagram media object.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.comments.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `string` | Yes | The Instagram Media ID of the post, Reel, video, Story, or carousel on which the comment will be created. |
+| `message` | `string` | Yes | The text content of the comment to post on the specified Instagram media. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The unique ID of the newly created Instagram comment. |
+
+
+
+---
+
+### update
+
+`comments.update`
+
+update a comment on an instagram media object.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.comments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | The Instagram Comment ID of the comment to update. |
+| `hide` | `boolean` | Yes | Whether the comment should be hidden. Set to true to hide the comment or false to unhide it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates whether the comment update operation completed successfully. |
+
+
+
+---
+
+## Conversations
+
+### get
+
+`conversations.get`
+
+get messages in a conversation on instagram messaging.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.conversations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation_id` | `string` | Yes | The Instagram conversation or message thread ID whose messages should be retrieved. |
+| `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account that owns the conversation. |
+| `q` | `string` | No | Optional search query used to filter messages within the conversation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | The list of messages contained within the specified conversation. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  message?: string,
+  created_time?: string,
+  from?: {
+    id?: string,
+    username?: string
+  },
+  attachments?: {
+    data?: {
+      id?: string,
+      mime_type?: string,
+      name?: string,
+      image_data?: {
+      },
+      video_data?: {
+      },
+      file_url?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+list conversations on instagram messaging.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account whose conversations should be retrieved. |
+| `q` | `string` | No | Optional search query used to filter conversations by participant, message content, or other supported criteria. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | The list of Instagram conversations associated with the connected account. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image
+
+### post
+
+`image.post`
+
+create an image container for publishing on instagram.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.image.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the image. |
+| `image_url` | `string` | Yes | A publicly accessible URL of the image to be uploaded to Instagram. |
+| `caption` | `string` | No | Optional caption text that will be displayed with the Instagram post. |
+| `alt_text` | `string` | No | Optional accessibility description of the image for screen readers. |
+| `is_carousel_item` | `boolean` | No | Set to true if this image will be added as an item in a carousel post rather than published as a standalone post. |
+| `location_id` | `string` | No | Optional Facebook Location ID to associate a location with the Instagram post. |
+| `user_tags` | `object[]` | No | Optional list of Instagram users to tag in the image along with their positions. |
+| `product_tags` | `object[]` | No | Optional list of products to tag in the image for Instagram Shopping. |
+
+<AccordionGroup>
+<Accordion title="user_tags full type">
+
+```ts
+{
+  username: string,
+  x: number,
+  y: number
+}[]
+```
+</Accordion>
+
+<Accordion title="product_tags full type">
+
+```ts
+{
+  product_id: string,
+  x: number,
+  y: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
+
+
+
+---
+
+### story
+
+`image.story`
+
+create an image story container for publishing on instagram.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.image.story({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Story. |
+| `image_url` | `string` | Yes | A publicly accessible URL of the image to be uploaded as an Instagram Story. |
+| `user_tags` | `string[]` | No | Optional list of Instagram usernames or user IDs to mention or tag in the Story. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
+
+
+
+---
+
+## Media
+
+### get
+
+`media.get`
+
+get details about a specific media object.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.media.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `string` | Yes | The Instagram Media ID of the post, reel, story, carousel, or video to retrieve. |
+| `q` | `string` | No | Optional search query or filter used when retrieving media-related information. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The unique Instagram Media ID. |
+| `caption` | `string` | No | The caption text associated with the media. |
+| `media_type` | `IMAGE \| VIDEO \| CAROUSEL_ALBUM` | Yes | The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM. |
+| `media_url` | `string` | No | The URL of the media asset. May be null or unavailable for certain media types. |
+| `thumbnail_url` | `string` | No | The URL of the media thumbnail image, typically available for videos and reels. |
+| `permalink` | `string` | Yes | The permanent public URL to view the media on Instagram. |
+| `timestamp` | `string` | Yes | The ISO 8601 timestamp indicating when the media was created. |
+| `username` | `string` | Yes | The Instagram username that published the media. |
+| `like_count` | `number` | Yes | The total number of likes received by the media. |
+| `comments_count` | `number` | Yes | The total number of comments on the media. |
+| `is_comment_enabled` | `boolean` | Yes | Indicates whether commenting is enabled for the media. |
+| `children` | `object` | No | Carousel child media items. Present only for carousel posts. |
+| `createdAt` | `Date` | No | The date and time when this record was created in the local system. |
+| `updatedAt` | `Date` | No | The date and time when this record was last updated in the local system. |
+
+<AccordionGroup>
+<Accordion title="children full type">
+
+```ts
+{
+  data: {
+    id: string,
+    media_type: IMAGE | VIDEO,
+    media_url: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insights
+
+`media.insights`
+
+get insights for a specific media object.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.media.insights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `string` | Yes | The Instagram Media ID of the post, Reel, Story, video, or carousel whose insights should be retrieved. |
+| `type` | `IMAGE \| VIDEO \| REELS \| STORY \| CAROUSEL_ALBUM` | Yes | The type of Instagram media for which insights are being requested. |
+| `metric` | `string` | No | Optional insight metric to retrieve, such as impressions, reach, engagement, saved, likes, comments, shares, plays, or other supported Instagram insight metrics. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | A collection of insight metrics and values returned for the requested Instagram media. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`media.list`
+
+list media objects on the instagram account.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.media.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account or createro account whose media should be retrieved. |
+| `q` | `string` | No | Optional search keyword or filter to narrow the media results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | The list of Instagram media objects returned by the request. |
+| `paging` | `object` | No | Pagination information used to navigate through additional pages of media results. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  caption?: string,
+  media_type: IMAGE | VIDEO | CAROUSEL_ALBUM,
+  media_url?: string | null,
+  thumbnail_url?: string | null,
+  permalink: string,
+  timestamp: string,
+  username: string,
+  like_count: number,
+  comments_count: number,
+  is_comment_enabled: boolean,
+  children?: {
+    data: {
+      id: string,
+      media_type: IMAGE | VIDEO,
+      media_url: string
+    }[]
+  },
+  createdAt?: Date | null,
+  updatedAt?: Date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`media.status`
+
+get the status of a media container.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.media.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `container_id` | `string` | Yes | The Instagram media container ID whose processing status should be retrieved. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The Instagram media container ID whose status was requested. |
+| `status_code` | `IN_PROGRESS \| FINISHED \| ERROR \| EXPIRED` | Yes | The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid. |
+
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+get details about a specific message on instagram messaging.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account that owns the message. |
+| `message_id` | `string` | Yes | The unique ID of the Instagram Direct Message to retrieve. |
+| `q` | `string` | Yes | A search query or filter string used when retrieving message details. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The unique identifier of the message. |
+| `message` | `string` | No | The text content of the message. |
+| `created_time` | `string` | No | The timestamp indicating when the message was created. |
+| `from` | `object` | No | Information about the user who sent the message. |
+| `attachments` | `object` | No | Attachment data associated with the message, such as images, videos, files, or other media. |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  id?: string,
+  username?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  data?: {
+    id?: string,
+    mime_type?: string,
+    name?: string,
+    image_data?: {
+    },
+    video_data?: {
+    },
+    file_url?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+send a message in instagram messaging.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account that will send the message. |
+| `recipient` | `string` | Yes | The recipient Instagram-scoped user ID (IGSID) or Messenger user ID that will receive the message. |
+| `message` | `object` | Yes | The message content, including text, attachments, and optional quick replies. |
+| `messaging_type` | `RESPONSE \| UPDATE \| MESSAGE_TAG` | No | The type of message being sent. Determines how Meta categorizes and delivers the message. |
+| `tag` | `string` | No | Required for certain MESSAGE_TAG messages. Specifies the approved message tag used for the message. |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  text?: string,
+  attachment?: {
+    type: image | video | audio | file | template,
+    payload: {
+    }
+  },
+  attachments?: {
+    type: image | video | audio | file | template,
+    payload: {
+    }
+  }[],
+  quick_replies?: {
+    content_type: text,
+    title: string,
+    payload: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient_id` | `string` | Yes | The ID of the user who received the message. |
+| `message_id` | `string` | Yes | The unique identifier of the message that was sent. |
+| `timestamp` | `number` | No | The Unix timestamp indicating when the message was sent. |
+
+
+
+---
+
+## Profile
+
+### get
+
+`profile.get`
+
+read the user instagram profile.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.profile.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram account. |
+| `q` | `string` | No | Optional search query or keyword used to filter related Instagram user data. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `ig_id` | `number` | No | — |
+| `username` | `string` | No | — |
+| `name` | `string` | No | — |
+| `biography` | `string` | No | — |
+| `profile_picture_url` | `string` | No | — |
+| `followers_count` | `number` | Yes | — |
+| `follows_count` | `number` | Yes | — |
+| `media_count` | `number` | Yes | — |
+| `website` | `string` | No | — |
+| `createdAt` | `Date` | No | — |
+| `updatedAt` | `Date` | No | — |
+
+
+
+---
+
+### insights
+
+`profile.insights`
+
+get insights for the instagram business account.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.profile.insights({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account whose insights should be retrieved. |
+| `metric` | `string` | Yes | One or more Instagram insight metrics to retrieve, such as impressions, reach, profile_views, follower_count, accounts_engaged, or other supported account-level metrics. |
+| `period` | `string` | Yes | The aggregation period for the requested metrics, such as day, week, days_28, lifetime, or other supported periods. |
+| `timeframe` | `string` | No | Required for demographics-related metrics. Specifies how far back Instagram should look when calculating the requested data. |
+| `metric_type` | `string` | No | Optional metric category or calculation type used when requesting specific insight metrics. |
+| `breakdown` | `string` | No | Optional dimension by which to break down the results, such as age, gender, country, city, or other supported demographic categories. |
+| `since` | `string` | No | Optional start date or timestamp for the insights query. Results will include data from this point onward. |
+| `until` | `string` | No | Optional end date or timestamp for the insights query. Results will include data up to this point. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | A collection of insight metrics and values returned for the requested Instagram media. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Publish
+
+### publish_media
+
+`publish.publish_media`
+
+publish media on instagram.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.publish.publish_media({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the media. |
+| `creation_id` | `string` | Yes | The media container ID returned by a previous media container creation request. This container will be published to Instagram. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
+
+
+
+---
+
+## Reel
+
+### post
+
+`reel.post`
+
+create a reel container for publishing on instagram.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.reel.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Reel. |
+| `video_url` | `string` | Yes | A publicly accessible URL of the video file to be uploaded as an Instagram Reel. |
+| `media_type` | `string` | Yes | The type of media container to create. For Reels, this is typically set to REELS. |
+| `caption` | `string` | No | Optional caption text that will accompany the Reel when published. |
+| `share_to_feed` | `boolean` | No | Whether the Reel should also be shared to the Instagram profile feed in addition to the Reels tab. |
+| `collaborators` | `string[]` | No | Optional list of Instagram User IDs to invite as collaborators on the Reel. |
+| `cover_url` | `string` | No | Optional publicly accessible URL of a custom cover image to use as the Reel thumbnail. |
+| `audio_name` | `string` | No | Optional name of the audio track associated with the Reel. |
+| `thumb_offset` | `number` | No | Optional timestamp offset in milliseconds used to generate the Reel thumbnail from the video. |
+| `location_id` | `string` | No | Optional Facebook Location ID to associate a location with the Reel. |
+| `user_tags` | `object[]` | No | Optional list of Instagram users to tag in the Reel. |
+| `trial_params` | `any` | No | Optional experimental or trial parameters supported by the Instagram API. |
+
+<AccordionGroup>
+<Accordion title="user_tags full type">
+
+```ts
+{
+  username: string,
+  x: number,
+  y: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
+
+
+
+---
+
+## Video
+
+### container
+
+`video.container`
+
+create a video carousel container for publishing on instagram.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.video.container({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the video. |
+| `video_url` | `string` | Yes | A publicly accessible URL of the video to be uploaded to Instagram. |
+| `caption` | `string` | No | Optional caption text that will be displayed with the video post. |
+| `alt_text` | `string` | No | Optional accessibility description of the video for screen readers. |
+| `location_id` | `string` | No | Optional Facebook Location ID to associate a location with the video post. |
+| `user_tags` | `object[]` | No | Optional list of Instagram users to tag in the video along with their positions. |
+| `product_tags` | `object[]` | No | Optional list of Instagram Shopping products to tag in the video. |
+
+<AccordionGroup>
+<Accordion title="user_tags full type">
+
+```ts
+{
+  username: string,
+  x: number,
+  y: number
+}[]
+```
+</Accordion>
+
+<Accordion title="product_tags full type">
+
+```ts
+{
+  product_id: string,
+  x: number,
+  y: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
+
+
+
+---
+
+### story
+
+`video.story`
+
+create a video story container for publishing on instagram.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.video.story({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account that will publish the Story. |
+| `video_url` | `string` | Yes | A publicly accessible URL of the video to be uploaded as an Instagram Story. |
+| `user_tags` | `string[]` | No | Optional list of Instagram usernames or user IDs to mention or tag in the Story. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The media container ID that can be used to check processing status or publish the media. |
+
+
+
+---
+

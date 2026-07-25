@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'agentql',
 	'ahrefs',
 	'airtable',
+	'algolia',
 	'amplitude',
 	'asana',
 	'bitwarden',
@@ -25,7 +26,11 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'cloudflare',
+	'confluence',
 	'cursor',
+	'datadog',
+	'deepseek',
+	'digitalocean',
 	'discord',
 	'dodopayments',
 	'dropbox',
@@ -33,31 +38,44 @@ export const BaseProviders = [
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'gemini',
 	'github',
 	'gitlab',
 	'gmail',
+	'googlebigquery',
 	'googlecalendar',
+	'googledocs',
 	'googledrive',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'heygen',
 	'hubspot',
+	'insightoai',
 	'instagram',
 	'intercom',
 	'jira',
 	'linear',
+	'linkedin',
+	'mailchimp',
 	'monday',
+	'neon',
 	'notion',
+	'ollama',
 	'onedrive',
+	'onepassword',
+	'openai',
 	'openweathermap',
 	'oura',
 	'outlook',
 	'pagerduty',
+	'perplexityai',
 	'posthog',
 	'razorpay',
 	'reddit',
 	'resend',
+	'retailed',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -76,6 +94,8 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'whatsapp',
+	'vercel',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -88,6 +108,7 @@ export const ProviderDisplayNames = {
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
+	algolia: 'Algolia',
 	amplitude: 'Amplitude',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -96,7 +117,11 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	cloudflare: 'Cloudflare',
+	confluence: 'Confluence',
 	cursor: 'Cursor',
+	datadog: 'Datadog',
+	deepseek: 'DeepSeek',
+	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
@@ -104,31 +129,44 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
+	linkedin: 'LinkedIn',
+	mailchimp: 'Mailchimp',
 	monday: 'Monday',
+	neon: 'Neon',
 	notion: 'Notion',
+	ollama: 'Ollama',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
+	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
+	retailed: 'Retailed',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -147,6 +185,8 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	whatsapp: 'WhatsApp',
+	vercel: 'Vercel',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -166,6 +206,7 @@ export type AllProviders =
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
+	| 'algolia'
 	| 'amplitude'
 	| 'asana'
 	| 'bitwarden'
@@ -174,7 +215,11 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'cloudflare'
+	| 'confluence'
 	| 'cursor'
+	| 'datadog'
+	| 'deepseek'
+	| 'digitalocean'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
@@ -182,31 +227,44 @@ export type AllProviders =
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'gemini'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googledocs'
 	| 'googledrive'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'heygen'
 	| 'hubspot'
+	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
 	| 'jira'
 	| 'linear'
+	| 'linkedin'
+	| 'mailchimp'
 	| 'monday'
+	| 'neon'
 	| 'notion'
+	| 'ollama'
 	| 'onedrive'
+	| 'onepassword'
+	| 'openai'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'perplexityai'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
+	| 'retailed'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
@@ -225,6 +283,8 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'whatsapp'
+	| 'vercel'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'

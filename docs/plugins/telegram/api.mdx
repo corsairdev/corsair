@@ -9,4 +9,497 @@ Every `telegram.api.*` operation is listed below with parameter shapes and retur
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Callback
+
+### answerCallbackQuery
+
+`callback.answerCallbackQuery`
+
+Answer callback query
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.callback.answerCallbackQuery({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### answerInlineQuery
+
+`callback.answerInlineQuery`
+
+Answer inline query
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.callback.answerInlineQuery({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+## Chat
+
+### getChat
+
+`chat.getChat`
+
+Get chat information
+
+**Risk:** `read`
+
+```ts
+await corsair.telegram.api.chat.getChat({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### getChatAdministrators
+
+`chat.getChatAdministrators`
+
+Get chat administrators
+
+**Risk:** `read`
+
+```ts
+await corsair.telegram.api.chat.getChatAdministrators({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### getChatMember
+
+`chat.getChatMember`
+
+Get chat member information
+
+**Risk:** `read`
+
+```ts
+await corsair.telegram.api.chat.getChatMember({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+## File
+
+### getFile
+
+`file.getFile`
+
+Get a file
+
+**Risk:** `read`
+
+```ts
+await corsair.telegram.api.file.getFile({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+## Me
+
+### getMe
+
+`me.getMe`
+
+Get bot info
+
+**Risk:** `read`
+
+```ts
+await corsair.telegram.api.me.getMe({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+## Messages
+
+### deleteMessage
+
+`messages.deleteMessage`
+
+Delete a message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.telegram.api.messages.deleteMessage({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### editMessageText
+
+`messages.editMessageText`
+
+Edit message text
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.editMessageText({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### pinChatMessage
+
+`messages.pinChatMessage`
+
+Pin a chat message
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.pinChatMessage({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendAnimation
+
+`messages.sendAnimation`
+
+Send animation
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendAnimation({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendAudio
+
+`messages.sendAudio`
+
+Send audio
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendAudio({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendChatAction
+
+`messages.sendChatAction`
+
+Send a chat action
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendChatAction({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendDocument
+
+`messages.sendDocument`
+
+Send document
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendDocument({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendLocation
+
+`messages.sendLocation`
+
+Send location
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendLocation({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendMediaGroup
+
+`messages.sendMediaGroup`
+
+Send media group
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendMediaGroup({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendMessage
+
+`messages.sendMessage`
+
+Send a message
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendMessage({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendPhoto
+
+`messages.sendPhoto`
+
+Send photo
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendPhoto({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendSticker
+
+`messages.sendSticker`
+
+Send sticker
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendSticker({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendVideo
+
+`messages.sendVideo`
+
+Send video
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.sendVideo({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### unpinChatMessage
+
+`messages.unpinChatMessage`
+
+Unpin a chat message
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.messages.unpinChatMessage({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+## Updates
+
+### getUpdates
+
+`updates.getUpdates`
+
+Get updates
+
+**Risk:** `read`
+
+```ts
+await corsair.telegram.api.updates.getUpdates({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+## Webhook
+
+### deleteWebhook
+
+`webhook.deleteWebhook`
+
+Delete webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.telegram.api.webhook.deleteWebhook({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
+
+### setWebhook
+
+`webhook.setWebhook`
+
+Set webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.telegram.api.webhook.setWebhook({});
+```
+
+**Input:** `unknown`
+
+
+**Output:** `unknown`
+
+
+---
 

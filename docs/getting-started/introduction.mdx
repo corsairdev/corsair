@@ -4,9 +4,9 @@ description: The go-to integration layer for AI agents and apps. Connect anythin
 mode: "wide"
 ---
 
-import { IntroFeatures } from '/snippets/intro-features.mdx';
+Corsair is the fastest way to add any integration to your app or agent. It handles the authentication and data-sync plumbing every service needs, so you write only the part that's unique to your use case — not the wiring you've already built a hundred times.
 
-Corsair is the go-to way to add any integration to your app or agent. Auth, token refresh, data storage, webhooks, rate limits are all handled. You write the part that's unique to your use case, not the plumbing you've already written a hundred times.
+Every integration is a plugin. Install the ones you need, hand Corsair a database and an encryption key, and each service becomes a typed client in your code — plus one set of tools your agent can call across all of them. One pattern, whether you have a single integration or fifty. [Corsair Hub](/hub/overview) handles the hosted OAuth and approval surfaces so you never build them.
 
 Install Corsair and the plugins you need:
 
@@ -24,6 +24,8 @@ pnpm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @
 bun add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
 ```
 </CodeGroup>
+
+Each service ships as its own `@corsair-dev/*` package. Find the one you need — and its exact install id — in the [**Plugins**](/guides/plugins) catalog.
 
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
@@ -48,21 +50,23 @@ can accept it. Let me know when he does.
 
 One prompt, four integrations, and Corsair handles the rest.
 
-Corsair runs entirely in your own app and stores credentials in your own database. When you would rather not host the connect, approval, and webhook surfaces yourself, [Hub](/hub/overview) is an optional relay that provides them, and it still stores none of your credentials.
+Corsair runs in your own app and stores credentials in your own database. **[Corsair Hub](/hub/overview) is the recommended way to run it** — connect your app, or your users' apps, without hosting the OAuth connect, approval, and webhook surfaces yourself. Hub relays those surfaces and still stores none of your credentials; tokens stay encrypted in your database. Prefer to host those surfaces yourself? That path stays [fully supported](/hub/manual-vs-hub).
 
-<IntroFeatures />
+<Tip>
+In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair Hub end to end — install, route, keys, and a real connected integration.
+</Tip>
 
 ## Get started
 
 <CardGroup cols={2}>
   <Card title="Quick start" icon="rocket" href="/getting-started/quick-start">
-    Install, migrate, and run your first integration in minutes.
+    Install and run your first integration with Hub in minutes.
   </Card>
-  <Card title="Setup" icon="wrench" href="/getting-started/setup">
-    Integrations, accounts, tenants, CLI, and setupCorsair.
+  <Card title="Set up with your agent" icon="sparkles" href="/getting-started/set-up-with-your-agent">
+    Paste one prompt and let your coding agent wire Corsair Hub end to end.
   </Card>
-  <Card title="MCP adapters" icon="robot" href="/mcp-adapters/mcp-adapters">
-    Connect your agent framework and start prompting across every plugin.
+  <Card title="Hub overview" icon="cloud" href="/hub/overview">
+    The hosted relay for connect and approvals — and why it stores no credentials.
   </Card>
   <Card title="Browse plugins" icon="grid" href="/guides/plugins">
     Slack, Linear, Gmail, GitHub, HubSpot, Stripe, and hundreds more.

@@ -7,7 +7,8 @@ Corsair handles authentication for production-grade applications. Whether you ne
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
-import { slack, linear } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     multiTenancy: true,
