@@ -89,12 +89,47 @@ export function resolvePath(
 	});
 }
 
+const INPUT_QUERY_KEYS: Record<string, string> = {
+	page: 'Page',
+	limit: 'Limit',
+	search_term: 'SearchTerm',
+	from_date: 'FromDate',
+	to_date: 'ToDate',
+	customer_states: 'CustomerStates',
+	send_type: 'SendType',
+	mailing_list_id: 'MailingListId',
+	content_category_id: 'ContentCategoryId',
+	groupid: 'Groupid',
+	filter_type: 'FilterType',
+	is_include_not_sent: 'IsIncludeNotSent',
+	rows_affected: 'RowsAffected',
+	previous_row_count: 'PreviousRowCount',
+	event_type: 'EventType',
+	state_type: 'StateType',
+	include_deleted: 'IncludeDeleted',
+	include_not_sent: 'IncludeNotSent',
+	page_number: 'PageNumber',
+	page_size: 'PageSize',
+	fields_type: 'FieldsType',
+	created_from_date: 'CreatedFromDate',
+	created_to_date: 'CreatedToDate',
+	event_from_date: 'EventFromDate',
+	event_to_date: 'EventToDate',
+};
+
 function buildQuery(route: ActiveTrailRoute, input: ActiveTrailEndpointInput) {
 	const query: Record<string, unknown> = { ...(input.query ?? {}) };
+	const pathParams = new Set(route.pathParams ?? []);
 	for (const key of route.queryParams ?? []) {
 		const snake = camelToSnake(key);
 		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
 		if (value !== undefined) query[key] = value;
+	}
+	for (const [snake, apiKey] of Object.entries(INPUT_QUERY_KEYS)) {
+		if (pathParams.has(snake) || pathParams.has(apiKey)) continue;
+		if (query[apiKey] !== undefined) continue;
+		const value = input[snake] ?? input[apiKey];
+		if (value !== undefined) query[apiKey] = value;
 	}
 	return Object.keys(query).length > 0 ? query : undefined;
 }

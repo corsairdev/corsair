@@ -421,7 +421,7 @@ export const activeTrailRoutes = [
 		description:
 			'Tool to retrieve the full list of account groups with pagination and filtering. Use when you need to get all groups or search for groups by name. Default limit is 100 groups per page.',
 		pathParams: [],
-		queryParams: [],
+		queryParams: ['SearchTerm', 'Page', 'Limit'],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -829,7 +829,14 @@ export const activeTrailRoutes = [
 		description:
 			'Tool to retrieve account contacts filtered by status and date range. Use when you need to get a list of contacts filtered by customer status (active, unsubscribed, bounced, etc.) or by registration date. Default behavior: retrieves contacts modified within the last three months with a limit of 100 contacts per page.',
 		pathParams: [],
-		queryParams: [],
+		queryParams: [
+			'CustomerStates',
+			'SearchTerm',
+			'FromDate',
+			'ToDate',
+			'Page',
+			'Limit',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1029,11 +1036,18 @@ export const activeTrailRoutes = [
 		group: 'groups',
 		name: 'getGroupContentsById',
 		method: 'GET',
-		path: '/api/groups/{id}/contents',
+		path: '/api/groups/{id}/members',
 		description:
 			'Tool to retrieve all group members by group ID with pagination and filtering. Use when you need to get complete information about contacts in a specific group. Returns up to 100 contacts per page with optional filtering by status and date range.',
 		pathParams: ['group_id'],
-		queryParams: [],
+		queryParams: [
+			'CustomerStates',
+			'SearchTerm',
+			'FromDate',
+			'ToDate',
+			'Page',
+			'Limit',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1057,7 +1071,7 @@ export const activeTrailRoutes = [
 		description:
 			'Tool to retrieve landing pages from the ActiveTrail account with pagination support. Use when you need to get all landing pages or fetch paginated results.',
 		pathParams: [],
-		queryParams: [],
+		queryParams: ['Page', 'Limit'],
 		riskLevel: 'read' as const,
 	},
 	{

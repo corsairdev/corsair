@@ -292,4 +292,95 @@ describe('ActiveTrail endpoints', () => {
 		]);
 		expect(mockRequest.mock.calls[2][1].method).toBe('GET');
 	});
+
+	it('forwards pagination query params on list endpoints', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			groups: {
+				getAllGroups: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+				getGroupContentsById: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+			contacts: {
+				getContactList: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+			landingpage: {
+				getLandingPages: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.groups.getAllGroups(mockCtx, {
+			page: 2,
+			limit: 25,
+			search_term: 'vip',
+		});
+		await endpoints.contacts.getContactList(mockCtx, {
+			page: 1,
+			limit: 50,
+			customer_states: 'active',
+			from_date: '2026-01-01',
+			to_date: '2026-07-01',
+		});
+		await endpoints.groups.getGroupContentsById(mockCtx, {
+			group_id: 7,
+			page: 3,
+			limit: 10,
+		});
+		await endpoints.landingpage.getLandingPages(mockCtx, {
+			page: 1,
+			limit: 20,
+		});
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual([
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/groups',
+				query: expect.objectContaining({
+					Page: 2,
+					Limit: 25,
+					SearchTerm: 'vip',
+				}),
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/contacts',
+				query: expect.objectContaining({
+					Page: 1,
+					Limit: 50,
+					CustomerStates: 'active',
+					FromDate: '2026-01-01',
+					ToDate: '2026-07-01',
+				}),
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/groups/7/members',
+				query: expect.objectContaining({
+					Page: 3,
+					Limit: 10,
+				}),
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/landingpage',
+				query: expect.objectContaining({
+					Page: 1,
+					Limit: 20,
+				}),
+			}),
+		]);
+	});
 });
