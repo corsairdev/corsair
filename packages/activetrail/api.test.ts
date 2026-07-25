@@ -383,4 +383,28 @@ describe('ActiveTrail endpoints', () => {
 			}),
 		]);
 	});
+
+	it('deleteMailingList resolves path from required id', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			external: {
+				deleteMailingList: (
+					ctx: ActiveTrailContext,
+					input: { id: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.external.deleteMailingList(mockCtx, { id: 'ml-42' });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'DELETE',
+				url: '/api/external/mailinglist/ml-42',
+			}),
+		);
+	});
 });

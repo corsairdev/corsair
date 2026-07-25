@@ -282,7 +282,7 @@ export const activeTrailRoutes = [
 		path: '/api/external/mailinglist/{mailinglistId}',
 		description:
 			'Tool to permanently remove a mailing list from the ActiveTrail account by its unique ID. Use when you need to delete a mailing list that is no longer needed. This operation is destructive and cannot be undone. Returns success status and confirmation message.',
-		pathParams: ['mailinglist_id'],
+		pathParams: ['id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
@@ -588,7 +588,7 @@ export const activeTrailRoutes = [
 		path: '/api/campaignreports/{id}/domains',
 		description:
 			'Tool to retrieve a report by domain for a specific campaign. Use when you need to analyze campaign performance grouped by recipient email domains, including sends, opens, clicks, bounces, and engagement metrics per domain. Defaults to campaigns updated in the last 3 months.',
-		pathParams: ['id'],
+		pathParams: ['campaign_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -600,7 +600,7 @@ export const activeTrailRoutes = [
 		path: '/api/campaignreports/{id}/opens',
 		description:
 			"Tool to retrieve contacts who opened a specific campaign email. Use when you need to identify which recipients opened your campaign, track open rates, and analyze campaign engagement. Default search covers campaigns updated in the last 3 months; if the campaign wasn't sent during the specified date range, an empty list is returned. Supports pagination and filtering by group.",
-		pathParams: ['id'],
+		pathParams: ['campaign_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -696,7 +696,7 @@ export const activeTrailRoutes = [
 		path: '/api/campaigns/{id}',
 		description:
 			'Tool to retrieve complete campaign information including send settings, design, template, and A/B test configuration. Use when you need comprehensive details about a specific email campaign.',
-		pathParams: ['id'],
+		pathParams: ['campaign_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -991,7 +991,7 @@ export const activeTrailRoutes = [
 		path: '/api/contacts/{id}/Statistics/OperationMessage/{messageId}',
 		description:
 			'Tool to retrieve customer interaction statistics for a specific transactional message. Use when you need to see how a contact engaged with a transactional/operational message including delivery status, opens, clicks, and other interaction metrics.',
-		pathParams: ['contact_id', 'message_id'],
+		pathParams: ['contact_id', 'transactional_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -1553,7 +1553,7 @@ export const activeTrailRoutes = [
 		path: '/api/smscampaign/OperationalMessage/{id}',
 		description:
 			'Tool to retrieve detailed information about a specific transactional SMS message by its unique identifier. Use when you need to fetch SMS message content, delivery statistics, and metadata for operational SMS messages.',
-		pathParams: ['id'],
+		pathParams: ['transactional_sms_id'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -1697,7 +1697,7 @@ export const activeTrailRoutes = [
 		path: '/api/webhooks/{id}/parameters',
 		description:
 			'Tool to add a new parameter to an existing webhook in your ActiveTrail account. Use when you need to configure additional parameters for webhook events, such as authentication headers, custom query parameters, or body fields. Each parameter can have either a static value or dynamically pull from contact fields.',
-		pathParams: ['id'],
+		pathParams: ['webhook_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -1867,7 +1867,7 @@ export const activeTrailRoutes = [
 		path: '/api/external/contact/{externalId}',
 		description:
 			"Tool to update an existing contact's information by ID. Use when you need to modify contact details such as name, email, phone, address, or custom fields. Only the fields you include in the request will be updated; other fields remain unchanged.",
-		pathParams: ['external_id'],
+		pathParams: ['id'],
 		queryParams: ['externalName'],
 		riskLevel: 'write' as const,
 	},
@@ -1891,7 +1891,7 @@ export const activeTrailRoutes = [
 		path: '/api/commerce/Order/{orderId}',
 		description:
 			'Updates an existing order in the ActiveTrail commerce system. Use this action to modify order details including customer information (name, email, phone), shipping address, order status, pricing (amounts, tax, currency), or product items. You must provide the existing order_id - this action cannot create new orders. Common use cases: - Update order status (e.g., from "pending" to "shipped") - Modify customer contact information - Adjust pricing or add/remove items - Update shipping addresses - Change order metadata (dates, custom fields)',
-		pathParams: ['orderId'],
+		pathParams: ['order_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},

@@ -424,7 +424,6 @@ export type DeleteGroupByIdResponse = z.infer<
 // deleteMailingList
 const DeleteMailingListInputSchema = z.object({
 	id: z.string(),
-	mailinglist_id: z.union([z.string(), z.number()]).optional(),
 	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
@@ -2633,7 +2632,6 @@ const UpdateWebhookParameterInputSchema = z.object({
 	parameter_id: z.number().int(),
 	event_value_type: z.string().optional(),
 	event_parameter_type: z.string().optional(),
-	parameterid: z.union([z.string(), z.number()]).optional(),
 	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
