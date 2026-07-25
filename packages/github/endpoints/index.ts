@@ -6,6 +6,7 @@ import * as Issues from './issues';
 import * as PullRequests from './pull-requests';
 import * as Releases from './releases';
 import * as Repositories from './repositories';
+import * as Search from './search';
 import * as Users from './users';
 import * as Workflows from './workflows';
 
@@ -34,6 +35,7 @@ export const RepositoriesEndpoints = {
 	unstar: Repositories.unstar,
 	checkStarred: Repositories.checkStarred,
 	listStarred: Repositories.listStarred,
+	listStargazers: Repositories.listStargazers,
 };
 
 export const ReleasesEndpoints = {
@@ -85,6 +87,12 @@ export const UsersEndpoints = {
 	getAuthenticated: Users.getAuthenticated,
 	update: Users.update,
 	getHovercard: Users.getHovercard,
+};
+
+export const SearchEndpoints = {
+	issues: Search.issues,
+	repositories: Search.repositories,
+	users: Search.users,
 };
 
 export * from './types';

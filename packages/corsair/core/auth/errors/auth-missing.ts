@@ -1,7 +1,7 @@
 /**
  * Error thrown when a plugin endpoint is called but the required auth credentials
- * are missing. Corsair intercepts this error and, for OAuth auth types, returns a
- * connect link the agent can present to the user.
+ * are missing. Endpoint binding enriches the message with a connect link when hub
+ * or manual config is available, then rethrows this error for callers to handle.
  */
 export class AuthMissingError extends Error {
 	pluginId: string;

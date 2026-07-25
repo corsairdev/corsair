@@ -1,22 +1,48 @@
+import type { CorsairDatabase } from '../db/kysely/database';
 import type { CorsairInternalConfig } from './index';
+import type { CorsairPlugin } from './plugins';
 
 const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
 
-const inflightByInstance = new WeakMap<
+const inflightByDatabase = new WeakMap<
+	CorsairDatabase,
+	Map<string, Promise<void>>
+>();
+
+const inflightByConfig = new WeakMap<
 	CorsairInternalConfig,
 	Map<string, Promise<void>>
 >();
 
+function buildInflightKey(
+	tenantId: string,
+	plugins: readonly CorsairPlugin[],
+): string {
+	const pluginScope = plugins
+		.map((plugin) => plugin.id)
+		.sort()
+		.join('\0');
+	return `${tenantId}\0${pluginScope}`;
+}
+
 function getInflightMap(
 	internal: CorsairInternalConfig,
 ): Map<string, Promise<void>> {
-	let inflightByTenant = inflightByInstance.get(internal);
-	if (!inflightByTenant) {
-		inflightByTenant = new Map();
-		inflightByInstance.set(internal, inflightByTenant);
+	if (internal.database) {
+		let inflightByScope = inflightByDatabase.get(internal.database);
+		if (!inflightByScope) {
+			inflightByScope = new Map();
+			inflightByDatabase.set(internal.database, inflightByScope);
+		}
+		return inflightByScope;
 	}
 
-	return inflightByTenant;
+	let inflightByScope = inflightByConfig.get(internal);
+	if (!inflightByScope) {
+		inflightByScope = new Map();
+		inflightByConfig.set(internal, inflightByScope);
+	}
+	return inflightByScope;
 }
 
 function createSetupShim(internal: CorsairInternalConfig): object {
@@ -43,7 +69,7 @@ export async function ensureTenantProvisioned(
 
 	const normalizedTenantId = tenantId.trim() || 'default';
 	const inflightByTenant = getInflightMap(internal);
-	const inflightKey = normalizedTenantId;
+	const inflightKey = buildInflightKey(normalizedTenantId, internal.plugins);
 	const existing = inflightByTenant.get(inflightKey);
 	if (existing) {
 		await existing;

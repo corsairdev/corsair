@@ -521,6 +521,7 @@ export function buildCorsairClient<
 			plugin,
 			kek,
 			allPlugins: plugins,
+			multiTenancy: internalConfig?.multiTenancy,
 		});
 
 		if (Object.keys(boundTree).length > 0) {

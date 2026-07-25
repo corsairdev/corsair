@@ -55,7 +55,8 @@ export type BrowserDeliveryMode =
 	| 'permission.approve'
 	| 'permission.deny'
 	| 'auth.credentials'
-	| 'connections.sync';
+	| 'connections.sync'
+	| 'connect.create_link';
 
 /**
  * Decoded payload inside a browser delivery token (`?d=` query param).
@@ -105,6 +106,8 @@ export type BrowserDeliveryPayload = {
 	requestId?: string;
 	/** API key / bot token fields (`deliveryMode: auth.credentials`). */
 	credentials?: Record<string, string>;
+	/** Plugin ids for connect link creation (`deliveryMode: connect.create_link`). */
+	connectLinkPlugins?: string[];
 };
 
 /** Max age of a browser delivery token (60 seconds). */
