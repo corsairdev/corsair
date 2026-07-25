@@ -133,4 +133,97 @@ describe('ActiveTrail endpoints', () => {
 			]),
 		);
 	});
+
+	it('createCampaign posts to /api/campaigns without a template Id path', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			campaigns: {
+				createCampaign: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.campaigns.createCampaign(mockCtx, {
+			design: { html: '<p>hi</p>' },
+			details: { name: 'Launch' },
+			scheduling: { send_now: true },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/api/campaigns',
+				body: expect.objectContaining({
+					details: { name: 'Launch' },
+				}),
+			}),
+		);
+	});
+
+	it('uses distinct paths for operational message endpoints', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			external: {
+				sendOperationalMessage: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+				sendOperationalMessageEmail: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.external.sendOperationalMessage(mockCtx, {
+			design: { html: '<p>a</p>' },
+			details: { subject: 'ops' },
+		});
+		await endpoints.external.sendOperationalMessageEmail(mockCtx, {
+			design: { html: '<p>b</p>' },
+			details: { subject: 'email' },
+			email_package: [{ email: 'a@b.com', pairs: [] }],
+		});
+
+		const urls = mockRequest.mock.calls.map((call) => call[1].url);
+		expect(urls).toEqual([
+			'/api/external/operational/message',
+			'/api/OperationalMessage/Message',
+		]);
+	});
+
+	it('postTemplatesCampaign requires Id in the path', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			templates: {
+				postTemplatesCampaign: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.templates.postTemplatesCampaign(mockCtx, {
+			Id: 42,
+			template_id: 42,
+			campaign_details: { name: 'From template' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/api/templates/42/campaign',
+			}),
+		);
+	});
 });

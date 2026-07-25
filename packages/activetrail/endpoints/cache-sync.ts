@@ -73,6 +73,7 @@ export async function syncActiveTrailOperationCache(
 	const rule = GROUP_CACHE_RULES[route.group];
 	if (!rule) return;
 
+	// ctx.db is typed loosely on the plugin context; narrow to the entity cache client shape we use.
 	const db = ctx.db as
 		| Record<
 				string,

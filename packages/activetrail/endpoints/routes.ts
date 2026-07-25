@@ -66,13 +66,13 @@ export const activeTrailRoutes = [
 	},
 	{
 		key: 'createCampaign',
-		group: 'templates',
+		group: 'campaigns',
 		name: 'createCampaign',
 		method: 'POST',
-		path: '/api/templates/{Id}/campaign',
+		path: '/api/campaigns',
 		description:
-			'Tool to create a new email campaign in ActiveTrail. Use when you need to create and return a new campaign for specific groups. The campaign can be configured as an A/B split test, E-commerce campaign, or a regular campaign. Campaign will be created in draft status unless is_sent is set to true.',
-		pathParams: ['Id'],
+			'Create and return a new email campaign for specific groups. The campaign can be configured as an A/B split test, E-commerce campaign, or a regular campaign. Created in draft status unless is_sent is set to true.',
+		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -1756,7 +1756,7 @@ export const activeTrailRoutes = [
 		method: 'POST',
 		path: '/api/external/operational/message',
 		description:
-			"Tool to send operational email messages to individual recipients (limited to 500 messages per request). Use when you need to send transactional or automated emails with personalized content. Recipients will be created as contacts in your account if they don't already exist.",
+			"Create and send a new operational message via the external API (limited to 500 messages per request). Recipients will be created as contacts if they don't already exist.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1766,9 +1766,9 @@ export const activeTrailRoutes = [
 		group: 'external',
 		name: 'sendOperationalMessageEmail',
 		method: 'POST',
-		path: '/api/external/operational/message',
+		path: '/api/OperationalMessage/Message',
 		description:
-			'Tool to send transactional/operational email messages via ActiveTrail. Use when you need to send automated emails like order confirmations, password resets, or notifications. Supports dynamic text replacement via key-value pairs and can send to multiple recipients (max 500).',
+			'Send an email operational message to individual emails (limited to 500). Supports dynamic text replacement via email_package key-value pairs.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,

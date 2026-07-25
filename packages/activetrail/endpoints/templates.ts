@@ -10,11 +10,6 @@ function getRoute(name: string) {
 	return route;
 }
 
-const createCampaignRoute = getRoute('createCampaign');
-export const createCampaign: ActiveTrailEndpoint = async (ctx, input = {}) => {
-	return executeActiveTrailOperation(ctx, input, createCampaignRoute);
-};
-
 const deleteTemplateRoute = getRoute('deleteTemplate');
 export const deleteTemplate: ActiveTrailEndpoint = async (ctx, input = {}) => {
 	return executeActiveTrailOperation(ctx, input, deleteTemplateRoute);
@@ -105,7 +100,6 @@ export const updateTemplateContent: ActiveTrailEndpoint = async (
 };
 
 export const TemplatesEndpoints = {
-	createCampaign,
 	deleteTemplate,
 	deleteTemplatesTemplateCategory,
 	getTemplateContent,

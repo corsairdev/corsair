@@ -10,6 +10,11 @@ function getRoute(name: string) {
 	return route;
 }
 
+const createCampaignRoute = getRoute('createCampaign');
+export const createCampaign: ActiveTrailEndpoint = async (ctx, input = {}) => {
+	return executeActiveTrailOperation(ctx, input, createCampaignRoute);
+};
+
 const createCampaignForContactsRoute = getRoute('createCampaignForContacts');
 export const createCampaignForContacts: ActiveTrailEndpoint = async (
 	ctx,
@@ -141,6 +146,7 @@ export const updateCampaignTemplate: ActiveTrailEndpoint = async (
 };
 
 export const CampaignsEndpoints = {
+	createCampaign,
 	createCampaignForContacts,
 	deleteCampaign,
 	getCampaignDesign,

@@ -131,7 +131,7 @@ export type CreateANewGroupResponse = z.infer<
 	typeof CreateANewGroupResponseSchema
 >;
 
-// createCampaign
+// createCampaign — POST /api/campaigns (no path params)
 const CreateCampaignInputSchema = z.object({
 	carts: z.record(z.string(), z.unknown()).optional(),
 	pairs: z.array(z.unknown()).optional(),
@@ -142,7 +142,6 @@ const CreateCampaignInputSchema = z.object({
 	send_test: z.string().optional(),
 	scheduling: z.record(z.string(), z.unknown()),
 	a_b_settings: z.record(z.string(), z.unknown()).optional(),
-	Id: z.union([z.string(), z.number()]).optional(),
 	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
@@ -2144,11 +2143,11 @@ export type ListTransactionalSmsMessagesResponse = z.infer<
 	typeof ListTransactionalSmsMessagesResponseSchema
 >;
 
-// postTemplatesCampaign
+// postTemplatesCampaign — path requires template Id
 const PostTemplatesCampaignInputSchema = z.object({
 	template_id: z.number().int(),
 	campaign_details: z.record(z.string(), z.unknown()),
-	Id: z.union([z.string(), z.number()]).optional(),
+	Id: z.union([z.string(), z.number()]),
 	body: ActiveTrailOptionalBodySchema,
 	query: z.record(z.string(), z.unknown()).optional(),
 });
