@@ -30,7 +30,72 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 	'integration.credentials',
 	'connect.create_link',
 	'connections.sync',
+	// Workflow execution. Only handled when the app opts in via
+	// processCorsair({ allowWorkflowExecution: true }); off by default.
+	'run',
 ]);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Workflow run contract (`type: 'run'`)
+//
+// Hub orchestrates workflows but cannot run credentialed operations itself, so it
+// delivers a signed `run` envelope to the app's /api/corsair. The app executes the
+// workflow code (which touches the tenant's Corsair client) and returns the result.
+//
+// Durable replay: `memoizedSteps` carries the outputs of steps that already
+// completed on a previous attempt. The app replays those without re-executing and
+// only runs the failed step + everything after it.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type RunTriggerType = 'cron' | 'cadence' | 'webhook' | 'manual';
+
+/** Hub → app: a single workflow execution attempt. */
+export type RunTunnelPayload = {
+	runId: string;
+	workflowId: string;
+	versionId: string;
+	tenantId: string;
+	/**
+	 * Executable CommonJS module source. Hub transpiles the stored TypeScript
+	 * workflow version to CJS before delivery; it MUST assign `module.exports.main`
+	 * to `(corsair, payload, step) => Promise<void>`. Kept as JS so the app (the
+	 * `corsair` package) needs no transpiler dependency.
+	 */
+	code: string;
+	/** What fired the run; `payload` is the webhook body (or null for schedule/manual). */
+	trigger: { type: RunTriggerType; payload: unknown };
+	/** Completed steps from prior attempts, keyed by step name (memoization store). */
+	memoizedSteps?: Record<string, { output: unknown }>;
+	/** Replay attempt counter (0 on first execution). */
+	attempt?: number;
+};
+
+/** One step's outcome within an execution (only steps that actually ran this attempt). */
+export type RunStepResult = {
+	name: string;
+	/** Execution order across all step() calls in this run (stable across attempts). */
+	seq: number;
+	status: 'completed' | 'failed';
+	output?: unknown;
+	error?: string;
+};
+
+/**
+ * App → Hub: outcome of one execution attempt (returned in the tunnel ack body).
+ *
+ * `sleeping` is a durable pause: the workflow called `step.sleep(...)`, so the app
+ * unwound `main` and reported progress so far. Hub reschedules the run for
+ * `sleepUntil`; on the next attempt the sleep step is memoized (satisfied) and
+ * execution continues past it. This is what makes long, multi-day workflows
+ * survive process restarts.
+ */
+export type RunResultPayload = {
+	status: 'completed' | 'failed' | 'sleeping';
+	steps: RunStepResult[];
+	error?: { message: string; failedStep?: string };
+	/** ISO timestamp when a `sleeping` run should be re-invoked. */
+	sleepUntil?: string;
+};
 
 /**
  * JSON body of a server-side delivery POST from the hub.

@@ -1,3 +1,9 @@
+export type {
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
+} from './hub/contracts/tunnel';
 export {
 	applyPermissionDecision,
 	type BrowserDeliveryPayload,
@@ -20,3 +26,8 @@ export {
 	verifyBrowserDeliveryToken,
 	type WebhookTunnelPayload,
 } from './tunnel/index';
+export {
+	type ExecuteWorkflowRunInput,
+	executeWorkflowRun,
+	type WorkflowStep,
+} from './workflows/execute';

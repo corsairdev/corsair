@@ -34,6 +34,7 @@ export {
 	describeDeliveryNetworkError,
 	encodeConnectTokenForPath,
 	extractConnectLinkFromDeliveryAck,
+	extractRunFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatHubApprovalMessage,

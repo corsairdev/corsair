@@ -5,11 +5,12 @@ import {
 	isConnectionsSyncRetryableError,
 	processConnectionsSyncDelivery,
 } from '../hub/connections-sync-delivery';
-import type { TunnelEnvelope } from '../hub/contracts/tunnel';
-import {
-	INBOUND_TUNNEL_TYPES,
-	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
+import type {
+	RunResultPayload,
+	RunTunnelPayload,
+	TunnelEnvelope,
 } from '../hub/contracts/tunnel';
+import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
@@ -24,6 +25,7 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
+import { executeWorkflowRun } from '../workflows/execute';
 
 export {
 	resolveAccountFromWebhookLink,
@@ -53,7 +55,38 @@ export type TunnelAck = {
 		body?: unknown;
 		headers?: Record<string, string>;
 	};
+	/**
+	 * @deprecated Shipped in v0.1.102. The connect URL now also lives in
+	 * `webhookResponse.body`; this alias is kept populated so direct
+	 * `processCorsair` consumers that read `ack.connectLink` don't break.
+	 */
+	connectLink?: {
+		connectUrl: string;
+		expiresAt?: string;
+	};
 };
+
+/**
+ * Builds the ack for a `connect.create_link` tunnel. Carries the connect URL in
+ * both `webhookResponse.body` (current) and the deprecated `connectLink` alias.
+ */
+export function connectLinkAck(result: {
+	connectUrl: string;
+	expiresAt?: string;
+}): TunnelAck {
+	return {
+		status: 'ok',
+		connectLink: { connectUrl: result.connectUrl, expiresAt: result.expiresAt },
+		webhookResponse: {
+			status: 200,
+			body: {
+				status: 'ok',
+				connectUrl: result.connectUrl,
+				expiresAt: result.expiresAt,
+			} satisfies ServerDeliveryAckBody,
+		},
+	};
+}
 
 export type WebhookTunnelPayload = {
 	headers: Record<string, string>;
@@ -146,17 +179,7 @@ async function handleConnectCreateLinkTunnel(
 ): Promise<TunnelAck> {
 	try {
 		const result = await processConnectLinkDelivery(corsair, payload);
-		return {
-			status: 'ok',
-			webhookResponse: {
-				status: 200,
-				body: {
-					status: 'ok',
-					connectUrl: result.connectUrl,
-					expiresAt: result.expiresAt,
-				} satisfies ServerDeliveryAckBody,
-			},
-		};
+		return connectLinkAck(result);
 	} catch (error) {
 		return {
 			status: 'failed',
@@ -427,11 +450,69 @@ async function handleIntegrationCredentialsTunnel(
 	}
 }
 
+/**
+ * Scopes the root Corsair instance to the run's tenant. Multi-tenant apps expose
+ * plugin namespaces only via `withTenant(...)`; the root wrapper does not, so a
+ * workflow calling `corsair.github.api.*` needs the tenant-scoped client. For
+ * single-tenant apps there is no `withTenant`, so the instance is used as-is.
+ */
+function scopeCorsairToTenant(corsair: unknown, tenantId: string): unknown {
+	const candidate = corsair as {
+		withTenant?: (tenantId: string) => unknown;
+	} | null;
+	if (tenantId && typeof candidate?.withTenant === 'function') {
+		return candidate.withTenant(tenantId);
+	}
+	return corsair;
+}
+
+async function handleRunTunnel(
+	corsair: unknown,
+	payload: RunTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		// Scope to the tenant BEFORE handing the client to workflow `main`, so the
+		// generated code's `corsair.<plugin>.api.*` calls resolve the right tenant's
+		// credentials. Dropping this silently breaks every multi-tenant run.
+		const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
+		const result: RunResultPayload = await executeWorkflowRun({
+			corsair: tenantScopedCorsair,
+			code: payload.code,
+			payload: payload.trigger?.payload ?? null,
+			memoizedSteps: payload.memoizedSteps,
+		});
+		// The envelope was processed successfully regardless of whether the workflow
+		// itself succeeded — Hub reads the run status/steps from `run` in the ack
+		// body. Nested under `run` so the ack's own `status: 'ok'` (envelope
+		// success) doesn't collide with the run's `status: 'completed'|'failed'`.
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: { status: 'ok', run: result } satisfies ServerDeliveryAckBody,
+			},
+		};
+	} catch (error) {
+		// Only reached for infrastructure-level failures (e.g. code failed to load).
+		return {
+			status: 'failed',
+			retryable: true,
+			error: error instanceof Error ? error.message : 'Workflow run failed',
+		};
+	}
+}
+
 export type ProcessCorsairOptions = {
 	/** HMAC signing secret shared with the tunnel relay. Required unless allowUnsignedTunnel is true. */
 	signingSecret?: string;
 	/** Local development only. Skips signature verification when signingSecret is omitted. */
 	allowUnsignedTunnel?: boolean;
+	/**
+	 * Opt-in to executing Hub-delivered workflow code (`type: 'run'`). Off by
+	 * default because it dynamically evaluates code in-process. See the warning in
+	 * workflows/execute.ts — sandbox before enabling in production.
+	 */
+	allowWorkflowExecution?: boolean;
 };
 
 export async function processCorsair(
@@ -569,22 +650,21 @@ export async function processCorsair(
 			}
 			return handleConnectionsSyncTunnel(corsair, signingSecret);
 		}
+		case 'run':
+			if (!options.allowWorkflowExecution) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error:
+						'Workflow execution is not enabled (set allowWorkflowExecution: true)',
+				};
+			}
+			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
 		default:
-			return unsupportedTunnelType(String(envelope.type));
+			return {
+				status: 'failed',
+				retryable: false,
+				error: `Unsupported tunnel type: ${String(envelope.type)}`,
+			};
 	}
-}
-
-function unsupportedTunnelType(type: string): TunnelAck {
-	if (!INBOUND_TUNNEL_TYPES.has(type as TunnelEnvelope['type'])) {
-		return {
-			status: 'failed',
-			retryable: false,
-			error: `Unsupported tunnel type: ${type}`,
-		};
-	}
-	return {
-		status: 'failed',
-		retryable: false,
-		error: `Unsupported tunnel type: ${type}`,
-	};
 }

@@ -38,6 +38,7 @@ export {
 	deliverSignedEnvelope,
 	describeDeliveryNetworkError,
 	extractConnectLinkFromDeliveryAck,
+	extractRunFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
