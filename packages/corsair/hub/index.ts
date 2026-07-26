@@ -137,6 +137,7 @@ export {
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
 	extractConnectLinkFromDeliveryAck,
+	extractRunFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
@@ -171,6 +172,17 @@ export {
 	encryptSyncManifest,
 	parseSyncDeliveryBody,
 } from './sync-payload';
+export {
+	type AgentMessageRole,
+	type AgentReply,
+	type CreateThreadResult,
+	createThread,
+	listThreadMessages,
+	listThreads,
+	postThreadMessage,
+	type ThreadMessage,
+	type ThreadSummary,
+} from './threads';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
@@ -186,6 +198,10 @@ export type {
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
 	HubProjectConnection,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
 	TunnelEnvelope,
 	TunnelType,
 } from './types';
