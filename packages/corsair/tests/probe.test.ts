@@ -79,4 +79,37 @@ describe('runReadonlyProbe', () => {
 		});
 		expect(result.status).toBe('error');
 	});
+
+	it('keeps readonly on a continuation that resumes after the timeout', async () => {
+		// Adversarial: a read resolves AFTER the wall-clock timeout, then the script
+		// tries a write. The timeout settles the delivery, but the detached
+		// continuation must STILL be under runReadonly — AsyncLocalStorage propagates
+		// the scope to it — so the write throws. No escape past the readonly guard.
+		let sendAttempted = false;
+		let wrote = false;
+		const corsair = {
+			slow: {
+				read: () =>
+					new Promise((resolve) => setTimeout(() => resolve('late'), 40)),
+			},
+			slack: {
+				send: async () => {
+					sendAttempted = true; // the post-timeout continuation actually reached here
+					assertReadonlyAllowed('slack.messages.post', 'write');
+					wrote = true;
+					return 'sent';
+				},
+			},
+		};
+		const result = await runReadonlyProbe({
+			corsair,
+			code: 'await corsair.slow.read(); return await corsair.slack.send();',
+			timeoutMs: 15,
+		});
+		expect(result.status).toBe('error'); // timed out first
+		// Let the detached continuation resume past the now-resolved slow read.
+		await new Promise((resolve) => setTimeout(resolve, 80));
+		expect(sendAttempted).toBe(true); // proves the continuation DID resume post-timeout
+		expect(wrote).toBe(false); // and the write was still blocked by readonly
+	});
 });
