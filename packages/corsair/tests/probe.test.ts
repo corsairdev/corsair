@@ -1,4 +1,7 @@
-import { isReadonlyScopeActive } from '../core/permissions';
+import {
+	assertReadonlyAllowed,
+	isReadonlyScopeActive,
+} from '../core/permissions';
 import { runReadonlyProbe } from '../workflows/probe';
 
 describe('runReadonlyProbe', () => {
@@ -43,5 +46,24 @@ describe('runReadonlyProbe', () => {
 			code: 'throw new Error("boom");',
 		});
 		expect(result).toEqual({ status: 'error', error: 'boom' });
+	});
+
+	it('returns an error when the script attempts a write', async () => {
+		// A write endpoint calls assertReadonlyAllowed(path, 'write'), which throws
+		// ReadonlyForbiddenError under the active scope — the exact guard bind.ts
+		// applies to every real endpoint. Proves a probe can look, never change.
+		const corsair = {
+			slack: {
+				send: async () => {
+					assertReadonlyAllowed('slack.messages.post', 'write');
+					return 'sent';
+				},
+			},
+		};
+		const result = await runReadonlyProbe({
+			corsair,
+			code: 'return await corsair.slack.send();',
+		});
+		expect(result.status).toBe('error');
 	});
 });

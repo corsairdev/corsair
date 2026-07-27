@@ -508,25 +508,35 @@ async function handleProbeTunnel(
 	corsair: unknown,
 	payload: ProbeTunnelPayload,
 ): Promise<TunnelAck> {
-	// Same tenant scoping as a run: the read-only script resolves the right
-	// tenant's credentials. `runReadonlyProbe` runs it under runReadonly, so a
-	// write/destructive call throws and comes back as `{ status: 'error' }`.
-	const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
-	const probe = await runReadonlyProbe({
-		corsair: tenantScopedCorsair,
-		code: payload.code,
-		timeoutMs: payload.timeoutMs,
-	});
-	// Envelope succeeded regardless of the script outcome — Hub reads `probe` from
-	// the ack. Nested so the ack's own `status: 'ok'` doesn't collide with the
-	// probe's `status: 'ok' | 'error'`.
-	return {
-		status: 'ok',
-		webhookResponse: {
-			status: 200,
-			body: { status: 'ok', probe } satisfies ServerDeliveryAckBody,
-		},
-	};
+	try {
+		// Same tenant scoping as a run: the read-only script resolves the right
+		// tenant's credentials. `runReadonlyProbe` runs it under runReadonly, so a
+		// write/destructive call throws and comes back as `{ status: 'error' }`.
+		const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
+		const probe = await runReadonlyProbe({
+			corsair: tenantScopedCorsair,
+			code: payload.code,
+			timeoutMs: payload.timeoutMs,
+		});
+		// Envelope succeeded regardless of the script outcome — Hub reads `probe` from
+		// the ack. Nested so the ack's own `status: 'ok'` doesn't collide with the
+		// probe's `status: 'ok' | 'error'`.
+		return {
+			status: 'ok',
+			webhookResponse: {
+				status: 200,
+				body: { status: 'ok', probe } satisfies ServerDeliveryAckBody,
+			},
+		};
+	} catch (error) {
+		// runReadonlyProbe never throws; this only fires if tenant scoping fails,
+		// which is deterministic — not worth retrying.
+		return {
+			status: 'failed',
+			retryable: false,
+			error: error instanceof Error ? error.message : 'Probe failed',
+		};
+	}
 }
 
 export type ProcessCorsairOptions = {

@@ -67,7 +67,7 @@ function isSleepInterrupt(value: unknown): value is SleepInterrupt {
 }
 
 /** Robust message extraction, including cross-realm errors (not `instanceof Error`). */
-function toMessage(err: unknown): string {
+export function toMessage(err: unknown): string {
 	if (err instanceof Error) return err.message;
 	if (err !== null && typeof err === 'object' && 'message' in err) {
 		const message = (err as { message?: unknown }).message;

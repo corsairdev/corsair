@@ -1,6 +1,7 @@
 import * as vm from 'node:vm';
 import { runReadonly } from '../core/permissions';
-import { harden } from './execute';
+import type { ProbeResultPayload } from '../hub/contracts/tunnel';
+import { harden, toMessage } from './execute';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Read-only probe runner (app side)
@@ -30,19 +31,8 @@ export type ReadonlyProbeInput = {
 	timeoutMs?: number;
 };
 
-export type ReadonlyProbeResult =
-	| { status: 'ok'; value: unknown }
-	| { status: 'error'; error: string };
-
-/** Message extraction that survives cross-realm errors (not `instanceof Error`). */
-function toMessage(err: unknown): string {
-	if (err instanceof Error) return err.message;
-	if (err !== null && typeof err === 'object' && 'message' in err) {
-		const message = (err as { message?: unknown }).message;
-		if (typeof message === 'string') return message;
-	}
-	return String(err);
-}
+/** The runner's result IS the wire contract — one source of truth (no drift). */
+export type ReadonlyProbeResult = ProbeResultPayload;
 
 /**
  * Runs `input.code` read-only against `input.corsair` in a locked-down vm realm
