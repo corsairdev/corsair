@@ -42,8 +42,8 @@ export interface WorkflowStep {
 
 const FAILED_STEP_MARKER = '__corsairFailedStep';
 
-// ponytail: one 30s cap covers both guards below; the deploy targets short,
-// gated workflows. Promote to a per-run config knob if long workflows land.
+// One 30s cap covers both guards below; the deploy targets short, gated
+// workflows. Promote to a per-run config knob if long workflows land.
 const WORKFLOW_TIMEOUT_MS = 30_000;
 
 /**

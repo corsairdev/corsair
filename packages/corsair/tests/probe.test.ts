@@ -66,4 +66,17 @@ describe('runReadonlyProbe', () => {
 		});
 		expect(result.status).toBe('error');
 	});
+
+	it('times out an async probe that never settles', async () => {
+		// The vm timeout only bounds synchronous work; this proves the wall-clock
+		// race bounds an async read that never resolves, instead of hanging the
+		// delivery handler forever.
+		const corsair = { slow: { read: () => new Promise(() => {}) } };
+		const result = await runReadonlyProbe({
+			corsair,
+			code: 'return await corsair.slow.read();',
+			timeoutMs: 50,
+		});
+		expect(result.status).toBe('error');
+	});
 });

@@ -698,9 +698,9 @@ export async function processCorsair(
 			}
 			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
 		case 'probe':
-			// ponytail: gated by the same flag as `run` — a probe still executes
-			// Hub-authored code (read-only). Split into its own flag if a tenant
-			// ever needs authoring probes without enabling full execution.
+			// Same gate as `run`: a probe still executes Hub-authored code (read-only).
+			// Could be split into its own flag if a tenant ever needs authoring probes
+			// without enabling full execution.
 			if (!options.allowWorkflowExecution) {
 				return {
 					status: 'failed',

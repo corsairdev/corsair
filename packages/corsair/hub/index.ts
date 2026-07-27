@@ -199,6 +199,8 @@ export type {
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
 	HubProjectConnection,
+	ProbeResultPayload,
+	ProbeTunnelPayload,
 	RunResultPayload,
 	RunStepResult,
 	RunTriggerType,

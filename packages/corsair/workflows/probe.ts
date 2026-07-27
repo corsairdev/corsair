@@ -51,18 +51,36 @@ export async function runReadonlyProbe(
 	// The only capability in scope is the hardened client, exposed as `corsair`.
 	sandbox.corsair = harden(input.corsair, undefined);
 
+	const timeoutMs = input.timeoutMs ?? PROBE_TIMEOUT_MS;
+
 	try {
 		// Run inside the readonly scope: vm.runInContext executes the script
 		// synchronously up to its first `await` (the first client call), so the
 		// scope must already be active when the promise is created — later
 		// continuations inherit it. assertReadonlyAllowed runs host-side per call.
-		const value = await runReadonly(
-			() =>
-				vm.runInContext(`(async () => {\n${input.code}\n})()`, context, {
-					filename: 'corsair:probe',
-					timeout: input.timeoutMs ?? PROBE_TIMEOUT_MS,
-				}) as Promise<unknown>,
-		);
+		const value = await runReadonly(() => {
+			const script = vm.runInContext(
+				`(async () => {\n${input.code}\n})()`,
+				context,
+				{ filename: 'corsair:probe', timeout: timeoutMs },
+			) as Promise<unknown>;
+			// The vm `timeout` only bounds synchronous execution; once the script
+			// yields at its first `await` it no longer applies. Bound the async
+			// remainder with a wall-clock race so a slow or never-settling read can't
+			// hang the delivery handler. A detached, timed-out script can't write
+			// (readonly), so it is harmless; clearTimeout frees a finished probe's timer.
+			void script.catch(() => {});
+			let timer: ReturnType<typeof setTimeout>;
+			const wallClock = new Promise<never>((_resolve, reject) => {
+				timer = setTimeout(
+					() => reject(new Error(`Probe exceeded ${timeoutMs}ms time limit`)),
+					timeoutMs,
+				);
+			});
+			return Promise.race([script, wallClock]).finally(() =>
+				clearTimeout(timer),
+			);
+		});
 
 		// Flatten realm-native / proxied values to plain host JSON for the wire.
 		return { status: 'ok', value: toSerializable(value) };
