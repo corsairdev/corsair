@@ -64,11 +64,14 @@ export async function runReadonlyProbe(
 				context,
 				{ filename: 'corsair:probe', timeout: timeoutMs },
 			) as Promise<unknown>;
-			// The vm `timeout` only bounds synchronous execution; once the script
-			// yields at its first `await` it no longer applies. Bound the async
-			// remainder with a wall-clock race so a slow or never-settling read can't
-			// hang the delivery handler. A detached, timed-out script can't write
-			// (readonly), so it is harmless; clearTimeout frees a finished probe's timer.
+			// The vm `timeout` only bounds synchronous execution up to the first
+			// `await`. Bound the async remainder with a wall-clock race so a slow or
+			// never-settling *async* read can't hang the handler. Note the ceiling: a
+			// post-await synchronous CPU loop can still block this timer on the same
+			// event loop — an in-thread limit shared with the run executor; fully
+			// bounding it needs worker/process isolation (tracked separately). A
+			// detached, timed-out script can't write (readonly); clearTimeout frees a
+			// finished probe's timer.
 			void script.catch(() => {});
 			let timer: ReturnType<typeof setTimeout>;
 			const wallClock = new Promise<never>((_resolve, reject) => {
