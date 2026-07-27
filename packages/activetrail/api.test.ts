@@ -435,6 +435,38 @@ describe('ActiveTrail endpoints', () => {
 		);
 	});
 
+	it('getGroupsEvents puts group id in the path and forwards filters', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			groups: {
+				getGroupsEvents: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.groups.getGroupsEvents(mockCtx, {
+			id: 99,
+			event_type: 'opens',
+			event_from_date: '2026-01-01',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/groups/99/events',
+				query: expect.objectContaining({
+					EventType: 'opens',
+					EventFromDate: '2026-01-01',
+				}),
+			}),
+		);
+	});
+
 	it('classifies read routes with correct method and risk', async () => {
 		const byName = Object.fromEntries(
 			activeTrailRoutes.map((route) => [route.name, route]),

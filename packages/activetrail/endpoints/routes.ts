@@ -1055,11 +1055,17 @@ export const activeTrailRoutes = [
 		group: 'groups',
 		name: 'getGroupsEvents',
 		method: 'GET',
-		path: '/api/groups/events',
+		path: '/api/groups/{id}/events',
 		description:
 			'Tool to retrieve all events for a specific group with optional filtering by event type, event date, and subscriber creation date. Use when you need to analyze group engagement metrics like opens, clicks, and unsubscribes. Default date range is 3 months back if not specified.',
-		pathParams: [],
-		queryParams: [],
+		pathParams: ['id'],
+		queryParams: [
+			'EventType',
+			'CreatedFromDate',
+			'CreatedToDate',
+			'EventFromDate',
+			'EventToDate',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
