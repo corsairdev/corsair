@@ -45,6 +45,7 @@ export const AssetSchema = z.object({
 	tags: z.array(z.string()),
 	created_at: z.number(),
 	updated_at: z.number(),
+	owner: OwnerSchema.optional(),
 	thumbnail: ThumbnailSchema.optional(),
 });
 
@@ -60,6 +61,18 @@ export const FolderSchema = z.object({
 
 export type Folder = z.infer<typeof FolderSchema>;
 
+export const BrandTemplateSchema = z.object({
+	id: z.string(),
+	title: z.string().optional(),
+	view_url: z.string().optional(),
+	create_url: z.string().optional(),
+	thumbnail: ThumbnailSchema.optional(),
+	created_at: z.number().optional(),
+	updated_at: z.number().optional(),
+});
+
+export type BrandTemplate = z.infer<typeof BrandTemplateSchema>;
+
 const DesignPageSchema = z.object({
 	index: z.number(),
 	dimensions: z
@@ -71,18 +84,18 @@ const DesignPageSchema = z.object({
 	thumbnail: ThumbnailSchema.optional(),
 });
 
-const PresetDesignTypeSchema = z.object({
+export const PresetDesignTypeSchema = z.object({
 	type: z.literal('preset'),
 	name: z.enum(['doc', 'email', 'presentation', 'whiteboard']),
 });
 
-const CustomDesignTypeSchema = z.object({
+export const CustomDesignTypeSchema = z.object({
 	type: z.literal('custom'),
 	width: z.number(),
 	height: z.number(),
 });
 
-const DesignTypeInputSchema = z.discriminatedUnion('type', [
+export const DesignTypeInputSchema = z.discriminatedUnion('type', [
 	PresetDesignTypeSchema,
 	CustomDesignTypeSchema,
 ]);
@@ -108,9 +121,13 @@ const ExportFormatSchema = z.discriminatedUnion('type', [
 	}),
 	z.object({
 		type: z.literal('gif'),
+		width: z.number().optional(),
+		height: z.number().optional(),
+		export_quality: z.enum(['regular', 'pro']).optional(),
 	}),
 	z.object({
 		type: z.literal('pptx'),
+		pages: z.array(z.number()).optional(),
 	}),
 	z.object({
 		type: z.literal('mp4'),
@@ -126,6 +143,18 @@ const ExportFormatSchema = z.discriminatedUnion('type', [
 				'vertical_4k',
 			])
 			.optional(),
+	}),
+	z.object({
+		type: z.literal('html_bundle'),
+		pages: z.array(z.number()).optional(),
+	}),
+	z.object({
+		type: z.literal('html_standalone'),
+		pages: z.array(z.number()).optional(),
+	}),
+	z.object({
+		type: z.literal('csv'),
+		pages: z.array(z.number()).optional(),
 	}),
 ]);
 
@@ -161,7 +190,22 @@ const FolderItemSchema = z.discriminatedUnion('type', [
 		type: z.literal('image'),
 		image: AssetSchema,
 	}),
+	z.object({
+		type: z.literal('brand_template'),
+		brand_template: BrandTemplateSchema,
+	}),
 ]);
+
+// Shared job primitives — Canva async jobs all follow this `in_progress` ->
+// `success` | `failed` lifecycle (asset uploads, imports, resizes, autofills).
+export const JobStatusSchema = z.enum(['in_progress', 'success', 'failed']);
+export type JobStatus = z.infer<typeof JobStatusSchema>;
+
+export const JobErrorSchema = z.object({
+	code: z.string(),
+	message: z.string(),
+});
+export type JobError = z.infer<typeof JobErrorSchema>;
 
 // ============================================================================
 // Users
@@ -181,6 +225,12 @@ const UsersGetProfileResponseSchema = z.object({
 			display_name: z.string().optional(),
 		})
 		.passthrough(),
+});
+
+const UsersGetCapabilitiesInputSchema = z.object({});
+
+const UsersGetCapabilitiesResponseSchema = z.object({
+	capabilities: z.array(z.string()),
 });
 
 // ============================================================================
@@ -235,6 +285,17 @@ const DesignsGetPagesInputSchema = z.object({
 
 const DesignsGetPagesResponseSchema = z.object({
 	items: z.array(DesignPageSchema),
+});
+
+const DesignsGetExportFormatsInputSchema = z.object({
+	designId: z.string(),
+});
+
+const DesignsGetExportFormatsResponseSchema = z.object({
+	export_formats: z.record(
+		z.string(),
+		z.object({ supports_pages: z.boolean().optional() }).passthrough(),
+	),
 });
 
 // ============================================================================
@@ -305,7 +366,9 @@ const FoldersListItemsInputSchema = z.object({
 	folderId: z.string(),
 	continuation: z.string().optional(),
 	limit: z.number().optional(),
-	item_types: z.array(z.enum(['design', 'folder', 'image'])).optional(),
+	item_types: z
+		.array(z.enum(['design', 'folder', 'image', 'brand_template']))
+		.optional(),
 	sort_by: z
 		.enum([
 			'created_ascending',
@@ -316,6 +379,7 @@ const FoldersListItemsInputSchema = z.object({
 			'title_descending',
 		])
 		.optional(),
+	pin_status: z.enum(['any', 'pinned']).optional(),
 });
 
 const FoldersListItemsResponseSchema = z.object({
@@ -352,6 +416,364 @@ const ExportsGetResponseSchema = z.object({
 });
 
 // ============================================================================
+// Brand Templates
+// ============================================================================
+
+export const BrandTemplateDatasetFieldSchema = z
+	.object({
+		type: z.enum(['text', 'image', 'chart']),
+	})
+	.passthrough();
+
+export const BrandTemplateDatasetSchema = z.record(
+	z.string(),
+	BrandTemplateDatasetFieldSchema,
+);
+
+export type BrandTemplateDataset = z.infer<typeof BrandTemplateDatasetSchema>;
+
+const BrandTemplatesListInputSchema = z.object({
+	query: z.string().optional(),
+	continuation: z.string().optional(),
+	limit: z.number().optional(),
+	ownership: z.enum(['any', 'owned', 'shared']).optional(),
+	sort_by: z
+		.enum([
+			'relevance',
+			'modified_descending',
+			'modified_ascending',
+			'title_descending',
+			'title_ascending',
+		])
+		.optional(),
+	dataset: z.enum(['any', 'non_empty']).optional(),
+});
+
+const BrandTemplatesListResponseSchema = z.object({
+	items: z.array(BrandTemplateSchema),
+	continuation: z.string().optional(),
+});
+
+const BrandTemplatesGetInputSchema = z.object({
+	brandTemplateId: z.string(),
+});
+
+const BrandTemplatesGetResponseSchema = z.object({
+	brand_template: BrandTemplateSchema,
+});
+
+const BrandTemplatesGetDatasetInputSchema = z.object({
+	brandTemplateId: z.string(),
+});
+
+const BrandTemplatesGetDatasetResponseSchema = z.object({
+	dataset: BrandTemplateDatasetSchema,
+});
+
+// ============================================================================
+// Asset Uploads
+// ============================================================================
+
+export const AssetUploadJobSchema = z.object({
+	id: z.string(),
+	status: JobStatusSchema,
+	asset: AssetSchema.optional(),
+	error: JobErrorSchema.optional(),
+});
+
+export type AssetUploadJob = z.infer<typeof AssetUploadJobSchema>;
+
+const AssetUploadsCreateInputSchema = z.object({
+	name: z.string(),
+	contentBase64: z.string(),
+});
+
+const AssetUploadsCreateResponseSchema = z.object({
+	job: AssetUploadJobSchema,
+});
+
+const AssetUploadsGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const AssetUploadsGetResponseSchema = z.object({
+	job: AssetUploadJobSchema,
+});
+
+const AssetUploadsCreateFromUrlInputSchema = z.object({
+	name: z.string(),
+	url: z.string(),
+});
+
+const AssetUploadsCreateFromUrlResponseSchema = z.object({
+	job: AssetUploadJobSchema,
+});
+
+const AssetUploadsGetFromUrlInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const AssetUploadsGetFromUrlResponseSchema = z.object({
+	job: AssetUploadJobSchema,
+});
+
+// ============================================================================
+// Imports
+// ============================================================================
+
+const ImportDesignSummarySchema = z.object({
+	id: z.string(),
+	title: z.string().optional(),
+	url: z.string().optional(),
+	thumbnail: ThumbnailSchema.optional(),
+});
+
+export type ImportDesignSummary = z.infer<typeof ImportDesignSummarySchema>;
+
+export const ImportJobSchema = z.object({
+	id: z.string(),
+	status: JobStatusSchema,
+	result: z
+		.object({
+			designs: z.array(ImportDesignSummarySchema),
+		})
+		.optional(),
+	error: JobErrorSchema.optional(),
+});
+
+export type ImportJob = z.infer<typeof ImportJobSchema>;
+
+const ImportsCreateInputSchema = z.object({
+	title: z.string(),
+	contentBase64: z.string(),
+	mime_type: z.string().optional(),
+});
+
+const ImportsCreateResponseSchema = z.object({
+	job: ImportJobSchema,
+});
+
+const ImportsGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const ImportsGetResponseSchema = z.object({
+	job: ImportJobSchema,
+});
+
+const ImportsCreateFromUrlInputSchema = z.object({
+	title: z.string(),
+	url: z.string(),
+});
+
+const ImportsCreateFromUrlResponseSchema = z.object({
+	job: ImportJobSchema,
+});
+
+const ImportsGetFromUrlInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const ImportsGetFromUrlResponseSchema = z.object({
+	job: ImportJobSchema,
+});
+
+// ============================================================================
+// Resizes
+// ============================================================================
+
+export const ResizeJobSchema = z.object({
+	id: z.string(),
+	status: JobStatusSchema,
+	result: z
+		.object({
+			design: DesignSchema,
+		})
+		.optional(),
+	error: JobErrorSchema.optional(),
+});
+
+export type ResizeJob = z.infer<typeof ResizeJobSchema>;
+
+const ResizesCreateInputSchema = z.object({
+	design_id: z.string(),
+	design_type: DesignTypeInputSchema,
+});
+
+const ResizesCreateResponseSchema = z.object({
+	job: ResizeJobSchema,
+});
+
+const ResizesGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const ResizesGetResponseSchema = z.object({
+	job: ResizeJobSchema,
+});
+
+// ============================================================================
+// Autofills
+// ============================================================================
+
+export const AutofillDataFieldSchema = z.union([
+	z.object({ type: z.literal('text'), text: z.string() }),
+	z.object({ type: z.literal('image'), asset_id: z.string() }),
+	z
+		.object({
+			type: z.literal('chart'),
+			chart_data: z.record(z.string(), z.unknown()),
+		})
+		.passthrough(),
+]);
+
+export type AutofillDataField = z.infer<typeof AutofillDataFieldSchema>;
+
+export const AutofillDataSchema = z.record(z.string(), AutofillDataFieldSchema);
+export type AutofillData = z.infer<typeof AutofillDataSchema>;
+
+const AutofillResultDesignSchema = z.object({
+	id: z.string(),
+	title: z.string().optional(),
+	url: z.string().optional(),
+	thumbnail: ThumbnailSchema.optional(),
+	current_page_index: z.number().optional(),
+});
+
+export const AutofillJobSchema = z.object({
+	id: z.string(),
+	status: JobStatusSchema,
+	result: z
+		.object({
+			type: z.string().optional(),
+			design: AutofillResultDesignSchema.optional(),
+		})
+		.optional(),
+	error: JobErrorSchema.optional(),
+});
+
+export type AutofillJob = z.infer<typeof AutofillJobSchema>;
+
+const AutofillsCreateInputSchema = z.object({
+	brand_template_id: z.string(),
+	data: AutofillDataSchema,
+	title: z.string().optional(),
+});
+
+const AutofillsCreateResponseSchema = z.object({
+	job: AutofillJobSchema,
+});
+
+const AutofillsGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const AutofillsGetResponseSchema = z.object({
+	job: AutofillJobSchema,
+});
+
+// ============================================================================
+// Comments
+// ============================================================================
+
+const CommentUserSchema = z
+	.object({
+		id: z.string(),
+		display_name: z.string().optional(),
+	})
+	.passthrough();
+
+const CommentContentSchema = z.object({
+	plaintext: z.string().optional(),
+	markdown: z.string().optional(),
+});
+
+export const CommentThreadSchema = z
+	.object({
+		id: z.string(),
+		design_id: z.string().optional(),
+		thread_type: z
+			.object({
+				type: z.string().optional(),
+				content: CommentContentSchema.optional(),
+			})
+			.passthrough()
+			.optional(),
+		author: CommentUserSchema.optional(),
+		assignee: CommentUserSchema.optional(),
+		created_at: z.number().optional(),
+		updated_at: z.number().optional(),
+	})
+	.passthrough();
+
+export type CommentThread = z.infer<typeof CommentThreadSchema>;
+
+export const CommentReplySchema = z
+	.object({
+		id: z.string(),
+		design_id: z.string().optional(),
+		thread_id: z.string().optional(),
+		author: CommentUserSchema.optional(),
+		content: CommentContentSchema.optional(),
+		created_at: z.number().optional(),
+		updated_at: z.number().optional(),
+	})
+	.passthrough();
+
+export type CommentReply = z.infer<typeof CommentReplySchema>;
+
+const CommentsCreateThreadInputSchema = z.object({
+	designId: z.string(),
+	message_plaintext: z.string(),
+	assignee_id: z.string().optional(),
+});
+
+const CommentsCreateThreadResponseSchema = z.object({
+	thread: CommentThreadSchema,
+});
+
+const CommentsGetThreadInputSchema = z.object({
+	designId: z.string(),
+	threadId: z.string(),
+});
+
+const CommentsGetThreadResponseSchema = z.object({
+	thread: CommentThreadSchema,
+});
+
+const CommentsCreateReplyInputSchema = z.object({
+	designId: z.string(),
+	threadId: z.string(),
+	message_plaintext: z.string(),
+});
+
+const CommentsCreateReplyResponseSchema = z.object({
+	reply: CommentReplySchema,
+});
+
+const CommentsListRepliesInputSchema = z.object({
+	designId: z.string(),
+	threadId: z.string(),
+	continuation: z.string().optional(),
+	limit: z.number().optional(),
+});
+
+const CommentsListRepliesResponseSchema = z.object({
+	items: z.array(CommentReplySchema),
+	continuation: z.string().optional(),
+});
+
+const CommentsGetReplyInputSchema = z.object({
+	designId: z.string(),
+	threadId: z.string(),
+	replyId: z.string(),
+});
+
+const CommentsGetReplyResponseSchema = z.object({
+	reply: CommentReplySchema,
+});
+
+// ============================================================================
 // Type Exports
 // ============================================================================
 
@@ -360,6 +782,12 @@ export type UsersGetMeResponse = z.infer<typeof UsersGetMeResponseSchema>;
 export type UsersGetProfileInput = z.infer<typeof UsersGetProfileInputSchema>;
 export type UsersGetProfileResponse = z.infer<
 	typeof UsersGetProfileResponseSchema
+>;
+export type UsersGetCapabilitiesInput = z.infer<
+	typeof UsersGetCapabilitiesInputSchema
+>;
+export type UsersGetCapabilitiesResponse = z.infer<
+	typeof UsersGetCapabilitiesResponseSchema
 >;
 
 export type DesignsListInput = z.infer<typeof DesignsListInputSchema>;
@@ -371,6 +799,12 @@ export type DesignsCreateResponse = z.infer<typeof DesignsCreateResponseSchema>;
 export type DesignsGetPagesInput = z.infer<typeof DesignsGetPagesInputSchema>;
 export type DesignsGetPagesResponse = z.infer<
 	typeof DesignsGetPagesResponseSchema
+>;
+export type DesignsGetExportFormatsInput = z.infer<
+	typeof DesignsGetExportFormatsInputSchema
+>;
+export type DesignsGetExportFormatsResponse = z.infer<
+	typeof DesignsGetExportFormatsResponseSchema
 >;
 
 export type AssetsGetInput = z.infer<typeof AssetsGetInputSchema>;
@@ -402,13 +836,115 @@ export type ExportsCreateResponse = z.infer<typeof ExportsCreateResponseSchema>;
 export type ExportsGetInput = z.infer<typeof ExportsGetInputSchema>;
 export type ExportsGetResponse = z.infer<typeof ExportsGetResponseSchema>;
 
+export type BrandTemplatesListInput = z.infer<
+	typeof BrandTemplatesListInputSchema
+>;
+export type BrandTemplatesListResponse = z.infer<
+	typeof BrandTemplatesListResponseSchema
+>;
+export type BrandTemplatesGetInput = z.infer<
+	typeof BrandTemplatesGetInputSchema
+>;
+export type BrandTemplatesGetResponse = z.infer<
+	typeof BrandTemplatesGetResponseSchema
+>;
+export type BrandTemplatesGetDatasetInput = z.infer<
+	typeof BrandTemplatesGetDatasetInputSchema
+>;
+export type BrandTemplatesGetDatasetResponse = z.infer<
+	typeof BrandTemplatesGetDatasetResponseSchema
+>;
+
+export type AssetUploadsCreateInput = z.infer<
+	typeof AssetUploadsCreateInputSchema
+>;
+export type AssetUploadsCreateResponse = z.infer<
+	typeof AssetUploadsCreateResponseSchema
+>;
+export type AssetUploadsGetInput = z.infer<typeof AssetUploadsGetInputSchema>;
+export type AssetUploadsGetResponse = z.infer<
+	typeof AssetUploadsGetResponseSchema
+>;
+export type AssetUploadsCreateFromUrlInput = z.infer<
+	typeof AssetUploadsCreateFromUrlInputSchema
+>;
+export type AssetUploadsCreateFromUrlResponse = z.infer<
+	typeof AssetUploadsCreateFromUrlResponseSchema
+>;
+export type AssetUploadsGetFromUrlInput = z.infer<
+	typeof AssetUploadsGetFromUrlInputSchema
+>;
+export type AssetUploadsGetFromUrlResponse = z.infer<
+	typeof AssetUploadsGetFromUrlResponseSchema
+>;
+
+export type ImportsCreateInput = z.infer<typeof ImportsCreateInputSchema>;
+export type ImportsCreateResponse = z.infer<typeof ImportsCreateResponseSchema>;
+export type ImportsGetInput = z.infer<typeof ImportsGetInputSchema>;
+export type ImportsGetResponse = z.infer<typeof ImportsGetResponseSchema>;
+export type ImportsCreateFromUrlInput = z.infer<
+	typeof ImportsCreateFromUrlInputSchema
+>;
+export type ImportsCreateFromUrlResponse = z.infer<
+	typeof ImportsCreateFromUrlResponseSchema
+>;
+export type ImportsGetFromUrlInput = z.infer<
+	typeof ImportsGetFromUrlInputSchema
+>;
+export type ImportsGetFromUrlResponse = z.infer<
+	typeof ImportsGetFromUrlResponseSchema
+>;
+
+export type ResizesCreateInput = z.infer<typeof ResizesCreateInputSchema>;
+export type ResizesCreateResponse = z.infer<typeof ResizesCreateResponseSchema>;
+export type ResizesGetInput = z.infer<typeof ResizesGetInputSchema>;
+export type ResizesGetResponse = z.infer<typeof ResizesGetResponseSchema>;
+
+export type AutofillsCreateInput = z.infer<typeof AutofillsCreateInputSchema>;
+export type AutofillsCreateResponse = z.infer<
+	typeof AutofillsCreateResponseSchema
+>;
+export type AutofillsGetInput = z.infer<typeof AutofillsGetInputSchema>;
+export type AutofillsGetResponse = z.infer<typeof AutofillsGetResponseSchema>;
+
+export type CommentsCreateThreadInput = z.infer<
+	typeof CommentsCreateThreadInputSchema
+>;
+export type CommentsCreateThreadResponse = z.infer<
+	typeof CommentsCreateThreadResponseSchema
+>;
+export type CommentsGetThreadInput = z.infer<
+	typeof CommentsGetThreadInputSchema
+>;
+export type CommentsGetThreadResponse = z.infer<
+	typeof CommentsGetThreadResponseSchema
+>;
+export type CommentsCreateReplyInput = z.infer<
+	typeof CommentsCreateReplyInputSchema
+>;
+export type CommentsCreateReplyResponse = z.infer<
+	typeof CommentsCreateReplyResponseSchema
+>;
+export type CommentsListRepliesInput = z.infer<
+	typeof CommentsListRepliesInputSchema
+>;
+export type CommentsListRepliesResponse = z.infer<
+	typeof CommentsListRepliesResponseSchema
+>;
+export type CommentsGetReplyInput = z.infer<typeof CommentsGetReplyInputSchema>;
+export type CommentsGetReplyResponse = z.infer<
+	typeof CommentsGetReplyResponseSchema
+>;
+
 export type CanvaEndpointInputs = {
 	usersGetMe: UsersGetMeInput;
 	usersGetProfile: UsersGetProfileInput;
+	usersGetCapabilities: UsersGetCapabilitiesInput;
 	designsList: DesignsListInput;
 	designsGet: DesignsGetInput;
 	designsCreate: DesignsCreateInput;
 	designsGetPages: DesignsGetPagesInput;
+	designsGetExportFormats: DesignsGetExportFormatsInput;
 	assetsGet: AssetsGetInput;
 	assetsUpdate: AssetsUpdateInput;
 	assetsDelete: AssetsDeleteInput;
@@ -420,15 +956,37 @@ export type CanvaEndpointInputs = {
 	foldersMoveItem: FoldersMoveItemInput;
 	exportsCreate: ExportsCreateInput;
 	exportsGet: ExportsGetInput;
+	brandTemplatesList: BrandTemplatesListInput;
+	brandTemplatesGet: BrandTemplatesGetInput;
+	brandTemplatesGetDataset: BrandTemplatesGetDatasetInput;
+	assetUploadsCreate: AssetUploadsCreateInput;
+	assetUploadsGet: AssetUploadsGetInput;
+	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlInput;
+	assetUploadsGetFromUrl: AssetUploadsGetFromUrlInput;
+	importsCreate: ImportsCreateInput;
+	importsGet: ImportsGetInput;
+	importsCreateFromUrl: ImportsCreateFromUrlInput;
+	importsGetFromUrl: ImportsGetFromUrlInput;
+	resizesCreate: ResizesCreateInput;
+	resizesGet: ResizesGetInput;
+	autofillsCreate: AutofillsCreateInput;
+	autofillsGet: AutofillsGetInput;
+	commentsCreateThread: CommentsCreateThreadInput;
+	commentsGetThread: CommentsGetThreadInput;
+	commentsCreateReply: CommentsCreateReplyInput;
+	commentsListReplies: CommentsListRepliesInput;
+	commentsGetReply: CommentsGetReplyInput;
 };
 
 export type CanvaEndpointOutputs = {
 	usersGetMe: UsersGetMeResponse;
 	usersGetProfile: UsersGetProfileResponse;
+	usersGetCapabilities: UsersGetCapabilitiesResponse;
 	designsList: DesignsListResponse;
 	designsGet: DesignsGetResponse;
 	designsCreate: DesignsCreateResponse;
 	designsGetPages: DesignsGetPagesResponse;
+	designsGetExportFormats: DesignsGetExportFormatsResponse;
 	assetsGet: AssetsGetResponse;
 	assetsUpdate: AssetsUpdateResponse;
 	assetsDelete: AssetsDeleteResponse;
@@ -440,15 +998,37 @@ export type CanvaEndpointOutputs = {
 	foldersMoveItem: FoldersMoveItemResponse;
 	exportsCreate: ExportsCreateResponse;
 	exportsGet: ExportsGetResponse;
+	brandTemplatesList: BrandTemplatesListResponse;
+	brandTemplatesGet: BrandTemplatesGetResponse;
+	brandTemplatesGetDataset: BrandTemplatesGetDatasetResponse;
+	assetUploadsCreate: AssetUploadsCreateResponse;
+	assetUploadsGet: AssetUploadsGetResponse;
+	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlResponse;
+	assetUploadsGetFromUrl: AssetUploadsGetFromUrlResponse;
+	importsCreate: ImportsCreateResponse;
+	importsGet: ImportsGetResponse;
+	importsCreateFromUrl: ImportsCreateFromUrlResponse;
+	importsGetFromUrl: ImportsGetFromUrlResponse;
+	resizesCreate: ResizesCreateResponse;
+	resizesGet: ResizesGetResponse;
+	autofillsCreate: AutofillsCreateResponse;
+	autofillsGet: AutofillsGetResponse;
+	commentsCreateThread: CommentsCreateThreadResponse;
+	commentsGetThread: CommentsGetThreadResponse;
+	commentsCreateReply: CommentsCreateReplyResponse;
+	commentsListReplies: CommentsListRepliesResponse;
+	commentsGetReply: CommentsGetReplyResponse;
 };
 
 export const CanvaEndpointInputSchemas = {
 	usersGetMe: UsersGetMeInputSchema,
 	usersGetProfile: UsersGetProfileInputSchema,
+	usersGetCapabilities: UsersGetCapabilitiesInputSchema,
 	designsList: DesignsListInputSchema,
 	designsGet: DesignsGetInputSchema,
 	designsCreate: DesignsCreateInputSchema,
 	designsGetPages: DesignsGetPagesInputSchema,
+	designsGetExportFormats: DesignsGetExportFormatsInputSchema,
 	assetsGet: AssetsGetInputSchema,
 	assetsUpdate: AssetsUpdateInputSchema,
 	assetsDelete: AssetsDeleteInputSchema,
@@ -460,15 +1040,37 @@ export const CanvaEndpointInputSchemas = {
 	foldersMoveItem: FoldersMoveItemInputSchema,
 	exportsCreate: ExportsCreateInputSchema,
 	exportsGet: ExportsGetInputSchema,
+	brandTemplatesList: BrandTemplatesListInputSchema,
+	brandTemplatesGet: BrandTemplatesGetInputSchema,
+	brandTemplatesGetDataset: BrandTemplatesGetDatasetInputSchema,
+	assetUploadsCreate: AssetUploadsCreateInputSchema,
+	assetUploadsGet: AssetUploadsGetInputSchema,
+	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlInputSchema,
+	assetUploadsGetFromUrl: AssetUploadsGetFromUrlInputSchema,
+	importsCreate: ImportsCreateInputSchema,
+	importsGet: ImportsGetInputSchema,
+	importsCreateFromUrl: ImportsCreateFromUrlInputSchema,
+	importsGetFromUrl: ImportsGetFromUrlInputSchema,
+	resizesCreate: ResizesCreateInputSchema,
+	resizesGet: ResizesGetInputSchema,
+	autofillsCreate: AutofillsCreateInputSchema,
+	autofillsGet: AutofillsGetInputSchema,
+	commentsCreateThread: CommentsCreateThreadInputSchema,
+	commentsGetThread: CommentsGetThreadInputSchema,
+	commentsCreateReply: CommentsCreateReplyInputSchema,
+	commentsListReplies: CommentsListRepliesInputSchema,
+	commentsGetReply: CommentsGetReplyInputSchema,
 } as const;
 
 export const CanvaEndpointOutputSchemas = {
 	usersGetMe: UsersGetMeResponseSchema,
 	usersGetProfile: UsersGetProfileResponseSchema,
+	usersGetCapabilities: UsersGetCapabilitiesResponseSchema,
 	designsList: DesignsListResponseSchema,
 	designsGet: DesignsGetResponseSchema,
 	designsCreate: DesignsCreateResponseSchema,
 	designsGetPages: DesignsGetPagesResponseSchema,
+	designsGetExportFormats: DesignsGetExportFormatsResponseSchema,
 	assetsGet: AssetsGetResponseSchema,
 	assetsUpdate: AssetsUpdateResponseSchema,
 	assetsDelete: AssetsDeleteResponseSchema,
@@ -480,4 +1082,24 @@ export const CanvaEndpointOutputSchemas = {
 	foldersMoveItem: FoldersMoveItemResponseSchema,
 	exportsCreate: ExportsCreateResponseSchema,
 	exportsGet: ExportsGetResponseSchema,
+	brandTemplatesList: BrandTemplatesListResponseSchema,
+	brandTemplatesGet: BrandTemplatesGetResponseSchema,
+	brandTemplatesGetDataset: BrandTemplatesGetDatasetResponseSchema,
+	assetUploadsCreate: AssetUploadsCreateResponseSchema,
+	assetUploadsGet: AssetUploadsGetResponseSchema,
+	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlResponseSchema,
+	assetUploadsGetFromUrl: AssetUploadsGetFromUrlResponseSchema,
+	importsCreate: ImportsCreateResponseSchema,
+	importsGet: ImportsGetResponseSchema,
+	importsCreateFromUrl: ImportsCreateFromUrlResponseSchema,
+	importsGetFromUrl: ImportsGetFromUrlResponseSchema,
+	resizesCreate: ResizesCreateResponseSchema,
+	resizesGet: ResizesGetResponseSchema,
+	autofillsCreate: AutofillsCreateResponseSchema,
+	autofillsGet: AutofillsGetResponseSchema,
+	commentsCreateThread: CommentsCreateThreadResponseSchema,
+	commentsGetThread: CommentsGetThreadResponseSchema,
+	commentsCreateReply: CommentsCreateReplyResponseSchema,
+	commentsListReplies: CommentsListRepliesResponseSchema,
+	commentsGetReply: CommentsGetReplyResponseSchema,
 } as const;

@@ -14,7 +14,19 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Assets, Designs, Exports, Folders, Users } from './endpoints';
+import {
+	Assets,
+	AssetUploads,
+	Autofills,
+	BrandTemplates,
+	Comments,
+	Designs,
+	Exports,
+	Folders,
+	Imports,
+	Resizes,
+	Users,
+} from './endpoints';
 import type {
 	CanvaEndpointInputs,
 	CanvaEndpointOutputs,
@@ -60,10 +72,12 @@ type CanvaEndpoint<K extends keyof CanvaEndpointOutputs> = CorsairEndpoint<
 export type CanvaEndpoints = {
 	usersGetMe: CanvaEndpoint<'usersGetMe'>;
 	usersGetProfile: CanvaEndpoint<'usersGetProfile'>;
+	usersGetCapabilities: CanvaEndpoint<'usersGetCapabilities'>;
 	designsList: CanvaEndpoint<'designsList'>;
 	designsGet: CanvaEndpoint<'designsGet'>;
 	designsCreate: CanvaEndpoint<'designsCreate'>;
 	designsGetPages: CanvaEndpoint<'designsGetPages'>;
+	designsGetExportFormats: CanvaEndpoint<'designsGetExportFormats'>;
 	assetsGet: CanvaEndpoint<'assetsGet'>;
 	assetsUpdate: CanvaEndpoint<'assetsUpdate'>;
 	assetsDelete: CanvaEndpoint<'assetsDelete'>;
@@ -75,6 +89,26 @@ export type CanvaEndpoints = {
 	foldersMoveItem: CanvaEndpoint<'foldersMoveItem'>;
 	exportsCreate: CanvaEndpoint<'exportsCreate'>;
 	exportsGet: CanvaEndpoint<'exportsGet'>;
+	brandTemplatesList: CanvaEndpoint<'brandTemplatesList'>;
+	brandTemplatesGet: CanvaEndpoint<'brandTemplatesGet'>;
+	brandTemplatesGetDataset: CanvaEndpoint<'brandTemplatesGetDataset'>;
+	assetUploadsCreate: CanvaEndpoint<'assetUploadsCreate'>;
+	assetUploadsGet: CanvaEndpoint<'assetUploadsGet'>;
+	assetUploadsCreateFromUrl: CanvaEndpoint<'assetUploadsCreateFromUrl'>;
+	assetUploadsGetFromUrl: CanvaEndpoint<'assetUploadsGetFromUrl'>;
+	importsCreate: CanvaEndpoint<'importsCreate'>;
+	importsGet: CanvaEndpoint<'importsGet'>;
+	importsCreateFromUrl: CanvaEndpoint<'importsCreateFromUrl'>;
+	importsGetFromUrl: CanvaEndpoint<'importsGetFromUrl'>;
+	resizesCreate: CanvaEndpoint<'resizesCreate'>;
+	resizesGet: CanvaEndpoint<'resizesGet'>;
+	autofillsCreate: CanvaEndpoint<'autofillsCreate'>;
+	autofillsGet: CanvaEndpoint<'autofillsGet'>;
+	commentsCreateThread: CanvaEndpoint<'commentsCreateThread'>;
+	commentsGetThread: CanvaEndpoint<'commentsGetThread'>;
+	commentsCreateReply: CanvaEndpoint<'commentsCreateReply'>;
+	commentsListReplies: CanvaEndpoint<'commentsListReplies'>;
+	commentsGetReply: CanvaEndpoint<'commentsGetReply'>;
 };
 
 export type CanvaWebhooks = Record<string, never>;
@@ -85,12 +119,14 @@ const canvaEndpointsNested = {
 	users: {
 		getMe: Users.getMe,
 		getProfile: Users.getProfile,
+		getCapabilities: Users.getCapabilities,
 	},
 	designs: {
 		list: Designs.list,
 		get: Designs.get,
 		create: Designs.create,
 		getPages: Designs.getPages,
+		getExportFormats: Designs.getExportFormats,
 	},
 	assets: {
 		get: Assets.get,
@@ -109,6 +145,38 @@ const canvaEndpointsNested = {
 		create: Exports.create,
 		get: Exports.get,
 	},
+	brandTemplates: {
+		list: BrandTemplates.list,
+		get: BrandTemplates.get,
+		getDataset: BrandTemplates.getDataset,
+	},
+	assetUploads: {
+		create: AssetUploads.create,
+		get: AssetUploads.get,
+		createFromUrl: AssetUploads.createFromUrl,
+		getFromUrl: AssetUploads.getFromUrl,
+	},
+	imports: {
+		create: Imports.create,
+		get: Imports.get,
+		createFromUrl: Imports.createFromUrl,
+		getFromUrl: Imports.getFromUrl,
+	},
+	resizes: {
+		create: Resizes.create,
+		get: Resizes.get,
+	},
+	autofills: {
+		create: Autofills.create,
+		get: Autofills.get,
+	},
+	comments: {
+		createThread: Comments.createThread,
+		getThread: Comments.getThread,
+		createReply: Comments.createReply,
+		listReplies: Comments.listReplies,
+		getReply: Comments.getReply,
+	},
 } as const;
 
 const canvaWebhooksNested = {} as const;
@@ -121,6 +189,10 @@ export const canvaEndpointSchemas = {
 	'users.getProfile': {
 		input: CanvaEndpointInputSchemas.usersGetProfile,
 		output: CanvaEndpointOutputSchemas.usersGetProfile,
+	},
+	'users.getCapabilities': {
+		input: CanvaEndpointInputSchemas.usersGetCapabilities,
+		output: CanvaEndpointOutputSchemas.usersGetCapabilities,
 	},
 	'designs.list': {
 		input: CanvaEndpointInputSchemas.designsList,
@@ -137,6 +209,10 @@ export const canvaEndpointSchemas = {
 	'designs.getPages': {
 		input: CanvaEndpointInputSchemas.designsGetPages,
 		output: CanvaEndpointOutputSchemas.designsGetPages,
+	},
+	'designs.getExportFormats': {
+		input: CanvaEndpointInputSchemas.designsGetExportFormats,
+		output: CanvaEndpointOutputSchemas.designsGetExportFormats,
 	},
 	'assets.get': {
 		input: CanvaEndpointInputSchemas.assetsGet,
@@ -182,6 +258,86 @@ export const canvaEndpointSchemas = {
 		input: CanvaEndpointInputSchemas.exportsGet,
 		output: CanvaEndpointOutputSchemas.exportsGet,
 	},
+	'brandTemplates.list': {
+		input: CanvaEndpointInputSchemas.brandTemplatesList,
+		output: CanvaEndpointOutputSchemas.brandTemplatesList,
+	},
+	'brandTemplates.get': {
+		input: CanvaEndpointInputSchemas.brandTemplatesGet,
+		output: CanvaEndpointOutputSchemas.brandTemplatesGet,
+	},
+	'brandTemplates.getDataset': {
+		input: CanvaEndpointInputSchemas.brandTemplatesGetDataset,
+		output: CanvaEndpointOutputSchemas.brandTemplatesGetDataset,
+	},
+	'assetUploads.create': {
+		input: CanvaEndpointInputSchemas.assetUploadsCreate,
+		output: CanvaEndpointOutputSchemas.assetUploadsCreate,
+	},
+	'assetUploads.get': {
+		input: CanvaEndpointInputSchemas.assetUploadsGet,
+		output: CanvaEndpointOutputSchemas.assetUploadsGet,
+	},
+	'assetUploads.createFromUrl': {
+		input: CanvaEndpointInputSchemas.assetUploadsCreateFromUrl,
+		output: CanvaEndpointOutputSchemas.assetUploadsCreateFromUrl,
+	},
+	'assetUploads.getFromUrl': {
+		input: CanvaEndpointInputSchemas.assetUploadsGetFromUrl,
+		output: CanvaEndpointOutputSchemas.assetUploadsGetFromUrl,
+	},
+	'imports.create': {
+		input: CanvaEndpointInputSchemas.importsCreate,
+		output: CanvaEndpointOutputSchemas.importsCreate,
+	},
+	'imports.get': {
+		input: CanvaEndpointInputSchemas.importsGet,
+		output: CanvaEndpointOutputSchemas.importsGet,
+	},
+	'imports.createFromUrl': {
+		input: CanvaEndpointInputSchemas.importsCreateFromUrl,
+		output: CanvaEndpointOutputSchemas.importsCreateFromUrl,
+	},
+	'imports.getFromUrl': {
+		input: CanvaEndpointInputSchemas.importsGetFromUrl,
+		output: CanvaEndpointOutputSchemas.importsGetFromUrl,
+	},
+	'resizes.create': {
+		input: CanvaEndpointInputSchemas.resizesCreate,
+		output: CanvaEndpointOutputSchemas.resizesCreate,
+	},
+	'resizes.get': {
+		input: CanvaEndpointInputSchemas.resizesGet,
+		output: CanvaEndpointOutputSchemas.resizesGet,
+	},
+	'autofills.create': {
+		input: CanvaEndpointInputSchemas.autofillsCreate,
+		output: CanvaEndpointOutputSchemas.autofillsCreate,
+	},
+	'autofills.get': {
+		input: CanvaEndpointInputSchemas.autofillsGet,
+		output: CanvaEndpointOutputSchemas.autofillsGet,
+	},
+	'comments.createThread': {
+		input: CanvaEndpointInputSchemas.commentsCreateThread,
+		output: CanvaEndpointOutputSchemas.commentsCreateThread,
+	},
+	'comments.getThread': {
+		input: CanvaEndpointInputSchemas.commentsGetThread,
+		output: CanvaEndpointOutputSchemas.commentsGetThread,
+	},
+	'comments.createReply': {
+		input: CanvaEndpointInputSchemas.commentsCreateReply,
+		output: CanvaEndpointOutputSchemas.commentsCreateReply,
+	},
+	'comments.listReplies': {
+		input: CanvaEndpointInputSchemas.commentsListReplies,
+		output: CanvaEndpointOutputSchemas.commentsListReplies,
+	},
+	'comments.getReply': {
+		input: CanvaEndpointInputSchemas.commentsGetReply,
+		output: CanvaEndpointOutputSchemas.commentsGetReply,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof canvaEndpointsNested>;
 
 const canvaWebhookSchemas = {} as const satisfies RequiredPluginWebhookSchemas<
@@ -199,6 +355,10 @@ const canvaEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get the authenticated user profile',
 	},
+	'users.getCapabilities': {
+		riskLevel: 'read',
+		description: "Get the authenticated user's capabilities",
+	},
 	'designs.list': {
 		riskLevel: 'read',
 		description: 'List designs in the user projects',
@@ -214,6 +374,10 @@ const canvaEndpointMeta = {
 	'designs.getPages': {
 		riskLevel: 'read',
 		description: 'Get pages for a design',
+	},
+	'designs.getExportFormats': {
+		riskLevel: 'read',
+		description: 'Get the export formats available for a design',
 	},
 	'assets.get': {
 		riskLevel: 'read',
@@ -258,6 +422,86 @@ const canvaEndpointMeta = {
 	'exports.get': {
 		riskLevel: 'read',
 		description: 'Get the status of an export job',
+	},
+	'brandTemplates.list': {
+		riskLevel: 'read',
+		description: "List the user's brand templates",
+	},
+	'brandTemplates.get': {
+		riskLevel: 'read',
+		description: 'Get metadata for a brand template',
+	},
+	'brandTemplates.getDataset': {
+		riskLevel: 'read',
+		description: 'Get the autofill dataset definition for a brand template',
+	},
+	'assetUploads.create': {
+		riskLevel: 'write',
+		description: 'Start a job to upload an asset from binary content',
+	},
+	'assetUploads.get': {
+		riskLevel: 'read',
+		description: 'Get the status of an asset upload job',
+	},
+	'assetUploads.createFromUrl': {
+		riskLevel: 'write',
+		description: 'Start a job to upload an asset from a URL',
+	},
+	'assetUploads.getFromUrl': {
+		riskLevel: 'read',
+		description: 'Get the status of a URL asset upload job',
+	},
+	'imports.create': {
+		riskLevel: 'write',
+		description: 'Start a job to import a design from binary content',
+	},
+	'imports.get': {
+		riskLevel: 'read',
+		description: 'Get the status of a design import job',
+	},
+	'imports.createFromUrl': {
+		riskLevel: 'write',
+		description: 'Start a job to import a design from a URL',
+	},
+	'imports.getFromUrl': {
+		riskLevel: 'read',
+		description: 'Get the status of a URL design import job',
+	},
+	'resizes.create': {
+		riskLevel: 'write',
+		description: 'Start a job to resize a design',
+	},
+	'resizes.get': {
+		riskLevel: 'read',
+		description: 'Get the status of a design resize job',
+	},
+	'autofills.create': {
+		riskLevel: 'write',
+		description: 'Start a job to autofill a brand template with data',
+	},
+	'autofills.get': {
+		riskLevel: 'read',
+		description: 'Get the status of a design autofill job',
+	},
+	'comments.createThread': {
+		riskLevel: 'write',
+		description: 'Create a new comment thread on a design',
+	},
+	'comments.getThread': {
+		riskLevel: 'read',
+		description: 'Get a comment thread on a design',
+	},
+	'comments.createReply': {
+		riskLevel: 'write',
+		description: 'Reply to a comment thread on a design',
+	},
+	'comments.listReplies': {
+		riskLevel: 'read',
+		description: 'List replies to a comment thread on a design',
+	},
+	'comments.getReply': {
+		riskLevel: 'read',
+		description: 'Get a reply to a comment thread on a design',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof canvaEndpointsNested>;
 
@@ -314,6 +558,10 @@ export function canva<const T extends CanvaPluginOptions>(
 				'folder:read',
 				'folder:write',
 				'profile:read',
+				'brandtemplate:meta:read',
+				'brandtemplate:content:read',
+				'comment:read',
+				'comment:write',
 			],
 		},
 		pluginWebhookMatcher: () => false,
@@ -351,9 +599,24 @@ export type {
 	AssetsDeleteResponse,
 	AssetsGetResponse,
 	AssetsUpdateResponse,
+	AssetUploadsCreateFromUrlResponse,
+	AssetUploadsCreateResponse,
+	AssetUploadsGetFromUrlResponse,
+	AssetUploadsGetResponse,
+	AutofillsCreateResponse,
+	AutofillsGetResponse,
+	BrandTemplatesGetDatasetResponse,
+	BrandTemplatesGetResponse,
+	BrandTemplatesListResponse,
 	CanvaEndpointInputs,
 	CanvaEndpointOutputs,
+	CommentsCreateReplyResponse,
+	CommentsCreateThreadResponse,
+	CommentsGetReplyResponse,
+	CommentsGetThreadResponse,
+	CommentsListRepliesResponse,
 	DesignsCreateResponse,
+	DesignsGetExportFormatsResponse,
 	DesignsGetPagesResponse,
 	DesignsGetResponse,
 	DesignsListResponse,
@@ -365,6 +628,13 @@ export type {
 	FoldersListItemsResponse,
 	FoldersMoveItemResponse,
 	FoldersUpdateResponse,
+	ImportsCreateFromUrlResponse,
+	ImportsCreateResponse,
+	ImportsGetFromUrlResponse,
+	ImportsGetResponse,
+	ResizesCreateResponse,
+	ResizesGetResponse,
+	UsersGetCapabilitiesResponse,
 	UsersGetMeResponse,
 	UsersGetProfileResponse,
 } from './endpoints/types';

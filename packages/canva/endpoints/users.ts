@@ -35,3 +35,20 @@ export const getProfile: CanvaEndpoints['usersGetProfile'] = async (
 	);
 	return result;
 };
+
+export const getCapabilities: CanvaEndpoints['usersGetCapabilities'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeCanvaRequest<
+		CanvaEndpointOutputs['usersGetCapabilities']
+	>('v1/users/me/capabilities', ctx.key, { method: 'GET' });
+
+	await logEventFromContext(
+		ctx,
+		'canva.users.getCapabilities',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};

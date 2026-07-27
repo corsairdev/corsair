@@ -1,7 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import type { CanvaEndpointOutputs } from './types';
+import type { CanvaEndpointOutputs, Design } from './types';
+
+function toDesignEntity(design: Design) {
+	return {
+		id: design.id,
+		title: design.title,
+		owner_user_id: design.owner?.user_id,
+		owner_team_id: design.owner?.team_id,
+		created_at: design.created_at ? new Date(design.created_at * 1000) : null,
+		updated_at: design.updated_at ? new Date(design.updated_at * 1000) : null,
+		page_count: design.page_count,
+		edit_url: design.urls?.edit_url,
+		view_url: design.urls?.view_url,
+	};
+}
 
 export const list: CanvaEndpoints['designsList'] = async (ctx, input) => {
 	const { query, continuation, ownership, sort_by, limit } = input;
@@ -20,6 +34,19 @@ export const list: CanvaEndpoints['designsList'] = async (ctx, input) => {
 		},
 	);
 
+	if (result.items.length > 0 && ctx.db.designs) {
+		try {
+			for (const design of result.items) {
+				await ctx.db.designs.upsertByEntityId(
+					design.id,
+					toDesignEntity(design),
+				);
+			}
+		} catch (error) {
+			console.warn('Failed to save designs to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'canva.designs.list',
@@ -35,6 +62,17 @@ export const get: CanvaEndpoints['designsGet'] = async (ctx, input) => {
 		ctx.key,
 		{ method: 'GET' },
 	);
+
+	if (ctx.db.designs) {
+		try {
+			await ctx.db.designs.upsertByEntityId(
+				result.design.id,
+				toDesignEntity(result.design),
+			);
+		} catch (error) {
+			console.warn('Failed to save design to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -60,6 +98,17 @@ export const create: CanvaEndpoints['designsCreate'] = async (ctx, input) => {
 			},
 		},
 	);
+
+	if (ctx.db.designs) {
+		try {
+			await ctx.db.designs.upsertByEntityId(
+				result.design.id,
+				toDesignEntity(result.design),
+			);
+		} catch (error) {
+			console.warn('Failed to save design to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -93,3 +142,20 @@ export const getPages: CanvaEndpoints['designsGetPages'] = async (
 	);
 	return result;
 };
+
+export const getExportFormats: CanvaEndpoints['designsGetExportFormats'] =
+	async (ctx, input) => {
+		const result = await makeCanvaRequest<
+			CanvaEndpointOutputs['designsGetExportFormats']
+		>(`v1/designs/${input.designId}/export-formats`, ctx.key, {
+			method: 'GET',
+		});
+
+		await logEventFromContext(
+			ctx,
+			'canva.designs.getExportFormats',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
