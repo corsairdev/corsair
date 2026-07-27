@@ -51,7 +51,13 @@ export async function runReadonlyProbe(
 	// The only capability in scope is the hardened client, exposed as `corsair`.
 	sandbox.corsair = harden(input.corsair, undefined);
 
-	const timeoutMs = input.timeoutMs ?? PROBE_TIMEOUT_MS;
+	// Clamp: a non-positive / non-finite timeout would make vm's `timeout` throw a
+	// RangeError. Fall back to the default instead.
+	const requested = input.timeoutMs;
+	const timeoutMs =
+		typeof requested === 'number' && Number.isFinite(requested) && requested > 0
+			? requested
+			: PROBE_TIMEOUT_MS;
 
 	try {
 		// Run inside the readonly scope: vm.runInContext executes the script

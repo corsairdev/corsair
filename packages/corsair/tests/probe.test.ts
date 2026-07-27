@@ -80,6 +80,17 @@ describe('runReadonlyProbe', () => {
 		expect(result.status).toBe('error');
 	});
 
+	it('falls back to the default for a non-positive timeoutMs', async () => {
+		// A bad timeoutMs (0/NaN in a payload) must not RangeError the vm — it uses
+		// the default and runs normally.
+		const result = await runReadonlyProbe({
+			corsair: {},
+			code: 'return 1;',
+			timeoutMs: 0,
+		});
+		expect(result).toEqual({ status: 'ok', value: 1 });
+	});
+
 	it('keeps readonly on a continuation that resumes after the timeout', async () => {
 		// Adversarial: a read resolves AFTER the wall-clock timeout, then the script
 		// tries a write. The timeout settles the delivery, but the detached
