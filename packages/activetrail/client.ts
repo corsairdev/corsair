@@ -47,7 +47,7 @@ export async function makeActiveTrailRequest<T>(
 		},
 	};
 
-	const hasBody = !['GET', 'HEAD', 'OPTIONS', 'DELETE'].includes(method);
+	const hasBody = !['GET', 'HEAD', 'OPTIONS'].includes(method);
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,

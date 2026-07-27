@@ -502,6 +502,36 @@ describe('ActiveTrail endpoints', () => {
 		);
 	});
 
+	it('removeExternalContactFromGroup sends DELETE body with contacts', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			external: {
+				removeExternalContactFromGroup: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.external.removeExternalContactFromGroup(mockCtx, {
+			group_id: 'g-1',
+			external_contacts: [{ id: 'c-1' }, { id: 'c-2' }],
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'DELETE',
+				url: '/api/external/group/g-1',
+				body: {
+					external_contacts: [{ id: 'c-1' }, { id: 'c-2' }],
+				},
+			}),
+		);
+	});
+
 	it('classifies read routes with correct method and risk', async () => {
 		const byName = Object.fromEntries(
 			activeTrailRoutes.map((route) => [route.name, route]),
