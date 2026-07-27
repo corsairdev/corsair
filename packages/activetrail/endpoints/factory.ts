@@ -115,6 +115,8 @@ const INPUT_QUERY_KEYS: Record<string, string> = {
 	rows_affected: 'RowsAffected',
 	previous_row_count: 'PreviousRowCount',
 	event_type: 'EventType',
+	campaign_id: 'CampaignId',
+	link_id: 'LinkId',
 	state_type: 'StateType',
 	include_deleted: 'IncludeDeleted',
 	include_not_sent: 'IncludeNotSent',

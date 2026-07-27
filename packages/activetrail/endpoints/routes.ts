@@ -565,7 +565,7 @@ export const activeTrailRoutes = [
 		description:
 			"Retrieves detailed click-through data for all links in a campaign or optionally for a specific link. Returns comprehensive information including contact details (name, email), click timestamps, device information (browser, OS, device type), and click counts. Default date range: last 3 months from current date. Use this for aggregate click analysis across multiple links; for detailed analysis of a single link, consider using 'Get Click Details by Link ID' action instead. Returns an error if the campaign wasn't sent within the specified date range.",
 		pathParams: ['id'],
-		queryParams: [],
+		queryParams: ['LinkId', 'FromDate', 'ToDate', 'Page', 'Limit'],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1230,7 +1230,17 @@ export const activeTrailRoutes = [
 		description:
 			'Tool to retrieve push notification campaigns with optional filtering by date, campaign ID, and search criteria. Use when you need to get push campaigns filtered by date range (default is last 6 months and last 20 campaigns), or filtered by specific campaign ID or search term.',
 		pathParams: [],
-		queryParams: [],
+		queryParams: [
+			'FromDate',
+			'ToDate',
+			'PageSize',
+			'CampaignId',
+			'FilterType',
+			'PageNumber',
+			'SearchTerm',
+			'IncludeDeleted',
+			'IncludeNotSent',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1350,7 +1360,17 @@ export const activeTrailRoutes = [
 		description:
 			'Retrieve contacts who clicked links in an SMS campaign with detailed click analytics. Returns contact information (name, email, phone), click timestamps, link details, and click counts. Supports filtering by specific links, date ranges, and contact search. Note: If the SMS was sent using "add numbers manually" instead of groups/mailing lists, you\'ll receive click counts but mobile numbers may not be available. Default search window is 3 months from today.',
 		pathParams: ['id'],
-		queryParams: [],
+		queryParams: [
+			'LinkId',
+			'FromDate',
+			'ToDate',
+			'SendType',
+			'SearchTerm',
+			'RowsAffected',
+			'PreviousRowCount',
+			'Page',
+			'Limit',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1422,7 +1442,16 @@ export const activeTrailRoutes = [
 		description:
 			'Tool to retrieve SMS campaign performance metrics and reports with filtering options. Use when you need to access SMS campaign analytics including sent, delivered, failed, clicks, and engagement statistics. Returns the last 20 campaigns from the last 6 months by default when no date range or filters are specified.',
 		pathParams: [],
-		queryParams: [],
+		queryParams: [
+			'SendType',
+			'SearchTerm',
+			'RowsAffected',
+			'PreviousRowCount',
+			'FromDate',
+			'ToDate',
+			'Page',
+			'Limit',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1572,7 +1601,14 @@ export const activeTrailRoutes = [
 		description:
 			'Tool to retrieve virtual number SMS replies with filtering options. Use when you need to fetch two-way SMS responses for campaigns with optional filtering by search term, campaign ID, or date range.',
 		pathParams: [],
-		queryParams: [],
+		queryParams: [
+			'SearchTerm',
+			'CampaignId',
+			'FromDate',
+			'ToDate',
+			'Limit',
+			'Page',
+		],
 		riskLevel: 'read' as const,
 	},
 	{

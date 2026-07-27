@@ -467,6 +467,41 @@ describe('ActiveTrail endpoints', () => {
 		);
 	});
 
+	it('getTwoWaySmsReplies forwards campaign_id and filters', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			account: {
+				getTwoWaySmsReplies: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.account.getTwoWaySmsReplies(mockCtx, {
+			campaign_id: 55,
+			search_term: 'hello',
+			page: 2,
+			limit: 10,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/api/2waysms/getreplies',
+				query: expect.objectContaining({
+					CampaignId: 55,
+					SearchTerm: 'hello',
+					Page: 2,
+					Limit: 10,
+				}),
+			}),
+		);
+	});
+
 	it('classifies read routes with correct method and risk', async () => {
 		const byName = Object.fromEntries(
 			activeTrailRoutes.map((route) => [route.name, route]),
