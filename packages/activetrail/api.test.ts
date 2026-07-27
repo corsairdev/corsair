@@ -532,6 +532,42 @@ describe('ActiveTrail endpoints', () => {
 		);
 	});
 
+	it('addGroupMember keeps campaign_id in the body, not the query', async () => {
+		const plugin = activetrail({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			groups: {
+				addGroupMember: (
+					ctx: ActiveTrailContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.groups.addGroupMember(mockCtx, {
+			group_id: '10',
+			campaign_id: 77,
+			email: 'a@b.com',
+		});
+
+		const options = mockRequest.mock.calls[0][1] as {
+			method: string;
+			url: string;
+			body?: Record<string, unknown>;
+			query?: Record<string, unknown>;
+		};
+		expect(options.method).toBe('POST');
+		expect(options.url).toBe('/api/groups/10/members');
+		expect(options.body).toEqual(
+			expect.objectContaining({
+				campaign_id: 77,
+				email: 'a@b.com',
+			}),
+		);
+		expect(options.query?.CampaignId).toBeUndefined();
+	});
+
 	it('classifies read routes with correct method and risk', async () => {
 		const byName = Object.fromEntries(
 			activeTrailRoutes.map((route) => [route.name, route]),

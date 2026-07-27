@@ -137,11 +137,13 @@ function buildQuery(route: ActiveTrailRoute, input: ActiveTrailEndpointInput) {
 		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
 		if (value !== undefined) query[key] = value;
 	}
-	for (const [snake, apiKey] of Object.entries(INPUT_QUERY_KEYS)) {
-		if (pathParams.has(snake) || pathParams.has(apiKey)) continue;
-		if (query[apiKey] !== undefined) continue;
-		const value = input[snake] ?? input[apiKey];
-		if (value !== undefined) query[apiKey] = value;
+	if (route.method === 'GET') {
+		for (const [snake, apiKey] of Object.entries(INPUT_QUERY_KEYS)) {
+			if (pathParams.has(snake) || pathParams.has(apiKey)) continue;
+			if (query[apiKey] !== undefined) continue;
+			const value = input[snake] ?? input[apiKey];
+			if (value !== undefined) query[apiKey] = value;
+		}
 	}
 	return Object.keys(query).length > 0 ? query : undefined;
 }
