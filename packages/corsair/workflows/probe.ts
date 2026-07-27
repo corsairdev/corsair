@@ -52,22 +52,21 @@ export async function runReadonlyProbe(
 	// The only capability in scope is the hardened client, exposed as `corsair`.
 	sandbox.corsair = harden(input.corsair, undefined);
 
-	// Clamp: a non-positive / non-finite timeout would make vm's `timeout` throw a
-	// RangeError. Fall back to the default instead.
-	const requested = input.timeoutMs;
-	const timeoutMs =
-		typeof requested === 'number' && Number.isFinite(requested) && requested > 0
-			? requested
-			: PROBE_TIMEOUT_MS;
+	// Clamp into (0, PROBE_TIMEOUT_MS]: non-positive / non-finite falls back to the
+	// default, and anything larger is capped so a payload can't extend the synchronous
+	// vm deadline and hold the host event loop.
+	const timeoutMs = clampProbeTimeout(input.timeoutMs);
 
-	// Serialize INSIDE the vm, in the script's own readonly context: a toJSON()/
-	// getter that reaches a write endpoint during stringify throws there (blocked),
-	// and the host only ever parses a plain string — it never runs script callbacks.
+	// Serialize INSIDE the vm, in the script's own readonly context: a toJSON()/getter
+	// that reaches a write endpoint during stringify throws there (blocked) and
+	// surfaces as { status: 'error' } — never a masked null. A genuine serialization
+	// failure (e.g. a circular value) likewise surfaces as an error, not a null. The
+	// host only ever parses a plain string, so it never runs script-defined callbacks.
 	const wrapped = `(async () => {
 const __result = await (async () => {
 ${input.code}
 })();
-try { return JSON.stringify(__result) ?? 'null'; } catch { return 'null'; }
+return JSON.stringify(__result) ?? 'null';
 })()`;
 
 	try {
@@ -114,4 +113,16 @@ function parseProbeJson(raw: unknown): unknown {
 	} catch {
 		return null;
 	}
+}
+
+/**
+ * Clamps a caller-supplied timeout into (0, {@link PROBE_TIMEOUT_MS}]. Non-finite or
+ * non-positive values fall back to the default; a larger value is capped so a probe
+ * payload can't extend the synchronous vm deadline and block the host event loop.
+ */
+export function clampProbeTimeout(ms: number | undefined): number {
+	if (typeof ms !== 'number' || !Number.isFinite(ms) || ms <= 0) {
+		return PROBE_TIMEOUT_MS;
+	}
+	return Math.min(ms, PROBE_TIMEOUT_MS);
 }

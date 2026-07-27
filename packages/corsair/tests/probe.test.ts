@@ -2,7 +2,7 @@ import {
 	assertReadonlyAllowed,
 	isReadonlyScopeActive,
 } from '../core/permissions';
-import { runReadonlyProbe } from '../workflows/probe';
+import { clampProbeTimeout, runReadonlyProbe } from '../workflows/probe';
 
 describe('runReadonlyProbe', () => {
 	it('returns the script value, reading through the client', async () => {
@@ -80,12 +80,12 @@ describe('runReadonlyProbe', () => {
 		expect(result.status).toBe('error');
 	});
 
-	it('blocks a write triggered by toJSON during result serialization', async () => {
-		// A returned object with a script-defined toJSON() is invoked by JSON.stringify.
-		// Serialization runs INSIDE the vm's readonly scope, so a write from toJSON is
-		// blocked (assertReadonlyAllowed throws) instead of escaping after the outer
-		// scope resolved — which a host-side JSON.stringify of the returned object would
-		// allow.
+	it('surfaces a write attempted by toJSON during serialization as an error', async () => {
+		// A returned object with a script-defined toJSON() is invoked by JSON.stringify,
+		// which runs INSIDE the vm's readonly scope — so a write from toJSON is blocked
+		// (assertReadonlyAllowed throws) and surfaces as { status: 'error' }, not a
+		// masked null. A host-side JSON.stringify of the returned object would instead
+		// invoke that callback outside the scope.
 		let wrote = false;
 		const corsair = {
 			slack: {
@@ -102,18 +102,7 @@ describe('runReadonlyProbe', () => {
 		});
 		await new Promise((resolve) => setTimeout(resolve, 20));
 		expect(wrote).toBe(false); // write blocked during serialization
-		expect(result.status).toBe('ok'); // probe still completes
-	});
-
-	it('falls back to the default for a non-positive timeoutMs', async () => {
-		// A bad timeoutMs (0/NaN in a payload) must not RangeError the vm — it uses
-		// the default and runs normally.
-		const result = await runReadonlyProbe({
-			corsair: {},
-			code: 'return 1;',
-			timeoutMs: 0,
-		});
-		expect(result).toEqual({ status: 'ok', value: 1 });
+		expect(result.status).toBe('error'); // surfaced as an error, not a masked null
 	});
 
 	it('keeps readonly on a continuation that resumes after the timeout', async () => {
@@ -147,5 +136,22 @@ describe('runReadonlyProbe', () => {
 		await new Promise((resolve) => setTimeout(resolve, 80));
 		expect(sendAttempted).toBe(true); // proves the continuation DID resume post-timeout
 		expect(wrote).toBe(false); // and the write was still blocked by readonly
+	});
+});
+
+describe('clampProbeTimeout', () => {
+	it('caps a too-large timeout at the default max', () => {
+		expect(clampProbeTimeout(1_000_000_000)).toBe(10_000);
+	});
+
+	it('keeps a valid in-range timeout', () => {
+		expect(clampProbeTimeout(50)).toBe(50);
+	});
+
+	it('falls back to the default for non-positive / non-finite values', () => {
+		expect(clampProbeTimeout(0)).toBe(10_000);
+		expect(clampProbeTimeout(-5)).toBe(10_000);
+		expect(clampProbeTimeout(Number.NaN)).toBe(10_000);
+		expect(clampProbeTimeout(undefined)).toBe(10_000);
 	});
 });
