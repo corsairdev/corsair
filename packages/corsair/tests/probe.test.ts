@@ -80,6 +80,31 @@ describe('runReadonlyProbe', () => {
 		expect(result.status).toBe('error');
 	});
 
+	it('blocks a write triggered by toJSON during result serialization', async () => {
+		// A returned object with a script-defined toJSON() is invoked by JSON.stringify.
+		// Serialization runs INSIDE the vm's readonly scope, so a write from toJSON is
+		// blocked (assertReadonlyAllowed throws) instead of escaping after the outer
+		// scope resolved — which a host-side JSON.stringify of the returned object would
+		// allow.
+		let wrote = false;
+		const corsair = {
+			slack: {
+				send: () => {
+					assertReadonlyAllowed('slack.messages.post', 'write');
+					wrote = true;
+					return 'sent';
+				},
+			},
+		};
+		const result = await runReadonlyProbe({
+			corsair,
+			code: 'return { toJSON() { corsair.slack.send(); return "x"; } };',
+		});
+		await new Promise((resolve) => setTimeout(resolve, 20));
+		expect(wrote).toBe(false); // write blocked during serialization
+		expect(result.status).toBe('ok'); // probe still completes
+	});
+
 	it('falls back to the default for a non-positive timeoutMs', async () => {
 		// A bad timeoutMs (0/NaN in a payload) must not RangeError the vm — it uses
 		// the default and runs normally.

@@ -16,8 +16,9 @@ import { harden, toMessage } from './execute';
 //     globals (process/require/fetch), and `corsair` is the hardened Proxy, so
 //     the script can navigate the client but can't reach the host Function ctor.
 //
-// The script's return value is the probe result. Unlike a workflow run there is
-// no step/memoization/durability — it's a synchronous lookup.
+// The result is serialized to a JSON string INSIDE the vm, under the script's own
+// readonly scope, and only the string is handed back — the host never invokes
+// script-defined toJSON()/getters (which would otherwise run outside the scope).
 // ─────────────────────────────────────────────────────────────────────────────
 
 const PROBE_TIMEOUT_MS = 10_000;
@@ -59,25 +60,33 @@ export async function runReadonlyProbe(
 			? requested
 			: PROBE_TIMEOUT_MS;
 
+	// Serialize INSIDE the vm, in the script's own readonly context: a toJSON()/
+	// getter that reaches a write endpoint during stringify throws there (blocked),
+	// and the host only ever parses a plain string — it never runs script callbacks.
+	const wrapped = `(async () => {
+const __result = await (async () => {
+${input.code}
+})();
+try { return JSON.stringify(__result) ?? 'null'; } catch { return 'null'; }
+})()`;
+
 	try {
-		// Run inside the readonly scope: vm.runInContext executes the script
-		// synchronously up to its first `await` (the first client call), so the
-		// scope must already be active when the promise is created — later
-		// continuations inherit it. assertReadonlyAllowed runs host-side per call.
-		const value = await runReadonly(() => {
-			const script = vm.runInContext(
-				`(async () => {\n${input.code}\n})()`,
-				context,
-				{ filename: 'corsair:probe', timeout: timeoutMs },
-			) as Promise<unknown>;
+		// vm.runInContext executes the script synchronously up to its first `await`
+		// (the first client call), so the readonly scope must already be active when
+		// the promise is created — later continuations inherit it. assertReadonlyAllowed
+		// runs host-side per call.
+		const raw = await runReadonly(() => {
+			const script = vm.runInContext(wrapped, context, {
+				filename: 'corsair:probe',
+				timeout: timeoutMs,
+			}) as Promise<unknown>;
 			// The vm `timeout` only bounds synchronous execution up to the first
 			// `await`. Bound the async remainder with a wall-clock race so a slow or
-			// never-settling *async* read can't hang the handler. Note the ceiling: a
-			// post-await synchronous CPU loop can still block this timer on the same
-			// event loop — an in-thread limit shared with the run executor; fully
-			// bounding it needs worker/process isolation (tracked separately). A
-			// detached, timed-out script can't write (readonly); clearTimeout frees a
-			// finished probe's timer.
+			// never-settling *async* read can't hang the handler. Ceiling: a post-await
+			// synchronous CPU loop can still block this timer on the same event loop —
+			// an in-thread limit shared with the run executor; fully bounding it needs
+			// worker/process isolation (tracked separately). A detached, timed-out
+			// script stays read-only; clearTimeout frees a finished probe's timer.
 			void script.catch(() => {});
 			let timer: ReturnType<typeof setTimeout>;
 			const wallClock = new Promise<never>((_resolve, reject) => {
@@ -91,18 +100,17 @@ export async function runReadonlyProbe(
 			);
 		});
 
-		// Flatten realm-native / proxied values to plain host JSON for the wire.
-		return { status: 'ok', value: toSerializable(value) };
+		return { status: 'ok', value: parseProbeJson(raw) };
 	} catch (err) {
 		return { status: 'error', error: toMessage(err) };
 	}
 }
 
-/** JSON round-trip so the result is plain, wire-safe host data (no realm proxies). */
-function toSerializable(value: unknown): unknown {
-	if (value === undefined) return null;
+/** The vm returns a JSON string (serialized in-scope); parse it to host data. */
+function parseProbeJson(raw: unknown): unknown {
+	if (typeof raw !== 'string') return null;
 	try {
-		return JSON.parse(JSON.stringify(value));
+		return JSON.parse(raw);
 	} catch {
 		return null;
 	}
