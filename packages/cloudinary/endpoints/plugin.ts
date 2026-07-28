@@ -44,7 +44,10 @@ import {
 	VideoEndpoints,
 	VideosEndpoints,
 } from './index';
-import { CloudinaryEndpointInputSchemas, CloudinaryEndpointOutputSchemas } from './types';
+import {
+	CloudinaryEndpointInputSchemas,
+	CloudinaryEndpointOutputSchemas,
+} from './types';
 
 export const cloudinaryEndpointsNested = {
 	live: LiveEndpoints,

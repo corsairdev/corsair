@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { CloudinaryAPIError } from './client';
 
 export const errorHandlers = {
@@ -21,9 +21,12 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 401) return true;
-			if (error instanceof CloudinaryAPIError && error.code === '401') return true;
+			if (error instanceof CloudinaryAPIError && error.code === '401')
+				return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('authorization required');
+			return (
+				msg.includes('unauthorized') || msg.includes('authorization required')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

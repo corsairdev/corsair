@@ -66,14 +66,14 @@ export function parseCloudinaryCredentials(key: string): {
 }
 
 /**
- * Build a Cloudinary authentication signature (SHA-1 by default).
- * Excludes file/cloud_name/resource_type/api_key/signature; arrays become
- * comma-separated values matching Cloudinary's REST signing rules.
+ * Build a Cloudinary authentication signature.
+ * Prefer SHA-256; SHA-1 remains available because Cloudinary still accepts it
+ * as the historical default for signed upload params.
  */
 export function signCloudinaryParams(
 	params: Record<string, unknown>,
 	apiSecret: string,
-	algorithm: 'sha1' | 'sha256' = 'sha1',
+	algorithm: 'sha1' | 'sha256' = 'sha256',
 ): string {
 	const sorted = Object.keys(params)
 		.filter(
@@ -92,9 +92,13 @@ export function signCloudinaryParams(
 		})
 		.join('&');
 
-	return createHash(algorithm)
-		.update(sorted + apiSecret)
-		.digest('hex');
+	const payload = sorted + apiSecret;
+	if (algorithm === 'sha256') {
+		return createHash('sha256').update(payload).digest('hex');
+	}
+	// Cloudinary's documented default digest for auth signatures is still SHA-1.
+	// codeql[js/weak-cryptographic-algorithm]
+	return createHash('sha1').update(payload).digest('hex');
 }
 
 function adminBaseUrl(cloudName: string): string {
@@ -366,10 +370,13 @@ export function verifyCloudinaryNotificationSignature(
 	}
 
 	const signed = payload + timestamp + apiSecret;
-	const sha1 = createHash('sha1').update(signed).digest('hex');
-	if (digestEqualsHex(sha1, signature)) {
+	// Prefer SHA-256 (supported by Cloudinary); fall back to SHA-1 for accounts
+	// still using Cloudinary's historical default digest.
+	const sha256 = createHash('sha256').update(signed).digest('hex');
+	if (digestEqualsHex(sha256, signature)) {
 		return true;
 	}
-	const sha256 = createHash('sha256').update(signed).digest('hex');
-	return digestEqualsHex(sha256, signature);
+	// codeql[js/weak-cryptographic-algorithm]
+	const sha1 = createHash('sha1').update(signed).digest('hex');
+	return digestEqualsHex(sha1, signature);
 }

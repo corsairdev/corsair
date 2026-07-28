@@ -56,6 +56,10 @@ function requireCredentials(): CloudinaryCredentials {
 	};
 }
 
+const hasLiveCredentials = Boolean(
+	TEST_API_KEY?.trim() && TEST_API_SECRET?.trim() && TEST_CLOUD_NAME?.trim(),
+);
+
 describe('Cloudinary client helpers', () => {
 	it('parseCloudinaryCredentials splits api_key:api_secret', () => {
 		expect(parseCloudinaryCredentials('key123:secret456')).toEqual({
@@ -64,10 +68,10 @@ describe('Cloudinary client helpers', () => {
 		});
 	});
 
-	it('signCloudinaryParams produces a deterministic SHA-1 hex signature', () => {
+	it('signCloudinaryParams produces a deterministic SHA-256 hex signature', () => {
 		const params = { public_id: 'sample', timestamp: 1_700_000_000 };
 		const signature = signCloudinaryParams(params, 'test-secret');
-		const expected = createHash('sha1')
+		const expected = createHash('sha256')
 			.update('public_id=sample&timestamp=1700000000test-secret')
 			.digest('hex');
 
@@ -83,7 +87,7 @@ describe('Cloudinary client helpers', () => {
 			timestamp: 1_700_000_000,
 		};
 		const signature = signCloudinaryParams(params, 'test-secret');
-		const expected = createHash('sha1')
+		const expected = createHash('sha256')
 			.update('eager=w_100,w_200&tags=a,b&timestamp=1700000000test-secret')
 			.digest('hex');
 
@@ -109,7 +113,7 @@ describe('Cloudinary client helpers', () => {
 		const payload = '{"notification_type":"upload"}';
 		const timestamp = String(Math.floor(Date.now() / 1000));
 		const apiSecret = 'webhook-secret';
-		const signature = createHash('sha1')
+		const signature = createHash('sha256')
 			.update(payload + timestamp + apiSecret)
 			.digest('hex');
 
@@ -148,7 +152,9 @@ describe('Cloudinary client helpers', () => {
 	});
 });
 
-describe('Cloudinary API Type Tests', () => {
+const describeLive = hasLiveCredentials ? describe : describe.skip;
+
+describeLive('Cloudinary API Type Tests', () => {
 	describe('health', () => {
 		it('pingCloudinaryServers returns correct type', async () => {
 			const credentials = requireCredentials();

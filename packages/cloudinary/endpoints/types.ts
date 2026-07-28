@@ -9,7 +9,7 @@ import {
 	CloudinaryTransformationSchema,
 	CloudinaryUploadPresetSchema,
 	PaginationSchema,
-} from "./schemas";
+} from './schemas';
 
 const QuerySchema = z.record(z.string(), z.unknown());
 
@@ -18,8 +18,8 @@ export const CloudinaryEndpointInputBaseSchema = z
 		query: QuerySchema.optional(),
 		body: z.unknown().optional(),
 		file: z.union([z.instanceof(Blob), z.instanceof(File)]).optional(),
-		resource_type: z.enum(["image", "video", "raw", "auto"]).optional(),
-		upload_resource_type: z.enum(["image", "video", "raw", "auto"]).optional(),
+		resource_type: z.enum(['image', 'video', 'raw', 'auto']).optional(),
+		upload_resource_type: z.enum(['image', 'video', 'raw', 'auto']).optional(),
 	})
 	.catchall(z.unknown());
 
@@ -32,7 +32,10 @@ function inputSchemaForOperation(operation: CloudinaryOperation) {
 		(operation.pathParams ?? []).map((param) => [param, z.string().min(1)]),
 	);
 	const queryParams = Object.fromEntries(
-		(operation.queryParams ?? []).map((param) => [param, z.unknown().optional()]),
+		(operation.queryParams ?? []).map((param) => [
+			param,
+			z.unknown().optional(),
+		]),
 	);
 	return CloudinaryEndpointInputBaseSchema.extend({
 		...pathParams,
