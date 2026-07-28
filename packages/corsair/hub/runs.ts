@@ -74,7 +74,7 @@ async function decideRun(
 		hub,
 		path: `/runs/${encodeURIComponent(input.runId)}/${action}?tenantId=${encodeURIComponent(input.tenantId)}`,
 		body: {},
-		notFoundMessage: `Run "${input.runId}" cannot be ${action}d in its current state`,
+		notFoundMessage: `Run "${input.runId}" cannot be ${action === 'cancel' ? 'canceled' : `${action}d`} in its current state`,
 		parseResponse: (payload) => payload as { ok: boolean },
 	});
 }
