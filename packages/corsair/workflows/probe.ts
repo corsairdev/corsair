@@ -105,14 +105,14 @@ return JSON.stringify(__result) ?? 'null';
 	}
 }
 
-/** The vm returns a JSON string (serialized in-scope); parse it to host data. */
+/** The vm returns a JSON string (serialized in-scope); parse it to host data. A
+ * non-string or unparseable value means the runner itself is broken — throw so
+ * it surfaces as `{ status: 'error' }` instead of masking a bug as a null value. */
 function parseProbeJson(raw: unknown): unknown {
-	if (typeof raw !== 'string') return null;
-	try {
-		return JSON.parse(raw);
-	} catch {
-		return null;
+	if (typeof raw !== 'string') {
+		throw new Error(`Probe returned a non-string result (${typeof raw})`);
 	}
+	return JSON.parse(raw);
 }
 
 /**

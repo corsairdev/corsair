@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import * as vm from 'node:vm';
 import type { RunResultPayload, RunStepResult } from '../hub/contracts/tunnel';
 
@@ -64,6 +65,18 @@ function isSleepInterrupt(value: unknown): value is SleepInterrupt {
 		value !== null &&
 		(value as { __corsairSleep?: unknown }).__corsairSleep === true
 	);
+}
+
+/**
+ * Stable, position-anchored id for one step call. Deterministic across attempts
+ * (same name + seq → same id) and unique per call (seq disambiguates loops and
+ * reused names), so it doubles as the memoization key and the correlation id in
+ * run logs. The name is folded in so a code edit that changes the step at a given
+ * position yields a new id instead of replaying a stale output under the old name.
+ */
+export function computeStepId(name: string, seq: number): string {
+	const hash = createHash('sha256').update(`${seq} ${name}`).digest('hex');
+	return `st_${hash.slice(0, 16)}`;
 }
 
 /** Robust message extraction, including cross-realm errors (not `instanceof Error`). */
@@ -295,7 +308,7 @@ export type ExecuteWorkflowRunInput = {
 	code: string;
 	/** Webhook body (or null for schedule/manual triggers). */
 	payload: unknown;
-	/** Outputs of steps that already completed on prior attempts, keyed by name. */
+	/** Outputs of steps that already completed on prior attempts, keyed by stepId. */
 	memoizedSteps?: Record<string, { output: unknown }>;
 	/** Max run time (sync + wall-clock) in ms. Defaults to {@link WORKFLOW_TIMEOUT_MS}. */
 	timeoutMs?: number;
@@ -320,22 +333,30 @@ export async function executeWorkflowRun(
 		// work this attempt.
 		if (pendingSleep) throw pendingSleep;
 		const current = seq++;
+		const stepId = computeStepId(name, current);
 
 		// Replay: a completed step from a prior attempt is not re-executed and not
-		// re-reported (Hub already has it persisted). Harden the stored output so
-		// the sandbox gets a safe view rather than a bare host object.
-		if (Object.hasOwn(memo, name)) {
-			return harden(memo[name]!.output, undefined) as T;
+		// re-reported (Hub already has it persisted). Keyed by stepId so loops /
+		// reused names don't collide. Harden the stored output so the sandbox gets
+		// a safe view rather than a bare host object.
+		if (Object.hasOwn(memo, stepId)) {
+			return harden(memo[stepId]!.output, undefined) as T;
 		}
 
 		try {
 			const output = await fn();
-			steps.push({ name, seq: current, status: 'completed', output });
+			steps.push({ stepId, name, seq: current, status: 'completed', output });
 			return output;
 		} catch (err) {
 			if (isSleepInterrupt(err)) throw err;
 			const message = toMessage(err);
-			steps.push({ name, seq: current, status: 'failed', error: message });
+			steps.push({
+				stepId,
+				name,
+				seq: current,
+				status: 'failed',
+				error: message,
+			});
 			const wrapped = new Error(message);
 			(wrapped as unknown as Record<string, unknown>)[FAILED_STEP_MARKER] =
 				name;
@@ -346,11 +367,18 @@ export async function executeWorkflowRun(
 	step.sleep = async (name: string, ms: number): Promise<void> => {
 		if (pendingSleep) throw pendingSleep;
 		const current = seq++;
+		const stepId = computeStepId(name, current);
 		// Already slept on a prior attempt — the pause is satisfied, continue.
-		if (Object.hasOwn(memo, name)) return;
+		if (Object.hasOwn(memo, stepId)) return;
 		// First encounter: record the sleep as a completed step (so the next attempt
 		// replays past it) and unwind to hand control back to Hub.
-		steps.push({ name, seq: current, status: 'completed', output: null });
+		steps.push({
+			stepId,
+			name,
+			seq: current,
+			status: 'completed',
+			output: null,
+		});
 		// Guard non-finite ms: `Date.now() + NaN` → `new Date(NaN).toISOString()`
 		// throws, turning a sleep into an infra failure.
 		const delay = Number.isFinite(ms) ? Math.max(0, ms) : 0;

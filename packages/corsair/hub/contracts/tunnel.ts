@@ -68,7 +68,7 @@ export type RunTunnelPayload = {
 	code: string;
 	/** What fired the run; `payload` is the webhook body (or null for schedule/manual). */
 	trigger: { type: RunTriggerType; payload: unknown };
-	/** Completed steps from prior attempts, keyed by step name (memoization store). */
+	/** Completed steps from prior attempts, keyed by step id (memoization store). */
 	memoizedSteps?: Record<string, { output: unknown }>;
 	/** Replay attempt counter (0 on first execution). */
 	attempt?: number;
@@ -76,6 +76,13 @@ export type RunTunnelPayload = {
 
 /** One step's outcome within an execution (only steps that actually ran this attempt). */
 export type RunStepResult = {
+	/**
+	 * Stable, unique id for this step call — the memoization key and the log
+	 * correlation id. Derived from name + position, so loops / reused names don't
+	 * collide and a changed step at a position gets a new id (no stale replay).
+	 */
+	stepId: string;
+	/** Human-readable step name (may repeat across a run; use stepId for identity). */
 	name: string;
 	/** Execution order across all step() calls in this run (stable across attempts). */
 	seq: number;
@@ -115,7 +122,8 @@ export type ProbeTunnelPayload = {
 	tenantId: string;
 	/** Async JS body with `corsair` in scope; `return` the value to hand back. */
 	code: string;
-	/** Max run time in ms; the app applies a default when omitted. */
+	/** Max run time in ms, clamped app-side to (0, 10_000]; omitted, non-positive,
+	 * or non-finite falls back to the 10s default. */
 	timeoutMs?: number;
 };
 
