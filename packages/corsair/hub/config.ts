@@ -33,6 +33,7 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		signingSecret,
 		oauthCallbackUrl: input.oauthCallbackUrl?.trim().replace(/\/$/, ''),
 		redirectURL: input.redirectURL?.trim() || undefined,
+		allowWorkflowExecution: input.allowWorkflowExecution ?? false,
 	};
 }
 
