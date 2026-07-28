@@ -1,14 +1,13 @@
-import type { CorsairEndpoint } from 'corsair/core';
+import type { AccountKeyManagerFor, CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-import type { AccountKeyManagerFor } from 'corsair/core';
+import type { cloudinaryAuthConfig } from '../auth-config';
+import type { CloudinaryCredentials } from '../client';
 import {
 	makeCloudinaryAdminRequest,
 	makeCloudinaryLiveRequest,
 	makeCloudinaryUploadRequest,
 	parseCloudinaryCredentials,
-	type CloudinaryCredentials,
 } from '../client';
-import { cloudinaryAuthConfig } from '../auth-config';
 import type { CloudinaryContext } from '../plugin-types';
 import type { CloudinaryOperation } from './operation-types';
 import type { CloudinaryEndpointInput } from './types';
@@ -24,6 +23,8 @@ const CONTROL_KEYS = new Set([
 	'resource_type',
 	'upload_resource_type',
 	'file',
+	'content_range',
+	'x_unique_upload_id',
 ]);
 
 const LIST_RESPONSE_KEYS = [
@@ -49,16 +50,51 @@ type CacheRule = {
 
 const CACHE_RULES: Partial<Record<string, CacheRule>> = {
 	getResourceByAssetId: { entity: 'resources', idKeys: ['asset_id', 'id'] },
-	getResourceByPublicId: { entity: 'resources', idKeys: ['asset_id', 'public_id'] },
-	listImages: { entity: 'resources', idKeys: ['asset_id', 'public_id'], listKeys: ['resources'] },
-	listVideos: { entity: 'resources', idKeys: ['asset_id', 'public_id'], listKeys: ['resources'] },
-	listRawFiles: { entity: 'resources', idKeys: ['asset_id', 'public_id'], listKeys: ['resources'] },
-	listResourcesByType: { entity: 'resources', idKeys: ['asset_id', 'public_id'], listKeys: ['resources'] },
-	searchAssets: { entity: 'resources', idKeys: ['asset_id', 'public_id'], listKeys: ['resources'] },
-	getRootFolders: { entity: 'folders', idKeys: ['external_id', 'path', 'name'], listKeys: ['folders'] },
-	showFolder: { entity: 'folders', idKeys: ['external_id', 'path', 'name'], listKeys: ['folders'] },
+	getResourceByPublicId: {
+		entity: 'resources',
+		idKeys: ['asset_id', 'public_id'],
+	},
+	listImages: {
+		entity: 'resources',
+		idKeys: ['asset_id', 'public_id'],
+		listKeys: ['resources'],
+	},
+	listVideos: {
+		entity: 'resources',
+		idKeys: ['asset_id', 'public_id'],
+		listKeys: ['resources'],
+	},
+	listRawFiles: {
+		entity: 'resources',
+		idKeys: ['asset_id', 'public_id'],
+		listKeys: ['resources'],
+	},
+	listResourcesByType: {
+		entity: 'resources',
+		idKeys: ['asset_id', 'public_id'],
+		listKeys: ['resources'],
+	},
+	searchAssets: {
+		entity: 'resources',
+		idKeys: ['asset_id', 'public_id'],
+		listKeys: ['resources'],
+	},
+	getRootFolders: {
+		entity: 'folders',
+		idKeys: ['external_id', 'path', 'name'],
+		listKeys: ['folders'],
+	},
+	showFolder: {
+		entity: 'folders',
+		idKeys: ['external_id', 'path', 'name'],
+		listKeys: ['folders'],
+	},
 	getUploadPreset: { entity: 'uploadPresets', idKeys: ['name'] },
-	listUploadPresets: { entity: 'uploadPresets', idKeys: ['name'], listKeys: ['presets'] },
+	listUploadPresets: {
+		entity: 'uploadPresets',
+		idKeys: ['name'],
+		listKeys: ['presets'],
+	},
 	getTransformation: { entity: 'transformations', idKeys: ['name'] },
 	getTransformations: {
 		entity: 'transformations',
@@ -72,7 +108,11 @@ const CACHE_RULES: Partial<Record<string, CacheRule>> = {
 		listKeys: ['metadata_fields'],
 	},
 	getLiveStream: { entity: 'liveStreams', idKeys: ['id'] },
-	getLiveStreams: { entity: 'liveStreams', idKeys: ['id'], listKeys: ['live_streams'] },
+	getLiveStreams: {
+		entity: 'liveStreams',
+		idKeys: ['id'],
+		listKeys: ['live_streams'],
+	},
 };
 
 export type CloudinaryEndpoint = CorsairEndpoint<
@@ -96,15 +136,6 @@ function resolvePath(path: string, input: CloudinaryEndpointInput): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function credentialsFromContext(ctx: CloudinaryContext): CloudinaryCredentials {
-	const { apiKey, apiSecret } = parseCloudinaryCredentials(ctx.key);
-	const cloudName = ctx.options.cloudName ?? ctx.cloudName;
-	if (!cloudName) {
-		throw new Error('[cloudinary] cloud_name is required');
-	}
-	return { apiKey, apiSecret, cloudName };
 }
 
 async function resolveCloudName(ctx: CloudinaryContext): Promise<string> {
@@ -176,6 +207,22 @@ function uploadResourceType(
 	);
 }
 
+function uploadHeaders(
+	input: CloudinaryEndpointInput,
+): Record<string, string> | undefined {
+	const headers: Record<string, string> = {};
+	if (typeof input.content_range === 'string' && input.content_range) {
+		headers['Content-Range'] = input.content_range;
+	}
+	if (
+		typeof input.x_unique_upload_id === 'string' &&
+		input.x_unique_upload_id
+	) {
+		headers['X-Unique-Upload-Id'] = input.x_unique_upload_id;
+	}
+	return Object.keys(headers).length > 0 ? headers : undefined;
+}
+
 async function requestOperation(
 	ctx: CloudinaryContext,
 	input: CloudinaryEndpointInput,
@@ -195,11 +242,17 @@ async function requestOperation(
 	}
 
 	if (operation.api === 'upload') {
-		return makeCloudinaryUploadRequest(path, credentials, uploadResourceType(operation, input), {
-			method: 'POST',
-			body: body ?? {},
-			bodyKind: operation.bodyKind === 'multipart' ? 'multipart' : 'form',
-		});
+		return makeCloudinaryUploadRequest(
+			path,
+			credentials,
+			uploadResourceType(operation, input),
+			{
+				method: 'POST',
+				body: body ?? {},
+				bodyKind: operation.bodyKind === 'multipart' ? 'multipart' : 'form',
+				headers: uploadHeaders(input),
+			},
+		);
 	}
 
 	return makeCloudinaryAdminRequest(path, credentials, {
@@ -209,7 +262,10 @@ async function requestOperation(
 	});
 }
 
-function cacheItems(response: unknown, listKeys: string[]): Record<string, unknown>[] {
+function cacheItems(
+	response: unknown,
+	listKeys: string[],
+): Record<string, unknown>[] {
 	if (Array.isArray(response)) return response.filter(isRecord);
 	if (!isRecord(response)) return [];
 
@@ -249,6 +305,8 @@ async function syncOperationResult(
 	for (const item of cacheItems(response, rule.listKeys ?? [])) {
 		const entityId = cacheEntityId(item, rule.idKeys);
 		if (!entityId) continue;
+		// upsertByEntityId is generated per-entity with a narrow payload type; API
+		// responses are untyped records, so never is required at this cache boundary.
 		await db.upsertByEntityId(entityId, item as never);
 	}
 }

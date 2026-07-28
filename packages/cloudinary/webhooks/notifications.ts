@@ -1,38 +1,54 @@
-import { logEventFromContext } from 'corsair/core';
 import type { CorsairWebhook } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
+import type { z } from 'zod';
 import type { CloudinaryContext } from '../plugin-types';
+import type {
+	CloudinaryAccessControlChangedSchema,
+	CloudinaryCreateFolderNotificationSchema,
+	CloudinaryDeleteFolderNotificationSchema,
+	CloudinaryDeleteNotificationSchema,
+	CloudinaryEagerNotificationSchema,
+	CloudinaryExplodeNotificationSchema,
+	CloudinaryMoveNotificationSchema,
+	CloudinaryRelatedAssetsNotificationSchema,
+	CloudinaryRenameNotificationSchema,
+	CloudinaryResourceContextChangedSchema,
+	CloudinaryResourceMetadataChangedSchema,
+	CloudinaryResourceTagsChangedSchema,
+	CloudinaryUploadNotificationSchema,
+} from './types';
 import {
 	createCloudinaryMatch,
 	verifyCloudinaryWebhookSignature,
-	type CloudinaryAccessControlChangedSchema,
-	type CloudinaryCreateFolderNotificationSchema,
-	type CloudinaryDeleteFolderNotificationSchema,
-	type CloudinaryDeleteNotificationSchema,
-	type CloudinaryEagerNotificationSchema,
-	type CloudinaryExplodeNotificationSchema,
-	type CloudinaryMoveNotificationSchema,
-	type CloudinaryRelatedAssetsNotificationSchema,
-	type CloudinaryRenameNotificationSchema,
-	type CloudinaryResourceContextChangedSchema,
-	type CloudinaryResourceMetadataChangedSchema,
-	type CloudinaryResourceTagsChangedSchema,
-	type CloudinaryUploadNotificationSchema,
 } from './types';
-import type { z } from 'zod';
 
 type UploadEvent = z.infer<typeof CloudinaryUploadNotificationSchema>;
 type EagerEvent = z.infer<typeof CloudinaryEagerNotificationSchema>;
 type DeleteEvent = z.infer<typeof CloudinaryDeleteNotificationSchema>;
 type RenameEvent = z.infer<typeof CloudinaryRenameNotificationSchema>;
-type ResourceTagsChangedEvent = z.infer<typeof CloudinaryResourceTagsChangedSchema>;
-type ResourceContextChangedEvent = z.infer<typeof CloudinaryResourceContextChangedSchema>;
-type ResourceMetadataChangedEvent = z.infer<typeof CloudinaryResourceMetadataChangedSchema>;
-type CreateFolderEvent = z.infer<typeof CloudinaryCreateFolderNotificationSchema>;
-type DeleteFolderEvent = z.infer<typeof CloudinaryDeleteFolderNotificationSchema>;
+type ResourceTagsChangedEvent = z.infer<
+	typeof CloudinaryResourceTagsChangedSchema
+>;
+type ResourceContextChangedEvent = z.infer<
+	typeof CloudinaryResourceContextChangedSchema
+>;
+type ResourceMetadataChangedEvent = z.infer<
+	typeof CloudinaryResourceMetadataChangedSchema
+>;
+type CreateFolderEvent = z.infer<
+	typeof CloudinaryCreateFolderNotificationSchema
+>;
+type DeleteFolderEvent = z.infer<
+	typeof CloudinaryDeleteFolderNotificationSchema
+>;
 type MoveEvent = z.infer<typeof CloudinaryMoveNotificationSchema>;
 type ExplodeEvent = z.infer<typeof CloudinaryExplodeNotificationSchema>;
-type AccessControlChangedEvent = z.infer<typeof CloudinaryAccessControlChangedSchema>;
-type RelatedAssetsEvent = z.infer<typeof CloudinaryRelatedAssetsNotificationSchema>;
+type AccessControlChangedEvent = z.infer<
+	typeof CloudinaryAccessControlChangedSchema
+>;
+type RelatedAssetsEvent = z.infer<
+	typeof CloudinaryRelatedAssetsNotificationSchema
+>;
 
 async function handleNotification<T extends Record<string, unknown>>(
 	ctx: CloudinaryContext,
@@ -54,22 +70,33 @@ async function handleNotification<T extends Record<string, unknown>>(
 	const event = request.payload;
 	await logEventFromContext(ctx, logKey, { ...event }, 'completed');
 
-	const entityId =
-		(typeof event.asset_id === 'string' && event.asset_id) ||
-		(typeof event.public_id === 'string' && event.public_id) ||
-		undefined;
+	const assetId =
+		typeof event.asset_id === 'string' && event.asset_id
+			? event.asset_id
+			: undefined;
+	const publicId =
+		typeof event.public_id === 'string' && event.public_id
+			? event.public_id
+			: undefined;
+	// Prefer immutable asset_id for cache keys; public_id is a fallback only.
+	const entityId = assetId ?? publicId;
 
 	if (entityId && options?.syncResource === 'upsert' && ctx.db.resources) {
 		await ctx.db.resources.upsertByEntityId(entityId, {
 			...event,
-			asset_id: entityId,
-			public_id:
-				typeof event.public_id === 'string' ? event.public_id : entityId,
+			asset_id: assetId ?? entityId,
+			public_id: publicId ?? entityId,
 		});
 	}
 
-	if (entityId && options?.syncResource === 'delete' && ctx.db.resources) {
-		await ctx.db.resources.deleteByEntityId(entityId);
+	if (options?.syncResource === 'delete' && ctx.db.resources) {
+		if (assetId) {
+			await ctx.db.resources.deleteByEntityId(assetId);
+		} else if (publicId) {
+			// Uploads are cached by asset_id when present; delete notifications
+			// sometimes only send public_id. Best-effort delete by that key.
+			await ctx.db.resources.deleteByEntityId(publicId);
+		}
 	}
 
 	return {
@@ -117,7 +144,11 @@ export const RenameWebhooks = {
 	rename: {
 		match: createCloudinaryMatch('rename'),
 		handler: async (ctx, request) =>
-			handleNotification<RenameEvent>(ctx, request, 'cloudinary.webhook.rename'),
+			handleNotification<RenameEvent>(
+				ctx,
+				request,
+				'cloudinary.webhook.rename',
+			),
 	} satisfies CorsairWebhook<CloudinaryContext, RenameEvent, RenameEvent>,
 };
 
@@ -201,7 +232,11 @@ export const OtherWebhooks = {
 	explode: {
 		match: createCloudinaryMatch('explode'),
 		handler: async (ctx, request) =>
-			handleNotification<ExplodeEvent>(ctx, request, 'cloudinary.webhook.explode'),
+			handleNotification<ExplodeEvent>(
+				ctx,
+				request,
+				'cloudinary.webhook.explode',
+			),
 	} satisfies CorsairWebhook<CloudinaryContext, ExplodeEvent, ExplodeEvent>,
 	accessControlChanged: {
 		match: createCloudinaryMatch('access_control_changed'),

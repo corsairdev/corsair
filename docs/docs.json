@@ -126,10 +126,7 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "guides/plugins",
-              "guides/create-your-own-plugin"
-            ]
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
@@ -232,6 +229,7 @@
                 "group": "Cloudinary",
                 "pages": [
                   "plugins/cloudinary/overview",
+                  "plugins/cloudinary/get-credentials",
                   "plugins/cloudinary/api",
                   "plugins/cloudinary/database",
                   "plugins/cloudinary/webhooks"

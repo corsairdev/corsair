@@ -7,11 +7,9 @@ export function matchCloudinaryTenantWebhook(
 	const body = readBodyRecord(request);
 	if (!body) return null;
 
-	const externalId = firstString([
-		body.cloud_name,
-		asRecord(body)?.cloud_name,
-		body.signature_key,
-	]);
+	// Cloudinary notification payloads may include cloud_name; signature_key is
+	// not a tenant identifier and must not be used for multi-tenant routing.
+	const externalId = firstString([body.cloud_name, asRecord(body)?.cloud_name]);
 
 	if (!externalId) return null;
 

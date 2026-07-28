@@ -67,7 +67,7 @@ Follow [Get Credentials](/plugins/cloudinary/get-credentials) if you need help g
 pnpm corsair setup --plugin=cloudinary
 ```
 
-Use the key names documented in [Get Credentials](/plugins/cloudinary/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+Use the key names documented in [Get Credentials](/plugins/cloudinary/get-credentials) (`api_key=`, `api_secret=`, `cloud_name=`).
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
@@ -84,10 +84,9 @@ Store per-tenant secrets after you create the tenant record. See [Multi-tenancy]
 
 ## Authentication
 
-See [Get Credentials](/plugins/cloudinary/get-credentials) for how to obtain and store secrets. Auth methods depend on how you configure `cloudinary({ ... })` — check the plugin source `*PluginOptions` type for supported `authType` values.
+See [Get Credentials](/plugins/cloudinary/get-credentials) for how to obtain and store secrets. This plugin supports **API key** auth only (`api_key` + `api_secret` + `cloud_name`).
 
 - [API key authentication](/concepts/api-key)
-- [OAuth 2.0](/concepts/oauth)
 
 ## Webhooks
 

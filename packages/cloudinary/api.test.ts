@@ -1,13 +1,13 @@
 import 'dotenv/config';
 import { createHash } from 'node:crypto';
 import { z } from 'zod';
+import type { CloudinaryCredentials } from './client';
 import {
 	encodeCloudinaryFormBody,
 	makeCloudinaryAdminRequest,
 	parseCloudinaryCredentials,
 	signCloudinaryParams,
 	verifyCloudinaryNotificationSignature,
-	type CloudinaryCredentials,
 } from './client';
 import { CloudinaryUsageSchema } from './endpoints/schemas';
 import { CloudinaryEndpointOutputSchemas } from './endpoints/types';
@@ -17,7 +17,8 @@ const TEST_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 const TEST_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const TEST_PUBLIC_ID = process.env.CLOUDINARY_TEST_PUBLIC_ID;
 const TEST_RESOURCE_TYPE = process.env.CLOUDINARY_TEST_RESOURCE_TYPE ?? 'image';
-const TEST_DELIVERY_TYPE = process.env.CLOUDINARY_TEST_DELIVERY_TYPE ?? 'upload';
+const TEST_DELIVERY_TYPE =
+	process.env.CLOUDINARY_TEST_DELIVERY_TYPE ?? 'upload';
 
 const PingResponseSchema = z.object({ status: z.string() }).passthrough();
 
@@ -73,23 +74,23 @@ describe('Cloudinary client helpers', () => {
 		expect(signature).toBe(expected);
 	});
 
-	it('signCloudinaryParams includes every array element in the signature', () => {
+	it('signCloudinaryParams excludes unsigned fields and joins arrays with commas', () => {
 		const params = {
+			api_key: 'should-not-sign',
+			file: 'should-not-sign',
 			eager: ['w_100', 'w_200'],
 			tags: ['a', 'b'],
 			timestamp: 1_700_000_000,
 		};
 		const signature = signCloudinaryParams(params, 'test-secret');
 		const expected = createHash('sha1')
-			.update(
-				'eager[]=w_100&eager[]=w_200&tags[]=a&tags[]=b&timestamp=1700000000test-secret',
-			)
+			.update('eager=w_100,w_200&tags=a,b&timestamp=1700000000test-secret')
 			.digest('hex');
 
 		expect(signature).toBe(expected);
 	});
 
-	it('encodeCloudinaryFormBody preserves all array field values', () => {
+	it('encodeCloudinaryFormBody serializes arrays as comma-separated values', () => {
 		const encoded = encodeCloudinaryFormBody({
 			tags: ['one', 'two', 'three'],
 			eager: ['w_100', 'w_200'],
@@ -98,15 +99,15 @@ describe('Cloudinary client helpers', () => {
 		});
 		const params = new URLSearchParams(encoded);
 
-		expect(params.getAll('tags[]')).toEqual(['one', 'two', 'three']);
-		expect(params.getAll('eager[]')).toEqual(['w_100', 'w_200']);
+		expect(params.get('tags')).toBe('one,two,three');
+		expect(params.get('eager')).toBe('w_100,w_200');
 		expect(params.get('timestamp')).toBe('1700000000');
 		expect(params.get('api_key')).toBe('key');
 	});
 
 	it('verifyCloudinaryNotificationSignature validates signed payloads', () => {
 		const payload = '{"notification_type":"upload"}';
-		const timestamp = '1700000000';
+		const timestamp = String(Math.floor(Date.now() / 1000));
 		const apiSecret = 'webhook-secret';
 		const signature = createHash('sha1')
 			.update(payload + timestamp + apiSecret)
@@ -133,6 +134,14 @@ describe('Cloudinary client helpers', () => {
 				payload,
 				timestamp,
 				'invalid',
+				apiSecret,
+			),
+		).toBe(false);
+		expect(
+			verifyCloudinaryNotificationSignature(
+				payload,
+				'1700000000',
+				signature,
 				apiSecret,
 			),
 		).toBe(false);

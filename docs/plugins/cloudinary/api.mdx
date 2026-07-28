@@ -547,7 +547,7 @@ await corsair.cloudinary.api.assets.searchVisualAssets({});
 
 `chunk.uploadChunk`
 
-Upload a file chunk for large uploads
+Upload a file chunk for large uploads (requires `content_range` and `x_unique_upload_id`)
 
 **Risk:** `write`
 
@@ -564,6 +564,8 @@ await corsair.cloudinary.api.chunk.uploadChunk({});
 | `file` | `custom \| custom` | No | — |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+| `content_range` | `string` | No | `Content-Range` header, e.g. `bytes 0-5242879/20000000` |
+| `x_unique_upload_id` | `string` | No | Same unique id for every chunk of the file |
 
 <AccordionGroup>
 <Accordion title="query full type">
@@ -1624,7 +1626,7 @@ await corsair.cloudinary.api.live.deleteLiveStreamOutput({});
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
-| `outputId` | `string` | Yes | — |
+| `liveStreamOutputId` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="query full type">
@@ -1715,7 +1717,7 @@ await corsair.cloudinary.api.live.getLiveStreamOutput({});
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
-| `outputId` | `string` | Yes | — |
+| `liveStreamOutputId` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="query full type">
@@ -1942,7 +1944,7 @@ await corsair.cloudinary.api.live.updateLiveStreamOutput({});
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
-| `outputId` | `string` | Yes | — |
+| `liveStreamOutputId` | `string` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="query full type">

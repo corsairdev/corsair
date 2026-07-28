@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairErrorHandler,
@@ -6,10 +7,15 @@ import type {
 	KeyBuilderContext,
 	PluginPermissionsConfig,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-
+import {
+	cloudinaryEndpointMeta,
+	cloudinaryEndpointSchemas,
+	cloudinaryEndpointsNested,
+} from './endpoints/plugin';
 import { errorHandlers } from './error-handlers';
+import type { CloudinaryPluginOptionsBase } from './plugin-types';
+import { cloudinaryAuthConfig } from './plugin-types';
 import { CloudinarySchema } from './schema';
 import {
 	DeleteWebhooks,
@@ -20,6 +26,8 @@ import {
 	ResourceWebhooks,
 	UploadWebhooks,
 } from './webhooks';
+import { resolveCloudinaryOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchCloudinaryTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CloudinaryAccessControlChangedSchema,
 	CloudinaryCreateFolderNotificationSchema,
@@ -35,17 +43,6 @@ import {
 	CloudinaryResourceTagsChangedSchema,
 	CloudinaryUploadNotificationSchema,
 } from './webhooks/types';
-import { matchCloudinaryTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveCloudinaryOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import {
-	cloudinaryAuthConfig,
-	type CloudinaryPluginOptionsBase,
-} from './plugin-types';
-import {
-	cloudinaryEndpointMeta,
-	cloudinaryEndpointSchemas,
-	cloudinaryEndpointsNested,
-} from './endpoints/plugin';
 
 export type CloudinaryPluginOptions = CloudinaryPluginOptionsBase & {
 	hooks?: InternalCloudinaryPlugin['hooks'];
@@ -54,16 +51,20 @@ export type CloudinaryPluginOptions = CloudinaryPluginOptionsBase & {
 	permissions?: PluginPermissionsConfig<typeof cloudinaryEndpointsNested>;
 };
 
-export type { CloudinaryContext } from './plugin-types';
 export { cloudinaryAuthConfig } from './auth-config';
+export type { CloudinaryContext } from './plugin-types';
 
 export type CloudinaryKeyBuilderContext = KeyBuilderContext<
 	CloudinaryPluginOptions,
 	typeof cloudinaryAuthConfig
 >;
 
-export type CloudinaryBoundEndpoints = BindEndpoints<typeof cloudinaryEndpointsNested>;
-export type CloudinaryBoundWebhooks = BindWebhooks<typeof cloudinaryWebhooksNested>;
+export type CloudinaryBoundEndpoints = BindEndpoints<
+	typeof cloudinaryEndpointsNested
+>;
+export type CloudinaryBoundWebhooks = BindWebhooks<
+	typeof cloudinaryWebhooksNested
+>;
 
 const cloudinaryWebhooksNested = {
 	upload: UploadWebhooks,
@@ -145,23 +146,26 @@ const cloudinaryWebhookSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-export type BaseCloudinaryPlugin<T extends CloudinaryPluginOptions> = CorsairPlugin<
-	'cloudinary',
-	typeof CloudinarySchema,
-	typeof cloudinaryEndpointsNested,
-	typeof cloudinaryWebhooksNested,
-	T,
-	typeof defaultAuthType,
-	typeof cloudinaryAuthConfig
->;
+export type BaseCloudinaryPlugin<T extends CloudinaryPluginOptions> =
+	CorsairPlugin<
+		'cloudinary',
+		typeof CloudinarySchema,
+		typeof cloudinaryEndpointsNested,
+		typeof cloudinaryWebhooksNested,
+		T,
+		typeof defaultAuthType,
+		typeof cloudinaryAuthConfig
+	>;
 
-export type InternalCloudinaryPlugin = BaseCloudinaryPlugin<CloudinaryPluginOptions>;
+export type InternalCloudinaryPlugin =
+	BaseCloudinaryPlugin<CloudinaryPluginOptions>;
 
 export type ExternalCloudinaryPlugin<T extends CloudinaryPluginOptions> =
 	BaseCloudinaryPlugin<T>;
 
 export function cloudinary<const T extends CloudinaryPluginOptions>(
-	incomingOptions: CloudinaryPluginOptions & T = {} as CloudinaryPluginOptions & T,
+	incomingOptions: CloudinaryPluginOptions & T = {} as CloudinaryPluginOptions &
+		T,
 ): ExternalCloudinaryPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -196,6 +200,8 @@ export function cloudinary<const T extends CloudinaryPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CloudinaryKeyBuilderContext, source) => {
+			// Cloudinary signs notifications with the API secret. webhookSecret /
+			// webhook_signature are optional overrides for that same secret value.
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
