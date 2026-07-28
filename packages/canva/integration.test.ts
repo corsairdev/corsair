@@ -2,11 +2,15 @@ import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { canva } from './index';
 
+const hasLiveCredentials = Boolean(
+	process.env.CANVA_ACCESS_TOKEN && process.env.CORSAIR_KEK,
+);
+
 async function createCanvaClient() {
 	const accessToken = process.env.CANVA_ACCESS_TOKEN;
 	const kek = process.env.CORSAIR_KEK;
 	if (!accessToken || !kek) {
-		return null;
+		throw new Error('CANVA_ACCESS_TOKEN and CORSAIR_KEK are required');
 	}
 
 	const testDb = createTestDatabase();
@@ -25,13 +29,10 @@ async function createCanvaClient() {
 }
 
 describe('Canva plugin integration', () => {
-	it('hits live API when credentials exist', async () => {
-		const setup = await createCanvaClient();
-		if (!setup) {
-			return;
-		}
+	const liveIt = hasLiveCredentials ? it : it.skip;
 
-		const { corsair, testDb } = setup;
+	liveIt('hits live API when credentials exist', async () => {
+		const { corsair, testDb } = await createCanvaClient();
 		try {
 			const me = await corsair.canva.api.users.getMe({});
 			expect(me.team_user.user_id).toBeTruthy();

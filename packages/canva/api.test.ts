@@ -777,11 +777,17 @@ describe('Canva input schemas', () => {
 describe('Canva base64 helpers', () => {
 	it('encodes metadata and decodes binary', () => {
 		const encoded = encodeUtf8ToBase64('My Awesome Upload 🚀');
-		expect(encoded.length).toBeGreaterThan(0);
+		expect(encoded).toBe('TXkgQXdlc29tZSBVcGxvYWQg8J+agA==');
 
 		const bytes = decodeBase64ToBytes(
 			Buffer.from([0x89, 0x50, 0x4e, 0x47]).toString('base64'),
 		);
 		expect(Array.from(bytes)).toEqual([0x89, 0x50, 0x4e, 0x47]);
+
+		const urlSafe = decodeBase64ToBytes('-_8=');
+		expect(Array.from(urlSafe)).toEqual(
+			Array.from(decodeBase64ToBytes('+/8=')),
+		);
+		expect(() => decodeBase64ToBytes('@@@')).toThrow('Invalid base64 input');
 	});
 });
