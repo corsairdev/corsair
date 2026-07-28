@@ -24,6 +24,13 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	buildClientBridgeBrowserDeliveryUrl,
+	type ClientBridgeDeliverySpec,
+	type ClientBridgeTransportResult,
+	type PrepareClientBridgeDeliveryTransportInput,
+	prepareClientBridgeDeliveryTransport,
+} from './client-bridge-delivery';
+export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
 	HubNotConfiguredError,
@@ -32,6 +39,10 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export type {
+	ConnectCreateLinkDeliveryPayload,
+	ConnectCreateLinkDeliveryResult,
+} from './connect-link-delivery';
 export {
 	type ConnectAuthFieldStatus,
 	type ConnectAuthStatusLevel,
@@ -120,10 +131,13 @@ export {
 	decodeConnectSessionTokenFromPath,
 	decodeConnectTokenFromPath,
 	decodePermissionTokenFromPath,
+	deliverConnectCreateLink,
 	deliverSignedEnvelope,
 	describeDeliveryNetworkError,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractConnectLinkFromDeliveryAck,
+	extractRunFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
@@ -131,6 +145,7 @@ export {
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
+	parseConnectLinkFromDeliveryBody,
 	parseServerDeliveryAckBody,
 	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,
@@ -157,6 +172,17 @@ export {
 	encryptSyncManifest,
 	parseSyncDeliveryBody,
 } from './sync-payload';
+export {
+	type AgentMessageRole,
+	type AgentReply,
+	type CreateThreadResult,
+	createThread,
+	listThreadMessages,
+	listThreads,
+	postThreadMessage,
+	type ThreadMessage,
+	type ThreadSummary,
+} from './threads';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
@@ -172,6 +198,10 @@ export type {
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
 	HubProjectConnection,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
 	TunnelEnvelope,
 	TunnelType,
 } from './types';

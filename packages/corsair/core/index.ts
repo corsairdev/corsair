@@ -238,6 +238,13 @@ export type {
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
 } from './permissions';
+export {
+	assertReadonlyAllowed,
+	isReadonlyScopeActive,
+	PermissionRequiredError,
+	ReadonlyForbiddenError,
+	runReadonly,
+} from './permissions';
 // Plugin types
 export type {
 	BeforeHookResult,
@@ -262,6 +269,15 @@ export type {
 	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
+// Agent chat threads namespace
+export type {
+	AgentReply,
+	CorsairThreadsNamespace,
+	CreateThreadResult,
+	ThreadHandle,
+	ThreadMessage,
+	ThreadSummary,
+} from './threads';
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
 // Webhook types

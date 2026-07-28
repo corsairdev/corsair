@@ -35,6 +35,8 @@ import type {
 	PermissionPolicy,
 } from '../plugins';
 import { ensureTenantProvisioned } from '../tenant-provision';
+import type { CorsairThreadsNamespace } from '../threads';
+import { buildThreadsNamespace } from '../threads';
 import type {
 	BindWebhooks,
 	CorsairWebhookTenantMatcher,
@@ -207,7 +209,14 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
-	InferPluginNamespaces<Plugins>;
+	InferPluginNamespaces<Plugins> & {
+		/**
+		 * Chat interface over the Hub-hosted workflow agent, scoped to this
+		 * client's tenant. Create/list threads and send messages that author or
+		 * edit workflows. Requires `hub` to be configured on `createCorsair`.
+		 */
+		threads: CorsairThreadsNamespace;
+	};
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
@@ -382,9 +391,15 @@ export function buildCorsairClient<
 		internalConfig,
 	} = options;
 
+	// Canonical tenant scope for this client. Single-tenant clients pass no
+	// tenantId → 'default', which is Hub's own single-tenant convention. Used
+	// identically for provisioning, plugin operations, and the threads API so a
+	// client's scope is the same everywhere.
+	const effectiveTenantId = tenantId ?? 'default';
+
 	const ensureProvisioned =
 		internalConfig && database
-			? () => ensureTenantProvisioned(internalConfig, tenantId ?? 'default')
+			? () => ensureTenantProvisioned(internalConfig, effectiveTenantId)
 			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
@@ -397,7 +412,6 @@ export function buildCorsairClient<
 
 	for (const plugin of plugins) {
 		const schema = plugin.schema;
-		const effectiveTenantId = tenantId ?? 'default';
 
 		// Create a shared account ID resolver for this plugin
 		const getAccountId = createAccountIdResolver(
@@ -521,6 +535,7 @@ export function buildCorsairClient<
 			plugin,
 			kek,
 			allPlugins: plugins,
+			multiTenancy: internalConfig?.multiTenancy,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
@@ -558,6 +573,13 @@ export function buildCorsairClient<
 			}
 		}
 	}
+
+	// Tenant-scoped chat interface to the Hub workflow agent. Attached to every
+	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
+	(apiUnsafe as Record<string, unknown>).threads = buildThreadsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
 
 	return apiUnsafe as CorsairClient<Plugins>;
 }

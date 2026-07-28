@@ -7,7 +7,12 @@
  */
 
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
-import type { TunnelEnvelope, TunnelType } from '../contracts/tunnel';
+import type { ConnectCreateLinkDeliveryResult } from '../connect-link-delivery';
+import type {
+	RunResultPayload,
+	TunnelEnvelope,
+	TunnelType,
+} from '../contracts/tunnel';
 import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../contracts/tunnel';
 
 /**
@@ -58,7 +63,18 @@ export type ServerDeliveryAckBody = {
 	sync?: {
 		encrypted: string;
 	};
+	/** Workflow execution outcome returned by `run` deliveries. */
+	run?: RunResultPayload;
 };
+
+/**
+ * Reads the workflow run outcome from a parsed delivery ack body.
+ */
+export function extractRunFromDeliveryAck(
+	body: ServerDeliveryAckBody,
+): RunResultPayload | null {
+	return body.run ?? null;
+}
 
 function parseSignatureHeader(
 	value: string | null | undefined,
@@ -236,6 +252,69 @@ export function extractSyncFromDeliveryAck(
 		return null;
 	}
 	return { encrypted: encrypted.trim() };
+}
+
+export function extractConnectLinkFromDeliveryAck(
+	body: ServerDeliveryAckBody,
+): ConnectCreateLinkDeliveryResult | null {
+	const connectUrl = body.connectUrl?.trim();
+	if (!connectUrl) {
+		return null;
+	}
+
+	return { connectUrl, expiresAt: body.expiresAt };
+}
+
+/**
+ * Parses connect link payload from a raw delivery HTTP body.
+ */
+export function parseConnectLinkFromDeliveryBody(
+	body: string,
+): ConnectCreateLinkDeliveryResult | null {
+	return extractConnectLinkFromDeliveryAck(parseServerDeliveryAckBody(body));
+}
+
+/**
+ * POSTs a connect.create_link envelope to the app's delivery URL.
+ */
+export async function deliverConnectCreateLink(input: {
+	deliveryUrl: string;
+	projectId: string;
+	signingSecret: string;
+	tenantId: string;
+	plugins: string[];
+}): Promise<ConnectCreateLinkDeliveryResult> {
+	const delivery = await deliverSignedEnvelope({
+		deliveryUrl: input.deliveryUrl,
+		projectId: input.projectId,
+		signingSecret: input.signingSecret,
+		type: 'connect.create_link',
+		payload: {
+			tenantId: input.tenantId,
+			plugins: input.plugins,
+		},
+	});
+
+	const ack = parseServerDeliveryAckBody(delivery.body);
+	const ok = isServerDeliveryAckSuccessful({
+		httpOk: delivery.ok,
+		status: delivery.status,
+		body: ack,
+	});
+	const result = extractConnectLinkFromDeliveryAck(ack);
+
+	if (!ok || !result) {
+		throw new Error(
+			formatServerDeliveryError({
+				deliveryUrl: input.deliveryUrl,
+				status: delivery.status,
+				body: delivery.body,
+				ack,
+			}),
+		);
+	}
+
+	return result;
 }
 
 /**
