@@ -150,6 +150,24 @@ describe('Cloudinary client helpers', () => {
 			),
 		).toBe(false);
 	});
+
+	it('verifyCloudinaryNotificationSignature accepts Cloudinary SHA-1 defaults', () => {
+		const payload = '{"notification_type":"upload"}';
+		const timestamp = String(Math.floor(Date.now() / 1000));
+		const apiSecret = 'webhook-secret';
+		const signature = createHash('sha1')
+			.update(payload + timestamp + apiSecret)
+			.digest('hex');
+
+		expect(
+			verifyCloudinaryNotificationSignature(
+				payload,
+				timestamp,
+				signature,
+				apiSecret,
+			),
+		).toBe(true);
+	});
 });
 
 const describeLive = hasLiveCredentials ? describe : describe.skip;

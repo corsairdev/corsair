@@ -66,14 +66,13 @@ export function parseCloudinaryCredentials(key: string): {
 }
 
 /**
- * Build a Cloudinary authentication signature.
- * Prefer SHA-256; SHA-1 remains available because Cloudinary still accepts it
- * as the historical default for signed upload params.
+ * Build a Cloudinary authentication signature (SHA-256).
+ * Cloudinary accepts SHA-256 for signed upload params; prefer it over the
+ * historical SHA-1 default so we never mint weak digests from the API secret.
  */
 export function signCloudinaryParams(
 	params: Record<string, unknown>,
 	apiSecret: string,
-	algorithm: 'sha1' | 'sha256' = 'sha256',
 ): string {
 	const sorted = Object.keys(params)
 		.filter(
@@ -92,13 +91,9 @@ export function signCloudinaryParams(
 		})
 		.join('&');
 
-	const payload = sorted + apiSecret;
-	if (algorithm === 'sha256') {
-		return createHash('sha256').update(payload).digest('hex');
-	}
-	// Cloudinary's documented default digest for auth signatures is still SHA-1.
-	// codeql[js/weak-cryptographic-algorithm]
-	return createHash('sha1').update(payload).digest('hex');
+	return createHash('sha256')
+		.update(sorted + apiSecret)
+		.digest('hex');
 }
 
 function adminBaseUrl(cloudName: string): string {
@@ -370,13 +365,12 @@ export function verifyCloudinaryNotificationSignature(
 	}
 
 	const signed = payload + timestamp + apiSecret;
-	// Prefer SHA-256 (supported by Cloudinary); fall back to SHA-1 for accounts
-	// still using Cloudinary's historical default digest.
+	// Prefer SHA-256; Cloudinary still signs with SHA-1 by default unless the
+	// account is restricted to SHA-256-only, so accept both digests.
 	const sha256 = createHash('sha256').update(signed).digest('hex');
 	if (digestEqualsHex(sha256, signature)) {
 		return true;
 	}
-	// codeql[js/weak-cryptographic-algorithm]
-	const sha1 = createHash('sha1').update(signed).digest('hex');
+	const sha1 = createHash('sha1').update(signed).digest('hex'); // codeql[js/weak-cryptographic-algorithm] Cloudinary webhook contract defaults to SHA-1; verify only, never mint
 	return digestEqualsHex(sha1, signature);
 }
