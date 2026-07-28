@@ -1,18 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import type { Asset, CanvaEndpointOutputs } from './types';
-
-function toAssetEntity(asset: Asset) {
-	return {
-		id: asset.id,
-		type: asset.type,
-		name: asset.name,
-		tags: asset.tags,
-		created_at: asset.created_at ? new Date(asset.created_at * 1000) : null,
-		updated_at: asset.updated_at ? new Date(asset.updated_at * 1000) : null,
-	};
-}
+import { toAssetEntity } from './mappers';
+import type { CanvaEndpointOutputs } from './types';
 
 export const get: CanvaEndpoints['assetsGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['assetsGet']>(

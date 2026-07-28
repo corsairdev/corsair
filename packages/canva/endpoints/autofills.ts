@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
+import { toDesignEntity } from './mappers';
 import type { CanvaEndpointOutputs } from './types';
 
 async function upsertDesignFromJob(
@@ -9,12 +10,10 @@ async function upsertDesignFromJob(
 ) {
 	if (!job.result?.design || !ctx.db.designs) return;
 	try {
-		const design = job.result.design;
-		await ctx.db.designs.upsertByEntityId(design.id, {
-			id: design.id,
-			title: design.title,
-			url: design.url,
-		});
+		await ctx.db.designs.upsertByEntityId(
+			job.result.design.id,
+			toDesignEntity(job.result.design),
+		);
 	} catch (error) {
 		console.warn('Failed to save autofilled design to database:', error);
 	}

@@ -15,7 +15,7 @@ export const CanvaDesign = z.object({
 
 export const CanvaAsset = z.object({
 	id: z.string(),
-	type: z.string().optional(),
+	type: z.enum(['image', 'video']).optional(),
 	name: z.string().optional(),
 	tags: z.array(z.string()).optional(),
 	created_at: z.coerce.date().nullable().optional(),

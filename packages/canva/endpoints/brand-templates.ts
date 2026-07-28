@@ -1,22 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import type { BrandTemplate, CanvaEndpointOutputs } from './types';
-
-function toBrandTemplateEntity(brandTemplate: BrandTemplate) {
-	return {
-		id: brandTemplate.id,
-		title: brandTemplate.title,
-		view_url: brandTemplate.view_url,
-		create_url: brandTemplate.create_url,
-		created_at: brandTemplate.created_at
-			? new Date(brandTemplate.created_at * 1000)
-			: null,
-		updated_at: brandTemplate.updated_at
-			? new Date(brandTemplate.updated_at * 1000)
-			: null,
-	};
-}
+import { toBrandTemplateEntity } from './mappers';
+import type { CanvaEndpointOutputs } from './types';
 
 export const list: CanvaEndpoints['brandTemplatesList'] = async (
 	ctx,

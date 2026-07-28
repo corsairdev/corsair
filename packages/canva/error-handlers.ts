@@ -29,17 +29,24 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error) => {
-			if (error instanceof CanvaAPIError && error.status === 401) {
-				return true;
+			if (error instanceof CanvaAPIError) {
+				if (error.status === 401) return true;
+				if (
+					error.code === 'invalid_access_token' ||
+					error.code === 'revoked_access_token'
+				) {
+					return true;
+				}
 			}
 			const errorMessage = error.message.toLowerCase();
 			return (
 				errorMessage.includes('unauthorized') ||
 				errorMessage.includes('invalid_token') ||
-				errorMessage.includes('invalid_auth')
+				errorMessage.includes('invalid_auth') ||
+				errorMessage.includes('invalid_access_token')
 			);
 		},
-		handler: async (error, context) => {
+		handler: async (_error, context) => {
 			console.warn(
 				`[CANVA:${context.operation}] Authentication failed - check your OAuth access token`,
 			);
@@ -51,13 +58,20 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error) => {
-			if (error instanceof CanvaAPIError && error.status === 403) {
-				return true;
+			if (error instanceof CanvaAPIError) {
+				if (error.status === 403) return true;
+				if (
+					error.code === 'permission_denied' ||
+					error.code === 'insufficient_permissions'
+				) {
+					return true;
+				}
 			}
 			const errorMessage = error.message.toLowerCase();
 			return (
 				errorMessage.includes('forbidden') ||
-				errorMessage.includes('permission')
+				errorMessage.includes('permission') ||
+				errorMessage.includes('access_denied')
 			);
 		},
 		handler: async (error, context) => {
@@ -72,8 +86,9 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error) => {
-			if (error instanceof CanvaAPIError && error.status === 404) {
-				return true;
+			if (error instanceof CanvaAPIError) {
+				if (error.status === 404) return true;
+				if (error.code === 'not_found') return true;
 			}
 			const errorMessage = error.message.toLowerCase();
 			return errorMessage.includes('not_found');
@@ -85,6 +100,28 @@ export const errorHandlers = {
 
 			return {
 				maxRetries: 0,
+			};
+		},
+	},
+	NETWORK_ERROR: {
+		match: (error) => {
+			const errorMessage = error.message.toLowerCase();
+			return (
+				errorMessage.includes('network') ||
+				errorMessage.includes('connection') ||
+				errorMessage.includes('econnrefused') ||
+				errorMessage.includes('enotfound') ||
+				errorMessage.includes('etimedout') ||
+				errorMessage.includes('fetch failed')
+			);
+		},
+		handler: async (error, context) => {
+			console.warn(
+				`[CANVA:${context.operation}] Network error: ${error.message}`,
+			);
+
+			return {
+				maxRetries: 3,
 			};
 		},
 	},

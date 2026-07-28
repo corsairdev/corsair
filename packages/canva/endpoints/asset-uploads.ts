@@ -1,6 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
+import { decodeBase64ToBytes, encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
+import { toAssetEntity, withoutBase64 } from './mappers';
 import type { CanvaEndpointOutputs } from './types';
 
 async function upsertAssetFromJob(
@@ -9,18 +11,10 @@ async function upsertAssetFromJob(
 ) {
 	if (!job.asset || !ctx.db.assets) return;
 	try {
-		await ctx.db.assets.upsertByEntityId(job.asset.id, {
-			id: job.asset.id,
-			type: job.asset.type,
-			name: job.asset.name,
-			tags: job.asset.tags,
-			created_at: job.asset.created_at
-				? new Date(job.asset.created_at * 1000)
-				: null,
-			updated_at: job.asset.updated_at
-				? new Date(job.asset.updated_at * 1000)
-				: null,
-		});
+		await ctx.db.assets.upsertByEntityId(
+			job.asset.id,
+			toAssetEntity(job.asset),
+		);
 	} catch (error) {
 		console.warn('Failed to save uploaded asset to database:', error);
 	}
@@ -30,9 +24,7 @@ export const create: CanvaEndpoints['assetUploadsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	// Blob keeps raw bytes intact through corsair/http (string bodies are UTF-8
-	// encoded by fetch and would corrupt binary uploads).
-	const binaryBody = new Blob([Buffer.from(input.contentBase64, 'base64')], {
+	const binaryBody = new Blob([decodeBase64ToBytes(input.contentBase64)], {
 		type: 'application/octet-stream',
 	});
 
@@ -43,7 +35,7 @@ export const create: CanvaEndpoints['assetUploadsCreate'] = async (
 		body: binaryBody,
 		extraHeaders: {
 			'Asset-Upload-Metadata': JSON.stringify({
-				name_base64: Buffer.from(input.name).toString('base64'),
+				name_base64: encodeUtf8ToBase64(input.name),
 			}),
 		},
 	});
@@ -53,7 +45,7 @@ export const create: CanvaEndpoints['assetUploadsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.assetUploads.create',
-		{ name: input.name },
+		withoutBase64(input),
 		'completed',
 	);
 	return result;

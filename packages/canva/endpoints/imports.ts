@@ -1,6 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
+import { decodeBase64ToBytes, encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
+import { toDesignEntity, withoutBase64 } from './mappers';
 import type { CanvaEndpointOutputs } from './types';
 
 async function upsertDesignsFromJob(
@@ -10,11 +12,7 @@ async function upsertDesignsFromJob(
 	if (!job.result?.designs?.length || !ctx.db.designs) return;
 	try {
 		for (const design of job.result.designs) {
-			await ctx.db.designs.upsertByEntityId(design.id, {
-				id: design.id,
-				title: design.title,
-				url: design.url,
-			});
+			await ctx.db.designs.upsertByEntityId(design.id, toDesignEntity(design));
 		}
 	} catch (error) {
 		console.warn('Failed to save imported designs to database:', error);
@@ -22,9 +20,7 @@ async function upsertDesignsFromJob(
 }
 
 export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
-	// Blob keeps raw bytes intact through corsair/http (string bodies are UTF-8
-	// encoded by fetch and would corrupt binary imports).
-	const binaryBody = new Blob([Buffer.from(input.contentBase64, 'base64')], {
+	const binaryBody = new Blob([decodeBase64ToBytes(input.contentBase64)], {
 		type: 'application/octet-stream',
 	});
 
@@ -36,7 +32,7 @@ export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
 			body: binaryBody,
 			extraHeaders: {
 				'Import-Metadata': JSON.stringify({
-					title_base64: Buffer.from(input.title).toString('base64'),
+					title_base64: encodeUtf8ToBase64(input.title),
 					...(input.mime_type !== undefined && {
 						mime_type: input.mime_type,
 					}),
@@ -50,7 +46,7 @@ export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.imports.create',
-		{ title: input.title },
+		withoutBase64(input),
 		'completed',
 	);
 	return result;
@@ -82,7 +78,11 @@ export const createFromUrl: CanvaEndpoints['importsCreateFromUrl'] = async (
 		CanvaEndpointOutputs['importsCreateFromUrl']
 	>('v1/url-imports', ctx.key, {
 		method: 'POST',
-		body: { title: input.title, url: input.url },
+		body: {
+			title: input.title,
+			url: input.url,
+			...(input.mime_type !== undefined && { mime_type: input.mime_type }),
+		},
 	});
 
 	await upsertDesignsFromJob(ctx, result.job);

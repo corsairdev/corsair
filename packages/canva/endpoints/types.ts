@@ -1,9 +1,5 @@
 import { z } from 'zod';
 
-// ============================================================================
-// Shared Schemas
-// ============================================================================
-
 export const ThumbnailSchema = z.object({
 	width: z.number(),
 	height: z.number(),
@@ -74,7 +70,10 @@ export const BrandTemplateSchema = z.object({
 export type BrandTemplate = z.infer<typeof BrandTemplateSchema>;
 
 const DesignPageSchema = z.object({
-	index: z.number(),
+	id: z.string().optional(),
+	index: z.number().optional(),
+	page_number: z.number().optional(),
+	design_type: z.string().optional(),
 	dimensions: z
 		.object({
 			width: z.number(),
@@ -109,20 +108,27 @@ const ExportFormatSchema = z.discriminatedUnion('type', [
 	}),
 	z.object({
 		type: z.literal('jpg'),
+		quality: z.number().min(1).max(100),
 		width: z.number().optional(),
 		height: z.number().optional(),
+		pages: z.array(z.number()).optional(),
 		export_quality: z.enum(['regular', 'pro']).optional(),
 	}),
 	z.object({
 		type: z.literal('png'),
 		width: z.number().optional(),
 		height: z.number().optional(),
+		pages: z.array(z.number()).optional(),
+		lossless: z.boolean().optional(),
+		transparent_background: z.boolean().optional(),
+		as_single_image: z.boolean().optional(),
 		export_quality: z.enum(['regular', 'pro']).optional(),
 	}),
 	z.object({
 		type: z.literal('gif'),
 		width: z.number().optional(),
 		height: z.number().optional(),
+		pages: z.array(z.number()).optional(),
 		export_quality: z.enum(['regular', 'pro']).optional(),
 	}),
 	z.object({
@@ -158,16 +164,30 @@ const ExportFormatSchema = z.discriminatedUnion('type', [
 	}),
 ]);
 
+const ExportFormatOptionSchema = z
+	.object({
+		page_numbers: z.array(z.number()).optional(),
+	})
+	.passthrough();
+
+const DesignsGetExportFormatsResponseSchema = z.object({
+	formats: z.record(z.string(), ExportFormatOptionSchema),
+});
+
+export const JobStatusSchema = z.enum(['in_progress', 'success', 'failed']);
+export type JobStatus = z.infer<typeof JobStatusSchema>;
+
+export const JobErrorSchema = z.object({
+	code: z.string(),
+	message: z.string(),
+});
+export type JobError = z.infer<typeof JobErrorSchema>;
+
 const ExportJobSchema = z.object({
 	id: z.string(),
-	status: z.enum(['failed', 'in_progress', 'success']),
+	status: JobStatusSchema,
 	urls: z.array(z.string()).optional(),
-	error: z
-		.object({
-			code: z.string(),
-			message: z.string(),
-		})
-		.optional(),
+	error: JobErrorSchema.optional(),
 });
 
 const SuccessResponseSchema = z.object({
@@ -196,21 +216,6 @@ const FolderItemSchema = z.discriminatedUnion('type', [
 	}),
 ]);
 
-// Shared job primitives — Canva async jobs all follow this `in_progress` ->
-// `success` | `failed` lifecycle (asset uploads, imports, resizes, autofills).
-export const JobStatusSchema = z.enum(['in_progress', 'success', 'failed']);
-export type JobStatus = z.infer<typeof JobStatusSchema>;
-
-export const JobErrorSchema = z.object({
-	code: z.string(),
-	message: z.string(),
-});
-export type JobError = z.infer<typeof JobErrorSchema>;
-
-// ============================================================================
-// Users
-// ============================================================================
-
 const UsersGetMeInputSchema = z.object({});
 
 const UsersGetMeResponseSchema = z.object({
@@ -232,10 +237,6 @@ const UsersGetCapabilitiesInputSchema = z.object({});
 const UsersGetCapabilitiesResponseSchema = z.object({
 	capabilities: z.array(z.string()),
 });
-
-// ============================================================================
-// Designs
-// ============================================================================
 
 const DesignsListInputSchema = z.object({
 	query: z.string().optional(),
@@ -266,12 +267,19 @@ const DesignsGetResponseSchema = z.object({
 	design: DesignSchema,
 });
 
-const DesignsCreateInputSchema = z.object({
-	type: z.literal('type_and_asset').optional(),
-	design_type: DesignTypeInputSchema.optional(),
-	asset_id: z.string().optional(),
-	title: z.string().optional(),
-});
+const DesignsCreateInputSchema = z
+	.object({
+		type: z.literal('type_and_asset').optional(),
+		design_type: DesignTypeInputSchema.optional(),
+		asset_id: z.string().optional(),
+		title: z.string().optional(),
+	})
+	.refine(
+		(value) => value.design_type !== undefined || value.asset_id !== undefined,
+		{
+			message: 'Either design_type or asset_id is required',
+		},
+	);
 
 const DesignsCreateResponseSchema = z.object({
 	design: DesignSchema,
@@ -290,17 +298,6 @@ const DesignsGetPagesResponseSchema = z.object({
 const DesignsGetExportFormatsInputSchema = z.object({
 	designId: z.string(),
 });
-
-const DesignsGetExportFormatsResponseSchema = z.object({
-	export_formats: z.record(
-		z.string(),
-		z.object({ supports_pages: z.boolean().optional() }).passthrough(),
-	),
-});
-
-// ============================================================================
-// Assets
-// ============================================================================
 
 const AssetsGetInputSchema = z.object({
 	assetId: z.string(),
@@ -325,10 +322,6 @@ const AssetsDeleteInputSchema = z.object({
 });
 
 const AssetsDeleteResponseSchema = SuccessResponseSchema;
-
-// ============================================================================
-// Folders
-// ============================================================================
 
 const FoldersCreateInputSchema = z.object({
 	name: z.string(),
@@ -394,10 +387,6 @@ const FoldersMoveItemInputSchema = z.object({
 
 const FoldersMoveItemResponseSchema = SuccessResponseSchema;
 
-// ============================================================================
-// Exports
-// ============================================================================
-
 const ExportsCreateInputSchema = z.object({
 	design_id: z.string(),
 	format: ExportFormatSchema,
@@ -414,10 +403,6 @@ const ExportsGetInputSchema = z.object({
 const ExportsGetResponseSchema = z.object({
 	job: ExportJobSchema,
 });
-
-// ============================================================================
-// Brand Templates
-// ============================================================================
 
 export const BrandTemplateDatasetFieldSchema = z
 	.object({
@@ -470,10 +455,6 @@ const BrandTemplatesGetDatasetResponseSchema = z.object({
 	dataset: BrandTemplateDatasetSchema,
 });
 
-// ============================================================================
-// Asset Uploads
-// ============================================================================
-
 export const AssetUploadJobSchema = z.object({
 	id: z.string(),
 	status: JobStatusSchema,
@@ -516,10 +497,6 @@ const AssetUploadsGetFromUrlInputSchema = z.object({
 const AssetUploadsGetFromUrlResponseSchema = z.object({
 	job: AssetUploadJobSchema,
 });
-
-// ============================================================================
-// Imports
-// ============================================================================
 
 const ImportDesignSummarySchema = z.object({
 	id: z.string(),
@@ -564,6 +541,7 @@ const ImportsGetResponseSchema = z.object({
 const ImportsCreateFromUrlInputSchema = z.object({
 	title: z.string(),
 	url: z.string(),
+	mime_type: z.string().optional(),
 });
 
 const ImportsCreateFromUrlResponseSchema = z.object({
@@ -577,10 +555,6 @@ const ImportsGetFromUrlInputSchema = z.object({
 const ImportsGetFromUrlResponseSchema = z.object({
 	job: ImportJobSchema,
 });
-
-// ============================================================================
-// Resizes
-// ============================================================================
 
 export const ResizeJobSchema = z.object({
 	id: z.string(),
@@ -612,17 +586,20 @@ const ResizesGetResponseSchema = z.object({
 	job: ResizeJobSchema,
 });
 
-// ============================================================================
-// Autofills
-// ============================================================================
-
-export const AutofillDataFieldSchema = z.union([
+export const AutofillDataFieldSchema = z.discriminatedUnion('type', [
 	z.object({ type: z.literal('text'), text: z.string() }),
 	z.object({ type: z.literal('image'), asset_id: z.string() }),
+	z.object({ type: z.literal('video'), asset_id: z.string() }),
 	z
 		.object({
 			type: z.literal('chart'),
 			chart_data: z.record(z.string(), z.unknown()),
+		})
+		.passthrough(),
+	z
+		.object({
+			type: z.literal('sheet'),
+			sheet_data: z.record(z.string(), z.unknown()),
 		})
 		.passthrough(),
 ]);
@@ -671,10 +648,6 @@ const AutofillsGetInputSchema = z.object({
 const AutofillsGetResponseSchema = z.object({
 	job: AutofillJobSchema,
 });
-
-// ============================================================================
-// Comments
-// ============================================================================
 
 const CommentUserSchema = z
 	.object({
@@ -772,10 +745,6 @@ const CommentsGetReplyInputSchema = z.object({
 const CommentsGetReplyResponseSchema = z.object({
 	reply: CommentReplySchema,
 });
-
-// ============================================================================
-// Type Exports
-// ============================================================================
 
 export type UsersGetMeInput = z.infer<typeof UsersGetMeInputSchema>;
 export type UsersGetMeResponse = z.infer<typeof UsersGetMeResponseSchema>;

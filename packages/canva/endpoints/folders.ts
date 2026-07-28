@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
+import {
+	toAssetEntity,
+	toBrandTemplateEntity,
+	toDesignEntity,
+} from './mappers';
 import type { CanvaEndpointOutputs, Folder } from './types';
 
 function toFolderEntity(folder: Folder) {
@@ -151,7 +156,7 @@ export const listItems: CanvaEndpoints['foldersListItems'] = async (
 
 	if (
 		result.items.length > 0 &&
-		(ctx.db.folders || ctx.db.designs || ctx.db.assets)
+		(ctx.db.folders || ctx.db.designs || ctx.db.assets || ctx.db.brandTemplates)
 	) {
 		try {
 			for (const item of result.items) {
@@ -161,39 +166,20 @@ export const listItems: CanvaEndpoints['foldersListItems'] = async (
 						toFolderEntity(item.folder),
 					);
 				} else if (item.type === 'design' && ctx.db.designs) {
-					await ctx.db.designs.upsertByEntityId(item.design.id, {
-						id: item.design.id,
-						title: item.design.title,
-						owner_user_id: item.design.owner?.user_id,
-						owner_team_id: item.design.owner?.team_id,
-						url: item.design.url,
-					});
+					await ctx.db.designs.upsertByEntityId(
+						item.design.id,
+						toDesignEntity(item.design),
+					);
 				} else if (item.type === 'image' && ctx.db.assets) {
-					await ctx.db.assets.upsertByEntityId(item.image.id, {
-						id: item.image.id,
-						type: item.image.type,
-						name: item.image.name,
-						tags: item.image.tags,
-						created_at: item.image.created_at
-							? new Date(item.image.created_at * 1000)
-							: null,
-						updated_at: item.image.updated_at
-							? new Date(item.image.updated_at * 1000)
-							: null,
-					});
+					await ctx.db.assets.upsertByEntityId(
+						item.image.id,
+						toAssetEntity(item.image),
+					);
 				} else if (item.type === 'brand_template' && ctx.db.brandTemplates) {
-					await ctx.db.brandTemplates.upsertByEntityId(item.brand_template.id, {
-						id: item.brand_template.id,
-						title: item.brand_template.title,
-						view_url: item.brand_template.view_url,
-						create_url: item.brand_template.create_url,
-						created_at: item.brand_template.created_at
-							? new Date(item.brand_template.created_at * 1000)
-							: null,
-						updated_at: item.brand_template.updated_at
-							? new Date(item.brand_template.updated_at * 1000)
-							: null,
-					});
+					await ctx.db.brandTemplates.upsertByEntityId(
+						item.brand_template.id,
+						toBrandTemplateEntity(item.brand_template),
+					);
 				}
 			}
 		} catch (error) {

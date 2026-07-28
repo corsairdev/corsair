@@ -21,7 +21,7 @@ export const createThread: CanvaEndpoints['commentsCreateThread'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.createThread',
-		{ designId },
+		{ ...input },
 		'completed',
 	);
 	return result;
@@ -62,7 +62,7 @@ export const createReply: CanvaEndpoints['commentsCreateReply'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.createReply',
-		{ designId, threadId },
+		{ ...input },
 		'completed',
 	);
 	return result;

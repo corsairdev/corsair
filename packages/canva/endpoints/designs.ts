@@ -1,21 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import type { CanvaEndpointOutputs, Design } from './types';
-
-function toDesignEntity(design: Design) {
-	return {
-		id: design.id,
-		title: design.title,
-		owner_user_id: design.owner?.user_id,
-		owner_team_id: design.owner?.team_id,
-		created_at: design.created_at ? new Date(design.created_at * 1000) : null,
-		updated_at: design.updated_at ? new Date(design.updated_at * 1000) : null,
-		page_count: design.page_count,
-		edit_url: design.urls?.edit_url,
-		view_url: design.urls?.view_url,
-	};
-}
+import { toDesignEntity } from './mappers';
+import type { CanvaEndpointOutputs } from './types';
 
 export const list: CanvaEndpoints['designsList'] = async (ctx, input) => {
 	const { query, continuation, ownership, sort_by, limit } = input;

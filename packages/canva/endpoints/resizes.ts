@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
+import { toDesignEntity } from './mappers';
 import type { CanvaEndpointOutputs } from './types';
 
 async function upsertDesignFromJob(
@@ -9,18 +10,10 @@ async function upsertDesignFromJob(
 ) {
 	if (!job.result?.design || !ctx.db.designs) return;
 	try {
-		const design = job.result.design;
-		await ctx.db.designs.upsertByEntityId(design.id, {
-			id: design.id,
-			title: design.title,
-			owner_user_id: design.owner?.user_id,
-			owner_team_id: design.owner?.team_id,
-			created_at: design.created_at ? new Date(design.created_at * 1000) : null,
-			updated_at: design.updated_at ? new Date(design.updated_at * 1000) : null,
-			page_count: design.page_count,
-			edit_url: design.urls?.edit_url,
-			view_url: design.urls?.view_url,
-		});
+		await ctx.db.designs.upsertByEntityId(
+			job.result.design.id,
+			toDesignEntity(job.result.design),
+		);
 	} catch (error) {
 		console.warn('Failed to save resized design to database:', error);
 	}

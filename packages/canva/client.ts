@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class CanvaAPIError extends Error {
@@ -14,6 +18,16 @@ export class CanvaAPIError extends Error {
 }
 
 const CANVA_API_BASE = 'https://api.canva.com/rest';
+
+const CANVA_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 function isBinaryBody(body: unknown): body is string | Blob {
 	return (
@@ -45,7 +59,6 @@ export async function makeCanvaRequest<T>(
 			...(binary
 				? { 'Content-Type': 'application/octet-stream' }
 				: { 'Content-Type': 'application/json' }),
-			Authorization: `Bearer ${apiKey}`,
 			...extraHeaders,
 		},
 	};
@@ -64,10 +77,24 @@ export async function makeCanvaRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: CANVA_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new CanvaAPIError(error.message, error.status, error.retryAfter);
+			const code =
+				typeof error.body === 'object' &&
+				error.body !== null &&
+				'code' in error.body &&
+				typeof (error.body as { code?: unknown }).code === 'string'
+					? (error.body as { code: string }).code
+					: undefined;
+			throw new CanvaAPIError(
+				error.message,
+				error.status,
+				error.retryAfter,
+				code,
+			);
 		}
 		if (error instanceof Error) {
 			throw new CanvaAPIError(error.message);

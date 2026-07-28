@@ -1,9 +1,13 @@
-import { CanvaEndpointOutputSchemas } from './endpoints/types';
+import { decodeBase64ToBytes, encodeUtf8ToBase64 } from './base64';
+import {
+	CanvaEndpointInputSchemas,
+	CanvaEndpointOutputSchemas,
+} from './endpoints/types';
 import { canva } from './index';
 
 describe('Canva API response schemas', () => {
 	describe('designs', () => {
-		it('validates designs list response from Canva docs example', () => {
+		it('parses designs list response', () => {
 			const result = CanvaEndpointOutputSchemas.designsList.parse({
 				continuation:
 					'RkFGMgXlsVTDbMd:MR3L0QjiaUzycIAjx0yMyuNiV0OildoiOwL0x32G4NjNu4FwtAQNxowUQNMMYN',
@@ -37,7 +41,7 @@ describe('Canva API response schemas', () => {
 			expect(result.items[0]?.owner.user_id).toBe('auDAbliZ2rQNNOsUl5OLu');
 		});
 
-		it('validates design get response from Canva docs example', () => {
+		it('parses design get response', () => {
 			const result = CanvaEndpointOutputSchemas.designsGet.parse({
 				design: {
 					id: 'DAFVztcvd9z',
@@ -65,7 +69,7 @@ describe('Canva API response schemas', () => {
 			expect(result.design.urls.view_url).toContain('/view');
 		});
 
-		it('validates design create response shape', () => {
+		it('parses design create response', () => {
 			const result = CanvaEndpointOutputSchemas.designsCreate.parse({
 				design: {
 					id: 'DAFVztcvd9z',
@@ -85,11 +89,14 @@ describe('Canva API response schemas', () => {
 			expect(result.design.id).toBe('DAFVztcvd9z');
 		});
 
-		it('validates design pages response shape', () => {
+		it('parses design pages response', () => {
 			const result = CanvaEndpointOutputSchemas.designsGetPages.parse({
 				items: [
 					{
-						index: 0,
+						id: 'PB2NFQ9W78kLDFCK',
+						index: 1,
+						page_number: 1,
+						design_type: 'presentation',
 						dimensions: { width: 1920, height: 1080 },
 						thumbnail: {
 							width: 595,
@@ -101,25 +108,27 @@ describe('Canva API response schemas', () => {
 			});
 
 			expect(result.items).toHaveLength(1);
-			expect(result.items[0]?.index).toBe(0);
+			expect(result.items[0]?.page_number).toBe(1);
+			expect(result.items[0]?.design_type).toBe('presentation');
 		});
 
-		it('validates design export formats response shape', () => {
+		it('parses design export formats response', () => {
 			const result = CanvaEndpointOutputSchemas.designsGetExportFormats.parse({
-				export_formats: {
-					pdf: { supports_pages: true },
+				formats: {
+					pdf: { page_numbers: [1, 2, 3] },
 					png: {},
+					svg: {},
 					mp4: {},
 				},
 			});
 
-			expect(result.export_formats.pdf?.supports_pages).toBe(true);
-			expect(Object.keys(result.export_formats)).toContain('mp4');
+			expect(result.formats.pdf?.page_numbers).toEqual([1, 2, 3]);
+			expect(Object.keys(result.formats)).toContain('svg');
 		});
 	});
 
 	describe('assets', () => {
-		it('validates asset get response shape', () => {
+		it('parses asset get response', () => {
 			const result = CanvaEndpointOutputSchemas.assetsGet.parse({
 				asset: {
 					type: 'image',
@@ -140,7 +149,7 @@ describe('Canva API response schemas', () => {
 			expect(result.asset.tags).toContain('holiday');
 		});
 
-		it('validates asset update response shape', () => {
+		it('parses asset update response', () => {
 			const result = CanvaEndpointOutputSchemas.assetsUpdate.parse({
 				asset: {
 					type: 'image',
@@ -155,7 +164,7 @@ describe('Canva API response schemas', () => {
 			expect(result.asset.name).toBe('Renamed Upload');
 		});
 
-		it('validates asset delete success response shape', () => {
+		it('parses asset delete response', () => {
 			const result = CanvaEndpointOutputSchemas.assetsDelete.parse({
 				success: true,
 			});
@@ -165,7 +174,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('folders', () => {
-		it('validates folder create response shape', () => {
+		it('parses folder create response', () => {
 			const result = CanvaEndpointOutputSchemas.foldersCreate.parse({
 				folder: {
 					id: 'FAF2lZtloor',
@@ -179,7 +188,7 @@ describe('Canva API response schemas', () => {
 			expect(result.folder.name).toBe('My awesome holiday');
 		});
 
-		it('validates folder get response shape', () => {
+		it('parses folder get response', () => {
 			const result = CanvaEndpointOutputSchemas.foldersGet.parse({
 				folder: {
 					id: 'FAF2lZtloor',
@@ -192,7 +201,36 @@ describe('Canva API response schemas', () => {
 			expect(result.folder.id).toBe('FAF2lZtloor');
 		});
 
-		it('validates folder listItems response shape with mixed item types', () => {
+		it('parses folder update response', () => {
+			const result = CanvaEndpointOutputSchemas.foldersUpdate.parse({
+				folder: {
+					id: 'FAF2lZtloor',
+					name: 'Renamed folder',
+					created_at: 1377396000,
+					updated_at: 1692928800,
+				},
+			});
+
+			expect(result.folder.name).toBe('Renamed folder');
+		});
+
+		it('parses folder delete response', () => {
+			const result = CanvaEndpointOutputSchemas.foldersDelete.parse({
+				success: true,
+			});
+
+			expect(result.success).toBe(true);
+		});
+
+		it('parses folder moveItem response', () => {
+			const result = CanvaEndpointOutputSchemas.foldersMoveItem.parse({
+				success: true,
+			});
+
+			expect(result.success).toBe(true);
+		});
+
+		it('parses folder listItems response', () => {
 			const result = CanvaEndpointOutputSchemas.foldersListItems.parse({
 				items: [
 					{
@@ -253,7 +291,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('exports', () => {
-		it('validates exports create in-progress response shape', () => {
+		it('parses exports create response', () => {
 			const result = CanvaEndpointOutputSchemas.exportsCreate.parse({
 				job: {
 					id: 'e08861ae-3b29-45db-8dc1-1fe0bf7f1cc8',
@@ -265,7 +303,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.id).toBe('e08861ae-3b29-45db-8dc1-1fe0bf7f1cc8');
 		});
 
-		it('validates exports get success response shape', () => {
+		it('parses exports get response', () => {
 			const result = CanvaEndpointOutputSchemas.exportsGet.parse({
 				job: {
 					id: 'e08861ae-3b29-45db-8dc1-1fe0bf7f1cc8',
@@ -280,7 +318,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('users', () => {
-		it('validates users me response shape', () => {
+		it('parses users me response', () => {
 			const result = CanvaEndpointOutputSchemas.usersGetMe.parse({
 				team_user: {
 					user_id: 'auDAbliZ2rQNNOsUl5OLu',
@@ -292,7 +330,7 @@ describe('Canva API response schemas', () => {
 			expect(result.team_user.team_id).toBe('Oi2RJILTrKk0KRhRUZozX');
 		});
 
-		it('validates users profile response shape', () => {
+		it('parses users profile response', () => {
 			const result = CanvaEndpointOutputSchemas.usersGetProfile.parse({
 				profile: {
 					display_name: 'Jane Doe',
@@ -302,7 +340,7 @@ describe('Canva API response schemas', () => {
 			expect(result.profile.display_name).toBe('Jane Doe');
 		});
 
-		it('validates users capabilities response shape', () => {
+		it('parses users capabilities response', () => {
 			const result = CanvaEndpointOutputSchemas.usersGetCapabilities.parse({
 				capabilities: ['autofill', 'brand_template', 'resize'],
 			});
@@ -313,7 +351,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('brandTemplates', () => {
-		it('validates brand templates list response shape', () => {
+		it('parses brand templates list response', () => {
 			const result = CanvaEndpointOutputSchemas.brandTemplatesList.parse({
 				items: [
 					{
@@ -332,7 +370,7 @@ describe('Canva API response schemas', () => {
 			expect(result.items[0]?.id).toBe('DEMzWSwy3BQ');
 		});
 
-		it('validates brand template get response shape', () => {
+		it('parses brand template get response', () => {
 			const result = CanvaEndpointOutputSchemas.brandTemplatesGet.parse({
 				brand_template: {
 					id: 'DEMzWSwy3BQ',
@@ -347,7 +385,7 @@ describe('Canva API response schemas', () => {
 			expect(result.brand_template.title).toBe('Advertisement');
 		});
 
-		it('validates brand template dataset response shape', () => {
+		it('parses brand template dataset response', () => {
 			const result = CanvaEndpointOutputSchemas.brandTemplatesGetDataset.parse({
 				dataset: {
 					cute_pet_image_of_the_day: { type: 'image' },
@@ -362,7 +400,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('assetUploads', () => {
-		it('validates asset upload create in-progress response shape', () => {
+		it('parses asset upload create response', () => {
 			const result = CanvaEndpointOutputSchemas.assetUploadsCreate.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -373,7 +411,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.status).toBe('in_progress');
 		});
 
-		it('validates asset upload get success response shape with asset', () => {
+		it('parses asset upload get response', () => {
 			const result = CanvaEndpointOutputSchemas.assetUploadsGet.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -393,7 +431,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.asset?.id).toBe('Msd59349ff');
 		});
 
-		it('validates url asset upload create response shape', () => {
+		it('parses url asset upload create response', () => {
 			const result = CanvaEndpointOutputSchemas.assetUploadsCreateFromUrl.parse(
 				{
 					job: {
@@ -406,7 +444,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.id).toBe('450a76e7-f96f-43ae-9c37-0e1ce492ac72');
 		});
 
-		it('validates url asset upload get failed response shape', () => {
+		it('parses url asset upload get failed response', () => {
 			const result = CanvaEndpointOutputSchemas.assetUploadsGetFromUrl.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -421,7 +459,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('imports', () => {
-		it('validates import create success response shape with designs', () => {
+		it('parses import create response', () => {
 			const result = CanvaEndpointOutputSchemas.importsCreate.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -442,7 +480,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.result?.designs[0]?.id).toBe('DAFVztcvd9z');
 		});
 
-		it('validates import get response shape', () => {
+		it('parses import get response', () => {
 			const result = CanvaEndpointOutputSchemas.importsGet.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -453,7 +491,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.status).toBe('in_progress');
 		});
 
-		it('validates url import create response shape', () => {
+		it('parses url import create response', () => {
 			const result = CanvaEndpointOutputSchemas.importsCreateFromUrl.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -467,7 +505,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.result?.designs[0]?.id).toBe('DAFVztcvd9z');
 		});
 
-		it('validates url import get response shape', () => {
+		it('parses url import get response', () => {
 			const result = CanvaEndpointOutputSchemas.importsGetFromUrl.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -481,7 +519,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('resizes', () => {
-		it('validates resize create response shape', () => {
+		it('parses resize create response', () => {
 			const result = CanvaEndpointOutputSchemas.resizesCreate.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -492,7 +530,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.status).toBe('in_progress');
 		});
 
-		it('validates resize get success response shape with design', () => {
+		it('parses resize get response', () => {
 			const result = CanvaEndpointOutputSchemas.resizesGet.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -520,7 +558,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('autofills', () => {
-		it('validates autofill create response shape', () => {
+		it('parses autofill create response', () => {
 			const result = CanvaEndpointOutputSchemas.autofillsCreate.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -531,7 +569,7 @@ describe('Canva API response schemas', () => {
 			expect(result.job.status).toBe('in_progress');
 		});
 
-		it('validates autofill get success response shape with design', () => {
+		it('parses autofill get response', () => {
 			const result = CanvaEndpointOutputSchemas.autofillsGet.parse({
 				job: {
 					id: '450a76e7-f96f-43ae-9c37-0e1ce492ac72',
@@ -554,7 +592,7 @@ describe('Canva API response schemas', () => {
 	});
 
 	describe('comments', () => {
-		it('validates create thread response shape', () => {
+		it('parses create thread response', () => {
 			const result = CanvaEndpointOutputSchemas.commentsCreateThread.parse({
 				thread: {
 					id: 'KeAbcDefGh',
@@ -569,7 +607,7 @@ describe('Canva API response schemas', () => {
 			expect(result.thread.author?.display_name).toBe('John Doe');
 		});
 
-		it('validates get thread response shape', () => {
+		it('parses get thread response', () => {
 			const result = CanvaEndpointOutputSchemas.commentsGetThread.parse({
 				thread: {
 					id: 'KeAbcDefGh',
@@ -581,7 +619,7 @@ describe('Canva API response schemas', () => {
 			expect(result.thread.assignee?.id).toBe('auDAbliZ2rQNNOsUl5OLu');
 		});
 
-		it('validates create reply response shape', () => {
+		it('parses create reply response', () => {
 			const result = CanvaEndpointOutputSchemas.commentsCreateReply.parse({
 				reply: {
 					id: 'ReAbcDefGh',
@@ -594,7 +632,7 @@ describe('Canva API response schemas', () => {
 			expect(result.reply.content?.plaintext).toBe('Thanks!');
 		});
 
-		it('validates list replies response shape', () => {
+		it('parses list replies response', () => {
 			const result = CanvaEndpointOutputSchemas.commentsListReplies.parse({
 				items: [
 					{ id: 'ReAbcDefGh', thread_id: 'KeAbcDefGh' },
@@ -607,7 +645,7 @@ describe('Canva API response schemas', () => {
 			expect(result.continuation).toBe('xyz');
 		});
 
-		it('validates get reply response shape', () => {
+		it('parses get reply response', () => {
 			const result = CanvaEndpointOutputSchemas.commentsGetReply.parse({
 				reply: { id: 'ReAbcDefGh', thread_id: 'KeAbcDefGh' },
 			});
@@ -623,7 +661,7 @@ describe('canva plugin', () => {
 		expect(plugin.id).toBe('canva');
 	});
 
-	it('exposes the expected endpoint tree groups and keys', () => {
+	it('exposes endpoint groups', () => {
 		const plugin = canva();
 		const endpoints = plugin.endpoints;
 		expect(endpoints).toBeDefined();
@@ -660,11 +698,90 @@ describe('canva plugin', () => {
 		expect(plugin.webhooks).toEqual({});
 	});
 
-	it('has an empty webhook matcher (no webhooks supported)', () => {
+	it('disables webhook matching', () => {
 		const plugin = canva();
 		expect(plugin.pluginWebhookMatcher).toBeDefined();
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
+	});
+
+	it('declares oauth scopes', () => {
+		const plugin = canva();
+		expect(plugin.oauthConfig?.scopes).toEqual(
+			expect.arrayContaining([
+				'design:content:write',
+				'asset:write',
+				'folder:write',
+				'brandtemplate:content:read',
+				'comment:write',
+				'profile:read',
+			]),
+		);
+	});
+});
+
+describe('Canva input schemas', () => {
+	it('requires jpg quality', () => {
+		expect(() =>
+			CanvaEndpointInputSchemas.exportsCreate.parse({
+				design_id: 'DAFVztcvd9z',
+				format: { type: 'jpg' },
+			}),
+		).toThrow();
+
+		const result = CanvaEndpointInputSchemas.exportsCreate.parse({
+			design_id: 'DAFVztcvd9z',
+			format: { type: 'jpg', quality: 80 },
+		});
+		expect(result.format.type).toBe('jpg');
+	});
+
+	it('accepts png options and autofill video/sheet', () => {
+		const exportInput = CanvaEndpointInputSchemas.exportsCreate.parse({
+			design_id: 'DAFVztcvd9z',
+			format: {
+				type: 'png',
+				lossless: true,
+				transparent_background: true,
+				as_single_image: true,
+			},
+		});
+		expect(exportInput.format.type).toBe('png');
+
+		const autofill = CanvaEndpointInputSchemas.autofillsCreate.parse({
+			brand_template_id: 'BAFVztcvd9z',
+			data: {
+				headline: { type: 'text', text: 'Hello' },
+				hero: { type: 'video', asset_id: 'VAHCkrNUANI' },
+				table: {
+					type: 'sheet',
+					sheet_data: { rows: [] },
+				},
+			},
+		});
+		expect(autofill.data.hero?.type).toBe('video');
+		expect(autofill.data.table?.type).toBe('sheet');
+	});
+
+	it('accepts url import mime_type', () => {
+		const result = CanvaEndpointInputSchemas.importsCreateFromUrl.parse({
+			title: 'Imported',
+			url: 'https://example.com/file.pptx',
+			mime_type: 'application/vnd.apple.keynote',
+		});
+		expect(result.mime_type).toBe('application/vnd.apple.keynote');
+	});
+});
+
+describe('Canva base64 helpers', () => {
+	it('encodes metadata and decodes binary', () => {
+		const encoded = encodeUtf8ToBase64('My Awesome Upload 🚀');
+		expect(encoded.length).toBeGreaterThan(0);
+
+		const bytes = decodeBase64ToBytes(
+			Buffer.from([0x89, 0x50, 0x4e, 0x47]).toString('base64'),
+		);
+		expect(Array.from(bytes)).toEqual([0x89, 0x50, 0x4e, 0x47]);
 	});
 });
