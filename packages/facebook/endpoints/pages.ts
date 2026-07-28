@@ -2,15 +2,14 @@ import { makeFacebookRequest, makePageFacebookRequest } from '../client';
 import type { FacebookEndpoints } from '../index';
 import {
 	buildPaginationQuery,
+	cacheInsightValues,
+	cacheUpsert,
+	formatMetric,
 	logFacebookEvent,
 	omitUndefined,
 	upsertPageEntity,
 } from './shared';
 import type { FacebookEndpointOutputs } from './types';
-
-function formatMetric(metric: string | string[]): string {
-	return Array.isArray(metric) ? metric.join(',') : metric;
-}
 
 export const getDetails: FacebookEndpoints['getPageDetails'] = async (
 	ctx,
@@ -92,20 +91,7 @@ export const getInsights: FacebookEndpoints['getPageInsights'] = async (
 
 	if (result.data) {
 		for (const insight of result.data) {
-			const insightId =
-				insight.id ?? `${page_id}:${insight.name}:${period ?? 'default'}`;
-			try {
-				await ctx.db.insights.upsertByEntityId(insightId, {
-					insightId,
-					objectId: page_id,
-					name: insight.name,
-					period: insight.period ?? period,
-					value: insight.values?.[0]?.value,
-					endTime: insight.values?.[0]?.end_time,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheInsightValues(ctx, page_id, insight, period);
 		}
 	}
 
@@ -131,16 +117,12 @@ export const getRoles: FacebookEndpoints['getPageRoles'] = async (
 	if (result.data) {
 		for (const role of result.data) {
 			if (!role.id) continue;
-			try {
-				await ctx.db.pageRoles.upsertByEntityId(`${input.page_id}:${role.id}`, {
-					pageId: input.page_id,
-					userId: role.id,
-					name: role.name,
-					role: role.role,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.pageRoles, `${input.page_id}:${role.id}`, {
+				pageId: input.page_id,
+				userId: role.id,
+				name: role.name,
+				role: role.role,
+			});
 		}
 	}
 

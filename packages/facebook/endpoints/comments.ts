@@ -2,6 +2,7 @@ import { makePageFacebookRequest, resolvePageId } from '../client';
 import type { FacebookEndpoints } from '../index';
 import {
 	buildPaginationQuery,
+	cacheUpsert,
 	logFacebookEvent,
 	omitUndefined,
 } from './shared';
@@ -37,18 +38,14 @@ export const get: FacebookEndpoints['getComment'] = async (ctx, input) => {
 	});
 
 	if (result.id) {
-		try {
-			await ctx.db.comments.upsertByEntityId(result.id, {
-				commentId: result.id,
-				message: result.message,
-				createdTime: result.created_time,
-				authorId: result.from?.id,
-				authorName: result.from?.name,
-				isHidden: result.is_hidden,
-			});
-		} catch {
-			// Non-fatal cache write
-		}
+		await cacheUpsert(ctx.db.comments, result.id, {
+			commentId: result.id,
+			message: result.message,
+			createdTime: result.created_time,
+			authorId: result.from?.id,
+			authorName: result.from?.name,
+			isHidden: result.is_hidden,
+		});
 	}
 
 	await logFacebookEvent(ctx, 'facebook.comments.get', { ...input });
@@ -77,18 +74,14 @@ export const list: FacebookEndpoints['getComments'] = async (ctx, input) => {
 	if (result.data) {
 		for (const comment of result.data) {
 			if (!comment.id) continue;
-			try {
-				await ctx.db.comments.upsertByEntityId(comment.id, {
-					commentId: comment.id,
-					objectId: object_id,
-					message: comment.message,
-					createdTime: comment.created_time,
-					authorId: comment.from?.id,
-					authorName: comment.from?.name,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.comments, comment.id, {
+				commentId: comment.id,
+				objectId: object_id,
+				message: comment.message,
+				createdTime: comment.created_time,
+				authorId: comment.from?.id,
+				authorName: comment.from?.name,
+			});
 		}
 	}
 

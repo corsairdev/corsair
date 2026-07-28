@@ -2,14 +2,13 @@ import { makePageFacebookRequest, resolvePageId } from '../client';
 import type { FacebookEndpoints } from '../index';
 import {
 	buildPaginationQuery,
+	cacheInsightValues,
+	cacheUpsert,
+	formatMetric,
 	logFacebookEvent,
 	omitUndefined,
 } from './shared';
 import type { FacebookEndpointOutputs } from './types';
-
-function formatMetric(metric: string | string[]): string {
-	return Array.isArray(metric) ? metric.join(',') : metric;
-}
 
 export const create: FacebookEndpoints['createPost'] = async (ctx, input) => {
 	const { page_id, ...body } = input;
@@ -37,19 +36,15 @@ export const get: FacebookEndpoints['getPost'] = async (ctx, input) => {
 	});
 
 	if (result.id) {
-		try {
-			await ctx.db.posts.upsertByEntityId(result.id, {
-				postId: result.id,
-				pageId,
-				message: result.message,
-				createdTime: result.created_time,
-				isPublished: result.is_published,
-				permalinkUrl: result.permalink_url,
-				scheduledPublishTime: result.scheduled_publish_time,
-			});
-		} catch {
-			// Non-fatal cache write
-		}
+		await cacheUpsert(ctx.db.posts, result.id, {
+			postId: result.id,
+			pageId,
+			message: result.message,
+			createdTime: result.created_time,
+			isPublished: result.is_published,
+			permalinkUrl: result.permalink_url,
+			scheduledPublishTime: result.scheduled_publish_time,
+		});
 	}
 
 	await logFacebookEvent(ctx, 'facebook.posts.get', { ...input });
@@ -74,18 +69,14 @@ export const list: FacebookEndpoints['getPagePosts'] = async (ctx, input) => {
 	if (result.data) {
 		for (const post of result.data) {
 			if (!post.id) continue;
-			try {
-				await ctx.db.posts.upsertByEntityId(post.id, {
-					postId: post.id,
-					pageId: input.page_id,
-					message: post.message,
-					createdTime: post.created_time,
-					isPublished: post.is_published,
-					permalinkUrl: post.permalink_url,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.posts, post.id, {
+				postId: post.id,
+				pageId: input.page_id,
+				message: post.message,
+				createdTime: post.created_time,
+				isPublished: post.is_published,
+				permalinkUrl: post.permalink_url,
+			});
 		}
 	}
 
@@ -216,19 +207,7 @@ export const getInsights: FacebookEndpoints['getPostInsights'] = async (
 
 	if (result.data) {
 		for (const insight of result.data) {
-			const insightId = insight.id ?? `${input.post_id}:${insight.name}`;
-			try {
-				await ctx.db.insights.upsertByEntityId(insightId, {
-					insightId,
-					objectId: input.post_id,
-					name: insight.name,
-					period: insight.period,
-					value: insight.values?.[0]?.value,
-					endTime: insight.values?.[0]?.end_time,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheInsightValues(ctx, input.post_id, insight);
 		}
 	}
 
@@ -256,16 +235,12 @@ export const getReactions: FacebookEndpoints['getPostReactions'] = async (
 	if (result.data) {
 		for (const reaction of result.data) {
 			if (!reaction.id) continue;
-			try {
-				await ctx.db.reactions.upsertByEntityId(`${post_id}:${reaction.id}`, {
-					objectId: post_id,
-					userId: reaction.id,
-					name: reaction.name,
-					type: reaction.type,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.reactions, `${post_id}:${reaction.id}`, {
+				objectId: post_id,
+				userId: reaction.id,
+				name: reaction.name,
+				type: reaction.type,
+			});
 		}
 	}
 

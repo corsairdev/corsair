@@ -1,6 +1,6 @@
 import { makePageFacebookRequest } from '../client';
 import type { FacebookEndpoints } from '../index';
-import { buildPaginationQuery, logFacebookEvent } from './shared';
+import { buildPaginationQuery, cacheUpsert, logFacebookEvent } from './shared';
 import type { FacebookEndpointOutputs } from './types';
 
 export const list: FacebookEndpoints['getPageConversations'] = async (
@@ -23,18 +23,14 @@ export const list: FacebookEndpoints['getPageConversations'] = async (
 	if (result.data) {
 		for (const conversation of result.data) {
 			if (!conversation.id) continue;
-			try {
-				await ctx.db.conversations.upsertByEntityId(conversation.id, {
-					conversationId: conversation.id,
-					pageId: input.page_id,
-					updatedTime: conversation.updated_time,
-					messageCount: conversation.message_count,
-					unreadCount: conversation.unread_count,
-					snippet: conversation.snippet,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.conversations, conversation.id, {
+				conversationId: conversation.id,
+				pageId: input.page_id,
+				updatedTime: conversation.updated_time,
+				messageCount: conversation.message_count,
+				unreadCount: conversation.unread_count,
+				snippet: conversation.snippet,
+			});
 		}
 	}
 
@@ -60,19 +56,15 @@ export const getMessages: FacebookEndpoints['getConversationMessages'] = async (
 	if (result.data) {
 		for (const message of result.data) {
 			if (!message.id) continue;
-			try {
-				await ctx.db.messages.upsertByEntityId(message.id, {
-					messageId: message.id,
-					conversationId: input.conversation_id,
-					pageId: input.page_id,
-					message: message.message,
-					createdTime: message.created_time,
-					senderId: message.from?.id,
-					senderName: message.from?.name,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.messages, message.id, {
+				messageId: message.id,
+				conversationId: input.conversation_id,
+				pageId: input.page_id,
+				message: message.message,
+				createdTime: message.created_time,
+				senderId: message.from?.id,
+				senderName: message.from?.name,
+			});
 		}
 	}
 

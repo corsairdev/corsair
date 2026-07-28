@@ -1,6 +1,6 @@
 import { makePageFacebookRequest } from '../client';
 import type { FacebookEndpoints } from '../index';
-import { logFacebookEvent, omitUndefined } from './shared';
+import { cacheUpsert, logFacebookEvent, omitUndefined } from './shared';
 import type { FacebookEndpointOutputs } from './types';
 
 export const getDetails: FacebookEndpoints['getMessageDetails'] = async (
@@ -16,18 +16,14 @@ export const getDetails: FacebookEndpoints['getMessageDetails'] = async (
 	});
 
 	if (result.id) {
-		try {
-			await ctx.db.messages.upsertByEntityId(result.id, {
-				messageId: result.id,
-				pageId: input.page_id,
-				message: result.message,
-				createdTime: result.created_time,
-				senderId: result.from?.id,
-				senderName: result.from?.name,
-			});
-		} catch {
-			// Non-fatal cache write
-		}
+		await cacheUpsert(ctx.db.messages, result.id, {
+			messageId: result.id,
+			pageId: input.page_id,
+			message: result.message,
+			createdTime: result.created_time,
+			senderId: result.from?.id,
+			senderName: result.from?.name,
+		});
 	}
 
 	await logFacebookEvent(ctx, 'facebook.messages.getDetails', { ...input });

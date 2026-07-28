@@ -2,6 +2,7 @@ import { makePageFacebookRequest } from '../client';
 import type { FacebookEndpoints } from '../index';
 import {
 	buildPaginationQuery,
+	cacheUpsert,
 	logFacebookEvent,
 	omitUndefined,
 } from './shared';
@@ -103,16 +104,12 @@ export const createAlbum: FacebookEndpoints['createPhotoAlbum'] = async (
 	});
 
 	if (result.id) {
-		try {
-			await ctx.db.albums.upsertByEntityId(result.id, {
-				albumId: result.id,
-				pageId: page_id,
-				name,
-				description: message,
-			});
-		} catch {
-			// Non-fatal cache write
-		}
+		await cacheUpsert(ctx.db.albums, result.id, {
+			albumId: result.id,
+			pageId: page_id,
+			name,
+			description: message,
+		});
 	}
 
 	await logFacebookEvent(ctx, 'facebook.photos.createAlbum', { ...input });
@@ -134,18 +131,14 @@ export const list: FacebookEndpoints['getPagePhotos'] = async (ctx, input) => {
 	if (result.data) {
 		for (const photo of result.data) {
 			if (!photo.id) continue;
-			try {
-				await ctx.db.photos.upsertByEntityId(photo.id, {
-					photoId: photo.id,
-					pageId: input.page_id,
-					name: photo.name,
-					source: photo.source,
-					link: photo.link,
-					createdTime: photo.created_time,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.photos, photo.id, {
+				photoId: photo.id,
+				pageId: input.page_id,
+				name: photo.name,
+				source: photo.source,
+				link: photo.link,
+				createdTime: photo.created_time,
+			});
 		}
 	}
 

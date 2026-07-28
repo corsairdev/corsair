@@ -1,44 +1,43 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import {
-	FACEBOOK_RATE_LIMIT_ERROR_CODES,
 	FacebookAPIError,
+	isFacebookAuthError,
 	isFacebookRateLimitError,
 } from './client';
+
+function retryAfterMsOf(error: Error): number | undefined {
+	if (error instanceof FacebookAPIError && error.retryAfter !== undefined) {
+		return error.retryAfter;
+	}
+	if (error instanceof ApiError && error.retryAfter !== undefined) {
+		return error.retryAfter;
+	}
+	return undefined;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (isFacebookRateLimitError(error)) return true;
 			if (error instanceof ApiError && error.status === 429) return true;
-			if (error instanceof FacebookAPIError && error.code !== undefined) {
-				return FACEBOOK_RATE_LIMIT_ERROR_CODES.has(error.code);
+			if (error instanceof FacebookAPIError && error.status === 429) {
+				return true;
 			}
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('rate limit') ||
-				msg.includes('too many calls') ||
-				msg.includes('request limit') ||
-				msg.includes('429')
-			);
+			return error.message.toLowerCase().includes('429');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			headersRetryAfterMs: retryAfterMsOf(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof FacebookAPIError && error.code === 190) return true;
+			if (isFacebookAuthError(error)) return true;
 			if (error instanceof ApiError && error.status === 401) return true;
 			const msg = error.message.toLowerCase();
 			return (
-				msg.includes('invalid oauth') ||
-				msg.includes('access token') ||
-				msg.includes('session has expired')
+				msg.includes('invalid oauth') || msg.includes('session has expired')
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),

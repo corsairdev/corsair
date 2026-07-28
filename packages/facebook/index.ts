@@ -605,6 +605,7 @@ export function facebook<const T extends FacebookPluginOptions>(
 				'read_insights',
 			],
 		},
+		// Page push webhooks (object: 'page') are intentionally out of scope for this PR.
 		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,

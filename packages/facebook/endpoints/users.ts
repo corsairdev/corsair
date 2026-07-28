@@ -1,11 +1,36 @@
 import { makeFacebookRequest } from '../client';
-import type { FacebookEndpoints } from '../index';
+import type { FacebookContext, FacebookEndpoints } from '../index';
 import {
 	buildPaginationQuery,
+	cacheUpsert,
 	logFacebookEvent,
 	upsertPageEntity,
 } from './shared';
 import type { FacebookEndpointOutputs } from './types';
+
+async function fetchAccounts(
+	ctx: FacebookContext,
+	input: {
+		fields?: string;
+		limit?: number;
+		after?: string;
+		before?: string;
+	},
+) {
+	return makeFacebookRequest<FacebookEndpointOutputs['getUserPages']>(
+		'/me/accounts',
+		ctx.key,
+		{
+			query: buildPaginationQuery({
+				fields:
+					input.fields ?? 'id,name,access_token,category,category_list,tasks',
+				limit: input.limit,
+				after: input.after,
+				before: input.before,
+			}),
+		},
+	);
+}
 
 export const getCurrentUser: FacebookEndpoints['getCurrentUser'] = async (
 	ctx,
@@ -20,15 +45,11 @@ export const getCurrentUser: FacebookEndpoints['getCurrentUser'] = async (
 	});
 
 	if (result.id) {
-		try {
-			await ctx.db.users.upsertByEntityId(result.id, {
-				facebookUserId: result.id,
-				name: result.name,
-				email: result.email,
-			});
-		} catch {
-			// Non-fatal cache write
-		}
+		await cacheUpsert(ctx.db.users, result.id, {
+			facebookUserId: result.id,
+			name: result.name,
+			email: result.email,
+		});
 	}
 
 	await logFacebookEvent(ctx, 'facebook.users.getCurrentUser', { ...input });
@@ -39,18 +60,7 @@ export const getUserPages: FacebookEndpoints['getUserPages'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeFacebookRequest<
-		FacebookEndpointOutputs['getUserPages']
-	>('/me/accounts', ctx.key, {
-		query: buildPaginationQuery({
-			fields:
-				input.fields ?? 'id,name,access_token,category,category_list,tasks',
-			limit: input.limit,
-			after: input.after,
-			before: input.before,
-		}),
-	});
-
+	const result = await fetchAccounts(ctx, input);
 	await logFacebookEvent(ctx, 'facebook.users.getUserPages', { ...input });
 	return result;
 };
@@ -59,17 +69,7 @@ export const listManagedPages: FacebookEndpoints['listManagedPages'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeFacebookRequest<
-		FacebookEndpointOutputs['listManagedPages']
-	>('/me/accounts', ctx.key, {
-		query: buildPaginationQuery({
-			fields:
-				input.fields ?? 'id,name,access_token,category,category_list,tasks',
-			limit: input.limit,
-			after: input.after,
-			before: input.before,
-		}),
-	});
+	const result = await fetchAccounts(ctx, input);
 
 	if (result.data) {
 		for (const page of result.data) {

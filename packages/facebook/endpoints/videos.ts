@@ -2,6 +2,7 @@ import { makePageFacebookRequest } from '../client';
 import type { FacebookEndpoints } from '../index';
 import {
 	buildPaginationQuery,
+	cacheUpsert,
 	logFacebookEvent,
 	omitUndefined,
 } from './shared';
@@ -54,19 +55,15 @@ export const list: FacebookEndpoints['getPageVideos'] = async (ctx, input) => {
 	if (result.data) {
 		for (const video of result.data) {
 			if (!video.id) continue;
-			try {
-				await ctx.db.videos.upsertByEntityId(video.id, {
-					videoId: video.id,
-					pageId: input.page_id,
-					title: video.title,
-					description: video.description,
-					source: video.source,
-					permalinkUrl: video.permalink_url,
-					createdTime: video.created_time,
-				});
-			} catch {
-				// Non-fatal cache write
-			}
+			await cacheUpsert(ctx.db.videos, video.id, {
+				videoId: video.id,
+				pageId: input.page_id,
+				title: video.title,
+				description: video.description,
+				source: video.source,
+				permalinkUrl: video.permalink_url,
+				createdTime: video.created_time,
+			});
 		}
 	}
 

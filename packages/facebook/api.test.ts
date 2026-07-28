@@ -177,6 +177,84 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 				}),
 			);
 		});
+
+		it('invalidates a stale cached page token and retries once', async () => {
+			const { FacebookAPIError } = await import('./client');
+			mockRequest
+				.mockRejectedValueOnce(new FacebookAPIError('expired', 190))
+				.mockResolvedValueOnce({ access_token: 'rotated-page-token' })
+				.mockResolvedValueOnce({ id: PAGE_ID, name: 'Recovered' });
+
+			await call('pages', 'getDetails', { page_id: PAGE_ID });
+
+			expect(pagesUpsert).toHaveBeenCalledWith(
+				PAGE_ID,
+				expect.objectContaining({ accessToken: undefined }),
+			);
+			expect(lastCall().config.TOKEN).toBe('rotated-page-token');
+		});
+	});
+
+	describe('keyBuilder', () => {
+		it('returns options.key when provided', async () => {
+			const keyed = facebook({ key: USER_TOKEN });
+			await expect(
+				keyed.keyBuilder!(
+					{
+						authType: 'oauth_2',
+						options: {},
+						keys: { get_access_token: jest.fn() },
+					} as never,
+					'endpoint',
+				),
+			).resolves.toBe(USER_TOKEN);
+		});
+
+		it('throws AuthMissingError when authType is not oauth_2', async () => {
+			const unkeyed = facebook({});
+			await expect(
+				unkeyed.keyBuilder!(
+					{
+						authType: 'api_key',
+						options: {},
+						keys: { get_access_token: jest.fn() },
+					} as never,
+					'endpoint',
+				),
+			).rejects.toThrow();
+		});
+
+		it('throws AuthMissingError when access token is missing', async () => {
+			const unkeyed = facebook({});
+			await expect(
+				unkeyed.keyBuilder!(
+					{
+						authType: 'oauth_2',
+						options: {},
+						keys: {
+							get_access_token: jest.fn().mockResolvedValue(undefined),
+						},
+					} as never,
+					'endpoint',
+				),
+			).rejects.toThrow();
+		});
+
+		it('returns the stored oauth access token', async () => {
+			const unkeyed = facebook({});
+			await expect(
+				unkeyed.keyBuilder!(
+					{
+						authType: 'oauth_2',
+						options: {},
+						keys: {
+							get_access_token: jest.fn().mockResolvedValue('stored-token'),
+						},
+					} as never,
+					'endpoint',
+				),
+			).resolves.toBe('stored-token');
+		});
 	});
 
 	describe('users', () => {
@@ -599,6 +677,21 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
 			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
 			expect(result.maxRetries).toBe(5);
+		});
+
+		it('honors retryAfter from FacebookAPIError', async () => {
+			const { FacebookAPIError } = await import('./client');
+			const err = new FacebookAPIError(
+				'rate limited',
+				4,
+				undefined,
+				undefined,
+				undefined,
+				429,
+				1500,
+			);
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
+			expect(result.headersRetryAfterMs).toBe(1500);
 		});
 
 		it('matches auth and permission errors', async () => {

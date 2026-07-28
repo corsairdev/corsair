@@ -33,6 +33,30 @@ export function buildPaginationQuery(input: {
 	};
 }
 
+export function formatMetric(metric: string | string[]): string {
+	return Array.isArray(metric) ? metric.join(',') : metric;
+}
+
+type UpsertClient = {
+	upsertByEntityId: (
+		entityId: string,
+		data: Record<string, unknown>,
+	) => Promise<unknown>;
+};
+
+/** Best-effort entity cache write — never fails the API call. */
+export async function cacheUpsert(
+	client: UpsertClient,
+	entityId: string,
+	data: Record<string, unknown>,
+): Promise<void> {
+	try {
+		await client.upsertByEntityId(entityId, data);
+	} catch {
+		// Non-fatal cache write
+	}
+}
+
 /**
  * Upsert a page entity while preserving a previously cached accessToken.
  * `upsertByEntityId` replaces the whole data blob, so callers must merge.
@@ -51,5 +75,47 @@ export async function upsertPageEntity(
 		});
 	} catch {
 		// Non-fatal cache write
+	}
+}
+
+/** Persist insight time-series points without clobbering other buckets. */
+export async function cacheInsightValues(
+	ctx: FacebookContext,
+	objectId: string,
+	insight: {
+		id?: string;
+		name: string;
+		period?: string;
+		values?: Array<{
+			value?: number | string | Record<string, unknown>;
+			end_time?: string;
+		}>;
+	},
+	fallbackPeriod?: string,
+): Promise<void> {
+	const period = insight.period ?? fallbackPeriod;
+	const values = insight.values?.length
+		? insight.values
+		: [{ value: undefined, end_time: undefined }];
+
+	for (const point of values) {
+		const insightId =
+			insight.id && values.length === 1
+				? insight.id
+				: [
+						objectId,
+						insight.name,
+						period ?? 'default',
+						point.end_time ?? 'latest',
+					].join(':');
+
+		await cacheUpsert(ctx.db.insights, insightId, {
+			insightId,
+			objectId,
+			name: insight.name,
+			period,
+			value: point.value,
+			endTime: point.end_time,
+		});
 	}
 }

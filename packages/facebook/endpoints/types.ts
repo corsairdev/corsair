@@ -315,9 +315,12 @@ const AddReactionInputSchema = z
 			.describe(
 				'Page ID for Page-token auth. Optional when object_id is composite PageID_PostID.',
 			),
-		type: ReactionTypeSchema.optional().describe(
-			'Only LIKE is supported by the Graph API for programmatic reactions.',
-		),
+		type: z
+			.literal('LIKE')
+			.optional()
+			.describe(
+				'Only LIKE is supported by the Graph API for programmatic reactions.',
+			),
 	})
 	.describe('Add a LIKE reaction to a post or comment.');
 

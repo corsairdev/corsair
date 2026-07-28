@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 /** Latest stable Graph API version aligned with the Instagram plugin. */
 export const FACEBOOK_GRAPH_API_VERSION = 'v25.0';
@@ -19,6 +19,8 @@ export class FacebookAPIError extends Error {
 		public readonly subcode?: number,
 		public readonly type?: string,
 		public readonly fbtraceId?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'FacebookAPIError';
@@ -78,20 +80,56 @@ export function isFacebookRateLimitError(error: unknown): boolean {
 	if (error instanceof FacebookAPIError && error.code !== undefined) {
 		return FACEBOOK_RATE_LIMIT_ERROR_CODES.has(error.code);
 	}
+	if (error instanceof FacebookAPIError && error.status === 429) {
+		return true;
+	}
 	const msg =
 		error instanceof Error ? error.message.toLowerCase() : String(error);
 	return (
 		msg.includes('rate limit') ||
 		msg.includes('too many calls') ||
-		msg.includes('request limit')
+		msg.includes('request limit') ||
+		msg.includes('429')
 	);
 }
 
 export function isFacebookAuthError(error: unknown): boolean {
 	if (error instanceof FacebookAPIError) {
-		return error.code === FACEBOOK_AUTH_ERROR_CODE;
+		return error.code === FACEBOOK_AUTH_ERROR_CODE || error.status === 401;
 	}
 	return false;
+}
+
+function toFacebookAPIError(error: unknown): FacebookAPIError {
+	if (error instanceof FacebookAPIError) {
+		return error;
+	}
+	const status = error instanceof ApiError ? error.status : undefined;
+	const retryAfter = error instanceof ApiError ? error.retryAfter : undefined;
+	const graphError = extractGraphError(error);
+	if (graphError) {
+		return new FacebookAPIError(
+			graphError.message ?? 'Unknown Facebook Graph API error',
+			graphError.code,
+			graphError.error_subcode,
+			graphError.type,
+			graphError.fbtrace_id,
+			status,
+			retryAfter,
+		);
+	}
+	if (error instanceof Error) {
+		return new FacebookAPIError(
+			error.message,
+			undefined,
+			undefined,
+			undefined,
+			undefined,
+			status,
+			retryAfter,
+		);
+	}
+	return new FacebookAPIError('Unknown Facebook Graph API error');
 }
 
 export async function makeFacebookRequest<T>(
@@ -132,20 +170,7 @@ export async function makeFacebookRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error: unknown) {
-		const graphError = extractGraphError(error);
-		if (graphError) {
-			throw new FacebookAPIError(
-				graphError.message ?? 'Unknown Facebook Graph API error',
-				graphError.code,
-				graphError.error_subcode,
-				graphError.type,
-				graphError.fbtrace_id,
-			);
-		}
-		if (error instanceof Error) {
-			throw new FacebookAPIError(error.message);
-		}
-		throw new FacebookAPIError('Unknown Facebook Graph API error');
+		throw toFacebookAPIError(error);
 	}
 }
 
@@ -184,12 +209,31 @@ export function resolvePageId(
 	);
 }
 
+/** Clear a stale page access token from the entity cache. */
+export async function invalidatePageAccessToken(
+	ctx: FacebookRequestContext | undefined,
+	pageId: string,
+): Promise<void> {
+	if (!ctx?.db?.pages) return;
+	try {
+		const existing = await ctx.db.pages.findByEntityId(pageId);
+		await ctx.db.pages.upsertByEntityId(pageId, {
+			...(existing?.data ?? {}),
+			facebookId: pageId,
+			accessToken: undefined,
+		});
+	} catch {
+		// Non-fatal cache clear
+	}
+}
+
 export async function resolvePageAccessToken(
 	userAccessToken: string,
 	pageId: string,
 	ctx?: FacebookRequestContext,
+	options?: { bypassCache?: boolean },
 ): Promise<string> {
-	if (ctx?.db?.pages) {
+	if (!options?.bypassCache && ctx?.db?.pages) {
 		try {
 			const cached = await ctx.db.pages.findByEntityId(pageId);
 			const cachedToken = cached?.data?.accessToken;
@@ -239,5 +283,17 @@ export async function makePageFacebookRequest<T>(
 	options: FacebookRequestOptions = {},
 ): Promise<T> {
 	const pageToken = await resolvePageAccessToken(ctx.key, pageId, ctx);
-	return makeFacebookRequest<T>(endpoint, pageToken, options);
+	try {
+		return await makeFacebookRequest<T>(endpoint, pageToken, options);
+	} catch (error: unknown) {
+		if (!isFacebookAuthError(error)) {
+			throw error;
+		}
+		// Cached page tokens can go stale — clear and retry once with a fresh resolve.
+		await invalidatePageAccessToken(ctx, pageId);
+		const freshToken = await resolvePageAccessToken(ctx.key, pageId, ctx, {
+			bypassCache: true,
+		});
+		return makeFacebookRequest<T>(endpoint, freshToken, options);
+	}
 }
