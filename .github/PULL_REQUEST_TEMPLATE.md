@@ -1,3 +1,6 @@
+<!-- Please open this PR as a DRAFT until the checklist below is complete. -->
+<!-- Automated review (Greptile + gate) starts when you mark it ready. -->
+
 ## Description
 
 <!-- Briefly describe the changes you've made and why they're necessary. -->

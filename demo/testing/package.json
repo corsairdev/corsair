@@ -24,7 +24,6 @@
     "agent": "tsx src/scripts/agent.ts"
   },
   "dependencies": {
-    "@corsair-dev/cloudinary": "workspace:*",
     "@anthropic-ai/claude-agent-sdk": "^0.2.0",
     "@corsair-dev/agentql": "workspace:*",
     "@corsair-dev/bitwarden": "workspace:*",
@@ -61,7 +60,7 @@
     "next": "^14.2.24",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zod": "catalog:"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@corsair-dev/cli": "workspace:*",

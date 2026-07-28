@@ -1,7 +1,7 @@
 import * as Files from './files';
 import * as Folders from './folders';
 import * as Search from './search';
-import * as SharedDrives from './sharedDrives';
+import * as SharedDrives from './shared-drives';
 
 export const FilesEndpoints = {
 	list: Files.list,

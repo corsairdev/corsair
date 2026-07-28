@@ -24,6 +24,13 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	buildClientBridgeBrowserDeliveryUrl,
+	type ClientBridgeDeliverySpec,
+	type ClientBridgeTransportResult,
+	type PrepareClientBridgeDeliveryTransportInput,
+	prepareClientBridgeDeliveryTransport,
+} from './client-bridge-delivery';
+export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
 	HubNotConfiguredError,
@@ -32,6 +39,10 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export type {
+	ConnectCreateLinkDeliveryPayload,
+	ConnectCreateLinkDeliveryResult,
+} from './connect-link-delivery';
 export {
 	type ConnectAuthFieldStatus,
 	type ConnectAuthStatusLevel,
@@ -40,6 +51,10 @@ export {
 	getConnectStatusForTenant,
 } from './connect-status';
 export { listHubProjectConnections } from './connections';
+export {
+	isConnectionsSyncRetryableError,
+	processConnectionsSyncDelivery,
+} from './connections-sync-delivery';
 export {
 	type ConnectAuthKind,
 	type ConnectPluginManifestEntry,
@@ -92,6 +107,8 @@ export {
 } from './permission';
 export type { ReportConnectionStatusInput } from './report-connection-status';
 export {
+	buildWebhookLinkReport,
+	registerHubWebhookTenantLink,
 	reportConnectionStatus,
 	reportConnectionStatusForHub,
 	reportPluginConnectionAuthMissing,
@@ -114,15 +131,23 @@ export {
 	decodeConnectSessionTokenFromPath,
 	decodeConnectTokenFromPath,
 	decodePermissionTokenFromPath,
+	deliverConnectCreateLink,
 	deliverSignedEnvelope,
+	describeDeliveryNetworkError,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractConnectLinkFromDeliveryAck,
+	extractRunFromDeliveryAck,
+	extractSyncFromDeliveryAck,
+	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
 	getConnectSessionExpiryMs,
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
+	parseConnectLinkFromDeliveryBody,
 	parseServerDeliveryAckBody,
+	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,
 	type SignedDeliveryHeaders,
 	type SignedEnvelopeDeliveryResult,
@@ -139,6 +164,25 @@ export {
 	verifySignedToken,
 	verifySignedTunnelDelivery,
 } from './signing';
+export {
+	type ConnectionsSyncManifest,
+	type ConnectionsSyncPlugin,
+	decryptSyncManifest,
+	type EncryptedSyncPayload,
+	encryptSyncManifest,
+	parseSyncDeliveryBody,
+} from './sync-payload';
+export {
+	type AgentMessageRole,
+	type AgentReply,
+	type CreateThreadResult,
+	createThread,
+	listThreadMessages,
+	listThreads,
+	postThreadMessage,
+	type ThreadMessage,
+	type ThreadSummary,
+} from './threads';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,
@@ -154,6 +198,10 @@ export type {
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
 	HubProjectConnection,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
 	TunnelEnvelope,
 	TunnelType,
 } from './types';

@@ -6,12 +6,13 @@ import type {
 	CorsairPlugin,
 	KeyBuilderContext,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	cloudinaryEndpointMeta,
 	cloudinaryEndpointSchemas,
 	cloudinaryEndpointsNested,
+	cloudinaryEndpointMeta as generatedCloudinaryEndpointMeta,
 } from './endpoints/plugin';
 import { errorHandlers } from './error-handlers';
 import type { CloudinaryPluginOptionsBase } from './plugin-types';
@@ -43,6 +44,11 @@ import {
 	CloudinaryResourceTagsChangedSchema,
 	CloudinaryUploadNotificationSchema,
 } from './webhooks/types';
+
+export const cloudinaryEndpointMeta =
+	generatedCloudinaryEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof cloudinaryEndpointsNested
+	>;
 
 export type CloudinaryPluginOptions = CloudinaryPluginOptionsBase & {
 	hooks?: InternalCloudinaryPlugin['hooks'];
@@ -239,10 +245,6 @@ export type {
 
 export type { CloudinaryWebhookOutputs } from './webhooks/types';
 
-export {
-	cloudinaryEndpointsNested,
-	cloudinaryEndpointSchemas,
-	cloudinaryEndpointMeta,
-};
+export { cloudinaryEndpointsNested, cloudinaryEndpointSchemas };
 
 export { parseCloudinaryCredentials, signCloudinaryParams } from './client';
