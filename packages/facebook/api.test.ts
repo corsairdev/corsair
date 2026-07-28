@@ -363,6 +363,20 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 	});
 
 	describe('posts', () => {
+		it('create defaults published=false when scheduling', async () => {
+			mockRequest.mockResolvedValue({ id: 'p1' });
+			await call('posts', 'create', {
+				page_id: PAGE_ID,
+				message: 'later',
+				scheduled_publish_time: 1700000000,
+			});
+			expect(lastCall().options.body).toEqual({
+				message: 'later',
+				published: false,
+				scheduled_publish_time: 1700000000,
+			});
+		});
+
 		it('create POSTs to /{page_id}/feed with a page token', async () => {
 			mockRequest.mockResolvedValue({ id: POST_ID });
 			await call('posts', 'create', {
@@ -374,7 +388,7 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 				options: {
 					method: 'POST',
 					url: `${PAGE_ID}/feed`,
-					body: { message: 'hello' },
+					body: { message: 'hello', published: true },
 				},
 			});
 		});
@@ -621,6 +635,7 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 			expect(lastCall().options.body).toEqual({
 				recipient: { id: 'u1' },
 				message: { text: 'hello' },
+				messaging_type: 'RESPONSE',
 			});
 
 			await call('messages', 'sendMedia', {
@@ -629,11 +644,15 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 				attachment_type: 'image',
 				attachment_url: 'https://example.com/a.jpg',
 			});
-			expect(lastCall().options.body.message).toEqual({
-				attachment: {
-					type: 'image',
-					payload: { url: 'https://example.com/a.jpg', is_reusable: true },
+			expect(lastCall().options.body).toEqual({
+				recipient: { id: 'u1' },
+				message: {
+					attachment: {
+						type: 'image',
+						payload: { url: 'https://example.com/a.jpg', is_reusable: true },
+					},
 				},
+				messaging_type: 'RESPONSE',
 			});
 
 			mockRequest.mockResolvedValue({ recipient_id: 'u1' });

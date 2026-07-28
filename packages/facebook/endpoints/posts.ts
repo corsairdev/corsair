@@ -11,12 +11,18 @@ import {
 import type { FacebookEndpointOutputs } from './types';
 
 export const create: FacebookEndpoints['createPost'] = async (ctx, input) => {
-	const { page_id, ...body } = input;
+	const { page_id, published, scheduled_publish_time, ...rest } = input;
+	const shouldSchedule = scheduled_publish_time !== undefined;
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['createPost']
 	>(`/${page_id}/feed`, ctx, page_id, {
 		method: 'POST',
-		body: omitUndefined(body),
+		body: omitUndefined({
+			...rest,
+			// Graph rejects scheduled posts unless published=false.
+			published: published ?? (shouldSchedule ? false : true),
+			scheduled_publish_time,
+		}),
 	});
 
 	await logFacebookEvent(ctx, 'facebook.posts.create', { ...input });

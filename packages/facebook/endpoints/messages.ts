@@ -40,7 +40,7 @@ export const send: FacebookEndpoints['sendMessage'] = async (ctx, input) => {
 		body: omitUndefined({
 			recipient: { id: recipient_id },
 			message: { text: message },
-			messaging_type,
+			messaging_type: messaging_type ?? 'RESPONSE',
 			tag,
 		}),
 	});
@@ -74,7 +74,7 @@ export const sendMedia: FacebookEndpoints['sendMediaMessage'] = async (
 					payload: { url: attachment_url, is_reusable: true },
 				},
 			},
-			messaging_type,
+			messaging_type: messaging_type ?? 'RESPONSE',
 			tag,
 		}),
 	});
