@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'anchorbrowser',
 	'activetrail',
 	'agentql',
 	'ahrefs',
@@ -105,6 +106,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	anchorbrowser: 'Anchor Browser',
 	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
@@ -204,6 +206,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'anchorbrowser'
 	| 'activetrail'
 	| 'agentql'
 	| 'ahrefs'
