@@ -13,7 +13,7 @@ export type WorkflowRunStep = {
 	stepId: string;
 	name: string;
 	seq: number;
-	status: 'completed' | 'failed';
+	status: 'running' | 'completed' | 'failed';
 	output?: unknown;
 	error?: string;
 };
