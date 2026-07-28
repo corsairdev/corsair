@@ -46,6 +46,8 @@ import type {
 	WebhookTree,
 } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
+import type { CorsairWorkflowsNamespace } from '../workflows';
+import { buildWorkflowsNamespace } from '../workflows';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types
@@ -223,6 +225,11 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 		 * approve/deny/cancel a run. Requires `hub` to be configured.
 		 */
 		runs: CorsairRunsNamespace;
+		/**
+		 * List this tenant's workflows and trigger manual runs. Requires `hub`
+		 * to be configured.
+		 */
+		workflows: CorsairWorkflowsNamespace;
 	};
 
 /**
@@ -588,6 +595,10 @@ export function buildCorsairClient<
 		effectiveTenantId,
 	);
 	(apiUnsafe as Record<string, unknown>).runs = buildRunsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
+	(apiUnsafe as Record<string, unknown>).workflows = buildWorkflowsNamespace(
 		hubConfig,
 		effectiveTenantId,
 	);
