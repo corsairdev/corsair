@@ -190,10 +190,15 @@ describe('Kaggle endpoint schemas', () => {
 	}
 
 	it('rejects invalid required inputs', () => {
-			for (const schema of [KaggleEndpointInputSchemas.datasetsGetMetadata, KaggleEndpointInputSchemas.datasetsCreate, KaggleEndpointInputSchemas.competitionsGenerateSubmissionUrl, KaggleEndpointInputSchemas.modelsGetInstance]) {
-				expect(schema.safeParse({}).success).toBe(false);
-			}
-		});
+		for (const schema of [
+			KaggleEndpointInputSchemas.datasetsGetMetadata,
+			KaggleEndpointInputSchemas.datasetsCreate,
+			KaggleEndpointInputSchemas.competitionsGenerateSubmissionUrl,
+			KaggleEndpointInputSchemas.modelsGetInstance,
+		]) {
+			expect(schema.safeParse({}).success).toBe(false);
+		}
+	});
 });
 
 // LIVE SMOKE TESTS — list-only routes (no fixture entity IDs that would 404).
