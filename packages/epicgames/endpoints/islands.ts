@@ -62,12 +62,11 @@ export const get: EpicGamesEndpoints['islandsGet'] = async (ctx, input) => {
 export const getMetricsByInterval: EpicGamesEndpoints['islandsGetMetricsByInterval'] =
 	async (ctx, input) => {
 		const { code, interval, from, to, metrics, ...rest } = input;
-		const intervalSeg = interval ?? 'day';
 		// With explicit interval → /metrics/{interval}; default day also has /metrics
 		const path =
 			interval === undefined
 				? `/islands/${encodeURIComponent(code)}/metrics`
-				: `/islands/${encodeURIComponent(code)}/metrics/${encodeURIComponent(intervalSeg)}`;
+				: `/islands/${encodeURIComponent(code)}/metrics/${encodeURIComponent(interval)}`;
 
 		const metricsParam = Array.isArray(metrics) ? metrics.join(',') : metrics;
 

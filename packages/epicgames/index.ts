@@ -31,7 +31,7 @@ export type EpicGamesPluginOptions = {
 	key?: string;
 	/** Unreal Web Remote Control base URL (default http://127.0.0.1:30010). */
 	remoteControlBaseUrl?: string;
-	/** When true, send Bearer on Remote Control calls (default: true if key present). */
+	/** When true, explicitly send the Epic token on Remote Control calls (default: false). */
 	remoteControlBearer?: boolean;
 	hooks?: InternalEpicGamesPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -243,7 +243,7 @@ export const epicgamesEndpointSchemas = {
 	typeof epicgamesEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'oauth_2' as const;
+const defaultAuthType = 'oauth_2';
 
 const epicgamesEndpointMeta = {
 	'islands.list': {

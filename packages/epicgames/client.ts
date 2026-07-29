@@ -22,12 +22,14 @@ export type EpicGamesQueryValue = string | number | boolean | undefined;
 type RequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS';
 	// body shape varies per endpoint and is validated by callers via typed Zod input schemas
-	body?: Record<string, unknown> | unknown[];
+	body?: unknown;
 	query?: Record<string, EpicGamesQueryValue>;
 	/** Override base URL (Remote Control often uses a local UE host). */
 	baseUrl?: string;
 	/** When true, send Authorization: Bearer <token>. */
 	bearer?: boolean;
+	/** Abort timeout for the raw OPTIONS preflight, in milliseconds. */
+	timeoutMs?: number;
 };
 
 /**
@@ -45,6 +47,7 @@ export async function makeEpicGamesRequest<T>(
 		query,
 		baseUrl = FORTNITE_ECOSYSTEM_BASE,
 		bearer = true,
+		timeoutMs = 10_000,
 	} = options;
 
 	const headers: Record<string, string> = {
@@ -65,16 +68,25 @@ export async function makeEpicGamesRequest<T>(
 
 	if (method === 'OPTIONS') {
 		const url = new URL(
-			endpoint.startsWith('http')
-				? endpoint
-				: `${config.BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`,
+			`${config.BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`,
 		);
 		if (query) {
 			for (const [k, v] of Object.entries(query)) {
 				if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
 			}
 		}
-		const res = await fetch(url, { method: 'OPTIONS', headers });
+		const controller = new AbortController();
+		const timeout = setTimeout(() => controller.abort(), timeoutMs);
+		let res: Response;
+		try {
+			res = await fetch(url, {
+				method: 'OPTIONS',
+				headers,
+				signal: controller.signal,
+			});
+		} finally {
+			clearTimeout(timeout);
+		}
 		const text = await res.text();
 		let json: unknown = {};
 		try {
@@ -110,8 +122,7 @@ export async function makeEpicGamesRequest<T>(
 		url: endpoint,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? // cast: RequestOptions.body is Record | array; ApiRequestOptions.body is Record
-					(body as Record<string, unknown>)
+				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,

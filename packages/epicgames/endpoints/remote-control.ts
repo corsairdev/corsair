@@ -15,8 +15,8 @@ function remoteOpts(ctx: {
 }) {
 	return {
 		baseUrl: remoteBase(ctx),
-		// Local UE Remote Control is often open; optional Bearer when configured.
-		bearer: ctx.options.remoteControlBearer ?? Boolean(ctx.key),
+		// UE Remote Control does not accept Epic OAuth tokens; opt in explicitly.
+		bearer: ctx.options.remoteControlBearer ?? false,
 	};
 }
 
@@ -191,12 +191,6 @@ export const updatePresetProperty: EpicGamesEndpoints['remoteUpdatePresetPropert
 		// PropertyValue is free-form UE JSON; client body type is Record | array.
 		// Wrap primitives so the HTTP helper always receives a Record body.
 		// cast: after typeof object guard, TS still types value as unknown from Zod
-		const propertyValue: Record<string, unknown> =
-			input.value !== null &&
-			typeof input.value === 'object' &&
-			!Array.isArray(input.value)
-				? (input.value as Record<string, unknown>)
-				: { value: input.value };
 
 		const result = await makeEpicGamesRequest<
 			EpicGamesEndpointOutputs['remoteUpdatePresetProperty']
@@ -206,7 +200,7 @@ export const updatePresetProperty: EpicGamesEndpoints['remoteUpdatePresetPropert
 			{
 				method: 'PUT',
 				body: {
-					PropertyValue: propertyValue,
+					PropertyValue: input.value,
 				},
 				...remoteOpts(ctx),
 			},

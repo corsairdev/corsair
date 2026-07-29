@@ -18,7 +18,6 @@ const LooseListSchema = z.union([
 			meta: LooseObjectSchema.optional(),
 		})
 		.catchall(z.unknown()),
-	LooseObjectSchema,
 ]);
 
 /** Interval path segment for Fortnite metrics (OpenAPI IntervalPath). */
