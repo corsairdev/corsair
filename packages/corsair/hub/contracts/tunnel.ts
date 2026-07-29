@@ -17,7 +17,8 @@ export type TunnelType =
 	| 'integration.credentials'
 	| 'connect.create_link'
 	| 'connections.sync'
-	| 'run';
+	| 'run'
+	| 'probe';
 
 /** Inbound tunnel types the app accepts (write-only — no credential reads). */
 export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
@@ -33,6 +34,9 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 	// Workflow execution. Only handled when the app opts in via
 	// processCorsair({ allowWorkflowExecution: true }); off by default.
 	'run',
+	// Read-only probe (authoring dry-run / id grounding). Same opt-in gate as
+	// `run`; the app runs it under runReadonly so it can never write.
+	'probe',
 ]);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -64,7 +68,7 @@ export type RunTunnelPayload = {
 	code: string;
 	/** What fired the run; `payload` is the webhook body (or null for schedule/manual). */
 	trigger: { type: RunTriggerType; payload: unknown };
-	/** Completed steps from prior attempts, keyed by step name (memoization store). */
+	/** Completed steps from prior attempts, keyed by step id (memoization store). */
 	memoizedSteps?: Record<string, { output: unknown }>;
 	/** Replay attempt counter (0 on first execution). */
 	attempt?: number;
@@ -72,6 +76,13 @@ export type RunTunnelPayload = {
 
 /** One step's outcome within an execution (only steps that actually ran this attempt). */
 export type RunStepResult = {
+	/**
+	 * Stable, unique id for this step call — the memoization key and the log
+	 * correlation id. Derived from name + position, so loops / reused names don't
+	 * collide and a changed step at a position gets a new id (no stale replay).
+	 */
+	stepId: string;
+	/** Human-readable step name (may repeat across a run; use stepId for identity). */
 	name: string;
 	/** Execution order across all step() calls in this run (stable across attempts). */
 	seq: number;
@@ -96,6 +107,30 @@ export type RunResultPayload = {
 	/** ISO timestamp when a `sleeping` run should be re-invoked. */
 	sleepUntil?: string;
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Read-only probe contract (`type: 'probe'`)
+//
+// Hub's authoring agent asks the app to run a short read-only script against the
+// tenant's client — to ground on real ids/fields or dry-run generated code before
+// saving it. The app runs it under `runReadonly`, so any write/destructive call
+// throws and the probe can never change anything.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Hub → app: one read-only script to run against the tenant's client. */
+export type ProbeTunnelPayload = {
+	tenantId: string;
+	/** Async JS body with `corsair` in scope; `return` the value to hand back. */
+	code: string;
+	/** Max run time in ms, clamped app-side to (0, 10_000]; omitted, non-positive,
+	 * or non-finite falls back to the 10s default. */
+	timeoutMs?: number;
+};
+
+/** App → Hub: the script's value, or an error (including a blocked write). */
+export type ProbeResultPayload =
+	| { status: 'ok'; value: unknown }
+	| { status: 'error'; error: string };
 
 /**
  * JSON body of a server-side delivery POST from the hub.

@@ -1,4 +1,4 @@
-import { executeWorkflowRun } from '../workflows/execute';
+import { computeStepId, executeWorkflowRun } from '../workflows/execute';
 
 // A mock tenant client. `db.query` echoes its arg so tests can prove the
 // membrane lets normal calls through and hardens the result.
@@ -30,8 +30,25 @@ describe('executeWorkflowRun — happy path', () => {
 		`);
 		expect(result.status).toBe('completed');
 		expect(result.steps).toEqual([
-			{ name: 'greet', seq: 0, status: 'completed', output: 'hello' },
+			{
+				stepId: computeStepId('greet', 0),
+				name: 'greet',
+				seq: 0,
+				status: 'completed',
+				output: 'hello',
+			},
 		]);
+	});
+
+	it('gives distinct stepIds to reused names (loops) but stable ones across attempts', async () => {
+		const a = computeStepId('sync', 0);
+		const b = computeStepId('sync', 1);
+		expect(a).not.toBe(b);
+		expect(computeStepId('sync', 0)).toBe(a);
+		// Pin the wire format: Hub persists these as cross-version memo keys, so a
+		// change to the hash input/digest/truncation must break this test.
+		expect(a).toMatch(/^st_[0-9a-f]{16}$/);
+		expect(a).toBe('st_db505c3e4b022e6f');
 	});
 
 	it('passes calls through the membrane and hardens the result', async () => {
@@ -104,13 +121,19 @@ describe('executeWorkflowRun — replay / memoization', () => {
 				await step('b', async () => 'B:' + a);
 			};
 		`,
-			{ memoizedSteps: { a: { output: 'memoA' } } },
+			{ memoizedSteps: { [computeStepId('a', 0)]: { output: 'memoA' } } },
 		);
 		expect(result.status).toBe('completed');
 		// Only the freshly-run step is reported; `b` still gets seq 1 because the
 		// replayed `a` advances the counter.
 		expect(result.steps).toEqual([
-			{ name: 'b', seq: 1, status: 'completed', output: 'B:memoA' },
+			{
+				stepId: computeStepId('b', 1),
+				name: 'b',
+				seq: 1,
+				status: 'completed',
+				output: 'B:memoA',
+			},
 		]);
 	});
 
@@ -141,11 +164,20 @@ describe('executeWorkflowRun — sleep', () => {
 		expect(first.steps.map((s) => s.name)).toEqual(['one', 'nap']);
 
 		const second = await run(code, {
-			memoizedSteps: { one: { output: 1 }, nap: { output: null } },
+			memoizedSteps: {
+				[computeStepId('one', 0)]: { output: 1 },
+				[computeStepId('nap', 1)]: { output: null },
+			},
 		});
 		expect(second.status).toBe('completed');
 		expect(second.steps).toEqual([
-			{ name: 'two', seq: 2, status: 'completed', output: 2 },
+			{
+				stepId: computeStepId('two', 2),
+				name: 'two',
+				seq: 2,
+				status: 'completed',
+				output: 2,
+			},
 		]);
 	});
 

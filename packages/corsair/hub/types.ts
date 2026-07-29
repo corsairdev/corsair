@@ -76,6 +76,8 @@ export type {
 export type { DeliveryTransport } from './contracts/environment';
 export type {
 	BrowserDeliveryMode,
+	ProbeResultPayload,
+	ProbeTunnelPayload,
 	RunResultPayload,
 	RunStepResult,
 	RunTriggerType,
