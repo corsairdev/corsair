@@ -383,7 +383,7 @@ const facebookEndpointMeta = {
 	'pages.search': {
 		riskLevel: 'read',
 		description:
-			'DEPRECATED for standard Facebook apps: /pages/search is Workplace-only.',
+			'Search public Pages via /pages/search. Requires pages_read_engagement or Page Public Metadata/Content Access.',
 	},
 	'pages.updateSettings': {
 		riskLevel: 'write',
@@ -399,15 +399,17 @@ const facebookEndpointMeta = {
 	},
 	'pages.assignTask': {
 		riskLevel: 'write',
-		description: 'Assign Page tasks to a user.',
+		description:
+			'Assign Page tasks to a business/system user via /assigned_users.',
 	},
 	'pages.removeTask': {
 		riskLevel: 'write',
-		description: 'Remove a user from Page task assignments.',
+		description: 'Remove a business/system user from Page task assignments.',
 	},
 	'posts.create': {
 		riskLevel: 'write',
-		description: 'Publish or schedule a Page feed post.',
+		description:
+			'Publish or schedule a Page feed post (supports attached_media for multi-photo).',
 	},
 	'posts.get': {
 		riskLevel: 'read',
@@ -491,7 +493,8 @@ const facebookEndpointMeta = {
 	},
 	'photos.createPost': {
 		riskLevel: 'write',
-		description: 'Create and publish a photo post on a Page.',
+		description:
+			'Create and publish a photo post on a Page (uses caption per Graph docs).',
 	},
 	'photos.addToAlbum': {
 		riskLevel: 'write',
@@ -503,7 +506,7 @@ const facebookEndpointMeta = {
 	},
 	'photos.list': {
 		riskLevel: 'read',
-		description: 'List photos uploaded to a Page.',
+		description: 'List Page photos via /photos (defaults to type=uploaded).',
 	},
 	'videos.createPost': {
 		riskLevel: 'write',
@@ -511,16 +514,18 @@ const facebookEndpointMeta = {
 	},
 	'videos.list': {
 		riskLevel: 'read',
-		description: 'List videos uploaded to a Page.',
+		description:
+			'List Page videos via GET /{page-id}/videos (Video API; needs pages_read_engagement + MANAGE).',
 	},
 	'videos.upload': {
 		riskLevel: 'write',
 		description:
-			'Deprecated direct upload helper. Prefer resumable upload for large files.',
+			'Publish a Page video from file_url (same edge as createPost; not resumable/chunked).',
 	},
 	'conversations.list': {
 		riskLevel: 'read',
-		description: 'List Messenger conversations for a Page.',
+		description:
+			'List Messenger conversations for a Page (optional platform filter).',
 	},
 	'conversations.getMessages': {
 		riskLevel: 'read',
@@ -593,6 +598,7 @@ export function facebook<const T extends FacebookPluginOptions>(
 			authUrl: 'https://www.facebook.com/v25.0/dialog/oauth',
 			tokenUrl: 'https://graph.facebook.com/v25.0/oauth/access_token',
 			scopes: [
+				'email',
 				'pages_show_list',
 				'pages_read_engagement',
 				'pages_manage_posts',

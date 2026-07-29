@@ -61,7 +61,7 @@ const SearchPagesInputSchema = z
 		after: z.string().optional(),
 	})
 	.describe(
-		'DEPRECATED for standard Facebook apps: /pages/search is Workplace-only and returns Error #10 for most apps. Prefer pages.listManaged or direct page ID lookup.',
+		'Search public Pages via /pages/search. Requires pages_read_engagement or Page Public Metadata/Content Access; may return Error #10 without those features.',
 	);
 
 const UpdatePageSettingsInputSchema = z
@@ -87,26 +87,42 @@ const GetPageInsightsInputSchema = PageIdInputSchema.extend({
 
 const GetPageRolesInputSchema = PageIdInputSchema.merge(PaginationInputSchema)
 	.pick({ page_id: true, fields: true, limit: true, after: true, before: true })
-	.describe('List users and their roles on a Facebook Page.');
+	.describe('List non-business people and their Page tasks via /roles.');
 
 const AssignPageTaskInputSchema = z
 	.object({
 		page_id: z.string(),
-		user: z.string().describe('Facebook User ID to assign tasks to.'),
+		user: z
+			.string()
+			.describe('Business user or system user ID to assign tasks to.'),
 		tasks: z
 			.array(z.string())
 			.describe(
 				'Page tasks such as MANAGE, CREATE_CONTENT, MODERATE, ADVERTISE, ANALYZE.',
 			),
+		business: z
+			.string()
+			.optional()
+			.describe(
+				'Business ID. Required for many Business Manager assigned_users flows.',
+			),
 	})
-	.describe('Assign Page tasks to a user.');
+	.describe('Assign Page tasks to a business/system user via /assigned_users.');
 
 const RemovePageTaskInputSchema = z
 	.object({
 		page_id: z.string(),
-		user: z.string().describe('Facebook User ID to remove from Page tasks.'),
+		user: z
+			.string()
+			.describe('Business user or system user ID to remove from Page tasks.'),
+		business: z
+			.string()
+			.optional()
+			.describe(
+				'Business ID. Required for many Business Manager assigned_users flows.',
+			),
 	})
-	.describe('Remove a user from Page task assignments.');
+	.describe('Remove a business/system user from Page task assignments.');
 
 // ─── Posts ───────────────────────────────────────────────────────────────────
 
@@ -117,11 +133,38 @@ const CreatePostInputSchema = z
 		link: z.string().optional(),
 		published: z.boolean().optional(),
 		scheduled_publish_time: z.number().optional(),
+		unpublished_content_type: z
+			.enum(['SCHEDULED', 'DRAFT', 'ADS_POST'])
+			.optional()
+			.describe(
+				'Required by Graph for some unpublished/scheduled media attach flows.',
+			),
+		attached_media: z
+			.array(
+				z.object({
+					media_fbid: z
+						.string()
+						.describe('Photo/video ID from an unpublished upload.'),
+				}),
+			)
+			.optional()
+			.describe(
+				'Multi-photo/video attach. Upload unpublished media first, then pass media_fbid values.',
+			),
 		targeting: z.record(z.string(), z.unknown()).optional(),
 	})
-	.refine((value) => Boolean(value.message || value.link), {
-		message: 'Either message or link is required to create a post.',
-	})
+	.refine(
+		(value) =>
+			Boolean(
+				value.message ||
+					value.link ||
+					(value.attached_media && value.attached_media.length > 0),
+			),
+		{
+			message:
+				'Either message, link, or attached_media is required to create a post.',
+		},
+	)
 	.describe('Publish or schedule a Page feed post.');
 
 const GetPostInputSchema = z
@@ -343,9 +386,14 @@ const UnlikePostOrCommentInputSchema = z
 const UploadPhotoInputSchema = z
 	.object({
 		page_id: z.string(),
-		url: z.string().optional(),
+		url: z.string().describe('Publicly accessible image URL.'),
 		caption: z.string().optional(),
-		published: z.boolean().optional(),
+		published: z
+			.boolean()
+			.optional()
+			.describe(
+				'Defaults to false so the photo can be attached to a feed post.',
+			),
 		temporary: z.boolean().optional(),
 		no_story: z.boolean().optional(),
 	})
@@ -359,7 +407,10 @@ const UploadPhotosBatchInputSchema = z
 				z.object({
 					url: z.string(),
 					caption: z.string().optional(),
-					published: z.boolean().optional(),
+					published: z
+						.boolean()
+						.optional()
+						.describe('Defaults to false for multi-photo feed attach flows.'),
 				}),
 			)
 			.min(1)
@@ -371,7 +422,14 @@ const CreatePhotoPostInputSchema = z
 	.object({
 		page_id: z.string(),
 		url: z.string(),
-		message: z.string().optional(),
+		caption: z
+			.string()
+			.optional()
+			.describe('Preferred photo caption field per Graph docs.'),
+		message: z
+			.string()
+			.optional()
+			.describe('Deprecated alias for caption; mapped to caption at runtime.'),
 		published: z.boolean().optional(),
 		scheduled_publish_time: z.number().optional(),
 	})
@@ -383,8 +441,12 @@ const AddPhotosToAlbumInputSchema = z
 		page_id: z
 			.string()
 			.describe('Page ID used to resolve the Page access token.'),
-		url: z.string().optional(),
-		message: z.string().optional(),
+		url: z.string().describe('Publicly accessible image URL.'),
+		caption: z.string().optional(),
+		message: z
+			.string()
+			.optional()
+			.describe('Deprecated alias for caption; mapped to caption at runtime.'),
 	})
 	.describe('Add a photo to an existing album.');
 
@@ -397,16 +459,23 @@ const CreatePhotoAlbumInputSchema = z
 	})
 	.describe('Create a photo album on a Page.');
 
-const GetPagePhotosInputSchema = PageIdInputSchema.merge(
-	PaginationInputSchema,
-).describe('List photos uploaded to a Page.');
+const GetPagePhotosInputSchema = PageIdInputSchema.merge(PaginationInputSchema)
+	.extend({
+		type: z
+			.enum(['uploaded', 'profile', 'tagged'])
+			.optional()
+			.describe(
+				'Defaults to uploaded. Graph defaults to profile without this.',
+			),
+	})
+	.describe('List photos uploaded to a Page.');
 
 // ─── Videos ──────────────────────────────────────────────────────────────────
 
 const CreateVideoPostInputSchema = z
 	.object({
 		page_id: z.string(),
-		file_url: z.string().optional(),
+		file_url: z.string().describe('Publicly accessible video URL.'),
 		title: z.string().optional(),
 		description: z.string().optional(),
 		published: z.boolean().optional(),
@@ -416,7 +485,9 @@ const CreateVideoPostInputSchema = z
 
 const GetPageVideosInputSchema = PageIdInputSchema.merge(
 	PaginationInputSchema,
-).describe('List videos uploaded to a Page.');
+).describe(
+	'List Page videos via GET /{page-id}/videos (Video API). Requires a Page token with pages_read_engagement and the MANAGE task.',
+);
 
 const UploadVideoInputSchema = z
 	.object({
@@ -425,16 +496,24 @@ const UploadVideoInputSchema = z
 		title: z.string().optional(),
 		description: z.string().optional(),
 		published: z.boolean().optional(),
+		scheduled_publish_time: z.number().optional(),
 	})
 	.describe(
-		'Deprecated direct upload helper. Prefer videos.createPost with resumable upload for large files.',
+		'Publish a Page video from file_url (same Graph edge as videos.createPost). Not a resumable/chunked upload — use Graph resumable upload for large files.',
 	);
 
 // ─── Conversations & Messages ────────────────────────────────────────────────
 
 const GetPageConversationsInputSchema = PageIdInputSchema.merge(
 	PaginationInputSchema,
-).describe('List Messenger conversations for a Page.');
+)
+	.extend({
+		platform: z
+			.enum(['messenger', 'instagram', 'whatsapp'])
+			.optional()
+			.describe('Filter conversations by messaging platform.'),
+	})
+	.describe('List Messenger conversations for a Page.');
 
 const GetConversationMessagesInputSchema = z
 	.object({
@@ -455,26 +534,51 @@ const GetMessageDetailsInputSchema = z
 	})
 	.describe('Retrieve a single Messenger message by ID.');
 
-const SendMessageInputSchema = z
-	.object({
-		page_id: z.string(),
-		recipient_id: z.string(),
-		message: z.string(),
-		messaging_type: z.enum(['RESPONSE', 'UPDATE', 'MESSAGE_TAG']).optional(),
-		tag: z.string().optional(),
-	})
-	.describe('Send a text Messenger message from a Page.');
+function requireTagWhenMessageTag<
+	T extends {
+		messaging_type?: 'RESPONSE' | 'UPDATE' | 'MESSAGE_TAG' | 'UTILITY';
+		tag?: string;
+	},
+>(schema: z.ZodType<T>) {
+	return schema.superRefine((value, ctx) => {
+		if (value.messaging_type === 'MESSAGE_TAG' && !value.tag) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['tag'],
+				message: 'tag is required when messaging_type is MESSAGE_TAG',
+			});
+		}
+	});
+}
 
-const SendMediaMessageInputSchema = z
-	.object({
-		page_id: z.string(),
-		recipient_id: z.string(),
-		attachment_type: z.enum(['image', 'video', 'audio', 'file']),
-		attachment_url: z.string(),
-		messaging_type: z.enum(['RESPONSE', 'UPDATE', 'MESSAGE_TAG']).optional(),
-		tag: z.string().optional(),
-	})
-	.describe('Send a media Messenger message from a Page.');
+const SendMessageInputSchema = requireTagWhenMessageTag(
+	z
+		.object({
+			page_id: z.string(),
+			recipient_id: z.string(),
+			message: z.string(),
+			messaging_type: z
+				.enum(['RESPONSE', 'UPDATE', 'MESSAGE_TAG', 'UTILITY'])
+				.optional(),
+			tag: z.string().optional(),
+		})
+		.describe('Send a text Messenger message from a Page.'),
+);
+
+const SendMediaMessageInputSchema = requireTagWhenMessageTag(
+	z
+		.object({
+			page_id: z.string(),
+			recipient_id: z.string(),
+			attachment_type: z.enum(['image', 'video', 'audio', 'file']),
+			attachment_url: z.string(),
+			messaging_type: z
+				.enum(['RESPONSE', 'UPDATE', 'MESSAGE_TAG', 'UTILITY'])
+				.optional(),
+			tag: z.string().optional(),
+		})
+		.describe('Send a media Messenger message from a Page.'),
+);
 
 const MarkMessageSeenInputSchema = z
 	.object({

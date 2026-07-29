@@ -264,6 +264,7 @@ export const FacebookPageRoleSchema = z
 	.object({
 		id: z.string().optional(),
 		name: z.string().optional(),
+		tasks: z.array(z.string()).optional(),
 		role: z.string().optional(),
 	})
 	.passthrough();

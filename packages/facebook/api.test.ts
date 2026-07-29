@@ -115,8 +115,9 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 		expect(Object.keys(FacebookEndpointInputSchemas)).toHaveLength(44);
 	});
 
-	it('includes read_insights in OAuth scopes', () => {
+	it('includes read_insights and email in OAuth scopes', () => {
 		expect(plugin.oauthConfig?.scopes).toContain('read_insights');
+		expect(plugin.oauthConfig?.scopes).toContain('email');
 	});
 
 	it('resolvePageId extracts composite PageID_PostID', () => {
@@ -296,7 +297,7 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 			);
 		});
 
-		it('search uses the deprecated /pages/search endpoint', async () => {
+		it('search hits /pages/search with the user token', async () => {
 			mockRequest.mockResolvedValue({ data: [] });
 			await call('pages', 'search', { q: 'coffee' });
 			expect(lastCall().options.url).toBe('pages/search');
@@ -346,9 +347,20 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 		});
 
 		it('getRoles / assignTask / removeTask hit the expected edges', async () => {
-			mockRequest.mockResolvedValue({ data: [{ id: 'u1', role: 'MANAGER' }] });
+			mockRequest.mockResolvedValue({
+				data: [{ id: 'u1', name: 'Admin', tasks: ['MANAGE'] }],
+			});
 			await call('pages', 'getRoles', { page_id: PAGE_ID });
-			expect(lastCall().options.url).toBe(`${PAGE_ID}/roles`);
+			expect(lastCall()).toMatchObject({
+				options: {
+					url: `${PAGE_ID}/roles`,
+					query: expect.objectContaining({ fields: 'id,name,tasks' }),
+				},
+			});
+			expect(mockCtx.db.pageRoles.upsertByEntityId).toHaveBeenCalledWith(
+				`${PAGE_ID}:u1`,
+				expect.objectContaining({ tasks: ['MANAGE'] }),
+			);
 
 			mockRequest.mockResolvedValue({ success: true });
 			await call('pages', 'assignTask', {
@@ -382,6 +394,21 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 				message: 'later',
 				published: false,
 				scheduled_publish_time: 1700000000,
+				unpublished_content_type: 'SCHEDULED',
+			});
+		});
+
+		it('create supports attached_media for multi-photo posts', async () => {
+			mockRequest.mockResolvedValue({ id: 'p2' });
+			await call('posts', 'create', {
+				page_id: PAGE_ID,
+				message: 'album',
+				attached_media: [{ media_fbid: 'ph1' }, { media_fbid: 'ph2' }],
+			});
+			expect(lastCall().options.body).toEqual({
+				message: 'album',
+				attached_media: [{ media_fbid: 'ph1' }, { media_fbid: 'ph2' }],
+				published: true,
 			});
 		});
 
@@ -540,15 +567,23 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 				page_id: PAGE_ID,
 				url: 'https://example.com/a.jpg',
 			});
-			expect(lastCall().options.url).toBe(`${PAGE_ID}/photos`);
+			expect(lastCall().options).toMatchObject({
+				url: `${PAGE_ID}/photos`,
+				body: {
+					url: 'https://example.com/a.jpg',
+					published: false,
+				},
+			});
 
 			await call('photos', 'createPost', {
 				page_id: PAGE_ID,
 				url: 'https://example.com/a.jpg',
+				message: 'legacy caption',
 				scheduled_publish_time: 1700000000,
 			});
 			expect(lastCall().options.body).toEqual({
 				url: 'https://example.com/a.jpg',
+				caption: 'legacy caption',
 				published: false,
 				scheduled_publish_time: 1700000000,
 			});
@@ -568,7 +603,10 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 
 			mockRequest.mockResolvedValue({ data: [{ id: 'ph1', name: 'n' }] });
 			await call('photos', 'list', { page_id: PAGE_ID });
-			expect(lastCall().options.url).toBe(`${PAGE_ID}/photos`);
+			expect(lastCall().options).toMatchObject({
+				url: `${PAGE_ID}/photos`,
+				query: expect.objectContaining({ type: 'uploaded' }),
+			});
 		});
 
 		it('uploadBatch authenticates the batch request with a page token', async () => {
@@ -583,7 +621,7 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 					method: 'POST',
 					url: '',
 					formData: expect.objectContaining({
-						batch: expect.stringContaining(`${PAGE_ID}/photos`),
+						batch: expect.stringContaining('published=false'),
 					}),
 				},
 			});

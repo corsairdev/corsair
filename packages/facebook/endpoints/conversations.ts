@@ -1,6 +1,11 @@
 import { makePageFacebookRequest } from '../client';
 import type { FacebookEndpoints } from '../index';
-import { buildPaginationQuery, cacheUpsert, logFacebookEvent } from './shared';
+import {
+	buildPaginationQuery,
+	cacheUpsert,
+	logFacebookEvent,
+	omitUndefined,
+} from './shared';
 import type { FacebookEndpointOutputs } from './types';
 
 export const list: FacebookEndpoints['getPageConversations'] = async (
@@ -10,13 +15,16 @@ export const list: FacebookEndpoints['getPageConversations'] = async (
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['getPageConversations']
 	>(`/${input.page_id}/conversations`, ctx, input.page_id, {
-		query: buildPaginationQuery({
-			fields:
-				input.fields ??
-				'id,link,updated_time,message_count,unread_count,snippet,participants',
-			limit: input.limit,
-			after: input.after,
-			before: input.before,
+		query: omitUndefined({
+			...buildPaginationQuery({
+				fields:
+					input.fields ??
+					'id,link,updated_time,message_count,unread_count,snippet,participants',
+				limit: input.limit,
+				after: input.after,
+				before: input.before,
+			}),
+			platform: input.platform,
 		}),
 	});
 

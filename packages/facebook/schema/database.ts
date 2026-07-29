@@ -130,6 +130,7 @@ export const FacebookPageRoleEntity = z.object({
 	pageId: z.string().optional(),
 	userId: z.string().optional(),
 	name: z.string().optional(),
+	tasks: z.array(z.string()).optional(),
 	role: z.string().optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),

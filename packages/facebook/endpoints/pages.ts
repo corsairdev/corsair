@@ -107,7 +107,7 @@ export const getRoles: FacebookEndpoints['getPageRoles'] = async (
 		FacebookEndpointOutputs['getPageRoles']
 	>(`/${input.page_id}/roles`, ctx, input.page_id, {
 		query: buildPaginationQuery({
-			fields: input.fields ?? 'id,name,role',
+			fields: input.fields ?? 'id,name,tasks',
 			limit: input.limit,
 			after: input.after,
 			before: input.before,
@@ -121,7 +121,7 @@ export const getRoles: FacebookEndpoints['getPageRoles'] = async (
 				pageId: input.page_id,
 				userId: role.id,
 				name: role.name,
-				role: role.role,
+				tasks: role.tasks,
 			});
 		}
 	}
@@ -134,12 +134,12 @@ export const assignTask: FacebookEndpoints['assignPageTask'] = async (
 	ctx,
 	input,
 ) => {
-	const { page_id, user, tasks } = input;
+	const { page_id, user, tasks, business } = input;
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['assignPageTask']
 	>(`/${page_id}/assigned_users`, ctx, page_id, {
 		method: 'POST',
-		body: { user, tasks },
+		body: omitUndefined({ user, tasks, business }),
 	});
 
 	await logFacebookEvent(ctx, 'facebook.pages.assignTask', { ...input });
@@ -150,12 +150,12 @@ export const removeTask: FacebookEndpoints['removePageTask'] = async (
 	ctx,
 	input,
 ) => {
-	const { page_id, user } = input;
+	const { page_id, user, business } = input;
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['removePageTask']
 	>(`/${page_id}/assigned_users`, ctx, page_id, {
 		method: 'DELETE',
-		query: { user },
+		query: omitUndefined({ user, business }),
 	});
 
 	await logFacebookEvent(ctx, 'facebook.pages.removeTask', { ...input });

@@ -9,12 +9,13 @@ import {
 import type { FacebookEndpointOutputs } from './types';
 
 export const upload: FacebookEndpoints['uploadPhoto'] = async (ctx, input) => {
-	const { page_id, ...body } = input;
+	const { page_id, published, ...rest } = input;
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['uploadPhoto']
 	>(`/${page_id}/photos`, ctx, page_id, {
 		method: 'POST',
-		body: omitUndefined(body),
+		// Default unpublished so callers can attach to a multi-photo feed post.
+		body: omitUndefined({ ...rest, published: published ?? false }),
 	});
 
 	await logFacebookEvent(ctx, 'facebook.photos.upload', { ...input });
@@ -32,8 +33,8 @@ export const uploadBatch: FacebookEndpoints['uploadPhotosBatch'] = async (
 			omitUndefined({
 				url: photo.url,
 				caption: photo.caption,
-				published:
-					photo.published === undefined ? undefined : String(photo.published),
+				// Batch uploads must stay unpublished until attached to a feed post.
+				published: String(photo.published ?? false),
 			}) as Record<string, string>,
 		).toString(),
 		name: `photo_${index}`,
@@ -57,7 +58,8 @@ export const createPost: FacebookEndpoints['createPhotoPost'] = async (
 	ctx,
 	input,
 ) => {
-	const { page_id, url, message, published, scheduled_publish_time } = input;
+	const { page_id, url, caption, message, published, scheduled_publish_time } =
+		input;
 	const shouldSchedule = scheduled_publish_time !== undefined;
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['createPhotoPost']
@@ -65,7 +67,8 @@ export const createPost: FacebookEndpoints['createPhotoPost'] = async (
 		method: 'POST',
 		body: omitUndefined({
 			url,
-			message,
+			// Graph prefers caption; accept deprecated message as an alias.
+			caption: caption ?? message,
 			published: published ?? (shouldSchedule ? false : true),
 			scheduled_publish_time,
 		}),
@@ -79,12 +82,12 @@ export const addToAlbum: FacebookEndpoints['addPhotosToAlbum'] = async (
 	ctx,
 	input,
 ) => {
-	const { album_id, page_id, url, message } = input;
+	const { album_id, page_id, url, caption, message } = input;
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['addPhotosToAlbum']
 	>(`/${album_id}/photos`, ctx, page_id, {
 		method: 'POST',
-		body: omitUndefined({ url, message }),
+		body: omitUndefined({ url, caption: caption ?? message }),
 	});
 
 	await logFacebookEvent(ctx, 'facebook.photos.addToAlbum', { ...input });
@@ -120,12 +123,16 @@ export const list: FacebookEndpoints['getPagePhotos'] = async (ctx, input) => {
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['getPagePhotos']
 	>(`/${input.page_id}/photos`, ctx, input.page_id, {
-		query: buildPaginationQuery({
-			fields: input.fields ?? 'id,name,created_time,source,link,images',
-			limit: input.limit,
-			after: input.after,
-			before: input.before,
-		}),
+		query: {
+			...buildPaginationQuery({
+				fields: input.fields ?? 'id,name,created_time,source,link,images',
+				limit: input.limit,
+				after: input.after,
+				before: input.before,
+			}),
+			// Graph defaults to type=profile; uploaded is what Page APIs usually want.
+			type: input.type ?? 'uploaded',
+		},
 	});
 
 	if (result.data) {

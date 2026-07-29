@@ -71,14 +71,28 @@ export const list: FacebookEndpoints['getPageVideos'] = async (ctx, input) => {
 	return result;
 };
 
-/** @deprecated Prefer resumable upload via the Graph API for large video files. */
+/** Publish from file_url — not a resumable/chunked Graph upload. */
 export const upload: FacebookEndpoints['uploadVideo'] = async (ctx, input) => {
-	const { page_id, file_url, title, description, published } = input;
+	const {
+		page_id,
+		file_url,
+		title,
+		description,
+		published,
+		scheduled_publish_time,
+	} = input;
+	const shouldSchedule = scheduled_publish_time !== undefined;
 	const result = await makePageFacebookRequest<
 		FacebookEndpointOutputs['uploadVideo']
 	>(`/${page_id}/videos`, ctx, page_id, {
 		method: 'POST',
-		body: omitUndefined({ file_url, title, description, published }),
+		body: omitUndefined({
+			file_url,
+			title,
+			description,
+			published: published ?? (shouldSchedule ? false : true),
+			scheduled_publish_time,
+		}),
 	});
 
 	await logFacebookEvent(ctx, 'facebook.videos.upload', { ...input });
