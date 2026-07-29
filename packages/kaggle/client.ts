@@ -150,7 +150,9 @@ export async function makeKaggleBinaryRequest(
 			signal: AbortSignal.timeout(KAGGLE_REQUEST_TIMEOUT_MS),
 		});
 	} catch (error) {
-		throw new KaggleAPIError(error instanceof Error ? error.message : 'Kaggle binary request failed');
+		throw new KaggleAPIError(
+			error instanceof Error ? error.message : 'Kaggle binary request failed',
+		);
 	}
 
 	if (!res.ok) {
@@ -194,12 +196,19 @@ export async function makeKaggleBinaryRequest(
 	}
 
 	const contentLength = Number(res.headers.get('content-length'));
-	if (Number.isFinite(contentLength) && contentLength > KAGGLE_MAX_BINARY_PAYLOAD_BYTES) {
-		throw new KaggleAPIError(`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`);
+	if (
+		Number.isFinite(contentLength) &&
+		contentLength > KAGGLE_MAX_BINARY_PAYLOAD_BYTES
+	) {
+		throw new KaggleAPIError(
+			`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`,
+		);
 	}
 	const buf = Buffer.from(await res.arrayBuffer());
 	if (buf.length > KAGGLE_MAX_BINARY_PAYLOAD_BYTES) {
-		throw new KaggleAPIError(`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`);
+		throw new KaggleAPIError(
+			`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`,
+		);
 	}
 	const contentType =
 		res.headers.get('content-type') ?? 'application/octet-stream';

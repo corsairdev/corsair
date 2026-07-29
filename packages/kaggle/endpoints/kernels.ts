@@ -109,7 +109,7 @@ export const listOutputFiles: KaggleEndpoints['kernelsListOutputFiles'] =
 	async (ctx, input) => {
 		const result = await makeKaggleRequest<
 			KaggleEndpointOutputs['kernelsListOutputFiles']
-		>('/kernels/output/list', ctx.key, {
+		>('/kernels/files', ctx.key, {
 			method: 'GET',
 			query: {
 				userName: input.userName,
