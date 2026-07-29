@@ -167,30 +167,6 @@ describe('Cloudinary client helpers', () => {
 			),
 		).toBe(false);
 	});
-
-	it('verifyCloudinaryNotificationSignature accepts Cloudinary SHA-1 defaults', () => {
-		const payload = '{"notification_type":"upload"}';
-		const timestamp = '1700000000';
-		const apiSecret = 'webhook-secret';
-		// Precomputed SHA-1(payload + timestamp + secret) — avoids weak-algo usage in tests.
-		const signature = '37fa18d19c420fbc2627380e545b80c3d31e0a56';
-		const nowSpy = jest
-			.spyOn(Date, 'now')
-			.mockReturnValue(Number(timestamp) * 1000);
-
-		try {
-			expect(
-				verifyCloudinaryNotificationSignature(
-					payload,
-					timestamp,
-					signature,
-					apiSecret,
-				),
-			).toBe(true);
-		} finally {
-			nowSpy.mockRestore();
-		}
-	});
 });
 
 const describeLive = hasLiveCredentials ? describe : describe.skip;

@@ -370,12 +370,6 @@ function digestEqualsHex(expectedHex: string, signature: string): boolean {
 	}
 }
 
-/** Legacy Cloudinary webhook digests — verify incoming signatures only, never mint. */
-function legacyCloudinaryWebhookDigestHex(payload: string): string {
-	// codeql[js/weak-cryptographic-algorithm]: Cloudinary still signs webhooks with SHA-1 by default
-	return createHash('sha1').update(payload).digest('hex');
-}
-
 export function verifyCloudinaryNotificationSignature(
 	payload: string,
 	timestamp: string,
@@ -392,11 +386,6 @@ export function verifyCloudinaryNotificationSignature(
 	}
 
 	const signed = payload + timestamp + apiSecret;
-	// Prefer SHA-256; Cloudinary still signs with SHA-1 by default unless the
-	// account is restricted to SHA-256-only, so accept both digests.
-	const sha256 = createHash('sha256').update(signed).digest('hex');
-	if (digestEqualsHex(sha256, signature)) {
-		return true;
-	}
-	return digestEqualsHex(legacyCloudinaryWebhookDigestHex(signed), signature);
+	const digest = createHash('sha256').update(signed).digest('hex');
+	return digestEqualsHex(digest, signature);
 }
