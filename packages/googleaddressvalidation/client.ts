@@ -36,7 +36,7 @@ export async function makeGoogleAddressValidationRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'POST', body, query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: GOOGLEADDRESSVALIDATION_API_BASE,
