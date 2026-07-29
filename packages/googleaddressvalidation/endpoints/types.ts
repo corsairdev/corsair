@@ -1,29 +1,231 @@
 import { z } from 'zod';
 
-const ExampleGetInputSchema = z.object({
-	id: z.string(),
+const PostalAddressSchema = z.object({
+	revision: z.number().optional(),
+	regionCode: z.string().optional(),
+	languageCode: z.string().optional(),
+	postalCode: z.string().optional(),
+	sortingCode: z.string().optional(),
+	administrativeArea: z.string().optional(),
+	locality: z.string().optional(),
+	sublocality: z.string().optional(),
+	addressLines: z.array(z.string()).optional(),
+	recipients: z.array(z.string()).optional(),
+	organization: z.string().optional(),
 });
 
-export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
+const GranularitySchema = z.enum([
+	'GRANULARITY_UNSPECIFIED',
+	'SUB_PREMISE',
+	'PREMISE',
+	'PREMISE_PROXIMITY',
+	'BLOCK',
+	'ROUTE',
+	'OTHER',
+]);
 
-const ExampleGetResponseSchema = z.object({
-	id: z.string(),
+const ConfirmationLevelSchema = z.enum([
+	'CONFIRMATION_LEVEL_UNSPECIFIED',
+	'CONFIRMED',
+	'UNCONFIRMED_BUT_PLAUSIBLE',
+	'UNCONFIRMED_AND_SUSPICIOUS',
+]);
+
+const PossibleNextActionSchema = z.enum([
+	'POSSIBLE_NEXT_ACTION_UNSPECIFIED',
+	'FIX',
+	'CONFIRM_ADD_SUBPREMISES',
+	'CONFIRM',
+	'ACCEPT',
+]);
+
+const AddressComponentSchema = z.object({
+	componentName: z
+		.object({
+			text: z.string().optional(),
+			languageCode: z.string().optional(),
+		})
+		.optional(),
+	componentType: z.string().optional(),
+	confirmationLevel: ConfirmationLevelSchema.optional(),
+	inferred: z.boolean().optional(),
+	spellCorrected: z.boolean().optional(),
+	replaced: z.boolean().optional(),
+	unexpected: z.boolean().optional(),
 });
 
-export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
+const LatLngSchema = z.object({
+	latitude: z.number(),
+	longitude: z.number(),
+});
+
+const AddressResultSchema = z.object({
+	formattedAddress: z.string().optional(),
+	postalAddress: PostalAddressSchema.optional(),
+	addressComponents: z.array(AddressComponentSchema).optional(),
+	missingComponentTypes: z.array(z.string()).optional(),
+	unconfirmedComponentTypes: z.array(z.string()).optional(),
+	unresolvedTokens: z.array(z.string()).optional(),
+});
+
+const UspsDataSchema = z
+	.object({
+		standardizedAddress: z
+			.object({
+				firstAddressLine: z.string().optional(),
+				firm: z.string().optional(),
+				secondAddressLine: z.string().optional(),
+				urbanization: z.string().optional(),
+				cityStateZipAddressLine: z.string().optional(),
+				city: z.string().optional(),
+				state: z.string().optional(),
+				zipCode: z.string().optional(),
+				zipCodeExtension: z.string().optional(),
+			})
+			.optional(),
+		deliveryPointCode: z.string().optional(),
+		deliveryPointCheckDigit: z.string().optional(),
+		dpvConfirmation: z.string().optional(),
+		dpvFootnote: z.string().optional(),
+		dpvCmra: z.string().optional(),
+		dpvVacant: z.string().optional(),
+		dpvNoStat: z.string().optional(),
+		dpvNoStatReasonCode: z.number().optional(),
+		dpvDrop: z.string().optional(),
+		dpvThrowback: z.string().optional(),
+		dpvNonDeliveryDays: z.string().optional(),
+		dpvNonDeliveryDaysValues: z.number().optional(),
+		dpvNoSecureLocation: z.string().optional(),
+		dpvPbsa: z.string().optional(),
+		dpvDoorNotAccessible: z.string().optional(),
+		dpvEnhancedDeliveryCode: z.string().optional(),
+		carrierRoute: z.string().optional(),
+		carrierRouteIndicator: z.string().optional(),
+		ewsNoMatch: z.boolean().optional(),
+		postOfficeCity: z.string().optional(),
+		postOfficeState: z.string().optional(),
+		abbreviatedCity: z.string().optional(),
+		fipsCountyCode: z.string().optional(),
+		county: z.string().optional(),
+		elotNumber: z.string().optional(),
+		elotFlag: z.string().optional(),
+		lacsLinkReturnCode: z.string().optional(),
+		lacsLinkIndicator: z.string().optional(),
+		poBoxOnlyPostalCode: z.boolean().optional(),
+		suitelinkFootnote: z.string().optional(),
+		pmbDesignator: z.string().optional(),
+		pmbNumber: z.string().optional(),
+		addressRecordType: z.string().optional(),
+		defaultAddress: z.boolean().optional(),
+		errorMessage: z.string().optional(),
+		cassProcessed: z.boolean().optional(),
+	})
+	.passthrough();
+
+const ValidateAddressInputSchema = z.object({
+	address: PostalAddressSchema,
+	previousResponseId: z.string().optional(),
+	enableUspsCass: z.boolean().optional(),
+	languageOptions: z
+		.object({
+			returnEnglishLatinAddress: z.boolean().optional(),
+		})
+		.optional(),
+	sessionToken: z.string().optional(),
+});
+
+export type ValidateAddressInput = z.infer<typeof ValidateAddressInputSchema>;
+
+const ValidateAddressResponseSchema = z.object({
+	result: z.object({
+		verdict: z
+			.object({
+				inputGranularity: GranularitySchema.optional(),
+				validationGranularity: GranularitySchema.optional(),
+				geocodeGranularity: GranularitySchema.optional(),
+				addressComplete: z.boolean().optional(),
+				hasUnconfirmedComponents: z.boolean().optional(),
+				hasInferredComponents: z.boolean().optional(),
+				hasReplacedComponents: z.boolean().optional(),
+				hasSpellCorrectedComponents: z.boolean().optional(),
+				possibleNextAction: PossibleNextActionSchema.optional(),
+			})
+			.optional(),
+		address: AddressResultSchema.optional(),
+		geocode: z
+			.object({
+				location: LatLngSchema.optional(),
+				plusCode: z
+					.object({
+						globalCode: z.string().optional(),
+						compoundCode: z.string().optional(),
+					})
+					.optional(),
+				bounds: z
+					.object({
+						low: LatLngSchema.optional(),
+						high: LatLngSchema.optional(),
+					})
+					.optional(),
+				featureSizeMeters: z.number().optional(),
+				placeId: z.string().optional(),
+				placeTypes: z.array(z.string()).optional(),
+			})
+			.optional(),
+		metadata: z
+			.object({
+				business: z.boolean().optional(),
+				poBox: z.boolean().optional(),
+				residential: z.boolean().optional(),
+			})
+			.optional(),
+		uspsData: UspsDataSchema.optional(),
+		englishLatinAddress: AddressResultSchema.optional(),
+	}),
+	responseId: z.string(),
+});
+
+export type ValidateAddressResponse = z.infer<
+	typeof ValidateAddressResponseSchema
+>;
+
+const ProvideValidationFeedbackInputSchema = z.object({
+	conclusion: z.enum([
+		'VALIDATION_CONCLUSION_UNSPECIFIED',
+		'VALIDATED_VERSION_USED',
+		'USER_VERSION_USED',
+		'UNVALIDATED_VERSION_USED',
+		'UNUSED',
+	]),
+	responseId: z.string(),
+});
+
+export type ProvideValidationFeedbackInput = z.infer<
+	typeof ProvideValidationFeedbackInputSchema
+>;
+
+const ProvideValidationFeedbackResponseSchema = z.object({}).passthrough();
+
+export type ProvideValidationFeedbackResponse = z.infer<
+	typeof ProvideValidationFeedbackResponseSchema
+>;
 
 export type GoogleAddressValidationEndpointInputs = {
-	exampleGet: ExampleGetInput;
+	validateAddress: ValidateAddressInput;
+	provideValidationFeedback: ProvideValidationFeedbackInput;
 };
 
 export type GoogleAddressValidationEndpointOutputs = {
-	exampleGet: ExampleGetResponse;
+	validateAddress: ValidateAddressResponse;
+	provideValidationFeedback: ProvideValidationFeedbackResponse;
 };
 
 export const GoogleAddressValidationEndpointInputSchemas = {
-	exampleGet: ExampleGetInputSchema,
+	validateAddress: ValidateAddressInputSchema,
+	provideValidationFeedback: ProvideValidationFeedbackInputSchema,
 } as const;
 
 export const GoogleAddressValidationEndpointOutputSchemas = {
-	exampleGet: ExampleGetResponseSchema,
+	validateAddress: ValidateAddressResponseSchema,
+	provideValidationFeedback: ProvideValidationFeedbackResponseSchema,
 } as const;

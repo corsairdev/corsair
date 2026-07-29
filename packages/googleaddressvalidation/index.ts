@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Example } from './endpoints';
+import { Address } from './endpoints';
 import type {
 	GoogleAddressValidationEndpointInputs,
 	GoogleAddressValidationEndpointOutputs,
@@ -56,21 +56,29 @@ type GoogleAddressValidationEndpoint<
 >;
 
 export type GoogleAddressValidationEndpoints = {
-	exampleGet: GoogleAddressValidationEndpoint<'exampleGet'>;
+	validateAddress: GoogleAddressValidationEndpoint<'validateAddress'>;
+	provideValidationFeedback: GoogleAddressValidationEndpoint<'provideValidationFeedback'>;
 };
 
 const googleAddressValidationEndpointsNested = {
-	example: {
-		get: Example.get,
+	address: {
+		validate: Address.validate,
+		provideFeedback: Address.provideFeedback,
 	},
 } as const;
 
 const googleAddressValidationWebhooksNested = {} as const;
 
 export const googleAddressValidationEndpointSchemas = {
-	'example.get': {
-		input: GoogleAddressValidationEndpointInputSchemas.exampleGet,
-		output: GoogleAddressValidationEndpointOutputSchemas.exampleGet,
+	'address.validate': {
+		input: GoogleAddressValidationEndpointInputSchemas.validateAddress,
+		output: GoogleAddressValidationEndpointOutputSchemas.validateAddress,
+	},
+	'address.provideFeedback': {
+		input:
+			GoogleAddressValidationEndpointInputSchemas.provideValidationFeedback,
+		output:
+			GoogleAddressValidationEndpointOutputSchemas.provideValidationFeedback,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof googleAddressValidationEndpointsNested
@@ -79,9 +87,14 @@ export const googleAddressValidationEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const googleAddressValidationEndpointMeta = {
-	'example.get': {
+	'address.validate': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Validate a postal address and get standardized results',
+	},
+	'address.provideFeedback': {
+		riskLevel: 'write',
+		description:
+			'Report the outcome of a previous address validation sequence back to Google',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof googleAddressValidationEndpointsNested
@@ -162,8 +175,10 @@ export function googleaddressvalidation<
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
 	GoogleAddressValidationEndpointInputs,
 	GoogleAddressValidationEndpointOutputs,
+	ProvideValidationFeedbackInput,
+	ProvideValidationFeedbackResponse,
+	ValidateAddressInput,
+	ValidateAddressResponse,
 } from './endpoints/types';

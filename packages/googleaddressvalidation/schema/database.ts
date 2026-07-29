@@ -1,9 +1,2 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const GoogleAddressValidationExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type GoogleAddressValidationExample = z.infer<typeof GoogleAddressValidationExample>;
+// Address Validation is a stateless request/response API — validation
+// results are not persisted locally, so there are no database entities.
