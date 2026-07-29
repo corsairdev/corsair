@@ -110,9 +110,69 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 		expect(leaves).toHaveLength(44);
 	});
 
+	it('maps every Composio FACEBOOK_* op to a nested endpoint', () => {
+		const composioToEndpoint: Record<string, [string, string]> = {
+			FACEBOOK_GET_CURRENT_USER: ['users', 'getCurrentUser'],
+			FACEBOOK_GET_USER_PAGES: ['users', 'getUserPages'],
+			FACEBOOK_LIST_MANAGED_PAGES: ['pages', 'listManaged'],
+			FACEBOOK_GET_PAGE_DETAILS: ['pages', 'getDetails'],
+			FACEBOOK_SEARCH_PAGES: ['pages', 'search'],
+			FACEBOOK_UPDATE_PAGE_SETTINGS: ['pages', 'updateSettings'],
+			FACEBOOK_GET_PAGE_INSIGHTS: ['pages', 'getInsights'],
+			FACEBOOK_GET_PAGE_ROLES: ['pages', 'getRoles'],
+			FACEBOOK_ASSIGN_PAGE_TASK: ['pages', 'assignTask'],
+			FACEBOOK_REMOVE_PAGE_TASK: ['pages', 'removeTask'],
+			FACEBOOK_CREATE_POST: ['posts', 'create'],
+			FACEBOOK_GET_POST: ['posts', 'get'],
+			FACEBOOK_GET_PAGE_POSTS: ['posts', 'list'],
+			FACEBOOK_GET_SCHEDULED_POSTS: ['posts', 'listScheduled'],
+			FACEBOOK_UPDATE_POST: ['posts', 'update'],
+			FACEBOOK_DELETE_POST: ['posts', 'delete'],
+			FACEBOOK_RESCHEDULE_POST: ['posts', 'reschedule'],
+			FACEBOOK_PUBLISH_SCHEDULED_POST: ['posts', 'publishScheduled'],
+			FACEBOOK_GET_PAGE_TAGGED_POSTS: ['posts', 'listTagged'],
+			FACEBOOK_GET_POST_INSIGHTS: ['posts', 'getInsights'],
+			FACEBOOK_GET_POST_REACTIONS: ['posts', 'getReactions'],
+			FACEBOOK_CREATE_COMMENT: ['comments', 'create'],
+			FACEBOOK_GET_COMMENT: ['comments', 'get'],
+			FACEBOOK_GET_COMMENTS: ['comments', 'list'],
+			FACEBOOK_UPDATE_COMMENT: ['comments', 'update'],
+			FACEBOOK_DELETE_COMMENT: ['comments', 'delete'],
+			FACEBOOK_LIKE_POST_OR_COMMENT: ['reactions', 'add'],
+			FACEBOOK_UNLIKE_POST_OR_COMMENT: ['reactions', 'unlike'],
+			FACEBOOK_UPLOAD_PHOTO: ['photos', 'upload'],
+			FACEBOOK_UPLOAD_PHOTOS_BATCH: ['photos', 'uploadBatch'],
+			FACEBOOK_CREATE_PHOTO_POST: ['photos', 'createPost'],
+			FACEBOOK_ADD_PHOTOS_TO_ALBUM: ['photos', 'addToAlbum'],
+			FACEBOOK_CREATE_PHOTO_ALBUM: ['photos', 'createAlbum'],
+			FACEBOOK_GET_PAGE_PHOTOS: ['photos', 'list'],
+			FACEBOOK_CREATE_VIDEO_POST: ['videos', 'createPost'],
+			FACEBOOK_GET_PAGE_VIDEOS: ['videos', 'list'],
+			FACEBOOK_UPLOAD_VIDEO: ['videos', 'upload'],
+			FACEBOOK_GET_PAGE_CONVERSATIONS: ['conversations', 'list'],
+			FACEBOOK_GET_CONVERSATION_MESSAGES: ['conversations', 'getMessages'],
+			FACEBOOK_GET_MESSAGE_DETAILS: ['messages', 'getDetails'],
+			FACEBOOK_SEND_MESSAGE: ['messages', 'send'],
+			FACEBOOK_SEND_MEDIA_MESSAGE: ['messages', 'sendMedia'],
+			FACEBOOK_MARK_MESSAGE_SEEN: ['messages', 'markSeen'],
+			FACEBOOK_TOGGLE_TYPING_INDICATOR: ['messages', 'toggleTyping'],
+		};
+
+		expect(Object.keys(composioToEndpoint)).toHaveLength(44);
+		for (const [op, [group, name]] of Object.entries(composioToEndpoint)) {
+			expect(endpoints[group]?.[name]).toEqual(expect.any(Function));
+			void op;
+		}
+	});
+
 	it('registers zod schemas for every nested endpoint', () => {
 		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(44);
 		expect(Object.keys(FacebookEndpointInputSchemas)).toHaveLength(44);
+	});
+
+	it('exposes 0 webhook triggers (Composio parity)', () => {
+		expect(plugin.webhooks).toEqual({});
+		expect(plugin.pluginWebhookMatcher?.({} as never)).toBe(false);
 	});
 
 	it('includes read_insights and email in OAuth scopes', () => {
@@ -324,7 +384,7 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 				data: [
 					{
 						id: 'ins1',
-						name: 'page_impressions',
+						name: 'page_follows',
 						period: 'day',
 						values: [{ value: 10, end_time: '2026-01-01' }],
 					},
@@ -332,7 +392,7 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 			});
 			await call('pages', 'getInsights', {
 				page_id: PAGE_ID,
-				metric: 'page_impressions',
+				metric: 'page_follows',
 				period: 'day',
 			});
 			// Single-value insights still key by end_time so query windows don't collide.
@@ -474,11 +534,11 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 			expect(lastCall().options.url).toBe(`${PAGE_ID}/tagged`);
 
 			mockRequest.mockResolvedValue({
-				data: [{ name: 'post_impressions', values: [{ value: 1 }] }],
+				data: [{ name: 'post_clicks', values: [{ value: 1 }] }],
 			});
 			await call('posts', 'getInsights', {
 				post_id: POST_ID,
-				metric: ['post_impressions'],
+				metric: ['post_clicks'],
 			});
 			expect(lastCall().options.url).toBe(`${POST_ID}/insights`);
 			expect(mockCtx.db.insights.upsertByEntityId).toHaveBeenCalled();

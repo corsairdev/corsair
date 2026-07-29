@@ -383,7 +383,7 @@ const facebookEndpointMeta = {
 	'pages.search': {
 		riskLevel: 'read',
 		description:
-			'Search public Pages via /pages/search. Requires pages_read_engagement or Page Public Metadata/Content Access.',
+			'Search Pages via /pages/search (deprecated for most apps; Workplace-only). Prefer pages.listManaged or pages.getDetails.',
 	},
 	'pages.updateSettings': {
 		riskLevel: 'write',
@@ -476,12 +476,12 @@ const facebookEndpointMeta = {
 	},
 	'reactions.add': {
 		riskLevel: 'write',
-		description: 'Add a reaction to a post or comment.',
+		description:
+			'Add a LIKE to a post or comment via /likes (Graph only allows LIKE programmatically).',
 	},
 	'reactions.unlike': {
 		riskLevel: 'write',
-		description:
-			'Remove the authenticated user like/reaction from a post or comment.',
+		description: 'Remove a LIKE from a post or comment via DELETE /likes.',
 	},
 	'photos.upload': {
 		riskLevel: 'write',

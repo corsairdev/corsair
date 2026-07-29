@@ -79,7 +79,7 @@ const UpdatePageSettingsInputSchema = z
 const GetPageInsightsInputSchema = PageIdInputSchema.extend({
 	metric: z
 		.union([z.string(), z.array(z.string())])
-		.describe('Insight metric name(s), e.g. page_impressions.'),
+		.describe('Insight metric name(s), e.g. page_follows, page_views_total.'),
 	period: z.enum(['day', 'week', 'days_28', 'month', 'lifetime']).optional(),
 	since: z.union([z.string(), z.number()]).optional(),
 	until: z.union([z.string(), z.number()]).optional(),
