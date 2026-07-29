@@ -139,7 +139,7 @@ describe('handler path construction', () => {
 		});
 		const call = lastCall();
 		expect(call[0]).toBe('/v1/chat/completions');
-		expect(call[2]?.baseUrl).toBe(Client.HF_INFERENCE_BASE);
+		expect(call[2]?.baseUrl).toBe(Client.LLM_GATEWAY_BASE);
 	});
 
 	it('repos.create → /api/repos/create', async () => {
