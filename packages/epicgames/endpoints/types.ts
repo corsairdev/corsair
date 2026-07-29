@@ -75,9 +75,16 @@ const RemoteSessionInputSchema = z
 	.catchall(z.unknown());
 export type RemoteSessionInput = z.infer<typeof RemoteSessionInputSchema>;
 
+const RemoteBatchRequestSchema = z
+	.object({
+		RequestId: z.union([z.string(), z.number()]),
+		URL: z.string().min(1),
+		Verb: z.string().min(1),
+	})
+	.catchall(z.unknown());
+
 const RemoteBatchInputSchema = z.object({
-	// batch is an ordered list of remote calls; each item shape is free-form per UE docs
-	requests: z.array(LooseObjectSchema),
+	requests: z.array(RemoteBatchRequestSchema),
 });
 export type RemoteBatchInput = z.infer<typeof RemoteBatchInputSchema>;
 
@@ -167,15 +174,12 @@ export type CallObjectFunctionInput = z.infer<
 	typeof CallObjectFunctionInputSchema
 >;
 
-const PutObjectPropertyInputSchema = z
-	.object({
-		objectPath: z.string(),
-		// property map is free-form; keys are property names, values are UE JSON values
-		access: z.enum(['READ_ACCESS', 'WRITE_ACCESS']).optional(),
-		// unknown property bag — shape depends on which UObject properties are requested
-		propertyValues: LooseObjectSchema.optional(),
-	})
-	.catchall(z.unknown());
+const PutObjectPropertyInputSchema = z.object({
+	objectPath: z.string(),
+	propertyName: z.string(),
+	propertyValue: z.unknown(),
+	access: z.enum(['READ_ACCESS', 'WRITE_ACCESS']).optional(),
+});
 export type PutObjectPropertyInput = z.infer<
 	typeof PutObjectPropertyInputSchema
 >;
@@ -187,12 +191,6 @@ export type GetObjectThumbnailInput = z.infer<
 	typeof GetObjectThumbnailInputSchema
 >;
 
-const ListBlueprintCallableFunctionsInputSchema = z.object({
-	objectPath: z.string(),
-});
-export type ListBlueprintCallableFunctionsInput = z.infer<
-	typeof ListBlueprintCallableFunctionsInputSchema
->;
 
 const WaitForObjectEventInputSchema = z
 	.object({

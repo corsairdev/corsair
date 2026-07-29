@@ -310,8 +310,8 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 		await RemoteControl.putObjectProperty(mockCtx(), {
 			objectPath: '/Game/A',
 			access: 'WRITE_ACCESS',
-			// colliding key must not override the real objectPath
-			propertyValues: { bHidden: true, objectPath: 'spoofed' },
+			propertyName: 'bHidden',
+				propertyValue: true,
 		});
 		const call = mockRequest.mock.calls.find(
 			(c) => c[0] === '/remote/object/property',
@@ -342,50 +342,6 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 			'test-token',
 			expect.objectContaining({ method: 'PUT' }),
 		);
-	});
-
-	it('listBlueprintCallableFunctions extracts Functions from describe', async () => {
-		mockRequest.mockResolvedValueOnce({
-			Name: 'Actor',
-			Functions: [{ Name: 'SetActorLocation' }, { Name: 'Destroy' }],
-			Properties: [{ Name: 'Location' }],
-		});
-		const result = await RemoteControl.listBlueprintCallableFunctions(
-			mockCtx(),
-			{ objectPath: '/Game/A' },
-		);
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/remote/object/describe',
-			'test-token',
-			expect.objectContaining({
-				method: 'PUT',
-				body: expect.objectContaining({
-					objectPath: '/Game/A',
-					access: 'READ_ACCESS',
-				}),
-			}),
-		);
-		// Distinct from describeObject: returns filtered functions list only
-		expect(result).toEqual({
-			objectPath: '/Game/A',
-			functions: [{ Name: 'SetActorLocation' }, { Name: 'Destroy' }],
-			count: 2,
-		});
-		expect(result).not.toHaveProperty('Properties');
-		expect(result).not.toHaveProperty('Name');
-	});
-
-	it('listBlueprintCallableFunctions returns empty when no Functions key', async () => {
-		mockRequest.mockResolvedValueOnce({ Name: 'Actor' });
-		const result = await RemoteControl.listBlueprintCallableFunctions(
-			mockCtx(),
-			{ objectPath: '/Game/A' },
-		);
-		expect(result).toEqual({
-			objectPath: '/Game/A',
-			functions: [],
-			count: 0,
-		});
 	});
 
 	it('waitForObjectEvent → PUT /remote/object/event', async () => {
