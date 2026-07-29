@@ -188,6 +188,10 @@ function outputSchemaForOperation(
 		return CloudinaryTagListResponseSchema;
 	}
 
+	if (key.startsWith('destroy') || key.startsWith('delete')) {
+		return CloudinaryResultResponseSchema;
+	}
+
 	if (RESOURCE_LIST_KEYS.has(key)) {
 		return CloudinaryResourceListResponseSchema;
 	}
@@ -258,10 +262,6 @@ function outputSchemaForOperation(
 
 	if (RESOURCE_WRITE_KEYS.has(key)) {
 		return CloudinaryResourceSchema.passthrough();
-	}
-
-	if (key.startsWith('destroy') || key.startsWith('delete')) {
-		return CloudinaryResultResponseSchema;
 	}
 
 	if (key.startsWith('generate')) {

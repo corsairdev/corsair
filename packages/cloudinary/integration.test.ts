@@ -4,14 +4,22 @@ import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { cloudinary } from './index';
 
+const hasIntegrationCredentials = Boolean(
+	process.env.CLOUDINARY_API_KEY?.trim() &&
+		process.env.CLOUDINARY_API_SECRET?.trim() &&
+		process.env.CLOUDINARY_CLOUD_NAME?.trim() &&
+		process.env.CORSAIR_KEK?.trim(),
+);
+
+const describeIntegration = hasIntegrationCredentials
+	? describe
+	: describe.skip;
+
 async function createCloudinaryClient() {
-	const apiKey = process.env.CLOUDINARY_API_KEY;
-	const apiSecret = process.env.CLOUDINARY_API_SECRET;
-	const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-	const kek = process.env.CORSAIR_KEK;
-	if (!apiKey || !apiSecret || !cloudName || !kek) {
-		return null;
-	}
+	const apiKey = process.env.CLOUDINARY_API_KEY!;
+	const apiSecret = process.env.CLOUDINARY_API_SECRET!;
+	const cloudName = process.env.CLOUDINARY_CLOUD_NAME!;
+	const kek = process.env.CORSAIR_KEK!;
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'cloudinary');
@@ -34,14 +42,9 @@ async function createCloudinaryClient() {
 	return { corsair, testDb, cloudName };
 }
 
-describe('Cloudinary plugin integration', () => {
+describeIntegration('Cloudinary plugin integration', () => {
 	it('resource endpoints interact with API, events, and DB cache', async () => {
-		const setup = await createCloudinaryClient();
-		if (!setup) {
-			return;
-		}
-
-		const { corsair, testDb } = setup;
+		const { corsair, testDb } = await createCloudinaryClient();
 
 		const listInput = {
 			max_results: 5,
@@ -90,12 +93,7 @@ describe('Cloudinary plugin integration', () => {
 	});
 
 	it('folder endpoints interact with API, events, and DB cache', async () => {
-		const setup = await createCloudinaryClient();
-		if (!setup) {
-			return;
-		}
-
-		const { corsair, testDb } = setup;
+		const { corsair, testDb } = await createCloudinaryClient();
 
 		const listInput = {
 			max_results: 5,
@@ -135,12 +133,7 @@ describe('Cloudinary plugin integration', () => {
 	});
 
 	it('upload lifecycle interacts with API, events, and DB cache', async () => {
-		const setup = await createCloudinaryClient();
-		if (!setup) {
-			return;
-		}
-
-		const { corsair, testDb } = setup;
+		const { corsair, testDb } = await createCloudinaryClient();
 		const publicId = `corsair-integration-${Date.now()}`;
 		const png = Buffer.from(
 			'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
@@ -152,31 +145,37 @@ describe('Cloudinary plugin integration', () => {
 			file: new Blob([png], { type: 'image/png' }),
 		};
 
-		const uploaded = (await corsair.cloudinary.api.asset.uploadAsset(
-			uploadInput,
-		)) as { asset_id?: string; public_id?: string };
-		expect(uploaded).toBeDefined();
+		await corsair.cloudinary.api.asset.uploadAsset(uploadInput);
 
-		const orm = createCorsairOrm(testDb.database);
-		const uploadEvents = await orm.events.findMany({
-			where: { event_type: 'cloudinary.asset.uploadAsset' },
-		});
-		expect(uploadEvents.length).toBeGreaterThan(0);
+		try {
+			const orm = createCorsairOrm(testDb.database);
+			const uploadEvents = await orm.events.findMany({
+				where: { event_type: 'cloudinary.asset.uploadAsset' },
+			});
+			expect(uploadEvents.length).toBeGreaterThan(0);
 
-		const assetId =
-			typeof uploaded.asset_id === 'string' ? uploaded.asset_id : undefined;
-		if (assetId) {
-			const resourceFromDb =
-				await corsair.cloudinary.db.resources.findByEntityId(assetId);
-			expect(resourceFromDb).not.toBeNull();
-			expect(resourceFromDb?.data.public_id).toBe(publicId);
+			const fetched =
+				(await corsair.cloudinary.api.resource.getResourceByPublicId({
+					resource_type: 'image',
+					type: 'upload',
+					public_id: publicId,
+				})) as { asset_id?: string; public_id?: string };
+			expect(fetched.public_id).toBe(publicId);
+
+			const assetId =
+				typeof fetched.asset_id === 'string' ? fetched.asset_id : undefined;
+			if (assetId) {
+				const resourceFromDb =
+					await corsair.cloudinary.db.resources.findByEntityId(assetId);
+				expect(resourceFromDb).not.toBeNull();
+				expect(resourceFromDb?.data.public_id).toBe(publicId);
+			}
+		} finally {
+			await corsair.cloudinary.api.asset.destroyAsset({
+				resource_type: 'image',
+				public_id: publicId,
+			});
+			testDb.cleanup();
 		}
-
-		await corsair.cloudinary.api.asset.destroyAsset({
-			resource_type: 'image',
-			public_id: publicId,
-		});
-
-		testDb.cleanup();
 	}, 60000);
 });

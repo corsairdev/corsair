@@ -165,24 +165,26 @@ describeLive('Cloudinary live integration', () => {
 			file: new Blob([png], { type: 'image/png' }),
 		});
 
-		const fetched = await createCloudinaryEndpoint(getOp)(ctx, {
-			resource_type: 'image',
-			type: 'upload',
-			public_id: publicId,
-		});
-		expect(fetched).toBeDefined();
+		try {
+			const fetched = await createCloudinaryEndpoint(getOp)(ctx, {
+				resource_type: 'image',
+				type: 'upload',
+				public_id: publicId,
+			});
+			expect(fetched).toBeDefined();
 
-		await createCloudinaryEndpoint(tagOp)(ctx, {
-			resource_type: 'image',
-			tag: 'corsair-test',
-			public_ids: [publicId],
-			command: 'add',
-		});
-
-		await createCloudinaryEndpoint(destroyOp)(ctx, {
-			resource_type: 'image',
-			public_id: publicId,
-		});
+			await createCloudinaryEndpoint(tagOp)(ctx, {
+				resource_type: 'image',
+				tag: 'corsair-test',
+				public_ids: [publicId],
+				command: 'add',
+			});
+		} finally {
+			await createCloudinaryEndpoint(destroyOp)(ctx, {
+				resource_type: 'image',
+				public_id: publicId,
+			});
+		}
 	}, 60000);
 
 	const readOps = cloudinaryOperations.filter(

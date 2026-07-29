@@ -3,7 +3,9 @@ import type { WebhookRequest } from 'corsair/core';
 import type { CloudinaryContext } from './plugin-types';
 import {
 	DeleteWebhooks,
+	EagerWebhooks,
 	FolderWebhooks,
+	OtherWebhooks,
 	RenameWebhooks,
 	ResourceWebhooks,
 	UploadWebhooks,
@@ -219,5 +221,105 @@ describe('cloudinary webhook handlers', () => {
 		expect(ctx.db.folders?.deleteByEntityId).toHaveBeenCalledWith(
 			'samples/old-folder',
 		);
+	});
+
+	it('eager webhook accepts valid signatures', async () => {
+		const result = await EagerWebhooks.eager.handler(
+			makeCtx(),
+			makeWebhookRequest({
+				notification_type: 'eager',
+				public_id: 'sample',
+				asset_id: 'asset-123',
+			}) as never,
+		);
+
+		expect(result.success).toBe(true);
+	});
+
+	it('resource context changes upsert cached resources', async () => {
+		const ctx = makeCtx();
+		const result = await ResourceWebhooks.resourceContextChanged.handler(
+			ctx,
+			makeWebhookRequest({
+				notification_type: 'resource_context_changed',
+				public_id: 'sample',
+				asset_id: 'asset-123',
+				context: { alt: 'sample' },
+			}) as never,
+		);
+
+		expect(result.success).toBe(true);
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+	});
+
+	it('resource metadata changes upsert cached resources', async () => {
+		const ctx = makeCtx();
+		const result = await ResourceWebhooks.resourceMetadataChanged.handler(
+			ctx,
+			makeWebhookRequest({
+				notification_type: 'resource_metadata_changed',
+				public_id: 'sample',
+				asset_id: 'asset-123',
+				metadata: { category: 'test' },
+			}) as never,
+		);
+
+		expect(result.success).toBe(true);
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+	});
+
+	it('move webhook upserts cached resources', async () => {
+		const ctx = makeCtx();
+		const result = await FolderWebhooks.move.handler(
+			ctx,
+			makeWebhookRequest({
+				notification_type: 'move',
+				public_id: 'sample',
+				asset_id: 'asset-123',
+				asset_folder: 'samples/moved',
+			}) as never,
+		);
+
+		expect(result.success).toBe(true);
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+	});
+
+	it('explode webhook accepts valid signatures', async () => {
+		const result = await OtherWebhooks.explode.handler(
+			makeCtx(),
+			makeWebhookRequest({
+				notification_type: 'explode',
+				public_id: 'sample',
+				asset_id: 'asset-123',
+			}) as never,
+		);
+
+		expect(result.success).toBe(true);
+	});
+
+	it('access control changed webhook accepts valid signatures', async () => {
+		const result = await OtherWebhooks.accessControlChanged.handler(
+			makeCtx(),
+			makeWebhookRequest({
+				notification_type: 'access_control_changed',
+				public_id: 'sample',
+				asset_id: 'asset-123',
+			}) as never,
+		);
+
+		expect(result.success).toBe(true);
+	});
+
+	it('related assets webhook accepts valid signatures', async () => {
+		const result = await OtherWebhooks.relatedAssets.handler(
+			makeCtx(),
+			makeWebhookRequest({
+				notification_type: 'related_assets',
+				public_id: 'sample',
+				asset_id: 'asset-123',
+			}) as never,
+		);
+
+		expect(result.success).toBe(true);
 	});
 });

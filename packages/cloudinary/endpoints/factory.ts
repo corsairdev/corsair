@@ -345,10 +345,14 @@ export function createCloudinaryEndpoint(
 ): CloudinaryEndpoint {
 	return async (ctx, input = {}) => {
 		const result = await requestOperation(ctx, input, operation);
+		const query = buildQuery(operation, input);
 		try {
 			await syncOperationResult(ctx, operation, result);
-		} catch {
-			// Cache sync is best-effort; never fail a successful API response.
+		} catch (error) {
+			console.warn(
+				`[cloudinary] cache sync failed for ${operation.key}:`,
+				error,
+			);
 		}
 		try {
 			await logEventFromContext(
@@ -362,7 +366,7 @@ export function createCloudinaryEndpoint(
 						},
 						{},
 					),
-					query: input.query,
+					...(query ?? {}),
 				},
 				'completed',
 			);
