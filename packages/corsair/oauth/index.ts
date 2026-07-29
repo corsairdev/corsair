@@ -20,7 +20,10 @@ import {
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
-import { registerHubWebhookTenantLink } from '../hub/report-connection-status';
+import {
+	registerHubWebhookTenantLink,
+	reportPluginConnectionStatus,
+} from '../hub/report-connection-status';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
@@ -341,6 +344,14 @@ export async function processOAuthCallback(
 			String(Math.floor(Date.now() / 1000) + tokens.expires_in),
 		);
 	}
+
+	// Ack the stored token to Hub so the grid and list_connections flip to
+	// connected. The webhook-link and subscribe blocks below only add inbound
+	// routing — connection status must not depend on either.
+	await reportPluginConnectionStatus(corsair, {
+		plugin,
+		tenantId,
+	}).catch(() => {});
 
 	try {
 		const tenantLink = await resolveOAuthWebhookTenantLink(

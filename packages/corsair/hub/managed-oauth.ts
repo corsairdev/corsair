@@ -6,7 +6,10 @@ import {
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
-import { registerHubWebhookTenantLink } from './report-connection-status';
+import {
+	registerHubWebhookTenantLink,
+	reportPluginConnectionStatus,
+} from './report-connection-status';
 
 export type ManagedOAuthDeliveryErrorCode =
 	| 'invalid_corsair_instance'
@@ -103,6 +106,14 @@ export async function processManagedOAuthDelivery(
 	if (scope) {
 		await accountKm.set_scope(scope);
 	}
+
+	// Ack the stored token to Hub so the grid and list_connections flip to
+	// connected. The webhook-link block below only adds inbound routing —
+	// connection status must not depend on it.
+	await reportPluginConnectionStatus(corsair, {
+		plugin,
+		tenantId,
+	}).catch(() => {});
 
 	try {
 		const tenantLink = await resolveOAuthWebhookTenantLink(
