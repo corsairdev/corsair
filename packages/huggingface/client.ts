@@ -92,14 +92,14 @@ export async function makeHuggingFaceRequest<T>(
 
 	if (rawText) {
 		return rawFetch<T>(
-				baseUrl,
-				endpoint,
-				method,
-				headers,
-				body,
-				query,
-				timeoutMs,
-			);
+			baseUrl,
+			endpoint,
+			method,
+			headers,
+			body,
+			query,
+			timeoutMs,
+		);
 	}
 
 	const config: OpenAPIConfig = {
@@ -178,12 +178,20 @@ async function rawFetch<T>(
 	let parsed: unknown = text;
 	const location = res.headers.get('location');
 	if (res.status >= 300 && res.status < 400) {
-		parsed = { status: res.status, location: location ?? undefined, raw: text.slice(0, 2000) };
+		parsed = {
+			status: res.status,
+			location: location ?? undefined,
+			raw: text.slice(0, 2000),
+		};
 	} else {
 		try {
 			parsed = text ? JSON.parse(text) : {};
 		} catch {
-			parsed = { status: res.status, location: location ?? undefined, raw: text.slice(0, 2000) };
+			parsed = {
+				status: res.status,
+				location: location ?? undefined,
+				raw: text.slice(0, 2000),
+			};
 		}
 	}
 	if (res.status >= 400) {
