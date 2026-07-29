@@ -99,13 +99,14 @@ export async function cacheInsightValues(
 		: [{ value: undefined, end_time: undefined }];
 
 	for (const point of values) {
+		// Graph's insight.id does not encode end_time / query windows, so only
+		// use the bare id when there is no window-specific snapshot.
 		const insightId =
-			insight.id && values.length === 1
+			insight.id && !point.end_time
 				? insight.id
 				: [
-						objectId,
-						insight.name,
-						period ?? 'default',
+						insight.id ??
+							[objectId, insight.name, period ?? 'default'].join(':'),
 						point.end_time ?? 'latest',
 					].join(':');
 

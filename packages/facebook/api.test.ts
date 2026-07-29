@@ -334,7 +334,15 @@ describe('Facebook endpoint behavior (mocked HTTP)', () => {
 				metric: 'page_impressions',
 				period: 'day',
 			});
-			expect(mockCtx.db.insights.upsertByEntityId).toHaveBeenCalled();
+			// Single-value insights still key by end_time so query windows don't collide.
+			expect(mockCtx.db.insights.upsertByEntityId).toHaveBeenCalledWith(
+				'ins1:2026-01-01',
+				expect.objectContaining({
+					insightId: 'ins1:2026-01-01',
+					value: 10,
+					endTime: '2026-01-01',
+				}),
+			);
 		});
 
 		it('getRoles / assignTask / removeTask hit the expected edges', async () => {
