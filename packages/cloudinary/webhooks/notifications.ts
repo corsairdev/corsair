@@ -2,7 +2,7 @@ import type { CorsairWebhook } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { CloudinaryContext } from '../plugin-types';
-import type {
+import {
 	CloudinaryAccessControlChangedSchema,
 	CloudinaryCreateFolderNotificationSchema,
 	CloudinaryDeleteFolderNotificationSchema,
@@ -16,8 +16,6 @@ import type {
 	CloudinaryResourceMetadataChangedSchema,
 	CloudinaryResourceTagsChangedSchema,
 	CloudinaryUploadNotificationSchema,
-} from './types';
-import {
 	createCloudinaryMatch,
 	verifyCloudinaryWebhookSignature,
 } from './types';
@@ -50,12 +48,32 @@ type RelatedAssetsEvent = z.infer<
 	typeof CloudinaryRelatedAssetsNotificationSchema
 >;
 
+function folderEntityId(event: Record<string, unknown>): string | undefined {
+	const folder = event.folder;
+	if (folder && typeof folder === 'object' && !Array.isArray(folder)) {
+		const record = folder as Record<string, unknown>;
+		if (typeof record.path === 'string' && record.path) {
+			return record.path;
+		}
+		if (typeof record.name === 'string' && record.name) {
+			return record.name;
+		}
+	}
+	return undefined;
+}
+
 async function handleNotification<T extends Record<string, unknown>>(
 	ctx: CloudinaryContext,
 	request: Parameters<CorsairWebhook<CloudinaryContext, T, T>['handler']>[1],
 	logKey: string,
+	schema: {
+		safeParse: (
+			value: unknown,
+		) => { success: true; data: T } | { success: false };
+	},
 	options?: {
 		syncResource?: 'upsert' | 'delete';
+		syncFolder?: 'upsert' | 'delete';
 	},
 ) {
 	const verification = verifyCloudinaryWebhookSignature(request, ctx.key);
@@ -67,7 +85,16 @@ async function handleNotification<T extends Record<string, unknown>>(
 		};
 	}
 
-	const event = request.payload;
+	const parsed = schema.safeParse(request.payload);
+	if (!parsed.success) {
+		return {
+			success: false as const,
+			statusCode: 400,
+			error: 'Invalid webhook payload',
+		};
+	}
+
+	const event = parsed.data;
 	await logEventFromContext(ctx, logKey, { ...event }, 'completed');
 
 	const assetId =
@@ -99,6 +126,19 @@ async function handleNotification<T extends Record<string, unknown>>(
 		}
 	}
 
+	const folderId = folderEntityId(event);
+	if (folderId && options?.syncFolder === 'upsert' && ctx.db.folders) {
+		await ctx.db.folders.upsertByEntityId(folderId, {
+			...event,
+			name: folderId.split('/').pop() ?? folderId,
+			path: folderId,
+		});
+	}
+
+	if (options?.syncFolder === 'delete' && folderId && ctx.db.folders) {
+		await ctx.db.folders.deleteByEntityId(folderId);
+	}
+
 	return {
 		success: true as const,
 		corsairEntityId: entityId,
@@ -114,6 +154,7 @@ export const UploadWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.upload',
+				CloudinaryUploadNotificationSchema,
 				{ syncResource: 'upsert' },
 			),
 	} satisfies CorsairWebhook<CloudinaryContext, UploadEvent, UploadEvent>,
@@ -123,7 +164,12 @@ export const EagerWebhooks = {
 	eager: {
 		match: createCloudinaryMatch('eager'),
 		handler: async (ctx, request) =>
-			handleNotification<EagerEvent>(ctx, request, 'cloudinary.webhook.eager'),
+			handleNotification<EagerEvent>(
+				ctx,
+				request,
+				'cloudinary.webhook.eager',
+				CloudinaryEagerNotificationSchema,
+			),
 	} satisfies CorsairWebhook<CloudinaryContext, EagerEvent, EagerEvent>,
 };
 
@@ -135,6 +181,7 @@ export const DeleteWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.delete',
+				CloudinaryDeleteNotificationSchema,
 				{ syncResource: 'delete' },
 			),
 	} satisfies CorsairWebhook<CloudinaryContext, DeleteEvent, DeleteEvent>,
@@ -148,6 +195,8 @@ export const RenameWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.rename',
+				CloudinaryRenameNotificationSchema,
+				{ syncResource: 'upsert' },
 			),
 	} satisfies CorsairWebhook<CloudinaryContext, RenameEvent, RenameEvent>,
 };
@@ -160,6 +209,8 @@ export const ResourceWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.resourceTagsChanged',
+				CloudinaryResourceTagsChangedSchema,
+				{ syncResource: 'upsert' },
 			),
 	} satisfies CorsairWebhook<
 		CloudinaryContext,
@@ -173,6 +224,8 @@ export const ResourceWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.resourceContextChanged',
+				CloudinaryResourceContextChangedSchema,
+				{ syncResource: 'upsert' },
 			),
 	} satisfies CorsairWebhook<
 		CloudinaryContext,
@@ -186,6 +239,8 @@ export const ResourceWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.resourceMetadataChanged',
+				CloudinaryResourceMetadataChangedSchema,
+				{ syncResource: 'upsert' },
 			),
 	} satisfies CorsairWebhook<
 		CloudinaryContext,
@@ -202,6 +257,8 @@ export const FolderWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.createFolder',
+				CloudinaryCreateFolderNotificationSchema,
+				{ syncFolder: 'upsert' },
 			),
 	} satisfies CorsairWebhook<
 		CloudinaryContext,
@@ -215,6 +272,8 @@ export const FolderWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.deleteFolder',
+				CloudinaryDeleteFolderNotificationSchema,
+				{ syncFolder: 'delete' },
 			),
 	} satisfies CorsairWebhook<
 		CloudinaryContext,
@@ -224,7 +283,13 @@ export const FolderWebhooks = {
 	move: {
 		match: createCloudinaryMatch('move'),
 		handler: async (ctx, request) =>
-			handleNotification<MoveEvent>(ctx, request, 'cloudinary.webhook.move'),
+			handleNotification<MoveEvent>(
+				ctx,
+				request,
+				'cloudinary.webhook.move',
+				CloudinaryMoveNotificationSchema,
+				{ syncResource: 'upsert' },
+			),
 	} satisfies CorsairWebhook<CloudinaryContext, MoveEvent, MoveEvent>,
 };
 
@@ -236,6 +301,7 @@ export const OtherWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.explode',
+				CloudinaryExplodeNotificationSchema,
 			),
 	} satisfies CorsairWebhook<CloudinaryContext, ExplodeEvent, ExplodeEvent>,
 	accessControlChanged: {
@@ -245,6 +311,7 @@ export const OtherWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.accessControlChanged',
+				CloudinaryAccessControlChangedSchema,
 			),
 	} satisfies CorsairWebhook<
 		CloudinaryContext,
@@ -258,6 +325,7 @@ export const OtherWebhooks = {
 				ctx,
 				request,
 				'cloudinary.webhook.relatedAssets',
+				CloudinaryRelatedAssetsNotificationSchema,
 			),
 	} satisfies CorsairWebhook<
 		CloudinaryContext,

@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
 	CloudinaryFolder,
 	CloudinaryLiveStream,
@@ -10,6 +11,14 @@ import {
 	CloudinaryUploadPreset,
 	CloudinaryUsage,
 } from './database';
+
+export const CloudinaryCredentials = z.object({
+	apiKey: z.string(),
+	apiSecret: z.string(),
+	cloudName: z.string(),
+});
+
+export type CloudinaryCredentials = z.infer<typeof CloudinaryCredentials>;
 
 export const CloudinarySchema = {
 	version: '1.0.0',

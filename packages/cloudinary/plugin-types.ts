@@ -1,9 +1,10 @@
 import type { CorsairPluginContext, PickAuth } from 'corsair/core';
 import { cloudinaryAuthConfig } from './auth-config';
-import type { CloudinarySchema } from './schema';
+import type { CloudinaryCredentials, CloudinarySchema } from './schema';
 
 export type CloudinaryPluginOptionsBase = {
 	authType?: PickAuth<'api_key'>;
+	credentials?: CloudinaryCredentials;
 	key?: string;
 	apiSecret?: string;
 	cloudName?: string;

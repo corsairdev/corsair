@@ -2,10 +2,12 @@ import type {
 	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
+	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	KeyBuilderContext,
 	PluginPermissionsConfig,
+	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
@@ -14,8 +16,15 @@ import {
 	cloudinaryEndpointsNested,
 	cloudinaryEndpointMeta as generatedCloudinaryEndpointMeta,
 } from './endpoints/plugin';
+import type {
+	CloudinaryEndpointInputs,
+	CloudinaryEndpointOutputs,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import type { CloudinaryPluginOptionsBase } from './plugin-types';
+import type {
+	CloudinaryContext,
+	CloudinaryPluginOptionsBase,
+} from './plugin-types';
 import { cloudinaryAuthConfig } from './plugin-types';
 import { CloudinarySchema } from './schema';
 import {
@@ -58,7 +67,22 @@ export type CloudinaryPluginOptions = CloudinaryPluginOptionsBase & {
 };
 
 export { cloudinaryAuthConfig } from './auth-config';
+export { CloudinaryAPIError } from './client';
+
+export { errorHandlers } from './error-handlers';
 export type { CloudinaryContext } from './plugin-types';
+export type {
+	CloudinaryDeleteNotification,
+	CloudinaryEagerNotification,
+	CloudinaryRenameNotification,
+	CloudinaryUploadNotification,
+	CloudinaryWebhookOutputs,
+	CloudinaryWebhookPayload,
+} from './webhooks/types';
+export {
+	createCloudinaryMatch,
+	verifyCloudinaryWebhookSignature,
+} from './webhooks/types';
 
 export type CloudinaryKeyBuilderContext = KeyBuilderContext<
 	CloudinaryPluginOptions,
@@ -71,6 +95,17 @@ export type CloudinaryBoundEndpoints = BindEndpoints<
 export type CloudinaryBoundWebhooks = BindWebhooks<
 	typeof cloudinaryWebhooksNested
 >;
+
+type CloudinaryEndpoint<K extends keyof CloudinaryEndpointOutputs> =
+	CorsairEndpoint<
+		CloudinaryContext,
+		CloudinaryEndpointInputs[K],
+		CloudinaryEndpointOutputs[K]
+	>;
+
+export type CloudinaryEndpoints = {
+	[K in keyof CloudinaryEndpointOutputs]: CloudinaryEndpoint<K>;
+};
 
 const cloudinaryWebhooksNested = {
 	upload: UploadWebhooks,
@@ -190,14 +225,13 @@ export function cloudinary<const T extends CloudinaryPluginOptions>(
 		endpointMeta: cloudinaryEndpointMeta,
 		endpointSchemas: cloudinaryEndpointSchemas,
 		webhookSchemas: cloudinaryWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
+		pluginWebhookMatcher: (request: RawWebhookRequest) => {
 			const headers = request.headers;
-			return (
-				'x-cld-signature' in headers ||
-				'X-Cld-Signature' in headers ||
-				'x-cld-timestamp' in headers ||
-				'X-Cld-Timestamp' in headers
-			);
+			const hasSignature =
+				'x-cld-signature' in headers || 'X-Cld-Signature' in headers;
+			const hasTimestamp =
+				'x-cld-timestamp' in headers || 'X-Cld-Timestamp' in headers;
+			return hasSignature && hasTimestamp;
 		},
 		pluginTenantWebhookMatcher: matchCloudinaryTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveCloudinaryOAuthWebhookTenantLink,
@@ -216,17 +250,21 @@ export function cloudinary<const T extends CloudinaryPluginOptions>(
 				const webhookSecret = await ctx.keys.get_webhook_signature();
 				if (webhookSecret) return webhookSecret;
 				const apiSecret = await ctx.keys.get_api_secret();
-				return apiSecret ?? '';
+				if (!apiSecret) {
+					throw new AuthMissingError('cloudinary', 'api_key');
+				}
+				return apiSecret;
 			}
 
-			if (source === 'endpoint' && options.key && options.apiSecret) {
-				return `${options.key}:${options.apiSecret}`;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const apiKey = options.key ?? (await ctx.keys.get_api_key());
+			if (source === 'endpoint') {
+				const apiKey =
+					options.credentials?.apiKey ??
+					options.key ??
+					(await ctx.keys.get_api_key());
 				const apiSecret =
-					options.apiSecret ?? (await ctx.keys.get_api_secret());
+					options.credentials?.apiSecret ??
+					options.apiSecret ??
+					(await ctx.keys.get_api_secret());
 				if (!apiKey || !apiSecret) {
 					throw new AuthMissingError('cloudinary', 'api_key');
 				}
@@ -242,8 +280,6 @@ export type {
 	CloudinaryEndpointInputs,
 	CloudinaryEndpointOutputs,
 } from './endpoints/types';
-
-export type { CloudinaryWebhookOutputs } from './webhooks/types';
 
 export { cloudinaryEndpointsNested, cloudinaryEndpointSchemas };
 

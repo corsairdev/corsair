@@ -151,6 +151,51 @@ function methodSendsBody(
 	);
 }
 
+function adminHeaders(
+	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+	credentials: CloudinaryCredentials,
+): Record<string, string> {
+	const headers: Record<string, string> = {
+		Authorization: basicAuthHeader(credentials),
+	};
+	if (method !== 'GET') {
+		headers['Content-Type'] = 'application/json';
+	}
+	return headers;
+}
+
+function toUploadFile(value: unknown): Blob | undefined {
+	if (value instanceof Blob) {
+		return value;
+	}
+	if (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) {
+		return new Blob([value]);
+	}
+	return undefined;
+}
+
+function uploadFormDataRecord(
+	body: Record<string, unknown>,
+): Record<string, unknown> {
+	const formData: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(body)) {
+		if (value === undefined || value === null) continue;
+		if (key === 'file') {
+			const file = toUploadFile(value);
+			if (file) {
+				formData[key] = file;
+				continue;
+			}
+		}
+		if (Array.isArray(value)) {
+			formData[key] = value.map((item) => flattenFormValue(item)).join(',');
+			continue;
+		}
+		formData[key] = flattenFormValue(value);
+	}
+	return formData;
+}
+
 function unwrapLiveResponse<T>(response: unknown): T {
 	if (
 		response !== null &&
@@ -179,17 +224,16 @@ export async function makeCloudinaryAdminRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			Authorization: basicAuthHeader(credentials),
-			'Content-Type': 'application/json',
-		},
+		HEADERS: adminHeaders(method, credentials),
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		body: methodSendsBody(method) ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType: methodSendsBody(method)
+			? 'application/json; charset=utf-8'
+			: undefined,
 		query,
 	};
 
@@ -218,17 +262,16 @@ export async function makeCloudinaryLiveRequest<T>(
 		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			Authorization: basicAuthHeader(credentials),
-			'Content-Type': 'application/json',
-		},
+		HEADERS: adminHeaders(method, credentials),
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		body: methodSendsBody(method) ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType: methodSendsBody(method)
+			? 'application/json; charset=utf-8'
+			: undefined,
 		query,
 	};
 
@@ -260,62 +303,40 @@ export async function makeCloudinaryUploadRequest<T>(
 		bodyKind = 'form',
 		headers = {},
 	} = options;
-	const baseUrl = uploadBaseUrl(credentials.cloudName, resourceType);
-	const authHeader = basicAuthHeader(credentials);
 
-	if (bodyKind === 'multipart') {
-		const formData = new FormData();
-		for (const [key, value] of Object.entries(body)) {
-			if (value === undefined || value === null) continue;
-			if (key === 'file' && (value instanceof Blob || value instanceof File)) {
-				formData.append('file', value);
-				continue;
-			}
-			if (Array.isArray(value)) {
-				formData.append(
-					key,
-					value.map((item) => flattenFormValue(item)).join(','),
-				);
-				continue;
-			}
-			formData.append(key, flattenFormValue(value));
-		}
-
-		const response = await fetch(`${baseUrl}${endpoint}`, {
-			method,
-			headers: {
-				Authorization: authHeader,
-				...headers,
-			},
-			body: formData,
-		});
-
-		if (!response.ok) {
-			const text = await response.text();
-			throw new CloudinaryAPIError(
-				`Upload failed (${response.status}): ${text}`,
-			);
-		}
-
-		return response.json() as Promise<T>;
-	}
-
-	const response = await fetch(`${baseUrl}${endpoint}`, {
-		method,
-		headers: {
-			Authorization: authHeader,
-			'Content-Type': 'application/x-www-form-urlencoded',
-			...headers,
+	const config: OpenAPIConfig = {
+		BASE: uploadBaseUrl(credentials.cloudName, resourceType),
+		VERSION: '1.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		HEADERS: {
+			Authorization: basicAuthHeader(credentials),
 		},
-		body: encodeCloudinaryFormBody(body),
-	});
+	};
 
-	if (!response.ok) {
-		const text = await response.text();
-		throw new CloudinaryAPIError(`Upload failed (${response.status}): ${text}`);
+	const requestOptions: ApiRequestOptions =
+		bodyKind === 'multipart'
+			? {
+					method,
+					url: endpoint,
+					formData: uploadFormDataRecord(body),
+					headers,
+				}
+			: {
+					method,
+					url: endpoint,
+					body: encodeCloudinaryFormBody(body),
+					mediaType: 'application/x-www-form-urlencoded',
+					headers,
+				};
+
+	try {
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: CLOUDINARY_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		throw normalizeCloudinaryError(error);
 	}
-
-	return response.json() as Promise<T>;
 }
 
 function normalizeCloudinaryError(error: unknown): CloudinaryAPIError {
@@ -349,6 +370,12 @@ function digestEqualsHex(expectedHex: string, signature: string): boolean {
 	}
 }
 
+/** Legacy Cloudinary webhook digests — verify incoming signatures only, never mint. */
+function legacyCloudinaryWebhookDigestHex(payload: string): string {
+	// codeql[js/weak-cryptographic-algorithm]: Cloudinary still signs webhooks with SHA-1 by default
+	return createHash('sha1').update(payload).digest('hex');
+}
+
 export function verifyCloudinaryNotificationSignature(
 	payload: string,
 	timestamp: string,
@@ -371,6 +398,5 @@ export function verifyCloudinaryNotificationSignature(
 	if (digestEqualsHex(sha256, signature)) {
 		return true;
 	}
-	const sha1 = createHash('sha1').update(signed).digest('hex'); // codeql[js/weak-cryptographic-algorithm] Cloudinary webhook contract defaults to SHA-1; verify only, never mint
-	return digestEqualsHex(sha1, signature);
+	return digestEqualsHex(legacyCloudinaryWebhookDigestHex(signed), signature);
 }

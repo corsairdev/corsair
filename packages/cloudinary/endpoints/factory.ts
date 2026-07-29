@@ -17,6 +17,8 @@ type CloudinaryAccountKeys = AccountKeyManagerFor<
 	typeof cloudinaryAuthConfig
 >;
 
+const CLOUDINARY_RESOURCE_TYPES = ['image', 'video', 'raw'] as const;
+
 const CONTROL_KEYS = new Set([
 	'query',
 	'body',
@@ -121,16 +123,23 @@ export type CloudinaryEndpoint = CorsairEndpoint<
 	unknown
 >;
 
-function encodePathPart(value: unknown): string {
+/** Encode a Cloudinary path value, preserving `/` as segment separators. */
+export function encodeCloudinaryPathPart(value: unknown): string {
 	if (typeof value !== 'string' || value.length === 0) {
 		throw new Error('[cloudinary] missing required path parameter');
 	}
-	return encodeURIComponent(value);
+	return value
+		.split('/')
+		.map((segment) => encodeURIComponent(segment))
+		.join('/');
 }
 
-function resolvePath(path: string, input: CloudinaryEndpointInput): string {
+export function resolveCloudinaryPath(
+	path: string,
+	input: CloudinaryEndpointInput,
+): string {
 	return path.replace(/\{([^}]+)\}/g, (_, key: string) =>
-		encodePathPart(input[key]),
+		encodeCloudinaryPathPart(input[key]),
 	);
 }
 
@@ -139,6 +148,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 async function resolveCloudName(ctx: CloudinaryContext): Promise<string> {
+	if (ctx.options.credentials?.cloudName)
+		return ctx.options.credentials.cloudName;
 	if (ctx.options.cloudName) return ctx.options.cloudName;
 	if (ctx.cloudName) return ctx.cloudName;
 	const fromKeys = await (ctx.keys as CloudinaryAccountKeys).get_cloud_name();
@@ -207,6 +218,19 @@ function uploadResourceType(
 	);
 }
 
+function uploadBody(
+	input: CloudinaryEndpointInput,
+	baseBody: Record<string, unknown> | undefined,
+): Record<string, unknown> {
+	const body: Record<string, unknown> = { ...(baseBody ?? {}) };
+	for (const key of ['file', 'content_range', 'x_unique_upload_id'] as const) {
+		if (input[key] !== undefined) {
+			body[key] = input[key];
+		}
+	}
+	return body;
+}
+
 function uploadHeaders(
 	input: CloudinaryEndpointInput,
 ): Record<string, string> | undefined {
@@ -228,8 +252,13 @@ async function requestOperation(
 	input: CloudinaryEndpointInput,
 	operation: CloudinaryOperation,
 ) {
+	// Cloudinary has no Admin API to enumerate resource types; return the supported set.
+	if (operation.key === 'listResourceTypes') {
+		return { resource_types: [...CLOUDINARY_RESOURCE_TYPES] };
+	}
+
 	const credentials = await credentialsFromContextAsync(ctx);
-	const path = resolvePath(operation.path, input);
+	const path = resolveCloudinaryPath(operation.path, input);
 	const query = buildQuery(operation, input);
 	const body = requestBody(operation, input);
 
@@ -248,7 +277,7 @@ async function requestOperation(
 			uploadResourceType(operation, input),
 			{
 				method: 'POST',
-				body: body ?? {},
+				body: uploadBody(input, body),
 				bodyKind: operation.bodyKind === 'multipart' ? 'multipart' : 'form',
 				headers: uploadHeaders(input),
 			},
@@ -316,22 +345,30 @@ export function createCloudinaryEndpoint(
 ): CloudinaryEndpoint {
 	return async (ctx, input = {}) => {
 		const result = await requestOperation(ctx, input, operation);
-		await syncOperationResult(ctx, operation, result);
-		await logEventFromContext(
-			ctx,
-			`cloudinary.${operation.group}.${operation.key}`,
-			{
-				...(operation.pathParams ?? []).reduce<Record<string, unknown>>(
-					(acc, key) => {
-						if (input[key] !== undefined) acc[key] = input[key];
-						return acc;
-					},
-					{},
-				),
-				query: input.query,
-			},
-			'completed',
-		);
+		try {
+			await syncOperationResult(ctx, operation, result);
+		} catch {
+			// Cache sync is best-effort; never fail a successful API response.
+		}
+		try {
+			await logEventFromContext(
+				ctx,
+				`cloudinary.${operation.group}.${operation.key}`,
+				{
+					...(operation.pathParams ?? []).reduce<Record<string, unknown>>(
+						(acc, key) => {
+							if (input[key] !== undefined) acc[key] = input[key];
+							return acc;
+						},
+						{},
+					),
+					query: input.query,
+				},
+				'completed',
+			);
+		} catch {
+			// Event logging is best-effort.
+		}
 		return result;
 	};
 }
