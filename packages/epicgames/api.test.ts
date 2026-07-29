@@ -294,10 +294,22 @@ describePublicLive('Epic Games public Fortnite Data API', () => {
 		expect(parsed.success).toBe(true);
 	}, 20000);
 });
-		it('requires RequestId, URL, and Verb for remote batch requests', () => {
-			const schema = EpicGamesEndpointInputSchemas.remoteBatch;
-			expect(schema.safeParse({ requests: [{ RequestId: 1, URL: '/remote/info', Verb: 'GET', Body: {} }] }).success).toBe(true);
-			expect(schema.safeParse({ requests: [{ URL: '/remote/info', Verb: 'GET' }] }).success).toBe(false);
-			expect(schema.safeParse({ requests: [{ RequestId: 1, Verb: 'GET' }] }).success).toBe(false);
-			expect(schema.safeParse({ requests: [{ RequestId: 1, URL: '/remote/info' }] }).success).toBe(false);
-		});
+it('requires RequestId, URL, and Verb for remote batch requests', () => {
+	const schema = EpicGamesEndpointInputSchemas.remoteBatch;
+	expect(
+		schema.safeParse({
+			requests: [{ RequestId: 1, URL: '/remote/info', Verb: 'GET', Body: {} }],
+		}).success,
+	).toBe(true);
+	expect(
+		schema.safeParse({ requests: [{ URL: '/remote/info', Verb: 'GET' }] })
+			.success,
+	).toBe(false);
+	expect(
+		schema.safeParse({ requests: [{ RequestId: 1, Verb: 'GET' }] }).success,
+	).toBe(false);
+	expect(
+		schema.safeParse({ requests: [{ RequestId: 1, URL: '/remote/info' }] })
+			.success,
+	).toBe(false);
+});

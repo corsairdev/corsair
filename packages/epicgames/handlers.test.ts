@@ -311,7 +311,7 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 			objectPath: '/Game/A',
 			access: 'WRITE_ACCESS',
 			propertyName: 'bHidden',
-				propertyValue: true,
+			propertyValue: true,
 		});
 		const call = mockRequest.mock.calls.find(
 			(c) => c[0] === '/remote/object/property',
