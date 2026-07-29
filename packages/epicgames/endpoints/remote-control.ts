@@ -279,15 +279,18 @@ export const callObjectFunction: EpicGamesEndpoints['remoteCallObjectFunction'] 
 
 export const putObjectProperty: EpicGamesEndpoints['remotePutObjectProperty'] =
 	async (ctx, input) => {
+		const { objectPath, access, propertyValues, ...rest } = input;
+		// Spread free-form property bag first, then pin required keys last so a
+		// property named "objectPath" / "access" cannot overwrite the path/access.
 		const result = await makeEpicGamesRequest<
 			EpicGamesEndpointOutputs['remotePutObjectProperty']
 		>('/remote/object/property', ctx.key, {
 			method: 'PUT',
 			body: {
-				objectPath: input.objectPath,
-				propertyName: input.propertyName,
-				propertyValue: input.propertyValue,
-				access: input.access ?? 'WRITE_ACCESS',
+				...(propertyValues ?? {}),
+				...rest,
+				objectPath,
+				access: access ?? 'READ_ACCESS',
 			},
 			...remoteOpts(ctx),
 		});
@@ -317,6 +320,77 @@ export const getObjectThumbnail: EpicGamesEndpoints['remoteGetObjectThumbnail'] 
 		);
 		return result;
 	};
+
+/**
+ * List Blueprint-callable functions on a UObject.
+ *
+ * Distinct from `describeObject`: that op returns the full describe payload.
+ * This op only returns `{ objectPath, functions, count }` after filtering the
+ * describe response. UE has no dedicated list-functions HTTP route.
+ */
+export const listBlueprintCallableFunctions: EpicGamesEndpoints['remoteListBlueprintCallableFunctions'] =
+	async (ctx, input) => {
+		const described = await makeEpicGamesRequest<Record<string, unknown>>(
+			'/remote/object/describe',
+			ctx.key,
+			{
+				method: 'PUT',
+				// same transport as describeObject, different return shape (filtered)
+				body: {
+					objectPath: input.objectPath,
+					// request function metadata when the UE build supports it
+					access: 'READ_ACCESS',
+				},
+				...remoteOpts(ctx),
+			},
+		);
+
+		const functions = extractBlueprintCallableFunctions(described);
+		// Never return the raw describe payload — callers get a functions list only.
+		const result: EpicGamesEndpointOutputs['remoteListBlueprintCallableFunctions'] =
+			{
+				objectPath: input.objectPath,
+				functions,
+				count: functions.length,
+			};
+
+		await logEventFromContext(
+			ctx,
+			'epicgames.remote.listBlueprintCallableFunctions',
+			{ count: functions.length },
+			'completed',
+		);
+		return result;
+	};
+
+/**
+ * Pull Blueprint-callable function descriptors out of a /remote/object/describe
+ * payload. UE versions use different keys (Functions, functions, etc.).
+ */
+function extractBlueprintCallableFunctions(
+	described: Record<string, unknown>,
+): unknown[] {
+	const candidates = [
+		described.Functions,
+		described.functions,
+		described.CallableFunctions,
+		described.BlueprintCallableFunctions,
+	];
+	for (const candidate of candidates) {
+		if (Array.isArray(candidate)) return candidate;
+	}
+	// Nested under Class / Object metadata in some UE builds
+	const nested = described.Class ?? described.Object ?? described.Description;
+	if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+		// cast: typeof object guard narrows from unknown but not to Record
+		const obj = nested as Record<string, unknown>;
+		for (const key of ['Functions', 'functions', 'CallableFunctions']) {
+			// cast: Array.isArray narrows to any[]; values remain free-form UE JSON
+			if (Array.isArray(obj[key])) return obj[key] as unknown[];
+		}
+	}
+	return [];
+}
 
 export const waitForObjectEvent: EpicGamesEndpoints['remoteWaitForObjectEvent'] =
 	async (ctx, input) => {
