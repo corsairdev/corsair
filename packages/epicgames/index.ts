@@ -231,6 +231,10 @@ export const epicgamesEndpointSchemas = {
 		input: EpicGamesEndpointInputSchemas.remoteGetObjectThumbnail,
 		output: EpicGamesEndpointOutputSchemas.remoteGetObjectThumbnail,
 	},
+	'remote.listBlueprintCallableFunctions': {
+		input: EpicGamesEndpointInputSchemas.remoteListBlueprintCallableFunctions,
+		output: EpicGamesEndpointOutputSchemas.remoteListBlueprintCallableFunctions,
+	},
 	'remote.waitForObjectEvent': {
 		input: EpicGamesEndpointInputSchemas.remoteWaitForObjectEvent,
 		output: EpicGamesEndpointOutputSchemas.remoteWaitForObjectEvent,
@@ -345,6 +349,10 @@ const epicgamesEndpointMeta = {
 	'remote.getObjectThumbnail': {
 		riskLevel: 'read',
 		description: 'Fetch Content Browser thumbnail for an asset path',
+	},
+	'remote.listBlueprintCallableFunctions': {
+		riskLevel: 'read',
+		description: 'List Blueprint-callable functions exposed by a UObject',
 	},
 	'remote.waitForObjectEvent': {
 		riskLevel: 'write',
