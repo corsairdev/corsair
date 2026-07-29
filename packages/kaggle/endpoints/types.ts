@@ -49,8 +49,8 @@ const CreateDatasetInputSchema = z
 	.object({
 		// Dataset creation body — free-form metadata + file tokens per Kaggle create API.
 		// keys/values depend on title, licenses, resources, and prior upload tokens.
-		id: z.string().optional(),
-		title: z.string().optional(),
+		id: z.string(),
+		title: z.string(),
 		subtitle: z.string().optional(),
 		description: z.string().optional(),
 		isPrivate: z.boolean().optional(),

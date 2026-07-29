@@ -13,6 +13,8 @@ export class KaggleAPIError extends Error {
 
 /** Official Kaggle REST base used by the public API / CLI. */
 const KAGGLE_API_BASE = 'https://www.kaggle.com/api/v1';
+const KAGGLE_REQUEST_TIMEOUT_MS = 30_000;
+export const KAGGLE_MAX_BINARY_PAYLOAD_BYTES = 100 * 1024 * 1024;
 
 /**
  * Parse credentials for HTTP Basic auth.
@@ -140,13 +142,16 @@ export async function makeKaggleBinaryRequest(
 		}
 	}
 
-	const res = await fetch(url, {
-		method,
-		headers: {
-			...authHeaders(credential, username),
-			Accept: '*/*',
-		},
-	});
+	let res: Response;
+	try {
+		res = await fetch(url, {
+			method,
+			headers: { ...authHeaders(credential, username), Accept: '*/*' },
+			signal: AbortSignal.timeout(KAGGLE_REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		throw new KaggleAPIError(error instanceof Error ? error.message : 'Kaggle binary request failed');
+	}
 
 	if (!res.ok) {
 		const text = await res.text();
@@ -158,6 +163,8 @@ export async function makeKaggleBinaryRequest(
 			retryAfterMs = Number.isFinite(asNum)
 				? asNum * 1000
 				: Date.parse(retryAfterHeader) - Date.now();
+			if (retryAfterMs !== undefined && !Number.isFinite(retryAfterMs))
+				retryAfterMs = undefined;
 			if (retryAfterMs !== undefined && retryAfterMs < 0) {
 				retryAfterMs = undefined;
 			}
@@ -186,7 +193,14 @@ export async function makeKaggleBinaryRequest(
 		);
 	}
 
+	const contentLength = Number(res.headers.get('content-length'));
+	if (Number.isFinite(contentLength) && contentLength > KAGGLE_MAX_BINARY_PAYLOAD_BYTES) {
+		throw new KaggleAPIError(`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`);
+	}
 	const buf = Buffer.from(await res.arrayBuffer());
+	if (buf.length > KAGGLE_MAX_BINARY_PAYLOAD_BYTES) {
+		throw new KaggleAPIError(`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`);
+	}
 	const contentType =
 		res.headers.get('content-type') ?? 'application/octet-stream';
 	const disposition = res.headers.get('content-disposition') ?? '';

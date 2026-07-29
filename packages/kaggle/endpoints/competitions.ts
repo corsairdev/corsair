@@ -124,7 +124,7 @@ export const generateSubmissionUrl: KaggleEndpoints['competitionsGenerateSubmiss
 		>(
 			// Kaggle v1: POST /competitions/submissions/url/{contentLength}/{lastModifiedDateUtc}
 			// Competition slug belongs in the body as competitionName (not a path segment).
-			`/competitions/submissions/url/${input.contentLength}/${input.lastModifiedDateUtc}`,
+			`/competitions/submissions/url/${encodeURIComponent(String(input.contentLength))}/${encodeURIComponent(String(input.lastModifiedDateUtc))}`,
 			ctx.key,
 			{
 				method: 'POST',

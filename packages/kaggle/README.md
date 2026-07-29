@@ -10,6 +10,7 @@ API credentials only (no OAuth, no webhooks).
 | --- | --- |
 | Legacy key file | `kaggle.json` → username + key as `username:key` |
 | Env (legacy) | `KAGGLE_USERNAME` + `KAGGLE_KEY` |
+| Env (legacy) | `KAGGLE_API_KEY` as `username:key` |
 | Env (newer token) | `KAGGLE_API_TOKEN` as Bearer |
 
 ```ts
