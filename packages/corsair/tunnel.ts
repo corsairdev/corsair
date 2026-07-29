@@ -31,3 +31,8 @@ export {
 	executeWorkflowRun,
 	type WorkflowStep,
 } from './workflows/execute';
+export {
+	type ReadonlyProbeInput,
+	type ReadonlyProbeResult,
+	runReadonlyProbe,
+} from './workflows/probe';
