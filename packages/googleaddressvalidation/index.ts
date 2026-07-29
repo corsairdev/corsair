@@ -1,20 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Example } from './endpoints';
 import type {
 	GoogleAddressValidationEndpointInputs,
@@ -26,21 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { GoogleAddressValidationSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveGoogleAddressValidationOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchGoogleAddressValidationTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	ExampleEvent,
-	GoogleAddressValidationWebhookOutputs,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type GoogleAddressValidationPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalGoogleAddressValidationPlugin['hooks'];
-	webhookHooks?: InternalGoogleAddressValidationPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<
 		typeof googleAddressValidationEndpointsNested
@@ -71,33 +59,13 @@ export type GoogleAddressValidationEndpoints = {
 	exampleGet: GoogleAddressValidationEndpoint<'exampleGet'>;
 };
 
-type GoogleAddressValidationWebhook<
-	K extends keyof GoogleAddressValidationWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	GoogleAddressValidationContext,
-	TEvent,
-	GoogleAddressValidationWebhookOutputs[K]
->;
-
-export type GoogleAddressValidationWebhooks = {
-	example: GoogleAddressValidationWebhook<'example', ExampleEvent>;
-};
-
-export type GoogleAddressValidationBoundWebhooks =
-	BindWebhooks<GoogleAddressValidationWebhooks>;
-
 const googleAddressValidationEndpointsNested = {
 	example: {
 		get: Example.get,
 	},
 } as const;
 
-const googleAddressValidationWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const googleAddressValidationWebhooksNested = {} as const;
 
 export const googleAddressValidationEndpointSchemas = {
 	'example.get': {
@@ -106,16 +74,6 @@ export const googleAddressValidationEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof googleAddressValidationEndpointsNested
->;
-
-const googleAddressValidationWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof googleAddressValidationWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -131,9 +89,6 @@ const googleAddressValidationEndpointMeta = {
 
 export const googleAddressValidationAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -172,20 +127,13 @@ export function googleaddressvalidation<
 		schema: GoogleAddressValidationSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: googleAddressValidationEndpointsNested,
 		webhooks: googleAddressValidationWebhooksNested,
 		endpointMeta: googleAddressValidationEndpointMeta,
 		endpointSchemas: googleAddressValidationEndpointSchemas,
-		webhookSchemas: googleAddressValidationWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-googleaddressvalidation-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchGoogleAddressValidationTenantWebhook,
-		oauthWebhookTenantLinkResolver:
-			resolveGoogleAddressValidationOAuthWebhookTenantLink,
+
+		pluginWebhookMatcher: () => false,
+
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -194,30 +142,21 @@ export function googleaddressvalidation<
 			ctx: GoogleAddressValidationKeyBuilderContext,
 			source,
 		) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+
+				if (res) {
+					return res;
+				}
+
+				throw new AuthMissingError('googleaddressvalidation', 'api_key');
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('googleaddressvalidation', ctx.authType);
 		},
 	} satisfies InternalGoogleAddressValidationPlugin;
 }
@@ -228,7 +167,3 @@ export type {
 	GoogleAddressValidationEndpointInputs,
 	GoogleAddressValidationEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	GoogleAddressValidationWebhookOutputs,
-} from './webhooks/types';

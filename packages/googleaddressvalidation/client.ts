@@ -11,8 +11,8 @@ export class GoogleAddressValidationAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const GOOGLEADDRESSVALIDATION_API_BASE = 'https://api.example.com';
+const GOOGLEADDRESSVALIDATION_API_BASE =
+	'https://addressvalidation.googleapis.com';
 
 export async function makeGoogleAddressValidationRequest<T>(
 	endpoint: string,
@@ -30,14 +30,12 @@ export async function makeGoogleAddressValidationRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
 		},
 	};
 
+	// Google's API Key auth is a `key` query param, not an Authorization header.
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
@@ -46,7 +44,7 @@ export async function makeGoogleAddressValidationRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: { ...query, key: apiKey },
 	};
 
 	try {
