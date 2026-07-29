@@ -19,6 +19,8 @@ export const HF_DATASETS_SERVER_BASE = 'https://datasets-server.huggingface.co';
 
 /** OpenAI-compatible Inference Providers router. */
 export const HF_INFERENCE_BASE = 'https://router.huggingface.co';
+/** Corsair LiteLLM gateway for model-generation calls. */
+export const LLM_GATEWAY_BASE = 'https://llm.corsair.dev';
 
 /** Inference Endpoints management API. */
 export const HF_ENDPOINTS_BASE = 'https://api.endpoints.huggingface.cloud';
@@ -44,10 +46,10 @@ export type HuggingFaceRequestOptions = {
 	 * Public Hub GETs work without a token.
 	 */
 	bearer?: boolean;
-	/**
-	 * When true, do not follow redirects (useful for resolve endpoints).
-	 */
+	/** Select raw text/JSON parsing through the fetch-based request path. */
 	rawText?: boolean;
+	/** Abort raw fetches after this many milliseconds (default: 30 seconds). */
+	timeoutMs?: number;
 };
 
 /**
@@ -67,6 +69,7 @@ export async function makeHuggingFaceRequest<T>(
 		headers: extraHeaders,
 		bearer = true,
 		rawText = false,
+		timeoutMs = 30_000,
 	} = options;
 
 	const headers: Record<string, string> = {
@@ -88,7 +91,15 @@ export async function makeHuggingFaceRequest<T>(
 	}
 
 	if (rawText) {
-		return rawFetch<T>(baseUrl, endpoint, method, headers, body, query);
+		return rawFetch<T>(
+				baseUrl,
+				endpoint,
+				method,
+				headers,
+				body,
+				query,
+				timeoutMs,
+			);
 	}
 
 	const config: OpenAPIConfig = {
@@ -136,6 +147,7 @@ async function rawFetch<T>(
 	headers: Record<string, string>,
 	body: Record<string, unknown> | unknown[] | undefined,
 	query: Record<string, HuggingFaceQueryValue> | undefined,
+	timeoutMs: number,
 ): Promise<T> {
 	const url = new URL(
 		endpoint.startsWith('http')
@@ -159,19 +171,20 @@ async function rawFetch<T>(
 		body:
 			body !== undefined && method !== 'GET' ? JSON.stringify(body) : undefined,
 		redirect: 'manual',
+		signal: AbortSignal.timeout(timeoutMs),
 	});
 	const text = await res.text();
-	// unknown: body may be JSON, plain text, or a synthetic redirect object
+	// Manual redirects need their status and location even when the body is empty.
 	let parsed: unknown = text;
-	try {
-		parsed = text ? JSON.parse(text) : {};
-	} catch {
-		parsed = {
-			status: res.status,
-			location: res.headers.get('location') ?? undefined,
-			// raw body for non-JSON resolve responses
-			raw: text.slice(0, 2000),
-		};
+	const location = res.headers.get('location');
+	if (res.status >= 300 && res.status < 400) {
+		parsed = { status: res.status, location: location ?? undefined, raw: text.slice(0, 2000) };
+	} else {
+		try {
+			parsed = text ? JSON.parse(text) : {};
+		} catch {
+			parsed = { status: res.status, location: location ?? undefined, raw: text.slice(0, 2000) };
+		}
 	}
 	if (res.status >= 400) {
 		throw new ApiError(

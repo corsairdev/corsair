@@ -104,7 +104,7 @@ export type GetWebhookInput = z.infer<typeof GetWebhookInputSchema>;
 export type GetWebhookResponse = HfOpenResponse; // open HF JSON
 
 const CreateWebhookInputSchema = z.object({
-	url: z.string().url(),
+	url: z.url(),
 	watched: z.array(z.record(z.string(), z.unknown())).optional(),
 	domains: z.array(z.string()).optional(),
 	secret: z.string().optional(),
@@ -117,7 +117,7 @@ export type CreateWebhookResponse = HfOpenResponse; // open HF JSON
 
 const UpdateWebhookInputSchema = z.object({
 	webhookId: z.string(),
-	url: z.string().url().optional(),
+	url: z.url().optional(),
 	watched: z.array(z.record(z.string(), z.unknown())).optional(),
 	domains: z.array(z.string()).optional(),
 	extra: z.record(z.string(), z.unknown()).optional(),

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { HF_INFERENCE_BASE } from '../client';
+import { LLM_GATEWAY_BASE } from '../client';
 import type { HuggingFaceEndpoints } from '../index';
 import { req, summarize } from './helpers';
 
@@ -12,7 +12,7 @@ export const chatCompletion: HuggingFaceEndpoints['inferenceChatCompletion'] =
 		} & Record<string, unknown>;
 		const response = await req(ctx, '/v1/chat/completions', {
 			method: 'POST',
-			baseUrl: HF_INFERENCE_BASE,
+			baseUrl: LLM_GATEWAY_BASE,
 			body: {
 				...rest,
 				max_tokens: maxTokens,
@@ -37,7 +37,7 @@ export const embeddings: HuggingFaceEndpoints['inferenceEmbeddings'] = async (
 	const { extra, ...rest } = input;
 	const response = await req(ctx, '/v1/embeddings', {
 		method: 'POST',
-		baseUrl: HF_INFERENCE_BASE,
+		baseUrl: LLM_GATEWAY_BASE,
 		body: { ...rest, ...extra },
 	});
 	await logEventFromContext(

@@ -42,7 +42,7 @@ export const createIndex: HuggingFaceEndpoints['papersCreateIndex'] = async (
 ) => {
 	const response = await req(ctx, '/api/papers/index', {
 		method: 'POST',
-		body: { id: input.paperId },
+		body: { arxivId: input.paperId },
 	});
 	await logEventFromContext(
 		ctx,

@@ -947,7 +947,7 @@ export const huggingFaceEndpointSchemas = {
 	typeof huggingFaceEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 const huggingFaceEndpointMeta = {
 	'account.getWhoami': {
