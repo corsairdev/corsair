@@ -4,6 +4,18 @@ import {
 } from '../core/permissions';
 import { clampProbeTimeout, runReadonlyProbe } from '../workflows/probe';
 
+// Poll until an observable flag flips instead of sleeping a fixed duration, so a
+// slow runner can't assert before a post-timeout continuation has resumed.
+async function waitFor(
+	predicate: () => boolean,
+	budgetMs = 2_000,
+): Promise<void> {
+	const deadline = Date.now() + budgetMs;
+	while (!predicate() && Date.now() < deadline) {
+		await new Promise((resolve) => setTimeout(resolve, 5));
+	}
+}
+
 describe('runReadonlyProbe', () => {
 	it('returns the script value, reading through the client', async () => {
 		const corsair = {
@@ -100,7 +112,8 @@ describe('runReadonlyProbe', () => {
 			corsair,
 			code: 'return { toJSON() { corsair.slack.send(); return "x"; } };',
 		});
-		await new Promise((resolve) => setTimeout(resolve, 20));
+		// toJSON runs synchronously inside runReadonlyProbe, so the result is
+		// already settled here — no continuation to wait for.
 		expect(wrote).toBe(false); // write blocked during serialization
 		expect(result.status).toBe('error'); // surfaced as an error, not a masked null
 	});
@@ -133,7 +146,7 @@ describe('runReadonlyProbe', () => {
 		});
 		expect(result.status).toBe('error'); // timed out first
 		// Let the detached continuation resume past the now-resolved slow read.
-		await new Promise((resolve) => setTimeout(resolve, 80));
+		await waitFor(() => sendAttempted);
 		expect(sendAttempted).toBe(true); // proves the continuation DID resume post-timeout
 		expect(wrote).toBe(false); // and the write was still blocked by readonly
 	});
