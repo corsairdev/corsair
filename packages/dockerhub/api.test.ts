@@ -76,7 +76,9 @@ describe('DockerHub endpoint input schemas', () => {
 
 	it('imagesGet does not accept a page input', () => {
 		const parsed = DockerHubEndpointInputSchemas.imagesGet.parse({
-			...FIXTURES.imagesGet,
+			namespace: FIXTURES.imagesGet.namespace,
+			name: FIXTURES.imagesGet.name,
+			digest: FIXTURES.imagesGet.digest,
 			page: 2,
 		});
 		expect(parsed).not.toHaveProperty('page');
