@@ -73,6 +73,14 @@ describe('DockerHub endpoint input schemas', () => {
 			});
 		});
 	}
+
+	it('imagesGet does not accept a page input', () => {
+		const parsed = DockerHubEndpointInputSchemas.imagesGet.parse({
+			...FIXTURES.imagesGet,
+			page: 2,
+		});
+		expect(parsed).not.toHaveProperty('page');
+	});
 });
 
 describe('client helpers', () => {

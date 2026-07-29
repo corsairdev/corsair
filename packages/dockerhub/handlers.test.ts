@@ -156,8 +156,17 @@ describe('handler path construction', () => {
 			namespace: 'library',
 			name: 'alpine',
 			digest: 'sha256:target',
+			pageSize: 25,
 		});
 		expect(mockReq).toHaveBeenCalledTimes(2);
+		expect(mockReq.mock.calls[0]?.[2]?.query).toEqual({
+			page: 1,
+			page_size: 25,
+		});
+		expect(mockReq.mock.calls[1]?.[2]?.query).toEqual({
+			page: 2,
+			page_size: 25,
+		});
 		expect((res as { digest: string }).digest).toBe('sha256:target');
 		expect((res as { foundOnPage: number }).foundOnPage).toBe(2);
 	});
