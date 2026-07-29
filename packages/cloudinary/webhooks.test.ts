@@ -156,7 +156,15 @@ describe('cloudinary webhook handlers', () => {
 		);
 
 		expect(result.success).toBe(true);
-		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalledWith(
+			'asset-123',
+			expect.objectContaining({
+				asset_id: 'asset-123',
+				public_id: 'asset-123',
+				from_public_id: 'old-id',
+				to_public_id: 'new-id',
+			}),
+		);
 	});
 
 	it('resource tag changes upsert cached resources', async () => {
@@ -174,7 +182,14 @@ describe('cloudinary webhook handlers', () => {
 		);
 
 		expect(result.success).toBe(true);
-		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalledWith(
+			'asset-123',
+			expect.objectContaining({
+				asset_id: 'asset-123',
+				public_id: 'sample',
+				tags: ['corsair'],
+			}),
+		);
 	});
 
 	it('create folder webhook upserts cached folders', async () => {
@@ -249,7 +264,14 @@ describe('cloudinary webhook handlers', () => {
 		);
 
 		expect(result.success).toBe(true);
-		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalledWith(
+			'asset-123',
+			expect.objectContaining({
+				asset_id: 'asset-123',
+				public_id: 'sample',
+				context: { alt: 'sample' },
+			}),
+		);
 	});
 
 	it('resource metadata changes upsert cached resources', async () => {
@@ -265,7 +287,14 @@ describe('cloudinary webhook handlers', () => {
 		);
 
 		expect(result.success).toBe(true);
-		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalledWith(
+			'asset-123',
+			expect.objectContaining({
+				asset_id: 'asset-123',
+				public_id: 'sample',
+				metadata: { category: 'test' },
+			}),
+		);
 	});
 
 	it('move webhook upserts cached resources', async () => {
@@ -281,7 +310,14 @@ describe('cloudinary webhook handlers', () => {
 		);
 
 		expect(result.success).toBe(true);
-		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalled();
+		expect(ctx.db.resources?.upsertByEntityId).toHaveBeenCalledWith(
+			'asset-123',
+			expect.objectContaining({
+				asset_id: 'asset-123',
+				public_id: 'sample',
+				asset_folder: 'samples/moved',
+			}),
+		);
 	});
 
 	it('explode webhook accepts valid signatures', async () => {
