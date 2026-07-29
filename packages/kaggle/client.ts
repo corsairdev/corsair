@@ -205,7 +205,15 @@ export async function makeKaggleBinaryRequest(
 		res.headers.get('content-type') ?? 'application/octet-stream';
 	const disposition = res.headers.get('content-disposition') ?? '';
 	const match = /filename\*?=(?:UTF-8''|")?([^\";]+)/i.exec(disposition);
-	const fileName = match?.[1]?.replace(/"/g, '');
+	const rawFileName = match?.[1]?.replace(/"/g, '');
+	let fileName: string | undefined;
+	if (rawFileName) {
+		try {
+			fileName = decodeURIComponent(rawFileName);
+		} catch {
+			fileName = rawFileName;
+		}
+	}
 
 	return {
 		contentType,
