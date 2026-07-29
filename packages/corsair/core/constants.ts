@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'activetrail',
 	'agentql',
 	'ahrefs',
 	'airtable',
@@ -49,6 +50,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'hashnode',
 	'heygen',
 	'hubspot',
 	'huggingface',
@@ -104,6 +106,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
@@ -140,6 +143,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
@@ -202,6 +206,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'activetrail'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
@@ -238,6 +243,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
 	| 'huggingface'
