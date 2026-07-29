@@ -167,6 +167,9 @@ export async function makeKaggleBinaryRequest(
 				: Date.parse(retryAfterHeader) - Date.now();
 			if (retryAfterMs !== undefined && !Number.isFinite(retryAfterMs))
 				retryAfterMs = undefined;
+			if (retryAfterMs !== undefined && !Number.isFinite(retryAfterMs)) {
+				retryAfterMs = undefined;
+			}
 			if (retryAfterMs !== undefined && retryAfterMs < 0) {
 				retryAfterMs = undefined;
 			}
@@ -204,12 +207,30 @@ export async function makeKaggleBinaryRequest(
 			`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`,
 		);
 	}
-	const buf = Buffer.from(await res.arrayBuffer());
-	if (buf.length > KAGGLE_MAX_BINARY_PAYLOAD_BYTES) {
-		throw new KaggleAPIError(
-			`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`,
-		);
+	if (!res.body) {
+		throw new KaggleAPIError('Kaggle binary response has no body');
 	}
+	const chunks: Buffer[] = [];
+	let totalBytes = 0;
+	const reader = res.body.getReader();
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			const chunk = Buffer.from(value);
+			totalBytes += chunk.length;
+			if (totalBytes > KAGGLE_MAX_BINARY_PAYLOAD_BYTES) {
+				await reader.cancel();
+				throw new KaggleAPIError(
+					`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`,
+				);
+			}
+			chunks.push(chunk);
+		}
+	} finally {
+		reader.releaseLock();
+	}
+	const buf = Buffer.concat(chunks, totalBytes);
 	const contentType =
 		res.headers.get('content-type') ?? 'application/octet-stream';
 	const disposition = res.headers.get('content-disposition') ?? '';

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeKaggleBinaryRequest, makeKaggleRequest } from '../client';
+import { makeKaggleRequest } from '../client';
 import type { KaggleEndpoints } from '../index';
 import type { KaggleEndpointOutputs } from './types';
 
@@ -83,7 +83,11 @@ export const downloadOutput: KaggleEndpoints['kernelsDownloadOutput'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeKaggleBinaryRequest('/kernels/output', ctx.key, {
+	// Kaggle /kernels/output returns a JSON listing of output file URLs;
+	// it is not the binary download endpoint.
+	const result = await makeKaggleRequest<
+		KaggleEndpointOutputs['kernelsDownloadOutput']
+	>('/kernels/output', ctx.key, {
 		method: 'GET',
 		query: {
 			userName: input.userName,
@@ -98,7 +102,6 @@ export const downloadOutput: KaggleEndpoints['kernelsDownloadOutput'] = async (
 		{
 			userName: input.userName,
 			kernelSlug: input.kernelSlug,
-			size: result.size,
 		},
 		'completed',
 	);
