@@ -333,7 +333,7 @@ export type KaggleEndpointOutputs = {
 	kernelsList: z.infer<typeof LooseListSchema>;
 	kernelsPull: z.infer<typeof LooseObjectSchema>;
 	kernelsGetStatus: z.infer<typeof LooseObjectSchema>;
-	kernelsDownloadOutput: z.infer<typeof BinaryDownloadSchema>;
+	kernelsDownloadOutput: z.infer<typeof LooseObjectSchema>;
 	kernelsListOutputFiles: z.infer<typeof LooseListSchema>;
 
 	modelsList: z.infer<typeof LooseListSchema>;
@@ -396,7 +396,7 @@ export const KaggleEndpointOutputSchemas = {
 	kernelsList: LooseListSchema,
 	kernelsPull: LooseObjectSchema,
 	kernelsGetStatus: LooseObjectSchema,
-	kernelsDownloadOutput: BinaryDownloadSchema,
+	kernelsDownloadOutput: LooseObjectSchema,
 	kernelsListOutputFiles: LooseListSchema,
 
 	modelsList: LooseListSchema,
