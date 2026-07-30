@@ -32,6 +32,29 @@ function toRoutesTravelMode(mode?: string): string {
 	return map[mode.toLowerCase()] ?? mode.toUpperCase();
 }
 
+function toRoutesUnits(units?: string): 'METRIC' | 'IMPERIAL' | undefined {
+	if (!units) return undefined;
+	return units.toLowerCase() === 'imperial' ? 'IMPERIAL' : 'METRIC';
+}
+
+function toRoutesDepartureTime(departure_time?: string): string | undefined {
+	if (!departure_time || departure_time === 'now') return undefined;
+	if (/^\d+$/.test(departure_time)) {
+		return new Date(Number(departure_time) * 1000).toISOString();
+	}
+	return departure_time;
+}
+
+function formatDistanceText(meters: number, units?: string): string {
+	if (units?.toLowerCase() === 'imperial') {
+		const miles = meters / 1609.344;
+		return miles >= 0.1
+			? `${miles.toFixed(1)} mi`
+			: `${Math.round(meters * 3.28084)} ft`;
+	}
+	return meters >= 1000 ? `${(meters / 1000).toFixed(1)} km` : `${meters} m`;
+}
+
 const ROUTES_FIELD_MASK =
 	'routes.duration,routes.distanceMeters,routes.legs,routes.polyline.encodedPolyline';
 const ROUTE_MATRIX_FIELD_MASK =
@@ -51,15 +74,16 @@ function toRouteModifiers(avoid?: string): Record<string, boolean> | undefined {
 	return Object.keys(modifiers).length > 0 ? modifiers : undefined;
 }
 
-function formatMatrixElement(elem: Record<string, unknown>) {
+function formatMatrixElement(elem: Record<string, unknown>, units?: string) {
+	const meters = elem?.distanceMeters as number | undefined;
 	return {
 		status:
 			elem?.condition === 'ROUTE_EXISTS' || !elem?.condition
 				? 'OK'
 				: 'ZERO_RESULTS',
 		distance:
-			elem?.distanceMeters !== undefined
-				? { text: `${elem.distanceMeters} m`, value: elem.distanceMeters }
+			meters !== undefined
+				? { text: formatDistanceText(meters, units), value: meters }
 				: undefined,
 		duration: elem?.duration
 			? {
@@ -75,6 +99,7 @@ function adaptComputeRouteMatrixToLegacy(
 	elementsArray: Record<string, unknown>[],
 	originsList: string[],
 	destinationsList: string[],
+	units?: string,
 ): DistanceMatrixResponse {
 	const numOrigins = originsList.length;
 	const numDestinations = destinationsList.length;
@@ -89,7 +114,7 @@ function adaptComputeRouteMatrixToLegacy(
 		const originIdx = (elem.originIndex as number) ?? 0;
 		const destIdx = (elem.destinationIndex as number) ?? 0;
 		if (originIdx < numOrigins && destIdx < numDestinations) {
-			rows[originIdx]!.elements[destIdx] = formatMatrixElement(elem);
+			rows[originIdx]!.elements[destIdx] = formatMatrixElement(elem, units);
 		}
 	}
 
@@ -146,11 +171,15 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 			? validatedInput.destinations
 			: [validatedInput.destinations];
 
-		const matrixBody = {
+		const matrixBody: Record<string, unknown> = {
 			origins: originsList.map((o) => ({ waypoint: { address: o } })),
 			destinations: destinationsList.map((d) => ({ waypoint: { address: d } })),
 			travelMode: toRoutesTravelMode(validatedInput.mode),
 		};
+		const departureTime = toRoutesDepartureTime(validatedInput.departure_time);
+		const units = toRoutesUnits(validatedInput.units);
+		if (departureTime) matrixBody.departureTime = departureTime;
+		if (units) matrixBody.units = units;
 
 		const res = await makeGoogleMapsRequest<unknown>(
 			'/distanceMatrix/v1:computeRouteMatrix',
@@ -171,6 +200,7 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 			elementsArray,
 			originsList,
 			destinationsList,
+			validatedInput.units,
 		);
 	} else {
 		const originsStr = Array.isArray(validatedInput.origins)
