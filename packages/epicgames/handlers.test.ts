@@ -355,6 +355,81 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 		);
 	});
 
+	it('listBlueprintCallableFunctions filters Functions key (not raw describe)', async () => {
+		const funcs = [{ Name: 'Jump' }, { Name: 'Crouch' }];
+		mockRequest.mockResolvedValueOnce({
+			Name: 'MyActor',
+			Properties: [{ Name: 'bHidden' }],
+			Functions: funcs,
+		});
+		const result = await RemoteControl.listBlueprintCallableFunctions(
+			mockCtx(),
+			{ objectPath: '/Game/A' },
+		);
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/remote/object/describe',
+			'test-token',
+			expect.objectContaining({
+				method: 'PUT',
+				body: expect.objectContaining({
+					objectPath: '/Game/A',
+					access: 'READ_ACCESS',
+				}),
+			}),
+		);
+		expect(result).toEqual({
+			objectPath: '/Game/A',
+			functions: funcs,
+			count: 2,
+		});
+		// Must not leak the full describe payload
+		expect(result).not.toHaveProperty('Name');
+		expect(result).not.toHaveProperty('Properties');
+	});
+
+	it('listBlueprintCallableFunctions accepts lowercase functions key', async () => {
+		mockRequest.mockResolvedValueOnce({
+			functions: [{ Name: 'Fire' }],
+		});
+		const result = await RemoteControl.listBlueprintCallableFunctions(
+			mockCtx(),
+			{ objectPath: '/Game/B' },
+		);
+		expect(result).toEqual({
+			objectPath: '/Game/B',
+			functions: [{ Name: 'Fire' }],
+			count: 1,
+		});
+	});
+
+	it('listBlueprintCallableFunctions reads nested Class.CallableFunctions', async () => {
+		mockRequest.mockResolvedValueOnce({
+			Class: { CallableFunctions: [{ Name: 'Reload' }] },
+		});
+		const result = await RemoteControl.listBlueprintCallableFunctions(
+			mockCtx(),
+			{ objectPath: '/Game/C' },
+		);
+		expect(result).toEqual({
+			objectPath: '/Game/C',
+			functions: [{ Name: 'Reload' }],
+			count: 1,
+		});
+	});
+
+	it('listBlueprintCallableFunctions returns empty list when no function keys', async () => {
+		mockRequest.mockResolvedValueOnce({ Name: 'EmptyActor', Properties: [] });
+		const result = await RemoteControl.listBlueprintCallableFunctions(
+			mockCtx(),
+			{ objectPath: '/Game/D' },
+		);
+		expect(result).toEqual({
+			objectPath: '/Game/D',
+			functions: [],
+			count: 0,
+		});
+	});
+
 	it('waitForObjectEvent → PUT /remote/object/event', async () => {
 		await RemoteControl.waitForObjectEvent(mockCtx(), {
 			objectPath: '/Game/A',
