@@ -75,10 +75,20 @@ describe('makeKaggleBinaryRequest', () => {
 
 	it('wraps network failures in KaggleAPIError', async () => {
 		fetchSpy.mockRejectedValue(new Error('connection reset'));
-		const error = await captureError(
-			makeKaggleBinaryRequest('/x', 'user:key'),
-		);
+		const error = await captureError(makeKaggleBinaryRequest('/x', 'user:key'));
 		expect(error).toBeInstanceOf(KaggleAPIError);
+	});
+
+	it('wraps mid-stream read failures in KaggleAPIError', async () => {
+		const body = new ReadableStream<Uint8Array>({
+			pull(controller) {
+				controller.error(new Error('stream reset'));
+			},
+		});
+		fetchSpy.mockResolvedValue(new Response(body, { status: 200 }));
+		const error = await captureError(makeKaggleBinaryRequest('/x', 'user:key'));
+		expect(error).toBeInstanceOf(KaggleAPIError);
+		expect((error as Error).message).toBe('stream reset');
 	});
 
 	it('returns base64 payload and percent-decodes RFC 5987 filenames', async () => {

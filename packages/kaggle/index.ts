@@ -323,7 +323,8 @@ const kaggleEndpointMeta = {
 	},
 	'kernels.downloadOutput': {
 		riskLevel: 'read',
-		description: 'Download kernel output artifacts (returned as base64)',
+		description:
+			'List kernel session output files with download URLs (JSON metadata from GET /kernels/output)',
 	},
 	'kernels.listOutputFiles': {
 		riskLevel: 'read',

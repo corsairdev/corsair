@@ -222,6 +222,44 @@ describe('handler path construction', () => {
 		);
 	});
 
+	it('datasets.download uses binary client', async () => {
+		await Datasets.download(ctx(), {
+			ownerSlug: 'owner',
+			datasetSlug: 'slug',
+			datasetVersionNumber: 2,
+		});
+		expect(mockBin).toHaveBeenCalledWith(
+			'/datasets/download/owner/slug',
+			'user:key',
+			expect.objectContaining({
+				method: 'GET',
+				query: { datasetVersionNumber: 2 },
+			}),
+		);
+	});
+
+	it('datasets.downloadFile uses binary client', async () => {
+		await Datasets.downloadFile(ctx(), {
+			ownerSlug: 'owner',
+			datasetSlug: 'slug',
+			fileName: 'data.csv',
+		});
+		expect(mockBin).toHaveBeenCalledWith(
+			'/datasets/download/owner/slug/data.csv',
+			'user:key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
+	it('competitions.downloadLeaderboard uses binary client', async () => {
+		await Competitions.downloadLeaderboard(ctx(), { id: 'titanic' });
+		expect(mockBin).toHaveBeenCalledWith(
+			'/competitions/leaderboard/download/titanic',
+			'user:key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
 	it('models.listInstanceVersionFiles → files path', async () => {
 		await Models.listInstanceVersionFiles(ctx(), {
 			ownerSlug: 'google',

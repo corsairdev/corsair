@@ -167,7 +167,7 @@ export async function makeKaggleBinaryRequest(
 				: Date.parse(retryAfterHeader) - Date.now();
 			if (retryAfterMs !== undefined && !Number.isFinite(retryAfterMs))
 				retryAfterMs = undefined;
-			if (retryAfterMs !== undefined && retryAfterMs < 0) {
+			if (retryAfterMs !== undefined && !(retryAfterMs >= 0)) {
 				retryAfterMs = undefined;
 			}
 		}
@@ -224,6 +224,13 @@ export async function makeKaggleBinaryRequest(
 			}
 			chunks.push(chunk);
 		}
+	} catch (error) {
+		if (error instanceof KaggleAPIError) throw error;
+		throw new KaggleAPIError(
+			error instanceof Error
+				? error.message
+				: 'Kaggle binary stream read failed',
+		);
 	} finally {
 		reader.releaseLock();
 	}
