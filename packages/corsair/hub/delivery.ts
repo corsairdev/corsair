@@ -362,6 +362,7 @@ export async function handleHubDeliveryPost(
 	const ack = await processCorsair(corsair, request, {
 		signingSecret: hub.signingSecret,
 		allowWorkflowExecution: hub.allowWorkflowExecution,
+		workflowExecutor: hub.workflowExecutor,
 	});
 
 	if (ack.status !== 'ok') {
