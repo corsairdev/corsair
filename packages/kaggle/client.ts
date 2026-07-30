@@ -167,9 +167,6 @@ export async function makeKaggleBinaryRequest(
 				: Date.parse(retryAfterHeader) - Date.now();
 			if (retryAfterMs !== undefined && !Number.isFinite(retryAfterMs))
 				retryAfterMs = undefined;
-			if (retryAfterMs !== undefined && !Number.isFinite(retryAfterMs)) {
-				retryAfterMs = undefined;
-			}
 			if (retryAfterMs !== undefined && retryAfterMs < 0) {
 				retryAfterMs = undefined;
 			}
