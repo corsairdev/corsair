@@ -65,7 +65,10 @@ export const createWorkspaceGitCredentials: DatabricksEndpoints['createWorkspace
 		await logEventFromContext(
 			ctx,
 			'databricks.workspace.create_git_credentials',
-			input,
+			{
+				git_username: input.git_username,
+				git_provider: input.git_provider,
+			},
 			'completed',
 		);
 		return response;

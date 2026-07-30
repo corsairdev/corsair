@@ -1,3 +1,4 @@
+import * as crypto from 'node:crypto';
 import { DatabricksAPIError, makeDatabricksRequest } from './client';
 import { endpointContractCases } from './endpoint-contract-cases';
 import * as Apps from './endpoints/apps';
@@ -16,6 +17,7 @@ import * as Security from './endpoints/security';
 import * as Serving from './endpoints/serving';
 import * as Sharing from './endpoints/sharing';
 import * as Sql from './endpoints/sql';
+import { DatabricksEndpointInputSchemas } from './endpoints/types';
 import * as Workspace from './endpoints/workspace';
 import { errorHandlers } from './error-handlers';
 import { matchDatabricksTenantWebhook } from './webhooks/tenant-matcher';
@@ -129,8 +131,10 @@ describe('Databricks client', () => {
 				expect.anything(),
 			);
 		} finally {
-			if (prev === undefined) process.env.DATABRICKS_HOST = undefined;
-			else process.env.DATABRICKS_HOST = prev;
+			if (prev === undefined) {
+				// biome-ignore lint/performance/noDelete: remove unset env var entirely
+				delete process.env.DATABRICKS_HOST;
+			} else process.env.DATABRICKS_HOST = prev;
 		}
 	});
 });
@@ -158,11 +162,16 @@ describe('Databricks endpoint routing', () => {
 		...c,
 		name: `${c.mod}.${c.fn}`,
 		fn: (endpointModules[c.mod] as Record<string, AnyEndpoint>)[c.fn]!,
+		schema:
+			DatabricksEndpointInputSchemas[
+				c.fn as keyof typeof DatabricksEndpointInputSchemas
+			],
 	}));
 
 	it.each(cases)('$name calls $method $endpoint', async (c) => {
 		const ctx = createContext();
-		await c.fn(ctx, c.input);
+		const input = c.schema.parse(c.input);
+		await c.fn(ctx, input);
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const [path, key, options] = mockRequest.mock.calls[0]!;
@@ -265,6 +274,41 @@ describe('Databricks webhooks', () => {
 		);
 		expect(res.valid).toBe(false);
 		expect(res.error).toBe('Invalid webhook signature');
+	});
+
+	it('accepts valid webhook signature from raw inbound request body', () => {
+		const secret = 'test-secret';
+		const body = '{"event_type":"job.completed","source":"webhook"}';
+		const signature = crypto
+			.createHmac('sha256', secret)
+			.update(body)
+			.digest('hex');
+		const res = verifyDatabricksWebhookSignatureFromRaw(
+			{
+				body,
+				headers: { 'x-databricks-signature': signature },
+			},
+			secret,
+		);
+		expect(res.valid).toBe(true);
+	});
+
+	it('accepts valid webhook signature when rawBody differs from payload', () => {
+		const secret = 'test-secret';
+		const rawBody = '{"event_type":"job.completed","source":"webhook"}';
+		const signature = crypto
+			.createHmac('sha256', secret)
+			.update(rawBody)
+			.digest('hex');
+		const res = verifyDatabricksWebhookSignature(
+			{
+				headers: { 'x-databricks-signature': signature },
+				rawBody,
+				payload: { event_type: 'job.completed' },
+			} as any,
+			secret,
+		);
+		expect(res.valid).toBe(true);
 	});
 
 	it('requires string body for raw inbound verification', () => {

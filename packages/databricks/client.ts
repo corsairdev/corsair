@@ -38,6 +38,9 @@ export async function makeDatabricksRequest<T>(
 	} = {},
 ): Promise<T> {
 	const apiKey = typeof keyOrCtx === 'string' ? keyOrCtx : keyOrCtx.key;
+	if (!apiKey?.trim()) {
+		throw new DatabricksAPIError('Databricks API key is missing');
+	}
 	const ctxHost =
 		typeof keyOrCtx === 'object' && keyOrCtx !== null
 			? keyOrCtx.options?.host || keyOrCtx.options?.baseUrl
@@ -74,7 +77,6 @@ export async function makeDatabricksRequest<T>(
 		VERSION: '2.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`,

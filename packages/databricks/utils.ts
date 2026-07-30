@@ -5,6 +5,64 @@ export function safeEncode(value: string): string {
 	return encodeURIComponent(value);
 }
 
+type AzureServicePrincipalInput = {
+	azure_service_principal?: {
+		directory_id: string;
+		application_id: string;
+		client_secret: string;
+	};
+};
+
+export function redactAzureServicePrincipal<
+	T extends AzureServicePrincipalInput,
+>(input: T): T {
+	if (!input.azure_service_principal) {
+		return input;
+	}
+	return {
+		...input,
+		azure_service_principal: {
+			...input.azure_service_principal,
+			client_secret: '[redacted]',
+		},
+	};
+}
+
+function splitCsvRecords(text: string): string[] {
+	const records: string[] = [];
+	let current = '';
+	let inQuotes = false;
+
+	for (let i = 0; i < text.length; i++) {
+		const char = text[i];
+		if (char === '"') {
+			if (inQuotes && text[i + 1] === '"') {
+				current += '""';
+				i++;
+			} else {
+				inQuotes = !inQuotes;
+				current += char;
+			}
+		} else if ((char === '\n' || char === '\r') && !inQuotes) {
+			if (char === '\r' && text[i + 1] === '\n') {
+				i++;
+			}
+			if (current.trim()) {
+				records.push(current);
+			}
+			current = '';
+		} else {
+			current += char;
+		}
+	}
+
+	if (current.trim()) {
+		records.push(current);
+	}
+
+	return records;
+}
+
 /**
  * Parses CSV text responses into an array of record objects.
  */
@@ -16,7 +74,7 @@ export function parseCsvRecords(
 	}
 
 	if (typeof response === 'string' && response.trim().length > 0) {
-		const lines = response.trim().split(/\r?\n/);
+		const lines = splitCsvRecords(response.trim());
 		if (lines.length <= 1) return [];
 
 		const firstLine = lines[0];

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Apps,
 	Catalog,
@@ -1612,7 +1613,12 @@ export function databricks<const T extends DatabricksPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:databricks:webhook_signature]: Databricks webhook secret is missing',
+					);
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {
@@ -1621,15 +1627,21 @@ export function databricks<const T extends DatabricksPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('databricks', 'api_key');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('databricks', 'oauth_2');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('databricks', ctx.authType);
 		},
 	} satisfies InternalDatabricksPlugin;
 }

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DatabricksEndpoints } from '..';
 import { DatabricksAPIError, makeDatabricksRequest } from '../client';
-import { safeEncode } from '../utils';
+import { redactAzureServicePrincipal, safeEncode } from '../utils';
 
 export const assignMetastoreToWorkspace: DatabricksEndpoints['assignMetastoreToWorkspace'] =
 	async (ctx, input) => {
@@ -109,7 +109,7 @@ export const createCatalogCredential: DatabricksEndpoints['createCatalogCredenti
 		await logEventFromContext(
 			ctx,
 			'databricks.catalog.create_credential',
-			input,
+			redactAzureServicePrincipal(input),
 			'completed',
 		);
 		return response;
@@ -162,7 +162,7 @@ export const createStorageCredential: DatabricksEndpoints['createStorageCredenti
 		await logEventFromContext(
 			ctx,
 			'databricks.catalog.create_storage_credential',
-			input,
+			redactAzureServicePrincipal(input),
 			'completed',
 		);
 		return response;

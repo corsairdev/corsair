@@ -48,7 +48,7 @@ export const createLegacySqlQuery: DatabricksEndpoints['createLegacySqlQuery'] =
 		await logEventFromContext(
 			ctx,
 			'databricks.sql.create_legacy_query',
-			input,
+			{ name: input.name, data_source_id: input.data_source_id },
 			'completed',
 		);
 		return response;
@@ -103,7 +103,7 @@ export const createSqlQuery: DatabricksEndpoints['createSqlQuery'] = async (
 	await logEventFromContext(
 		ctx,
 		'databricks.sql.create_query',
-		input,
+		{ name: input.name, warehouse_id: input.warehouse_id },
 		'completed',
 	);
 	return response;

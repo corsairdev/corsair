@@ -1,13 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DatabricksEndpoints } from '..';
 import { makeDatabricksRequest } from '../client';
+import { safeEncode } from '../utils';
 
 export const addMemberToSecurityGroup: DatabricksEndpoints['addMemberToSecurityGroup'] =
 	async (ctx, input) => {
-		await makeDatabricksRequest<void>(`groups/${input.group_id}/members`, ctx, {
-			method: 'POST',
-			body: { member_id: input.member_id },
-		});
+		await makeDatabricksRequest<void>(
+			`groups/${safeEncode(input.group_id)}/members`,
+			ctx,
+			{
+				method: 'POST',
+				body: { member_id: input.member_id },
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -67,7 +72,7 @@ export const createIamUserV2: DatabricksEndpoints['createIamUserV2'] = async (
 	await logEventFromContext(
 		ctx,
 		'databricks.iam.create_user_v2',
-		input,
+		{ userName: input.userName },
 		'completed',
 	);
 	return response;
@@ -92,9 +97,13 @@ export const deleteIamGroupV2: DatabricksEndpoints['deleteIamGroupV2'] = async (
 	ctx,
 	input,
 ) => {
-	await makeDatabricksRequest<void>(`preview/scim/v2/Groups/${input.id}`, ctx, {
-		method: 'DELETE',
-	});
+	await makeDatabricksRequest<void>(
+		`preview/scim/v2/Groups/${safeEncode(input.id)}`,
+		ctx,
+		{
+			method: 'DELETE',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -108,7 +117,7 @@ export const deleteIamGroupV2: DatabricksEndpoints['deleteIamGroupV2'] = async (
 export const deleteIamServicePrincipalV2: DatabricksEndpoints['deleteIamServicePrincipalV2'] =
 	async (ctx, input) => {
 		await makeDatabricksRequest<void>(
-			`preview/scim/v2/ServicePrincipals/${input.id}`,
+			`preview/scim/v2/ServicePrincipals/${safeEncode(input.id)}`,
 			ctx,
 			{ method: 'DELETE' },
 		);
@@ -126,9 +135,13 @@ export const deleteIamUserV2: DatabricksEndpoints['deleteIamUserV2'] = async (
 	ctx,
 	input,
 ) => {
-	await makeDatabricksRequest<void>(`preview/scim/v2/Users/${input.id}`, ctx, {
-		method: 'DELETE',
-	});
+	await makeDatabricksRequest<void>(
+		`preview/scim/v2/Users/${safeEncode(input.id)}`,
+		ctx,
+		{
+			method: 'DELETE',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,

@@ -1069,11 +1069,11 @@ export const endpointContractCases = [
 		method: 'POST',
 		input: {
 			experiment_id: 'exp-123',
-			timestamp: 0,
+			max_timestamp_millis: 0,
 		},
 		expectedBody: {
 			experiment_id: 'exp-123',
-			timestamp: 0,
+			max_timestamp_millis: 0,
 		},
 	},
 	{
@@ -1108,7 +1108,7 @@ export const endpointContractCases = [
 	{
 		mod: 'Security',
 		fn: 'createOAuthServicePrincipalSecret',
-		endpoint: 'accounts/service-principals/sp-123/credentials/secrets',
+		endpoint: 'accounts/servicePrincipals/sp-123/credentials/secrets',
 		method: 'POST',
 		input: {
 			service_principal_id: 'sp-123',
@@ -1158,7 +1158,7 @@ export const endpointContractCases = [
 	{
 		mod: 'Security',
 		fn: 'deleteOAuth2ServicePrincipalSecret',
-		endpoint: 'accounts/service-principals/sp-123/credentials/secrets/sec-123',
+		endpoint: 'accounts/servicePrincipals/sp-123/credentials/secrets/sec-123',
 		method: 'DELETE',
 		input: {
 			service_principal_id: 'sp-123',
@@ -1239,9 +1239,11 @@ export const endpointContractCases = [
 		method: 'POST',
 		input: {
 			name: 'p-1',
+			authentication_type: 'TOKEN',
 		},
 		expectedBody: {
 			name: 'p-1',
+			authentication_type: 'TOKEN',
 		},
 	},
 	{
