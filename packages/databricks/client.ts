@@ -98,10 +98,12 @@ export async function makeDatabricksRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
+			const body = error.body as { error_code?: string } | undefined;
 			throw new DatabricksAPIError(
 				error.message,
 				error.status,
 				error.retryAfter,
+				body?.error_code,
 			);
 		}
 		if (error instanceof Error) {

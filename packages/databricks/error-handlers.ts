@@ -12,7 +12,8 @@ export const errorHandlers = {
 				return (
 					msg.includes('429') ||
 					msg.includes('request_limit_exceeded') ||
-					msg.includes('too_many_requests')
+					msg.includes('too_many_requests') ||
+					msg.includes('too many requests')
 				);
 			}
 			return false;

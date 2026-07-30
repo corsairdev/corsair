@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DatabricksEndpoints } from '..';
-import { makeDatabricksRequest } from '../client';
+import { DatabricksAPIError, makeDatabricksRequest } from '../client';
 import { safeEncode } from '../utils';
 
 export const assignMetastoreToWorkspace: DatabricksEndpoints['assignMetastoreToWorkspace'] =
@@ -60,8 +60,10 @@ export const checkTableExists: DatabricksEndpoints['checkTableExists'] = async (
 		return { exists: true };
 	} catch (error) {
 		const isNotFound =
-			error instanceof Error &&
-			((error as { status?: number }).status === 404 ||
+			error instanceof DatabricksAPIError &&
+			(error.status === 404 ||
+				error.code === 'RESOURCE_DOES_NOT_EXIST' ||
+				error.code === 'TABLE_DOES_NOT_EXIST' ||
 				error.message.includes('404') ||
 				error.message.includes('RESOURCE_DOES_NOT_EXIST') ||
 				error.message.includes('TABLE_DOES_NOT_EXIST'));
