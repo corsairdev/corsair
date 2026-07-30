@@ -38,18 +38,6 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-function isReconstructedRawBody(rawBody: string, payload: unknown): boolean {
-	if (
-		payload === null ||
-		typeof payload !== 'object' ||
-		Array.isArray(payload)
-	) {
-		return false;
-	}
-	// Corsair sets rawBody = JSON.stringify(body) when the inbound body was parsed.
-	return rawBody === JSON.stringify(payload);
-}
-
 export function createDatabricksMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
@@ -75,17 +63,13 @@ export function verifyDatabricksWebhookSignature(
 		return { valid: false, error: 'Missing webhook signature header' };
 	}
 
+	// Corsair preserves the inbound string on rawBody when body arrived as text.
+	// Do not infer reconstruction via JSON.stringify(payload) — that rejects
+	// valid compact payloads that stringify back to the same bytes.
 	if (typeof request.rawBody !== 'string') {
 		return {
 			valid: false,
 			error: 'Missing raw body for signature verification',
-		};
-	}
-
-	if (isReconstructedRawBody(request.rawBody, request.payload)) {
-		return {
-			valid: false,
-			error: 'Missing original raw body for signature verification',
 		};
 	}
 

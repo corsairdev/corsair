@@ -249,18 +249,23 @@ describe('Databricks webhooks', () => {
 		expect(res.error).toBe('Missing raw body for signature verification');
 	});
 
-	it('rejects reconstructed rawBody from parsed payload', () => {
+	it('accepts valid compact rawBody that equals JSON.stringify(payload)', () => {
+		const secret = 'test-secret';
 		const payload = { event_type: 'job.completed' };
-		const req = {
-			headers: { 'x-databricks-signature': 'sig' },
-			rawBody: JSON.stringify(payload),
-			payload,
-		};
-		const res = verifyDatabricksWebhookSignature(req as any, 'secret');
-		expect(res.valid).toBe(false);
-		expect(res.error).toBe(
-			'Missing original raw body for signature verification',
+		const rawBody = JSON.stringify(payload);
+		const signature = crypto
+			.createHmac('sha256', secret)
+			.update(rawBody)
+			.digest('hex');
+		const res = verifyDatabricksWebhookSignature(
+			{
+				headers: { 'x-databricks-signature': signature },
+				rawBody,
+				payload,
+			} as any,
+			secret,
 		);
+		expect(res.valid).toBe(true);
 	});
 
 	it('verifies signature from raw inbound request body', () => {
