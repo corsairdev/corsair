@@ -75,9 +75,20 @@ const RemoteSessionInputSchema = z
 	.catchall(z.unknown());
 export type RemoteSessionInput = z.infer<typeof RemoteSessionInputSchema>;
 
+// UE Web Remote Control batch items require RequestId, URL, and Verb per the
+// official HTTP reference; allow extra passthrough keys (Body, Headers, etc.).
+const RemoteBatchItemSchema = z
+	.object({
+		RequestId: z.number(),
+		URL: z.string(),
+		Verb: z.string(),
+	})
+	.passthrough();
+
 const RemoteBatchInputSchema = z.object({
-	// batch is an ordered list of remote calls; each item shape is free-form per UE docs
-	requests: z.array(LooseObjectSchema),
+	// batch is an ordered list of remote calls; each item must identify itself
+	// (RequestId), target a route (URL), and pick an HTTP verb (Verb).
+	requests: z.array(RemoteBatchItemSchema),
 });
 export type RemoteBatchInput = z.infer<typeof RemoteBatchInputSchema>;
 

@@ -306,12 +306,11 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 		);
 	});
 
-	it('putObjectProperty → PUT /remote/object/property', async () => {
+	it('putObjectProperty → PUT /remote/object/property (propertyValues bag)', async () => {
 		await RemoteControl.putObjectProperty(mockCtx(), {
 			objectPath: '/Game/A',
 			access: 'WRITE_ACCESS',
-			propertyName: 'bHidden',
-			propertyValue: true,
+			propertyValues: { bHidden: true },
 		});
 		const call = mockRequest.mock.calls.find(
 			(c) => c[0] === '/remote/object/property',
@@ -327,10 +326,22 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 				}),
 			}),
 		);
-		// reserved keys win over propertyValues
-		expect(
-			(call?.[2] as { body: { objectPath: string } }).body.objectPath,
-		).toBe('/Game/A');
+	});
+
+	it('putObjectProperty pins reserved keys over propertyValues', async () => {
+		// A property literally named "objectPath" in the bag must not overwrite
+		// the real path; the handler spreads the bag first then pins reserved keys.
+		await RemoteControl.putObjectProperty(mockCtx(), {
+			objectPath: '/Game/A',
+			access: 'WRITE_ACCESS',
+			propertyValues: { objectPath: '/spoofed', bHidden: true },
+		});
+		const call = mockRequest.mock.calls.find(
+			(c) => c[0] === '/remote/object/property',
+		);
+		const body = (call?.[2] as { body: { objectPath: string } }).body;
+		expect(body.objectPath).toBe('/Game/A');
+		expect((body as { bHidden?: boolean }).bHidden).toBe(true);
 	});
 
 	it('getObjectThumbnail → PUT /remote/object/thumbnail', async () => {
