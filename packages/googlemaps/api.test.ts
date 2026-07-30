@@ -176,6 +176,58 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(Array.isArray(resOAuth.rows)).toBe(true);
 		expect((resOAuth.rows![0] as any).elements).toBeDefined();
 		expect(Array.isArray((resOAuth.rows![0] as any).elements)).toBe(true);
+
+		// OAuth multi-origin: elements grouped by originIndex into separate rows
+		mockedMakeRequest.mockResolvedValueOnce([
+			{
+				originIndex: 0,
+				destinationIndex: 0,
+				condition: 'ROUTE_EXISTS',
+				distanceMeters: 1000,
+				duration: '120s',
+			},
+			{
+				originIndex: 0,
+				destinationIndex: 1,
+				condition: 'ROUTE_EXISTS',
+				distanceMeters: 2000,
+				duration: '240s',
+			},
+			{
+				originIndex: 1,
+				destinationIndex: 0,
+				condition: 'ROUTE_EXISTS',
+				distanceMeters: 3000,
+				duration: '360s',
+			},
+			{
+				originIndex: 1,
+				destinationIndex: 1,
+				condition: 'ROUTE_EXISTS',
+				distanceMeters: 4000,
+				duration: '480s',
+			},
+		]);
+		const resMultiOrigin = await plugin.endpoints!.routes.distanceMatrix(
+			dummyOAuthCtx,
+			{
+				origins: ['SF', 'San Jose, CA'],
+				destinations: ['Oakland', 'Berkeley'],
+			},
+		);
+		expect(resMultiOrigin.rows).toHaveLength(2);
+		expect((resMultiOrigin.rows![0] as any).elements[0].distance.value).toBe(
+			1000,
+		);
+		expect((resMultiOrigin.rows![0] as any).elements[1].distance.value).toBe(
+			2000,
+		);
+		expect((resMultiOrigin.rows![1] as any).elements[0].distance.value).toBe(
+			3000,
+		);
+		expect((resMultiOrigin.rows![1] as any).elements[1].distance.value).toBe(
+			4000,
+		);
 	});
 
 	it('routes.getDirection calculates directions (api_key and oauth)', async () => {
@@ -204,6 +256,39 @@ describe('Google Maps Plugin API Tests', () => {
 			},
 		);
 		expect(resOAuth.status).toBe('OK');
+
+		// OAuth with waypoints and avoid: forwarded to Routes API computeRoutes
+		mockedMakeRequest.mockResolvedValueOnce({
+			routes: [{ legs: [] }],
+		});
+		await plugin.endpoints!.routes.getDirection(dummyOAuthCtx, {
+			origin: 'San Jose, CA',
+			destination: 'San Francisco, CA',
+			mode: 'driving',
+			waypoints: ['Palo Alto, CA', 'Redwood City, CA'],
+			avoid: 'tolls|highways',
+		});
+		expect(mockedMakeRequest).toHaveBeenLastCalledWith(
+			'/directions/v2:computeRoutes',
+			dummyOAuthCtx,
+			expect.objectContaining({
+				method: 'POST',
+				baseUrl: 'https://routes.googleapis.com',
+				body: expect.objectContaining({
+					origin: { address: 'San Jose, CA' },
+					destination: { address: 'San Francisco, CA' },
+					travelMode: 'DRIVE',
+					intermediates: [
+						{ address: 'Palo Alto, CA' },
+						{ address: 'Redwood City, CA' },
+					],
+					routeModifiers: {
+						avoidTolls: true,
+						avoidHighways: true,
+					},
+				}),
+			}),
+		);
 	});
 
 	it('routes.getRoute computes routes via Routes API', async () => {

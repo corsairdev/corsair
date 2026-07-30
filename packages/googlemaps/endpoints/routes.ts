@@ -18,6 +18,84 @@ import {
 	GetRouteResponseSchema,
 } from './types';
 
+function toRoutesTravelMode(mode?: string): string {
+	if (!mode) return 'DRIVE';
+	const map: Record<string, string> = {
+		driving: 'DRIVE',
+		walking: 'WALK',
+		bicycling: 'BICYCLE',
+		transit: 'TRANSIT',
+		drive: 'DRIVE',
+		walk: 'WALK',
+		bicycle: 'BICYCLE',
+	};
+	return map[mode.toLowerCase()] ?? mode.toUpperCase();
+}
+
+function toRouteWaypoint(location: string): { address: string } {
+	return { address: location };
+}
+
+function toRouteModifiers(avoid?: string): Record<string, boolean> | undefined {
+	if (!avoid) return undefined;
+	const items = avoid.split('|').map((a) => a.trim().toLowerCase());
+	const modifiers: Record<string, boolean> = {};
+	if (items.includes('tolls')) modifiers.avoidTolls = true;
+	if (items.includes('highways')) modifiers.avoidHighways = true;
+	if (items.includes('ferries')) modifiers.avoidFerries = true;
+	return Object.keys(modifiers).length > 0 ? modifiers : undefined;
+}
+
+function formatMatrixElement(elem: Record<string, unknown>) {
+	return {
+		status:
+			elem?.condition === 'ROUTE_EXISTS' || !elem?.condition
+				? 'OK'
+				: 'ZERO_RESULTS',
+		distance:
+			elem?.distanceMeters !== undefined
+				? { text: `${elem.distanceMeters} m`, value: elem.distanceMeters }
+				: undefined,
+		duration: elem?.duration
+			? {
+					text: elem.duration,
+					value: parseInt(String(elem.duration).replace('s', ''), 10),
+				}
+			: undefined,
+		...elem,
+	};
+}
+
+function adaptComputeRouteMatrixToLegacy(
+	elementsArray: Record<string, unknown>[],
+	originsList: string[],
+	destinationsList: string[],
+): DistanceMatrixResponse {
+	const numOrigins = originsList.length;
+	const numDestinations = destinationsList.length;
+
+	const rows = Array.from({ length: numOrigins }, () => ({
+		elements: Array.from({ length: numDestinations }, () => ({
+			status: 'ZERO_RESULTS',
+		})),
+	}));
+
+	for (const elem of elementsArray) {
+		const originIdx = (elem.originIndex as number) ?? 0;
+		const destIdx = (elem.destinationIndex as number) ?? 0;
+		if (originIdx < numOrigins && destIdx < numDestinations) {
+			rows[originIdx]!.elements[destIdx] = formatMatrixElement(elem);
+		}
+	}
+
+	return {
+		status: 'OK',
+		origin_addresses: originsList,
+		destination_addresses: destinationsList,
+		rows,
+	};
+}
+
 export const computeRouteMatrix: GoogleMapsEndpoints['computeRouteMatrix'] =
 	async (ctx, input) => {
 		const validatedInput = ComputeRouteMatrixInputSchema.parse(input);
@@ -67,7 +145,7 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 		const matrixBody = {
 			origins: originsList.map((o) => ({ waypoint: { address: o } })),
 			destinations: destinationsList.map((d) => ({ waypoint: { address: d } })),
-			travelMode: validatedInput.mode?.toUpperCase(),
+			travelMode: toRoutesTravelMode(validatedInput.mode),
 		};
 
 		const res = await makeGoogleMapsRequest<unknown>(
@@ -80,38 +158,15 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 			},
 		);
 
-		const elementsArray = Array.isArray(res)
-			? res
-			: ((res as any)?.elements ?? [res]);
+		const elementsArray = (
+			Array.isArray(res) ? res : ((res as any)?.elements ?? [res])
+		) as Record<string, unknown>[];
 
-		const formattedElements = elementsArray.map((elem: any) => ({
-			status:
-				elem?.condition === 'ROUTE_EXISTS' || !elem?.condition
-					? 'OK'
-					: 'ZERO_RESULTS',
-			distance:
-				elem?.distanceMeters !== undefined
-					? { text: `${elem.distanceMeters} m`, value: elem.distanceMeters }
-					: undefined,
-			duration: elem?.duration
-				? {
-						text: elem.duration,
-						value: parseInt(String(elem.duration).replace('s', ''), 10),
-					}
-				: undefined,
-			...elem,
-		}));
-
-		rawResponse = {
-			status: 'OK',
-			origin_addresses: originsList,
-			destination_addresses: destinationsList,
-			rows: [
-				{
-					elements: formattedElements,
-				},
-			],
-		};
+		rawResponse = adaptComputeRouteMatrixToLegacy(
+			elementsArray,
+			originsList,
+			destinationsList,
+		);
 	} else {
 		const originsStr = Array.isArray(validatedInput.origins)
 			? validatedInput.origins.join('|')
@@ -161,11 +216,26 @@ export const getDirection: GoogleMapsEndpoints['getDirection'] = async (
 		(ctx as any).options?.authType === 'oauth_2';
 
 	if (isOAuth) {
-		const routeBody = {
-			origin: { address: validatedInput.origin },
-			destination: { address: validatedInput.destination },
-			travelMode: validatedInput.mode?.toUpperCase() || 'DRIVE',
+		const routeBody: Record<string, unknown> = {
+			origin: toRouteWaypoint(validatedInput.origin),
+			destination: toRouteWaypoint(validatedInput.destination),
+			travelMode: toRoutesTravelMode(validatedInput.mode),
 		};
+
+		const waypointsList = validatedInput.waypoints
+			? Array.isArray(validatedInput.waypoints)
+				? validatedInput.waypoints
+				: validatedInput.waypoints.split('|')
+			: undefined;
+
+		if (waypointsList?.length) {
+			routeBody.intermediates = waypointsList.map(toRouteWaypoint);
+		}
+
+		const routeModifiers = toRouteModifiers(validatedInput.avoid);
+		if (routeModifiers) {
+			routeBody.routeModifiers = routeModifiers;
+		}
 
 		const res = await makeGoogleMapsRequest<Record<string, unknown>>(
 			'/directions/v2:computeRoutes',
