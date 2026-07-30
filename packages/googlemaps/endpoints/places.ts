@@ -1,5 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeGoogleMapsRequest, resolvePlacePhotoUrl } from '../client';
+import {
+	GoogleMapsAPIError,
+	isGoogleMapsOAuth,
+	makeGoogleMapsRequest,
+	resolvePlacePhotoUrl,
+} from '../client';
 import type { GoogleMapsEndpoints } from '../index';
 import type {
 	AutocompleteResponse,
@@ -94,6 +99,14 @@ export const getPlacePhoto: GoogleMapsEndpoints['getPlacePhoto'] = async (
 ) => {
 	const validatedInput = GetPlacePhotoInputSchema.parse(input);
 	const { photo_reference, maxwidth, maxheight } = validatedInput;
+
+	if (!photo_reference.startsWith('places/') && isGoogleMapsOAuth(ctx)) {
+		throw new GoogleMapsAPIError(
+			'Legacy photo references require API key authentication. Use Places API (New) photo names (places/...) with OAuth.',
+			400,
+			'INVALID_ARGUMENT',
+		);
+	}
 
 	let photoRequestUrl: string;
 	if (photo_reference.startsWith('places/')) {

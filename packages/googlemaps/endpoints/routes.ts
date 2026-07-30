@@ -86,7 +86,6 @@ function formatMatrixElement(elem: Record<string, unknown>, units?: string) {
 					value: parseInt(String(elem.duration).replace('s', ''), 10),
 				}
 			: undefined,
-		...elem,
 	};
 }
 

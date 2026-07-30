@@ -93,10 +93,8 @@ describe('Google Maps Plugin API Tests', () => {
 			} as Response)
 			.mockResolvedValueOnce({
 				ok: true,
-				headers: new Headers({ 'content-type': 'application/json' }),
-				json: async () => ({
-					photoUri: 'https://lh3.googleusercontent.com/oauth-photo.jpg',
-				}),
+				headers: new Headers({ 'content-type': 'image/jpeg' }),
+				arrayBuffer: async () => Uint8Array.from([7, 8, 9]).buffer,
 			} as Response);
 
 		const plugin = googlemaps();
@@ -131,18 +129,22 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(resNew.photoUrl).toMatch(/^data:image\/jpeg;base64,/);
 		expect(resNew.photoUrl).not.toContain('key=');
 
-		const resOAuth = await plugin.endpoints!.places.getPlacePhoto(
+		await expect(
+			plugin.endpoints!.places.getPlacePhoto(dummyOAuthCtx, {
+				photo_reference: 'ref_12345',
+				maxwidth: 400,
+			}),
+		).rejects.toThrow(/Legacy photo references require API key/);
+
+		const resOAuthNew = await plugin.endpoints!.places.getPlacePhoto(
 			dummyOAuthCtx,
 			{
-				photo_reference: 'ref_12345',
+				photo_reference: 'places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/Aap_uEA7',
 				maxwidth: 400,
 			},
 		);
-		expect(resOAuth.photoUrl).toBe(
-			'https://lh3.googleusercontent.com/oauth-photo.jpg',
-		);
-		expect(resOAuth.photoUrl).not.toContain('key=');
-		expect(resOAuth.photoUrl).not.toContain(dummyOAuthCtx.key);
+		expect(resOAuthNew.photoUrl).toMatch(/^data:image\/jpeg;base64,/);
+		expect(resOAuthNew.photoUrl).not.toContain('key=');
 
 		fetchMock.mockRestore();
 	});
@@ -226,6 +228,7 @@ describe('Google Maps Plugin API Tests', () => {
 			},
 		);
 		expect(resOAuth.status).toBe('OK');
+		expect((resOAuth.rows![0] as any).elements[0].status).toBe('OK');
 		expect(resOAuth.rows).toBeDefined();
 		expect(Array.isArray(resOAuth.rows)).toBe(true);
 		expect((resOAuth.rows![0] as any).elements).toBeDefined();
@@ -290,6 +293,7 @@ describe('Google Maps Plugin API Tests', () => {
 				condition: 'ROUTE_EXISTS',
 				distanceMeters: 1609,
 				duration: '600s',
+				status: { code: 0, message: 'OK' },
 			},
 		]);
 		const resOptions = await plugin.endpoints!.routes.distanceMatrix(
@@ -302,6 +306,7 @@ describe('Google Maps Plugin API Tests', () => {
 			},
 		);
 		expect(resOptions.rows).toBeDefined();
+		expect((resOptions.rows![0] as any).elements[0].status).toBe('OK');
 		expect((resOptions.rows![0] as any).elements[0].distance.text).toBe(
 			'1.0 mi',
 		);
