@@ -48,8 +48,9 @@ export const get2dTile: GoogleMapsEndpoints['get2dTile'] = async (
 ) => {
 	const validatedInput = Get2dTileInputSchema.parse(input);
 	const { session, z, x, y } = validatedInput;
+	const keyParam = ctx.key ? `&key=${encodeURIComponent(ctx.key)}` : '';
 
-	const tileUrl = `https://tile.googleapis.com/v1/2dtiles/${z}/${x}/${y}?session=${encodeURIComponent(session)}`;
+	const tileUrl = `https://tile.googleapis.com/v1/2dtiles/${z}/${x}/${y}?session=${encodeURIComponent(session)}${keyParam}`;
 
 	const response = Get2dTileResponseSchema.parse({
 		tileUrl,

@@ -18,7 +18,6 @@ module.exports = {
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
-		'^.+\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
 		'^.+\\.ts$': [
 			'ts-jest',
 			{
@@ -44,8 +43,8 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/../corsair/core.ts',
-		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/core$': '<rootDir>/node_modules/corsair/core.ts',
+		'^corsair/http$': '<rootDir>/node_modules/corsair/http.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],

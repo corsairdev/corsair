@@ -495,6 +495,7 @@ describe('Google Maps Plugin API Tests', () => {
 		});
 
 		expect(res.tileUrl).toContain('2dtiles/10/5/8');
+		expect(res.tileUrl).toContain('key=test_key');
 	});
 
 	it('tiles.get3dTilesRoot fetches 3D tiles root tileset', async () => {
