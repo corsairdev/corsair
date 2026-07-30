@@ -3,6 +3,14 @@ import { makeYoucomSearchRequest } from '../client';
 import type { YoucomEndpoints } from '../index';
 import { YouSearchRequestSchema, YouSearchResponseSchema } from './types';
 
+function searchResultEntityId(
+	query: string,
+	resultType: 'web' | 'news',
+	url: string,
+): string {
+	return [query, resultType, url].join(':');
+}
+
 export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
 	const request = YouSearchRequestSchema.parse(input);
 	const response = YouSearchResponseSchema.parse(
@@ -12,12 +20,15 @@ export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
 	const webResults = response.results.web ?? [];
 	for (const result of webResults) {
 		try {
-			await ctx.db.searchResults.upsertByEntityId(result.url, {
-				...result,
-				resultType: 'web' as const,
-				query: request.query,
-				searchedAt: new Date(),
-			});
+			await ctx.db.searchResults.upsertByEntityId(
+				searchResultEntityId(request.query, 'web', result.url),
+				{
+					...result,
+					resultType: 'web' as const,
+					query: request.query,
+					searchedAt: new Date(),
+				},
+			);
 		} catch (error) {
 			console.warn(
 				`[youcom] Failed to save web search result ${result.url}:`,
@@ -29,12 +40,15 @@ export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
 	const newsResults = response.results.news ?? [];
 	for (const result of newsResults) {
 		try {
-			await ctx.db.searchResults.upsertByEntityId(result.url, {
-				...result,
-				resultType: 'news' as const,
-				query: request.query,
-				searchedAt: new Date(),
-			});
+			await ctx.db.searchResults.upsertByEntityId(
+				searchResultEntityId(request.query, 'news', result.url),
+				{
+					...result,
+					resultType: 'news' as const,
+					query: request.query,
+					searchedAt: new Date(),
+				},
+			);
 		} catch (error) {
 			console.warn(
 				`[youcom] Failed to save news search result ${result.url}:`,

@@ -80,6 +80,37 @@ describe('youSearch endpoint validation', () => {
 			}),
 		);
 	});
+
+	it('uses composite entity IDs for web and news cache writes', async () => {
+		searchSpy.mockResolvedValue({
+			results: {
+				web: [{ url: 'https://example.com/a', title: 'Web A' }],
+				news: [{ url: 'https://example.com/a', title: 'News A' }],
+			},
+			metadata: {
+				search_uuid: '942ccbdd-7705-4d9c-9d37-4ef386658e90',
+				query: 'test query',
+				latency: 0.5,
+			},
+		});
+
+		await youSearch(mockCtx, { query: 'test query' });
+
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'test query:web:https://example.com/a',
+			expect.objectContaining({
+				resultType: 'web',
+				query: 'test query',
+			}),
+		);
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'test query:news:https://example.com/a',
+			expect.objectContaining({
+				resultType: 'news',
+				query: 'test query',
+			}),
+		);
+	});
 });
 
 describe('makeYoucomSearchRequest routing', () => {
@@ -180,10 +211,18 @@ describe('makeYoucomSearchRequest routing', () => {
 		});
 	});
 
-	it('does not enable transport-level rate-limit retries', async () => {
+	it('disables transport-level rate-limit retries', async () => {
 		await makeYoucomSearchRequest('test-key', { query: 'test' });
 
-		expect(mockRequest.mock.calls[0]?.[2]).toBeUndefined();
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: {
+				enabled: false,
+				maxRetries: 0,
+				initialRetryDelay: 0,
+				backoffMultiplier: 1,
+				headerNames: {},
+			},
+		});
 	});
 });
 
