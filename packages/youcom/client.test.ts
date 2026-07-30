@@ -1,6 +1,13 @@
 import { ApiError, request } from 'corsair/http';
+import * as client from './client';
 import { makeYoucomSearchRequest, YoucomAPIError } from './client';
+import { youSearch } from './endpoints/yousearch';
 import { errorHandlers } from './error-handlers';
+import type { YoucomContext } from './index';
+
+jest.mock('corsair/core', () => ({
+	logEventFromContext: jest.fn(),
+}));
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -21,10 +28,59 @@ const sampleResponse = {
 	},
 };
 
+const upsertByEntityId = jest.fn();
+
+const mockCtx = {
+	key: 'test-key',
+	db: {
+		searchResults: {
+			upsertByEntityId,
+		},
+	},
+} as unknown as YoucomContext;
+
 function lastCall() {
 	const call = mockRequest.mock.calls[mockRequest.mock.calls.length - 1];
 	return { config: call?.[0], options: call?.[1] };
 }
+
+describe('youSearch endpoint validation', () => {
+	let searchSpy: jest.SpiedFunction<typeof client.makeYoucomSearchRequest>;
+
+	beforeEach(() => {
+		searchSpy = jest
+			.spyOn(client, 'makeYoucomSearchRequest')
+			.mockResolvedValue(sampleResponse);
+		upsertByEntityId.mockReset();
+	});
+
+	afterEach(() => {
+		searchSpy.mockRestore();
+	});
+
+	it('rejects invalid input before calling the provider', async () => {
+		await expect(
+			youSearch(mockCtx, { query: 'test', offset: 99 }),
+		).rejects.toThrow();
+		expect(searchSpy).not.toHaveBeenCalled();
+	});
+
+	it('applies schema defaults before calling the provider', async () => {
+		await youSearch(mockCtx, { query: 'test' });
+
+		expect(searchSpy).toHaveBeenCalledWith(
+			'test-key',
+			expect.objectContaining({
+				query: 'test',
+				count: 10,
+				offset: 0,
+				language: 'EN',
+				safesearch: 'moderate',
+				livecrawl_formats: ['html'],
+			}),
+		);
+	});
+});
 
 describe('makeYoucomSearchRequest routing', () => {
 	beforeEach(() => {
@@ -122,6 +178,12 @@ describe('makeYoucomSearchRequest routing', () => {
 			query: 'software engineering',
 			include_domains: ['github.com', 'stackoverflow.com'],
 		});
+	});
+
+	it('does not enable transport-level rate-limit retries', async () => {
+		await makeYoucomSearchRequest('test-key', { query: 'test' });
+
+		expect(mockRequest.mock.calls[0]?.[2]).toBeUndefined();
 	});
 });
 

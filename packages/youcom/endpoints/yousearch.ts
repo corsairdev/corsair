@@ -1,11 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeYoucomSearchRequest } from '../client';
 import type { YoucomEndpoints } from '../index';
-import { YouSearchResponseSchema } from './types';
+import { YouSearchRequestSchema, YouSearchResponseSchema } from './types';
 
 export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
+	const request = YouSearchRequestSchema.parse(input);
 	const response = YouSearchResponseSchema.parse(
-		await makeYoucomSearchRequest<unknown>(ctx.key, input),
+		await makeYoucomSearchRequest<unknown>(ctx.key, request),
 	);
 
 	const webResults = response.results.web ?? [];
@@ -14,7 +15,7 @@ export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
 			await ctx.db.searchResults.upsertByEntityId(result.url, {
 				...result,
 				resultType: 'web' as const,
-				query: input.query,
+				query: request.query,
 				searchedAt: new Date(),
 			});
 		} catch (error) {
@@ -31,7 +32,7 @@ export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
 			await ctx.db.searchResults.upsertByEntityId(result.url, {
 				...result,
 				resultType: 'news' as const,
-				query: input.query,
+				query: request.query,
 				searchedAt: new Date(),
 			});
 		} catch (error) {
@@ -46,7 +47,7 @@ export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
 		ctx,
 		'youcom.yousearch.youSearch',
 		{
-			query: input.query,
+			query: request.query,
 			webResultCount: webResults.length,
 			newsResultCount: newsResults.length,
 		},

@@ -1,8 +1,4 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import type { YouSearchRequest } from './endpoints/types';
 
@@ -26,16 +22,6 @@ export class YoucomAPIError extends Error {
 }
 
 const YOUCOM_API_BASE = 'https://ydc-index.io';
-
-const YOUCOM_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 3,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: {
-		retryAfter: 'Retry-After',
-	},
-};
 
 function shouldUsePost(input: YouSearchRequest): boolean {
 	return (
@@ -132,9 +118,7 @@ export async function makeYoucomRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: YOUCOM_RATE_LIMIT_CONFIG,
-		});
+		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new YoucomAPIError(error.message, String(error.status), {
