@@ -1,9 +1,19 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { listOperations, setupCorsair } from 'corsair';
+import { listOperations, runReadonly } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
+import { formatRunScriptError, formatRunScriptResult } from './tool-result.js';
+
+export {
+	callToolResultToText,
+	formatRunScriptError,
+	formatRunScriptResult,
+	isActionToolError,
+	isAgentFacingActionMessage,
+	toolErrorResult,
+} from './tool-result.js';
 
 export type CorsairToolDef = {
 	name: string;
@@ -15,7 +25,7 @@ export type CorsairToolDef = {
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
-	const { corsair } = options;
+	const { corsair, runOptions } = options;
 
 	const defs: CorsairToolDef[] = [
 		{
@@ -75,38 +85,21 @@ export function buildCorsairToolDefs(
 					),
 			},
 			handler: async ({ code }) => {
+				const readonly = runOptions?.readonly || false;
 				try {
 					const fn = new Function(
 						'corsair',
 						`return (async () => { ${code} })()`,
 					);
-					const result = await (fn as (c: unknown) => Promise<unknown>)(
-						corsair,
-					);
-					return {
-						content: [
-							{
-								type: 'text',
-								text: JSON.stringify(result ?? null, null, 2),
-							},
-						],
-					};
+					const invoke = () =>
+						(fn as (c: unknown) => Promise<unknown>)(corsair);
+					// When readonly is required, run the whole script inside a readonly
+					// scope that takes precedence over the developer's permission config.
+					// Any write/destructive endpoint throws and aborts the script.
+					const result = readonly ? await runReadonly(invoke) : await invoke();
+					return formatRunScriptResult(result);
 				} catch (err) {
-					const message = err instanceof Error ? err.message : String(err);
-					const extra =
-						err instanceof Error && err.cause
-							? `\nCause: ${String(err.cause)}`
-							: '';
-					const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-					return {
-						isError: true,
-						content: [
-							{
-								type: 'text',
-								text: `Error running snippet: ${message}${extra}\n${full}`,
-							},
-						],
-					};
+					return formatRunScriptError(err);
 				}
 			},
 		},
