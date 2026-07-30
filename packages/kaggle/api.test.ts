@@ -129,7 +129,14 @@ const FIXTURES: {
 	},
 	kernelsDownloadOutput: {
 		input: { userName: 'user', kernelSlug: 'kernel' },
-		output: binarySample,
+		output: {
+			files: [
+				{
+					fileName: 'submission.csv',
+					url: 'https://storage.googleapis.com/kaggle-output/sample',
+				},
+			],
+		},
 	},
 	kernelsListOutputFiles: {
 		input: { userName: 'user', kernelSlug: 'kernel' },
