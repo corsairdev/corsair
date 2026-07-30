@@ -76,13 +76,29 @@ export async function resolvePlacePhotoUrl(
 
 	if (url.hostname === 'maps.googleapis.com') {
 		url.searchParams.set('skipHttpRedirect', 'true');
-		const response = await fetch(url.toString(), { method: 'GET', headers });
-		if (!response.ok) {
+		const response = await fetch(url.toString(), {
+			method: 'GET',
+			headers,
+			redirect: 'manual',
+		});
+		if (!response.ok && response.status !== 302) {
 			throw new GoogleMapsAPIError(
 				`Failed to resolve place photo URL (${response.status})`,
 				response.status,
 			);
 		}
+
+		const contentType = response.headers.get('content-type') ?? '';
+		if (contentType.startsWith('image/')) {
+			const buffer = Buffer.from(await response.arrayBuffer());
+			return `data:${contentType};base64,${buffer.toString('base64')}`;
+		}
+
+		if (response.status === 302) {
+			const location = response.headers.get('location');
+			if (location) return location;
+		}
+
 		const payload = (await response.json()) as { photoUri?: string };
 		if (!payload.photoUri) {
 			throw new GoogleMapsAPIError('Place photo response missing photoUri');

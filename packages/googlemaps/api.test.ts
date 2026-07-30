@@ -76,9 +76,15 @@ describe('Google Maps Plugin API Tests', () => {
 			.spyOn(global, 'fetch')
 			.mockResolvedValueOnce({
 				ok: true,
+				headers: new Headers({ 'content-type': 'application/json' }),
 				json: async () => ({
 					photoUri: 'https://lh3.googleusercontent.com/legacy-photo.jpg',
 				}),
+			} as Response)
+			.mockResolvedValueOnce({
+				ok: true,
+				headers: new Headers({ 'content-type': 'image/jpeg' }),
+				arrayBuffer: async () => Uint8Array.from([4, 5, 6]).buffer,
 			} as Response)
 			.mockResolvedValueOnce({
 				ok: true,
@@ -87,6 +93,7 @@ describe('Google Maps Plugin API Tests', () => {
 			} as Response)
 			.mockResolvedValueOnce({
 				ok: true,
+				headers: new Headers({ 'content-type': 'application/json' }),
 				json: async () => ({
 					photoUri: 'https://lh3.googleusercontent.com/oauth-photo.jpg',
 				}),
@@ -105,6 +112,17 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(fetchMock.mock.calls[0]?.[1]?.headers).toEqual(
 			expect.objectContaining({ 'X-Goog-Api-Key': 'test_key' }),
 		);
+		expect(fetchMock.mock.calls[0]?.[1]?.redirect).toBe('manual');
+
+		// Legacy photo: when Google returns image bytes instead of JSON, use data URL
+		const resLegacyImage = await plugin.endpoints!.places.getPlacePhoto(
+			dummyCtx,
+			{
+				photo_reference: 'ref_legacy_image',
+				maxwidth: 400,
+			},
+		);
+		expect(resLegacyImage.photoUrl).toMatch(/^data:image\/jpeg;base64,/);
 
 		const resNew = await plugin.endpoints!.places.getPlacePhoto(dummyCtx, {
 			photo_reference: 'places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/Aap_uEA7',
@@ -292,11 +310,15 @@ describe('Google Maps Plugin API Tests', () => {
 			dummyOAuthCtx,
 			expect.objectContaining({
 				body: expect.objectContaining({
-					units: 'IMPERIAL',
 					departureTime: '2023-11-14T22:13:20.000Z',
 				}),
 			}),
 		);
+		const lastBody = mockedMakeRequest.mock.calls.at(-1)?.[2]?.body as Record<
+			string,
+			unknown
+		>;
+		expect(lastBody.units).toBeUndefined();
 	});
 
 	it('routes.getDirection calculates directions (api_key and oauth)', async () => {

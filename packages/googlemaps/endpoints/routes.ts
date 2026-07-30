@@ -32,11 +32,6 @@ function toRoutesTravelMode(mode?: string): string {
 	return map[mode.toLowerCase()] ?? mode.toUpperCase();
 }
 
-function toRoutesUnits(units?: string): 'METRIC' | 'IMPERIAL' | undefined {
-	if (!units) return undefined;
-	return units.toLowerCase() === 'imperial' ? 'IMPERIAL' : 'METRIC';
-}
-
 function toRoutesDepartureTime(departure_time?: string): string | undefined {
 	if (!departure_time || departure_time === 'now') return undefined;
 	if (/^\d+$/.test(departure_time)) {
@@ -177,9 +172,7 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 			travelMode: toRoutesTravelMode(validatedInput.mode),
 		};
 		const departureTime = toRoutesDepartureTime(validatedInput.departure_time);
-		const units = toRoutesUnits(validatedInput.units);
 		if (departureTime) matrixBody.departureTime = departureTime;
-		if (units) matrixBody.units = units;
 
 		const res = await makeGoogleMapsRequest<unknown>(
 			'/distanceMatrix/v1:computeRouteMatrix',
