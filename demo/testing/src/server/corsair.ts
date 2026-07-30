@@ -1,21 +1,14 @@
+import path from 'node:path';
+
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
-import { agentql } from '@corsair-dev/agentql';
-import { gmail } from '@corsair-dev/gmail';
-import { googlecalendar } from '@corsair-dev/googlecalendar';
-import { googlesheets } from '@corsair-dev/googlesheets';
-import { hubspot } from '@corsair-dev/hubspot';
-import { linear } from '@corsair-dev/linear';
-import { onedrive } from '@corsair-dev/onedrive';
-import { sharepoint } from '@corsair-dev/sharepoint';
-import { slack } from '@corsair-dev/slack';
-import { twilio } from '@corsair-dev/twilio';
-import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
+import { createChildProcessExecutor } from 'corsair/tunnel';
 
 import { sqlite } from '../db';
+import { getPlugins } from './plugins';
 
 const hubProjectApiKey =
 	process.env.CORSAIR_DEV_API_KEY ?? process.env.CORSAIR_API_KEY!;
@@ -37,32 +30,12 @@ export const corsair = createCorsair({
 		// oauthCallbackUrl: hubOAuthCallbackUrl,
 		projectApiKey: hubProjectApiKey,
 		signingSecret: hubSigningSecret,
+		allowWorkflowExecution: true,
+		workflowExecutor: createChildProcessExecutor({
+			childModulePath: path.join(process.cwd(), 'src/server/workflow-child.ts'),
+			execArgv: ['--import', 'tsx'],
+			maxOldSpaceMb: 256,
+		}),
 	},
-	plugins: [
-		// github({ authType: 'managed' }),
-		slack({
-			permissions: {
-				mode: 'cautious',
-				overrides: {
-					'messages.post': 'require_approval',
-				},
-			},
-		}),
-		googlesheets(),
-		googlecalendar(),
-		gmail(),
-		linear(),
-		sharepoint(),
-		onedrive(),
-		hubspot(),
-		agentql({
-			key: process.env.AGENTQL_API_KEY,
-		}),
-		twilio(),
-		vapi({
-			key: process.env.VAPI_API_KEY,
-			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
-		}),
-		instagram(),
-	],
+	plugins: getPlugins(),
 });
