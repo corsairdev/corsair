@@ -11,6 +11,7 @@ import { resolveIntegrationAccountIds } from '../account-lookup';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
+	createStaticAccountKeyManager,
 } from '../auth/key-manager';
 import type {
 	AccountKeyManagerFor,
@@ -376,6 +377,14 @@ export type BuildCorsairClientOptions = {
 	hubConfig?: HubConfig;
 	/** Internal config for lazy tenant provisioning on first use. */
 	internalConfig?: CorsairInternalConfig;
+	/**
+	 * In-memory decrypted credentials per plugin, e.g. { github: { access_token } }.
+	 * Set inside an isolated workflow child (no database, no kek); the account key
+	 * manager reads these instead of decrypting from the vault.
+	 */
+	credentialMap?: Record<string, Record<string, string>>;
+	/** Integration-level decrypted credentials per plugin (oauth_2 refresh). */
+	integrationCredentialMap?: Record<string, Record<string, string>>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -403,6 +412,8 @@ export function buildCorsairClient<
 		manualConfig,
 		hubConfig,
 		internalConfig,
+		credentialMap,
+		integrationCredentialMap,
 	} = options;
 
 	// Canonical tenant scope for this client. Single-tenant clients pass no
@@ -481,6 +492,17 @@ export function buildCorsairClient<
 				database,
 				extraAccountFields,
 				ensureProvisioned,
+			});
+			apiUnsafe[plugin.id]!.keys = accountKeyManager;
+		} else if (credentialMap?.[plugin.id] && pluginOptions?.authType) {
+			const extraAccountFields =
+				authConfig?.[pluginOptions.authType]?.account ?? [];
+
+			accountKeyManager = createStaticAccountKeyManager({
+				authType: pluginOptions.authType,
+				credentials: credentialMap[plugin.id]!,
+				integrationCredentials: integrationCredentialMap?.[plugin.id],
+				extraAccountFields,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}

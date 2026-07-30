@@ -1,4 +1,6 @@
 import { createStaticAccountKeyManager } from '../core/auth/key-manager';
+import { buildCorsairClient } from '../core/client';
+import type { CorsairPlugin } from '../core/plugins';
 
 describe('createStaticAccountKeyManager', () => {
 	it('returns injected api_key credentials with no db or kek', async () => {
@@ -39,5 +41,42 @@ describe('createStaticAccountKeyManager', () => {
 		).get_integration_credentials();
 		expect(integration.client_id).toBe('cid');
 		expect(integration.client_secret).toBe('csec');
+	});
+});
+
+describe('buildCorsairClient with credentialMap', () => {
+	const plugin = {
+		id: 'testkey',
+		options: { authType: 'api_key' },
+	} as unknown as CorsairPlugin;
+
+	it('resolves a plugin credential from the map with no db or kek', async () => {
+		const client = buildCorsairClient([plugin], {
+			database: undefined,
+			kek: undefined,
+			tenantId: 't1',
+			credentialMap: { testkey: { api_key: 'sekret' } },
+		});
+
+		const keys = (
+			client as unknown as Record<
+				string,
+				{ keys: { get_api_key(): Promise<string> } }
+			>
+		).testkey.keys;
+		expect(await keys.get_api_key()).toBe('sekret');
+	});
+
+	it('carries no internal config to leak (no kek, no database)', async () => {
+		const client = buildCorsairClient([plugin], {
+			database: undefined,
+			kek: undefined,
+			tenantId: 't1',
+			credentialMap: { testkey: { api_key: 'sekret' } },
+		});
+
+		expect(
+			(client as Record<symbol, unknown>)[Symbol.for('corsair:internal')],
+		).toBeUndefined();
 	});
 });
