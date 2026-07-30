@@ -20,6 +20,16 @@ export type DatabricksWebhookPayload = z.infer<
 
 export type DatabricksWebhookOutputs = Record<string, never>;
 
+/**
+ * Webhook request with explicit raw-body provenance.
+ * Set `rawBodyPreserved` only when `rawBody` is the original inbound bytes
+ * (not JSON.stringify of a parsed object).
+ */
+export type DatabricksWebhookRequest =
+	WebhookRequest<DatabricksWebhookPayload> & {
+		rawBodyPreserved?: boolean;
+	};
+
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
@@ -38,29 +48,6 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-/**
- * Corsair may set rawBody = JSON.stringify(parsedBody) when the inbound body
- * was already an object. Content-Length is the original wire size, so a
- * mismatch (or missing length) means we cannot trust rawBody for HMAC.
- */
-function hasPreservedRawBody(
-	request: Pick<WebhookRequest, 'rawBody' | 'headers'>,
-): boolean {
-	if (typeof request.rawBody !== 'string') {
-		return false;
-	}
-	const header = request.headers['content-length'];
-	const contentLength = Array.isArray(header) ? header[0] : header;
-	if (contentLength == null || contentLength === '') {
-		return false;
-	}
-	const expected = Number(contentLength);
-	if (!Number.isFinite(expected)) {
-		return false;
-	}
-	return Buffer.byteLength(request.rawBody, 'utf8') === expected;
-}
-
 export function createDatabricksMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
@@ -71,7 +58,7 @@ export function createDatabricksMatch(
 }
 
 export function verifyDatabricksWebhookSignature(
-	request: WebhookRequest<DatabricksWebhookPayload>,
+	request: DatabricksWebhookRequest,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
@@ -86,14 +73,19 @@ export function verifyDatabricksWebhookSignature(
 		return { valid: false, error: 'Missing webhook signature header' };
 	}
 
-	if (!hasPreservedRawBody(request)) {
+	// Do not infer provenance from Content-Length / JSON.stringify equality.
+	// Only verify when the caller explicitly marks the bytes as original.
+	if (
+		request.rawBodyPreserved !== true ||
+		typeof request.rawBody !== 'string'
+	) {
 		return {
 			valid: false,
 			error: 'Missing original raw body for signature verification',
 		};
 	}
 
-	const isValid = verifyHmacSignature(request.rawBody!, secret, signature);
+	const isValid = verifyHmacSignature(request.rawBody, secret, signature);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid webhook signature' };
 	}
