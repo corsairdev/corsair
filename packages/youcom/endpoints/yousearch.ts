@@ -1,12 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeYoucomSearchRequest } from '../client';
 import type { YoucomEndpoints } from '../index';
-import type { YouSearchResponse } from './types';
+import { YouSearchResponseSchema } from './types';
 
 export const youSearch: YoucomEndpoints['youSearch'] = async (ctx, input) => {
-	const response = await makeYoucomSearchRequest<YouSearchResponse>(
-		ctx.key,
-		input,
+	const response = YouSearchResponseSchema.parse(
+		await makeYoucomSearchRequest<unknown>(ctx.key, input),
 	);
 
 	const webResults = response.results.web ?? [];

@@ -128,7 +128,7 @@ export function youcom<const T extends YoucomPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res) return res;
 			}
 
 			throw new AuthMissingError('youcom', 'api_key');
