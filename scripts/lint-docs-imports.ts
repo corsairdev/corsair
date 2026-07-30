@@ -17,6 +17,13 @@ const plugins = new Set(
 
 let hasErrors = false;
 
+type CodeFence = {
+	start: number;
+	end: number;
+	body: string;
+	bodyStart: number;
+};
+
 function lintDocsInDir(dir: string) {
 	const entries = fs.readdirSync(dir, { withFileTypes: true });
 	for (const entry of entries) {
@@ -32,73 +39,188 @@ function lintDocsInDir(dir: string) {
 	}
 }
 
-function lintFile(filePath: string) {
-	const content = fs.readFileSync(filePath, 'utf8');
-	const relativePath = path.relative(process.cwd(), filePath);
+function getCodeFences(content: string): CodeFence[] {
+	const fences: CodeFence[] = [];
+	const fenceRegex = /```[^\n]*\n([\s\S]*?)```/g;
+	let match: RegExpExecArray | null;
+	while ((match = fenceRegex.exec(content)) !== null) {
+		const body = match[1];
+		const openLength = match[0].length - body.length - 3;
+		fences.push({
+			start: match.index,
+			end: match.index + match[0].length,
+			body,
+			bodyStart: match.index + openLength,
+		});
+	}
+	return fences;
+}
 
-	// --- Fix 1: Named imports with block-comment stripping ---
-	// Handles: import { a, b /* comment */ as alias, c } from 'corsair';
-	const namedImportRegex = /import\s+\{([^}]+)\}\s+from\s+['"]corsair['"]/g;
+function fenceContaining(
+	fences: CodeFence[],
+	index: number,
+): CodeFence | undefined {
+	return fences.find((fence) => index >= fence.start && index < fence.end);
+}
+
+function normalizeImportedName(item: string): string {
+	const withoutBlockComments = item.replace(
+		/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g,
+		'',
+	);
+	const beforeAlias = withoutBlockComments.split(/\s+as\s+/)[0] ?? '';
+	return beforeAlias.trim().replace(/^type\s+/, '');
+}
+
+function lineAt(content: string, index: number): number {
+	return content.substring(0, index).split('\n').length;
+}
+
+function reportInvalidNamedImport(
+	relativePath: string,
+	lineNumber: number,
+	invalidImports: string[],
+) {
+	hasErrors = true;
+	console.error(`[ERROR] ${relativePath}:${lineNumber}`);
+	console.error(
+		`  -> Invalid named import from 'corsair': ${invalidImports.join(', ')}`,
+	);
+	console.error(
+		`  -> Fix: Import plugins directly from their respective packages (e.g., import { ${invalidImports[0]} } from '@corsair-dev/${invalidImports[0]}';)`,
+	);
+}
+
+function reportInvalidBindingAccess(
+	relativePath: string,
+	lineNumber: number,
+	bindingName: string,
+	invalidAccesses: string[],
+) {
+	hasErrors = true;
+	console.error(`[ERROR] ${relativePath}:${lineNumber}`);
+	console.error(
+		`  -> Import '${bindingName}' from 'corsair' accesses plugins: ${invalidAccesses.join(', ')}`,
+	);
+	console.error(
+		`  -> Fix: Import plugins directly from their respective packages (e.g., import { ${invalidAccesses[0]} } from '@corsair-dev/${invalidAccesses[0]}';)`,
+	);
+}
+
+function findPluginAccesses(scope: string, bindingName: string): string[] {
+	const accessRegex = new RegExp(`\\b${bindingName}\\.(\\w+)\\b`, 'g');
+	const invalidAccesses: string[] = [];
+	let accessMatch: RegExpExecArray | null;
+	while ((accessMatch = accessRegex.exec(scope)) !== null) {
+		const member = accessMatch[1];
+		if (plugins.has(member) && !invalidAccesses.includes(member)) {
+			invalidAccesses.push(member);
+		}
+	}
+	return invalidAccesses;
+}
+
+function lintNamedImports(content: string, relativePath: string) {
+	const namedImportRegex =
+		/import\s+(?:type\s+)?(?:[\w$]+\s*,\s*)?\{([^}]+)\}\s+from\s+['"]corsair['"]/g;
 
 	let match: RegExpExecArray | null;
 	while ((match = namedImportRegex.exec(content)) !== null) {
 		const importedItems = match[1]
 			.split(',')
-			.map((item) => {
-				// Strip block comments (e.g. /* provider */) before alias splitting
-				const stripped = item.replace(/\/\*[^*]*\*+(?:[^/*][^*]*\*+)*\//g, '');
-				return stripped.split(/\s+as\s+/)[0].trim();
-			})
+			.map(normalizeImportedName)
 			.filter(Boolean);
-
 		const invalidImports = importedItems.filter((item) => plugins.has(item));
-
-		if (invalidImports.length > 0) {
-			hasErrors = true;
-			const lineNumber = content.substring(0, match.index).split('\n').length;
-
-			console.error(`[ERROR] ${relativePath}:${lineNumber}`);
-			console.error(
-				`  -> Invalid named import from 'corsair': ${invalidImports.join(', ')}`,
-			);
-			console.error(
-				`  -> Fix: Import plugins directly from their respective packages (e.g., import { ${invalidImports[0]} } from '@corsair-dev/${invalidImports[0]}';)`,
-			);
-		}
+		if (invalidImports.length === 0) continue;
+		reportInvalidNamedImport(
+			relativePath,
+			lineAt(content, match.index),
+			invalidImports,
+		);
 	}
+}
 
-	// --- Fix 2: Namespace imports (import * as ns from 'corsair') ---
-	// Handles: import * as corsair from 'corsair'; corsair.github(...)
+function lintBindingsInScope(
+	scope: string,
+	scopeAbsoluteStart: number,
+	fullContent: string,
+	relativePath: string,
+) {
 	const namespaceImportRegex =
 		/import\s+\*\s+as\s+(\w+)\s+from\s+['"]corsair['"]/g;
+	const defaultImportRegex =
+		/import\s+(?!type\b)(\w+)\s+from\s+['"]corsair['"]/g;
+
+	const checkBinding = (bindingName: string, matchIndex: number) => {
+		const invalidAccesses = findPluginAccesses(scope, bindingName);
+		if (invalidAccesses.length === 0) return;
+		reportInvalidBindingAccess(
+			relativePath,
+			lineAt(fullContent, scopeAbsoluteStart + matchIndex),
+			bindingName,
+			invalidAccesses,
+		);
+	};
 
 	let nsMatch: RegExpExecArray | null;
-	while ((nsMatch = namespaceImportRegex.exec(content)) !== null) {
-		const nsName = nsMatch[1];
-		const lineNumber = content.substring(0, nsMatch.index).split('\n').length;
+	while ((nsMatch = namespaceImportRegex.exec(scope)) !== null) {
+		checkBinding(nsMatch[1], nsMatch.index);
+	}
 
-		// Scan entire file body for accesses: ns.<pluginName>( or ns.<pluginName>.
-		const accessRegex = new RegExp(`\\b${nsName}\\.(\\w+)\\b`, 'g');
-		let accessMatch: RegExpExecArray | null;
-		const invalidAccesses: string[] = [];
-		while ((accessMatch = accessRegex.exec(content)) !== null) {
-			const member = accessMatch[1];
-			if (plugins.has(member) && !invalidAccesses.includes(member)) {
-				invalidAccesses.push(member);
-			}
-		}
+	let defaultMatch: RegExpExecArray | null;
+	while ((defaultMatch = defaultImportRegex.exec(scope)) !== null) {
+		checkBinding(defaultMatch[1], defaultMatch.index);
+	}
+}
 
-		if (invalidAccesses.length > 0) {
-			hasErrors = true;
-			console.error(`[ERROR] ${relativePath}:${lineNumber}`);
-			console.error(
-				`  -> Namespace import 'import * as ${nsName} from \'corsair\'' accesses plugins: ${invalidAccesses.join(', ')}`,
-			);
-			console.error(
-				`  -> Fix: Import plugins directly from their respective packages (e.g., import { ${invalidAccesses[0]} } from '@corsair-dev/${invalidAccesses[0]}';)`,
+function lintOutOfFenceBindings(
+	content: string,
+	fences: CodeFence[],
+	relativePath: string,
+) {
+	const patterns = [
+		/import\s+\*\s+as\s+(\w+)\s+from\s+['"]corsair['"]/g,
+		/import\s+(?!type\b)(\w+)\s+from\s+['"]corsair['"]/g,
+	];
+
+	for (const regex of patterns) {
+		let match: RegExpExecArray | null;
+		while ((match = regex.exec(content)) !== null) {
+			if (fenceContaining(fences, match.index)) continue;
+
+			const nextFence = fences.find((fence) => fence.start > match!.index);
+			const regionEnd = nextFence ? nextFence.start : content.length;
+			const region = content.slice(match.index, regionEnd);
+			const invalidAccesses = findPluginAccesses(region, match[1]);
+			if (invalidAccesses.length === 0) continue;
+
+			reportInvalidBindingAccess(
+				relativePath,
+				lineAt(content, match.index),
+				match[1],
+				invalidAccesses,
 			);
 		}
 	}
+}
+
+function lintFile(filePath: string) {
+	const content = fs.readFileSync(filePath, 'utf8');
+	const relativePath = path.relative(process.cwd(), filePath);
+	const fences = getCodeFences(content);
+
+	lintNamedImports(content, relativePath);
+
+	if (fences.length === 0) {
+		lintBindingsInScope(content, 0, content, relativePath);
+		return;
+	}
+
+	for (const fence of fences) {
+		lintBindingsInScope(fence.body, fence.bodyStart, content, relativePath);
+	}
+
+	lintOutOfFenceBindings(content, fences, relativePath);
 }
 
 console.log('Linting docs for invalid plugin imports...');
