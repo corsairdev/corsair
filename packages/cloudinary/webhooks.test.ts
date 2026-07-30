@@ -160,7 +160,7 @@ describe('cloudinary webhook handlers', () => {
 			'asset-123',
 			expect.objectContaining({
 				asset_id: 'asset-123',
-				public_id: 'asset-123',
+				public_id: 'new-id',
 				from_public_id: 'old-id',
 				to_public_id: 'new-id',
 			}),

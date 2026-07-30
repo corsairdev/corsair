@@ -62,6 +62,16 @@ function folderEntityId(event: Record<string, unknown>): string | undefined {
 	return undefined;
 }
 
+function resourcePublicId(event: Record<string, unknown>): string | undefined {
+	if (typeof event.public_id === 'string' && event.public_id) {
+		return event.public_id;
+	}
+	if (typeof event.to_public_id === 'string' && event.to_public_id) {
+		return event.to_public_id;
+	}
+	return undefined;
+}
+
 async function handleNotification<T extends Record<string, unknown>>(
 	ctx: CloudinaryContext,
 	request: Parameters<CorsairWebhook<CloudinaryContext, T, T>['handler']>[1],
@@ -101,18 +111,20 @@ async function handleNotification<T extends Record<string, unknown>>(
 		typeof event.asset_id === 'string' && event.asset_id
 			? event.asset_id
 			: undefined;
-	const publicId =
-		typeof event.public_id === 'string' && event.public_id
-			? event.public_id
-			: undefined;
+	const publicId = resourcePublicId(event);
 	// Prefer immutable asset_id for cache keys; public_id is a fallback only.
 	const entityId = assetId ?? publicId;
 
-	if (entityId && options?.syncResource === 'upsert' && ctx.db.resources) {
+	if (
+		entityId &&
+		publicId &&
+		options?.syncResource === 'upsert' &&
+		ctx.db.resources
+	) {
 		await ctx.db.resources.upsertByEntityId(entityId, {
 			...event,
 			asset_id: assetId ?? entityId,
-			public_id: publicId ?? entityId,
+			public_id: publicId,
 		});
 	}
 
