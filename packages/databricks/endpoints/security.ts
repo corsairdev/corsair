@@ -9,7 +9,7 @@ export const createOAuthServicePrincipalSecret: DatabricksEndpoints['createOAuth
 			secret_id: string;
 			secret_value?: string;
 		}>(
-			`accounts/servicePrincipals/${safeEncode(input.service_principal_id)}/credentials/secrets`,
+			`accounts/${safeEncode(input.account_id)}/servicePrincipals/${safeEncode(input.service_principal_id)}/credentials/secrets`,
 			ctx,
 			{ method: 'POST' },
 		);
@@ -76,7 +76,7 @@ export const deleteNotificationDestination: DatabricksEndpoints['deleteNotificat
 export const deleteOAuth2ServicePrincipalSecret: DatabricksEndpoints['deleteOAuth2ServicePrincipalSecret'] =
 	async (ctx, input) => {
 		await makeDatabricksRequest<void>(
-			`accounts/servicePrincipals/${safeEncode(input.service_principal_id)}/credentials/secrets/${safeEncode(input.secret_id)}`,
+			`accounts/${safeEncode(input.account_id)}/servicePrincipals/${safeEncode(input.service_principal_id)}/credentials/secrets/${safeEncode(input.secret_id)}`,
 			ctx,
 			{ method: 'DELETE' },
 		);

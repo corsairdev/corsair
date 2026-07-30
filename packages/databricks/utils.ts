@@ -5,27 +5,45 @@ export function safeEncode(value: string): string {
 	return encodeURIComponent(value);
 }
 
-type AzureServicePrincipalInput = {
+type CredentialLogInput = {
 	azure_service_principal?: {
 		directory_id: string;
 		application_id: string;
 		client_secret: string;
 	};
+	gcp_service_account_key?: {
+		email: string;
+		private_key: string;
+	};
 };
 
-export function redactAzureServicePrincipal<
-	T extends AzureServicePrincipalInput,
->(input: T): T {
-	if (!input.azure_service_principal) {
-		return input;
+/** Strip live secrets before persisting credential create events. */
+export function redactCredentialSecrets<T extends CredentialLogInput>(
+	input: T,
+): T {
+	let next: T = input;
+
+	if (input.azure_service_principal) {
+		next = {
+			...next,
+			azure_service_principal: {
+				...input.azure_service_principal,
+				client_secret: '[redacted]',
+			},
+		};
 	}
-	return {
-		...input,
-		azure_service_principal: {
-			...input.azure_service_principal,
-			client_secret: '[redacted]',
-		},
-	};
+
+	if (input.gcp_service_account_key) {
+		next = {
+			...next,
+			gcp_service_account_key: {
+				...input.gcp_service_account_key,
+				private_key: '[redacted]',
+			},
+		};
+	}
+
+	return next;
 }
 
 function splitCsvRecords(text: string): string[] {

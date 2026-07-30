@@ -419,6 +419,7 @@ export const DatabricksEndpointInputSchemas = {
 
 	// OAuth & Security Settings
 	createOAuthServicePrincipalSecret: z.object({
+		account_id: z.string(),
 		service_principal_id: z.string(),
 	}),
 	createPersonalAccessToken: z.object({
@@ -433,6 +434,7 @@ export const DatabricksEndpointInputSchemas = {
 		id: z.string(),
 	}),
 	deleteOAuth2ServicePrincipalSecret: z.object({
+		account_id: z.string(),
 		service_principal_id: z.string(),
 		secret_id: z.string(),
 	}),

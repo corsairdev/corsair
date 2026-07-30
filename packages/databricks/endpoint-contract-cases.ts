@@ -1108,9 +1108,10 @@ export const endpointContractCases = [
 	{
 		mod: 'Security',
 		fn: 'createOAuthServicePrincipalSecret',
-		endpoint: 'accounts/servicePrincipals/sp-123/credentials/secrets',
+		endpoint: 'accounts/acc-1/servicePrincipals/sp-123/credentials/secrets',
 		method: 'POST',
 		input: {
+			account_id: 'acc-1',
 			service_principal_id: 'sp-123',
 		},
 	},
@@ -1158,9 +1159,11 @@ export const endpointContractCases = [
 	{
 		mod: 'Security',
 		fn: 'deleteOAuth2ServicePrincipalSecret',
-		endpoint: 'accounts/servicePrincipals/sp-123/credentials/secrets/sec-123',
+		endpoint:
+			'accounts/acc-1/servicePrincipals/sp-123/credentials/secrets/sec-123',
 		method: 'DELETE',
 		input: {
+			account_id: 'acc-1',
 			service_principal_id: 'sp-123',
 			secret_id: 'sec-123',
 		},

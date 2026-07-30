@@ -72,7 +72,7 @@ export const createIamUserV2: DatabricksEndpoints['createIamUserV2'] = async (
 	await logEventFromContext(
 		ctx,
 		'databricks.iam.create_user_v2',
-		{ userName: input.userName },
+		{ id: response.id },
 		'completed',
 	);
 	return response;
