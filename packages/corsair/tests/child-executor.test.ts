@@ -7,7 +7,7 @@ import {
 	generateDEK,
 } from '../core/auth/encryption';
 import type { RunResultPayload } from '../hub/contracts/tunnel';
-import { createChildProcessExecutor as fromTunnel } from '../tunnel/index';
+import { createChildProcessExecutor as fromTunnel } from '../tunnel';
 import { createChildProcessExecutor } from '../workflows/child-executor';
 import { createTestDatabase } from './setup-db';
 

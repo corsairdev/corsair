@@ -7,6 +7,8 @@ export type {
 export {
 	applyPermissionDecision,
 	type BrowserDeliveryPayload,
+	type ChildProcessExecutorConfig,
+	createChildProcessExecutor,
 	isAuthCredentialsBrowserDelivery,
 	isByoOAuthBrowserDelivery,
 	isManagedBrowserDelivery,
@@ -19,6 +21,7 @@ export {
 	resolveAccountFromWebhookLink,
 	resolveTenantFromWebhookLink,
 	resolveTenantIdFromWebhookLink,
+	runWorkflowChild,
 	setWebhookTenantLink,
 	type TunnelAck,
 	type TunnelEnvelope,
