@@ -312,6 +312,8 @@ export type ExecuteWorkflowRunInput = {
 	memoizedSteps?: Record<string, { output: unknown }>;
 	/** Max run time (sync + wall-clock) in ms. Defaults to {@link WORKFLOW_TIMEOUT_MS}. */
 	timeoutMs?: number;
+	/** Tenant this run belongs to. Used by out-of-process executors to scope credential decryption. */
+	tenantId?: string;
 };
 
 /**
