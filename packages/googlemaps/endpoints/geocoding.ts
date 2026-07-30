@@ -68,6 +68,10 @@ export const geocodeAddressWithQuery: GoogleMapsEndpoints['geocodeAddressWithQue
 				{
 					method: 'POST',
 					baseUrl: 'https://places.googleapis.com',
+					headers: {
+						'X-Goog-FieldMask':
+							'places.formattedAddress,places.location,places.addressComponents,places.id',
+					},
 					body: {
 						textQuery: validatedInput.address,
 						regionCode: validatedInput.regionCode,

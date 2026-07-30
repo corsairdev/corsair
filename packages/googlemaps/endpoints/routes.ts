@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeGoogleMapsRequest } from '../client';
+import { isGoogleMapsOAuth, makeGoogleMapsRequest } from '../client';
 import type { GoogleMapsEndpoints } from '../index';
 import type {
 	ComputeRouteMatrixResponse,
@@ -31,6 +31,11 @@ function toRoutesTravelMode(mode?: string): string {
 	};
 	return map[mode.toLowerCase()] ?? mode.toUpperCase();
 }
+
+const ROUTES_FIELD_MASK =
+	'routes.duration,routes.distanceMeters,routes.legs,routes.polyline.encodedPolyline';
+const ROUTE_MATRIX_FIELD_MASK =
+	'originIndex,destinationIndex,condition,distanceMeters,duration,status';
 
 function toRouteWaypoint(location: string): { address: string } {
 	return { address: location };
@@ -106,6 +111,7 @@ export const computeRouteMatrix: GoogleMapsEndpoints['computeRouteMatrix'] =
 			{
 				method: 'POST',
 				baseUrl: 'https://routes.googleapis.com',
+				headers: { 'X-Goog-FieldMask': ROUTE_MATRIX_FIELD_MASK },
 				body: validatedInput as Record<string, unknown>,
 			},
 		);
@@ -130,9 +136,7 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 
 	let rawResponse: DistanceMatrixResponse;
 
-	const isOAuth =
-		(ctx as any).authType === 'oauth_2' ||
-		(ctx as any).options?.authType === 'oauth_2';
+	const isOAuth = isGoogleMapsOAuth(ctx);
 
 	if (isOAuth) {
 		const originsList = Array.isArray(validatedInput.origins)
@@ -154,6 +158,7 @@ export const distanceMatrix: GoogleMapsEndpoints['distanceMatrix'] = async (
 			{
 				method: 'POST',
 				baseUrl: 'https://routes.googleapis.com',
+				headers: { 'X-Goog-FieldMask': ROUTE_MATRIX_FIELD_MASK },
 				body: matrixBody,
 			},
 		);
@@ -211,9 +216,7 @@ export const getDirection: GoogleMapsEndpoints['getDirection'] = async (
 
 	let rawResponse: GetDirectionResponse;
 
-	const isOAuth =
-		(ctx as any).authType === 'oauth_2' ||
-		(ctx as any).options?.authType === 'oauth_2';
+	const isOAuth = isGoogleMapsOAuth(ctx);
 
 	if (isOAuth) {
 		const routeBody: Record<string, unknown> = {
@@ -243,6 +246,7 @@ export const getDirection: GoogleMapsEndpoints['getDirection'] = async (
 			{
 				method: 'POST',
 				baseUrl: 'https://routes.googleapis.com',
+				headers: { 'X-Goog-FieldMask': ROUTES_FIELD_MASK },
 				body: routeBody,
 			},
 		);
@@ -295,6 +299,7 @@ export const getRoute: GoogleMapsEndpoints['getRoute'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			baseUrl: 'https://routes.googleapis.com',
+			headers: { 'X-Goog-FieldMask': ROUTES_FIELD_MASK },
 			body: validatedInput as Record<string, unknown>,
 		},
 	);

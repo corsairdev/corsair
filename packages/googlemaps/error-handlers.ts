@@ -22,7 +22,7 @@ export const errorHandlers = {
 				error instanceof GoogleMapsAPIError &&
 				error.retryAfter !== undefined
 			) {
-				retryAfterMs = error.retryAfter;
+				retryAfterMs = error.retryAfter * 1000;
 			} else if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}

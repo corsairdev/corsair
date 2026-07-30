@@ -101,6 +101,11 @@ export const EmbedMapInputSchema = z.object({
 	center: z.string().optional().describe('Center lat,lng.'),
 	zoom: z.number().optional().describe('Zoom level.'),
 	maptype: z.string().optional().describe('roadmap or satellite.'),
+	location: z
+		.string()
+		.optional()
+		.describe('Lat,lng location for streetview mode.'),
+	pano: z.string().optional().describe('Panorama ID for streetview mode.'),
 });
 
 export const EmbedMapResponseSchema = z
@@ -133,9 +138,7 @@ export const GeocodeAddressWithQueryInputSchema = z.object({
 
 export const GeocodeAddressWithQueryResponseSchema = z
 	.object({
-		formattedAddress: z.string().optional(),
-		location: z.record(z.string(), z.unknown()).optional(),
-		results: z.array(z.record(z.string(), z.unknown())).optional(),
+		places: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
 
@@ -147,8 +150,8 @@ export const GeocodeDestinationsInputSchema = z.object({
 
 export const GeocodeDestinationsResponseSchema = z
 	.object({
-		destination: z.record(z.string(), z.unknown()).optional(),
-		places: z.array(z.record(z.string(), z.unknown())).optional(),
+		results: z.array(z.record(z.string(), z.unknown())).optional(),
+		status: z.string().optional(),
 	})
 	.passthrough();
 
@@ -347,8 +350,12 @@ export const RenderAerialVideoInputSchema = z.object({
 
 export const RenderAerialVideoResponseSchema = z
 	.object({
-		id: z.string().describe('Video ID to monitor with lookupAerialVideo.'),
 		state: z.string().optional(),
+		metadata: z
+			.object({
+				videoId: z.string(),
+			})
+			.optional(),
 	})
 	.passthrough();
 

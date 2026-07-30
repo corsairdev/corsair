@@ -7,12 +7,7 @@ describe('GoogleMaps schema', () => {
 	});
 
 	it('declares an entities map', () => {
-		expect(typeof GoogleMapsSchema.entities).toBe('object');
-		expect(GoogleMapsSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(GoogleMapsSchema.entities))).toBe(true);
-		for (const entity of Object.values(GoogleMapsSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(GoogleMapsSchema.entities).toEqual({});
 	});
 });
 

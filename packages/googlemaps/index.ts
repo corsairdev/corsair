@@ -280,7 +280,7 @@ const googleMapsEndpointMeta = {
 	'geocoding.geocodeAddress': {
 		riskLevel: 'read',
 		description:
-			"DEPRECATED: Legacy API to convert street addresses into geographic coordinates (latitude and longitude). This API works best with API key authentication. For OAuth connections without an API key, you may need to provide the 'key' parameter or use the newer 'Text Search' action instead. Use when you need to geocode an address or location to get its precise latitude/longitude coordinates.",
+			'DEPRECATED: Legacy API to convert street addresses into geographic coordinates (latitude and longitude). This API works best with API key authentication. For OAuth connections without an API key, use geocoding.geocodeAddressWithQuery or geocoding.geocodingApi instead. Use when you need to geocode an address or location to get its precise latitude/longitude coordinates.',
 	},
 	'geocoding.geocodeAddressWithQuery': {
 		riskLevel: 'read',

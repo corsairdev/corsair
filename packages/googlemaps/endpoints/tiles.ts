@@ -105,6 +105,12 @@ export const embedMap: GoogleMapsEndpoints['embedMap'] = async (ctx, input) => {
 			queryStr += `&origin=${encodeURIComponent(validatedInput.origin)}`;
 		if (validatedInput.destination)
 			queryStr += `&destination=${encodeURIComponent(validatedInput.destination)}`;
+	} else if (validatedInput.mode === 'streetview') {
+		if (validatedInput.pano) {
+			queryStr += `&pano=${encodeURIComponent(validatedInput.pano)}`;
+		} else if (validatedInput.location) {
+			queryStr += `&location=${encodeURIComponent(validatedInput.location)}`;
+		}
 	} else if (validatedInput.q) {
 		queryStr = `&q=${encodeURIComponent(validatedInput.q)}`;
 	}

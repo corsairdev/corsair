@@ -17,7 +17,7 @@ export const lookupAerialVideo: GoogleMapsEndpoints['lookupAerialVideo'] =
 		const validatedInput = LookupAerialVideoInputSchema.parse(input);
 
 		const rawResponse = await makeGoogleMapsRequest<LookupAerialVideoResponse>(
-			'/v1/videos:lookup',
+			'/v1/videos:lookupVideoMetadata',
 			ctx,
 			{
 				method: 'GET',
@@ -46,7 +46,7 @@ export const renderAerialVideo: GoogleMapsEndpoints['renderAerialVideo'] =
 		const validatedInput = RenderAerialVideoInputSchema.parse(input);
 
 		const rawResponse = await makeGoogleMapsRequest<RenderAerialVideoResponse>(
-			'/v1/videos:render',
+			'/v1/videos:renderVideo',
 			ctx,
 			{
 				method: 'POST',

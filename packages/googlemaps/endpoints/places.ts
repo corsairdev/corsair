@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeGoogleMapsRequest } from '../client';
+import { makeGoogleMapsRequest, resolvePlacePhotoUrl } from '../client';
 import type { GoogleMapsEndpoints } from '../index';
 import type {
 	AutocompleteResponse,
@@ -57,10 +57,11 @@ export const getPlaceDetails: GoogleMapsEndpoints['getPlaceDetails'] = async (
 		? validatedInput.place_id
 		: `places/${validatedInput.place_id}`;
 
-	const headers: Record<string, string> = {};
-	if (validatedInput.fields) {
-		headers['X-Goog-FieldMask'] = validatedInput.fields;
-	}
+	const headers: Record<string, string> = {
+		'X-Goog-FieldMask':
+			validatedInput.fields ??
+			'id,formattedAddress,location,displayName,photos',
+	};
 
 	const rawResponse = await makeGoogleMapsRequest<GetPlaceDetailsResponse>(
 		`/v1/${placePath}`,
@@ -93,18 +94,15 @@ export const getPlacePhoto: GoogleMapsEndpoints['getPlacePhoto'] = async (
 ) => {
 	const validatedInput = GetPlacePhotoInputSchema.parse(input);
 	const { photo_reference, maxwidth, maxheight } = validatedInput;
-	const isApiKey =
-		(ctx as any).authType === 'api_key' ||
-		(ctx as any).options?.authType === 'api_key';
-	let photoUrl: string;
-	const keyParam =
-		isApiKey && ctx.key ? `&key=${encodeURIComponent(ctx.key)}` : '';
 
+	let photoRequestUrl: string;
 	if (photo_reference.startsWith('places/')) {
-		photoUrl = `https://places.googleapis.com/v1/${photo_reference}/media?maxHeightPx=${maxheight ?? 400}&maxWidthPx=${maxwidth ?? 400}${keyParam}`;
+		photoRequestUrl = `https://places.googleapis.com/v1/${photo_reference}/media?maxHeightPx=${maxheight ?? 400}&maxWidthPx=${maxwidth ?? 400}`;
 	} else {
-		photoUrl = `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${encodeURIComponent(photo_reference)}&maxwidth=${maxwidth ?? 400}${maxheight ? `&maxheight=${maxheight}` : ''}${keyParam}`;
+		photoRequestUrl = `https://maps.googleapis.com/maps/api/place/photo?photo_reference=${encodeURIComponent(photo_reference)}&maxwidth=${maxwidth ?? 400}${maxheight ? `&maxheight=${maxheight}` : ''}`;
 	}
+
+	const photoUrl = await resolvePlacePhotoUrl(ctx, photoRequestUrl);
 
 	const response = GetPlacePhotoResponseSchema.parse({
 		photoUrl,
@@ -132,6 +130,10 @@ export const nearbySearch: GoogleMapsEndpoints['nearbySearch'] = async (
 		{
 			method: 'POST',
 			baseUrl: 'https://places.googleapis.com',
+			headers: {
+				'X-Goog-FieldMask':
+					'places.displayName,places.formattedAddress,places.location,places.id',
+			},
 			body: validatedInput as Record<string, unknown>,
 		},
 	);
@@ -160,6 +162,10 @@ export const textSearch: GoogleMapsEndpoints['textSearch'] = async (
 		{
 			method: 'POST',
 			baseUrl: 'https://places.googleapis.com',
+			headers: {
+				'X-Goog-FieldMask':
+					'places.displayName,places.formattedAddress,places.location,places.id',
+			},
 			body: validatedInput as Record<string, unknown>,
 		},
 	);

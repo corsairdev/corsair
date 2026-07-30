@@ -71,25 +71,48 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(res.formattedAddress).toBe('Sydney NSW, Australia');
 	});
 
-	it('places.getPlacePhoto generates authenticated place photo URL', async () => {
+	it('places.getPlacePhoto resolves photo without exposing credentials', async () => {
+		const fetchMock = jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({
+					photoUri: 'https://lh3.googleusercontent.com/legacy-photo.jpg',
+				}),
+			} as Response)
+			.mockResolvedValueOnce({
+				ok: true,
+				headers: new Headers({ 'content-type': 'image/jpeg' }),
+				arrayBuffer: async () => Uint8Array.from([1, 2, 3]).buffer,
+			} as Response)
+			.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({
+					photoUri: 'https://lh3.googleusercontent.com/oauth-photo.jpg',
+				}),
+			} as Response);
+
 		const plugin = googlemaps();
+
 		const res = await plugin.endpoints!.places.getPlacePhoto(dummyCtx, {
 			photo_reference: 'ref_12345',
 			maxwidth: 400,
 		});
+		expect(res.photoUrl).toBe(
+			'https://lh3.googleusercontent.com/legacy-photo.jpg',
+		);
+		expect(res.photoUrl).not.toContain('key=');
+		expect(fetchMock.mock.calls[0]?.[1]?.headers).toEqual(
+			expect.objectContaining({ 'X-Goog-Api-Key': 'test_key' }),
+		);
 
-		expect(res.photoUrl).toContain('ref_12345');
-		expect(res.photoUrl).toContain('key=test_key');
-
-		// Places API (New) resource names also require key for api_key auth
 		const resNew = await plugin.endpoints!.places.getPlacePhoto(dummyCtx, {
 			photo_reference: 'places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/Aap_uEA7',
 			maxwidth: 400,
 		});
-		expect(resNew.photoUrl).toContain('places.googleapis.com/v1/places/');
-		expect(resNew.photoUrl).toContain('key=test_key');
+		expect(resNew.photoUrl).toMatch(/^data:image\/jpeg;base64,/);
+		expect(resNew.photoUrl).not.toContain('key=');
 
-		// OAuth mode: should not expose bearer token in URL query string
 		const resOAuth = await plugin.endpoints!.places.getPlacePhoto(
 			dummyOAuthCtx,
 			{
@@ -97,8 +120,13 @@ describe('Google Maps Plugin API Tests', () => {
 				maxwidth: 400,
 			},
 		);
-
+		expect(resOAuth.photoUrl).toBe(
+			'https://lh3.googleusercontent.com/oauth-photo.jpg',
+		);
 		expect(resOAuth.photoUrl).not.toContain('key=');
+		expect(resOAuth.photoUrl).not.toContain(dummyOAuthCtx.key);
+
+		fetchMock.mockRestore();
 	});
 
 	it('places.nearbySearch searches places nearby', async () => {
@@ -188,11 +216,11 @@ describe('Google Maps Plugin API Tests', () => {
 		// OAuth multi-origin: elements grouped by originIndex into separate rows
 		mockedMakeRequest.mockResolvedValueOnce([
 			{
-				originIndex: 0,
-				destinationIndex: 0,
+				originIndex: 1,
+				destinationIndex: 1,
 				condition: 'ROUTE_EXISTS',
-				distanceMeters: 1000,
-				duration: '120s',
+				distanceMeters: 4000,
+				duration: '480s',
 			},
 			{
 				originIndex: 0,
@@ -209,11 +237,11 @@ describe('Google Maps Plugin API Tests', () => {
 				duration: '360s',
 			},
 			{
-				originIndex: 1,
-				destinationIndex: 1,
+				originIndex: 0,
+				destinationIndex: 0,
 				condition: 'ROUTE_EXISTS',
-				distanceMeters: 4000,
-				duration: '480s',
+				distanceMeters: 1000,
+				duration: '120s',
 			},
 		]);
 		const resMultiOrigin = await plugin.endpoints!.routes.distanceMatrix(
@@ -345,7 +373,7 @@ describe('Google Maps Plugin API Tests', () => {
 			},
 		);
 
-		expect(res).toBeDefined();
+		expect(res.places).toBeDefined();
 	});
 
 	it('geocoding.geocodeDestinations looks up destination info', async () => {
@@ -482,29 +510,56 @@ describe('Google Maps Plugin API Tests', () => {
 	it('aerial.lookupAerialVideo looks up aerial view video', async () => {
 		const plugin = googlemaps();
 		mockedMakeRequest.mockResolvedValueOnce({
-			id: 'video_123',
 			state: 'ACTIVE',
+			metadata: { videoId: 'video_123' },
 		});
 
 		const res = await plugin.endpoints!.aerial.lookupAerialVideo(dummyCtx, {
 			videoId: 'video_123',
 		});
 
-		expect(res.id).toBe('video_123');
+		expect(mockedMakeRequest).toHaveBeenCalledWith(
+			'/v1/videos:lookupVideoMetadata',
+			dummyCtx,
+			expect.objectContaining({ method: 'GET' }),
+		);
+		expect(res.state).toBe('ACTIVE');
 	});
 
-	it('aerial.renderAerialVideo starts rendering aerial view video', async () => {
+	it('aerial.renderAerialVideo starts rendering and supports polling lookup', async () => {
 		const plugin = googlemaps();
 		mockedMakeRequest.mockResolvedValueOnce({
-			id: 'video_id_999',
 			state: 'PROCESSING',
+			metadata: { videoId: 'video_id_999' },
 		});
 
 		const res = await plugin.endpoints!.aerial.renderAerialVideo(dummyCtx, {
 			address: '1600 Amphitheatre Pkwy, Mountain View, CA',
 		});
 
-		expect(res.id).toBe('video_id_999');
+		expect(mockedMakeRequest).toHaveBeenCalledWith(
+			'/v1/videos:renderVideo',
+			dummyCtx,
+			expect.objectContaining({ method: 'POST' }),
+		);
+		expect(res.metadata?.videoId).toBe('video_id_999');
+		expect(res.state).toBe('PROCESSING');
+
+		mockedMakeRequest.mockResolvedValueOnce({
+			state: 'ACTIVE',
+			metadata: { videoId: 'video_id_999' },
+		});
+		const lookup = await plugin.endpoints!.aerial.lookupAerialVideo(dummyCtx, {
+			videoId: res.metadata!.videoId,
+		});
+		expect(lookup.state).toBe('ACTIVE');
+		expect(mockedMakeRequest).toHaveBeenLastCalledWith(
+			'/v1/videos:lookupVideoMetadata',
+			dummyCtx,
+			expect.objectContaining({
+				query: expect.objectContaining({ videoId: 'video_id_999' }),
+			}),
+		);
 	});
 
 	it('preserves status code and retryAfter on GoogleMapsAPIError', () => {

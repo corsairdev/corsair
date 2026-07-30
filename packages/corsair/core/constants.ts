@@ -141,7 +141,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
-	googlemaps: 'GoogleMaps',
+	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
