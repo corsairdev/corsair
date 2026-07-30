@@ -81,14 +81,22 @@ const RemoteBatchItemSchema = z
 	.object({
 		RequestId: z.number(),
 		URL: z.string(),
-		Verb: z.string(),
+		Verb: z.enum(['PUT', 'POST', 'GET', 'DELETE']),
 	})
 	.passthrough();
 
 const RemoteBatchInputSchema = z.object({
 	// batch is an ordered list of remote calls; each item must identify itself
 	// (RequestId), target a route (URL), and pick an HTTP verb (Verb).
-	requests: z.array(RemoteBatchItemSchema),
+	requests: z
+		.array(RemoteBatchItemSchema)
+		.refine(
+			(items) => {
+				const ids = items.map((item) => item.RequestId);
+				return new Set(ids).size === ids.length;
+			},
+			{ message: 'Duplicate RequestId values are not allowed' },
+		),
 });
 export type RemoteBatchInput = z.infer<typeof RemoteBatchInputSchema>;
 
