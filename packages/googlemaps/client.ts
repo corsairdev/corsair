@@ -193,10 +193,17 @@ export async function makeGoogleMapsRequest<T>(
 
 		const retryHeader =
 			err?.headers?.['retry-after'] ?? err?.response?.headers?.['retry-after'];
-		const retryAfter =
-			err?.retryAfter ??
-			(retryHeader ? parseInt(String(retryHeader), 10) : undefined);
+		let retryAfterMs: number | undefined;
+		if (err?.retryAfter !== undefined) {
+			// corsair/http ApiError already exposes retryAfter in milliseconds.
+			retryAfterMs = err.retryAfter;
+		} else if (retryHeader) {
+			const seconds = parseInt(String(retryHeader), 10);
+			if (!Number.isNaN(seconds)) {
+				retryAfterMs = seconds * 1000;
+			}
+		}
 
-		throw new GoogleMapsAPIError(message, status, code, retryAfter);
+		throw new GoogleMapsAPIError(message, status, code, retryAfterMs);
 	}
 }

@@ -601,9 +601,21 @@ describe('Google Maps Plugin API Tests', () => {
 			'Resource exhausted',
 			429,
 			'RESOURCE_EXHAUSTED',
-			10,
+			5000,
 		);
 		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(10);
+		expect(error.retryAfter).toBe(5000);
+	});
+
+	it('rate limit handler does not double-convert retryAfter', async () => {
+		const { errorHandlers } = await import('./error-handlers');
+		const error = new clientModule.GoogleMapsAPIError(
+			'Rate limited',
+			429,
+			'RESOURCE_EXHAUSTED',
+			5000,
+		);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
+		expect(result.headersRetryAfterMs).toBe(5000);
 	});
 });
