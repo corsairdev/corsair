@@ -1,6 +1,14 @@
 import { fork } from 'node:child_process';
 import { join } from 'node:path';
+import { CORSAIR_INTERNAL } from '../core';
+import {
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+} from '../core/auth/encryption';
 import type { RunResultPayload } from '../hub/contracts/tunnel';
+import { createChildProcessExecutor } from '../workflows/child-executor';
+import { createTestDatabase } from './setup-db';
 
 const FIXTURE = join(__dirname, 'workflow-child-fixture.ts');
 
@@ -66,4 +74,92 @@ describe('runWorkflowChild (forked)', () => {
 		expect(result.status).toBe('completed');
 		expect(result.steps[0].output).toBe('no-internal');
 	});
+});
+
+const KEK = 'test-kek-with-at-least-32-characters!!';
+
+async function seedApiKeyAccount(
+	database: ReturnType<typeof createTestDatabase>['database'],
+	apiKey: string,
+) {
+	const now = new Date();
+	const dek = generateDEK();
+	const encryptedDek = await encryptDEK(dek, KEK);
+	await database.db
+		.insertInto('corsair_integrations')
+		.values({
+			id: 'integration-testkey',
+			created_at: now,
+			updated_at: now,
+			name: 'testkey',
+			config: encryptConfig({}, dek),
+			dek: encryptedDek,
+		})
+		.execute();
+	await database.db
+		.insertInto('corsair_accounts')
+		.values({
+			id: 'account-t1',
+			created_at: now,
+			updated_at: now,
+			tenant_id: 't1',
+			integration_id: 'integration-testkey',
+			config: encryptConfig({ api_key: apiKey }, dek),
+			dek: encryptedDek,
+		})
+		.execute();
+}
+
+function rootCorsair(
+	database: ReturnType<typeof createTestDatabase>['database'],
+) {
+	return {
+		[CORSAIR_INTERNAL]: {
+			plugins: [{ id: 'testkey', options: { authType: 'api_key' } }],
+			database,
+			kek: KEK,
+			multiTenancy: true,
+		},
+	};
+}
+
+const executor = createChildProcessExecutor({
+	childModulePath: join(__dirname, 'workflow-child-fixture.ts'),
+	execArgv: ['--import', 'tsx'],
+});
+
+describe('createChildProcessExecutor', () => {
+	it('decrypts in the parent and runs against real creds in the child', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedApiKeyAccount(database, 'vault-secret');
+			const result = await executor.run({
+				corsair: rootCorsair(database),
+				code: "module.exports.main = async (corsair, payload, step) => { await step('readkey', async () => corsair.testkey.keys.get_api_key()); };",
+				payload: null,
+				tenantId: 't1',
+			});
+			expect(result.status).toBe('completed');
+			expect(result.steps[0].output).toBe('vault-secret');
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('kills a runaway workflow and reports failure without hanging', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedApiKeyAccount(database, 'vault-secret');
+			const result = await executor.run({
+				corsair: rootCorsair(database),
+				code: 'module.exports.main = async () => { while (true) {} };',
+				payload: null,
+				tenantId: 't1',
+				timeoutMs: 500,
+			});
+			expect(result.status).toBe('failed');
+		} finally {
+			cleanup();
+		}
+	}, 15000);
 });
