@@ -12,7 +12,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import { EmailReputation, EmailValidation, Iban, Vat } from './endpoints';
 import type {
 	AbstractEndpointInputs,
@@ -239,20 +238,30 @@ export function abstract<const T extends AbstractPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AbstractKeyBuilderContext, source) => {
-			const authType = ctx.authType;
-
-			// Direct key from options takes priority
+			// Direct shared key from options takes priority.
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			// Retrieve from key manager
-			if (source === 'endpoint' && authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+			// This resolves the shared *fallback* key only — every endpoint
+			// resolves its own dedicated per-product key first (see
+			// endpoints/*.ts) and only falls back to this value if unset.
+			// Accounts that only ever configure dedicated per-product keys
+			// (a fully valid, documented setup) may have no base api_key
+			// credential and no DEK at all, which makes get_api_key() throw
+			// rather than return null — that must not abort requests that
+			// don't need the shared key in the first place, so treat it the
+			// same as "no shared key configured".
+			if (source === 'endpoint') {
+				try {
+					const res = await ctx.keys.get_api_key();
+					return res ?? '';
+				} catch {
+					return '';
+				}
 			}
 
-			throw new AuthMissingError('abstract', 'api_key');
+			return '';
 		},
 	} satisfies InternalAbstractPlugin;
 }

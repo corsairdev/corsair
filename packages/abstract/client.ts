@@ -53,6 +53,36 @@ export const ABSTRACT_API_HOSTS = {
 export type AbstractAPIHost = keyof typeof ABSTRACT_API_HOSTS;
 
 /**
+ * Redacts an email address for event logs (`logEventFromContext` persists
+ * its payload to `corsair_events`) — keeps the first character and domain
+ * for debugging/correlation without storing the full address in plaintext.
+ */
+export function redactEmail(email: string): string {
+	const atIndex = email.indexOf('@');
+	if (atIndex <= 0) return '***';
+	return `${email[0]}***${email.slice(atIndex)}`;
+}
+
+/**
+ * Safely reads a stored per-product key from the account key manager.
+ *
+ * `ctx.keys.get_*` throws (rather than returning null) when the account has
+ * no DEK at all — a fully valid state for accounts that only ever configure
+ * dedicated keys via plugin options and never touch the key manager. That
+ * must resolve to "no stored key", not abort the request.
+ */
+export async function tryGetStoredKey(
+	getter: () => Promise<string | null | undefined>,
+): Promise<string | undefined> {
+	try {
+		const value = await getter();
+		return value ?? undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Performs a request against a given Abstract API product.
  *
  * Auth: API key passed as the `api_key` query parameter (the only supported

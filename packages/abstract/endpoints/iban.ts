@@ -1,7 +1,8 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAbstractRequest } from '../client';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { makeAbstractRequest, tryGetStoredKey } from '../client';
 import type { AbstractEndpoints } from '../index';
 import type { AbstractEndpointOutputs } from './types';
+import { IbanValidateResponseSchema } from './types';
 
 /**
  * Validate the format and country code of an IBAN number. Use after
@@ -15,15 +16,25 @@ export const validate: AbstractEndpoints['ibanValidate'] = async (
 	input,
 ) => {
 	const apiKey =
-		ctx.options.ibanApiKey ?? (await ctx.keys.get_iban_api_key()) ?? ctx.key;
+		ctx.options.ibanApiKey ??
+		(await tryGetStoredKey(() => ctx.keys.get_iban_api_key())) ??
+		ctx.key;
 
-	const response = await makeAbstractRequest<
+	if (!apiKey) {
+		throw new AuthMissingError('abstract', 'api_key');
+	}
+
+	const rawResponse = await makeAbstractRequest<
 		AbstractEndpointOutputs['ibanValidate']
 	>('ibanValidation', '', apiKey, {
 		query: {
 			iban: input.iban,
 		},
 	});
+
+	// Abstract's response shape isn't guaranteed to match our types at
+	// compile time — validate it at runtime before trusting or persisting it.
+	const response = IbanValidateResponseSchema.parse(rawResponse);
 
 	if (ctx.db.ibanValidations) {
 		try {

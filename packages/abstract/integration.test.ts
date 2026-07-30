@@ -33,10 +33,13 @@ async function createAbstractClient() {
 		kek: process.env.CORSAIR_KEK!,
 	});
 
-	// keyBuilder always resolves the base ctx.key up front (even though none
-	// of the endpoints below end up using it, since each resolves its own
-	// per-product key first) — it just needs a DEK to exist on the account.
-	await corsair.abstract.keys.issue_new_dek();
+	// Deliberately no issue_new_dek() / set_api_key() call here — this is a
+	// dedicated-key-only setup (options only, no shared key, no DEK ever
+	// issued on the account) and must work without one. keyBuilder used to
+	// call ctx.keys.get_api_key() unconditionally, which throws "No DEK
+	// found" when the account was never initialized this way, aborting
+	// every request even though none of these endpoints touch the shared
+	// key at all.
 
 	return { corsair, testDb };
 }
@@ -139,6 +142,25 @@ describe('Abstract plugin integration', () => {
 		);
 		expect(fromDb).not.toBeNull();
 		expect(fromDb?.data.isValid).toBe(result.is_valid);
+
+		testDb.cleanup();
+	});
+
+	it('fails fast with AuthMissingError when no key is configured anywhere, instead of calling Abstract with an empty key', async () => {
+		// No env keys needed — this never reaches the network. No plugin
+		// options, no DEK issued, no key manager value set anywhere.
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'abstract', 'default');
+
+		const corsair = createCorsair({
+			plugins: [abstract({})],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+
+		await expect(
+			corsair.abstract.api.vat.getCategories({ countryCode: 'DE' }),
+		).rejects.toThrow(/auth-missing/);
 
 		testDb.cleanup();
 	});

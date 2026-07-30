@@ -1,7 +1,8 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAbstractRequest } from '../client';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { makeAbstractRequest, tryGetStoredKey } from '../client';
 import type { AbstractEndpoints } from '../index';
 import type { AbstractEndpointOutputs } from './types';
+import { VatGetCategoriesResponseSchema } from './types';
 
 /**
  * Retrieve VAT rate categories for a specific country, including standard,
@@ -16,15 +17,25 @@ export const getCategories: AbstractEndpoints['vatGetCategories'] = async (
 	input,
 ) => {
 	const apiKey =
-		ctx.options.vatApiKey ?? (await ctx.keys.get_vat_api_key()) ?? ctx.key;
+		ctx.options.vatApiKey ??
+		(await tryGetStoredKey(() => ctx.keys.get_vat_api_key())) ??
+		ctx.key;
 
-	const response = await makeAbstractRequest<
+	if (!apiKey) {
+		throw new AuthMissingError('abstract', 'api_key');
+	}
+
+	const rawResponse = await makeAbstractRequest<
 		AbstractEndpointOutputs['vatGetCategories']
 	>('vat', 'categories', apiKey, {
 		query: {
 			country_code: input.countryCode,
 		},
 	});
+
+	// Abstract's response shape isn't guaranteed to match our types at
+	// compile time — validate it at runtime before trusting or persisting it.
+	const response = VatGetCategoriesResponseSchema.parse(rawResponse);
 
 	if (ctx.db.vatCategories) {
 		try {

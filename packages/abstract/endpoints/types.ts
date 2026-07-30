@@ -133,7 +133,7 @@ export const VatGetCategoriesInputSchema = z.object({
 	/** ISO 3166-1 alpha-2 country code, e.g. "DE" */
 	countryCode: z
 		.string()
-		.length(2)
+		.regex(/^[A-Z]{2}$/, 'Must be an uppercase ISO 3166-1 alpha-2 country code')
 		.describe('ISO 3166-1 alpha-2 country code, e.g. "DE"'),
 });
 

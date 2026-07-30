@@ -1,11 +1,12 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAbstractRequest } from '../client';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { makeAbstractRequest, redactEmail, tryGetStoredKey } from '../client';
 import type { AbstractEndpoints } from '../index';
 import type {
 	AbstractEndpointOutputs,
 	EmailReputationResponse,
 	EmailValidateResponse,
 } from './types';
+import { EmailReputationResponseSchema } from './types';
 
 /**
  * Maps an Email Reputation response down to a simple validation-shaped
@@ -47,16 +48,26 @@ export const validate: AbstractEndpoints['emailValidate'] = async (
 ) => {
 	const apiKey =
 		ctx.options.emailReputationApiKey ??
-		(await ctx.keys.get_email_reputation_api_key()) ??
+		(await tryGetStoredKey(() => ctx.keys.get_email_reputation_api_key())) ??
 		ctx.key;
 
-	const reputationResponse = await makeAbstractRequest<
+	if (!apiKey) {
+		throw new AuthMissingError('abstract', 'api_key');
+	}
+
+	const rawReputationResponse = await makeAbstractRequest<
 		AbstractEndpointOutputs['emailReputation']
 	>('emailReputation', '', apiKey, {
 		query: {
 			email: input.email,
 		},
 	});
+
+	// Abstract's response shape isn't guaranteed to match our types at
+	// compile time — validate it at runtime before mapping/trusting it.
+	const reputationResponse = EmailReputationResponseSchema.parse(
+		rawReputationResponse,
+	);
 
 	const response = mapEmailReputationToValidation(reputationResponse);
 
@@ -87,7 +98,7 @@ export const validate: AbstractEndpoints['emailValidate'] = async (
 	await logEventFromContext(
 		ctx,
 		'abstract.email.validate',
-		{ ...input },
+		{ email: redactEmail(input.email) },
 		'completed',
 	);
 

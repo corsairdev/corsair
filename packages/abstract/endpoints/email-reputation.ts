@@ -1,7 +1,8 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAbstractRequest } from '../client';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { makeAbstractRequest, redactEmail, tryGetStoredKey } from '../client';
 import type { AbstractEndpoints } from '../index';
 import type { AbstractEndpointOutputs } from './types';
+import { EmailReputationResponseSchema } from './types';
 
 /**
  * Assess the deliverability and quality of an email address. Returns
@@ -16,16 +17,24 @@ import type { AbstractEndpointOutputs } from './types';
 export const get: AbstractEndpoints['emailReputation'] = async (ctx, input) => {
 	const apiKey =
 		ctx.options.emailReputationApiKey ??
-		(await ctx.keys.get_email_reputation_api_key()) ??
+		(await tryGetStoredKey(() => ctx.keys.get_email_reputation_api_key())) ??
 		ctx.key;
 
-	const response = await makeAbstractRequest<
+	if (!apiKey) {
+		throw new AuthMissingError('abstract', 'api_key');
+	}
+
+	const rawResponse = await makeAbstractRequest<
 		AbstractEndpointOutputs['emailReputation']
 	>('emailReputation', '', apiKey, {
 		query: {
 			email: input.email,
 		},
 	});
+
+	// Abstract's response shape isn't guaranteed to match our types at
+	// compile time — validate it at runtime before trusting or persisting it.
+	const response = EmailReputationResponseSchema.parse(rawResponse);
 
 	if (ctx.db.emailReputations) {
 		try {
@@ -51,7 +60,7 @@ export const get: AbstractEndpoints['emailReputation'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'abstract.email.reputation',
-		{ ...input },
+		{ email: redactEmail(input.email) },
 		'completed',
 	);
 
