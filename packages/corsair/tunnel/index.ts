@@ -39,6 +39,11 @@ export {
 
 export type { TunnelEnvelope, TunnelType } from '../hub/contracts/tunnel';
 export { verifySignedTunnelDelivery } from '../hub/signing/envelope';
+export { runWorkflowChild } from '../workflows/child';
+export {
+	type ChildProcessExecutorConfig,
+	createChildProcessExecutor,
+} from '../workflows/child-executor';
 export {
 	type BrowserDeliveryPayload,
 	isAuthCredentialsBrowserDelivery,
@@ -484,6 +489,7 @@ async function handleRunTunnel(
 			code: payload.code,
 			payload: payload.trigger?.payload ?? null,
 			memoizedSteps: payload.memoizedSteps,
+			tenantId: payload.tenantId,
 		});
 		// The envelope was processed successfully regardless of whether the workflow
 		// itself succeeded — Hub reads the run status/steps from `run` in the ack

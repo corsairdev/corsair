@@ -7,6 +7,7 @@ import {
 	generateDEK,
 } from '../core/auth/encryption';
 import type { RunResultPayload } from '../hub/contracts/tunnel';
+import { createChildProcessExecutor as fromTunnel } from '../tunnel/index';
 import { createChildProcessExecutor } from '../workflows/child-executor';
 import { createTestDatabase } from './setup-db';
 
@@ -162,4 +163,10 @@ describe('createChildProcessExecutor', () => {
 			cleanup();
 		}
 	}, 15000);
+});
+
+describe('public API surface', () => {
+	it('re-exports the child executor from the tunnel entry', () => {
+		expect(typeof fromTunnel).toBe('function');
+	});
 });
