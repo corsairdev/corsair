@@ -9,6 +9,8 @@ export type HubConfigInput = {
 	signingSecret: string;
 	apiUrl?: string;
 	oauthCallbackUrl?: string;
+	/** URL the connect/approve pages send the user back to when they're done. */
+	redirectURL?: string;
 	/**
 	 * Opt-in to executing Hub-delivered workflow code (`type: 'run'`). Off by
 	 * default because it dynamically evaluates code in-process. Sandbox before
@@ -22,6 +24,7 @@ export type HubConfig = {
 	projectApiKey: string;
 	signingSecret: string;
 	oauthCallbackUrl?: string;
+	redirectURL?: string;
 	allowWorkflowExecution?: boolean;
 };
 
