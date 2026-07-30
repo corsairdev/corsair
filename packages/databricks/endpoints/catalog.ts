@@ -59,14 +59,16 @@ export const checkTableExists: DatabricksEndpoints['checkTableExists'] = async (
 		);
 		return { exists: true };
 	} catch (error) {
+		const notFoundCodes = new Set([
+			'RESOURCE_DOES_NOT_EXIST',
+			'TABLE_DOES_NOT_EXIST',
+			'CATALOG_DOES_NOT_EXIST',
+			'SCHEMA_DOES_NOT_EXIST',
+		]);
 		const isNotFound =
 			error instanceof DatabricksAPIError &&
 			(error.status === 404 ||
-				error.code === 'RESOURCE_DOES_NOT_EXIST' ||
-				error.code === 'TABLE_DOES_NOT_EXIST' ||
-				error.message.includes('404') ||
-				error.message.includes('RESOURCE_DOES_NOT_EXIST') ||
-				error.message.includes('TABLE_DOES_NOT_EXIST'));
+				(error.code != null && notFoundCodes.has(error.code)));
 
 		if (isNotFound) {
 			await logEventFromContext(

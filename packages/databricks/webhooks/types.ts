@@ -38,6 +38,29 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
+/**
+ * Corsair may set rawBody = JSON.stringify(parsedBody) when the inbound body
+ * was already an object. Content-Length is the original wire size, so a
+ * mismatch (or missing length) means we cannot trust rawBody for HMAC.
+ */
+function hasPreservedRawBody(
+	request: Pick<WebhookRequest, 'rawBody' | 'headers'>,
+): boolean {
+	if (typeof request.rawBody !== 'string') {
+		return false;
+	}
+	const header = request.headers['content-length'];
+	const contentLength = Array.isArray(header) ? header[0] : header;
+	if (contentLength == null || contentLength === '') {
+		return false;
+	}
+	const expected = Number(contentLength);
+	if (!Number.isFinite(expected)) {
+		return false;
+	}
+	return Buffer.byteLength(request.rawBody, 'utf8') === expected;
+}
+
 export function createDatabricksMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
@@ -63,17 +86,14 @@ export function verifyDatabricksWebhookSignature(
 		return { valid: false, error: 'Missing webhook signature header' };
 	}
 
-	// Corsair preserves the inbound string on rawBody when body arrived as text.
-	// Do not infer reconstruction via JSON.stringify(payload) — that rejects
-	// valid compact payloads that stringify back to the same bytes.
-	if (typeof request.rawBody !== 'string') {
+	if (!hasPreservedRawBody(request)) {
 		return {
 			valid: false,
-			error: 'Missing raw body for signature verification',
+			error: 'Missing original raw body for signature verification',
 		};
 	}
 
-	const isValid = verifyHmacSignature(request.rawBody, secret, signature);
+	const isValid = verifyHmacSignature(request.rawBody!, secret, signature);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid webhook signature' };
 	}

@@ -225,13 +225,39 @@ describe('Databricks catalog.checkTableExists', () => {
 			}),
 		).rejects.toMatchObject({ status: 401 });
 	});
+
+	it('does not treat message text as not-found on non-404 status', async () => {
+		mockRequest.mockRejectedValueOnce(
+			new DatabricksAPIError(
+				'Permission denied: RESOURCE_DOES_NOT_EXIST mentioned',
+				403,
+			),
+		);
+		await expect(
+			Catalog.checkTableExists(createContext() as any, {
+				catalog_name: 'main',
+				schema_name: 'default',
+				table_name: 'events',
+			}),
+		).rejects.toMatchObject({ status: 403 });
+	});
 });
 
 describe('Databricks webhooks', () => {
-	it('verifies signature when rawBody string is present', () => {
+	function withContentLength(rawBody: string, headers: Record<string, string>) {
+		return {
+			...headers,
+			'content-length': String(Buffer.byteLength(rawBody, 'utf8')),
+		};
+	}
+
+	it('verifies signature when preserved rawBody is present', () => {
+		const rawBody = '{"event_type":"job.completed","source":"webhook"}';
 		const req = {
-			headers: { 'x-databricks-signature': 'invalid_sig' },
-			rawBody: '{"event_type":"job.completed","source":"webhook"}',
+			headers: withContentLength(rawBody, {
+				'x-databricks-signature': 'invalid_sig',
+			}),
+			rawBody,
 			payload: { event_type: 'job.completed' },
 		};
 		const res = verifyDatabricksWebhookSignature(req as any, 'secret');
@@ -241,15 +267,35 @@ describe('Databricks webhooks', () => {
 
 	it('returns error when rawBody is missing', () => {
 		const req = {
-			headers: { 'x-databricks-signature': 'sig' },
+			headers: { 'x-databricks-signature': 'sig', 'content-length': '10' },
 			payload: { event_type: 'job.completed' },
 		};
 		const res = verifyDatabricksWebhookSignature(req as any, 'secret');
 		expect(res.valid).toBe(false);
-		expect(res.error).toBe('Missing raw body for signature verification');
+		expect(res.error).toBe(
+			'Missing original raw body for signature verification',
+		);
 	});
 
-	it('accepts valid compact rawBody that equals JSON.stringify(payload)', () => {
+	it('rejects reconstructed rawBody when content-length mismatches', () => {
+		const original = '{\n  "event_type": "job.completed"\n}';
+		const reconstructed = JSON.stringify({ event_type: 'job.completed' });
+		const req = {
+			headers: {
+				'x-databricks-signature': 'sig',
+				'content-length': String(Buffer.byteLength(original, 'utf8')),
+			},
+			rawBody: reconstructed,
+			payload: { event_type: 'job.completed' },
+		};
+		const res = verifyDatabricksWebhookSignature(req as any, 'secret');
+		expect(res.valid).toBe(false);
+		expect(res.error).toBe(
+			'Missing original raw body for signature verification',
+		);
+	});
+
+	it('accepts valid compact rawBody with matching content-length', () => {
 		const secret = 'test-secret';
 		const payload = { event_type: 'job.completed' };
 		const rawBody = JSON.stringify(payload);
@@ -259,7 +305,9 @@ describe('Databricks webhooks', () => {
 			.digest('hex');
 		const res = verifyDatabricksWebhookSignature(
 			{
-				headers: { 'x-databricks-signature': signature },
+				headers: withContentLength(rawBody, {
+					'x-databricks-signature': signature,
+				}),
 				rawBody,
 				payload,
 			} as any,
@@ -307,7 +355,9 @@ describe('Databricks webhooks', () => {
 			.digest('hex');
 		const res = verifyDatabricksWebhookSignature(
 			{
-				headers: { 'x-databricks-signature': signature },
+				headers: withContentLength(rawBody, {
+					'x-databricks-signature': signature,
+				}),
 				rawBody,
 				payload: { event_type: 'job.completed' },
 			} as any,
