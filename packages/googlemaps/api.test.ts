@@ -81,6 +81,14 @@ describe('Google Maps Plugin API Tests', () => {
 		expect(res.photoUrl).toContain('ref_12345');
 		expect(res.photoUrl).toContain('key=test_key');
 
+		// Places API (New) resource names also require key for api_key auth
+		const resNew = await plugin.endpoints!.places.getPlacePhoto(dummyCtx, {
+			photo_reference: 'places/ChIJN1t_tDeuEmsRUsoyG83frY4/photos/Aap_uEA7',
+			maxwidth: 400,
+		});
+		expect(resNew.photoUrl).toContain('places.googleapis.com/v1/places/');
+		expect(resNew.photoUrl).toContain('key=test_key');
+
 		// OAuth mode: should not expose bearer token in URL query string
 		const resOAuth = await plugin.endpoints!.places.getPlacePhoto(
 			dummyOAuthCtx,
