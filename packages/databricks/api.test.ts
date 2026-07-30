@@ -19,7 +19,10 @@ import * as Sql from './endpoints/sql';
 import * as Workspace from './endpoints/workspace';
 import { errorHandlers } from './error-handlers';
 import { matchDatabricksTenantWebhook } from './webhooks/tenant-matcher';
-import { verifyDatabricksWebhookSignature } from './webhooks/types';
+import {
+	verifyDatabricksWebhookSignature,
+	verifyDatabricksWebhookSignatureFromRaw,
+} from './webhooks/types';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -166,6 +169,16 @@ describe('Databricks endpoint routing', () => {
 		expect(path).toBe(c.endpoint);
 		expect(key).toBe(ctx);
 		expect(options?.method ?? 'GET').toBe(c.method);
+		if ('expectedBody' in c) {
+			expect(options?.body).toEqual(c.expectedBody);
+		} else {
+			expect(options?.body).toBeUndefined();
+		}
+		if ('expectedQuery' in c) {
+			expect(options?.query).toEqual(c.expectedQuery);
+		} else {
+			expect(options?.query).toBeUndefined();
+		}
 	});
 });
 
@@ -209,7 +222,7 @@ describe('Databricks webhooks', () => {
 	it('verifies signature when rawBody string is present', () => {
 		const req = {
 			headers: { 'x-databricks-signature': 'invalid_sig' },
-			rawBody: '{"event_type":"job.completed"}',
+			rawBody: '{"event_type":"job.completed","source":"webhook"}',
 			payload: { event_type: 'job.completed' },
 		};
 		const res = verifyDatabricksWebhookSignature(req as any, 'secret');
@@ -225,6 +238,47 @@ describe('Databricks webhooks', () => {
 		const res = verifyDatabricksWebhookSignature(req as any, 'secret');
 		expect(res.valid).toBe(false);
 		expect(res.error).toBe('Missing raw body for signature verification');
+	});
+
+	it('rejects reconstructed rawBody from parsed payload', () => {
+		const payload = { event_type: 'job.completed' };
+		const req = {
+			headers: { 'x-databricks-signature': 'sig' },
+			rawBody: JSON.stringify(payload),
+			payload,
+		};
+		const res = verifyDatabricksWebhookSignature(req as any, 'secret');
+		expect(res.valid).toBe(false);
+		expect(res.error).toBe(
+			'Missing original raw body for signature verification',
+		);
+	});
+
+	it('verifies signature from raw inbound request body', () => {
+		const body = '{"event_type":"job.completed"}';
+		const res = verifyDatabricksWebhookSignatureFromRaw(
+			{
+				body,
+				headers: { 'x-databricks-signature': 'invalid_sig' },
+			},
+			'secret',
+		);
+		expect(res.valid).toBe(false);
+		expect(res.error).toBe('Invalid webhook signature');
+	});
+
+	it('requires string body for raw inbound verification', () => {
+		const res = verifyDatabricksWebhookSignatureFromRaw(
+			{
+				body: { event_type: 'job.completed' },
+				headers: { 'x-databricks-signature': 'sig' },
+			},
+			'secret',
+		);
+		expect(res.valid).toBe(false);
+		expect(res.error).toBe(
+			'Missing original raw body for signature verification',
+		);
 	});
 
 	it('matches tenant webhook', () => {

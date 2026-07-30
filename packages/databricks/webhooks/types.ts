@@ -38,6 +38,18 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
+function isReconstructedRawBody(rawBody: string, payload: unknown): boolean {
+	if (
+		payload === null ||
+		typeof payload !== 'object' ||
+		Array.isArray(payload)
+	) {
+		return false;
+	}
+	// Corsair sets rawBody = JSON.stringify(body) when the inbound body was parsed.
+	return rawBody === JSON.stringify(payload);
+}
+
 export function createDatabricksMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
@@ -70,8 +82,46 @@ export function verifyDatabricksWebhookSignature(
 		};
 	}
 
-	const rawBody = request.rawBody;
-	const isValid = verifyHmacSignature(rawBody, secret, signature);
+	if (isReconstructedRawBody(request.rawBody, request.payload)) {
+		return {
+			valid: false,
+			error: 'Missing original raw body for signature verification',
+		};
+	}
+
+	const isValid = verifyHmacSignature(request.rawBody, secret, signature);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid webhook signature' };
+	}
+
+	return { valid: true };
+}
+
+/** Verify using the raw inbound request before JSON parsing. */
+export function verifyDatabricksWebhookSignatureFromRaw(
+	request: Pick<RawWebhookRequest, 'body' | 'headers'>,
+	secret: string,
+): { valid: boolean; error?: string } {
+	if (!secret) {
+		return { valid: false, error: 'No webhook secret configured' };
+	}
+
+	const rawHeader =
+		request.headers['x-databricks-signature'] || request.headers['x-signature'];
+	const signature = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
+
+	if (!signature) {
+		return { valid: false, error: 'Missing webhook signature header' };
+	}
+
+	if (typeof request.body !== 'string') {
+		return {
+			valid: false,
+			error: 'Missing original raw body for signature verification',
+		};
+	}
+
+	const isValid = verifyHmacSignature(request.body, secret, signature);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid webhook signature' };
 	}

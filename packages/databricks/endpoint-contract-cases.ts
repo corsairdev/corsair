@@ -9,6 +9,10 @@ export const endpointContractCases = [
 			handle: 1,
 			data: 'SGVsbG8=',
 		},
+		expectedBody: {
+			handle: 1,
+			data: 'SGVsbG8=',
+		},
 	},
 	{
 		mod: 'Dbfs',
@@ -16,6 +20,9 @@ export const endpointContractCases = [
 		endpoint: 'dbfs/create',
 		method: 'POST',
 		input: {
+			path: '/tmp/test.txt',
+		},
+		expectedBody: {
 			path: '/tmp/test.txt',
 		},
 	},
@@ -27,6 +34,9 @@ export const endpointContractCases = [
 		input: {
 			path: '/tmp/test.txt',
 		},
+		expectedBody: {
+			path: '/tmp/test.txt',
+		},
 	},
 	{
 		mod: 'Compute',
@@ -34,6 +44,9 @@ export const endpointContractCases = [
 		endpoint: 'instance-profiles/add',
 		method: 'POST',
 		input: {
+			instance_profile_arn: 'arn:aws:iam::123:instance-profile/role',
+		},
+		expectedBody: {
 			instance_profile_arn: 'arn:aws:iam::123:instance-profile/role',
 		},
 	},
@@ -45,6 +58,9 @@ export const endpointContractCases = [
 		input: {
 			name: 'Policy 1',
 		},
+		expectedBody: {
+			name: 'Policy 1',
+		},
 	},
 	{
 		mod: 'Compute',
@@ -52,6 +68,10 @@ export const endpointContractCases = [
 		endpoint: 'instance-pools/create',
 		method: 'POST',
 		input: {
+			instance_pool_name: 'Pool 1',
+			node_type_id: 'i3.xlarge',
+		},
+		expectedBody: {
 			instance_pool_name: 'Pool 1',
 			node_type_id: 'i3.xlarge',
 		},
@@ -66,6 +86,11 @@ export const endpointContractCases = [
 			spark_version: '13.3.x',
 			node_type_id: 'i3.xlarge',
 		},
+		expectedBody: {
+			cluster_name: 'Test',
+			spark_version: '13.3.x',
+			node_type_id: 'i3.xlarge',
+		},
 	},
 	{
 		mod: 'Compute',
@@ -73,6 +98,10 @@ export const endpointContractCases = [
 		endpoint: 'global-init-scripts',
 		method: 'POST',
 		input: {
+			name: 'init.sh',
+			script: 'ZWNobyAx',
+		},
+		expectedBody: {
 			name: 'init.sh',
 			script: 'ZWNobyAx',
 		},
@@ -85,6 +114,9 @@ export const endpointContractCases = [
 		input: {
 			policy_id: 'p-123',
 		},
+		expectedBody: {
+			policy_id: 'p-123',
+		},
 	},
 	{
 		mod: 'Compute',
@@ -94,6 +126,9 @@ export const endpointContractCases = [
 		input: {
 			instance_pool_id: 'ip-123',
 		},
+		expectedBody: {
+			instance_pool_id: 'ip-123',
+		},
 	},
 	{
 		mod: 'Compute',
@@ -101,6 +136,9 @@ export const endpointContractCases = [
 		endpoint: 'clusters/delete',
 		method: 'POST',
 		input: {
+			cluster_id: 'c-123',
+		},
+		expectedBody: {
 			cluster_id: 'c-123',
 		},
 	},
@@ -122,6 +160,9 @@ export const endpointContractCases = [
 			group_id: 'g-1',
 			member_id: 'u-1',
 		},
+		expectedBody: {
+			member_id: 'u-1',
+		},
 	},
 	{
 		mod: 'Iam',
@@ -129,6 +170,9 @@ export const endpointContractCases = [
 		endpoint: 'preview/scim/v2/Groups',
 		method: 'POST',
 		input: {
+			displayName: 'Eng',
+		},
+		expectedBody: {
 			displayName: 'Eng',
 		},
 	},
@@ -140,6 +184,9 @@ export const endpointContractCases = [
 		input: {
 			applicationId: 'app-123',
 		},
+		expectedBody: {
+			applicationId: 'app-123',
+		},
 	},
 	{
 		mod: 'Iam',
@@ -149,6 +196,9 @@ export const endpointContractCases = [
 		input: {
 			userName: 'dev@company.com',
 		},
+		expectedBody: {
+			userName: 'dev@company.com',
+		},
 	},
 	{
 		mod: 'Iam',
@@ -156,6 +206,11 @@ export const endpointContractCases = [
 		endpoint: 'ip-access-lists',
 		method: 'POST',
 		input: {
+			label: 'Office',
+			list_type: 'ALLOW',
+			ip_addresses: ['1.2.3.4/32'],
+		},
+		expectedBody: {
 			label: 'Office',
 			list_type: 'ALLOW',
 			ip_addresses: ['1.2.3.4/32'],
@@ -198,6 +253,9 @@ export const endpointContractCases = [
 			workspace_id: 100,
 			default_catalog_name: 'main',
 		},
+		expectedBody: {
+			default_catalog_name: 'main',
+		},
 	},
 	{
 		mod: 'Catalog',
@@ -205,6 +263,9 @@ export const endpointContractCases = [
 		endpoint: 'unity-catalog/access-requests/batch-create',
 		method: 'POST',
 		input: {
+			requests: [],
+		},
+		expectedBody: {
 			requests: [],
 		},
 	},
@@ -231,6 +292,13 @@ export const endpointContractCases = [
 				host: 'localhost',
 			},
 		},
+		expectedBody: {
+			name: 'pg_conn',
+			connection_type: 'POSTGRESQL',
+			options: {
+				host: 'localhost',
+			},
+		},
 	},
 	{
 		mod: 'Catalog',
@@ -240,6 +308,9 @@ export const endpointContractCases = [
 		input: {
 			name: 'aws_cred',
 		},
+		expectedBody: {
+			name: 'aws_cred',
+		},
 	},
 	{
 		mod: 'Catalog',
@@ -247,6 +318,11 @@ export const endpointContractCases = [
 		endpoint: 'unity-catalog/external-locations',
 		method: 'POST',
 		input: {
+			name: 'ext_s3',
+			url: 's3://bucket/data',
+			credential_name: 'aws_cred',
+		},
+		expectedBody: {
 			name: 'ext_s3',
 			url: 's3://bucket/data',
 			credential_name: 'aws_cred',
@@ -261,6 +337,10 @@ export const endpointContractCases = [
 			name: 'main_meta',
 			storage_root: 's3://bucket/meta',
 		},
+		expectedBody: {
+			name: 'main_meta',
+			storage_root: 's3://bucket/meta',
+		},
 	},
 	{
 		mod: 'Catalog',
@@ -268,6 +348,9 @@ export const endpointContractCases = [
 		endpoint: 'unity-catalog/storage-credentials',
 		method: 'POST',
 		input: {
+			name: 'aws_cred',
+		},
+		expectedBody: {
 			name: 'aws_cred',
 		},
 	},
@@ -278,6 +361,9 @@ export const endpointContractCases = [
 		method: 'DELETE',
 		input: {
 			name: 'main',
+			force: false,
+		},
+		expectedQuery: {
 			force: false,
 		},
 	},
@@ -299,6 +385,9 @@ export const endpointContractCases = [
 			name: 'aws_cred',
 			force: false,
 		},
+		expectedQuery: {
+			force: false,
+		},
 	},
 	{
 		mod: 'Catalog',
@@ -318,6 +407,9 @@ export const endpointContractCases = [
 			name: 'ext_s3',
 			force: false,
 		},
+		expectedQuery: {
+			force: false,
+		},
 	},
 	{
 		mod: 'Catalog',
@@ -326,6 +418,9 @@ export const endpointContractCases = [
 		method: 'DELETE',
 		input: {
 			id: 'm-123',
+			force: false,
+		},
+		expectedQuery: {
 			force: false,
 		},
 	},
@@ -347,6 +442,9 @@ export const endpointContractCases = [
 			name: 'aws_cred',
 			force: false,
 		},
+		expectedQuery: {
+			force: false,
+		},
 	},
 	{
 		mod: 'Catalog',
@@ -366,6 +464,33 @@ export const endpointContractCases = [
 		input: {
 			ids: ['l-1'],
 		},
+		expectedBody: {
+			ids: ['l-1'],
+		},
+	},
+	{
+		mod: 'Marketplace',
+		fn: 'batchGetMarketplaceConsumerProviders',
+		endpoint: 'marketplace/consumer/providers/batch-get',
+		method: 'POST',
+		input: {
+			ids: ['p-1'],
+		},
+		expectedBody: {
+			ids: ['p-1'],
+		},
+	},
+	{
+		mod: 'Marketplace',
+		fn: 'createMarketplaceConsumerInstallation',
+		endpoint: 'marketplace/consumer/installations',
+		method: 'POST',
+		input: {
+			listing_id: 'l-1',
+		},
+		expectedBody: {
+			listing_id: 'l-1',
+		},
 	},
 	{
 		mod: 'Marketplace',
@@ -377,6 +502,11 @@ export const endpointContractCases = [
 			summary: 'Summary',
 			listing_type: 'FREE',
 		},
+		expectedBody: {
+			name: 'Dataset',
+			summary: 'Summary',
+			listing_type: 'FREE',
+		},
 	},
 	{
 		mod: 'Marketplace',
@@ -384,6 +514,7 @@ export const endpointContractCases = [
 		endpoint: 'marketplace/provider/analytics-dashboards',
 		method: 'POST',
 		input: {},
+		expectedBody: {},
 	},
 	{
 		mod: 'Marketplace',
@@ -412,6 +543,9 @@ export const endpointContractCases = [
 		input: {
 			job_id: 10,
 		},
+		expectedBody: {
+			job_id: 10,
+		},
 	},
 	{
 		mod: 'Jobs',
@@ -421,6 +555,9 @@ export const endpointContractCases = [
 		input: {
 			run_id: 10,
 		},
+		expectedBody: {
+			run_id: 10,
+		},
 	},
 	{
 		mod: 'Jobs',
@@ -428,6 +565,9 @@ export const endpointContractCases = [
 		endpoint: 'jobs/runs/delete',
 		method: 'POST',
 		input: {
+			run_id: 10,
+		},
+		expectedBody: {
 			run_id: 10,
 		},
 	},
@@ -449,6 +589,10 @@ export const endpointContractCases = [
 			name: 'Alert',
 			query_id: 'q-1',
 		},
+		expectedBody: {
+			name: 'Alert',
+			query_id: 'q-1',
+		},
 	},
 	{
 		mod: 'Sql',
@@ -456,6 +600,11 @@ export const endpointContractCases = [
 		endpoint: 'preview/sql/queries',
 		method: 'POST',
 		input: {
+			name: 'Query',
+			query: 'SELECT 1',
+			data_source_id: 'ds-1',
+		},
+		expectedBody: {
 			name: 'Query',
 			query: 'SELECT 1',
 			data_source_id: 'ds-1',
@@ -471,6 +620,11 @@ export const endpointContractCases = [
 			type: 'table',
 			name: 'Vis',
 		},
+		expectedBody: {
+			query_id: 'q-1',
+			type: 'table',
+			name: 'Vis',
+		},
 	},
 	{
 		mod: 'Sql',
@@ -478,6 +632,10 @@ export const endpointContractCases = [
 		endpoint: 'sql/alerts',
 		method: 'POST',
 		input: {
+			name: 'Alert',
+			query_id: 'q-1',
+		},
+		expectedBody: {
 			name: 'Alert',
 			query_id: 'q-1',
 		},
@@ -492,6 +650,11 @@ export const endpointContractCases = [
 			query: 'SELECT 1',
 			warehouse_id: 'w-1',
 		},
+		expectedBody: {
+			name: 'Query',
+			query: 'SELECT 1',
+			warehouse_id: 'w-1',
+		},
 	},
 	{
 		mod: 'Sql',
@@ -499,6 +662,11 @@ export const endpointContractCases = [
 		endpoint: 'sql/visualizations',
 		method: 'POST',
 		input: {
+			query_id: 'q-1',
+			type: 'table',
+			name: 'Vis',
+		},
+		expectedBody: {
 			query_id: 'q-1',
 			type: 'table',
 			name: 'Vis',
@@ -580,6 +748,14 @@ export const endpointContractCases = [
 				},
 			],
 		},
+		expectedBody: {
+			name: 'room_1',
+			collaborators: [
+				{
+					collaborator_alias: 'collab',
+				},
+			],
+		},
 	},
 	{
 		mod: 'Cleanrooms',
@@ -589,6 +765,9 @@ export const endpointContractCases = [
 		input: {
 			clean_room_name: 'room_1',
 		},
+		expectedBody: {
+			clean_room_name: 'room_1',
+		},
 	},
 	{
 		mod: 'Dataquality',
@@ -596,6 +775,11 @@ export const endpointContractCases = [
 		endpoint: 'quality-monitors',
 		method: 'POST',
 		input: {
+			table_name: 'main.default.tbl',
+			assets_dir: '/assets',
+			output_schema_name: 'main.default',
+		},
+		expectedBody: {
 			table_name: 'main.default.tbl',
 			assets_dir: '/assets',
 			output_schema_name: 'main.default',
@@ -611,6 +795,11 @@ export const endpointContractCases = [
 			assets_dir: '/assets',
 			output_schema_name: 'main.default',
 		},
+		expectedBody: {
+			table_name: 'main.default.tbl',
+			assets_dir: '/assets',
+			output_schema_name: 'main.default',
+		},
 	},
 	{
 		mod: 'Database',
@@ -618,6 +807,9 @@ export const endpointContractCases = [
 		endpoint: 'database/instances',
 		method: 'POST',
 		input: {
+			name: 'lakebase_db',
+		},
+		expectedBody: {
 			name: 'lakebase_db',
 		},
 	},
@@ -647,6 +839,9 @@ export const endpointContractCases = [
 		input: {
 			name: 'my_app',
 		},
+		expectedBody: {
+			name: 'my_app',
+		},
 	},
 	{
 		mod: 'Apps',
@@ -666,6 +861,10 @@ export const endpointContractCases = [
 			name: 'my_app',
 			source_code_path: '/path',
 		},
+		expectedBody: {
+			name: 'my_app',
+			source_code_path: '/path',
+		},
 	},
 	{
 		mod: 'Dashboards',
@@ -675,6 +874,9 @@ export const endpointContractCases = [
 		input: {
 			space_id: 'sp-1',
 			conversation_id: 'c-1',
+			content: 'Hello',
+		},
+		expectedBody: {
 			content: 'Hello',
 		},
 	},
@@ -687,6 +889,10 @@ export const endpointContractCases = [
 			warehouse_id: 'w-1',
 			serialized_space: '{}',
 		},
+		expectedBody: {
+			warehouse_id: 'w-1',
+			serialized_space: '{}',
+		},
 	},
 	{
 		mod: 'Dashboards',
@@ -694,6 +900,10 @@ export const endpointContractCases = [
 		endpoint: 'lakeview/dashboards',
 		method: 'POST',
 		input: {
+			display_name: 'Dash',
+			serialized_dashboard: '{}',
+		},
+		expectedBody: {
 			display_name: 'Dash',
 			serialized_dashboard: '{}',
 		},
@@ -738,6 +948,10 @@ export const endpointContractCases = [
 			name: 'model_v1',
 			experiment_id: 'exp-123',
 		},
+		expectedBody: {
+			name: 'model_v1',
+			experiment_id: 'exp-123',
+		},
 	},
 	{
 		mod: 'Ml',
@@ -745,6 +959,9 @@ export const endpointContractCases = [
 		endpoint: 'mlflow/experiments/create',
 		method: 'POST',
 		input: {
+			name: 'churn_exp',
+		},
+		expectedBody: {
 			name: 'churn_exp',
 		},
 	},
@@ -755,6 +972,11 @@ export const endpointContractCases = [
 		method: 'POST',
 		input: {
 			name: 'store-123',
+			store_type: 'ONLINE',
+		},
+		expectedBody: {
+			name: 'store-123',
+			store_type: 'ONLINE',
 		},
 	},
 	{
@@ -763,13 +985,12 @@ export const endpointContractCases = [
 		endpoint: 'automl/forecasting/experiments',
 		method: 'POST',
 		input: {
-			experiment_name: 'forecast',
+			name: 'forecast',
 			target_col: 'y',
-			time_col: 'ts',
-			identity_col: 'id',
-			frequency: 'D',
-			horizon: 7,
-			data_source: 'main.default.tbl',
+		},
+		expectedBody: {
+			name: 'forecast',
+			target_col: 'y',
 		},
 	},
 	{
@@ -778,6 +999,9 @@ export const endpointContractCases = [
 		endpoint: 'mlflow/runs/create',
 		method: 'POST',
 		input: {
+			experiment_id: 'exp-123',
+		},
+		expectedBody: {
 			experiment_id: 'exp-123',
 		},
 	},
@@ -808,6 +1032,9 @@ export const endpointContractCases = [
 		input: {
 			experiment_id: 'exp-123',
 		},
+		expectedBody: {
+			experiment_id: 'exp-123',
+		},
 	},
 	{
 		mod: 'Ml',
@@ -815,6 +1042,9 @@ export const endpointContractCases = [
 		endpoint: 'mlflow/runs/delete',
 		method: 'POST',
 		input: {
+			run_id: 'run-123',
+		},
+		expectedBody: {
 			run_id: 'run-123',
 		},
 	},
@@ -827,6 +1057,10 @@ export const endpointContractCases = [
 			run_id: 'run-123',
 			key: 'env',
 		},
+		expectedBody: {
+			run_id: 'run-123',
+			key: 'env',
+		},
 	},
 	{
 		mod: 'Ml',
@@ -834,6 +1068,10 @@ export const endpointContractCases = [
 		endpoint: 'mlflow/runs/delete-bulk',
 		method: 'POST',
 		input: {
+			experiment_id: 'exp-123',
+			timestamp: 0,
+		},
+		expectedBody: {
 			experiment_id: 'exp-123',
 			timestamp: 0,
 		},
@@ -885,6 +1123,28 @@ export const endpointContractCases = [
 			comment: 'test',
 			lifetime_seconds: 3600,
 		},
+		expectedBody: {
+			comment: 'test',
+			lifetime_seconds: 3600,
+		},
+	},
+	{
+		mod: 'Security',
+		fn: 'createNotificationDestination',
+		endpoint: 'notification-destinations',
+		method: 'POST',
+		input: {
+			display_name: 'Email',
+			config: {
+				addresses: ['a@b.com'],
+			},
+		},
+		expectedBody: {
+			display_name: 'Email',
+			config: {
+				addresses: ['a@b.com'],
+			},
+		},
 	},
 	{
 		mod: 'Security',
@@ -923,6 +1183,10 @@ export const endpointContractCases = [
 			name: 'llm_endpoint',
 			config: {},
 		},
+		expectedBody: {
+			name: 'llm_endpoint',
+			config: {},
+		},
 	},
 	{
 		mod: 'Serving',
@@ -930,6 +1194,10 @@ export const endpointContractCases = [
 		endpoint: 'vector-search/endpoints',
 		method: 'POST',
 		input: {
+			name: 'vs_endpoint',
+			endpoint_type: 'STANDARD',
+		},
+		expectedBody: {
 			name: 'vs_endpoint',
 			endpoint_type: 'STANDARD',
 		},
@@ -960,6 +1228,9 @@ export const endpointContractCases = [
 		input: {
 			name: 's-1',
 		},
+		expectedBody: {
+			name: 's-1',
+		},
 	},
 	{
 		mod: 'Sharing',
@@ -969,6 +1240,9 @@ export const endpointContractCases = [
 		input: {
 			name: 'p-1',
 		},
+		expectedBody: {
+			name: 'p-1',
+		},
 	},
 	{
 		mod: 'Sharing',
@@ -976,6 +1250,10 @@ export const endpointContractCases = [
 		endpoint: 'unity-catalog/recipients',
 		method: 'POST',
 		input: {
+			name: 'r-1',
+			authentication_type: 'TOKEN',
+		},
+		expectedBody: {
 			name: 'r-1',
 			authentication_type: 'TOKEN',
 		},
@@ -1006,6 +1284,9 @@ export const endpointContractCases = [
 		input: {
 			scope: 'my_scope',
 		},
+		expectedBody: {
+			scope: 'my_scope',
+		},
 	},
 	{
 		mod: 'Workspace',
@@ -1015,6 +1296,9 @@ export const endpointContractCases = [
 		input: {
 			tag_key: 'environment',
 		},
+		expectedBody: {
+			tag_key: 'environment',
+		},
 	},
 	{
 		mod: 'Workspace',
@@ -1022,6 +1306,9 @@ export const endpointContractCases = [
 		endpoint: 'workspace/mkdirs',
 		method: 'POST',
 		input: {
+			path: '/Workspace/Shared',
+		},
+		expectedBody: {
 			path: '/Workspace/Shared',
 		},
 	},
@@ -1035,6 +1322,11 @@ export const endpointContractCases = [
 			git_provider: 'gitHub',
 			personal_access_token: 'pat123',
 		},
+		expectedBody: {
+			git_username: 'user',
+			git_provider: 'gitHub',
+			personal_access_token: 'pat123',
+		},
 	},
 	{
 		mod: 'Workspace',
@@ -1042,6 +1334,10 @@ export const endpointContractCases = [
 		endpoint: 'repos',
 		method: 'POST',
 		input: {
+			url: 'https://github.com/repo',
+			provider: 'gitHub',
+		},
+		expectedBody: {
 			url: 'https://github.com/repo',
 			provider: 'gitHub',
 		},
@@ -1142,6 +1438,9 @@ export const endpointContractCases = [
 		input: {
 			scope: 'my_scope',
 		},
+		expectedBody: {
+			scope: 'my_scope',
+		},
 	},
 	{
 		mod: 'Workspace',
@@ -1149,6 +1448,10 @@ export const endpointContractCases = [
 		endpoint: 'secrets/acls/delete',
 		method: 'POST',
 		input: {
+			scope: 'my_scope',
+			principal: 'users@company.com',
+		},
+		expectedBody: {
 			scope: 'my_scope',
 			principal: 'users@company.com',
 		},
@@ -1179,6 +1482,9 @@ export const endpointContractCases = [
 		input: {
 			path: '/Workspace/file',
 		},
+		expectedBody: {
+			path: '/Workspace/file',
+		},
 	},
 	{
 		mod: 'Workspace',
@@ -1198,36 +1504,9 @@ export const endpointContractCases = [
 			scope: 'my_scope',
 			key: 'secret_key',
 		},
-	},
-	{
-		mod: 'Marketplace',
-		fn: 'batchGetMarketplaceConsumerProviders',
-		endpoint: 'marketplace/consumer/providers/batch-get',
-		method: 'POST',
-		input: {
-			ids: ['p-1'],
-		},
-	},
-	{
-		mod: 'Marketplace',
-		fn: 'createMarketplaceConsumerInstallation',
-		endpoint: 'marketplace/consumer/installations',
-		method: 'POST',
-		input: {
-			listing_id: 'l-1',
-		},
-	},
-	{
-		mod: 'Security',
-		fn: 'createNotificationDestination',
-		endpoint: 'notification-destinations',
-		method: 'POST',
-		input: {
-			display_name: 'Email',
-			type: 'email',
-			config: {
-				addresses: ['a@b.com'],
-			},
+		expectedBody: {
+			scope: 'my_scope',
+			key: 'secret_key',
 		},
 	},
 ] as const;
