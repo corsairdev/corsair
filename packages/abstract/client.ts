@@ -63,13 +63,26 @@ export function redactEmail(email: string): string {
 	return `${email[0]}***${email.slice(atIndex)}`;
 }
 
+// Matches only corsair's "no DEK on this account" error
+// (packages/corsair/core/auth/key-manager.ts: `No DEK found for account
+// (tenant: "...", integration: "...")`). No dedicated error class exists
+// for this state, so message matching is the only handle available; kept
+// narrow on purpose so it can't accidentally swallow an unrelated failure.
+const NO_DEK_ERROR_PATTERN = /no dek found/i;
+
 /**
  * Safely reads a stored per-product key from the account key manager.
  *
  * `ctx.keys.get_*` throws (rather than returning null) when the account has
  * no DEK at all — a fully valid state for accounts that only ever configure
- * dedicated keys via plugin options and never touch the key manager. That
- * must resolve to "no stored key", not abort the request.
+ * dedicated keys via plugin options and never touch the key manager, and
+ * must resolve to "no stored key" rather than abort the request.
+ *
+ * Anything else thrown (decryption failure, database error, ...) is a real
+ * operational problem, not an absent key, and must propagate — silently
+ * treating it as "not configured" would make an endpoint fall through to a
+ * different (shared) key after the one actually configured for it failed
+ * to be read, which is worse than failing loudly.
  */
 export async function tryGetStoredKey(
 	getter: () => Promise<string | null | undefined>,
@@ -77,8 +90,11 @@ export async function tryGetStoredKey(
 	try {
 		const value = await getter();
 		return value ?? undefined;
-	} catch {
-		return undefined;
+	} catch (error) {
+		if (error instanceof Error && NO_DEK_ERROR_PATTERN.test(error.message)) {
+			return undefined;
+		}
+		throw error;
 	}
 }
 

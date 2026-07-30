@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { tryGetStoredKey } from './client';
 import { EmailReputation, EmailValidation, Iban, Vat } from './endpoints';
 import type {
 	AbstractEndpointInputs,
@@ -249,16 +250,13 @@ export function abstract<const T extends AbstractPluginOptions>(
 			// Accounts that only ever configure dedicated per-product keys
 			// (a fully valid, documented setup) may have no base api_key
 			// credential and no DEK at all, which makes get_api_key() throw
-			// rather than return null — that must not abort requests that
-			// don't need the shared key in the first place, so treat it the
-			// same as "no shared key configured".
+			// rather than return null. tryGetStoredKey treats only that
+			// specific "no DEK" state as "no shared key configured" and
+			// re-throws anything else (a real decryption/DB failure), so a
+			// genuine operational problem can't be silently masked here.
 			if (source === 'endpoint') {
-				try {
-					const res = await ctx.keys.get_api_key();
-					return res ?? '';
-				} catch {
-					return '';
-				}
+				const res = await tryGetStoredKey(() => ctx.keys.get_api_key());
+				return res ?? '';
 			}
 
 			return '';
