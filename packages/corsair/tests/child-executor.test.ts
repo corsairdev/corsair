@@ -8,7 +8,10 @@ import {
 } from '../core/auth/encryption';
 import type { RunResultPayload } from '../hub/contracts/tunnel';
 import { createChildProcessExecutor as fromTunnel } from '../tunnel';
-import { createChildProcessExecutor } from '../workflows/child-executor';
+import {
+	createChildProcessExecutor,
+	kekLessEnv,
+} from '../workflows/child-executor';
 import { createTestDatabase } from './setup-db';
 
 const FIXTURE = join(__dirname, 'workflow-child-fixture.ts');
@@ -168,5 +171,21 @@ describe('createChildProcessExecutor', () => {
 describe('public API surface', () => {
 	it('re-exports the child executor from the tunnel entry', () => {
 		expect(typeof fromTunnel).toBe('function');
+	});
+});
+
+describe('kekLessEnv', () => {
+	it('strips only the env var whose value is the KEK', () => {
+		const env = kekLessEnv('master-kek-value', {
+			SECRET: 'master-kek-value',
+			SAFE: 'keep-me',
+		} as NodeJS.ProcessEnv);
+		expect(env.SECRET).toBeUndefined();
+		expect(env.SAFE).toBe('keep-me');
+	});
+
+	it('returns env unchanged when there is no KEK', () => {
+		const env = { A: '1' } as NodeJS.ProcessEnv;
+		expect(kekLessEnv(undefined, env)).toBe(env);
 	});
 });

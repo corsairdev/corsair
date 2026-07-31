@@ -1,4 +1,5 @@
 import { fork } from 'node:child_process';
+import { getCorsairInternal } from '../core/utils/corsair-instance';
 import type { RunResultPayload } from '../hub/contracts/tunnel';
 import type { ChildResultMessage, ChildRunMessage } from './child';
 import { collectTenantCredentials } from './collect-credentials';
@@ -50,9 +51,13 @@ async function runInChild(
 			? [`--max-old-space-size=${config.maxOldSpaceMb}`]
 			: []),
 	];
+	const kek = getCorsairInternal(input.corsair)?.kek;
 
 	return new Promise<RunResultPayload>((resolve) => {
-		const child = fork(config.childModulePath, [], { execArgv });
+		const child = fork(config.childModulePath, [], {
+			execArgv,
+			env: kekLessEnv(kek),
+		});
 		let settled = false;
 		const finish = (result: RunResultPayload) => {
 			if (settled) return;
@@ -105,4 +110,21 @@ async function runInChild(
 			timeoutMs,
 		} satisfies ChildRunMessage);
 	});
+}
+
+/**
+ * The child gets its credentials over IPC, never the master key — but a forked
+ * child inherits the parent's whole env by default. Strip any var whose value is
+ * the KEK so an escape from the vm can't read it from `process.env`, closing the
+ * gap the OS-process boundary exists to prevent. Name-agnostic: the app picks the
+ * var name, the parent holds the value.
+ */
+export function kekLessEnv(
+	kek: string | undefined,
+	env: NodeJS.ProcessEnv = process.env,
+): NodeJS.ProcessEnv {
+	if (!kek) return env;
+	return Object.fromEntries(
+		Object.entries(env).filter(([, value]) => value !== kek),
+	);
 }
