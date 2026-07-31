@@ -7,7 +7,6 @@
   "distribution_type": "public",
   "stripe_api_access_type": "oauth",
   "allowed_redirect_uris": ["https://auth.corsair.dev/oauth/callback"],
-  "ui_extension": [],
   "permissions": [
     {
       "permission": "balance_read",

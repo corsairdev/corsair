@@ -44,11 +44,11 @@ keeps Corsair out of cardholder-data (PCI) scope.
 
 ## Why the ENG-51 (Atlassian) mechanism does NOT apply
 
-ENG-51 built a generic personal-data reporting pass
-(`packages/corsair/oauth/personal-data-reporting.ts`) because Atlassian
-*mandates* reporting stored account IDs to a provider erasure API
-(`report-accounts`) and erasing on request. **Stripe exposes no equivalent
-provider-side erasure-report API.** So that machinery does not transfer here —
+The sibling ENG-51 branch (not yet merged to `main`, so the file is not in this
+tree) builds a generic personal-data reporting pass because Atlassian *mandates*
+reporting stored account IDs to a provider erasure API (`report-accounts`) and
+erasing on request. **Stripe exposes no equivalent provider-side erasure-report
+API.** So that machinery does not transfer here —
 do not copy it. The obligation for Stripe is contractual (data-usage rules +
 privacy policy), not an API handshake.
 

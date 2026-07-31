@@ -9,7 +9,6 @@ type Manifest = {
 	stripe_api_access_type: string;
 	distribution_type: string;
 	allowed_redirect_uris: string[];
-	ui_extension: unknown[];
 	permissions: Permission[];
 };
 
@@ -61,8 +60,10 @@ describe('stripe-app.json manifest', () => {
 		}
 	});
 
-	it('is data-only (no UI extension)', () => {
-		expect(manifest.ui_extension).toEqual([]);
+	it('is data-only: omits the ui_extension key entirely', () => {
+		// Stripe types ui_extension as an optional object; a backend-only app
+		// leaves it out rather than setting it to a placeholder value.
+		expect('ui_extension' in manifest).toBe(false);
 	});
 
 	it('requests exactly the least-privilege permission set', () => {
