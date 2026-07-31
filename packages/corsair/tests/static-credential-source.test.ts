@@ -1,3 +1,4 @@
+import { CORSAIR_INTERNAL } from '../core';
 import { createStaticAccountKeyManager } from '../core/auth/key-manager';
 import { buildCorsairClient } from '../core/client';
 import type { CorsairPlugin } from '../core/plugins';
@@ -76,7 +77,25 @@ describe('buildCorsairClient with credentialMap', () => {
 		});
 
 		expect(
-			(client as Record<symbol, unknown>)[Symbol.for('corsair:internal')],
+			(client as Record<symbol, unknown>)[CORSAIR_INTERNAL],
 		).toBeUndefined();
+	});
+
+	it('gives a key manager (resolving to null) for a plugin absent from the map', async () => {
+		const client = buildCorsairClient([plugin], {
+			database: undefined,
+			kek: undefined,
+			tenantId: 't1',
+			credentialMap: {},
+		});
+
+		const keys = (
+			client as unknown as Record<
+				string,
+				{ keys?: { get_api_key(): Promise<string | null> } }
+			>
+		).testkey.keys;
+		expect(keys).toBeDefined();
+		expect(await keys!.get_api_key()).toBeNull();
 	});
 });

@@ -494,13 +494,17 @@ export function buildCorsairClient<
 				ensureProvisioned,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
-		} else if (credentialMap?.[plugin.id] && pluginOptions?.authType) {
+		} else if (credentialMap && pluginOptions?.authType) {
+			// Child mode: every plugin with an auth type gets a static key manager,
+			// even one the tenant hasn't connected (empty creds → getters return
+			// null). Gating on a present entry would instead leave `keys` undefined
+			// and crash on access, diverging from the in-process manager.
 			const extraAccountFields =
 				authConfig?.[pluginOptions.authType]?.account ?? [];
 
 			accountKeyManager = createStaticAccountKeyManager({
 				authType: pluginOptions.authType,
-				credentials: credentialMap[plugin.id]!,
+				credentials: credentialMap[plugin.id] ?? {},
 				integrationCredentials: integrationCredentialMap?.[plugin.id],
 				extraAccountFields,
 			});
