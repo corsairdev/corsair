@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class PerplexityAiAPIError extends Error {
 	constructor(
@@ -52,9 +52,14 @@ export async function makePerplexityAiRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions);
-	} catch (error: any) {
-		const status = error?.status;
-		const retryAfter = error?.retryAfter;
+	} catch (error: unknown) {
+		// replaced 'any' with 'unknown' preventing runtime failures.
+		const status = error instanceof ApiError ? error.status : undefined;
+		const retryAfter =
+			error instanceof ApiError && error.retryAfter !== undefined
+				? String(error.retryAfter)
+				: undefined;
+
 		if (error instanceof Error) {
 			throw new PerplexityAiAPIError(
 				error.message,
