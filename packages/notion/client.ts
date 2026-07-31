@@ -52,6 +52,7 @@ export async function makeNotionRequest<T>(
 		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error: unknown) {
+		// replaced 'any' with 'unknown' preventing runtime failures.
 		if (error instanceof ApiError) {
 			if (error?.body?.message) {
 				throw new NotionAPIError(error.body.message, error.body.code);
