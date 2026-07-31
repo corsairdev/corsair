@@ -126,7 +126,6 @@ const DEFAULT_CHILD_ENV_ALLOWLIST: readonly string[] = [
 	'TMP',
 	'TEMP',
 	'NODE_ENV',
-	'NODE_OPTIONS',
 	'NODE_PATH',
 	'NODE_EXTRA_CA_CERTS',
 	'TZ',
@@ -152,7 +151,10 @@ const DEFAULT_CHILD_ENV_ALLOWLIST: readonly string[] = [
  * master KEK, DATABASE_URL, provider keys). Build the child's env from an
  * allow-list of runtime-necessary vars instead, plus any the app explicitly
  * opts into. Secrets are excluded by construction — nothing to out-guess (a
- * substring or re-encoded KEK, a newly-added secret name).
+ * substring or re-encoded KEK, a newly-added secret name). `NODE_OPTIONS` is
+ * deliberately off the list: it can carry `--require`/`--import` preloads that
+ * node runs before the child entry point, re-injecting stripped secrets (e.g.
+ * `--require dotenv/config`); node flags the child needs go through `execArgv`.
  */
 export function safeChildEnv(
 	env: NodeJS.ProcessEnv = process.env,

@@ -255,6 +255,15 @@ describe('safeChildEnv', () => {
 		expect(env.AGENTQL_API_KEY).toBeUndefined();
 	});
 
+	it('drops NODE_OPTIONS so an inherited preload cannot re-inject secrets', () => {
+		const env = safeChildEnv({
+			PATH: '/usr/bin',
+			NODE_OPTIONS: '--require /tmp/restore-secrets.js',
+		} as NodeJS.ProcessEnv);
+		expect(env.PATH).toBe('/usr/bin');
+		expect(env.NODE_OPTIONS).toBeUndefined();
+	});
+
 	it('passes through an app-declared extra var, still dropping secrets', () => {
 		const env = safeChildEnv(
 			{
