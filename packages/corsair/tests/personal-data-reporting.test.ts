@@ -1,5 +1,20 @@
 import { createCorsair } from '../core';
 import type { CorsairPlugin } from '../core/plugins';
+import { setupCorsair } from '../setup';
+import { createTestDatabase } from './setup-db';
+
+jest.mock('../hub/config', () => ({
+	getHubConfig: jest.fn(() => ({ hub: 'stub' })),
+}));
+jest.mock('../hub/managed-auth', () => ({
+	getManagedAccessToken: jest.fn(async () => ({
+		accessToken: 'refreshed-token',
+		expiresAt: 0,
+		refreshed: true,
+	})),
+}));
+
+import { getManagedAccessToken } from '../hub/managed-auth';
 import {
 	chunk,
 	collectReportableAccounts,
@@ -8,8 +23,6 @@ import {
 	reportPersonalDataForPlugin,
 	startPersonalDataReporting,
 } from '../oauth/personal-data-reporting';
-import { setupCorsair } from '../setup';
-import { createTestDatabase } from './setup-db';
 
 const JIRA_CONFIG = {
 	entityAccountIdFields: {
@@ -340,6 +353,33 @@ describe('reportPersonalDataForPlugin (through the entity mirror)', () => {
 		// u-closed (references atl-closed) and i-1 (reporter atl-closed) purged;
 		// u-open survives.
 		expect(remaining.map((r) => r.id).sort()).toEqual(['u-open']);
+	});
+
+	it('reports with a freshly-refreshed managed token (default token path)', async () => {
+		env = createTestDatabase();
+		await seed(env);
+		const corsair = createCorsair({
+			plugins: [jiraLike],
+			database: env.db,
+			kek: 'k'.repeat(64),
+		} as never);
+		await setupCorsair(corsair);
+		(getManagedAccessToken as jest.Mock).mockClear();
+
+		let usedToken: string | undefined;
+		// Only override `report` — exercise the real getToken → getManagedAccessToken path.
+		await reportPersonalDataForPlugin(corsair, jiraLike, {
+			report: async (token) => {
+				usedToken = token;
+				return { status: 204, body: null };
+			},
+		});
+
+		expect(getManagedAccessToken).toHaveBeenCalledTimes(1);
+		const ctx = (getManagedAccessToken as jest.Mock).mock.calls[0][0];
+		expect(ctx.plugin).toBe('jira');
+		expect(ctx.tenantId).toBe('default');
+		expect(usedToken).toBe('refreshed-token');
 	});
 });
 

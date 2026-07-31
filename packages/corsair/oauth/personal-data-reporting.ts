@@ -114,7 +114,11 @@ export type ReportAccountsDeps = {
 };
 
 export type ReportAccountsResult = {
-	/** Total provider account IDs reported across all accounts. */
+	/**
+	 * Provider account IDs submitted across all accounts (the report call
+	 * returned without throwing). Not an acknowledgement count — a 2xx with an
+	 * unparseable body still counts as submitted.
+	 */
 	reported: number;
 	/** Provider account IDs erased because the provider marked them closed. */
 	erased: string[];
@@ -250,11 +254,15 @@ async function eraseAccountRows(
 	}
 	if (doomed.length === 0) return;
 
-	await internal.database.db
-		.deleteFrom('corsair_entities')
-		.where('account_id', '=', accountId)
-		.where('id', 'in', doomed)
-		.execute();
+	// Chunk the delete: a widely-referenced closed account can produce thousands
+	// of ids, and SQLite caps bound variables per statement (`id in (…)`).
+	for (const ids of chunk(doomed, 500)) {
+		await internal.database.db
+			.deleteFrom('corsair_entities')
+			.where('account_id', '=', accountId)
+			.where('id', 'in', ids)
+			.execute();
+	}
 }
 
 /** Load every connected account of a plugin plus its entity rows. */
