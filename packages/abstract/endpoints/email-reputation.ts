@@ -17,7 +17,7 @@ import { EmailReputationResponseSchema } from './types';
 export const get: AbstractEndpoints['emailReputation'] = async (ctx, input) => {
 	const apiKey =
 		ctx.options.emailReputationApiKey ??
-		(await tryGetStoredKey(() => ctx.keys.get_email_reputation_api_key())) ??
+		(await tryGetStoredKey(() => ctx.keys?.get_email_reputation_api_key())) ??
 		ctx.key;
 
 	if (!apiKey) {

@@ -254,8 +254,18 @@ export function abstract<const T extends AbstractPluginOptions>(
 			// specific "no DEK" state as "no shared key configured" and
 			// re-throws anything else (a real decryption/DB failure), so a
 			// genuine operational problem can't be silently masked here.
+			//
+			// `ctx.keys` itself can also be entirely absent, not just
+			// missing a DEK — corsair's core only puts `keys` on the
+			// context at all when both a database *and* a KEK are
+			// configured (packages/corsair/core/client/index.ts), even
+			// though the type declares it as always present. The `?.`
+			// below is load-bearing: without it, a database-less/KEK-less
+			// setup using only dedicated per-product options would throw a
+			// raw TypeError here before the endpoint's own key resolution
+			// ever runs.
 			if (source === 'endpoint') {
-				const res = await tryGetStoredKey(() => ctx.keys.get_api_key());
+				const res = await tryGetStoredKey(() => ctx.keys?.get_api_key());
 				return res ?? '';
 			}
 

@@ -48,7 +48,7 @@ export const validate: AbstractEndpoints['emailValidate'] = async (
 ) => {
 	const apiKey =
 		ctx.options.emailReputationApiKey ??
-		(await tryGetStoredKey(() => ctx.keys.get_email_reputation_api_key())) ??
+		(await tryGetStoredKey(() => ctx.keys?.get_email_reputation_api_key())) ??
 		ctx.key;
 
 	if (!apiKey) {

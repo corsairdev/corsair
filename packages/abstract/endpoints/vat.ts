@@ -18,7 +18,7 @@ export const getCategories: AbstractEndpoints['vatGetCategories'] = async (
 ) => {
 	const apiKey =
 		ctx.options.vatApiKey ??
-		(await tryGetStoredKey(() => ctx.keys.get_vat_api_key())) ??
+		(await tryGetStoredKey(() => ctx.keys?.get_vat_api_key())) ??
 		ctx.key;
 
 	if (!apiKey) {

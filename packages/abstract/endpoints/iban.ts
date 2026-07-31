@@ -17,7 +17,7 @@ export const validate: AbstractEndpoints['ibanValidate'] = async (
 ) => {
 	const apiKey =
 		ctx.options.ibanApiKey ??
-		(await tryGetStoredKey(() => ctx.keys.get_iban_api_key())) ??
+		(await tryGetStoredKey(() => ctx.keys?.get_iban_api_key())) ??
 		ctx.key;
 
 	if (!apiKey) {

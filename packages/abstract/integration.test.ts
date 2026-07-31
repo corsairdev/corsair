@@ -219,4 +219,27 @@ describe('Abstract plugin integration', () => {
 			testDb.cleanup();
 		}
 	});
+
+	it('works with dedicated per-product keys and no database/key manager at all', async () => {
+		if (!VAT_KEY) {
+			return;
+		}
+
+		// No `database` at all — corsair's core only puts `keys` on the
+		// endpoint/keyBuilder context when both a database *and* a KEK are
+		// configured, so this omits `ctx.keys` entirely (not just an empty
+		// or DEK-less manager). `kek` is still required by createCorsair's
+		// type even though it's unused without a database.
+		const corsair = createCorsair({
+			plugins: [abstract({ vatApiKey: VAT_KEY })],
+			kek: '0123456789abcdef0123456789abcdef',
+		});
+
+		const result = await corsair.abstract.api.vat.getCategories({
+			countryCode: 'DE',
+		});
+
+		expect(Array.isArray(result)).toBe(true);
+		expect(result.length).toBeGreaterThan(0);
+	});
 });
