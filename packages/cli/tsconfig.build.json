@@ -8,5 +8,5 @@
     "outDir": "./dist"
   },
   "include": ["src/**/*.ts", "package.json", "yaml.d.ts"],
-  "exclude": ["dist", "node_modules", "sandbox/**/*"]
+  "exclude": ["dist", "node_modules", "sandbox/**/*", "src/**/*.test.ts"]
 }
