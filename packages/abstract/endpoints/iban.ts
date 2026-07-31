@@ -1,5 +1,5 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { makeAbstractRequest, tryGetStoredKey } from '../client';
+import { makeAbstractRequest, redactIban, tryGetStoredKey } from '../client';
 import type { AbstractEndpoints } from '../index';
 import type { AbstractEndpointOutputs } from './types';
 import { IbanValidateResponseSchema } from './types';
@@ -51,7 +51,7 @@ export const validate: AbstractEndpoints['ibanValidate'] = async (
 	await logEventFromContext(
 		ctx,
 		'abstract.iban.validate',
-		{ ...input },
+		{ iban: redactIban(input.iban) },
 		'completed',
 	);
 

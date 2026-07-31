@@ -63,6 +63,17 @@ export function redactEmail(email: string): string {
 	return `${email[0]}***${email.slice(atIndex)}`;
 }
 
+/**
+ * Redacts an IBAN for event logs — keeps the country code and last 4
+ * characters (useful for debugging/correlation) and masks the rest, since
+ * an IBAN identifies a specific bank account.
+ */
+export function redactIban(iban: string): string {
+	const trimmed = iban.replace(/\s+/g, '');
+	if (trimmed.length <= 6) return '***';
+	return `${trimmed.slice(0, 2)}${'*'.repeat(trimmed.length - 6)}${trimmed.slice(-4)}`;
+}
+
 // Matches only corsair's "no DEK on this account" error
 // (packages/corsair/core/auth/key-manager.ts: `No DEK found for account
 // (tenant: "...", integration: "...")`). No dedicated error class exists

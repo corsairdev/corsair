@@ -18,13 +18,35 @@ function getRetryAfter(error: Error): number | undefined {
 }
 
 /**
+ * Extracts a searchable string from Abstract's JSON error body
+ * (`{ error: { message, code, details } }`). Needed because the thrown
+ * error's own `.message` can end up as the raw error *object* rather than a
+ * string (corsair's request layer does `result.body?.message ||
+ * result.body?.error || ...`, and Abstract nests everything under `error`,
+ * so `.message` becomes that whole object, not text) — `.body` is preserved
+ * untouched on `AbstractAPIError` regardless, so it's the reliable source.
+ */
+function getErrorBodyText(error: Error): string {
+	const body = (error as Partial<AbstractAPIError>).body as
+		| { error?: { message?: string; code?: string } }
+		| undefined;
+	return [body?.error?.message, body?.error?.code, error.message]
+		.filter((part): part is string => typeof part === 'string')
+		.join(' ')
+		.toLowerCase();
+}
+
+/**
  * Error handlers for the Abstract plugin.
  *
  * Abstract API error codes (consistent across its product subdomains):
  * - 401: Invalid, missing, or unauthorized API key for the requested product
- * - 422: Request is missing a required parameter or a parameter is malformed
- *   (e.g. an unparseable email/IBAN or unknown country code)
- * - 429: Rate limit or monthly quota exceeded for the plan
+ * - 422: Verified against live keys — on Email Reputation specifically, a
+ *   422 means the account's request quota is exhausted, not a malformed
+ *   parameter (see QUOTA_ERROR below, checked before the generic
+ *   VALIDATION_ERROR bucket). Other products may still return 422 for a
+ *   genuinely malformed parameter.
+ * - 429: Rate limit exceeded
  * - 5xx: Internal server error
  */
 export const errorHandlers = {
@@ -56,6 +78,28 @@ export const errorHandlers = {
 			console.log(
 				'[ABSTRACT] Authentication failed — check that the API key is valid ' +
 					'for this specific Abstract product (each product has its own key).',
+			);
+			return { maxRetries: 0 };
+		},
+	},
+	QUOTA_ERROR: {
+		// Checked before VALIDATION_ERROR: on Email Reputation, Abstract
+		// returns 422 (not 429) when the account's plan quota is exhausted,
+		// confirmed against live keys. A generic 422 without quota wording
+		// falls through to VALIDATION_ERROR below.
+		match: (error: Error) => {
+			if (getStatus(error) !== 422) return false;
+			const text = getErrorBodyText(error);
+			return (
+				text.includes('quota') ||
+				text.includes('exceeded') ||
+				text.includes('limit reached')
+			);
+		},
+		handler: async () => {
+			console.warn(
+				'[ABSTRACT] Request rejected — the plan/quota limit for this ' +
+					'Abstract product has been exhausted, not a malformed request.',
 			);
 			return { maxRetries: 0 };
 		},
