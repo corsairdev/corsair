@@ -239,6 +239,26 @@ describe('collectTenantCredentials', () => {
 			cleanup();
 		}
 	});
+
+	it('surfaces a real credential failure instead of skipping the plugin', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			// DEK sealed under KEK, then read back with the wrong KEK → decryption
+			// fails. That is a real error, not a "not connected" skip.
+			await seedAccountConfig(database, { api_key: 'k' });
+			const corsair = {
+				[CORSAIR_INTERNAL]: {
+					plugins: [{ id: 'testkey', options: { authType: 'api_key' } }],
+					database,
+					kek: 'a-different-kek-at-least-32-chars!!!!',
+					multiTenancy: true,
+				},
+			};
+			await expect(collectTenantCredentials(corsair, 't1')).rejects.toThrow();
+		} finally {
+			cleanup();
+		}
+	});
 });
 
 describe('safeChildEnv', () => {

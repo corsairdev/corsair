@@ -75,13 +75,16 @@ export async function collectTenantCredentials(
 		} catch (error) {
 			// A missing/uninitialized integration or account means the tenant hasn't
 			// (fully) connected this plugin — expected, skip it. Both "not found" and
-			// "No DEK found" are that state. Anything else (decrypt/DB failure) is
-			// real and must not masquerade as "not connected", so surface it.
+			// "No DEK found" are that state. Anything else (DB, malformed ciphertext,
+			// KEK mismatch) is a real failure: skipping it would launch the child
+			// without these credentials and resurface downstream as a misleading
+			// provider auth error, so surface the real cause and fail collection.
 			const message = error instanceof Error ? error.message : String(error);
 			if (!/not found|no dek found/i.test(message)) {
 				console.warn(
 					`[corsair] failed to collect credentials for "${plugin.id}": ${message}`,
 				);
+				throw error;
 			}
 		}
 	}
