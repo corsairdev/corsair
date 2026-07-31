@@ -10,17 +10,24 @@ export class GoogleAddressValidationAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
-		options?: { cause?: Error },
+		options?: {
+			// Native `cause` chaining only — never the raw ApiError, since its
+			// `.url`/`.request.query` carry the API key (Google's auth is a query
+			// param, not a header). Use the fields below for ApiError metadata.
+			cause?: Error;
+			status?: number;
+			statusText?: string;
+			body?: unknown;
+			retryAfter?: number;
+		},
 	) {
-		super(message, options);
+		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'GoogleAddressValidationAPIError';
 
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.statusText = options.cause.statusText;
-			this.body = options.cause.body;
-			this.retryAfter = options.cause.retryAfter;
-		}
+		this.status = options?.status;
+		this.statusText = options?.statusText;
+		this.body = options?.body;
+		this.retryAfter = options?.retryAfter;
 	}
 }
 
@@ -64,13 +71,15 @@ export async function makeGoogleAddressValidationRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Not chained as `cause`: ApiError.url and ApiError.request.query carry
-			// the raw `key` query param (Google's auth is a query param, not a
-			// header), and status/statusText/body/retryAfter are already copied
-			// above for error-handlers.ts to route on.
 			throw new GoogleAddressValidationAPIError(
 				error.message,
 				String(error.status),
+				{
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+					retryAfter: error.retryAfter,
+				},
 			);
 		}
 
