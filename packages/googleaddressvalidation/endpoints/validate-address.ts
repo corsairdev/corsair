@@ -21,7 +21,7 @@ export const validate: GoogleAddressValidationEndpoints['validateAddress'] =
 		await logEventFromContext(
 			ctx,
 			'googleaddressvalidation.address.validate',
-			{ ...input },
+			{},
 			'completed',
 		);
 		return parsed;

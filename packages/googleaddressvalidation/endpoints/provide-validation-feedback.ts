@@ -21,7 +21,7 @@ export const provideFeedback: GoogleAddressValidationEndpoints['provideValidatio
 		await logEventFromContext(
 			ctx,
 			'googleaddressvalidation.address.provideFeedback',
-			{ ...input },
+			{},
 			'completed',
 		);
 		return parsed;
