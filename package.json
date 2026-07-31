@@ -23,6 +23,7 @@
     "generate:docs:all": "tsx scripts/generate-plugin-docs.ts --all",
     "build:explorer-catalog": "tsx scripts/build-explorer-catalog.ts",
     "validate:plugins": "tsx scripts/validate-plugins.ts",
+    "validate:docs": "tsx scripts/lint-docs-imports.ts",
     "prepare": "simple-git-hooks"
   },
   "pnpm": {
