@@ -1,4 +1,4 @@
-import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import dotenv from 'dotenv';
 
@@ -32,7 +32,9 @@ export const corsair = createCorsair({
 		signingSecret: hubSigningSecret,
 		allowWorkflowExecution: true,
 		workflowExecutor: createChildProcessExecutor({
-			childModulePath: path.join(process.cwd(), 'src/server/workflow-child.ts'),
+			childModulePath: fileURLToPath(
+				new URL('./workflow-child.ts', import.meta.url),
+			),
 			execArgv: ['--import', 'tsx'],
 			maxOldSpaceMb: 256,
 		}),
