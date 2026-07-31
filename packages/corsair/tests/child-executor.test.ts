@@ -12,6 +12,7 @@ import {
 	createChildProcessExecutor,
 	kekLessEnv,
 } from '../workflows/child-executor';
+import { collectTenantCredentials } from '../workflows/collect-credentials';
 import { createTestDatabase } from './setup-db';
 
 const FIXTURE = join(__dirname, 'workflow-child-fixture.ts');
@@ -82,9 +83,9 @@ describe('runWorkflowChild (forked)', () => {
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
 
-async function seedApiKeyAccount(
+async function seedAccountConfig(
 	database: ReturnType<typeof createTestDatabase>['database'],
-	apiKey: string,
+	config: Record<string, string>,
 ) {
 	const now = new Date();
 	const dek = generateDEK();
@@ -108,10 +109,17 @@ async function seedApiKeyAccount(
 			updated_at: now,
 			tenant_id: 't1',
 			integration_id: 'integration-testkey',
-			config: encryptConfig({ api_key: apiKey }, dek),
+			config: encryptConfig(config, dek),
 			dek: encryptedDek,
 		})
 		.execute();
+}
+
+function seedApiKeyAccount(
+	database: ReturnType<typeof createTestDatabase>['database'],
+	apiKey: string,
+) {
+	return seedAccountConfig(database, { api_key: apiKey });
 }
 
 function rootCorsair(
@@ -171,6 +179,36 @@ describe('createChildProcessExecutor', () => {
 describe('public API surface', () => {
 	it('re-exports the child executor from the tunnel entry', () => {
 		expect(typeof fromTunnel).toBe('function');
+	});
+});
+
+describe('collectTenantCredentials', () => {
+	it('collects plugin-specific account fields declared in authConfig', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccountConfig(database, { api_key: 'k', subdomain: 'acme' });
+			const corsair = {
+				[CORSAIR_INTERNAL]: {
+					plugins: [
+						{
+							id: 'testkey',
+							options: { authType: 'api_key' },
+							authConfig: { api_key: { account: ['subdomain'] } },
+						},
+					],
+					database,
+					kek: KEK,
+					multiTenancy: true,
+				},
+			};
+			const { credentialMap } = await collectTenantCredentials(corsair, 't1');
+			expect(credentialMap.testkey).toEqual({
+				api_key: 'k',
+				subdomain: 'acme',
+			});
+		} finally {
+			cleanup();
+		}
 	});
 });
 

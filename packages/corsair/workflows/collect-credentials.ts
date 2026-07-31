@@ -1,4 +1,5 @@
 import { createAccountKeyManager } from '../core/auth/key-manager';
+import type { PluginAuthConfig } from '../core/auth/types';
 import { BASE_AUTH_FIELDS } from '../core/auth/types';
 import type { AuthTypes } from '../core/constants';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
@@ -31,17 +32,28 @@ export async function collectTenantCredentials(
 			?.authType;
 		if (!authType) continue;
 
+		// Plugin-specific account fields (e.g. zendesk `subdomain`, twilio
+		// `account_sid`) live in authConfig, not BASE_AUTH_FIELDS. Collect both, or
+		// the child's key manager resolves them to null and the op fails auth.
+		const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
+		const extraAccountFields = authConfig?.[authType]?.account ?? [];
+		const accountFields = [
+			...BASE_AUTH_FIELDS[authType].account,
+			...extraAccountFields,
+		];
+
 		const km = createAccountKeyManager({
 			authType,
 			integrationName: plugin.id,
 			tenantId,
 			kek: internal.kek,
 			database: internal.database,
+			extraAccountFields,
 		}) as unknown as Record<string, () => Promise<unknown>>;
 
 		try {
 			const creds: Record<string, string> = {};
-			for (const field of BASE_AUTH_FIELDS[authType].account) {
+			for (const field of accountFields) {
 				const value = await km[`get_${field}`]!();
 				if (typeof value === 'string' && value.length > 0) creds[field] = value;
 			}
@@ -60,8 +72,17 @@ export async function collectTenantCredentials(
 				if (Object.keys(filtered).length > 0)
 					integrationCredentialMap[plugin.id] = filtered;
 			}
-		} catch {
-			// No account for this tenant + plugin — nothing to collect.
+		} catch (error) {
+			// A missing/uninitialized integration or account means the tenant hasn't
+			// (fully) connected this plugin — expected, skip it. Both "not found" and
+			// "No DEK found" are that state. Anything else (decrypt/DB failure) is
+			// real and must not masquerade as "not connected", so surface it.
+			const message = error instanceof Error ? error.message : String(error);
+			if (!/not found|no dek found/i.test(message)) {
+				console.warn(
+					`[corsair] failed to collect credentials for "${plugin.id}": ${message}`,
+				);
+			}
 		}
 	}
 
