@@ -17,6 +17,8 @@
 import type { CorsairInternalConfig, CorsairPlugin } from '../core';
 import { createAccountKeyManager } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
+import { getHubConfig } from '../hub/config';
+import { getManagedAccessToken } from '../hub/managed-auth';
 
 /** Which stored entity fields hold a provider account id, keyed by entity_type. */
 export type PersonalDataConfig = {
@@ -306,6 +308,10 @@ export async function reportPersonalDataForPlugin(
 
 	const rows = await loadAccountEntities(internal, plugin.id);
 
+	// Managed access tokens expire (~1h); a daily pass will usually find the
+	// stored token stale. getManagedAccessToken checks expiry and refreshes via
+	// the Hub, exactly as the endpoint keyBuilder does. Resolve the Hub lazily so
+	// injected getToken overrides (tests) never require a configured Hub.
 	const getToken =
 		overrides.getToken ??
 		(async (row: AccountEntities) => {
@@ -317,7 +323,13 @@ export async function reportPersonalDataForPlugin(
 				database: internal.database!,
 				extraAccountFields: [...(plugin.authConfig?.managed?.account ?? [])],
 			});
-			return keys.get_access_token();
+			const { accessToken } = await getManagedAccessToken({
+				keys,
+				hub: getHubConfig(corsair),
+				plugin: plugin.id,
+				tenantId: row.tenantId,
+			});
+			return accessToken;
 		});
 
 	return reportAccounts({
