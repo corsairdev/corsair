@@ -26,6 +26,7 @@ export type ChildResultMessage =
  */
 export function runWorkflowChild(plugins: readonly CorsairPlugin[]): void {
 	process.on('message', async (msg: ChildRunMessage) => {
+		let outgoing: ChildResultMessage;
 		try {
 			const corsair = buildCorsairClient(plugins, {
 				database: undefined,
@@ -42,15 +43,23 @@ export function runWorkflowChild(plugins: readonly CorsairPlugin[]): void {
 				timeoutMs: msg.timeoutMs,
 				tenantId: msg.tenantId,
 			});
-			process.send?.({ type: 'done', result } satisfies ChildResultMessage);
+			outgoing = { type: 'done', result };
 		} catch (error) {
-			process.send?.({
+			outgoing = {
 				type: 'error',
 				message:
 					error instanceof Error ? error.message : 'workflow child failed',
-			} satisfies ChildResultMessage);
-		} finally {
-			process.exit(0);
+			};
 		}
+		// process.send is async: exiting before the IPC flush drops the message and
+		// the parent reports "child exited early". Wait for the send callback first.
+		await new Promise<void>((resolve) => {
+			if (!process.send) {
+				resolve();
+				return;
+			}
+			process.send(outgoing, undefined, undefined, () => resolve());
+		});
+		process.exit(0);
 	});
 }
