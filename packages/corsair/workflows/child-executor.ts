@@ -145,6 +145,15 @@ const DEFAULT_CHILD_ENV_ALLOWLIST: readonly string[] = [
 ];
 
 /**
+ * Names never forwarded to the child even if an app opts them in — a code-exec
+ * vector (`NODE_OPTIONS`) and the master secrets that would undo the boundary.
+ * Matched case-insensitively so a differently-cased request can't slip past.
+ */
+const PROTECTED_CHILD_ENV: ReadonlySet<string> = new Set(
+	['NODE_OPTIONS', 'CORSAIR_KEK', 'DATABASE_URL'].map((n) => n.toLowerCase()),
+);
+
+/**
  * The child gets its tenant credentials over IPC — nothing else should reach it.
  * A forked child inherits the parent's whole env by default, which would hand
  * Hub-delivered workflow code every app-level secret in `process.env` (the
@@ -155,6 +164,7 @@ const DEFAULT_CHILD_ENV_ALLOWLIST: readonly string[] = [
  * deliberately off the list: it can carry `--require`/`--import` preloads that
  * node runs before the child entry point, re-injecting stripped secrets (e.g.
  * `--require dotenv/config`); node flags the child needs go through `execArgv`.
+ * An app's `extraAllowlist` can never re-add a {@link PROTECTED_CHILD_ENV} name.
  */
 export function safeChildEnv(
 	env: NodeJS.ProcessEnv = process.env,
@@ -163,6 +173,7 @@ export function safeChildEnv(
 	const allow = new Set([...DEFAULT_CHILD_ENV_ALLOWLIST, ...extraAllowlist]);
 	const out: NodeJS.ProcessEnv = {};
 	for (const key of allow) {
+		if (PROTECTED_CHILD_ENV.has(key.toLowerCase())) continue;
 		const value = env[key];
 		if (value !== undefined) out[key] = value;
 	}

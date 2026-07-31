@@ -264,6 +264,24 @@ describe('safeChildEnv', () => {
 		expect(env.NODE_OPTIONS).toBeUndefined();
 	});
 
+	it('never forwards protected names, even requested via the allow-list (any case)', () => {
+		const env = safeChildEnv(
+			{
+				NODE_OPTIONS: '--require /tmp/evil.js',
+				CORSAIR_KEK: 'master-kek',
+				DATABASE_URL: 'postgres://secret',
+				Database_Url: 'postgres://also-secret',
+				PATH: '/usr/bin',
+			} as NodeJS.ProcessEnv,
+			['NODE_OPTIONS', 'CORSAIR_KEK', 'DATABASE_URL', 'Database_Url'],
+		);
+		expect(env.NODE_OPTIONS).toBeUndefined();
+		expect(env.CORSAIR_KEK).toBeUndefined();
+		expect(env.DATABASE_URL).toBeUndefined();
+		expect((env as Record<string, unknown>).Database_Url).toBeUndefined();
+		expect(env.PATH).toBe('/usr/bin');
+	});
+
 	it('passes through an app-declared extra var, still dropping secrets', () => {
 		const env = safeChildEnv(
 			{
