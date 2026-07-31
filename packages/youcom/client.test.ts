@@ -211,16 +211,21 @@ describe('makeYoucomSearchRequest routing', () => {
 		});
 	});
 
-	it('disables transport-level rate-limit retries', async () => {
+	it('extracts rate-limit headers without transport retries', async () => {
 		await makeYoucomSearchRequest('test-key', { query: 'test' });
 
 		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
 			rateLimitConfig: {
-				enabled: false,
+				enabled: true,
 				maxRetries: 0,
 				initialRetryDelay: 0,
 				backoffMultiplier: 1,
-				headerNames: {},
+				headerNames: {
+					retryAfter: 'retry-after',
+					resetTime: 'x-ratelimit-reset',
+					remaining: 'x-ratelimit-remaining',
+					limit: 'x-ratelimit-limit',
+				},
 			},
 		});
 	});

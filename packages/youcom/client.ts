@@ -28,11 +28,16 @@ export class YoucomAPIError extends Error {
 const YOUCOM_API_BASE = 'https://ydc-index.io';
 
 const YOUCOM_NO_TRANSPORT_RETRIES: RateLimitConfig = {
-	enabled: false,
+	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 0,
 	backoffMultiplier: 1,
-	headerNames: {},
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
 };
 
 function shouldUsePost(input: YouSearchRequest): boolean {
