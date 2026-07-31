@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 const PostalAddressSchema = z.object({
-	revision: z.number().optional(),
+	// Google's PostalAddress.revision must be 0 (the only supported schema
+	// revision) — anything else is rejected remotely with INVALID_ARGUMENT.
+	revision: z.literal(0).optional(),
 	regionCode: z.string().optional(),
 	languageCode: z.string().optional(),
 	postalCode: z.string().optional(),

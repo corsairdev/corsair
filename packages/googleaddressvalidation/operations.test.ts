@@ -113,4 +113,15 @@ describe('GoogleAddressValidation endpoint routing', () => {
 
 		await expect(provideFeedback(ctx, provideFeedbackInput)).rejects.toThrow();
 	});
+
+	it('address.validate rejects an unsupported PostalAddress revision before calling the RPC', async () => {
+		const ctx = createContext();
+
+		await expect(
+			validate(ctx, {
+				address: { ...validateAddressInput.address, revision: 1 },
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
