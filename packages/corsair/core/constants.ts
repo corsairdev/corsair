@@ -27,6 +27,7 @@ export const BaseProviders = [
 	'calendly',
 	'canva',
 	'cloudflare',
+	'cloudinary',
 	'confluence',
 	'cursor',
 	'datadog',
@@ -36,6 +37,7 @@ export const BaseProviders = [
 	'dodopayments',
 	'dropbox',
 	'exa',
+	'facebook',
 	'figma',
 	'firecrawl',
 	'fireflies',
@@ -121,6 +123,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	cloudflare: 'Cloudflare',
+	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
 	datadog: 'Datadog',
@@ -130,6 +133,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
 	exa: 'Exa',
+	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -222,6 +226,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'canva'
 	| 'cloudflare'
+	| 'cloudinary'
 	| 'confluence'
 	| 'cursor'
 	| 'datadog'
@@ -231,6 +236,7 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
+	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
