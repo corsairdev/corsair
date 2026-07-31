@@ -55,4 +55,14 @@ describe('findCorsairConfigPath', () => {
 		touch('corsair/index.ts');
 		expect(findCorsairConfigPath(cwd)).toBe(path.join(cwd, 'corsair/index.ts'));
 	});
+
+	it('should find a root-level corsair.tsx', () => {
+		touch('corsair.tsx');
+		expect(findCorsairConfigPath(cwd)).toBe(path.join(cwd, 'corsair.tsx'));
+	});
+
+	it('should find a nested src/corsair.jsx', () => {
+		touch('src/corsair.jsx');
+		expect(findCorsairConfigPath(cwd)).toBe(path.join(cwd, 'src/corsair.jsx'));
+	});
 });
