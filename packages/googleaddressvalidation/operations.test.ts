@@ -72,7 +72,12 @@ describe('GoogleAddressValidation endpoint routing', () => {
 			expect.objectContaining({ method: 'POST', body: validateAddressInput }),
 		);
 		expect(result).toEqual(validateAddressResponse);
-		expect(mockLog).toHaveBeenCalled();
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'googleaddressvalidation.address.validate',
+			{},
+			'completed',
+		);
 	});
 
 	it('address.provideFeedback calls the provideValidationFeedback RPC and validates output', async () => {
@@ -87,7 +92,12 @@ describe('GoogleAddressValidation endpoint routing', () => {
 			expect.objectContaining({ method: 'POST', body: provideFeedbackInput }),
 		);
 		expect(result).toEqual({});
-		expect(mockLog).toHaveBeenCalled();
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'googleaddressvalidation.address.provideFeedback',
+			{},
+			'completed',
+		);
 	});
 
 	it('address.validate rejects a response missing the required responseId', async () => {

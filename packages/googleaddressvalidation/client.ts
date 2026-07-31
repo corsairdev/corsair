@@ -64,10 +64,13 @@ export async function makeGoogleAddressValidationRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Not chained as `cause`: ApiError.url and ApiError.request.query carry
+			// the raw `key` query param (Google's auth is a query param, not a
+			// header), and status/statusText/body/retryAfter are already copied
+			// above for error-handlers.ts to route on.
 			throw new GoogleAddressValidationAPIError(
 				error.message,
 				String(error.status),
-				{ cause: error },
 			);
 		}
 

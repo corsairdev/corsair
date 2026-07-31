@@ -39,34 +39,41 @@ const PossibleNextActionSchema = z.enum([
 	'ACCEPT',
 ]);
 
-const AddressComponentSchema = z.object({
-	componentName: z
-		.object({
-			text: z.string().optional(),
-			languageCode: z.string().optional(),
-		})
-		.optional(),
-	componentType: z.string().optional(),
-	confirmationLevel: ConfirmationLevelSchema.optional(),
-	inferred: z.boolean().optional(),
-	spellCorrected: z.boolean().optional(),
-	replaced: z.boolean().optional(),
-	unexpected: z.boolean().optional(),
-});
+const AddressComponentSchema = z
+	.object({
+		componentName: z
+			.object({
+				text: z.string().optional(),
+				languageCode: z.string().optional(),
+			})
+			.optional(),
+		componentType: z.string().optional(),
+		confirmationLevel: ConfirmationLevelSchema.optional(),
+		inferred: z.boolean().optional(),
+		spellCorrected: z.boolean().optional(),
+		replaced: z.boolean().optional(),
+		unexpected: z.boolean().optional(),
+	})
+	.passthrough();
 
+// Both fields are optional: proto3 JSON serialization omits fields left at
+// their zero value, so a location exactly on the equator/prime meridian
+// would otherwise fail to parse.
 const LatLngSchema = z.object({
-	latitude: z.number(),
-	longitude: z.number(),
+	latitude: z.number().optional(),
+	longitude: z.number().optional(),
 });
 
-const AddressResultSchema = z.object({
-	formattedAddress: z.string().optional(),
-	postalAddress: PostalAddressSchema.optional(),
-	addressComponents: z.array(AddressComponentSchema).optional(),
-	missingComponentTypes: z.array(z.string()).optional(),
-	unconfirmedComponentTypes: z.array(z.string()).optional(),
-	unresolvedTokens: z.array(z.string()).optional(),
-});
+const AddressResultSchema = z
+	.object({
+		formattedAddress: z.string().optional(),
+		postalAddress: PostalAddressSchema.optional(),
+		addressComponents: z.array(AddressComponentSchema).optional(),
+		missingComponentTypes: z.array(z.string()).optional(),
+		unconfirmedComponentTypes: z.array(z.string()).optional(),
+		unresolvedTokens: z.array(z.string()).optional(),
+	})
+	.passthrough();
 
 const UspsDataSchema = z
 	.object({
@@ -136,54 +143,58 @@ const ValidateAddressInputSchema = z.object({
 
 export type ValidateAddressInput = z.infer<typeof ValidateAddressInputSchema>;
 
-const ValidateAddressResponseSchema = z.object({
-	result: z.object({
-		verdict: z
+const ValidateAddressResponseSchema = z
+	.object({
+		result: z
 			.object({
-				inputGranularity: GranularitySchema.optional(),
-				validationGranularity: GranularitySchema.optional(),
-				geocodeGranularity: GranularitySchema.optional(),
-				addressComplete: z.boolean().optional(),
-				hasUnconfirmedComponents: z.boolean().optional(),
-				hasInferredComponents: z.boolean().optional(),
-				hasReplacedComponents: z.boolean().optional(),
-				hasSpellCorrectedComponents: z.boolean().optional(),
-				possibleNextAction: PossibleNextActionSchema.optional(),
-			})
-			.optional(),
-		address: AddressResultSchema.optional(),
-		geocode: z
-			.object({
-				location: LatLngSchema.optional(),
-				plusCode: z
+				verdict: z
 					.object({
-						globalCode: z.string().optional(),
-						compoundCode: z.string().optional(),
+						inputGranularity: GranularitySchema.optional(),
+						validationGranularity: GranularitySchema.optional(),
+						geocodeGranularity: GranularitySchema.optional(),
+						addressComplete: z.boolean().optional(),
+						hasUnconfirmedComponents: z.boolean().optional(),
+						hasInferredComponents: z.boolean().optional(),
+						hasReplacedComponents: z.boolean().optional(),
+						hasSpellCorrectedComponents: z.boolean().optional(),
+						possibleNextAction: PossibleNextActionSchema.optional(),
 					})
 					.optional(),
-				bounds: z
+				address: AddressResultSchema.optional(),
+				geocode: z
 					.object({
-						low: LatLngSchema.optional(),
-						high: LatLngSchema.optional(),
+						location: LatLngSchema.optional(),
+						plusCode: z
+							.object({
+								globalCode: z.string().optional(),
+								compoundCode: z.string().optional(),
+							})
+							.optional(),
+						bounds: z
+							.object({
+								low: LatLngSchema.optional(),
+								high: LatLngSchema.optional(),
+							})
+							.optional(),
+						featureSizeMeters: z.number().optional(),
+						placeId: z.string().optional(),
+						placeTypes: z.array(z.string()).optional(),
 					})
 					.optional(),
-				featureSizeMeters: z.number().optional(),
-				placeId: z.string().optional(),
-				placeTypes: z.array(z.string()).optional(),
+				metadata: z
+					.object({
+						business: z.boolean().optional(),
+						poBox: z.boolean().optional(),
+						residential: z.boolean().optional(),
+					})
+					.optional(),
+				uspsData: UspsDataSchema.optional(),
+				englishLatinAddress: AddressResultSchema.optional(),
 			})
-			.optional(),
-		metadata: z
-			.object({
-				business: z.boolean().optional(),
-				poBox: z.boolean().optional(),
-				residential: z.boolean().optional(),
-			})
-			.optional(),
-		uspsData: UspsDataSchema.optional(),
-		englishLatinAddress: AddressResultSchema.optional(),
-	}),
-	responseId: z.string(),
-});
+			.passthrough(),
+		responseId: z.string(),
+	})
+	.passthrough();
 
 export type ValidateAddressResponse = z.infer<
 	typeof ValidateAddressResponseSchema

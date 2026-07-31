@@ -137,7 +137,7 @@ export const ProviderDisplayNames = {
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
-	googleaddressvalidation: 'GoogleAddressValidation',
+	googleaddressvalidation: 'Google Address Validation',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',

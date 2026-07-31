@@ -25,7 +25,10 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 401) return true;
+			// Google Maps Platform APIs reject a missing/invalid key with 403
+			// PERMISSION_DENIED, not 401 — same key mechanism as this API.
+			const status = getStatus(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
