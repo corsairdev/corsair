@@ -1,5 +1,4 @@
 import { fork } from 'node:child_process';
-import { getCorsairInternal } from '../core/utils/corsair-instance';
 import type { RunResultPayload } from '../hub/contracts/tunnel';
 import type { ChildResultMessage, ChildRunMessage } from './child';
 import { collectTenantCredentials } from './collect-credentials';
@@ -15,6 +14,12 @@ export type ChildProcessExecutorConfig = {
 	maxOldSpaceMb?: number;
 	/** Grace between SIGTERM and SIGKILL on timeout. */
 	killGraceMs?: number;
+	/**
+	 * Extra env var names to pass into the child on top of the runtime-safe
+	 * defaults. Use only for an app-level value a plugin genuinely needs at
+	 * construction; never a per-tenant secret (those cross via IPC).
+	 */
+	envAllowlist?: readonly string[];
 };
 
 const DEFAULT_TIMEOUT_MS = 30_000;
@@ -51,12 +56,10 @@ async function runInChild(
 			? [`--max-old-space-size=${config.maxOldSpaceMb}`]
 			: []),
 	];
-	const kek = getCorsairInternal(input.corsair)?.kek;
-
 	return new Promise<RunResultPayload>((resolve) => {
 		const child = fork(config.childModulePath, [], {
 			execArgv,
-			env: kekLessEnv(kek),
+			env: safeChildEnv(process.env, config.envAllowlist),
 		});
 		let settled = false;
 		const finish = (result: RunResultPayload) => {
@@ -113,18 +116,53 @@ async function runInChild(
 }
 
 /**
- * The child gets its credentials over IPC, never the master key — but a forked
- * child inherits the parent's whole env by default. Strip any var whose value is
- * the KEK so an escape from the vm can't read it from `process.env`, closing the
- * gap the OS-process boundary exists to prevent. Name-agnostic: the app picks the
- * var name, the parent holds the value.
+ * Env var names a Node/tsx child needs to boot. Everything else — the master
+ * KEK, DATABASE_URL, provider API keys — is left behind.
  */
-export function kekLessEnv(
-	kek: string | undefined,
+const DEFAULT_CHILD_ENV_ALLOWLIST: readonly string[] = [
+	'PATH',
+	'HOME',
+	'TMPDIR',
+	'TMP',
+	'TEMP',
+	'NODE_ENV',
+	'NODE_OPTIONS',
+	'NODE_PATH',
+	'NODE_EXTRA_CA_CERTS',
+	'TZ',
+	'LANG',
+	'LC_ALL',
+	'LC_CTYPE',
+	'TERM',
+	// Windows runtime essentials
+	'SystemRoot',
+	'SYSTEMROOT',
+	'ComSpec',
+	'PATHEXT',
+	'WINDIR',
+	'APPDATA',
+	'LOCALAPPDATA',
+	'USERPROFILE',
+];
+
+/**
+ * The child gets its tenant credentials over IPC — nothing else should reach it.
+ * A forked child inherits the parent's whole env by default, which would hand
+ * Hub-delivered workflow code every app-level secret in `process.env` (the
+ * master KEK, DATABASE_URL, provider keys). Build the child's env from an
+ * allow-list of runtime-necessary vars instead, plus any the app explicitly
+ * opts into. Secrets are excluded by construction — nothing to out-guess (a
+ * substring or re-encoded KEK, a newly-added secret name).
+ */
+export function safeChildEnv(
 	env: NodeJS.ProcessEnv = process.env,
+	extraAllowlist: readonly string[] = [],
 ): NodeJS.ProcessEnv {
-	if (!kek) return env;
-	return Object.fromEntries(
-		Object.entries(env).filter(([, value]) => value !== kek),
-	);
+	const allow = new Set([...DEFAULT_CHILD_ENV_ALLOWLIST, ...extraAllowlist]);
+	const out: NodeJS.ProcessEnv = {};
+	for (const key of allow) {
+		const value = env[key];
+		if (value !== undefined) out[key] = value;
+	}
+	return out;
 }

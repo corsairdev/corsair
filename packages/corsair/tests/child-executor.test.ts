@@ -10,7 +10,7 @@ import type { RunResultPayload } from '../hub/contracts/tunnel';
 import { createChildProcessExecutor as fromTunnel } from '../tunnel';
 import {
 	createChildProcessExecutor,
-	kekLessEnv,
+	safeChildEnv,
 } from '../workflows/child-executor';
 import { collectTenantCredentials } from '../workflows/collect-credentials';
 import { createTestDatabase } from './setup-db';
@@ -24,30 +24,43 @@ function runInChild(message: unknown): Promise<{
 }> {
 	return new Promise((resolve, reject) => {
 		const child = fork(FIXTURE, [], { execArgv: ['--import', 'tsx'] });
+		let settled = false;
+		const settle = (fn: () => void) => {
+			if (settled) return;
+			settled = true;
+			clearTimeout(timer);
+			fn();
+		};
 		const timer = setTimeout(() => {
+			settle(() => reject(new Error('child timed out')));
 			child.kill('SIGKILL');
-			reject(new Error('child timed out'));
 		}, 8000);
 		child.on(
 			'message',
 			(m: { type: string; result?: RunResultPayload; message?: string }) => {
-				clearTimeout(timer);
 				if (m.type === 'done' && m.result) {
-					resolve({
-						result: m.result,
-						childPid: child.pid!,
-						parentPid: process.pid,
-					});
+					settle(() =>
+						resolve({
+							result: m.result!,
+							childPid: child.pid!,
+							parentPid: process.pid,
+						}),
+					);
 				} else {
-					reject(new Error(m.message ?? 'child error'));
+					settle(() => reject(new Error(m.message ?? 'child error')));
 				}
 				child.kill();
 			},
 		);
-		child.on('error', (e) => {
-			clearTimeout(timer);
-			reject(e);
-		});
+		child.on('error', (e) => settle(() => reject(e)));
+		// A child that dies before sending a result (e.g. a fixture that fails to
+		// load under tsx) emits 'exit' but never 'message' — surface that instead
+		// of stalling until the timeout fires with a misleading message.
+		child.on('exit', (code) =>
+			settle(() =>
+				reject(new Error(`child exited without a result (code ${code})`)),
+			),
+		);
 		child.send(message);
 	});
 }
@@ -65,7 +78,7 @@ describe('runWorkflowChild (forked)', () => {
 		expect(childPid).not.toBe(parentPid);
 		expect(result.status).toBe('completed');
 		expect(result.steps[0].output).toBe('injected-secret');
-	});
+	}, 20000);
 
 	it('exposes no master key to workflow code (symbol escape returns nothing)', async () => {
 		const { result } = await runInChild({
@@ -78,7 +91,7 @@ describe('runWorkflowChild (forked)', () => {
 		});
 		expect(result.status).toBe('completed');
 		expect(result.steps[0].output).toBe('no-internal');
-	});
+	}, 20000);
 });
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
@@ -158,6 +171,22 @@ describe('createChildProcessExecutor', () => {
 		}
 	});
 
+	it('denies workflow code any access to process (no env reachable in the sandbox)', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const result = await executor.run({
+				corsair: rootCorsair(database),
+				code: "module.exports.main = async (corsair, payload, step) => { await step('env', async () => (typeof process === 'undefined' ? 'no-process' : 'has-process')); };",
+				payload: null,
+				tenantId: 't1',
+			});
+			expect(result.status).toBe('completed');
+			expect(result.steps[0].output).toBe('no-process');
+		} finally {
+			cleanup();
+		}
+	}, 20000);
+
 	it('kills a runaway workflow and reports failure without hanging', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
@@ -212,18 +241,29 @@ describe('collectTenantCredentials', () => {
 	});
 });
 
-describe('kekLessEnv', () => {
-	it('strips only the env var whose value is the KEK', () => {
-		const env = kekLessEnv('master-kek-value', {
-			SECRET: 'master-kek-value',
-			SAFE: 'keep-me',
+describe('safeChildEnv', () => {
+	it('keeps allow-listed vars and drops everything else (KEK, DB, keys)', () => {
+		const env = safeChildEnv({
+			PATH: '/usr/bin',
+			CORSAIR_KEK: 'master-kek-value',
+			DATABASE_URL: 'postgres://secret',
+			AGENTQL_API_KEY: 'k',
 		} as NodeJS.ProcessEnv);
-		expect(env.SECRET).toBeUndefined();
-		expect(env.SAFE).toBe('keep-me');
+		expect(env.PATH).toBe('/usr/bin');
+		expect(env.CORSAIR_KEK).toBeUndefined();
+		expect(env.DATABASE_URL).toBeUndefined();
+		expect(env.AGENTQL_API_KEY).toBeUndefined();
 	});
 
-	it('returns env unchanged when there is no KEK', () => {
-		const env = { A: '1' } as NodeJS.ProcessEnv;
-		expect(kekLessEnv(undefined, env)).toBe(env);
+	it('passes through an app-declared extra var, still dropping secrets', () => {
+		const env = safeChildEnv(
+			{
+				FEATURE_FLAG: 'on',
+				DATABASE_URL: 'postgres://secret',
+			} as NodeJS.ProcessEnv,
+			['FEATURE_FLAG'],
+		);
+		expect(env.FEATURE_FLAG).toBe('on');
+		expect(env.DATABASE_URL).toBeUndefined();
 	});
 });
