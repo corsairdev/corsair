@@ -58,4 +58,122 @@ describe('runtime output validation rejects malformed provider responses', () =>
 		const real = { iban: 'DE89370400440532013000', is_valid: true };
 		expect(() => IbanValidateResponseSchema.parse(real)).not.toThrow();
 	});
+
+	it('accepts email_deliverability.mx_records as null (not just an empty array)', () => {
+		// Observed on a real heavily-breached test address — mx_records can be
+		// null rather than [].
+		const withNullMxRecords = {
+			status: 'deliverable',
+			status_detail: 'valid_email',
+			is_format_valid: true,
+			is_smtp_valid: true,
+			is_mx_valid: true,
+			mx_records: null,
+		};
+
+		expect(() =>
+			EmailReputationResponseSchema.shape.email_deliverability.parse(
+				withNullMxRecords,
+			),
+		).not.toThrow();
+	});
+
+	it('accepts a real Email Reputation response for an invalid address', () => {
+		// Captured from a live GET emailreputation.abstractapi.com/v1 call for
+		// "not-a-valid-email" — Abstract returns 200 with null domain/risk/
+		// breach fields rather than an error, since there's nothing to look up.
+		const invalidAddressResponse = {
+			email_address: 'not-a-valid-email',
+			suggested_correction: null,
+			email_deliverability: {
+				status: 'undeliverable',
+				status_detail: 'Invalid format',
+				is_format_valid: false,
+				is_smtp_valid: false,
+				is_mx_valid: false,
+				mx_records: [],
+			},
+			email_sender: {
+				first_name: null,
+				last_name: null,
+				email_provider_name: null,
+				organization_name: null,
+				organization_type: null,
+			},
+			email_domain: {
+				domain: null,
+				domain_age: null,
+				is_live_site: null,
+				registrar: null,
+				registrar_url: null,
+				date_registered: null,
+				date_last_renewed: null,
+				date_expires: null,
+				is_risky_tld: null,
+			},
+			email_quality: {
+				score: 0,
+				is_free_email: false,
+				is_username_suspicious: false,
+				is_disposable: false,
+				is_catchall: false,
+				is_subaddress: false,
+				is_role: false,
+				is_dmarc_enforced: false,
+				is_spf_strict: false,
+				minimum_age: null,
+			},
+			email_risk: {
+				address_risk_status: null,
+				domain_risk_status: null,
+			},
+			email_breaches: {
+				total_breaches: null,
+				date_first_breached: null,
+				date_last_breached: null,
+				breached_domains: [],
+			},
+		};
+
+		expect(() =>
+			EmailReputationResponseSchema.parse(invalidAddressResponse),
+		).not.toThrow();
+	});
+
+	it('accepts real breached_domains objects ({ domain, breach_date }), not plain strings', () => {
+		// Captured (trimmed) from a live call for a widely-breached test
+		// address — breached_domains is an array of objects, not string[] as
+		// originally assumed.
+		const breachedEmailBreaches = {
+			total_breaches: 642,
+			date_first_breached: '2007-07-12',
+			date_last_breached: '2026-07-01',
+			breached_domains: [
+				{ domain: 'adobe.com', breach_date: '2013-10-04' },
+				{ domain: 'yahoo.com', breach_date: '2012-07-11' },
+				{ domain: 'mail.ru', breach_date: '2014-09-10' },
+			],
+		};
+
+		expect(() =>
+			EmailReputationResponseSchema.shape.email_breaches.parse(
+				breachedEmailBreaches,
+			),
+		).not.toThrow();
+	});
+
+	it('rejects the originally-assumed string[] shape for breached_domains', () => {
+		const wronglyAssumedShape = {
+			total_breaches: 2,
+			date_first_breached: '2013-10-04',
+			date_last_breached: '2014-09-10',
+			breached_domains: ['adobe.com', 'mail.ru'],
+		};
+
+		expect(() =>
+			EmailReputationResponseSchema.shape.email_breaches.parse(
+				wronglyAssumedShape,
+			),
+		).toThrow();
+	});
 });

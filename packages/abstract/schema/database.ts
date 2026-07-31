@@ -30,8 +30,8 @@ export const AbstractEmailReputation = z.object({
 	isFreeEmail: z.boolean().optional(),
 	isDisposable: z.boolean().optional(),
 	isCatchall: z.boolean().optional(),
-	addressRiskStatus: z.string().optional(),
-	domainRiskStatus: z.string().optional(),
+	addressRiskStatus: z.string().nullable().optional(),
+	domainRiskStatus: z.string().nullable().optional(),
 	checkedAt: z.coerce.date().nullable().optional(),
 });
 

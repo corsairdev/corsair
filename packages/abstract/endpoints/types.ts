@@ -53,7 +53,7 @@ const EmailDeliverabilitySchema = z.object({
 	is_format_valid: z.boolean(),
 	is_smtp_valid: z.boolean(),
 	is_mx_valid: z.boolean(),
-	mx_records: z.array(z.string()).optional(),
+	mx_records: z.array(z.string()).nullable().optional(),
 });
 
 const EmailQualitySchema = z
@@ -83,29 +83,38 @@ const EmailSenderSchema = z
 
 const EmailDomainSchema = z
 	.object({
-		domain: z.string(),
+		// Abstract returns null for every field here (not just optional ones)
+		// when the address itself is invalid — there's no domain to look up.
+		domain: z.string().nullable(),
 		domain_age: z.number().nullable().optional(),
-		is_live_site: z.boolean().optional(),
+		is_live_site: z.boolean().nullable().optional(),
 		registrar: z.string().nullable().optional(),
 		registrar_url: z.string().nullable().optional(),
 		date_registered: z.string().nullable().optional(),
 		date_last_renewed: z.string().nullable().optional(),
 		date_expires: z.string().nullable().optional(),
-		is_risky_tld: z.boolean().optional(),
+		is_risky_tld: z.boolean().nullable().optional(),
 	})
 	.loose();
 
 const EmailRiskSchema = z.object({
-	address_risk_status: z.string(),
-	domain_risk_status: z.string(),
+	// Also null for an invalid address — there's no address/domain to assess.
+	address_risk_status: z.string().nullable(),
+	domain_risk_status: z.string().nullable(),
+});
+
+const BreachedDomainSchema = z.object({
+	domain: z.string(),
+	breach_date: z.string().nullable().optional(),
 });
 
 const EmailBreachesSchema = z
 	.object({
-		total_breaches: z.number(),
+		// null for an invalid address — Abstract never ran a breach lookup.
+		total_breaches: z.number().nullable(),
 		date_first_breached: z.string().nullable().optional(),
 		date_last_breached: z.string().nullable().optional(),
-		breached_domains: z.array(z.string()).optional(),
+		breached_domains: z.array(BreachedDomainSchema).optional(),
 	})
 	.loose();
 

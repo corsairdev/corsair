@@ -71,6 +71,36 @@ describe('Abstract API Type Tests', () => {
 			expect(response.email_address).toBe('support@abstractapi.com');
 			expect(typeof response.email_quality.score).toBe('number');
 		});
+
+		it('get returns correct type for an invalid address (null domain/risk/breach fields)', async () => {
+			const response = await makeAbstractRequest<EmailReputationResponse>(
+				'emailReputation',
+				'',
+				EMAIL_REPUTATION_KEY,
+				{ query: { email: 'not-a-valid-email' } },
+			);
+
+			const parsed =
+				AbstractEndpointOutputSchemas.emailReputation.parse(response);
+			expect(parsed.email_domain.domain).toBeNull();
+			expect(parsed.email_risk.address_risk_status).toBeNull();
+			expect(parsed.email_breaches?.total_breaches).toBeNull();
+		});
+
+		it('get returns correct type for a heavily-breached address', async () => {
+			const response = await makeAbstractRequest<EmailReputationResponse>(
+				'emailReputation',
+				'',
+				EMAIL_REPUTATION_KEY,
+				{ query: { email: 'test@test.com' } },
+			);
+
+			const parsed =
+				AbstractEndpointOutputSchemas.emailReputation.parse(response);
+			expect(parsed.email_breaches?.total_breaches ?? 0).toBeGreaterThan(0);
+			const firstBreach = parsed.email_breaches?.breached_domains?.[0];
+			expect(typeof firstBreach?.domain).toBe('string');
+		});
 	});
 
 	describe('vat categories', () => {
