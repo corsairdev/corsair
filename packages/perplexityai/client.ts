@@ -53,6 +53,7 @@ export async function makePerplexityAiRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error: unknown) {
+		// replaced 'any' with 'unknown' preventing runtime failures.
 		const status = error instanceof ApiError ? error.status : undefined;
 		const retryAfter =
 			error instanceof ApiError && error.retryAfter !== undefined
