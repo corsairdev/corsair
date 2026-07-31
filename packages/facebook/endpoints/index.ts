@@ -1,0 +1,9 @@
+export * as CommentsEndpoints from './comments';
+export * as ConversationsEndpoints from './conversations';
+export * as MessagesEndpoints from './messages';
+export * as PagesEndpoints from './pages';
+export * as PhotosEndpoints from './photos';
+export * as PostsEndpoints from './posts';
+export * as ReactionsEndpoints from './reactions';
+export * as UsersEndpoints from './users';
+export * as VideosEndpoints from './videos';
