@@ -1,0 +1,93 @@
+{
+  "id": "dev.corsair.integrations",
+  "version": "0.1.0",
+  "name": "Corsair Integrations",
+  "icon": "./icon.png",
+  "sandbox_install_compatible": true,
+  "distribution_type": "public",
+  "stripe_api_access_type": "oauth",
+  "allowed_redirect_uris": ["https://auth.corsair.dev/oauth/callback"],
+  "ui_extension": [],
+  "permissions": [
+    {
+      "permission": "balance_read",
+      "purpose": "Read your account balance so Corsair can report it to your connected AI agents.",
+      "name": "Backs the balance.get endpoint."
+    },
+    {
+      "permission": "charge_read",
+      "purpose": "Read charges so Corsair can retrieve and list them for your agents.",
+      "name": "Backs charges.get and charges.list."
+    },
+    {
+      "permission": "charge_write",
+      "purpose": "Create and update charges on your behalf when your agent requests it.",
+      "name": "Backs charges.create and charges.update."
+    },
+    {
+      "permission": "coupon_read",
+      "purpose": "Read coupons so Corsair can list them for your agents.",
+      "name": "Backs coupons.list."
+    },
+    {
+      "permission": "coupon_write",
+      "purpose": "Create coupons on your behalf when your agent requests it.",
+      "name": "Backs coupons.create."
+    },
+    {
+      "permission": "customer_read",
+      "purpose": "Read customers so Corsair can retrieve and list them for your agents.",
+      "name": "Backs customers.get and customers.list."
+    },
+    {
+      "permission": "customer_write",
+      "purpose": "Create, update, and delete customers on your behalf when your agent requests it.",
+      "name": "Backs customers.create and customers.delete (Stripe has no separate delete permission)."
+    },
+    {
+      "permission": "payment_intent_read",
+      "purpose": "Read payment intents so Corsair can retrieve and list them for your agents.",
+      "name": "Backs paymentIntents.get and paymentIntents.list."
+    },
+    {
+      "permission": "payment_intent_write",
+      "purpose": "Create and update payment intents on your behalf when your agent requests it.",
+      "name": "Backs paymentIntents.create and paymentIntents.update."
+    },
+    {
+      "permission": "plan_read",
+      "purpose": "Read prices so Corsair can list them for your agents.",
+      "name": "Backs prices.list (Prices API is authorized by the plan_read permission)."
+    },
+    {
+      "permission": "plan_write",
+      "purpose": "Create prices on your behalf when your agent requests it.",
+      "name": "Backs prices.create (Prices API is authorized by the plan_write permission)."
+    },
+    {
+      "permission": "source_read",
+      "purpose": "Read payment sources so Corsair can retrieve them for your agents.",
+      "name": "Backs sources.get."
+    },
+    {
+      "permission": "source_write",
+      "purpose": "Create payment sources on your behalf when your agent requests it.",
+      "name": "Backs sources.create."
+    },
+    {
+      "permission": "token_write",
+      "purpose": "Create single-use tokens on your behalf when your agent requests it.",
+      "name": "Backs tokens.create."
+    },
+    {
+      "permission": "webhook_write",
+      "purpose": "Subscribe to charge, customer, payment intent, and coupon events so Corsair stays in sync.",
+      "name": "Registers the webhook endpoint that feeds the plugin's webhook handlers."
+    },
+    {
+      "permission": "event_read",
+      "purpose": "Read event objects delivered to the webhook endpoint so Corsair can process them.",
+      "name": "Reads the event objects backing the plugin's webhook handlers."
+    }
+  ]
+}
