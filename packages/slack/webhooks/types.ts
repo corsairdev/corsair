@@ -910,7 +910,7 @@ export function verifySlackWebhookSignature(
 	signingSecret?: string,
 ): { valid: boolean; error?: string } {
 	if (!signingSecret) {
-		return { valid: false };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const rawBody = request.rawBody;
