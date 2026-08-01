@@ -593,12 +593,51 @@ function isObjectLikeType(type: string): boolean {
 	return type.includes('{');
 }
 
-/** Table "Type" column: primitives stay literal; object shapes become `object` / `object[]`. */
-function tableTypeDisplay(type: string): string {
-	const t = type.trim();
-	if (!isObjectLikeType(t)) return type;
-	if (/\[\]\s*$/.test(t)) return 'object[]';
+/**
+ * Splits a type string on top-level `|` separators only, so union branches are
+ * handled independently while nested unions inside `(...)`, `[...]`, or `{...}`
+ * stay intact.
+ */
+function splitTopLevelUnion(type: string): string[] {
+	const branches: string[] = [];
+	let depth = 0;
+	let start = 0;
+	for (let i = 0; i < type.length; i += 1) {
+		const ch = type[i]!;
+		if (ch === '(' || ch === '[' || ch === '{') depth += 1;
+		else if (ch === ')' || ch === ']' || ch === '}') {
+			depth = Math.max(0, depth - 1);
+		} else if (ch === '|' && depth === 0) {
+			branches.push(type.slice(start, i).trim());
+			start = i + 1;
+		}
+	}
+	const last = type.slice(start).trim();
+	if (last) branches.push(last);
+	return branches;
+}
+
+/** Collapses a single branch: object shapes become `object` / `object[]`, everything else stays literal. */
+function collapseTableType(type: string): string {
+	if (!isObjectLikeType(type)) return type;
+	if (/\[\]\s*$/.test(type)) return 'object[]';
 	return 'object';
+}
+
+/**
+ * Table "Type" column: top-level unions keep every branch (only object branches
+ * collapse to `object` / `object[]`) instead of collapsing to a single shape.
+ * Duplicate collapsed values (e.g. all-object unions) are kept once.
+ */
+function tableTypeDisplay(type: string): string {
+	const branches = splitTopLevelUnion(type.trim());
+	if (branches.length === 1) return collapseTableType(type);
+	const collapsed: string[] = [];
+	for (const branch of branches) {
+		const c = collapseTableType(branch);
+		if (!collapsed.includes(c)) collapsed.push(c);
+	}
+	return collapsed.join(' | ');
 }
 
 function escapeAttr(s: string): string {
