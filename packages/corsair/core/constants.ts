@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'abstract',
 	'activetrail',
 	'agentql',
 	'ahrefs',
@@ -27,8 +28,10 @@ export const BaseProviders = [
 	'calendly',
 	'canva',
 	'cloudflare',
+	'cloudinary',
 	'confluence',
 	'cursor',
+	'databricks',
 	'datadog',
 	'deepseek',
 	'digitalocean',
@@ -37,6 +40,7 @@ export const BaseProviders = [
 	'dodopayments',
 	'dropbox',
 	'exa',
+	'facebook',
 	'figma',
 	'firecrawl',
 	'fireflies',
@@ -48,6 +52,7 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledocs',
 	'googledrive',
+	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
@@ -97,8 +102,8 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
-	'whatsapp',
 	'vercel',
+	'whatsapp',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -107,6 +112,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	abstract: 'Abstract',
 	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
@@ -121,8 +127,10 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	cloudflare: 'Cloudflare',
+	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
+	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
@@ -131,6 +139,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
 	exa: 'Exa',
+	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -142,6 +151,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
+	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
@@ -191,8 +201,8 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
-	whatsapp: 'WhatsApp',
 	vercel: 'Vercel',
+	whatsapp: 'WhatsApp',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -208,6 +218,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'abstract'
 	| 'activetrail'
 	| 'agentql'
 	| 'ahrefs'
@@ -222,8 +233,10 @@ export type AllProviders =
 	| 'calendly'
 	| 'canva'
 	| 'cloudflare'
+	| 'cloudinary'
 	| 'confluence'
 	| 'cursor'
+	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
 	| 'digitalocean'
@@ -232,6 +245,7 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
+	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
@@ -243,6 +257,7 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledocs'
 	| 'googledrive'
+	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
@@ -292,8 +307,8 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
-	| 'whatsapp'
 	| 'vercel'
+	| 'whatsapp'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
