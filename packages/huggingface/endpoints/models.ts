@@ -261,15 +261,14 @@ export const createBranch: HuggingFaceEndpoints['modelsCreateBranch'] = async (
 	input,
 ) => {
 	const { namespace, repo } = splitRepoId(input.repoId);
+	// HF Hub POST /api/models/{ns}/{repo}/branch/{newBranchName} — the new
+	// branch name lives in the URL segment; the body carries the starting point.
 	const response = await req(
 		ctx,
-		`/api/models/${namespace}/${repo}/branch/${encodeURIComponent(input.revision)}`,
+		`/api/models/${namespace}/${repo}/branch/${encodeURIComponent(input.branch)}`,
 		{
 			method: 'POST',
-			body: {
-				branch: input.branch,
-				startingPoint: input.startingPoint ?? input.revision,
-			},
+			body: { startingPoint: input.startingPoint ?? input.revision },
 		},
 	);
 	await logEventFromContext(

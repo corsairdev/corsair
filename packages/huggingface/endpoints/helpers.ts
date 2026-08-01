@@ -30,6 +30,21 @@ export function hubRepoTypeSegment(
  * Redact sensitive fields before logEventFromContext (secrets, chat, commit ops).
  * `input` is unknown because handlers receive Zod-inferred objects of many shapes.
  */
+const REDACTED_KEYS = new Set([
+	'value',
+	'secret',
+	'messages',
+	'operations',
+	'files',
+	// free-form / PII-bearing fields (gated-repo answers, chat extras, comments)
+	'fields',
+	'extra',
+	'settings',
+	'content',
+	'comment',
+	'input',
+]);
+
 export function summarize(
 	// endpoint inputs vary per op; accept unknown and narrow for redaction
 	input: unknown,
@@ -38,13 +53,7 @@ export function summarize(
 	// cast: object branch after typeof check — entries need a string-key record
 	const out: Record<string, unknown> = {};
 	for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
-		if (
-			k === 'value' ||
-			k === 'secret' ||
-			k === 'messages' ||
-			k === 'operations' ||
-			k === 'files'
-		) {
+		if (REDACTED_KEYS.has(k)) {
 			out[k] = '[redacted]';
 		} else {
 			out[k] = v;

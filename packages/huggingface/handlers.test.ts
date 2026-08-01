@@ -18,6 +18,7 @@ import {
 	TrendingEndpoints,
 	UsersEndpoints,
 } from './endpoints';
+import { summarize } from './endpoints/helpers';
 import type { HuggingFaceEndpoints } from './index';
 
 const mockReq = jest.spyOn(Client, 'makeHuggingFaceRequest');
@@ -100,6 +101,55 @@ describe('handler path construction', () => {
 			expect.objectContaining({
 				method: 'POST',
 				body: { tag: 'v1.0', message: 'release' },
+			}),
+		);
+	});
+
+	it('models.createBranch puts branch name in URL, starting point in body', async () => {
+		await ModelsEndpoints.createBranch(ctx(), {
+			repoId: 'gpt2/small',
+			branch: 'dev',
+			revision: 'main',
+		});
+		expect(mockReq).toHaveBeenCalledWith(
+			'/api/models/gpt2/small/branch/dev',
+			'hf_test',
+			expect.objectContaining({
+				method: 'POST',
+				body: { startingPoint: 'main' },
+			}),
+		);
+	});
+
+	it('datasets.createBranch puts branch name in URL, starting point in body', async () => {
+		await DatasetsEndpoints.createBranch(ctx(), {
+			repoId: 'org/data',
+			branch: 'experiment',
+			revision: 'v2',
+			startingPoint: 'v2',
+		});
+		expect(mockReq).toHaveBeenCalledWith(
+			'/api/datasets/org/data/branch/experiment',
+			'hf_test',
+			expect.objectContaining({
+				method: 'POST',
+				body: { startingPoint: 'v2' },
+			}),
+		);
+	});
+
+	it('spaces.createBranch puts branch name in URL, starting point in body', async () => {
+		await SpacesEndpoints.createBranch(ctx(), {
+			repoId: 'user/space',
+			branch: 'preview',
+			revision: 'main',
+		});
+		expect(mockReq).toHaveBeenCalledWith(
+			'/api/spaces/user/space/branch/preview',
+			'hf_test',
+			expect.objectContaining({
+				method: 'POST',
+				body: { startingPoint: 'main' },
 			}),
 		);
 	});
@@ -240,5 +290,42 @@ describe('handler path construction', () => {
 		await EndpointsEndpoints.listVendors(ctx(), {});
 		expect(lastCall()[0]).toBe('/v2/provider');
 		expect(lastCall()[2]?.baseUrl).toBe(Client.HF_ENDPOINTS_BASE);
+	});
+});
+
+describe('summarize redaction', () => {
+	it('redacts secrets and free-form PII-bearing fields', () => {
+		const out = summarize({
+			repoId: 'org/model',
+			revision: 'main',
+			value: 'sk-123',
+			secret: 'hf_abc',
+			comment: 'personal email: a@b.c',
+			content: 'raw prompt text',
+			extra: { stream: true },
+			settings: { apiKey: 'x' },
+			fields: { email: 'a@b.c' },
+			messages: [{ role: 'user', content: 'hi' }],
+			limit: 10,
+		});
+		expect(out).toEqual({
+			repoId: 'org/model',
+			revision: 'main',
+			value: '[redacted]',
+			secret: '[redacted]',
+			comment: '[redacted]',
+			content: '[redacted]',
+			extra: '[redacted]',
+			settings: '[redacted]',
+			fields: '[redacted]',
+			messages: '[redacted]',
+			limit: 10,
+		});
+	});
+
+	it('returns an empty record for non-object input', () => {
+		expect(summarize('not-an-object')).toEqual({});
+		expect(summarize(null)).toEqual({});
+		expect(summarize(undefined)).toEqual({});
 	});
 });
