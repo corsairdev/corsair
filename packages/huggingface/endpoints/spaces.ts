@@ -431,7 +431,9 @@ export const getMetrics: HuggingFaceEndpoints['spacesGetMetrics'] = async (
 	const { namespace, repo } = splitRepoId(input.repoId);
 	const response = await req(ctx, `/api/spaces/${namespace}/${repo}/metrics`, {
 		method: 'GET',
-		rawText: true,
+		// SSE stream held open by the Hub; collect events for a bounded window.
+		sse: true,
+		timeoutMs: 10_000,
 	});
 	await logEventFromContext(
 		ctx,
@@ -449,7 +451,9 @@ export const getEvents: HuggingFaceEndpoints['spacesGetEvents'] = async (
 	const { namespace, repo } = splitRepoId(input.repoId);
 	const response = await req(ctx, `/api/spaces/${namespace}/${repo}/events`, {
 		method: 'GET',
-		rawText: true,
+		// SSE stream held open by the Hub; collect events for a bounded window.
+		sse: true,
+		timeoutMs: 10_000,
 	});
 	await logEventFromContext(
 		ctx,

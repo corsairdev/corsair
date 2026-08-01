@@ -298,9 +298,22 @@ describe('handler path construction', () => {
 		expect(lastCall()[2]).toEqual(expect.objectContaining({ method: 'POST' }));
 	});
 
-	it('spaces.getMetrics → /api/spaces/ns/repo/metrics', async () => {
+	it('spaces.getMetrics → /api/spaces/ns/repo/metrics (SSE)', async () => {
 		await SpacesEndpoints.getMetrics(ctx(), { repoId: 'user/space' });
-		expectPath('/api/spaces/user/space/metrics');
+		const call = lastCall();
+		expect(call[0]).toBe('/api/spaces/user/space/metrics');
+		expect(call[2]).toEqual(
+			expect.objectContaining({ method: 'GET', sse: true, timeoutMs: 10_000 }),
+		);
+	});
+
+	it('spaces.getEvents → /api/spaces/ns/repo/events (SSE)', async () => {
+		await SpacesEndpoints.getEvents(ctx(), { repoId: 'user/space' });
+		const call = lastCall();
+		expect(call[0]).toBe('/api/spaces/user/space/events');
+		expect(call[2]).toEqual(
+			expect.objectContaining({ method: 'GET', sse: true, timeoutMs: 10_000 }),
+		);
 	});
 
 	it('users.getOverview → /api/users/u/overview', async () => {

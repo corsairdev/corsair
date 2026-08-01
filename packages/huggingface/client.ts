@@ -46,6 +46,14 @@ export type HuggingFaceRequestOptions = {
 	bearer?: boolean;
 	/** Select raw text/JSON parsing through the fetch-based request path. */
 	rawText?: boolean;
+	/**
+	 * Parse an SSE stream (e.g. `/api/spaces/{ns}/{repo}/events|metrics`) by
+	 * collecting `data:` payloads until the stream closes or `timeoutMs`
+	 * elapses, then resolve with the array of parsed events. Without this,
+	 * `res.text()` blocks forever on the held-open stream and the fetch
+	 * aborts with an `AbortError` on timeout.
+	 */
+	sse?: boolean;
 	/** Abort raw fetches after this many milliseconds (default: 30 seconds). */
 	timeoutMs?: number;
 };
@@ -67,6 +75,7 @@ export async function makeHuggingFaceRequest<T>(
 		headers: extraHeaders,
 		bearer = true,
 		rawText = false,
+		sse = false,
 		timeoutMs = 30_000,
 	} = options;
 
@@ -88,7 +97,7 @@ export async function makeHuggingFaceRequest<T>(
 		headers.Authorization = `Bearer ${accessToken}`;
 	}
 
-	if (rawText) {
+	if (rawText || sse) {
 		return rawFetch<T>(
 			baseUrl,
 			endpoint,
@@ -97,6 +106,7 @@ export async function makeHuggingFaceRequest<T>(
 			body,
 			query,
 			timeoutMs,
+			sse,
 		);
 	}
 
@@ -146,6 +156,7 @@ async function rawFetch<T>(
 	body: Record<string, unknown> | unknown[] | undefined,
 	query: Record<string, HuggingFaceQueryValue> | undefined,
 	timeoutMs: number,
+	sse = false,
 ): Promise<T> {
 	const url = new URL(
 		endpoint.startsWith('http')
@@ -171,6 +182,12 @@ async function rawFetch<T>(
 		redirect: 'manual',
 		signal: AbortSignal.timeout(timeoutMs),
 	});
+	if (sse) {
+		// SSE streams stay open indefinitely; `res.text()` would block until the
+		// abort signal fires. Collect `data:` payloads instead, bounded by the
+		// same timeout so callers get events rather than an AbortError.
+		return readSseStream<T>(res, timeoutMs);
+	}
 	const text = await res.text();
 	// Manual redirects need their status and location even when the body is empty.
 	let parsed: unknown = text;
@@ -207,6 +224,53 @@ async function rawFetch<T>(
 	}
 	// cast: resolve/SSE/raw responses are validated by endpoint Zod output schemas
 	return parsed as T;
+}
+
+/**
+ * Read an SSE response body line-by-line, collecting `data:` payloads until
+ * the stream closes or `timeoutMs` elapses. Server-Sent Events streams stay
+ * open indefinitely (space runtime events/metrics), so a plain `res.text()`
+ * would block until the fetch's abort signal fires and throw an AbortError.
+ * `readSseStream` resolves with whatever events arrived before the deadline.
+ */
+async function readSseStream<T>(res: Response, timeoutMs: number): Promise<T> {
+	const events: unknown[] = [];
+	const reader = res.body?.getReader();
+	if (!reader) {
+		return events as T;
+	}
+	const decoder = new TextDecoder();
+	let buffer = '';
+	const deadline = Date.now() + timeoutMs;
+	try {
+		while (Date.now() < deadline) {
+			const { done, value } = await reader.read();
+			if (done) {
+				break;
+			}
+			buffer += decoder.decode(value, { stream: true });
+			let lineEnd: number;
+			while ((lineEnd = buffer.indexOf('\n')) !== -1) {
+				const line = buffer.slice(0, lineEnd).trim();
+				buffer = buffer.slice(lineEnd + 1);
+				if (line.startsWith('data:')) {
+					const payload = line.slice(5).trim();
+					if (payload) {
+						try {
+							events.push(JSON.parse(payload));
+						} catch {
+							events.push(payload);
+						}
+					}
+				}
+			}
+		}
+	} catch {
+		// Stream closed or aborted by the deadline; return what we collected.
+	} finally {
+		reader.releaseLock();
+	}
+	return events as T;
 }
 
 /** Split `owner/name` repo ids used across Hub APIs. */
