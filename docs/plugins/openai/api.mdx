@@ -538,14 +538,14 @@ await corsair.openai.api.audio.createTranscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom \| string` | Yes | — |
+| `file` | `Blob \| string` | Yes | — |
 | `fileName` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
 | `language` | `string` | No | — |
 | `prompt` | `string` | No | — |
 | `responseFormat` | `json \| text \| srt \| verbose_json \| vtt` | No | — |
 | `temperature` | `number` | No | — |
-| `timestampGranularities` | `word \| segment[]` | No | — |
+| `timestampGranularities` | `(word \| segment)[]` | No | — |
 
 
 
