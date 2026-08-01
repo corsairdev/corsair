@@ -85,7 +85,7 @@ Every plugin is shipped with typed, signature-verified webhook handlers. All web
 import { processWebhook } from 'corsair';
 
 app.post('/webhooks', async (req, res) => {
-  const webhook = processWebhook(corsair, req.headers, req.body)
+  const webhook = await processWebhook(corsair, req.headers, req.body)
   
   return res.json(webhook.response)
 });
