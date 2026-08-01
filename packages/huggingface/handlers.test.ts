@@ -77,19 +77,15 @@ describe('handler path construction', () => {
 			applyToAll: true,
 			filter: { readStatus: 'unread', repoType: 'model' },
 		});
-		expect(mockReq).toHaveBeenCalledWith(
-			'/api/notifications',
-			'hf_test',
-			expect.objectContaining({
-				method: 'DELETE',
-				body: { discussionIds: ['5f7f5b1b'] },
-				query: expect.objectContaining({
-					applyToAll: true,
-					readStatus: 'unread',
-					repoType: 'model',
-				}),
-			}),
-		);
+		expect(mockReq).toHaveBeenCalledWith('/api/notifications', 'hf_test', {
+			method: 'DELETE',
+			body: { discussionIds: ['5f7f5b1b'] },
+			query: {
+				applyToAll: true,
+				readStatus: 'unread',
+				repoType: 'model',
+			},
+		});
 	});
 
 	it('models.list → /api/models', async () => {
