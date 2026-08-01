@@ -34,13 +34,13 @@ export const listNotifications: HuggingFaceEndpoints['listNotifications'] =
 
 export const deleteNotifications: HuggingFaceEndpoints['deleteNotifications'] =
 	async (ctx, input) => {
+		const { discussionIds, applyToAll, filter } = input;
 		const response = await req(ctx, '/api/notifications', {
 			method: 'DELETE',
-			body: {
-				discussion_ids: input.discussionIds,
-				applyToAll: input.applyToAll,
-				...input.filter,
-			},
+			// HF DELETE /api/notifications: discussionIds live in the body;
+			// applyToAll and the search filters are query parameters.
+			query: { applyToAll, ...filter },
+			body: discussionIds ? { discussionIds } : undefined,
 		});
 		await logEventFromContext(
 			ctx,

@@ -17,8 +17,6 @@ export const HF_HUB_BASE = 'https://huggingface.co';
 /** Datasets Server (rows, stats, search, parquet). */
 export const HF_DATASETS_SERVER_BASE = 'https://datasets-server.huggingface.co';
 
-/** OpenAI-compatible Inference Providers router. */
-export const HF_INFERENCE_BASE = 'https://router.huggingface.co';
 /** Corsair LiteLLM gateway for model-generation calls. */
 export const LLM_GATEWAY_BASE = 'https://llm.corsair.dev';
 

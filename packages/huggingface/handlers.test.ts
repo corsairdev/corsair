@@ -71,6 +71,27 @@ describe('handler path construction', () => {
 		);
 	});
 
+	it('account.deleteNotifications sends discussionIds in body, filters in query', async () => {
+		await AccountEndpoints.deleteNotifications(ctx(), {
+			discussionIds: ['5f7f5b1b'],
+			applyToAll: true,
+			filter: { readStatus: 'unread', repoType: 'model' },
+		});
+		expect(mockReq).toHaveBeenCalledWith(
+			'/api/notifications',
+			'hf_test',
+			expect.objectContaining({
+				method: 'DELETE',
+				body: { discussionIds: ['5f7f5b1b'] },
+				query: expect.objectContaining({
+					applyToAll: true,
+					readStatus: 'unread',
+					repoType: 'model',
+				}),
+			}),
+		);
+	});
+
 	it('models.list → /api/models', async () => {
 		await ModelsEndpoints.list(ctx(), { limit: 5 });
 		expect(mockReq).toHaveBeenCalledWith(
