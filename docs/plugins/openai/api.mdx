@@ -974,7 +974,7 @@ await corsair.openai.api.chat.createCompletion({});
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 | `tools` | `object[]` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `none \| auto \| required \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 | `reasoningEffort` | `minimal \| low \| medium \| high` | No | — |
 | `user` | `string` | No | — |
@@ -4066,7 +4066,7 @@ await corsair.openai.api.messages.create({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `role` | `user \| assistant` | Yes | — |
-| `content` | `object[]` | Yes | — |
+| `content` | `string \| object[]` | Yes | — |
 | `attachments` | `object[]` | No | — |
 | `metadata` | `object` | No | — |
 
@@ -4618,7 +4618,7 @@ await corsair.openai.api.moderation.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| string[] \| object[]` | Yes | — |
 | `model` | `string` | No | — |
 
 <AccordionGroup>
@@ -4975,10 +4975,10 @@ await corsair.openai.api.responses.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| object[]` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `none \| auto \| required \| object` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 | `maxOutputTokens` | `number` | No | — |
@@ -5352,7 +5352,7 @@ await corsair.openai.api.runs.create({});
 | `maxPromptTokens` | `number` | No | — |
 | `maxCompletionTokens` | `number` | No | — |
 | `truncationStrategy` | `object` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `none \| auto \| required \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -6326,7 +6326,7 @@ await corsair.openai.api.threads.createAndRun({});
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 | `truncationStrategy` | `object` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `none \| auto \| required \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -6683,7 +6683,7 @@ await corsair.openai.api.tokens.countInput({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| object[]` | Yes | — |
 | `tools` | `object[]` | No | — |
 
 <AccordionGroup>
