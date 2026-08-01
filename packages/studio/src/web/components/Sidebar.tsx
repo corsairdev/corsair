@@ -44,6 +44,7 @@ export function Sidebar({
 						type="button"
 						key={item.id}
 						onClick={() => onNavigate(item.id)}
+						aria-current={current === item.id ? 'page' : undefined}
 						className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs text-left transition-colors ${
 							current === item.id
 								? 'bg-[var(--color-bg-hover)] text-[var(--color-text)]'
