@@ -3,10 +3,12 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
+import { aimlapi } from '@corsair-dev/aimlapi';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { hubspot } from '@corsair-dev/hubspot';
+import { instagram } from '@corsair-dev/instagram';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
@@ -40,6 +42,9 @@ export const corsair = createCorsair({
 	},
 	plugins: [
 		// github({ authType: 'managed' }),
+		aimlapi({
+			key: process.env.AIMLAPI_API_KEY,
+		}),
 		slack({
 			permissions: {
 				mode: 'cautious',

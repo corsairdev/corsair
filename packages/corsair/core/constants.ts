@@ -16,6 +16,7 @@ export const BaseProviders = [
 	'activetrail',
 	'agentql',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
 	'algolia',
 	'amplitude',
@@ -98,8 +99,8 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
-	'whatsapp',
 	'vercel',
+	'whatsapp',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -111,6 +112,7 @@ export const ProviderDisplayNames = {
 	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	amplitude: 'Amplitude',
@@ -193,8 +195,8 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
-	whatsapp: 'WhatsApp',
 	vercel: 'Vercel',
+	whatsapp: 'WhatsApp',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -213,6 +215,7 @@ export type AllProviders =
 	| 'activetrail'
 	| 'agentql'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
 	| 'algolia'
 	| 'amplitude'
@@ -295,8 +298,8 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
-	| 'whatsapp'
 	| 'vercel'
+	| 'whatsapp'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
