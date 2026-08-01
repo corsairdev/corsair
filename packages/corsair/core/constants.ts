@@ -31,6 +31,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'confluence',
 	'cursor',
+	'databricks',
 	'datadog',
 	'deepseek',
 	'digitalocean',
@@ -128,6 +129,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
+	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
@@ -232,6 +234,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'confluence'
 	| 'cursor'
+	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
 	| 'digitalocean'
