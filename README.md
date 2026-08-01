@@ -63,6 +63,10 @@ You can also override individual endpoints within any mode. For example, set Sla
 Corsair is built for production. Set `multiTenancy: true` and every tenant gets isolated credentials, isolated data storage, and isolated permissions handling. You can scope a request to a tenant id and Corsair ensures there is no cross-contamination.
 
 ```typescript
+import { github } from '@corsair-dev/github';
+import { slack } from '@corsair-dev/slack';
+import { createCorsair } from 'corsair/core';
+
 const corsair = createCorsair({
   multiTenancy: true,
   plugins: [slack(), github()],
@@ -78,6 +82,8 @@ await client.slack.api.messages.post({ channel: '#alerts', text: 'Deploy complet
 Every plugin is shipped with typed, signature-verified webhook handlers. All webhooks point to a single endpoint. Set it and forget it.
 
 ```typescript
+import { processWebhook } from 'corsair';
+
 app.post('/webhooks', async (req, res) => {
   const webhook = processWebhook(corsair, req.headers, req.body)
   
