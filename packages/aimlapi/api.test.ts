@@ -2,8 +2,10 @@ import { ApiError } from 'corsair/http';
 import { makeAimlApiRequest } from './client';
 import {
 	Assistants,
+	Batches,
 	Billing,
 	Chat,
+	Luma,
 	Messages,
 	Models,
 	Responses,
@@ -17,6 +19,22 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { AimlApiContext } from './index';
+
+// Mock the makeAimlApiRequest for non-live tests
+jest.mock('./client', () => ({
+	makeAimlApiRequest: jest.fn(),
+	AimlApiAPIError: class AimlApiAPIError extends Error {
+		constructor(
+			message: string,
+			public readonly code?: string,
+			public readonly status?: number,
+			public readonly retryAfter?: number,
+		) {
+			super(message);
+			this.name = 'AimlApiAPIError';
+		}
+	},
+}));
 
 /** Minimal plugin context for endpoint handler tests. */
 function testCtx(key: string): AimlApiContext {
@@ -272,6 +290,250 @@ describe('AimlApi error handlers', () => {
 
 	it('DEFAULT handler matches any error', () => {
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
+	});
+});
+
+describe('AimlApi mocked endpoint handlers', () => {
+	const ctx = testCtx('test_key');
+	const mockRequest = makeAimlApiRequest as jest.MockedFunction<
+		typeof makeAimlApiRequest
+	>;
+
+	beforeEach(() => {
+		mockRequest.mockClear();
+	});
+
+	it('Models.list calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue([{ id: 'gpt-4o' }]);
+		await Models.list(ctx, {});
+		expect(mockRequest).toHaveBeenCalledWith('/models', 'test_key', {
+			method: 'GET',
+		});
+	});
+
+	it('Models.listWithDetails calls correct endpoint with query', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await Models.listWithDetails(ctx, { limit: 10 });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/models/with-details',
+			'test_key',
+			{
+				method: 'GET',
+				query: { limit: 10 },
+			},
+		);
+	});
+
+	it('Chat.createCompletion calls correct endpoint with body', async () => {
+		mockRequest.mockResolvedValue({ id: 'chatcmpl-123', choices: [] });
+		await Chat.createCompletion(ctx, {
+			model: 'gpt-4o',
+			messages: [{ role: 'user', content: 'Hello' }],
+		});
+		expect(mockRequest).toHaveBeenCalledWith('/chat/completions', 'test_key', {
+			method: 'POST',
+			body: expect.objectContaining({
+				model: 'gpt-4o',
+				messages: [{ role: 'user', content: 'Hello' }],
+			}),
+		});
+	});
+
+	it('Responses.create calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'resp_123' });
+		await Responses.create(ctx, { model: 'o3-mini', instructions: 'Test' });
+		expect(mockRequest).toHaveBeenCalledWith('/responses', 'test_key', {
+			method: 'POST',
+			body: expect.objectContaining({ model: 'o3-mini' }),
+		});
+	});
+
+	it('Responses.get calls correct endpoint with ID', async () => {
+		mockRequest.mockResolvedValue({ id: 'resp_123' });
+		await Responses.get(ctx, { responseId: 'resp_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/responses/resp_123',
+			'test_key',
+			{
+				method: 'GET',
+			},
+		);
+	});
+
+	it('Assistants.create calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'asst_123' });
+		await Assistants.create(ctx, { model: 'gpt-4o', name: 'Test' });
+		expect(mockRequest).toHaveBeenCalledWith('/assistants', 'test_key', {
+			method: 'POST',
+			body: expect.objectContaining({ model: 'gpt-4o' }),
+		});
+	});
+
+	it('Assistants.list calls correct endpoint with pagination', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await Assistants.list(ctx, { limit: 20, after: 'asst_123' });
+		expect(mockRequest).toHaveBeenCalledWith('/assistants', 'test_key', {
+			method: 'GET',
+			query: { limit: 20, after: 'asst_123' },
+		});
+	});
+
+	it('Assistants.get calls correct endpoint with ID', async () => {
+		mockRequest.mockResolvedValue({ id: 'asst_123' });
+		await Assistants.get(ctx, { assistantId: 'asst_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/assistants/asst_123',
+			'test_key',
+			{
+				method: 'GET',
+			},
+		);
+	});
+
+	it('Assistants.update calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'asst_123' });
+		await Assistants.update(ctx, { assistantId: 'asst_123', model: 'gpt-4o' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/assistants/asst_123',
+			'test_key',
+			{
+				method: 'PATCH',
+				body: expect.objectContaining({ model: 'gpt-4o' }),
+			},
+		);
+	});
+
+	it('Assistants.del calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ deleted: true });
+		await Assistants.delete(ctx, { assistantId: 'asst_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/assistants/asst_123',
+			'test_key',
+			{
+				method: 'DELETE',
+			},
+		);
+	});
+
+	it('Threads.create calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'thread_123' });
+		await Threads.create(ctx, {});
+		expect(mockRequest).toHaveBeenCalledWith('/threads', 'test_key', {
+			method: 'POST',
+			body: {},
+		});
+	});
+
+	it('Threads.get calls correct endpoint with ID', async () => {
+		mockRequest.mockResolvedValue({ id: 'thread_123' });
+		await Threads.get(ctx, { threadId: 'thread_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123',
+			'test_key',
+			{
+				method: 'GET',
+			},
+		);
+	});
+
+	it('Messages.create calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'msg_123' });
+		await Messages.create(ctx, {
+			threadId: 'thread_123',
+			role: 'user',
+			content: 'Test',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/messages',
+			'test_key',
+			{ method: 'POST', body: expect.objectContaining({ role: 'user' }) },
+		);
+	});
+
+	it('Messages.list calls correct endpoint with thread ID', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await Messages.list(ctx, { threadId: 'thread_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/messages',
+			'test_key',
+			{ method: 'GET', query: {} },
+		);
+	});
+
+	it('Runs.create calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'run_123' });
+		await Runs.create(ctx, {
+			threadId: 'thread_123',
+			assistantId: 'asst_123',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs',
+			'test_key',
+			{
+				method: 'POST',
+				body: expect.objectContaining({ assistant_id: 'asst_123' }),
+			},
+		);
+	});
+
+	it('Runs.submitToolOutputs calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'run_123' });
+		await Runs.submitToolOutputs(ctx, {
+			threadId: 'thread_123',
+			runId: 'run_123',
+			toolOutputs: [],
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs/run_123/submit_tool_outputs',
+			'test_key',
+			{ method: 'POST', body: expect.objectContaining({ tool_outputs: [] }) },
+		);
+	});
+
+	it('RunSteps.list calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await RunSteps.list(ctx, { threadId: 'thread_123', runId: 'run_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs/run_123/steps',
+			'test_key',
+			{ method: 'GET', query: {} },
+		);
+	});
+
+	it('Billing.getBalance calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ current_balance: 100 });
+		await Billing.getBalance(ctx, {});
+		expect(mockRequest).toHaveBeenCalledWith('/billing/balance', 'test_key', {
+			method: 'GET',
+		});
+	});
+
+	it('Batches.list calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await Batches.list(ctx, {});
+		expect(mockRequest).toHaveBeenCalledWith('/batches', 'test_key', {
+			method: 'GET',
+			query: {},
+		});
+	});
+
+	it('Luma.getGeneration calls correct endpoint', async () => {
+		mockRequest.mockResolvedValue({ id: 'gen_123' });
+		await Luma.getGeneration(ctx, { generationId: 'gen_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/luma/generations/gen_123',
+			'test_key',
+			{ method: 'GET' },
+		);
+	});
+
+	it('Luma.listGenerations calls correct endpoint with pagination', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await Luma.listGenerations(ctx, { limit: 10, offset: 0 });
+		expect(mockRequest).toHaveBeenCalledWith('/luma/generations', 'test_key', {
+			method: 'GET',
+			query: { limit: 10, offset: 0 },
+		});
 	});
 });
 

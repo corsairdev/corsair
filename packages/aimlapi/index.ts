@@ -433,7 +433,7 @@ const aimlApiEndpointMeta = {
 
 export const aimlApiAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

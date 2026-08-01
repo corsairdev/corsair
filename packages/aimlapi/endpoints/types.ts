@@ -10,7 +10,7 @@ const PaginationInputSchema = z
 	.passthrough();
 
 const BaseInputSchema = z.object({}).passthrough();
-const BaseResponseSchema = z.object({}).passthrough();
+const BaseResponseSchema = z.any();
 const ModelMessageSchema = z
 	.object({
 		role: z.string(),

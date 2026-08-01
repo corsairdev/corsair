@@ -39,9 +39,14 @@ export async function makeAimlApiRequest<T>(
 		},
 	};
 
+	// Normalize endpoint: add /v1 prefix if not already versioned
+	const normalizedEndpoint = /^\/v\d+\//.test(endpoint)
+		? endpoint
+		: `/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
+
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
+		url: normalizedEndpoint,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body

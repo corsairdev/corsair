@@ -1,9 +1,4 @@
-import { example } from './example';
+// AIMLAPI does not support webhooks
+export const ExampleWebhooks = {};
 
-export const ExampleWebhooks = {
-	example: example,
-};
-
-export * from './oauth-tenant-link';
-export * from './tenant-matcher';
 export * from './types';
