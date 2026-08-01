@@ -447,14 +447,14 @@ Synced entities support \`corsair.${pluginId}.db.<entity>.search()\` and \`.list
 
 	const exampleRead = exRead
 		? `\`\`\`ts
-await corsair.${pluginId}.api.${exRead.shortPath}({});
+await corsair.${pluginId}.api.${exRead.shortPath}(${renderCallArguments(exRead.input, exRead.shortPath)});
 \`\`\`
 `
 		: '_No read-style endpoint inferred; pick any operation from the reference below._\n';
 
 	const exampleWrite = exWrite
 		? `\`\`\`ts
-await corsair.${pluginId}.api.${exWrite.shortPath}({});
+await corsair.${pluginId}.api.${exWrite.shortPath}(${renderCallArguments(exWrite.input, exWrite.shortPath)});
 \`\`\`
 `
 		: '_No write-style endpoint inferred; pick any operation from the reference below._\n';
@@ -593,28 +593,369 @@ function isObjectLikeType(type: string): boolean {
 	return type.includes('{');
 }
 
-/**
- * Splits a type string on top-level `|` separators only, so union branches are
- * handled independently while nested unions inside `(...)`, `[...]`, or `{...}`
- * stay intact.
- */
-function splitTopLevelUnion(type: string): string[] {
-	const branches: string[] = [];
+function splitTopLevel(type: string, delimiter: string): string[] {
+	const parts: string[] = [];
 	let depth = 0;
 	let start = 0;
+	let inString: '"' | "'" | null = null;
 	for (let i = 0; i < type.length; i += 1) {
 		const ch = type[i]!;
-		if (ch === '(' || ch === '[' || ch === '{') depth += 1;
-		else if (ch === ')' || ch === ']' || ch === '}') {
+		if (inString) {
+			if (ch === '\\') {
+				i += 1;
+				continue;
+			}
+			if (ch === inString) inString = null;
+			continue;
+		}
+		if (ch === '"' || ch === "'") {
+			inString = ch;
+			continue;
+		}
+		if (ch === '(' || ch === '[' || ch === '{' || ch === '<') {
+			depth += 1;
+			continue;
+		}
+		if (ch === ')' || ch === ']' || ch === '}' || ch === '>') {
 			depth = Math.max(0, depth - 1);
-		} else if (ch === '|' && depth === 0) {
-			branches.push(type.slice(start, i).trim());
+			continue;
+		}
+		if (ch === delimiter && depth === 0) {
+			parts.push(type.slice(start, i).trim());
 			start = i + 1;
 		}
 	}
 	const last = type.slice(start).trim();
-	if (last) branches.push(last);
-	return branches;
+	if (last) parts.push(last);
+	return parts;
+}
+
+/**
+ * Splits a type string on top-level `|` separators only, so union branches are
+ * handled independently while nested unions inside `(...)`, `[...]`, `{...}`, or
+ * `Record<...>` stay intact.
+ */
+function splitTopLevelUnion(type: string): string[] {
+	return splitTopLevel(type, '|');
+}
+
+function stripOuterParens(type: string): string {
+	let out = type.trim();
+	for (;;) {
+		if (!out.startsWith('(') || !out.endsWith(')')) return out;
+		let depth = 0;
+		let wrapsWhole = true;
+		let inString: '"' | "'" | null = null;
+		for (let i = 0; i < out.length; i += 1) {
+			const ch = out[i]!;
+			if (inString) {
+				if (ch === '\\') {
+					i += 1;
+					continue;
+				}
+				if (ch === inString) inString = null;
+				continue;
+			}
+			if (ch === '"' || ch === "'") {
+				inString = ch;
+				continue;
+			}
+			if (ch === '(') depth += 1;
+			else if (ch === ')') {
+				depth -= 1;
+				if (depth === 0 && i < out.length - 1) {
+					wrapsWhole = false;
+					break;
+				}
+			}
+		}
+		if (!wrapsWhole) return out;
+		out = out.slice(1, -1).trim();
+	}
+}
+
+function arrayItemType(type: string): string | undefined {
+	const clean = stripOuterParens(type);
+	if (!clean.endsWith('[]')) return undefined;
+	return stripOuterParens(clean.slice(0, -2).trim());
+}
+
+function recordValueType(type: string): string | undefined {
+	const clean = stripOuterParens(type);
+	if (!clean.startsWith('Record<') || !clean.endsWith('>')) return undefined;
+	const inner = clean.slice('Record<'.length, -1);
+	const [, value] = splitTopLevel(inner, ',');
+	return value?.trim();
+}
+
+type InlineObjectField = {
+	key: string;
+	optional: boolean;
+	type: string;
+};
+
+function objectFieldsFromInlineType(type: string): InlineObjectField[] | null {
+	const clean = stripOuterParens(type);
+	if (!clean.startsWith('{') || !clean.endsWith('}')) return null;
+	const body = clean.slice(1, -1).trim();
+	if (body.length === 0) return [];
+	return splitTopLevel(body, ',')
+		.map((part) => {
+			const match = /^([A-Za-z_$][\w$]*)(\?)?:\s*(.+)$/.exec(part);
+			if (!match) return undefined;
+			return {
+				key: match[1]!,
+				optional: match[2] === '?',
+				type: match[3]!.trim(),
+			};
+		})
+		.filter((field): field is InlineObjectField => field !== undefined);
+}
+
+function isQuotedLiteralType(type: string): boolean {
+	return /^'(?:\\.|[^'])*'$/.test(type) || /^"(?:\\.|[^"])*"$/.test(type);
+}
+
+function quoteSampleString(value: string): string {
+	return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+}
+
+function formatObjectKey(key: string): string {
+	return /^[A-Za-z_$][\w$]*$/.test(key) ? key : JSON.stringify(key);
+}
+
+function renderObjectLiteral(
+	entries: Array<[string, string]>,
+	depth: number,
+): string {
+	if (entries.length === 0) return '{}';
+	const unit = '  ';
+	const pad = unit.repeat(depth + 1);
+	const closePad = unit.repeat(depth);
+	return `{\n${entries
+		.map(([key, value]) => `${pad}${formatObjectKey(key)}: ${value}`)
+		.join(',\n')}\n${closePad}}`;
+}
+
+function renderArrayLiteral(item: string, depth: number): string {
+	if (!item.includes('\n')) return `[${item}]`;
+	const unit = '  ';
+	const pad = unit.repeat(depth + 1);
+	const closePad = unit.repeat(depth);
+	return `[\n${pad}${item}\n${closePad}]`;
+}
+
+function sampleModelForEndpoint(shortPath: string | undefined): string {
+	if (shortPath === 'audio.createSpeech') return 'tts-1';
+	if (
+		shortPath === 'audio.createTranscription' ||
+		shortPath === 'audio.createTranslation'
+	) {
+		return 'whisper-1';
+	}
+	if (shortPath === 'embeddings.create') return 'text-embedding-3-small';
+	if (shortPath === 'completions.create') return 'gpt-3.5-turbo-instruct';
+	if (shortPath === 'fineTuning.createJob') {
+		return 'gpt-4o-mini-2024-07-18';
+	}
+	return 'gpt-4o-mini';
+}
+
+function samplePromptForEndpoint(shortPath: string | undefined): string {
+	if (shortPath === 'images.createEdit') return 'make it blue';
+	if (shortPath === 'videos.createRemix') return 'make it night';
+	if (shortPath?.startsWith('images.') || shortPath?.startsWith('videos.')) {
+		return 'a cat';
+	}
+	return 'hello';
+}
+
+function sampleStringForField(
+	key: string,
+	shortPath: string | undefined,
+): string | undefined {
+	const values: Record<string, string> = {
+		assistantId: 'asst_123',
+		batchId: 'batch_123',
+		completionId: 'chatcmpl_123',
+		containerId: 'ctr_123',
+		conversationId: 'conv_123',
+		engineId: 'davinci',
+		evalId: 'eval_123',
+		fileId: 'file_123',
+		inputFileId: 'file_123',
+		itemId: 'item_123',
+		messageId: 'msg_123',
+		mimeType: 'application/octet-stream',
+		modelSample: 'hello',
+		outputItemId: 'out_123',
+		responseId: 'resp_123',
+		runId: 'run_123',
+		skillId: 'skill_123',
+		stepId: 'step_123',
+		threadId: 'thread_123',
+		trainingFile: 'file_123',
+		uploadId: 'upload_123',
+		vectorStoreId: 'vs_123',
+		videoId: 'video_123',
+		voice: 'alloy',
+	};
+	if (key in values) return values[key];
+	if (key === 'model') return sampleModelForEndpoint(shortPath);
+	if (key === 'prompt') return samplePromptForEndpoint(shortPath);
+	if (key === 'input') {
+		if (shortPath === 'embeddings.create') return 'test';
+		return 'hi';
+	}
+	if (key === 'content' || key === 'output' || key === 'query') return 'hello';
+	if (key === 'file') return 'file contents';
+	if (key === 'data') return 'chunk';
+	if (key === 'image' || key === 'mask' || key === 'inputReference') {
+		return 'image bytes';
+	}
+	if (key === 'fileName') return 'file.txt';
+	if (key === 'filename') return 'big.bin';
+	if (key === 'imageFileName') return 'image.png';
+	if (key === 'maskFileName') return 'mask.png';
+	if (key === 'inputReferenceFileName') return 'reference.png';
+	if (key.endsWith('Id')) return `${key.slice(0, -2).toLowerCase()}_123`;
+	return undefined;
+}
+
+function sampleValueForKnownField(
+	key: string,
+	type: string,
+	shortPath: string | undefined,
+): string | undefined {
+	switch (key) {
+		case 'bytes':
+			return '1024';
+		case 'dataSource':
+			return "{ type: 'completions' }";
+		case 'dataSourceConfig':
+			return "{ type: 'custom' }";
+		case 'grader':
+			return "{ type: 'string_check' }";
+		case 'items':
+			return "[{ type: 'message', role: 'user', content: 'hi' }]";
+		case 'messages':
+			return "[{ role: 'user', content: 'hello' }]";
+		case 'metadata':
+			return "{ key: 'value' }";
+		case 'partIds':
+			return "['part_1']";
+		case 'session':
+			return "{ type: 'realtime' }";
+		case 'testingCriteria':
+			return "[{ type: 'string_check' }]";
+		case 'toolOutputs':
+			return "[{ toolCallId: 'call_1', output: 'ok' }]";
+	}
+	if (key === 'fileIds') return "['file_123']";
+	if (type === 'string' || splitTopLevelUnion(type).includes('string')) {
+		const value = sampleStringForField(key, shortPath);
+		if (value !== undefined) return quoteSampleString(value);
+	}
+	return undefined;
+}
+
+function sampleValueForType(
+	type: string,
+	key: string,
+	shortPath: string | undefined,
+	depth: number,
+): string {
+	const clean = stripOuterParens(type.trim());
+	const known = sampleValueForKnownField(key, clean, shortPath);
+	if (known !== undefined) return known;
+
+	const unionBranches = splitTopLevelUnion(clean);
+	if (unionBranches.length > 1) {
+		const branch =
+			unionBranches.find((b) => b !== 'null' && b !== 'undefined') ??
+			unionBranches[0]!;
+		return sampleValueForType(branch, key, shortPath, depth);
+	}
+
+	if (isQuotedLiteralType(clean)) return clean;
+
+	const arrayInner = arrayItemType(clean);
+	if (arrayInner !== undefined) {
+		return renderArrayLiteral(
+			sampleValueForType(arrayInner, key, shortPath, depth + 1),
+			depth,
+		);
+	}
+
+	const recordValue = recordValueType(clean);
+	if (recordValue !== undefined) {
+		return renderObjectLiteral(
+			[['key', sampleValueForType(recordValue, 'key', shortPath, depth + 1)]],
+			depth,
+		);
+	}
+
+	const objectFields = objectFieldsFromInlineType(clean);
+	if (objectFields !== null) {
+		const requiredEntries = objectFields
+			.filter((field) => !field.optional)
+			.map((field): [string, string] => [
+				field.key,
+				sampleValueForType(field.type, field.key, shortPath, depth + 1),
+			]);
+		return renderObjectLiteral(requiredEntries, depth);
+	}
+
+	switch (clean) {
+		case 'string': {
+			const value = sampleStringForField(key, shortPath) ?? 'value';
+			return quoteSampleString(value);
+		}
+		case 'number':
+			return '1';
+		case 'boolean':
+			return 'true';
+		case 'Date':
+			return 'new Date()';
+		case 'null':
+			return 'null';
+		case 'any':
+		case 'custom':
+		case 'unknown':
+			return quoteSampleString(sampleStringForField(key, shortPath) ?? 'value');
+		default:
+			return quoteSampleString(clean);
+	}
+}
+
+function extraExampleEntriesForEndpoint(
+	shortPath: string,
+): Array<[string, string]> {
+	if (shortPath === 'containerFiles.create') {
+		return [['fileId', quoteSampleString('file_123')]];
+	}
+	return [];
+}
+
+function renderCallArguments(
+	input: DocSchemaShape,
+	shortPath?: string,
+): string {
+	if (input.kind !== 'object' || input.fields.length === 0) return '{}';
+	const entries = input.fields
+		.filter((field) => !field.optional)
+		.map((field): [string, string] => [
+			field.key,
+			sampleValueForType(field.type, field.key, shortPath, 1),
+		]);
+	for (const [key, value] of shortPath
+		? extraExampleEntriesForEndpoint(shortPath)
+		: []) {
+		if (!entries.some(([existingKey]) => existingKey === key)) {
+			entries.push([key, value]);
+		}
+	}
+	return renderObjectLiteral(entries, 0);
 }
 
 /** Collapses a single branch: object shapes become `object` / `object[]`, everything else stays literal. */
@@ -648,6 +989,7 @@ function prettifyTypeBlock(type: string): string {
 	const unit = '  ';
 	let out = '';
 	let depth = 0;
+	let genericDepth = 0;
 	let i = 0;
 	const n = type.length;
 
@@ -657,6 +999,38 @@ function prettifyTypeBlock(type: string): string {
 
 	while (i < n) {
 		const ch = type[i]!;
+
+		if (ch === '"' || ch === "'") {
+			const quote = ch;
+			out += ch;
+			i += 1;
+			while (i < n) {
+				const next = type[i]!;
+				out += next;
+				i += 1;
+				if (next === '\\' && i < n) {
+					out += type[i]!;
+					i += 1;
+					continue;
+				}
+				if (next === quote) break;
+			}
+			continue;
+		}
+
+		if (ch === '<') {
+			genericDepth += 1;
+			out += ch;
+			i += 1;
+			continue;
+		}
+
+		if (ch === '>') {
+			genericDepth = Math.max(0, genericDepth - 1);
+			out += ch;
+			i += 1;
+			continue;
+		}
 
 		// Array suffix `[]` (e.g. `{ a: string }[]`) — keep on one line, not `}[\n]`
 		if (ch === '[' && type[i + 1] === ']') {
@@ -687,7 +1061,7 @@ function prettifyTypeBlock(type: string): string {
 			continue;
 		}
 
-		if (ch === ',') {
+		if (ch === ',' && genericDepth === 0) {
 			out += ',';
 			out += '\n';
 			appendIndent();
@@ -696,7 +1070,7 @@ function prettifyTypeBlock(type: string): string {
 			continue;
 		}
 
-		if (ch === '|') {
+		if (ch === '|' && genericDepth === 0) {
 			out = out.replace(/[ \t]+$/g, '');
 			out += ' | ';
 			i += 1;
@@ -831,7 +1205,9 @@ function buildApiMdx(
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
 			sections.push('```ts');
-			sections.push(`await ${callExpr}({});`);
+			sections.push(
+				`await ${callExpr}(${renderCallArguments(ep.input, ep.shortPath)});`,
+			);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));

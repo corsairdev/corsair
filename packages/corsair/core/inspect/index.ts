@@ -61,6 +61,16 @@ function getZodArrayItem(def: ZodDef): ZodTypeAny | undefined {
 		| undefined;
 }
 
+function getZodRecordKeyValue(def: ZodDef): {
+	key?: ZodTypeAny;
+	value?: ZodTypeAny;
+} {
+	return {
+		key: (def.keyType ?? def.keySchema) as ZodTypeAny | undefined,
+		value: (def.valueType ?? def.valueSchema) as ZodTypeAny | undefined,
+	};
+}
+
 function getZodShape(
 	schema: ZodTypeAny,
 	def: ZodDef,
@@ -126,12 +136,56 @@ function isOptionalish(typeName: string | undefined): boolean {
 	);
 }
 
+function typeLiteral(value: unknown): string {
+	if (typeof value === 'string') {
+		return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+	}
+	if (
+		typeof value === 'number' ||
+		typeof value === 'boolean' ||
+		value === null
+	) {
+		return String(value);
+	}
+	return 'unknown';
+}
+
+function hasTopLevelTypeOperator(type: string): boolean {
+	let depth = 0;
+	let inString: '"' | "'" | null = null;
+	for (let i = 0; i < type.length; i += 1) {
+		const ch = type[i]!;
+		if (inString) {
+			if (ch === '\\') {
+				i += 1;
+				continue;
+			}
+			if (ch === inString) inString = null;
+			continue;
+		}
+		if (ch === '"' || ch === "'") {
+			inString = ch;
+			continue;
+		}
+		if (ch === '(' || ch === '[' || ch === '{' || ch === '<') {
+			depth += 1;
+			continue;
+		}
+		if (ch === ')' || ch === ']' || ch === '}' || ch === '>') {
+			depth = Math.max(0, depth - 1);
+			continue;
+		}
+		if ((ch === '|' || ch === '&') && depth === 0) return true;
+	}
+	return false;
+}
+
 /**
  * Produces a compact single-line TypeScript-like type string.
  * Used for array item types, union members, and simple inline fields.
  *
  * Optional fields in objects are rendered with a "?" suffix on the key.
- * Enums render as pipe-separated values: full | none
+ * Enums render as pipe-separated literal values: 'full' | 'none'
  */
 function zodToInlineType(schema: ZodTypeAny): string {
 	const def = getZodDef(schema);
@@ -148,14 +202,15 @@ function zodToInlineType(schema: ZodTypeAny): string {
 			return 'Date';
 		case 'ZodNull':
 			return 'null';
-		case 'ZodUnknown':
 		case 'ZodAny':
 			return 'any';
+		case 'ZodUnknown':
+			return 'unknown';
 		case 'ZodLiteral':
-			return String(def.value ?? getZodOptions(def)[0] ?? 'unknown');
+			return typeLiteral(def.value ?? getZodOptions(def)[0] ?? 'unknown');
 		case 'ZodEnum':
 			return getZodOptions(def)
-				.map((v) => String(v))
+				.map((v) => typeLiteral(v))
 				.join(' | ');
 		case 'ZodOptional': {
 			const inner = getZodInner(def);
@@ -173,13 +228,15 @@ function zodToInlineType(schema: ZodTypeAny): string {
 		case 'ZodArray': {
 			const itemType = getZodArrayItem(def);
 			if (!itemType) return 'unknown[]';
-			const itemDef = getZodDef(itemType);
-			const isUnion = getZodTypeName(itemDef) === 'ZodUnion';
 			const inner = zodToInlineType(itemType);
-			return `${isUnion ? `(${inner})` : inner}[]`;
+			return `${hasTopLevelTypeOperator(inner) ? `(${inner})` : inner}[]`;
 		}
-		case 'ZodRecord':
-			return '{}';
+		case 'ZodRecord': {
+			const { key, value } = getZodRecordKeyValue(def);
+			const keyType = key ? zodToInlineType(key) : 'string';
+			const valueType = value ? zodToInlineType(value) : 'unknown';
+			return `Record<${keyType}, ${valueType}>`;
+		}
 		case 'ZodObject': {
 			const shape = getZodShape(schema, def);
 			const entries = Object.entries(shape);
