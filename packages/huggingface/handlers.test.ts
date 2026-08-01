@@ -255,6 +255,28 @@ describe('handler path construction', () => {
 		expectPath('/api/models/org/model/discussions/1');
 	});
 
+	it('discussions.create sends title/description/pullRequest body', async () => {
+		await DiscussionsEndpoints.create(ctx(), {
+			repoType: 'model',
+			repoId: 'org/model',
+			title: 'Hello',
+			description: 'Details here',
+			pullRequest: true,
+		});
+		expect(mockReq).toHaveBeenCalledWith(
+			'/api/models/org/model/discussions',
+			'hf_test',
+			expect.objectContaining({
+				method: 'POST',
+				body: {
+					title: 'Hello',
+					description: 'Details here',
+					pullRequest: true,
+				},
+			}),
+		);
+	});
+
 	it('papers.getDaily → /api/daily_papers', async () => {
 		await PapersEndpoints.getDaily(ctx(), {});
 		expectPath('/api/daily_papers');

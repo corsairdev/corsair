@@ -1242,7 +1242,7 @@ const DiscussionsCreateInputSchema = z.object({
 	repoType: z.enum(['model', 'dataset', 'space']),
 	repoId: z.string(),
 	title: z.string(),
-	content: z.string().optional(),
+	description: z.string().optional(),
 	pullRequest: z.boolean().optional(),
 });
 

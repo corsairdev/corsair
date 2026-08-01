@@ -56,7 +56,7 @@ export const create: HuggingFaceEndpoints['discussionsCreate'] = async (
 			method: 'POST',
 			body: {
 				title: input.title,
-				content: input.content ?? '',
+				description: input.description ?? '',
 				pullRequest: input.pullRequest,
 			},
 		},
